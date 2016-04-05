@@ -192,8 +192,14 @@ public class VtmWsdlInsert extends BaseTaskService {
             for (String categorPath : categoriePaths) {
 
                 // 每棵树的信息取得
-                $info("每棵树的信息取得开始");
-                List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
+                $info("每棵树的信息取得开始" + categorPath);
+                List<CmsBtFeedInfoModel> product;
+                try{
+                    product = getCategoryInfo(categorPath);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    throw e;
+                }
                 $info("每棵树的信息取得结束");
 
                 product.forEach(cmsBtFeedInfoModel -> {
