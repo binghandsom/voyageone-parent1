@@ -97,13 +97,18 @@
         where
         task_id = #{taskId}
     </delete>
-    <select id="cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById" resultType="HashMap" parameterType="String" >
+    <select id="cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById" resultType="HashMap" >
         select
-        cart_id,
-        revert_time
-        from voyageone_cms2.cms_bt_stock_separate_platform_info
-        where cart_id = #{cart_id}
-          and revert_time >#{revert_time}
+        a.channel_id,
+        a.promotion_id,
+        a.cart_id,
+        b.revert_time
+        from voyageone_cms2.cms_bt_promotion a
+        INNER JOIN voyageone_cms2.cms_bt_stock_separate_platform_info b
+        on a.cart_id=b.cart_id and a.promotion_id = b.promotion_id
+        where a.cart_id = #{cartId}
+        and a.channel_id=#{channelId}
+        and b.revert_time >#{revertTime}
     </select>
     <insert id="cms_bt_stock_separate_platform_info_insert" parameterType="Map">
         INSERT INTO voyageone_cms2.cms_bt_stock_separate_platform_info (

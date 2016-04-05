@@ -237,7 +237,6 @@
         <foreach collection="list" item="skuItem" open="(" separator="," close=")">
             #{skuItem}
         </foreach>
-        group by product_sku,promotion_id
     </select>
     <select id="select_cms_bt_promotion_sku_bt_all_sku_promotionIds" parameterType="List" resultType="HashMap">
         select distinct product_sku,product_code
@@ -246,7 +245,6 @@
         <foreach collection="list" item="skuItem" open="(" separator="," close=")">
             #{skuItem}
         </foreach>
-        group by product_sku,product_code
     </select>
 
 </mapper>
