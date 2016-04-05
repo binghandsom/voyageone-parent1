@@ -69,6 +69,12 @@ public class CacheHelper {
     }
 
     @SuppressWarnings("unchecked")
+    public static boolean isExists(String key,String cellKey,Class self){
+        reloadData(key, self);
+        return onWindows()?localCache.get(key).containsKey(cellKey):getHashOperation().hasKey(key,cellKey);
+    }
+
+    @SuppressWarnings("unchecked")
     public static Set<String> getKeySet(String key, Class self) {
         reloadData(key, self);
         return onWindows()?localCache.get(key).keySet():getHashOperation().keys(key);
