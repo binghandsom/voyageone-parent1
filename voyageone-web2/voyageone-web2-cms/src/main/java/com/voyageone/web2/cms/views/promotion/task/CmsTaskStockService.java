@@ -15,7 +15,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
-import com.voyageone.service.dao.wms.WmsBtLogicInventoryDao;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;

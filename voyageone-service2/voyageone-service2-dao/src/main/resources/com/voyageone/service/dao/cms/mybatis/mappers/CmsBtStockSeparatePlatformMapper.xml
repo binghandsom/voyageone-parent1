@@ -27,6 +27,9 @@
         <if test="commonPlatform == null" >
         and t1.cart_id != -1
         </if>
+        <if test="channelIdWhere != null" >
+            and t2.channel_id = #{channelIdWhere}
+        </if>
         <if test="taskId != null" >
         and t1.task_id = #{taskId}
         </if>
@@ -35,6 +38,9 @@
         </if>
         <if test="revertTime != null" >
             <![CDATA[ and t1.revert_time <= #{revertTime} ]]>
+        </if>
+        <if test="revertTimeGt != null" >
+            <![CDATA[ and t1.revert_time > #{revertTimeGt} ]]>
         </if>
         <if test="revertFlg != null" >
             and t1.revert_flg = #{revertFlg}
