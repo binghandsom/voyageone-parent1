@@ -125,7 +125,19 @@
                         <div class="col-sm-4">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label"></label>
+                                    <span class="col-sm-3 control-label">是否锁定</span>
+                                    <div class=" col-sm-2 ">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" ng-model="errorInfo.status" name="onoffswitch" ng-change="updateFinishStatus(errorInfo.seq)" class="onoffswitch-checkbox" id="myonoffswitch5">
+                                            <label class="onoffswitch-label" for="myonoffswitch5">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">检索</label>
                                     <div class="form-inline col-sm-9">
                                         <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"  ng-model="vm.searchKey"  class="form-control col-sm-8">
                                         <span class="input-group-btn"><button class="btn btn-vo" ng-click="search()" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
@@ -206,6 +218,7 @@
                                            target="_blank">{{group.productModel | limitTo: 30}}{{group.productModel.length > 30 ? '...' : ''}}
                                         </a>
 									</span>&nbsp;
+                                    <span class="label label-yellow-new m-l-md">&nbsp;shoecity&nbsp;</span>
                                     <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{group.catPath}}</span>
                                 </td>
                             </tr>
@@ -303,6 +316,7 @@
 											<a href="#/product/detail/{{code.productId}}" title="{{code.productName}}"
                                                target="_blank">{{code.productName | limitTo: 30}}{{code.productName.length > 30 ? '...' : ''}}</a>
 										</span>
+                                    <span class="label label-yellow-new m-t-xs m-l-xs">&nbsp;Shoecity&nbsp;</span>
                                     <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{code.catPath}}</span>
                                 </td>
                             </tr>

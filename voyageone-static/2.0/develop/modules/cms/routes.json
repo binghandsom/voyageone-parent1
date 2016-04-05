@@ -59,6 +59,11 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
+  "search_feedsearch": {
+    "hash": "/search/feedsearch",
+    "templateUrl": "views/search/feedsearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
+  },
   "search_advance_param": {
     "url": "/search/advance/",
     "hash": "/search/advance/:type/:value",
@@ -132,6 +137,11 @@
     "hash": "/channel/custom/value/:catPath",
     "templateUrl": "views/channel/custom/value.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
+  },
+  "channel_feedImportRule_feedImportRuleList": {
+    "hash": "/channel/feedImportRule/feedImportRuleList",
+    "templateUrl": "views/channel/feedImportRule/feedImportRuleList.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/feedImportRule/feedImportRuleList.ctl"
   },
   "channel_authority": {
     "hash": "/channel/authority",
