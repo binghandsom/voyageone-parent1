@@ -68,7 +68,7 @@ public class VtmService extends BaseTaskService {
         // 插入数据库
         $info("维他命产品信息插入开始");
         int count = vtmSuperFeedImport();
-        $info("维他命产品信息插入完成");
+        $info("维他命产品信息插入完成 共"+count+"条数据");
         if( count > 0) {
             // 清表
 

@@ -316,7 +316,7 @@ public class ProductService extends BaseService {
         if (!StringUtils.isEmpty(queryStr)) {
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setQuery(queryStr);
-            queryObject.setProjection("prodId", "modified", "fields.status");
+            queryObject.setProjection("prodId", "modified", "fields.status", "groups");
 
             CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             if (findModel == null) {
@@ -450,7 +450,7 @@ public class ProductService extends BaseService {
                     if (!StringUtils.isEmpty(request.getModifier())) {
                         modifier = request.getModifier();
                     }
-                    insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getProdId(), modifier);
+                    insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getGroups().getPlatforms(), modifier);
                 }
 
                 /**
@@ -603,7 +603,7 @@ public class ProductService extends BaseService {
 
     private void insertSxWorkLoad(CmsConstants.ProductStatus befStatus,
                                   CmsConstants.ProductStatus aftStatus,
-                                  String channelId, Long groupId, String modifier) {
+                                  String channelId, List<CmsBtProductModel_Group_Platform> platforms, String modifier) {
         if (befStatus != null && aftStatus != null) {
             boolean isNeed = false;
             // 从其他状态转为Pending
@@ -615,14 +615,38 @@ public class ProductService extends BaseService {
                 isNeed = true;
             }
 
-            if (isNeed) {
+//            if (isNeed) {
+//                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+//                model.setChannelId(channelId);
+//                model.setGroupId(groupId);
+//                model.setPublishStatus(0);
+//                model.setCreater(modifier);
+//                model.setModifier(modifier);
+//                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
+//            }
+
+            // 获得该店铺的上新平台列表
+            List<Integer> carts = new ArrayList<>();
+            for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
+                carts.add(Integer.valueOf(typeChannelBean.getValue()));
+            }
+
+            // 获取所有的可上新的平台group信息
+            List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+            for(CmsBtProductModel_Group_Platform platform : platforms) {
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-                model.setChannelId(channelId);
-                model.setGroupId(groupId);
-                model.setPublishStatus(0);
-                model.setCreater(modifier);
-                model.setModifier(modifier);
-                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
+                if (carts.contains(platform.getCartId()) && isNeed) {
+                    model.setChannelId(channelId);
+                    model.setGroupId(platform.getGroupId());
+                    model.setPublishStatus(0);
+                    model.setCreater(modifier);
+                    model.setModifier(modifier);
+                    models.add(model);
+                }
+            }
+
+            if (models.size() > 0) {
+                cmsBtSxWorkloadDao.insertSxWorkloadModels(models);
             }
         }
     }
