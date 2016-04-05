@@ -1,21 +1,16 @@
-package com.voyageone.common.components.issueLog;
+package com.voyageone.common.logger;
 
 import com.voyageone.common.util.JacksonUtil;
 import org.aspectj.lang.JoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * @author aooer 2016/3/30.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class AopLog{
+public class VOAopLoggable {
 
     public void doBefore(JoinPoint joinPoint) {
         getLog(joinPoint).info(getMethodPath(joinPoint)+"\tStart");
