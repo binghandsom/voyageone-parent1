@@ -1007,24 +1007,40 @@ public class CmsTaskStockService extends BaseAppService {
      * @param lang
      */
     private void saveUpdateTasksByPromotionInfo(Map param, String lang,String promotionType) {
-        //取得页面上的信息
-        Map<String, Object> promotionList = (Map) param.get("promotionList");
         //用户名
         String user=(String)param.get("userName");
-        List<Map> separatePlatformList = new ArrayList<>();
         //取得TaskID
         int taskId=(int) param.get("taskId");
-        separatePlatformList= (List<Map>) promotionList.get("platformList");
+        List<Map> separatePlatformList= (List<Map>) param.get("promotionList");
         for(int i=0;i<separatePlatformList.size();i++){
             Map<String,Object> separatePlatformMap  = new HashMap<>();
-            //cartId
-            separatePlatformMap.put("cartId",separatePlatformList.get(i).get("cartId").toString());
-            //增优先顺
-            separatePlatformMap.put("addPriority",separatePlatformList.get(i).get("addPriority").toString());
-            //减优先顺
-            separatePlatformMap.put("subtractPriority",separatePlatformList.get(i).get("subtractPriority").toString());
-            //更新者modifier
-            separatePlatformMap.put("modifier",user);
+            if(SEPARATE_TYPE.equals(separatePlatformList.get(i).get("type").toString())){
+                //cartId
+                separatePlatformMap.put("cartId",separatePlatformList.get(i).get("cartId").toString());
+                //增优先顺
+                separatePlatformMap.put("addPriority",separatePlatformList.get(i).get("addPriority").toString());
+                //减优先顺
+                separatePlatformMap.put("subtractPriority",separatePlatformList.get(i).get("subtractPriority").toString());
+                //更新者modifier
+                separatePlatformMap.put("modifier",user);
+                //还原时间
+                separatePlatformMap.put("revertTime",separatePlatformList.get(i).get("revertTime").toString());
+
+            }else{
+                //commonPlatform
+                separatePlatformMap.put("commonPlatform","-1");
+                //cartId
+                separatePlatformMap.put("cartId",separatePlatformList.get(i).get("cartId").toString());
+                //增优先顺
+                separatePlatformMap.put("addPriority",separatePlatformList.get(i).get("addPriority").toString());
+                //减优先顺
+                separatePlatformMap.put("subtractPriority",separatePlatformList.get(i).get("subtractPriority").toString());
+                //更新者modifier
+                separatePlatformMap.put("modifier",user);
+                //还原时间
+                separatePlatformMap.put("revertTime",separatePlatformList.get(i).get("revertTime").toString());
+            }
+
             //循环活动信息并且插入表格
             cmsBtStockSeparatePlatformInfoDao.updateStockSeparatePlatform(separatePlatformMap);
         }
