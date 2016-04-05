@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <select id="select_stock_separate_item" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_item_selectStockSeparateItem" resultType="HashMap" parameterType="HashMap">
         select
             task_id,
             channel_id,
@@ -52,15 +52,15 @@
         </if>
     </select>
 
-    <select id="select_stock_separate_item_by_sql_object" resultType="Object" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_item_selectStockSeparateItemBySqlMap" resultType="HashMap" parameterType="HashMap">
         ${sql}
     </select>
 
-    <select id="select_stock_separate_item_by_sql_map" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_item_selectStockSeparateItemBySqlObject" resultType="Object" parameterType="HashMap">
         ${sql}
     </select>
 
-    <select id="select_stock_separate_success_qty" resultType="int" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_item_selectStockSeparateSuccessQty" resultType="int" parameterType="HashMap">
         select sum(separate_qty) as separate_qty_sum
         from   voyageone_cms2.cms_bt_stock_separate_item
         where
@@ -84,7 +84,7 @@
         </if>
     </select>
 
-    <select id="select_stock_separate_item_by_status" resultType="Integer" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_item_selectStockSeparateItemByStatus" resultType="Integer" parameterType="HashMap">
         select seq
             from   voyageone_cms2.cms_bt_stock_separate_item
             where task_id = #{taskId}
@@ -98,13 +98,13 @@
         limit 0,1
     </select>
 
-    <select id="select_stock_separate_item_history_cnt" resultType="int" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_item_selectStockSeparateItemHistoryCnt" resultType="int" parameterType="HashMap">
          select count(*)
             from   voyageone_cms2.cms_bt_stock_separate_item_history
             where task_id = #{taskId}
     </select>
 
-    <update id="update_stock_separate_item" parameterType="HashMap" >
+    <update id="cms_bt_stock_separate_item_updateStockSeparateItem" parameterType="HashMap" >
         update voyageone_cms2.cms_bt_stock_separate_item
         <set >
             <if test="qty != null" >
@@ -167,7 +167,7 @@
         </where>
     </update>
 
-    <delete id="delete_stock_separate_item" parameterType="HashMap">
+    <delete id="cms_bt_stock_separate_item_deleteStockSeparateItem" parameterType="HashMap">
         delete
         from voyageone_cms2.cms_bt_stock_separate_item
         where
@@ -180,7 +180,7 @@
         </if>
     </delete>
 
-    <insert id="insert_cms_bt_stock_separate_item" parameterType="HashMap" useGeneratedKeys="true" keyProperty="seq">
+    <insert id="cms_bt_stock_separate_insertStockSeparateItem" parameterType="HashMap" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_stock_separate_item (
         task_id,
         channel_id,
@@ -240,7 +240,7 @@
         )
     </insert>
 
-    <select id="select_stock_separate_detail_all" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_selectStockSeparateDetailAll" resultType="HashMap" parameterType="HashMap">
         (select
         '${stockCommon}' as type,
         t2.task_name as taskName,
@@ -276,7 +276,7 @@
         )
     </select>
 
-    <select id="select_stock_separate_item_excel_map" resultType="com.voyageone.service.bean.cms.task.stock.StockExcelBean" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_selectExcelStockInfo" resultType="com.voyageone.service.bean.cms.task.stock.StockExcelBean" parameterType="HashMap">
         select
           `product_model`,
           `product_code`,
@@ -295,7 +295,7 @@
           `product_model`,`product_code`,`sku`,`cart_id`
     </select>
 
-    <insert id="insert_cms_bt_stock_separate_item_excel" parameterType="List">
+    <insert id="cms_bt_stock_separate_insertStockSeparateItemFromExcel" parameterType="List">
         insert into voyageone_cms2.cms_bt_stock_separate_item (
         task_id,
         channel_id,
@@ -361,7 +361,7 @@
         </foreach>
     </insert>
 
-    <select id="select_stock_separate_error_excel" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_selectExcelStockErrorInfo" resultType="HashMap" parameterType="HashMap">
         select
             '1' as `type`,
             `product_model` as model,

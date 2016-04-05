@@ -14,14 +14,14 @@ import java.util.Map;
 public class CmsBtStockSalesQuantityDao extends BaseDao {
 
     public List<Map<String, Object>> selectStockSalesQuantity(Map<String, Object> param) {
-        return selectList("select_stock_sales_quantity", param);
+        return selectList("cms_bt_stock_sales_quantity_selectStockSalesQuantity", param);
     }
 
     public Integer selectStockSalesQuantityQty(Map<String, Object> param) {
-        return selectOne("select_stock_sales_quantity_qty", param);
+        return selectOne("cms_bt_stock_sales_quantity_selectStockSalesQuantityQty", param);
     }
 
     public int updateStockSalesQuantity(Map<String, Object> param) {
-        return update("update_stock_sales_quantity", param);
+        return update("cms_bt_stock_sales_quantity_updateStockSalesQuantity", param);
     }
 }

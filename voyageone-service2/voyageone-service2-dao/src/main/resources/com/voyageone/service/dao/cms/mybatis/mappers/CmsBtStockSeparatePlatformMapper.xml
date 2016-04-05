@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <select id="select_stock_separate_platform" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_platform_info_selectStockSeparatePlatform" resultType="HashMap" parameterType="HashMap">
         select
             t1.task_id,
             t1.cart_id,
@@ -42,7 +42,7 @@
         order by t1.cart_id
     </select>
 
-    <update id="update_stock_separate_platform" parameterType="HashMap" >
+    <update id="cms_bt_stock_separate_platform_info_updateStockSeparatePlatform" parameterType="HashMap" >
         update voyageone_cms2.cms_bt_stock_separate_platform_info
         <set >
             <if test="separatePercent != null" >
@@ -85,21 +85,21 @@
         </where>
     </update>
 
-    <delete id="delete_stock_separate_platform" parameterType="HashMap">
+    <delete id="cms_bt_stock_separate_platform_info_deleteStockSeparatePlatform" parameterType="HashMap">
         delete
         from voyageone_cms2.cms_bt_stock_separate_platform_info
         where
         task_id = #{taskId}
     </delete>
-    <select id="select_cms_bt_stock_separate_platform_info" resultType="HashMap" parameterType="String" >
+    <select id="cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById" resultType="HashMap" parameterType="String" >
         select
         cart_id,
         revert_time
         from voyageone_cms2.cms_bt_stock_separate_platform_info
         where cart_id = #{cart_id}
-          and revert_time >#{resvert_time}
+          and revert_time >#{revert_time}
     </select>
-    <insert id="insert_cms_cms_bt_stock_separate_platform_info" parameterType="Map">
+    <insert id="cms_bt_stock_separate_platform_info_insert" parameterType="Map">
         INSERT INTO voyageone_cms2.cms_bt_stock_separate_platform_info (
             task_id,
             cart_id,
@@ -130,7 +130,7 @@
             #{modifier}
         )
     </insert>
-    <select id="select_cms_bt_stock_separate_platform_info_by_task_id" parameterType="String" resultType="Map" >
+    <select id="cms_bt_stock_separate_platform_info_stockSeparatePlatFormInfoMapByTaskID" parameterType="String" resultType="Map" >
         select	cart_id cart_id,
                 type type,
                 separate_percent value,

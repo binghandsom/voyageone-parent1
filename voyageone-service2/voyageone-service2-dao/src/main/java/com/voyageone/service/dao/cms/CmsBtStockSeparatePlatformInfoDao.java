@@ -13,26 +13,26 @@ import java.util.Map;
 @Repository
 public class CmsBtStockSeparatePlatformInfoDao extends BaseDao {
     public List<Map<String, Object>> selectStockSeparatePlatform(Map<String, Object> param) {
-        return selectList("select_stock_separate_platform", param);
+        return selectList("cms_bt_stock_separate_platform_info_selectStockSeparatePlatform", param);
     }
 
     public int updateStockSeparatePlatform(Map<String, Object> param) {
-        return update("update_stock_separate_platform", param);
+        return update("cms_bt_stock_separate_platform_info_updateStockSeparatePlatform", param);
     }
 
     public int deleteStockSeparatePlatform(Map<String, Object> param) {
-        return delete("delete_stock_separate_platform", param);
+        return delete("cms_bt_stock_separate_platform_info_deleteStockSeparatePlatform", param);
     }
-    public String selectStockSeparatePlatFormInfoById(String cart_id,String resvert_time){
-        return selectOne("select_cms_bt_stock_separate_platform_info", parameters(
+    public String selectStockSeparatePlatFormInfoById(String cart_id,String revert_time){
+        return selectOne("cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById", parameters(
                 "cart_id", cart_id,
-                "resvert_time", resvert_time
+                "revert_time", revert_time
         ));
     }
     public int insert(Map stockSeparatePlatFormInfoMap) {
-        return insert("insert_cms_cms_bt_stock_separate_platform_info", stockSeparatePlatFormInfoMap);
+        return insert("cms_bt_stock_separate_platform_info_insert", stockSeparatePlatFormInfoMap);
     }
     public List<Map<String,Object>> stockSeparatePlatFormInfoMapByTaskID(String task_id){
-        return selectList("select_cms_bt_stock_separate_platform_info_by_task_id",task_id);
+        return selectList("cms_bt_stock_separate_platform_info_stockSeparatePlatFormInfoMapByTaskID",task_id);
     }
 }

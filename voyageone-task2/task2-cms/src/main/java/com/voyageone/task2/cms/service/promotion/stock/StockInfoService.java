@@ -1,13 +1,10 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
-import com.voyageone.service.dao.wms.WmsBtLogicInventoryDao;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +19,10 @@ import java.util.*;
 @Service
 public class StockInfoService {
 
+//    @Autowired
+//    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
     @Autowired
-    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
@@ -91,12 +90,12 @@ public class StockInfoService {
         // 取得逻辑库存
         Map<String,Integer> skuLogicStockAll = new HashMap<>();
         sqlParam.put("channelId", channelId);
-        List<Map<String, Object>> listLogicInventory = wmsBtLogicInventoryDao.selectLogicInventoryList(sqlParam);
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = wmsBtInventoryCenterLogicDao.selectItemDetail(sqlParam);
         if (listLogicInventory != null && listLogicInventory.size() > 0) {
-            for (Map<String, Object> mapLogicInventory : listLogicInventory) {
-                String sku = (String) mapLogicInventory.get("sku");
+            for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
+                String sku = logicInventory.getSku();
                 setSku.add(sku);
-                Integer logicStock = (Integer) mapLogicInventory.get("qty_china");
+                Integer logicStock = logicInventory.getQtyChina();
                 Integer logicStockAll = skuLogicStockAll.get(sku);
                 if (logicStockAll != null) {
                     skuLogicStockAll.put(sku, logicStockAll + logicStock);

@@ -14,6 +14,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.dao.wms.WmsBtLogicInventoryDao;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -62,8 +63,10 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
 
+//    @Autowired
+//    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
     @Autowired
-    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
     private CmsBtTasksDao cmsBtTasksDao;
@@ -1735,7 +1738,7 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         sqlParam.put("sku", sku);
         sqlParam.put("channelId", channelId);
-        Integer logicInventoryCnt = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam);
+        Integer logicInventoryCnt = wmsBtInventoryCenterLogicDao.selectLogicInventoryCnt(sqlParam);
         if (logicInventoryCnt != null) {
             logicStock = logicInventoryCnt;
         }
