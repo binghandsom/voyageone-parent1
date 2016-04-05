@@ -1991,7 +1991,7 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("cartId", param.get("cartId"));
         // sku
         sqlParam.put("sku", param.get("sku"));
-        // 一般库存隔离状态 状态 = 3：隔离成功,5：等待还原, 6：等待中, 7：还原成功 ,8：还原失败
+        // 一般库存隔离状态 状态 = 3：隔离成功,5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败
         sqlParam.put("statusStockList", Arrays.asList(STATUS_SEPARATE_SUCCESS,
                                                         STATUS_WAITING_REVERT,
                                                         STATUS_REVERTING,
@@ -2001,6 +2001,13 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("statusStockIncrementList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         // 是否从历史表中取得数据
         sqlParam.put("tableNameSuffix", param.get("tableNameSuffix"));
+        if ("cn".equals((String) param.get("lang"))) {
+            sqlParam.put("stockCommon", "一般库存隔离");
+            sqlParam.put("stockIncrement", "增量库存隔离");
+        } else {
+            sqlParam.put("stockCommon", "Stock Separate");
+            sqlParam.put("stockIncrement", "Stock Increment Separate");
+        }
         List<Map<String, Object>> stockHistoryList = cmsBtStockSeparateItemDao.selectStockSeparateDetailAll(sqlParam);
 
         return stockHistoryList;

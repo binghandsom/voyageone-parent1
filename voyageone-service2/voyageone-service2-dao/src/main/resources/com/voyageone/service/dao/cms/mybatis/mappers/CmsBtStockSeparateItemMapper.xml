@@ -242,7 +242,7 @@
 
     <select id="select_stock_separate_detail_all" resultType="HashMap" parameterType="HashMap">
         (select
-        '一般库存隔离' as type,
+        '${stockCommon}' as type,
         t2.task_name as taskName,
         t1.separate_qty as qty
         from voyageone_cms2.cms_bt_stock_separate_item${tableNameSuffix} t1
@@ -259,7 +259,7 @@
         )
         union
         (select
-            '增量库存隔离' as type,
+            '${stockIncrement}' as type,
             t2.sub_task_Name as taskName,
             t1.increment_qty as qty
         from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1

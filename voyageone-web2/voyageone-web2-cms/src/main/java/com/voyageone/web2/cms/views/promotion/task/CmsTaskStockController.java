@@ -1216,6 +1216,9 @@ public class CmsTaskStockController extends CmsController {
             param.put("tableNameSuffix", "");
         }
 
+        // 语言
+        param.put("lang", this.getLang());
+
         // 取得某个Sku的所有隔离详细
         List<Map<String, Object>> stockHistoryList = cmsTaskStockService.getSkuSeparationDetail(param);
         // 返回内容
