@@ -124,9 +124,9 @@
         where
         task_id = #{task_id}
     </delete>
-    <select id="select_cms_bt_tasks_task_id" parameterType="String">
+    <select id="select_cms_bt_tasks_task_id" parameterType="String" resultType="string">
       select MAX(task_id) task_id
-        from cms_bt_tasks
+        from voyageone_cms2.cms_bt_tasks
        where task_name=#{task_name}
     </select>
 

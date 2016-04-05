@@ -101,9 +101,33 @@
     </select>
     <insert id="insert_cms_cms_bt_stock_separate_platform_info" parameterType="Map">
         INSERT INTO voyageone_cms2.cms_bt_stock_separate_platform_info (
-            task_id, cart_id, promotion_id, type, separate_percent,restore_separate_time,add_priority,subtract_priority
+            task_id,
+            cart_id,
+            promotion_id,
+            type,
+            separate_percent,
+            revert_time,
+            revert_flg,
+            add_priority,
+            subtract_priority,
+            created,
+            creater,
+            modified,
+            modifier
         ) VALUES (
-            #{task_id}, #{cart_id}, #{promotion_id}, #{type}, #{separate_percent}, #{restore_separate_time}, #{add_priority}, #{subtract_priority}
+            #{task_id},
+            #{cart_id},
+            #{promotion_id},
+            #{type},
+            #{separate_percent},
+            #{revert_time},
+            #{revert_flg},
+            #{add_priority},
+            #{subtract_priority},
+            now(),
+            #{creater},
+            now(),
+            #{modifier}
         )
     </insert>
     <select id="select_cms_bt_stock_separate_platform_info_by_task_id" parameterType="String" resultType="Map" >
@@ -114,7 +138,6 @@
                 add_priority addPriority,
                 subtract_priority subtractPriority
         from voyageone_cms2.cms_bt_stock_separate_platform_info
-        where type ='1'
-        and task_id =#{task_id}
+        where task_id =#{task_id}
     </select>
 </mapper>
