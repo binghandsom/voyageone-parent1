@@ -62,6 +62,12 @@ public class CacheHelper {
     }
 
     @SuppressWarnings("unchecked")
+    public static <T> T isExists(String key, String cellKey, Class self) {
+        reloadData(key, self);
+        return (T) getHashOperation().hasKey(key, cellKey);
+    }
+
+    @SuppressWarnings("unchecked")
     public static Set<String> getKeySet(String key, Class self) {
         reloadData(key, self);
         return getHashOperation().keys(key);
