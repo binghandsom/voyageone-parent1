@@ -275,14 +275,15 @@ public class StockInfoService {
     }
 
     /**
+     * ims_bt_log_syn_inventory插入处理
      *
      * @param channelId 渠道id
      * @param cartId 平台
      * @param sku sku
      * @param qty 数量
-     * @param synType 0、全量；2、增量
-     * @param separateSeq 隔离的数据的seq
-     * @param separateStatus 隔离状态(2：隔离中, 6：还原中)
+     * @param synType 0、全量；2、增量;
+     * @param separateSeq 隔离的数据的seq(null(默认值0):隔离对象外)
+     * @param separateStatus 隔离状态(2：隔离中, 6：还原中， null：隔离对象外或增量时)
      * @param creater 创建者
      */
     public void insertImsBtLogSynInventory(String channelId, Integer cartId, String sku, Integer qty, String synType, Integer separateSeq, String separateStatus, String creater) {

@@ -12,7 +12,9 @@
             syn_flg,
         </if>
         syn_type,
-        separate_seq,
+        <if test="separateSeq != null" >
+            separate_seq,
+        </if>
         <if test="separateStatus != null" >
             separate_status,
         </if>
@@ -35,7 +37,9 @@
             #{synFlg},
         </if>
         #{synType},
-        #{separateSeq},
+        <if test="separateSeq != null" >
+            #{separateSeq},
+        </if>
         <if test="separateStatus != null" >
             #{separateStatus},
         </if>

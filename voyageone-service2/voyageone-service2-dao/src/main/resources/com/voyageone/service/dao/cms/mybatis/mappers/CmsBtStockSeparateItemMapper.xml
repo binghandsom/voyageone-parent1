@@ -3,6 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
     <select id="cms_bt_stock_separate_item_selectStockSeparateItem" resultType="HashMap" parameterType="HashMap">
         select
+            seq,
             task_id,
             channel_id,
             product_model,

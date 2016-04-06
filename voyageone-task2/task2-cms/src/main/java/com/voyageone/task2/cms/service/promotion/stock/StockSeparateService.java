@@ -352,7 +352,7 @@ public class StockSeparateService extends BaseTaskService {
                                             cartId,
                                             sku,
                                             separateQty,
-                                            null,
+                                            stockInfoService.SYN_TYPE_ALL,
                                             null,
                                             null,
                                             getTaskName());
@@ -371,8 +371,6 @@ public class StockSeparateService extends BaseTaskService {
                                             stockInfoService.STATUS_SEPARATING,
                                             getTaskName());
                                 }
-
-
                             }
                         }
 
@@ -385,7 +383,7 @@ public class StockSeparateService extends BaseTaskService {
                                     cartId,
                                     sku,
                                     separateQty,
-                                    null,
+                                    stockInfoService.SYN_TYPE_ALL,
                                     null,
                                     null,
                                     getTaskName());
