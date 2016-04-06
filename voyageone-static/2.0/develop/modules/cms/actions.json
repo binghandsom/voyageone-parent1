@@ -126,7 +126,19 @@
       },
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
-        "getListByWhere": "getPromotionProductInfoListByWhere"
+        "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere"
+      }
+    },
+    "cmsBtJmPromotionImportTask":{
+      "cmsBtJmPromotionImportTaskService":{
+        "root":"/cms/CmsBtJmPromotionImportTask/index",
+        "getByPromotionId":"getByPromotionId"
+      }
+    },
+    "cmsBtJmPromotionExportTask":{
+      "cmsBtJmPromotionExportTaskService":{
+        "root":"/cms/CmsBtJmPromotionExportTask/index",
+        "getByPromotionId":"getByPromotionId"
       }
     },
     "task": {

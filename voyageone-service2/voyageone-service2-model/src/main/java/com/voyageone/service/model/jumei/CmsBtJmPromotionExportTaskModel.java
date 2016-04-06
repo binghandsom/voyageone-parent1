@@ -12,7 +12,6 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
         setFileName(""); 
         setFilePath(""); 
         setErrorMsg(""); 
-        setFailuresPath(""); 
         setBeginTime(DateHelp.getDefaultDate());
         setEndTime(DateHelp.getDefaultDate());
         setCreater(""); 
@@ -34,7 +33,7 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
     
     
  /**
-导入的文件名
+导出的文件名
         */
      private String fileName;
     
@@ -52,25 +51,13 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
     
     
  /**
-功导入成功的行数
+成功导出的行数
         */
      private int successRows;
     
     
  /**
-导入失败的行数
-        */
-     private int failuresRows;
-    
-    
- /**
-导入失败的行记录  存储的文件
-        */
-     private String failuresPath;
-    
-    
- /**
-0:导入成功  1:读取文件错误 2：导入失败(生成失败记录文件)
+1:导出成功  2:导出失败
         */
      private int errorCode;
     
@@ -97,6 +84,12 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
 创建时间
         */
      private Date created;
+    
+    
+ /**
+是否导出
+        */
+     private boolean isExport;
     
         
          /**
@@ -128,7 +121,7 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
     
         
          /**
-           导入的文件名
+           导出的文件名
         */
         public String getFileName()
         {
@@ -191,7 +184,7 @@ this.errorMsg="";
     
         
          /**
-           功导入成功的行数
+           成功导出的行数
         */
         public int getSuccessRows()
         {
@@ -205,42 +198,7 @@ this.errorMsg="";
     
         
          /**
-           导入失败的行数
-        */
-        public int getFailuresRows()
-        {
-         
-        return this.failuresRows;
-        }
-        public void setFailuresRows(int failuresRows)
-        {
-         this.failuresRows=failuresRows;
-        }
-    
-        
-         /**
-           导入失败的行记录  存储的文件
-        */
-        public String getFailuresPath()
-        {
-         
-        return this.failuresPath;
-        }
-        public void setFailuresPath(String failuresPath)
-        {
-        if(failuresPath!=null){
-this.failuresPath=failuresPath;
- }
-else
-{
-this.failuresPath="";
-}
-
-        }
-    
-        
-         /**
-           0:导入成功  1:读取文件错误 2：导入失败(生成失败记录文件)
+           1:导出成功  2:导出失败
         */
         public int getErrorCode()
         {
@@ -334,6 +292,20 @@ else
 this.created=DateHelp.getDefaultDate();
 }
 
+        }
+    
+        
+         /**
+           是否导出
+        */
+        public boolean getIsExport()
+        {
+         
+        return this.isExport;
+        }
+        public void setIsExport(boolean isExport)
+        {
+         this.isExport=isExport;
         }
     
 }

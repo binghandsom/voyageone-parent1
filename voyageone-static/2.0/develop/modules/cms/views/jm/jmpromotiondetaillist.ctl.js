@@ -5,9 +5,9 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    function detailController($scope, jmPromotionService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
+    function detailController($scope, jmPromotionService,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
         $scope.datePicker = [];
-        $scope.vm = {"promotionId": $routeParams.parentId,modelList:[]};
+        $scope.vm = {"promotionId": $routeParams.parentId,modelList:[],cmsBtJmPromotionImportTaskList:[],cmsBtJmPromotionExportTaskList:[]};
         $scope.searchInfo={cmsBtJmPromotionId: $routeParams.parentId};
         $scope.parentModel={};
         $scope.initialize = function () {
@@ -17,16 +17,30 @@ define([
             $scope.search();
         };
         $scope.search = function () {
-            console.log("searchInfo");
-            console.log($scope.searchInfo);
+           // console.log("searchInfo");
+           // console.log($scope.searchInfo);
             loadSearchInfo();
-            jmPromotionDetailService.getListByWhere($scope.searchInfo).then(function (res) {
-                console.log(res);
+            jmPromotionDetailService.getPromotionProductInfoListByWhere($scope.searchInfo).then(function (res) {
+                //console.log(res);
                 $scope.vm.modelList = res.data;
                 // $scope.groupPageOption.total = $scope.vm.modelList.size;
             }, function (res) {
             })
         };
+        $scope.selectImport=function(){
+            cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
+               // console.log(res);
+                $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
+            }, function (res) {
+            })
+        }
+        $scope.selectExport=function(){
+            cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
+                // console.log(res);
+                $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
+            }, function (res) {
+            })
+        }
         function loadSearchInfo()
         {
             $scope.searchInfo.synchStateList=[];
@@ -49,6 +63,6 @@ define([
         }
     }
 
-    detailController.$inject = ['$scope', 'jmPromotionService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
+    detailController.$inject = ['$scope', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
 });

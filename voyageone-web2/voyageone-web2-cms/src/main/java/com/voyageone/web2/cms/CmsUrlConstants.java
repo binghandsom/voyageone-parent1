@@ -53,7 +53,22 @@ public interface CmsUrlConstants {
             }
         }
     }
-
+interface CmsBtJmPromotionImportTask{
+        interface LIST {
+            interface  INDEX {
+                String ROOT="/cms/CmsBtJmPromotionImportTask/index";
+                String GET_BY_PROMOTIONID="getByPromotionId";
+            }
+        }
+    }
+    interface CmsBtJmPromotionExportTask{
+        interface LIST {
+            interface  INDEX {
+                String ROOT="/cms/CmsBtJmPromotionExportTask/index";
+                String GET_BY_PROMOTIONID="getByPromotionId";
+            }
+        }
+    }
     // 活动管理
     interface PROMOTION {
         interface LIST {

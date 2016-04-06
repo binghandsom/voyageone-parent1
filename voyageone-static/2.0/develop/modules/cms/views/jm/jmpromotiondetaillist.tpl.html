@@ -293,104 +293,13 @@
 				</table>
 			</div>
 		</tab>
-		<tab>
-			<tab-heading>导出任务一览</tab-heading>
-			<div class="table-responsive">
-				<table class="table table-hover-new vo_table">
-					<thead>
-					<tr>
-						<th class="mfb-xt3 text-center">Seq.</th>
-						<th class="text-center">导入文件名</th>
-						<th class="text-center">成功件数</th>
-						<th class="text-center">失败件数</th>
-						<th class="text-center">导入开始时间</th>
-						<th class="text-center">导入结束时间</th>
-						<th class="text-center">异常信息Code</th>
-						<th class="text-center">操作</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr>
-						<td class="mfb-xt3 text-center">1</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">2</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">3</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">4</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">5</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">6</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">7</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</tab>
-		<tab>
+
+		<tab  ng-click="selectImport()">
 			<tab-heading>导入任务一览</tab-heading>
 			<div class="table-responsive">
 				<table class="table table-hover-new vo_table">
 					<thead>
 					<tr>
-						<th class="mfb-xt3 text-center">Seq.</th>
 						<th class="text-center">导出文件名</th>
 						<th class="text-center">成功件数</th>
 						<th class="text-center">失败件数</th>
@@ -400,51 +309,47 @@
 						<th class="text-center">操作</th>
 					</tr>
 					</thead>
-					<tbody>
-					<tr>
-						<td class="mfb-xt3 text-center">1</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">2</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">3</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-center">4</td>
-						<td class="text-center">我是文件名</td>
-						<td class="text-center">1635</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">2016.4.1</td>
-						<td class="text-center">2016.4.6</td>
-						<td class="text-center">693541</td>
+					<tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
+					<tr  ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
+						<td class="text-center">{{model.fileName}}</td>
+						<td class="text-center">{{model.successRows}}</td>
+						<td class="text-center">{{model.failuresRows}}</td>
+						<td class="text-center">{{model.beginTime}}</td>
+						<td class="text-center">{{model.endTime}}</td>
+						<td class="text-center">{{model.errorMsg}}</td>
 						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
 					</tr>
 					</tbody>
 				</table>
 			</div>
 		</tab>
+				<tab ng-click="selectExport()" >
+					<tab-heading>导出任务一览</tab-heading>
+					<div class="table-responsive">
+						<table class="table table-hover-new vo_table">
+							<thead>
+							<tr>
+								<th class="text-center">导出文件名</th>
+								<th class="text-center">成功件数</th>
+								<th class="text-center">导入开始时间</th>
+								<th class="text-center">导入结束时间</th>
+								<th class="text-center">异常信息Code</th>
+								<th class="text-center">操作</th>
+							</tr>
+							</thead>
+							<tbody ng-if="vm.cmsBtJmPromotionExportTaskList.length">
+							<tr  ng-repeat="model in vm.cmsBtJmPromotionExportTaskList">
+								<td class="text-center">{{model.fileName}}</td>
+								<td class="text-center">{{model.successRows}}</td>
+								<td class="text-center">{{model.beginTime}}</td>
+								<td class="text-center">{{model.endTime}}</td>
+								<td class="text-center">{{model.errorMsg}}</td>
+								<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</tab>
 		</tabset>
 		</div>
 		<!--<div class="m-t-xs">-->
