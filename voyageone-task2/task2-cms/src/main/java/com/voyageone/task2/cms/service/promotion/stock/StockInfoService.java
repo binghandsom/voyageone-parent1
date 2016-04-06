@@ -8,6 +8,7 @@ import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.dao.ims.ImsBtLogSynInventoryDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class StockInfoService {
 
     @Autowired
     private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+
+    @Autowired
+    private ImsBtLogSynInventoryDao imsBtLogSynInventoryDao;
 
     /** 增量/库存隔离状态 0：未进行 */
     public static final String STATUS_READY = "0";
@@ -82,6 +86,11 @@ public class StockInfoService {
     public static final String AUTO_REVERTED  = "1";
     /** 自动还原标志  1: 已经执行自动还原 */
     public static final String NOT_REVERT = "0";
+
+    /** syn_type 0: 全量 */
+    public static final String SYN_TYPE_ALL  = "0";
+    /** syn_type 2: 增量 */
+    public static final String SYN_TYPE_ADD = "2";
 
     /**
      * 取得可用库存
@@ -263,5 +272,30 @@ public class StockInfoService {
      */
     private void removeListValue(List<Integer> listSource, List<Integer> listRemove) {
         listRemove.forEach(val -> listSource.remove(val));
+    }
+
+    /**
+     * ims_bt_log_syn_inventory插入处理
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台
+     * @param sku sku
+     * @param qty 数量
+     * @param synType 0、全量；2、增量;
+     * @param separateSeq 隔离的数据的seq(null(默认值0):隔离对象外)
+     * @param separateStatus 隔离状态(2：隔离中, 6：还原中， null：隔离对象外或增量时)
+     * @param creater 创建者
+     */
+    public void insertImsBtLogSynInventory(String channelId, Integer cartId, String sku, Integer qty, String synType, Integer separateSeq, String separateStatus, String creater) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId",channelId);
+        param.put("cartId",cartId);
+        param.put("sku",sku);
+        param.put("qty",qty);
+        param.put("synType",synType);
+        param.put("separateSeq",separateSeq);
+        param.put("separateStatus",separateStatus);
+        param.put("creater",creater);
+        imsBtLogSynInventoryDao.insert(param);
     }
 }

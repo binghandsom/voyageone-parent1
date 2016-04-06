@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="ExcelMap" type="com.voyageone.service.bean.cms.task.stock.StockExcelBean">
+        <result column="product_model" property="productModel" />
+        <result column="product_code" property="productCode" />
+        <result column="sku" property="sku" />
+        <result column="cart_id" property="cartId" />
+        <result column="property1" property="property1" />
+        <result column="property2" property="property2" />
+        <result column="property3" property="property3" />
+        <result column="property4" property="property4" />
+        <result column="qty" property="qty" />
+        <result column="separate_qty" property="separateQty" />
+        <result column="status" property="status" />
+    </resultMap>
+
     <select id="cms_bt_stock_separate_item_selectStockSeparateItem" resultType="HashMap" parameterType="HashMap">
         select
+            seq,
             task_id,
             channel_id,
             product_model,
@@ -276,7 +291,7 @@
         )
     </select>
 
-    <select id="cms_bt_stock_separate_selectExcelStockInfo" resultType="com.voyageone.service.bean.cms.task.stock.StockExcelBean" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_selectExcelStockInfo" resultMap="ExcelMap" parameterType="HashMap">
         select
           `product_model`,
           `product_code`,
@@ -295,7 +310,7 @@
           `product_model`,`product_code`,`sku`,`cart_id`
     </select>
 
-    <insert id="cms_bt_stock_separate_insertStockSeparateItemFromExcel" parameterType="List">
+    <insert id="cms_bt_stock_separate_insertStockSeparateItemByList" parameterType="List">
         insert into voyageone_cms2.cms_bt_stock_separate_item (
         task_id,
         channel_id,
@@ -316,12 +331,12 @@
         modifier
         ) value
         <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.task_id},
+            (#{item.taskId},
             #{item.channelId},
-            #{item.product_model},
-            #{item.product_code},
+            #{item.productModel},
+            #{item.productCode},
             #{item.sku},
-            #{item.cart_id},
+            #{item.cartId},
             <if test="item.property1 != null" >
                 #{item.property1},
             </if>
@@ -347,7 +362,7 @@
                 '',
             </if>
             #{item.qty},
-            #{item.separate_qty},
+            #{item.separateQty},
             <if test="item.status != null" >
                 #{item.status},
             </if>

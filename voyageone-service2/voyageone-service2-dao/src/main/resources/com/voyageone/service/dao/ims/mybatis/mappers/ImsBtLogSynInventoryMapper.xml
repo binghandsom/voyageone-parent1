@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <insert id="ims_bt_log_syn_inventory_insert" parameterType="HashMap">
+        insert into voyageone_ims.ims_bt_log_syn_inventory (
+        order_channel_id,
+        cart_id,
+        sku,
+        qty,
+        <if test="synFlg != null" >
+            syn_flg,
+        </if>
+        syn_type,
+        <if test="separateSeq != null" >
+            separate_seq,
+        </if>
+        <if test="separateStatus != null" >
+            separate_status,
+        </if>
+        <if test="remarks != null" >
+            remarks,
+        </if>
+        <if test="active != null" >
+            active,
+        </if>
+        created,
+        creater,
+        modified,
+        modifier
+        ) value (
+        #{channelId},
+        #{cartId},
+        #{sku},
+        #{qty},
+        <if test="synFlg != null" >
+            #{synFlg},
+        </if>
+        #{synType},
+        <if test="separateSeq != null" >
+            #{separateSeq},
+        </if>
+        <if test="separateStatus != null" >
+            #{separateStatus},
+        </if>
+        <if test="remarks != null" >
+            #{remarks},
+        </if>
+        <if test="active != null" >
+            #{active},
+        </if>
+        now(),
+        #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+
+</mapper>

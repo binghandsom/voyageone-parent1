@@ -277,18 +277,11 @@ public class StockSeparateService extends BaseTaskService {
      * @param mapSkuTaskData Map<taskId, Map<sku,resultData>>该渠道下的sku数据
      */
     private void executeByChannel(String channelId, Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData) {
-//        // 渠道对应的所有销售平台取得
-//        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-//        List<Integer> listCartId = new ArrayList<>();
-//        cartList.forEach(cartInfo -> listCartId.add(Integer.parseInt(cartInfo.getValue())));
-
         // 取得可用库存
         $info("开始取得可用库存数据");
         Map<String,Integer> skuStockUsableAll = stockInfoService.getUsableStock(channelId);
         $info("可用库存数据取得完毕");
 
-//       // 取得该渠道下已经隔离的平台
-//        List<Integer> listSeparateCartId = stockInfoService.getSeparateCartId(channelId);
         // 取得该渠道下未被隔离的平台(共享平台)
         List<Integer> listShareCartId = stockInfoService.getShareCartId(channelId, null, null);
 
@@ -314,59 +307,87 @@ public class StockSeparateService extends BaseTaskService {
 
                     Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
                     Integer skuUsableOld = 0; // 可用库存
+                    Map<Integer, Integer> cartSeparateQtyOld = new HashMap<>(); // Map<平台, 隔离库存>
+                    Map<Integer, Integer> cartSeq = new HashMap<>(); // Map<平台, seq>
                     for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
                         String sku = entry.getKey();
                         List<Map<String, Object>> listData = entry.getValue();
                         skuUsableOld = (Integer) listData.get(0).get("qty");
-                        Map<Integer, Integer> cartSeparateQtyOld = new HashMap<>(); // Map<平台, 隔离库存>
+                        cartSeparateQtyOld.clear();
+                        cartSeq.clear();
                         Integer separateQtyAll = 0;
                         for (Map<String, Object> data : listData) {
                             Integer cartId = (Integer) data.get("cart_id");
                             Integer separateQty = (Integer) data.get("separate_qty");
                             separateQtyAll += separateQty;
                             cartSeparateQtyOld.put(cartId, separateQty);
+                            cartSeq.put(cartId, (Integer) data.get("seq"));
                         }
 
                         // 各平台最终显示库存（包含隔离平台，共享平台（-1），不包含动态平台）
                         Map<Integer, Integer> cartDisplayQty = calQty(cartSeparateQtyOld, separateQtyAll, skuUsableOld, skuStockUsableAll.get(sku), mapPlatAdd, mapPlatSub);
 
                         // 更新
-//                        for (Integer cartId : listCartId) {
-//                            if (mapPlatAdd.containsKey(cartId)) {
-//                                // 此任务设定的隔离平台
-//                                // 更新cms_bt_stock_separate_item库存隔离数据表
-//                                Map<String, Object> updateParam = new HashMap<>();
-//                                updateParam.put("qty", skuStockUsableAll.get(sku));
-//                                updateParam.put("status", stockInfoService.STATUS_SEPARATING);
-//                                updateParam.put("modifier", getTaskName());
-//                                updateParam.put("taskId", taskId);
-//                                updateParam.put("sku", sku);
-//                                updateParam.put("cartId", cartId);
-//
-//                                Integer separateQty = cartDisplayQty.get(cartId);
-//                                if (separateQty == null) {
-//                                    // 动态
-//                                    separateQty = cartDisplayQty.get(-1);
-//                                } else {
-//                                    updateParam.put("separateQty", separateQty);
-//                                }
-////                                cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
-//
-//                                // 更新ims_bt_log_syn_inventory
-//
-//
-//
-//                            } else {
-//                                // 共享平台
-//                                if (!listSeparateCartId.contains(cartId)) {
-//                                    // 不是已经隔离的平台
-//                                    Integer separateQty = cartDisplayQty.get(-1);
-//
-//                                    // 更新ims_bt_log_syn_inventory
-//
-//                                }
-//                            }
-//                        }
+                        for (Integer cartId : mapPlatAdd.values()) {
+                           // 此任务设定的隔离平台
+                            if (cartId != -1) {
+                                // 更新cms_bt_stock_separate_item库存隔离数据表
+                                Map<String, Object> updateParam = new HashMap<>();
+                                updateParam.put("qty", skuStockUsableAll.get(sku));
+                                updateParam.put("status", stockInfoService.STATUS_SEPARATING);
+                                updateParam.put("modifier", getTaskName());
+                                updateParam.put("taskId", taskId);
+                                updateParam.put("sku", sku);
+                                updateParam.put("cartId", cartId);
+
+                                Integer separateQty = cartDisplayQty.get(cartId);
+                                if (separateQty == null) {
+                                    // 动态
+                                    separateQty = cartDisplayQty.get(-1);
+                                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+
+                                    // 更新ims_bt_log_syn_inventory
+                                    stockInfoService.insertImsBtLogSynInventory(
+                                            channelId,
+                                            cartId,
+                                            sku,
+                                            separateQty,
+                                            stockInfoService.SYN_TYPE_ALL,
+                                            null,
+                                            null,
+                                            getTaskName());
+                                } else {
+                                    updateParam.put("separateQty", separateQty);
+                                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+
+                                    // 更新ims_bt_log_syn_inventory
+                                    stockInfoService.insertImsBtLogSynInventory(
+                                            channelId,
+                                            cartId,
+                                            sku,
+                                            separateQty,
+                                            stockInfoService.SYN_TYPE_ALL,
+                                            cartSeq.get(cartId),
+                                            stockInfoService.STATUS_SEPARATING,
+                                            getTaskName());
+                                }
+                            }
+                        }
+
+                        for (Integer cartId : listShareCartId) {
+                            // 共享平台
+                            Integer separateQty = cartDisplayQty.get(-1);
+                            // 更新ims_bt_log_syn_inventory
+                            stockInfoService.insertImsBtLogSynInventory(
+                                    channelId,
+                                    cartId,
+                                    sku,
+                                    separateQty,
+                                    stockInfoService.SYN_TYPE_ALL,
+                                    null,
+                                    null,
+                                    getTaskName());
+                        }
                     }
                 }
             });
@@ -460,5 +481,4 @@ public class StockSeparateService extends BaseTaskService {
         return ret;
     }
 
-//    private void update ims_bt_log_syn_inventory
 }

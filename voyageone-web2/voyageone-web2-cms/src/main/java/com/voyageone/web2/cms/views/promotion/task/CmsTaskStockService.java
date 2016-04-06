@@ -183,7 +183,7 @@ public class CmsTaskStockService extends BaseAppService {
             //取得选择的活动ID
             Map<String, Boolean> selFlag = (Map) param.get("selFlag");
             //判断cms_bt_stock_separate_platform_info表中取得是否有对应的任务ID
-            checkSeparatePromotionID(selFlag);
+            checkSeparatePromotionID(selFlag,channelId);
             //根据活动ID取得cms_bt_promotion隔离的CartID
             Map<String,Object> separateCartIdMap =getPromotionIdByCartID(selFlag);
             //取得隔离和未隔离的数据
@@ -220,47 +220,51 @@ public class CmsTaskStockService extends BaseAppService {
      * 判断cms_bt_stock_separate_platform_info表中取得是否有对应的任务ID
      * @param selFlag
      */
-    private void checkSeparatePromotionID(Map<String, Boolean> selFlag){
+    private void checkSeparatePromotionID(Map<String, Boolean> selFlag,String channelId){
+        //是否选择重复的店铺渠道
+        Map<String,Object> repeatList  = new HashMap<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
-            //取得活动ID 渠道ID 还原时间
+            //根据活动ID取得活动开始时间
             HashMap<String, String> promotionInfo= cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
-            //Promotion存在的存在时间小于还原时间返回错误画面
-            for (Map.Entry<String, String> promotionInfoEntry : promotionInfo.entrySet()) {
-                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //取得还原时间
-                String activityStart=promotionInfo.get("activity_start").toString()+" 00:00:00";
-                //取得当前系统时间
-                Date date=new Date();
-                String sysTime=fmt.format(date);
-                Calendar activityStartCalendar = Calendar.getInstance();
-                Calendar sysTimeCalendar = Calendar.getInstance();
-                //还原时间检查
-                if("activity_start".equals(promotionInfoEntry.getKey())){
-                    try {
-                        //取得还原时间
-                        activityStartCalendar.setTime(fmt.parse(activityStart));
-                        //当前时间
-                        sysTimeCalendar.setTime(fmt.parse(sysTime));
-                        int result=activityStartCalendar.compareTo(sysTimeCalendar);
-                        if(result==0)
-                            throw new BusinessException("隔离任务已存在请重新确认");
-                        else if(result<0){
-                            throw new BusinessException("隔离任务已存在请重新确认");
-                        }
-                    } catch (ParseException e) {
-                        throw new BusinessException("时间格式不正确,请重新确认");
-                    }
-                }
-                //系统任务的检查
-                if("cart_id".equals(promotionInfoEntry.getKey())){
-                    String cart_id=promotionInfoEntry.getKey();
-                    String separateInfo= cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatFormInfoById(cart_id,sysTime);
-                    // Code输入check
-                    if (!StringUtils.isEmpty(separateInfo)) {
-                        throw new BusinessException("隔离已任务已存在，请重新确认");
-                    }
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //取得活动开始时间
+            String activityStart=promotionInfo.get("activity_start").toString()+" 00:00:00";
+            //取得当前系统时间
+            Date date=new Date();
+            String sysTime=fmt.format(date);
+            Calendar activityStartCalendar = Calendar.getInstance();
+            Calendar sysTimeCalendar = Calendar.getInstance();
+            //根据活动ID取得隔离的CartID=
+            if(repeatList.size()==0){
+                repeatList.put(promotionInfo.get("cart_id"),entry.getKey());
+            }else{
+                if(repeatList.keySet().contains(promotionInfo.get("cart_id"))){
+                    throw new BusinessException("已经选择重复的店铺渠道,请确认");
+                }else{
+                    repeatList.put(promotionInfo.get("cart_id"),entry.getKey());
                 }
             }
+            //还原时间检查
+            try {
+                //取得活动开始时间
+                activityStartCalendar.setTime(fmt.parse(activityStart));
+                //当前时间
+                sysTimeCalendar.setTime(fmt.parse(sysTime));
+                int result=activityStartCalendar.compareTo(sysTimeCalendar);
+                if(result>=0){
+                    throw new BusinessException("参加的活动已经开始");
+                }
+            } catch (ParseException e) {
+                throw new BusinessException("时间格式不正确,请重新确认");
+            }
+            int cartId=Integer.parseInt(String.valueOf(promotionInfo.get("cart_id")));
+            //判断活动是否开始或者是否已经隔离
+            List<Map<String, Object>> separateInfo= cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatFormInfoById(cartId,sysTime,channelId);
+            //取得返回值
+            if (separateInfo.size()!=0) {
+                throw new BusinessException("隔离平台任务已经存在,请确认");
+            }
+
         }
     }
     /**
@@ -271,8 +275,6 @@ public class CmsTaskStockService extends BaseAppService {
     private Map<String, Object> getPromotionIdByCartID(Map<String, Boolean> selFlag) {
         Map<String,Object> platformList  = new HashMap<>();
         Map<String,String> cartNameMap = new HashMap<>();
-        HashMap<String,String> channelIdMap = new HashMap<>();
-        String channelId="";
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得隔离的CartID
             cartNameMap=cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
@@ -296,8 +298,6 @@ public class CmsTaskStockService extends BaseAppService {
         HashMap<String,String> isAllSeparateCartName=new HashMap();
         // 还原时间
         String revertTime="";
-        // 根据数据的值
-
         //取得隔离渠道的数据
         for(TypeChannelBean cartId :typeChannelBeanList){
             for(Map.Entry<String, Object> entry : separateCartIdMap.entrySet()){
@@ -633,10 +633,14 @@ public class CmsTaskStockService extends BaseAppService {
         separatePlatformList= (List<Map>) param.get("promotionList");
         String taskName = (String) param.get("taskName");
         //任务名称
-        if (StringUtils.isEmpty(taskName)) {
-            throw new BusinessException("任务名称必须填写");
+        if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
+            throw new BusinessException("必须输入且长度小于1000！");
         }
-
+        //增优先顺
+        Map<String,String> addPriorityMap =new HashMap<>();
+        int[] addPriorityList=new int[separatePlatformList.size()];
+        //减优先顺
+        int[] subtractPriorityList=new int[separatePlatformList.size()];
         for(int i=0;i<separatePlatformList.size();i++){
             //平台id
             String cartId=separatePlatformList.get(i).get("cartId").toString();
@@ -647,27 +651,37 @@ public class CmsTaskStockService extends BaseAppService {
             //类型（1：隔离，2：共享）
             String type= separatePlatformList.get(i).get("type").toString();
             // 还原时间
-            String revertTime=separatePlatformList.get(i).get("revertTime").toString();
+            String revertTime="";
+            boolean contains = separatePlatformList.get(i).containsKey("revertTime");
+            if(contains){
+                if(separatePlatformList.get(i).get("revertTime").equals("revertTime")){
+                    revertTime=separatePlatformList.get(i).get("revertTime").toString();
+                }
+            }else{
+                throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
+            }
             //增优先顺
             String addPriority=separatePlatformList.get(i).get("addPriority").toString();
             //减优先顺
             String subtractPriority=separatePlatformList.get(i).get("subtractPriority").toString();
-
-            if(type.equals("1")){
+            if(type.equals(SEPARATE_TYPE)){
                 //隔离平台的隔离比例
-                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)) {
-                    throw new BusinessException("隔离平台的隔离比例必须填且为大于0的整数！");
+                if(value.equals("%")){
+                    throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
+                }else{
+                    String[] separateValue = value.split("%");
+                    if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])||separateValue[0].getBytes().length>2) {
+                        throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
+                    }
                 }
                 //增优先顺
-                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)) {
+                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.getBytes().length>1) {
                     throw new BusinessException("增优先顺为大于0的整数！");
                 }
                 //减优先顺
-                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)) {
+                if (StringUtils.isEmpty(subtractPriority)||!StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
                     throw new BusinessException("减优先顺为大于0的整数！");
                 }
-                //优先顺必须是1开始的连续整数
-
                 //隔离结束时间必须是时间格式
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
@@ -677,8 +691,25 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
                 }
             }
+            addPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("addPriority")));
+            subtractPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("subtractPriority")));
         }
-
+        Arrays.sort(addPriorityList);
+        //增优先的排序Check
+        for(int i=0;i<addPriorityList.length;i++){
+            System.out.println(addPriorityList[i]);
+            if(addPriorityList[i]!=(i+1)){
+                throw new BusinessException("增优先顺不是从1开始的连续自然数");
+            }
+        }
+        Arrays.sort(subtractPriorityList);
+        //增优先的排序Check
+        for(int i=0;i<subtractPriorityList.length;i++){
+            System.out.println(subtractPriorityList[i]);
+            if(subtractPriorityList[i]!=(i+1)){
+                throw new BusinessException("减优先顺不是从1开始的连续自然数");
+            }
+        }
     }
     /**
      * 页面只导入SKU的场合
@@ -690,17 +721,17 @@ public class CmsTaskStockService extends BaseAppService {
         //取得所有的隔离promotionIds
         List<String> promotionIdList=getSeparatePlatformInfoByPromotionInfo(param);
         //根据promotionIds取得隔离平台的SKU
-        HashMap<String,Object> SeparateHashMaps=getSeparateSkuHashMapsBypPromotionIds(promotionIdList);
+        HashMap<String,Object> separateHashMaps=getSeparateSkuHashMapsBypPromotionIds(promotionIdList);
         //根据promotion_id取得所有平台的SKU
         HashMap<String,Object> skuHash = getSkuHashMapsByPromotionIds(promotionIdList);
         //根据promotion_id取得平台code对应的属性
         HashMap<String,Object> codeHash= getCodeHashByPromotionIds(promotionIdList);
         //根据SkuHash和codeHash取得AllSkuHash
-        HashMap<String,Object> allSkuHash=getSkuByCodeforAllSkuInfo(skuHash, codeHash);
+        HashMap<String,Object> allSkuHash=getSkuByCodeForAllSkuInfo(skuHash, codeHash);
         //根据platformList绑定所有的SKU
         HashMap<String,Object> allSkuProHash =getAllSkuInfoByPlatFormList(param,allSkuHash);
         //根据allSkuProHash和SeparateHashMaps将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-        saveStockSeparateItem(SeparateHashMaps,allSkuProHash,onlySku);
+        saveStockSeparateItem(separateHashMaps,allSkuProHash,onlySku);
     }
     /**
      * 取得所有选择的活动ID
@@ -754,10 +785,13 @@ public class CmsTaskStockService extends BaseAppService {
         for(int i=0;i<skuList.size();i++){
             //取得对应的活动product_sku
             String product_sku =skuList.get(i).get("product_sku").toString();
+            HashMap<String,String> pro = new HashMap<>();
             //取得对应的活动product_code
-            String product_code =skuList.get(i).get("product_code").toString();
+            pro.put("product_code",skuList.get(i).get("product_code").toString());
+            //取得对应的活动product_model
+            pro.put("product_model",skuList.get(i).get("product_model").toString());
             //拼接SKU取得对应的活动ID
-            allSkuHashMaps.put(product_sku,product_code);
+            allSkuHashMaps.put(product_sku,pro);
         }
         //返回隔离SKU对应的Code
         return allSkuHashMaps;
@@ -777,10 +811,6 @@ public class CmsTaskStockService extends BaseAppService {
             //产品Code
             String product_code =codeList.get(i).get("product_code").toString();
             HashMap<String,String> proMap = new HashMap<>();
-            //产品product_code
-            proMap.put("product_code",codeList.get(i).get("product_code").toString());
-            //产品product_model
-            proMap.put("product_model",codeList.get(i).get("product_model").toString());
             //属性1（品牌）
             proMap.put("property_1",codeList.get(i).get("property_1").toString());
             //属性2（英文短描述）
@@ -802,15 +832,34 @@ public class CmsTaskStockService extends BaseAppService {
      * @param codeHash
      * @return aSkuProHash
      */
-    private HashMap<String, Object> getSkuByCodeforAllSkuInfo(Map<String, Object> skuHash, Map<String, Object> codeHash) {
+    private HashMap<String, Object> getSkuByCodeForAllSkuInfo(Map<String, Object> skuHash, Map<String, Object> codeHash) {
         //取得SKU级别的SKU对应的属性
         HashMap<String,Object> aSkuProHash = new HashMap();
         for (Map.Entry<String, Object> skuHashEntry : skuHash.entrySet()) {
-            for(Map.Entry<String,Object> codeHashEntry:codeHash.entrySet()){
-                if(skuHashEntry.getValue().equals(codeHashEntry.getKey())){
-                    aSkuProHash.put(skuHashEntry.getKey(),codeHashEntry.getValue());
-                }
+            HashMap<String,String> proValue= new HashMap<>();
+            proValue=(HashMap<String,String>)skuHashEntry.getValue();
+            //产品Code
+            String product_code =proValue.get("product_code");
+            //产品Model
+            String product_model =proValue.get("product_model");
+            //取得对应的属性
+            HashMap<String,String> proMap = (HashMap<String,String>) codeHash.get(product_code);
+            if (proMap == null) {
+                proMap = new HashMap<String,String>();
+                //属性1（品牌）
+                proMap.put("property_1","");
+                //属性2（英文短描述）
+                proMap.put("property_2","");
+                //属性3（性别）
+                proMap.put("property_3","");
+                //属性4（SIZE）
+                proMap.put("property_4","");
             }
+            //产品product_code
+            proMap.put("product_code", product_code);
+            //产品product_model
+            proMap.put("product_model",product_model);
+            aSkuProHash.put(skuHashEntry.getKey(),proMap);
         }
         //返回对应SKU级别对应的属性集合
         return aSkuProHash;
@@ -924,7 +973,6 @@ public class CmsTaskStockService extends BaseAppService {
                 //可用库存(取得可用库存)
                 usableStockInt=Integer.parseInt(getUsableStock(allSkuProHashEntry.getKey(), ""));
                 aSkuProHash.put("qty", usableStockInt);
-                //隔离库存
                 //隔离库存比例
                 separate_percent=Integer.parseInt(proMapValue.get("value").toString());
                 //隔离库存
@@ -1025,7 +1073,6 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("modifier",user);
                 //还原时间
                 separatePlatformMap.put("revertTime",separatePlatformList.get(i).get("revertTime").toString());
-
             }else{
                 //commonPlatform
                 separatePlatformMap.put("commonPlatform","-1");
@@ -1040,7 +1087,6 @@ public class CmsTaskStockService extends BaseAppService {
                 //还原时间
                 separatePlatformMap.put("revertTime",separatePlatformList.get(i).get("revertTime").toString());
             }
-
             //循环活动信息并且插入表格
             cmsBtStockSeparatePlatformInfoDao.updateStockSeparatePlatform(separatePlatformMap);
         }
@@ -2408,7 +2454,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map> propertyList = (List<Map>) param.get("propertyList");
 
         for (StockExcelBean rowData : resultData) {
-            cart_id = rowData.getCart_id();
+            cart_id = rowData.getCartId();
             if (!mapCartCol.containsKey(cart_id)) {
                 continue;
             }
@@ -2419,8 +2465,8 @@ public class CmsTaskStockService extends BaseAppService {
                 row = FileUtils.row(sheet, lineIndex++);
                 colIndex = 0;
 
-                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProduct_model()); // Model
-                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProduct_code()); // Code
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProductModel()); // Model
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProductCode()); // Code
                 FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getSku()); // Sku
 
                 // 属性
@@ -2435,7 +2481,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparate_qty().toPlainString()));
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
 
                 CellStyle cellStyle = book.createCellStyle();
@@ -2448,7 +2494,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparate_qty().toPlainString()));
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
             }
         }
@@ -2483,10 +2529,10 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String, Map<String, StockExcelBean>> mapSkuInDB = new HashMap<String, Map<String, StockExcelBean>>();
         for (StockExcelBean rowData : resultData) {
             if (mapSkuInDB.containsKey(rowData.getSku())) {
-                mapSkuInDB.get(rowData.getSku()).put(rowData.getCart_id(), rowData);
+                mapSkuInDB.get(rowData.getSku()).put(rowData.getCartId(), rowData);
             } else {
                 mapSkuInDB.put(rowData.getSku(), new HashMap<String, StockExcelBean>() {{
-                    put(rowData.getCart_id(), rowData);
+                    put(rowData.getCartId(), rowData);
                 }});
             }
         }
@@ -2746,10 +2792,10 @@ public class CmsTaskStockService extends BaseAppService {
                 }
 
                 StockExcelBean bean = new StockExcelBean();
-                bean.setProduct_model(model);
-                bean.setProduct_code(code);
+                bean.setProductModel(model);
+                bean.setProductCode(code);
                 bean.setSku(sku);
-                bean.setCart_id(cartId);
+                bean.setCartId(cartId);
                 for (int c = 3; c <= colPlatform[0] - 2; c++) {
                     // 属性
                     bean.setProperty(getCellCommentValue(rowHeader, c), getCellValue(row, c));
@@ -2757,9 +2803,9 @@ public class CmsTaskStockService extends BaseAppService {
                 bean.setQty(new BigDecimal(usableStock));
                 if (isDYNAMIC) {
                     // 动态
-                    bean.setSeparate_qty(new BigDecimal("-1"));
+                    bean.setSeparateQty(new BigDecimal("-1"));
                 } else {
-                    bean.setSeparate_qty(new BigDecimal(separate_qty));
+                    bean.setSeparateQty(new BigDecimal(separate_qty));
                     bean.setStatus(STATUS_READY);
                 }
 
@@ -2774,10 +2820,10 @@ public class CmsTaskStockService extends BaseAppService {
                 if (beanInDB == null) {
                     throw new BusinessException("Sku=" + sku + "的DB数据的平台信息错误！");
                 }
-                if (!model.equals(beanInDB.getProduct_model())) {
+                if (!model.equals(beanInDB.getProductModel())) {
                     throw new BusinessException("变更方式导入时,Model不能变更！" + "Sku=" + sku);
                 }
-                if (!code.equals(beanInDB.getProduct_code())) {
+                if (!code.equals(beanInDB.getProductCode())) {
                     throw new BusinessException("变更方式导入时,Code不能变更！" + "Sku=" + sku);
                 }
                 if (!sku.equals(beanInDB.getSku())) {
@@ -2811,7 +2857,7 @@ public class CmsTaskStockService extends BaseAppService {
                         }
                     } else {
                         // 非动态
-                        if (StringUtils.isEmpty(dbStatus) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
+                        if (StringUtils.isEmpty(dbStatus) || !separate_qty.equals(beanInDB.getSeparateQty().toPlainString())) {
                             // DB动态或数量不一致
                             isUpdate = true;
                         }
@@ -2820,10 +2866,10 @@ public class CmsTaskStockService extends BaseAppService {
 
                 if (isUpdate) {
                     StockExcelBean bean = new StockExcelBean();
-                    bean.setProduct_model(model);
-                    bean.setProduct_code(code);
+                    bean.setProductModel(model);
+                    bean.setProductCode(code);
                     bean.setSku(sku);
-                    bean.setCart_id(cartId);
+                    bean.setCartId(cartId);
                     for (int c = 3; c <= colPlatform[0] - 2; c++) {
                         // 属性
                         bean.setProperty(getCellCommentValue(rowHeader, c), getCellValue(row, c));
@@ -2831,9 +2877,9 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setQty(new BigDecimal(usableStock));
                     if (isDYNAMIC) {
                         // 动态
-                        bean.setSeparate_qty(new BigDecimal("-1"));
+                        bean.setSeparateQty(new BigDecimal("-1"));
                     } else {
-                        bean.setSeparate_qty(new BigDecimal(separate_qty));
+                        bean.setSeparateQty(new BigDecimal(separate_qty));
                         if (STATUS_SEPARATE_SUCCESS.equals(dbStatus)) {
                             bean.setStatus(STATUS_CHANGED);
                             if(mapSku.containsKey(cartId)) {
@@ -2884,8 +2930,8 @@ public class CmsTaskStockService extends BaseAppService {
                     mapSaveData.put("modifier", creater);
                     for (StockExcelBean bean : saveData) {
                         mapSaveData.put("sku", bean.getSku());
-                        mapSaveData.put("cartId", bean.getCart_id());
-                        mapSaveData.put("separateQty", bean.getSeparate_qty());
+                        mapSaveData.put("cartId", bean.getCartId());
+                        mapSaveData.put("separateQty", bean.getSeparateQty());
                         mapSaveData.put("status", StringUtils.null2Space(bean.getStatus()));
 
                         updateImportData(mapSaveData);
@@ -2917,7 +2963,7 @@ public class CmsTaskStockService extends BaseAppService {
                             throw new BusinessException("导入文件有数据异常");
                         }
 
-                        mapSaveData.put("task_id", task_id);
+                        mapSaveData.put("taskId", task_id);
                         mapSaveData.put("creater", creater);
                         mapSaveData.put("channelId", channelId);
 
@@ -2946,7 +2992,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param saveData 保存对象
      */
     private void insertImportData(List<Map<String, Object>> saveData) {
-        cmsBtStockSeparateItemDao.insertStockSeparateItemFromExcel(saveData);
+        cmsBtStockSeparateItemDao.insertStockSeparateItemByList(saveData);
     }
 
     /**
