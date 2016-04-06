@@ -7,6 +7,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,6 +24,8 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class PlatformCategoryDaoTest {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     CmsMtPlatformCategoryDao platformCategoryDao;
@@ -54,10 +58,8 @@ public class PlatformCategoryDaoTest {
             try {
                 BeanUtils.populate(leafObj, leafMap);
                 leafObjs.add(leafObj);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                logger.error(e.getMessage(), e);
             }
         }
 

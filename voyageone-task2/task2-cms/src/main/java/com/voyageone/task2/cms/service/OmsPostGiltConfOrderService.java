@@ -17,8 +17,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
@@ -32,8 +30,6 @@ import java.util.UUID;
 
 @Service
 public class OmsPostGiltConfOrderService extends BaseTaskService {
-	
-	private static Log logger = LogFactory.getLog(OmsPostGiltConfOrderService.class);
 	
 	@Autowired
 	private OrderDao orderDao;
@@ -101,7 +97,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 		boolean isSuccess = true;
 
 		if (!orderChannelID.equals(orderChannelIDParam)) {
-			return isSuccess;
+			return true;
 		}
 
 		// 待推送订单信息取得
@@ -110,9 +106,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 		// 有数据的场合
 		if (pushOrderList.size() > 0) {
 
-			for (int i = 0; i < pushOrderList.size(); i++) {
-				OutFormOrderdetailOrders orderInfo = pushOrderList.get(i);
-
+			for (OutFormOrderdetailOrders orderInfo : pushOrderList) {
 				// 向Gilt推送
 				isSuccess = postGiltConfirmedOrderSub(orderInfo);
 				if (!isSuccess) {
@@ -120,7 +114,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 				}
 			}
 		} else {
-			logger.info("postGiltConfirmedOrder push order rec = 0");
+			$info("postGiltConfirmedOrder push order rec = 0");
 		}
 
 		return isSuccess;
@@ -133,8 +127,6 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 	private boolean postGiltConfirmedOrderSub(OutFormOrderdetailOrders orderInfo) {
 		// 异常判定
 		boolean ret = true;
-		// 处理判定
-		boolean isSuccess = true;
 
 		try {
 			// Gilt 推送
@@ -144,7 +136,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 //			List<String> orderNumberList = new ArrayList<String>();
 //			orderNumberList.add(orderInfo.getOrderNumber());
 //			isSuccess = orderDao.updateOrdersSendInfoAndExtTxt1(POST_GILT_CONFIRMED_ORDER, orderNumberList, (String) retArr.get(1));
-			isSuccess = updateOrdersInfo(retArr, orderInfo);
+			boolean isSuccess = updateOrdersInfo(retArr, orderInfo);
 			if (!isSuccess) {
 				// DB 更新失败
 				ret = false;
@@ -156,7 +148,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 
 		} catch (Exception e) {
 			ret = false;
-			logger.error("postGiltConfirmedOrderSub", e);
+			$error("postGiltConfirmedOrderSub", e);
 			issueLog.log("postGiltConfirmedOrder.postGiltConfirmedOrderSub",
 					"postGiltConfirmedOrder error;Push order number = " + orderInfo.getOrderNumber(),
 					ErrorType.BatchJob,
@@ -171,22 +163,21 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 	 *
 	 */
 	private List<Object> postGiltConfirmedOrderByService(OutFormOrderdetailOrders orderInfo) throws Exception {
-		List<Object> retArr = new ArrayList<Object>();
-		boolean ret = true;
+		List<Object> retArr = new ArrayList<>();
 		String errorContent = "";
 		try {
 			GiltPatchOrderRequest request=new GiltPatchOrderRequest();
 			request.setId(UUID.fromString(orderInfo.getClientOrderId()));
 			request.setStatus(GiltOrderStatus.confirmed);
 			GiltOrder orders= giltOrderService.patchOrder(request);
-			logger.info("postGiltConfirmedOrder Success ; Push order uuid = " + orders.getId());
+			$info("postGiltConfirmedOrder Success ; Push order uuid = " + orders.getId());
 		} catch (GiltException e) {
 			// TODO 通知客服 超卖（无法发货） 其他订单处理继续
-			logger.info("postGiltConfirmedOrder order Gilt error "+ e.getMessage() + " ; Push order number = " + orderInfo.getOrderNumber());
+			$info("postGiltConfirmedOrder order Gilt error " + e.getMessage() + " ; Push order number = " + orderInfo.getOrderNumber());
 			errorContent = e.getMessage();
 		}
 
-		retArr.add(ret);
+		retArr.add(true);
 		retArr.add(errorContent);
 		return retArr;
 	}
@@ -196,13 +187,8 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 	 *
 	 */
 	private List<OutFormOrderdetailOrders> getPushOrderListForNotConfirmed(String orderChannelId) {
-
-		List<OutFormOrderdetailOrders> ordersList = new ArrayList<OutFormOrderdetailOrders>();
-
 		// 订单信息取得
-		ordersList = orderDao.getOrdersListByOrderChannelIdForNotConfirmed(orderChannelId, getConfirmedTime(orderChannelId));
-
-		return ordersList;
+		return orderDao.getOrdersListByOrderChannelIdForNotConfirmed(orderChannelId, getConfirmedTime(orderChannelId));
 	}
 
 	/**
@@ -210,14 +196,11 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 	 *
 	 */
 	private String getConfirmedTime(String orderChannelId) {
-		String ret = "";
 
 		String confirmedTimeInterval = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.confirmed_time_interval);
 		Date confirmedTimeTmp = DateTimeUtil.addMinutes(DateTimeUtil.getDate(), Integer.valueOf(confirmedTimeInterval) * -1);
 
-		ret = DateTimeUtil.format(confirmedTimeTmp, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
-
-		return ret;
+		return DateTimeUtil.format(confirmedTimeTmp, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 	}
 
 	/**
@@ -229,9 +212,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 
 		TransactionStatus status=transactionManager.getTransaction(def);
 		try {
-			String noteContent = "";
-
-			List<String> orderNumberList = new ArrayList<String>();
+			List<String> orderNumberList = new ArrayList<>();
 			orderNumberList.add(orderInfo.getOrderNumber());
 
 			String retContent = "";
@@ -250,7 +231,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 			}
 
 			if (isSuccess) {
-				List<OutFormOrderdetailOrders> pushOrderList = new ArrayList<OutFormOrderdetailOrders>();
+				List<OutFormOrderdetailOrders> pushOrderList = new ArrayList<>();
 				pushOrderList.add(orderInfo);
 
 				String notesStr = getBatchNoteSqlData(pushOrderList, getTaskName(), retContent);
@@ -272,7 +253,7 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 						SubSystem.OMS);
 			}
 		} catch (Exception ex) {
-			logger.error("updateOrdersSendInfo", ex);
+			$error("updateOrdersSendInfo", ex);
 
 			isSuccess = false;
 
@@ -291,18 +272,15 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 	 * 批处理Notes信息所需数据拼装
 	 *
 	 * @param orderInfoList 订单列表（含明细）
-	 * @param taskName
-	 * @return
+	 * @param taskName String
+	 * @return String
 	 */
 	private String getBatchNoteSqlData(List<OutFormOrderdetailOrders> orderInfoList, String taskName, String retContent) {
 		StringBuilder sqlBuffer = new StringBuilder();
-		ArrayList<String> orderNumberList = new ArrayList<String>();
+		ArrayList<String> orderNumberList = new ArrayList<>();
 
-		int size = orderInfoList.size();
-		for (int i = 0; i < size; i++) {
+		for (OutFormOrderdetailOrders orderInfo : orderInfoList) {
 			// 订单信息
-			OutFormOrderdetailOrders orderInfo = orderInfoList.get(i);
-
 			//	相同订单号只出一条Notes
 			if (orderNumberList.contains(orderInfo.getOrderNumber())) {
 				continue;
@@ -327,12 +305,6 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 
 	/**
 	 * 一条订单的插入notes表语句values部分
-	 *
-	 * @param orderInfo
-	 * @param entryDate
-	 * @param entryTime
-	 * @param taskName
-	 * @return
 	 */
 	private String prepareNotesData(OutFormOrderdetailOrders orderInfo, String entryDate, String entryTime, String taskName, String retContent) {
 		StringBuilder sqlValueBuffer = new StringBuilder();
@@ -441,9 +413,6 @@ public class OmsPostGiltConfOrderService extends BaseTaskService {
 
 	/**
 	 * 转换数据中的特殊字符
-	 *
-	 * @param data
-	 * @return
 	 */
 	private String transferStr(String data) {
 		if (StringUtils.isNullOrBlank2(data)) {

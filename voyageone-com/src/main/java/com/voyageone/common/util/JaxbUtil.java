@@ -1,5 +1,7 @@
 package com.voyageone.common.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -19,6 +21,8 @@ import java.io.StringWriter;
  * @create		2013-3-29 下午2:40:14
  */
 public class JaxbUtil {
+
+	private final static Logger logger = LoggerFactory.getLogger(JaxbUtil.class);
 
 	/**
 	 * JavaBean转换成xml
@@ -48,7 +52,7 @@ public class JaxbUtil {
 			marshaller.marshal(obj, writer);
 			result = writer.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;
@@ -68,7 +72,7 @@ public class JaxbUtil {
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			t = (T) unmarshaller.unmarshal(new StringReader(xml));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return t;
 	}
@@ -80,7 +84,7 @@ public class JaxbUtil {
 		try {
 			result = (NodeList) xpath.evaluate(express, source, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;
@@ -93,7 +97,7 @@ public class JaxbUtil {
 		try {
 			result = (Node) xpath.evaluate(express, source, XPathConstants.NODE);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;

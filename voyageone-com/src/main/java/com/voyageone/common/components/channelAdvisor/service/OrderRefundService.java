@@ -1,19 +1,18 @@
 package com.voyageone.common.components.channelAdvisor.service;
 
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.channelAdvisor.CaConstants;
 import com.voyageone.common.components.channelAdvisor.base.CaBase;
-import com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean;
-import com.voyageone.common.components.channelAdvisor.bean.orders.OrderCriteria;
 import com.voyageone.common.components.channelAdvisor.bean.orders.RefundOrderRequest;
-import com.voyageone.common.components.channelAdvisor.soap.*;
-import com.voyageone.common.components.channelAdvisor.webservices.*;
+import com.voyageone.common.components.channelAdvisor.soap.OrderRefundResSoapenv;
+import com.voyageone.common.components.channelAdvisor.soap.OrderRefundSoapenv;
+import com.voyageone.common.components.channelAdvisor.webservices.APICredentials;
+import com.voyageone.common.components.channelAdvisor.webservices.APIResultOfRefundOrderResponse;
+import com.voyageone.common.components.channelAdvisor.webservices.SubmitOrderRefund;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.JaxbUtil;
 import org.springframework.stereotype.Component;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * update by Jerry on 2015-08-18.
@@ -24,13 +23,13 @@ public class OrderRefundService extends CaBase {
     private final static String SUBMIT_ORDER_REFUND = "SubmitOrderRefund";
 
     /**
-     * @description 订单取消/退货
+     * 订单取消/退货
      * @param refundOrderRequest 参数bean
      * @param configs 渠道配置信息
      * @return String
      * @throws Exception
      */
-    public APIResultOfRefundOrderResponse submitOrderRefund(RefundOrderRequest refundOrderRequest, HashMap<String, ThirdPartyConfigBean> configs) throws Exception {
+    public APIResultOfRefundOrderResponse submitOrderRefund(RefundOrderRequest refundOrderRequest, Map<String, ThirdPartyConfigBean> configs) throws Exception {
         String requestXmlStr = createParamXmlStr(refundOrderRequest, configs);
         //  请求XML保存
         backupTheXmlFile(refundOrderRequest.getClientOrderIdentifier(), requestXmlStr, 0);
@@ -47,7 +46,7 @@ public class OrderRefundService extends CaBase {
     }
 
     //设置请求参数，创建参数xml
-    private String createParamXmlStr(RefundOrderRequest refundOrderRequest, HashMap<String, ThirdPartyConfigBean> configs) {
+    private String createParamXmlStr(RefundOrderRequest refundOrderRequest, Map<String, ThirdPartyConfigBean> configs) {
         try {
             //设置Hearder内容 apiCredentials 对象
             APICredentials apiCredentials = new APICredentials();

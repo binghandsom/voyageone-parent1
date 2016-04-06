@@ -6,10 +6,8 @@ import com.voyageone.common.configs.beans.PortConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.PortConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -20,29 +18,25 @@ import java.util.*;
  */
 public class PortConfigs {
 
-    private static final Log logger = LogFactory.getLog(PortConfigs.class);
+    private static final Class selfClass = PortConfigs.class;
+
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_PortConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_PortConfigs.toString();
 
-    private static HashOperations<String, String, PortConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            PortConfigDao portConfigDao = ConfigDaoFactory.getPortConfigDao();
-            Map<String, PortConfigBean> portConfigBeanMap = new HashMap<>();
-            portConfigDao.getAll().forEach(
-                    bean -> {
-                        portConfigBeanMap
-                                .put(
-                                        buildKey(bean.getPort(), bean.getCfg_name(), bean.getSeq() + ""),
-                                        bean
-                                );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, portConfigBeanMap);
-            logger.info("portConfig 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        PortConfigDao portConfigDao = ConfigDaoFactory.getPortConfigDao();
+        Map<String, PortConfigBean> portConfigBeanMap = new HashMap<>();
+        portConfigDao.getAll().forEach(
+                bean ->
+                    portConfigBeanMap.put(
+                            buildKey(bean.getPort(), bean.getCfg_name(), bean.getSeq() + ""),
+                            bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, portConfigBeanMap);
+        logger.info("portConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -51,7 +45,7 @@ public class PortConfigs {
      * @return key
      */
     private static String buildKey(String id, String name, String seq) {
-        return id + CacheHelper.SKIP + name + CacheHelper.SKIP + seq;
+        return id + CacheKeyEnums.SKIP + name + CacheKeyEnums.SKIP + seq;
     }
 
     /**
@@ -77,8 +71,10 @@ public class PortConfigs {
      */
     public static String getVal2(String id, PortConfigEnums.Name name, String val1) {
         List<PortConfigBean> beans = getConfigs(id, name);
-        for (PortConfigBean bean : beans)
-            if (val1.equals(bean.getCfg_val1())) return bean.getCfg_val2();
+        if (beans != null) {
+            for (PortConfigBean bean : beans)
+                if (val1.equals(bean.getCfg_val1())) return bean.getCfg_val2();
+        }
         return "";
     }
 
@@ -91,7 +87,7 @@ public class PortConfigs {
      * @return List<PortConfig>
      */
     public static List<PortConfigBean> getConfigs(String id, PortConfigEnums.Name name) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
 
         List<String> keyList = new ArrayList<>();
@@ -99,6 +95,6 @@ public class PortConfigs {
             if (k.startsWith(buildKey(id, name.toString(), ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 }

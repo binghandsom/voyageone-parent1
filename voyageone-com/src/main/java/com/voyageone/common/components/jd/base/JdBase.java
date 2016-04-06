@@ -1,7 +1,7 @@
 package com.voyageone.common.components.jd.base;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jd.open.api.sdk.DefaultJdClient;
@@ -20,10 +20,10 @@ import com.voyageone.common.configs.beans.ShopBean;
  */
 public abstract class JdBase {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     protected IssueLog issueLog;
-
-    protected Log logger = LogFactory.getLog(getClass());
 
     /**
      * 获取京东API连接

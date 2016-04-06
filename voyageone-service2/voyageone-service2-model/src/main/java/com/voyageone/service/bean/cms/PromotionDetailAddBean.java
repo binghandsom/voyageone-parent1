@@ -14,6 +14,7 @@ public class PromotionDetailAddBean {
     private Integer promotionId;
     private Integer cartId;
     private String channelId;
+    private String orgChannelId;
     private Double promotionPrice;
     private String productCode;
     private Long productId;
@@ -80,6 +81,14 @@ public class PromotionDetailAddBean {
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
     }
 
     /**

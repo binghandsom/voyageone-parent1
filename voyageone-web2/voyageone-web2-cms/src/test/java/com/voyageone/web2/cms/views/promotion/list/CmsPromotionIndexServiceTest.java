@@ -20,6 +20,6 @@ public class CmsPromotionIndexServiceTest {
     CmsPromotionIndexService cmsPromotionIndexService;
     @Test
     public void testGetCodeExcelFile() throws Exception {
-        cmsPromotionIndexService.getCodeExcelFile(45);
+        cmsPromotionIndexService.getCodeExcelFile(45,"010");
     }
 }

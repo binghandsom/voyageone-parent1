@@ -1,22 +1,25 @@
-package com.voyageone.common.configs.Enums;
+package com.voyageone.common.configs;
 
+import com.voyageone.common.util.JacksonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.*;
+
 /**
- * @author aooer 2016/3/23.
+ * @author aooer 2016/4/5.
  * @version 2.0.0
  * @since 2.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class CacheKeyEnumsTest {
+public class UsJoisTest {
+
 
     @Test
-    public void testDelete() throws Exception {
-        boolean isDel= CacheKeyEnums.ConfigData_CarrierConfigs.delete();
-        System.out.println(isDel);
+    public void testIsExists() throws Exception {
+        System.out.println(UsJois.isExists("2"));
     }
 }

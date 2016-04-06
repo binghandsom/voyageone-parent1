@@ -34,7 +34,7 @@ public class TbTraderatesService extends TbBase {
 	 *            结束日期
 	 * @param shop
 	 *            渠道
-	 * @return
+	 * @return List<TradeRate>
 	 */
 	public List<TradeRate> getTradeRateList(String startdate, String enddate, ShopBean shop) {
 
@@ -60,8 +60,7 @@ public class TbTraderatesService extends TbBase {
 				TraderatesGetResponse response = reqTaobaoApi(shop, req);
 
 				if (response != null && response.getErrorCode() == null) {
-					if(response.getTradeRates() != null)
-					{
+					if(response.getTradeRates() != null) {
 						tradeRates.addAll(response.getTradeRates());
 					}
 					// 没有下一页的场合
@@ -73,8 +72,7 @@ public class TbTraderatesService extends TbBase {
 						pageNo++;
 					}
 				} else {
-					if(response != null)
-					{
+					if(response != null) {
 						logger.error("调用API失败:" + response.getSubCode() + ":" + response.getSubMsg());
 					}else{
 						logger.error("调用API超时");

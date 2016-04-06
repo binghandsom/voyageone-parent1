@@ -7,7 +7,7 @@ package com.voyageone.web2.sdk.api;
  *
  * @author chuanyu.liang
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class VoApiResponse {
 

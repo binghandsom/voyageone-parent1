@@ -24,18 +24,13 @@ public class TbWLBService extends TbBase {
      * @param lgOrderCode 物流订单编号
      */
     public WlbImportsOrderCancelResponse cancelOrder(ShopBean shop, String lgOrderCode) throws ApiException {
-
-		WlbImportsOrderCancelResponse response = null;
-        
 		//获取淘宝API连接
-		TaobaoClient client = getDefaultTaobaoClient(shop);
+		//TaobaoClient client = getDefaultTaobaoClient(shop);
 
 		WlbImportsOrderCancelRequest req = new WlbImportsOrderCancelRequest();
 		req.setLgorderCode(lgOrderCode);
 //    		response = client.execute(req , shop.getSessionKey());
-		response = reqTaobaoApi(shop,req);
-
-        return response;
+		return reqTaobaoApi(shop, req);
     }
 
 	/**
@@ -44,17 +39,12 @@ public class TbWLBService extends TbBase {
 	 * @param sourceOrderId 订单号
 	 */
 	public WlbImportsOrderGetResponse orderGet(ShopBean shop, String sourceOrderId) throws ApiException {
-
-		WlbImportsOrderGetResponse response = null;
-
 		//获取淘宝API连接
-		TaobaoClient client = getDefaultTaobaoClient(shop);
+		//TaobaoClient client = getDefaultTaobaoClient(shop);
 
 		WlbImportsOrderGetRequest req = new WlbImportsOrderGetRequest();
 		req.setTradeId(Long.valueOf(sourceOrderId));
 //    		response = client.execute(req , shop.getSessionKey());
-		response = reqTaobaoApi(shop,req);
-
-		return response;
+		return reqTaobaoApi(shop,req);
 	}
 }

@@ -75,9 +75,6 @@ public class CmsGetJmMasterService extends BaseTaskService {
 
     /**
      * 插入分类信息
-     *
-     * @param shopBean
-     * @throws Exception
      */
     public void insertCategory(ShopBean shopBean) throws Exception {
         try {
@@ -85,16 +82,13 @@ public class CmsGetJmMasterService extends BaseTaskService {
             jmCategoryDao.clearJmCategory();
             jmCategoryDao.insertJmCategory(categorys);
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
             issueLog.log(e, ErrorType.BatchJob, getSubSystem());
         }
     }
 
     /**
      * 插入品牌
-     *
-     * @param shopBean
-     * @throws Exception
      */
     public void insertBrand(ShopBean shopBean) throws Exception {
         try {
@@ -106,7 +100,7 @@ public class CmsGetJmMasterService extends BaseTaskService {
             }
             jmMasterDao.insertJmMaster(jmMasterBeans);
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
             issueLog.log(e, ErrorType.BatchJob, getSubSystem());
         }
 
@@ -114,9 +108,6 @@ public class CmsGetJmMasterService extends BaseTaskService {
 
     /**
      * 插入货币
-     *
-     * @param shopBean
-     * @throws Exception
      */
     public void inserCurrency(ShopBean shopBean) throws Exception {
         try {
@@ -128,15 +119,12 @@ public class CmsGetJmMasterService extends BaseTaskService {
             }
             jmMasterDao.insertJmMaster(jmMasterBeans);
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
             issueLog.log(e, ErrorType.BatchJob, getSubSystem());
         }
     }
     /**
      * 插入仓库
-     *
-     * @param shopBean
-     * @throws Exception
      */
     public void inserWarehouse(ShopBean shopBean) {
         try {
@@ -148,7 +136,7 @@ public class CmsGetJmMasterService extends BaseTaskService {
             }
             jmMasterDao.insertJmMaster(jmMasterBeans);
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
             issueLog.log(e, ErrorType.BatchJob, getSubSystem());
         }
     }
