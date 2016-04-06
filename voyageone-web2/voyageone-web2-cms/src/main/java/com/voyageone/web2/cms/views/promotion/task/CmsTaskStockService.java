@@ -633,7 +633,7 @@ public class CmsTaskStockService extends BaseAppService {
         separatePlatformList= (List<Map>) param.get("promotionList");
         String taskName = (String) param.get("taskName");
         //任务名称
-        if (StringUtils.isEmpty(taskName)||taskName.length()<=1000) {
+        if (StringUtils.isEmpty(taskName)||taskName.length()>=1000) {
             throw new BusinessException("必须输入且长度小于1000！");
         }
         //增优先顺
@@ -658,15 +658,15 @@ public class CmsTaskStockService extends BaseAppService {
             String subtractPriority=separatePlatformList.get(i).get("subtractPriority").toString();
             if(type.equals("1")){
                 //隔离平台的隔离比例
-                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)||value.length()<3) {
+                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)||value.length()>3) {
                     throw new BusinessException("隔离平台的隔离比例必须填且为大于0的整数！");
                 }
                 //增优先顺
-                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.length()<2) {
+                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.length()>2) {
                     throw new BusinessException("增优先顺为大于0的整数！");
                 }
                 //减优先顺
-                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)||subtractPriority.length()<2) {
+                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)||subtractPriority.length()>2) {
                     throw new BusinessException("减优先顺为大于0的整数！");
                 }
                 //隔离结束时间必须是时间格式
