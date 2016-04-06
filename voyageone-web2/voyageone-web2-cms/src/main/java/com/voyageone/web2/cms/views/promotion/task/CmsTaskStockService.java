@@ -633,7 +633,7 @@ public class CmsTaskStockService extends BaseAppService {
         separatePlatformList= (List<Map>) param.get("promotionList");
         String taskName = (String) param.get("taskName");
         //任务名称
-        if (StringUtils.isEmpty(taskName)||taskName.length()>=1000) {
+        if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
             throw new BusinessException("必须输入且长度小于1000！");
         }
         //增优先顺
@@ -651,22 +651,28 @@ public class CmsTaskStockService extends BaseAppService {
             //类型（1：隔离，2：共享）
             String type= separatePlatformList.get(i).get("type").toString();
             // 还原时间
-            String revertTime=separatePlatformList.get(i).get("revertTime").toString();
+            String revertTime="";
+            boolean contains = separatePlatformList.get(i).containsKey("revertTime");
+            if(contains){
+                revertTime=separatePlatformList.get(i).get("revertTime").toString();
+            }else{
+                throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
+            }
             //增优先顺
             String addPriority=separatePlatformList.get(i).get("addPriority").toString();
             //减优先顺
             String subtractPriority=separatePlatformList.get(i).get("subtractPriority").toString();
-            if(type.equals("1")){
+            if(type.equals(SEPARATE_TYPE)){
                 //隔离平台的隔离比例
-                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)||value.length()>3) {
-                    throw new BusinessException("隔离平台的隔离比例必须填且为大于0的整数！");
+                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)||value.getBytes().length>2) {
+                    throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
                 }
                 //增优先顺
-                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.length()>2) {
+                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.getBytes().length>1) {
                     throw new BusinessException("增优先顺为大于0的整数！");
                 }
                 //减优先顺
-                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)||subtractPriority.length()>2) {
+                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
                     throw new BusinessException("减优先顺为大于0的整数！");
                 }
                 //隔离结束时间必须是时间格式
@@ -677,21 +683,6 @@ public class CmsTaskStockService extends BaseAppService {
                 } catch (ParseException e){
                     throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
                 }
-                //时间格式 时check
-                int hour = Integer.parseInt(revertTime.substring(11, 13));
-                if (hour < 0 || hour > 23){
-                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
-                }
-                //时间格式 分check
-                int minute = Integer.parseInt(revertTime.substring(14, 16));
-                if (minute < 0 || minute > 59){
-                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
-                }
-                //时间格式 秒check
-                int second = Integer.parseInt(revertTime.substring(17, 19));
-                if (second < 0 || second > 59){
-                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
-                }
             }
             addPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("addPriority")));
             subtractPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("subtractPriority")));
@@ -700,7 +691,7 @@ public class CmsTaskStockService extends BaseAppService {
         //增优先的排序Check
         for(int i=0;i<addPriorityList.length;i++){
             System.out.println(addPriorityList[i]);
-            if(addPriorityList[i]!=i){
+            if(addPriorityList[i]!=(i+1)){
                 throw new BusinessException("增优先顺不是从1开始的连续自然数");
             }
         }
@@ -708,7 +699,7 @@ public class CmsTaskStockService extends BaseAppService {
         //增优先的排序Check
         for(int i=0;i<subtractPriorityList.length;i++){
             System.out.println(subtractPriorityList[i]);
-            if(subtractPriorityList[i]!=i){
+            if(subtractPriorityList[i]!=(i+1)){
                 throw new BusinessException("减优先顺不是从1开始的连续自然数");
             }
         }
