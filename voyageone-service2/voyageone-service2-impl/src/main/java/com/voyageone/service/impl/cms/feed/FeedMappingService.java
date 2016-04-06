@@ -69,4 +69,8 @@ public class FeedMappingService {
     public List<CmsBtFeedMappingModel> getMappingsWithoutProps(String feedCategoryPath, String selChannelId) {
         return feedMappingDao.findMappingsWithoutProps(feedCategoryPath, selChannelId);
     }
+
+    public List<CmsBtFeedMappingModel> getFeedMappings(String channelId) {
+        return feedMappingDao.findMappingByChannelId(channelId);
+    }
 }
