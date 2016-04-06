@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService) {
         $scope.promotionOld={};
         $scope.datePicker = [];
         $scope.vm = {
@@ -25,6 +25,7 @@ define([
             codeSelList: { selList: []},
             skuSelList: { selList: []}
         };
+        $scope.currentChannelId = cookieService.channel();
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
@@ -179,7 +180,7 @@ define([
                 $scope.vm.groupList = res.data.resultData == null ? [] : res.data.resultData;
                 _.forEach(res.data.resultData, function(item) {
                     // 初始化数据选中需要的数组
-                    tempGroupSelect.currPageRows({"id": item.modelId, data:item});
+                    tempGroupSelect.currPageRows({"id": item.productModel, data:item});
                 });
                 $scope.vm.groupSelList = tempGroupSelect.selectRowsInfo;
                 //selAllFlag($scope.vm.groupSelList,"modelId");
@@ -219,6 +220,6 @@ define([
             })
         }
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService'];
     return detailController;
 });
