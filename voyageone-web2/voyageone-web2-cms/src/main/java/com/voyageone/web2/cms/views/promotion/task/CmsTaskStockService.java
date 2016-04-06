@@ -1490,7 +1490,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的增量隔离库存（含非本任务的）
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("skuList", skuList);
-        sqlParam1.put("channelId", param.get("channelId"));
+        sqlParam2.put("channelId", param.get("channelId"));
         // 状态 = 3：增量成功,5：还原,
         sqlParam2.put("statusList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         sqlParam2.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -3244,8 +3244,9 @@ public class CmsTaskStockService extends BaseAppService {
                 sql += " limit " + start + "," + length + ") t1 ";
             }
         } else {
-            sql += " where sku in (" + skuInfo + ")";
+            sql += " where task_id = " + String.valueOf(param.get("taskId"));
             sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
+            sql += " and sku in (" + skuInfo + ")";
             sql += " order by sku ) t1 ";
 //            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
 //                    " and status = '" + (String) param.get("status") + "')";
