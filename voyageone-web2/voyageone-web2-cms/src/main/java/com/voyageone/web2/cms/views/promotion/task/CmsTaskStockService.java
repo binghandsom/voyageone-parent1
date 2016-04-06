@@ -654,7 +654,9 @@ public class CmsTaskStockService extends BaseAppService {
             String revertTime="";
             boolean contains = separatePlatformList.get(i).containsKey("revertTime");
             if(contains){
-                revertTime=separatePlatformList.get(i).get("revertTime").toString();
+                if(separatePlatformList.get(i).get("revertTime").equals("revertTime")){
+                    revertTime=separatePlatformList.get(i).get("revertTime").toString();
+                }
             }else{
                 throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
             }
@@ -664,8 +666,13 @@ public class CmsTaskStockService extends BaseAppService {
             String subtractPriority=separatePlatformList.get(i).get("subtractPriority").toString();
             if(type.equals(SEPARATE_TYPE)){
                 //隔离平台的隔离比例
-                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)||value.getBytes().length>2) {
+                if(value.equals("%")){
                     throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
+                }else{
+                    String[] separateValue = value.split("%");
+                    if (StringUtils.isEmpty(separateValue[0])||separateValue[0].getBytes().length>2) {
+                        throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
+                    }
                 }
                 //增优先顺
                 if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.getBytes().length>1) {
