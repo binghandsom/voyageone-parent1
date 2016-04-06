@@ -393,6 +393,11 @@ public class ProductSkuService extends BaseService {
                                 updateMap.put("skus.$.client_retail_price", skuModel.getClientRetailPrice());
                             }
 
+                            // 涨价降价标志
+                            if (skuModel.getPriceChgFlg() != null) {
+                                updateMap.put("skus.$.priceChgFlg", skuModel.getPriceChgFlg());
+                            }
+
                             if (updateMap.size() > 0) {
                                 BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                                 skuUpdateModel.setUpdateMap(updateMap);
