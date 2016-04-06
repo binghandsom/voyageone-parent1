@@ -12,32 +12,32 @@
                 <if test="id != null">
                         AND id = #{id}
                     </if>
-                                <if test="platform_id != null">
-                        AND id = #{platform_id}
+                                <if test="platformId != null">
+                        AND platform_id = #{platformId}
                     </if>
-                                <if test="channel_id != null">
-                        AND id = #{channel_id}
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if>
-                                <if test="template_type != null">
-                        AND id = #{template_type}
+                                <if test="templateType != null">
+                        AND template_type = #{templateType}
                     </if>
-                                <if test="image_template_url != null">
-                        AND id = #{image_template_url}
+                                <if test="imageTemplateUrl != null">
+                        AND image_template_url = #{imageTemplateUrl}
                     </if>
-                                <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                                <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
                         </where>
     </select>
@@ -49,40 +49,40 @@
                         AND id = #{id}
                     </if> 
                 
-                    <if test="platform_id != null">
-                        AND id = #{platform_id}
+                    <if test="platformId != null">
+                        AND platform_id = #{platformId}
                     </if> 
                 
-                    <if test="channel_id != null">
-                        AND id = #{channel_id}
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if> 
                 
-                    <if test="template_type != null">
-                        AND id = #{template_type}
+                    <if test="templateType != null">
+                        AND template_type = #{templateType}
                     </if> 
                 
-                    <if test="image_template_url != null">
-                        AND id = #{image_template_url}
+                    <if test="imageTemplateUrl != null">
+                        AND image_template_url = #{imageTemplateUrl}
                     </if> 
                 
-                    <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                    <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
         </where> limit 1
     </select>

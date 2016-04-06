@@ -23,8 +23,6 @@ public class CmsBtJmPromotionProductService {
         return dao.select(id);
     }
 
-
-
     public int update(CmsBtJmPromotionProductModel entity) {
         return dao.update(entity);
     }

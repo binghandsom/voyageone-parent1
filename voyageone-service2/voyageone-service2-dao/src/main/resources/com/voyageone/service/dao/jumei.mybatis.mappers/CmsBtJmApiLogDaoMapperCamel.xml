@@ -12,20 +12,20 @@
                 <if test="id != null">
                         AND id = #{id}
                     </if>
-                                <if test="source_id != null">
-                        AND id = #{source_id}
+                                <if test="sourceId != null">
+                        AND source_id = #{sourceId}
                     </if>
-                                <if test="api_type != null">
-                        AND id = #{api_type}
+                                <if test="apiType != null">
+                        AND api_type = #{apiType}
                     </if>
-                                <if test="error_msg != null">
-                        AND id = #{error_msg}
+                                <if test="errorMsg != null">
+                        AND error_msg = #{errorMsg}
                     </if>
-                                <if test="error_code != null">
-                        AND id = #{error_code}
+                                <if test="errorCode != null">
+                        AND error_code = #{errorCode}
                     </if>
                                 <if test="remark != null">
-                        AND id = #{remark}
+                        AND remark = #{remark}
                     </if>
                         </where>
     </select>
@@ -37,24 +37,24 @@
                         AND id = #{id}
                     </if> 
                 
-                    <if test="source_id != null">
-                        AND id = #{source_id}
+                    <if test="sourceId != null">
+                        AND source_id = #{sourceId}
                     </if> 
                 
-                    <if test="api_type != null">
-                        AND id = #{api_type}
+                    <if test="apiType != null">
+                        AND api_type = #{apiType}
                     </if> 
                 
-                    <if test="error_msg != null">
-                        AND id = #{error_msg}
+                    <if test="errorMsg != null">
+                        AND error_msg = #{errorMsg}
                     </if> 
                 
-                    <if test="error_code != null">
-                        AND id = #{error_code}
+                    <if test="errorCode != null">
+                        AND error_code = #{errorCode}
                     </if> 
                 
                     <if test="remark != null">
-                        AND id = #{remark}
+                        AND remark = #{remark}
                     </if> 
         </where> limit 1
     </select>

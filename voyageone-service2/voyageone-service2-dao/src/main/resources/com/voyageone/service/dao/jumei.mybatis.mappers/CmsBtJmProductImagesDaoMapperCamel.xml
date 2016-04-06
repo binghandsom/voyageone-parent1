@@ -12,44 +12,44 @@
                 <if test="id != null">
                         AND id = #{id}
                     </if>
-                                <if test="channel_id != null">
-                        AND id = #{channel_id}
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if>
-                                <if test="product_code != null">
-                        AND id = #{product_code}
+                                <if test="productCode != null">
+                        AND product_code = #{productCode}
                     </if>
-                                <if test="image_type_name != null">
-                        AND id = #{image_type_name}
+                                <if test="imageTypeName != null">
+                        AND image_type_name = #{imageTypeName}
                     </if>
-                                <if test="image_type != null">
-                        AND id = #{image_type}
+                                <if test="imageType != null">
+                        AND image_type = #{imageType}
                     </if>
-                                <if test="image_index != null">
-                        AND id = #{image_index}
+                                <if test="imageIndex != null">
+                        AND image_index = #{imageIndex}
                     </if>
-                                <if test="origin_url != null">
-                        AND id = #{origin_url}
+                                <if test="originUrl != null">
+                        AND origin_url = #{originUrl}
                     </if>
-                                <if test="jm_url != null">
-                        AND id = #{jm_url}
+                                <if test="jmUrl != null">
+                        AND jm_url = #{jmUrl}
                     </if>
-                                <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                                <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
                                 <if test="productImageUrlKey != null">
-                        AND id = #{productImageUrlKey}
+                        AND productImageUrlKey = #{productImageUrlKey}
                     </if>
                         </where>
     </select>
@@ -61,56 +61,56 @@
                         AND id = #{id}
                     </if> 
                 
-                    <if test="channel_id != null">
-                        AND id = #{channel_id}
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if> 
                 
-                    <if test="product_code != null">
-                        AND id = #{product_code}
+                    <if test="productCode != null">
+                        AND product_code = #{productCode}
                     </if> 
                 
-                    <if test="image_type_name != null">
-                        AND id = #{image_type_name}
+                    <if test="imageTypeName != null">
+                        AND image_type_name = #{imageTypeName}
                     </if> 
                 
-                    <if test="image_type != null">
-                        AND id = #{image_type}
+                    <if test="imageType != null">
+                        AND image_type = #{imageType}
                     </if> 
                 
-                    <if test="image_index != null">
-                        AND id = #{image_index}
+                    <if test="imageIndex != null">
+                        AND image_index = #{imageIndex}
                     </if> 
                 
-                    <if test="origin_url != null">
-                        AND id = #{origin_url}
+                    <if test="originUrl != null">
+                        AND origin_url = #{originUrl}
                     </if> 
                 
-                    <if test="jm_url != null">
-                        AND id = #{jm_url}
+                    <if test="jmUrl != null">
+                        AND jm_url = #{jmUrl}
                     </if> 
                 
-                    <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                    <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
                 
                     <if test="productImageUrlKey != null">
-                        AND id = #{productImageUrlKey}
+                        AND productImageUrlKey = #{productImageUrlKey}
                     </if> 
         </where> limit 1
     </select>

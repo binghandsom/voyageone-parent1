@@ -13,25 +13,25 @@
                         AND id = #{id}
                     </if>
                                 <if test="name != null">
-                        AND id = #{name}
+                        AND name = #{name}
                     </if>
-                                <if test="jm_master_brand_id != null">
-                        AND id = #{jm_master_brand_id}
+                                <if test="jmMasterBrandId != null">
+                        AND jm_master_brand_id = #{jmMasterBrandId}
                     </if>
-                                <if test="en_name != null">
-                        AND id = #{en_name}
+                                <if test="enName != null">
+                        AND en_name = #{enName}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
                         </where>
     </select>
@@ -44,31 +44,31 @@
                     </if> 
                 
                     <if test="name != null">
-                        AND id = #{name}
+                        AND name = #{name}
                     </if> 
                 
-                    <if test="jm_master_brand_id != null">
-                        AND id = #{jm_master_brand_id}
+                    <if test="jmMasterBrandId != null">
+                        AND jm_master_brand_id = #{jmMasterBrandId}
                     </if> 
                 
-                    <if test="en_name != null">
-                        AND id = #{en_name}
+                    <if test="enName != null">
+                        AND en_name = #{enName}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
         </where> limit 1
     </select>

@@ -12,50 +12,50 @@
                 <if test="id != null">
                         AND id = #{id}
                     </if>
-                                <if test="platform_id != null">
-                        AND id = #{platform_id}
+                                <if test="platformId != null">
+                        AND platform_id = #{platformId}
                     </if>
-                                <if test="channel_id != null">
-                        AND id = #{channel_id}
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if>
-                                <if test="brand_name != null">
-                        AND id = #{brand_name}
+                                <if test="brandName != null">
+                        AND brand_name = #{brandName}
                     </if>
-                                <if test="product_type != null">
-                        AND id = #{product_type}
+                                <if test="productType != null">
+                        AND product_type = #{productType}
                     </if>
-                                <if test="size_type != null">
-                        AND id = #{size_type}
+                                <if test="sizeType != null">
+                        AND size_type = #{sizeType}
                     </if>
-                                <if test="data_type != null">
-                        AND id = #{data_type}
+                                <if test="dataType != null">
+                        AND data_type = #{dataType}
                     </if>
-                                <if test="image_index != null">
-                        AND id = #{image_index}
+                                <if test="imageIndex != null">
+                        AND image_index = #{imageIndex}
                     </if>
                                 <if test="value1 != null">
-                        AND id = #{value1}
+                        AND value1 = #{value1}
                     </if>
                                 <if test="value2 != null">
-                        AND id = #{value2}
+                        AND value2 = #{value2}
                     </if>
-                                <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                                <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if>
-                                <if test="error_message != null">
-                        AND id = #{error_message}
+                                <if test="errorMessage != null">
+                        AND error_message = #{errorMessage}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
                         </where>
     </select>
@@ -67,64 +67,64 @@
                         AND id = #{id}
                     </if> 
                 
-                    <if test="platform_id != null">
-                        AND id = #{platform_id}
+                    <if test="platformId != null">
+                        AND platform_id = #{platformId}
                     </if> 
                 
-                    <if test="channel_id != null">
-                        AND id = #{channel_id}
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if> 
                 
-                    <if test="brand_name != null">
-                        AND id = #{brand_name}
+                    <if test="brandName != null">
+                        AND brand_name = #{brandName}
                     </if> 
                 
-                    <if test="product_type != null">
-                        AND id = #{product_type}
+                    <if test="productType != null">
+                        AND product_type = #{productType}
                     </if> 
                 
-                    <if test="size_type != null">
-                        AND id = #{size_type}
+                    <if test="sizeType != null">
+                        AND size_type = #{sizeType}
                     </if> 
                 
-                    <if test="data_type != null">
-                        AND id = #{data_type}
+                    <if test="dataType != null">
+                        AND data_type = #{dataType}
                     </if> 
                 
-                    <if test="image_index != null">
-                        AND id = #{image_index}
+                    <if test="imageIndex != null">
+                        AND image_index = #{imageIndex}
                     </if> 
                 
                     <if test="value1 != null">
-                        AND id = #{value1}
+                        AND value1 = #{value1}
                     </if> 
                 
                     <if test="value2 != null">
-                        AND id = #{value2}
+                        AND value2 = #{value2}
                     </if> 
                 
-                    <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                    <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if> 
                 
-                    <if test="error_message != null">
-                        AND id = #{error_message}
+                    <if test="errorMessage != null">
+                        AND error_message = #{errorMessage}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
         </where> limit 1
     </select>

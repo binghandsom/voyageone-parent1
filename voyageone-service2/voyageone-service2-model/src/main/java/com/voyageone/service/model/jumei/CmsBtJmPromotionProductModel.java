@@ -13,12 +13,12 @@ public class CmsBtJmPromotionProductModel implements Serializable
         setProductCode(""); 
         setJmHashId(""); 
         setMarketPrice(new BigDecimal(0));
+        setDealPrice(new BigDecimal(0));
         setCreater(""); 
         setCreated(DateHelp.getDefaultDate());
         setModifier(""); 
         setAppId(""); 
         setPcId(""); 
-        setDealPrice(new BigDecimal(0));
         setDiscount(new BigDecimal(0));
         setErrorMsg(""); 
 
@@ -44,7 +44,7 @@ public class CmsBtJmPromotionProductModel implements Serializable
     
     
  /**
-聚美产品ID（聚美系统）
+商品id
         */
      private int cmsBtJmProductId;
     
@@ -74,7 +74,13 @@ public class CmsBtJmPromotionProductModel implements Serializable
     
     
  /**
-更新聚美平台的状态:1:待更新2:同步更新完成 3:同步更新失败
+团购价格 至少大于15元
+        */
+     private BigDecimal dealPrice;
+    
+    
+ /**
+更新聚美平台的状态:0:未更新  1:待上传 2:上传成功 3:上传异常
         */
      private int synchState;
     
@@ -122,12 +128,6 @@ APP端模块ID
     
     
  /**
-团购价格 至少大于15元
-        */
-     private BigDecimal dealPrice;
-    
-    
- /**
 折扣
         */
      private BigDecimal discount;
@@ -137,6 +137,12 @@ APP端模块ID
 同步更新异常信息
         */
      private String errorMsg;
+    
+    
+ /**
+sku数量
+        */
+     private int skuCount;
     
         
          /**
@@ -189,7 +195,7 @@ this.channelId="";
     
         
          /**
-           聚美产品ID（聚美系统）
+           商品id
         */
         public int getCmsBtJmProductId()
         {
@@ -273,7 +279,21 @@ this.jmHashId="";
     
         
          /**
-           更新聚美平台的状态:1:待更新2:同步更新完成 3:同步更新失败
+           团购价格 至少大于15元
+        */
+        public BigDecimal getDealPrice()
+        {
+         
+        return this.dealPrice;
+        }
+        public void setDealPrice(BigDecimal dealPrice)
+        {
+         this.dealPrice=dealPrice;
+        }
+    
+        
+         /**
+           更新聚美平台的状态:0:未更新  1:待上传 2:上传成功 3:上传异常
         */
         public int getSynchState()
         {
@@ -420,20 +440,6 @@ this.pcId="";
     
         
          /**
-           团购价格 至少大于15元
-        */
-        public BigDecimal getDealPrice()
-        {
-         
-        return this.dealPrice;
-        }
-        public void setDealPrice(BigDecimal dealPrice)
-        {
-         this.dealPrice=dealPrice;
-        }
-    
-        
-         /**
            折扣
         */
         public BigDecimal getDiscount()
@@ -465,6 +471,20 @@ else
 this.errorMsg="";
 }
 
+        }
+    
+        
+         /**
+           sku数量
+        */
+        public int getSkuCount()
+        {
+         
+        return this.skuCount;
+        }
+        public void setSkuCount(int skuCount)
+        {
+         this.skuCount=skuCount;
         }
     
 }

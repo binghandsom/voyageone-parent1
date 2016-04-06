@@ -47,4 +47,8 @@ public class CmsJmPromotionIndexController extends CmsController {
         params.setModifier(getUser().getUserName());
         return success(cmsPromotionService.update(params));
     }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET)
+    public Object get(@RequestBody int id) {//@RequestParam("id")
+        return success(cmsPromotionService.select(id));
+    }
 }

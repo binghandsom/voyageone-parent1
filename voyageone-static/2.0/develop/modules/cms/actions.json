@@ -119,12 +119,14 @@
       "jmPromotionService" : {
         "root": "/cms/jmpromotion/index",
         "init": "init",
+        "get":"get",
         "getListByWhere": "getListByWhere",
         "insert": "insert",
         "update": "update"
       },
       "jmPromotionDetailService": {
-        "root": "/cms/jmPromotionDetail/index"
+        "root": "/cms/jmpromotion/detail",
+        "getListByWhere": "getListByWhere"
       }
     },
     "task": {

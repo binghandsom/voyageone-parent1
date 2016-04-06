@@ -35,10 +35,25 @@ public interface CmsUrlConstants {
 
                 String INSERT = "insert";
 
-                String UPDATE= "update";
+                String UPDATE = "update";
+                String GET = "get";
+            }
+
+            interface DETAIL {
+                String ROOT = "/cms/jmpromotion/detail";
+
+                String INIT = "init";
+
+                String GET_LIST_BY_WHERE = "getListByWhere";
+
+                String INSERT = "insert";
+
+                String UPDATE = "update";
+                String GET = "get";
             }
         }
     }
+
     // 活动管理
     interface PROMOTION {
         interface LIST {

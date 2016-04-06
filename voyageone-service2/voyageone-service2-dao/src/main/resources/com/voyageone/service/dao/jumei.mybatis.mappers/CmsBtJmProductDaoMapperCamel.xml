@@ -12,131 +12,131 @@
                 <if test="id != null">
                         AND id = #{id}
                     </if>
-                                <if test="channel_id != null">
-                        AND id = #{channel_id}
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if>
-                                <if test="jumei_product_id != null">
-                        AND id = #{jumei_product_id}
+                                <if test="jumeiProductId != null">
+                        AND jumei_product_id = #{jumeiProductId}
                     </if>
-                                <if test="product_code != null">
-                        AND id = #{product_code}
+                                <if test="productCode != null">
+                        AND product_code = #{productCode}
                     </if>
-                                <if test="foreign_language_name != null">
-                        AND id = #{foreign_language_name}
+                                <if test="foreignLanguageName != null">
+                        AND foreign_language_name = #{foreignLanguageName}
                     </if>
-                                <if test="product_name_cn != null">
-                        AND id = #{product_name_cn}
+                                <if test="productNameCn != null">
+                        AND product_name_cn = #{productNameCn}
                     </if>
-                                <if test="product_long_name != null">
-                        AND id = #{product_long_name}
+                                <if test="productLongName != null">
+                        AND product_long_name = #{productLongName}
                     </if>
-                                <if test="product_medium_name != null">
-                        AND id = #{product_medium_name}
+                                <if test="productMediumName != null">
+                        AND product_medium_name = #{productMediumName}
                     </if>
-                                <if test="product_short_name != null">
-                        AND id = #{product_short_name}
+                                <if test="productShortName != null">
+                        AND product_short_name = #{productShortName}
                     </if>
-                                <if test="vo_category_name != null">
-                        AND id = #{vo_category_name}
+                                <if test="voCategoryName != null">
+                        AND vo_category_name = #{voCategoryName}
                     </if>
-                                <if test="category_lv1_name != null">
-                        AND id = #{category_lv1_name}
+                                <if test="categoryLv1Name != null">
+                        AND category_lv1_name = #{categoryLv1Name}
                     </if>
-                                <if test="category_lv2_name != null">
-                        AND id = #{category_lv2_name}
+                                <if test="categoryLv2Name != null">
+                        AND category_lv2_name = #{categoryLv2Name}
                     </if>
-                                <if test="category_lv3_name != null">
-                        AND id = #{category_lv3_name}
+                                <if test="categoryLv3Name != null">
+                        AND category_lv3_name = #{categoryLv3Name}
                     </if>
-                                <if test="category_lv4_name != null">
-                        AND id = #{category_lv4_name}
+                                <if test="categoryLv4Name != null">
+                        AND category_lv4_name = #{categoryLv4Name}
                     </if>
-                                <if test="category_lv4_id != null">
-                        AND id = #{category_lv4_id}
+                                <if test="categoryLv4Id != null">
+                        AND category_lv4_id = #{categoryLv4Id}
                     </if>
-                                <if test="vo_brand_name != null">
-                        AND id = #{vo_brand_name}
+                                <if test="voBrandName != null">
+                        AND vo_brand_name = #{voBrandName}
                     </if>
-                                <if test="brand_name != null">
-                        AND id = #{brand_name}
+                                <if test="brandName != null">
+                        AND brand_name = #{brandName}
                     </if>
-                                <if test="brand_id != null">
-                        AND id = #{brand_id}
+                                <if test="brandId != null">
+                        AND brand_id = #{brandId}
                     </if>
-                                <if test="product_type != null">
-                        AND id = #{product_type}
+                                <if test="productType != null">
+                        AND product_type = #{productType}
                     </if>
-                                <if test="size_type != null">
-                        AND id = #{size_type}
+                                <if test="sizeType != null">
+                        AND size_type = #{sizeType}
                     </if>
-                                <if test="color_en != null">
-                        AND id = #{color_en}
+                                <if test="colorEn != null">
+                        AND color_en = #{colorEn}
                     </if>
                                 <if test="attribute != null">
-                        AND id = #{attribute}
+                        AND attribute = #{attribute}
                     </if>
                                 <if test="origin != null">
-                        AND id = #{origin}
+                        AND origin = #{origin}
                     </if>
-                                <if test="address_of_produce != null">
-                        AND id = #{address_of_produce}
+                                <if test="addressOfProduce != null">
+                        AND address_of_produce = #{addressOfProduce}
                     </if>
-                                <if test="material_en != null">
-                        AND id = #{material_en}
+                                <if test="materialEn != null">
+                        AND material_en = #{materialEn}
                     </if>
-                                <if test="material_cn != null">
-                        AND id = #{material_cn}
+                                <if test="materialCn != null">
+                        AND material_cn = #{materialCn}
                     </if>
-                                <if test="product_des_en != null">
-                        AND id = #{product_des_en}
+                                <if test="productDesEn != null">
+                        AND product_des_en = #{productDesEn}
                     </if>
-                                <if test="product_des_cn != null">
-                        AND id = #{product_des_cn}
+                                <if test="productDesCn != null">
+                        AND product_des_cn = #{productDesCn}
                     </if>
-                                <if test="available_period != null">
-                        AND id = #{available_period}
+                                <if test="availablePeriod != null">
+                        AND available_period = #{availablePeriod}
                     </if>
-                                <if test="applicable_crowd != null">
-                        AND id = #{applicable_crowd}
+                                <if test="applicableCrowd != null">
+                        AND applicable_crowd = #{applicableCrowd}
                     </if>
-                                <if test="search_meta_text_custom != null">
-                        AND id = #{search_meta_text_custom}
+                                <if test="searchMetaTextCustom != null">
+                        AND search_meta_text_custom = #{searchMetaTextCustom}
                     </if>
-                                <if test="function_ids != null">
-                        AND id = #{function_ids}
+                                <if test="functionIds != null">
+                        AND function_ids = #{functionIds}
                     </if>
                                 <if test="msrp != null">
-                        AND id = #{msrp}
+                        AND msrp = #{msrp}
                     </if>
-                                <if test="hs_code != null">
-                        AND id = #{hs_code}
+                                <if test="hsCode != null">
+                        AND hs_code = #{hsCode}
                     </if>
-                                <if test="hs_name != null">
-                        AND id = #{hs_name}
+                                <if test="hsName != null">
+                        AND hs_name = #{hsName}
                     </if>
-                                <if test="hs_unit != null">
-                        AND id = #{hs_unit}
+                                <if test="hsUnit != null">
+                        AND hs_unit = #{hsUnit}
                     </if>
-                                <if test="send_flg != null">
-                        AND id = #{send_flg}
+                                <if test="sendFlg != null">
+                        AND send_flg = #{sendFlg}
                     </if>
                                 <if test="state != null">
-                        AND id = #{state}
+                        AND state = #{state}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
-                                <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                                <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if>
                         </where>
     </select>
@@ -148,172 +148,172 @@
                         AND id = #{id}
                     </if> 
                 
-                    <if test="channel_id != null">
-                        AND id = #{channel_id}
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
                     </if> 
                 
-                    <if test="jumei_product_id != null">
-                        AND id = #{jumei_product_id}
+                    <if test="jumeiProductId != null">
+                        AND jumei_product_id = #{jumeiProductId}
                     </if> 
                 
-                    <if test="product_code != null">
-                        AND id = #{product_code}
+                    <if test="productCode != null">
+                        AND product_code = #{productCode}
                     </if> 
                 
-                    <if test="foreign_language_name != null">
-                        AND id = #{foreign_language_name}
+                    <if test="foreignLanguageName != null">
+                        AND foreign_language_name = #{foreignLanguageName}
                     </if> 
                 
-                    <if test="product_name_cn != null">
-                        AND id = #{product_name_cn}
+                    <if test="productNameCn != null">
+                        AND product_name_cn = #{productNameCn}
                     </if> 
                 
-                    <if test="product_long_name != null">
-                        AND id = #{product_long_name}
+                    <if test="productLongName != null">
+                        AND product_long_name = #{productLongName}
                     </if> 
                 
-                    <if test="product_medium_name != null">
-                        AND id = #{product_medium_name}
+                    <if test="productMediumName != null">
+                        AND product_medium_name = #{productMediumName}
                     </if> 
                 
-                    <if test="product_short_name != null">
-                        AND id = #{product_short_name}
+                    <if test="productShortName != null">
+                        AND product_short_name = #{productShortName}
                     </if> 
                 
-                    <if test="vo_category_name != null">
-                        AND id = #{vo_category_name}
+                    <if test="voCategoryName != null">
+                        AND vo_category_name = #{voCategoryName}
                     </if> 
                 
-                    <if test="category_lv1_name != null">
-                        AND id = #{category_lv1_name}
+                    <if test="categoryLv1Name != null">
+                        AND category_lv1_name = #{categoryLv1Name}
                     </if> 
                 
-                    <if test="category_lv2_name != null">
-                        AND id = #{category_lv2_name}
+                    <if test="categoryLv2Name != null">
+                        AND category_lv2_name = #{categoryLv2Name}
                     </if> 
                 
-                    <if test="category_lv3_name != null">
-                        AND id = #{category_lv3_name}
+                    <if test="categoryLv3Name != null">
+                        AND category_lv3_name = #{categoryLv3Name}
                     </if> 
                 
-                    <if test="category_lv4_name != null">
-                        AND id = #{category_lv4_name}
+                    <if test="categoryLv4Name != null">
+                        AND category_lv4_name = #{categoryLv4Name}
                     </if> 
                 
-                    <if test="category_lv4_id != null">
-                        AND id = #{category_lv4_id}
+                    <if test="categoryLv4Id != null">
+                        AND category_lv4_id = #{categoryLv4Id}
                     </if> 
                 
-                    <if test="vo_brand_name != null">
-                        AND id = #{vo_brand_name}
+                    <if test="voBrandName != null">
+                        AND vo_brand_name = #{voBrandName}
                     </if> 
                 
-                    <if test="brand_name != null">
-                        AND id = #{brand_name}
+                    <if test="brandName != null">
+                        AND brand_name = #{brandName}
                     </if> 
                 
-                    <if test="brand_id != null">
-                        AND id = #{brand_id}
+                    <if test="brandId != null">
+                        AND brand_id = #{brandId}
                     </if> 
                 
-                    <if test="product_type != null">
-                        AND id = #{product_type}
+                    <if test="productType != null">
+                        AND product_type = #{productType}
                     </if> 
                 
-                    <if test="size_type != null">
-                        AND id = #{size_type}
+                    <if test="sizeType != null">
+                        AND size_type = #{sizeType}
                     </if> 
                 
-                    <if test="color_en != null">
-                        AND id = #{color_en}
+                    <if test="colorEn != null">
+                        AND color_en = #{colorEn}
                     </if> 
                 
                     <if test="attribute != null">
-                        AND id = #{attribute}
+                        AND attribute = #{attribute}
                     </if> 
                 
                     <if test="origin != null">
-                        AND id = #{origin}
+                        AND origin = #{origin}
                     </if> 
                 
-                    <if test="address_of_produce != null">
-                        AND id = #{address_of_produce}
+                    <if test="addressOfProduce != null">
+                        AND address_of_produce = #{addressOfProduce}
                     </if> 
                 
-                    <if test="material_en != null">
-                        AND id = #{material_en}
+                    <if test="materialEn != null">
+                        AND material_en = #{materialEn}
                     </if> 
                 
-                    <if test="material_cn != null">
-                        AND id = #{material_cn}
+                    <if test="materialCn != null">
+                        AND material_cn = #{materialCn}
                     </if> 
                 
-                    <if test="product_des_en != null">
-                        AND id = #{product_des_en}
+                    <if test="productDesEn != null">
+                        AND product_des_en = #{productDesEn}
                     </if> 
                 
-                    <if test="product_des_cn != null">
-                        AND id = #{product_des_cn}
+                    <if test="productDesCn != null">
+                        AND product_des_cn = #{productDesCn}
                     </if> 
                 
-                    <if test="available_period != null">
-                        AND id = #{available_period}
+                    <if test="availablePeriod != null">
+                        AND available_period = #{availablePeriod}
                     </if> 
                 
-                    <if test="applicable_crowd != null">
-                        AND id = #{applicable_crowd}
+                    <if test="applicableCrowd != null">
+                        AND applicable_crowd = #{applicableCrowd}
                     </if> 
                 
-                    <if test="search_meta_text_custom != null">
-                        AND id = #{search_meta_text_custom}
+                    <if test="searchMetaTextCustom != null">
+                        AND search_meta_text_custom = #{searchMetaTextCustom}
                     </if> 
                 
-                    <if test="function_ids != null">
-                        AND id = #{function_ids}
+                    <if test="functionIds != null">
+                        AND function_ids = #{functionIds}
                     </if> 
                 
                     <if test="msrp != null">
-                        AND id = #{msrp}
+                        AND msrp = #{msrp}
                     </if> 
                 
-                    <if test="hs_code != null">
-                        AND id = #{hs_code}
+                    <if test="hsCode != null">
+                        AND hs_code = #{hsCode}
                     </if> 
                 
-                    <if test="hs_name != null">
-                        AND id = #{hs_name}
+                    <if test="hsName != null">
+                        AND hs_name = #{hsName}
                     </if> 
                 
-                    <if test="hs_unit != null">
-                        AND id = #{hs_unit}
+                    <if test="hsUnit != null">
+                        AND hs_unit = #{hsUnit}
                     </if> 
                 
-                    <if test="send_flg != null">
-                        AND id = #{send_flg}
+                    <if test="sendFlg != null">
+                        AND send_flg = #{sendFlg}
                     </if> 
                 
                     <if test="state != null">
-                        AND id = #{state}
+                        AND state = #{state}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
                 
-                    <if test="syn_flg != null">
-                        AND id = #{syn_flg}
+                    <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
                     </if> 
         </where> limit 1
     </select>

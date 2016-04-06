@@ -47,7 +47,7 @@ public class CmsBtJmProductImagesModel implements Serializable
     
     
  /**
-图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图）
+图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图 8:商品介绍图）
         */
      private int imageType;
     
@@ -184,7 +184,7 @@ this.imageTypeName="";
     
         
          /**
-           图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图）
+           图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图 8:商品介绍图）
         */
         public int getImageType()
         {

@@ -13,34 +13,34 @@
                         AND id = #{id}
                     </if>
                                 <if test="code != null">
-                        AND id = #{code}
+                        AND code = #{code}
                     </if>
                                 <if test="key != null">
-                        AND id = #{key}
+                        AND key = #{key}
                     </if>
                                 <if test="name1 != null">
-                        AND id = #{name1}
+                        AND name1 = #{name1}
                     </if>
                                 <if test="name2 != null">
-                        AND id = #{name2}
+                        AND name2 = #{name2}
                     </if>
                                 <if test="name3 != null">
-                        AND id = #{name3}
+                        AND name3 = #{name3}
                     </if>
                                 <if test="name4 != null">
-                        AND id = #{name4}
+                        AND name4 = #{name4}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
                         </where>
     </select>
@@ -53,43 +53,43 @@
                     </if> 
                 
                     <if test="code != null">
-                        AND id = #{code}
+                        AND code = #{code}
                     </if> 
                 
                     <if test="key != null">
-                        AND id = #{key}
+                        AND key = #{key}
                     </if> 
                 
                     <if test="name1 != null">
-                        AND id = #{name1}
+                        AND name1 = #{name1}
                     </if> 
                 
                     <if test="name2 != null">
-                        AND id = #{name2}
+                        AND name2 = #{name2}
                     </if> 
                 
                     <if test="name3 != null">
-                        AND id = #{name3}
+                        AND name3 = #{name3}
                     </if> 
                 
                     <if test="name4 != null">
-                        AND id = #{name4}
+                        AND name4 = #{name4}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
         </where> limit 1
     </select>

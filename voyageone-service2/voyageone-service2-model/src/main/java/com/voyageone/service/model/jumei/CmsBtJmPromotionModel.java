@@ -16,13 +16,13 @@ public class CmsBtJmPromotionModel implements Serializable
         setCmsBtJmMasterBrandName(""); 
         setBrand(""); 
         setCategory(""); 
+        setActivityStart(DateHelp.getDefaultDate());
         setActivityEnd(DateHelp.getDefaultDate());
         setPrePeriodStart(DateHelp.getDefaultDate());
         setPrePeriodEnd(DateHelp.getDefaultDate());
         setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
-        setActivityStart(DateHelp.getDefaultDate());
 
     }
  
@@ -82,6 +82,12 @@ public class CmsBtJmPromotionModel implements Serializable
     
     
  /**
+活动开始时间
+        */
+     private Date activityStart;
+    
+    
+ /**
 活动结束时间
         */
      private Date activityEnd;
@@ -127,12 +133,6 @@ public class CmsBtJmPromotionModel implements Serializable
 修改人
         */
      private String modifier;
-    
-    
- /**
-活动开始时间
-        */
-     private Date activityStart;
     
     
  /**
@@ -317,6 +317,27 @@ this.category="";
     
         
          /**
+           活动开始时间
+        */
+        public Date getActivityStart()
+        {
+         
+        return this.activityStart;
+        }
+        public void setActivityStart(Date activityStart)
+        {
+       if(activityStart!=null){
+this.activityStart=activityStart;
+ }
+else
+{
+this.activityStart=DateHelp.getDefaultDate();
+}
+
+        }
+    
+        
+         /**
            活动结束时间
         */
         public Date getActivityEnd()
@@ -465,27 +486,6 @@ this.modifier=modifier;
 else
 {
 this.modifier="";
-}
-
-        }
-    
-        
-         /**
-           活动开始时间
-        */
-        public Date getActivityStart()
-        {
-         
-        return this.activityStart;
-        }
-        public void setActivityStart(Date activityStart)
-        {
-       if(activityStart!=null){
-this.activityStart=activityStart;
- }
-else
-{
-this.activityStart=DateHelp.getDefaultDate();
 }
 
         }

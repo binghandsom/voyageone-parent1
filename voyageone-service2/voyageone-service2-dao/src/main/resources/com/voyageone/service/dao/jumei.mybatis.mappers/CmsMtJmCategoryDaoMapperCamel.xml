@@ -13,31 +13,31 @@
                         AND id = #{id}
                     </if>
                                 <if test="name != null">
-                        AND id = #{name}
+                        AND name = #{name}
                     </if>
                                 <if test="level != null">
-                        AND id = #{level}
+                        AND level = #{level}
                     </if>
-                                <if test="parent_category_id != null">
-                        AND id = #{parent_category_id}
+                                <if test="parentCategoryId != null">
+                        AND parent_category_id = #{parentCategoryId}
                     </if>
-                                <if test="seo_keywords != null">
-                        AND id = #{seo_keywords}
+                                <if test="seoKeywords != null">
+                        AND seo_keywords = #{seoKeywords}
                     </if>
-                                <if test="seo_description != null">
-                        AND id = #{seo_description}
+                                <if test="seoDescription != null">
+                        AND seo_description = #{seoDescription}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if>
                         </where>
     </select>
@@ -50,39 +50,39 @@
                     </if> 
                 
                     <if test="name != null">
-                        AND id = #{name}
+                        AND name = #{name}
                     </if> 
                 
                     <if test="level != null">
-                        AND id = #{level}
+                        AND level = #{level}
                     </if> 
                 
-                    <if test="parent_category_id != null">
-                        AND id = #{parent_category_id}
+                    <if test="parentCategoryId != null">
+                        AND parent_category_id = #{parentCategoryId}
                     </if> 
                 
-                    <if test="seo_keywords != null">
-                        AND id = #{seo_keywords}
+                    <if test="seoKeywords != null">
+                        AND seo_keywords = #{seoKeywords}
                     </if> 
                 
-                    <if test="seo_description != null">
-                        AND id = #{seo_description}
+                    <if test="seoDescription != null">
+                        AND seo_description = #{seoDescription}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND id = #{modified}
+                        AND modified = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND id = #{modifier}
+                        AND modifier = #{modifier}
                     </if> 
         </where> limit 1
     </select>

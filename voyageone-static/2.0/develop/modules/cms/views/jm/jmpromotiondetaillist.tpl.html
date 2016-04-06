@@ -72,24 +72,24 @@
 									<label class="col-sm-3 control-label">状态</label>
 									<div class="col-sm-8" style="padding-left:0px">
 										<label class="checkbox-inline c-checkbox" style="margin-left:4px">
-											<input type="checkbox" ng-model="seacheInfo.synchState" />
+											<input type="checkbox" ng-model="seacheInfo.synchState0" />
 											<span class="fa fa-check"></span>&nbsp;导入成功&nbsp;</label>
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox"/>
+											<input type="checkbox" ng-model="seacheInfo.synchState1" />
 											<span class="fa fa-check"></span>&nbsp;待上传&nbsp;</label>
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox">
-											<span class="fa fa-check"></span>&nbsp;上传异常&nbsp;</label>
+										<input type="checkbox"  ng-model="seacheInfo.synchState2"/>
+										<span class="fa fa-check" ></span>&nbsp;上传成功&nbsp;</label>
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox"/>
-											<span class="fa fa-check"></span>&nbsp;上传成功&nbsp;</label>
+											<input type="checkbox" ng-model="seacheInfo.synchState3" >
+											<span class="fa fa-check"></span>&nbsp;上传异常&nbsp;</label>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">折扣</label>
 									<div class="col-sm-8 form-inline">
-										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginDiscount" placeholder="from"></div>&nbsp;~&nbsp;
-										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endDiscount" placeholder="to"></div>
+										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="seacheInfo.beginDiscount" placeholder="from"></div>&nbsp;~&nbsp;
+										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="seacheInfo.endDiscount" placeholder="to"></div>
 									</div>
 								</div>
 								<div class="form-group">
@@ -106,8 +106,8 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label"></label>
 									<div class="col-sm-8 form-inline">
-										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="beginPrice" placeholder="from"></div>&nbsp;~&nbsp;
-										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="endPrice" placeholder="to"></div>
+										<div class="input-group col-sm-4"> <input type="text" class="form-control"  ng-model="seacheInfo.beginPrice"  placeholder="from" /> </div>&nbsp;~&nbsp;
+										<div class="input-group col-sm-4" ><input type="text" class="form-control"  ng-model="seacheInfo.endPrice"     placeholder="to"  /> </div>
 									</div>
 								</div>
 							</div>
@@ -221,7 +221,7 @@
 					<tr>
 						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label>
 						</th>
-						<th class="text-center">产品</th>
+						<!--<th class="text-center">产品</th>-->
 						<th class="mfb-xxx text-left">聚美类目</th>
 						<th class="text-center">PC模块ID</th>
 						<th class="text-center">APP模块ID</th>
@@ -239,109 +239,54 @@
 						<th>Action</th>
 					</tr>
 					</thead>
-					<tbody>
-					<tr>
+					<tbody ng-if="vm.modelList.length">
+					<tr ng-repeat="model in vm.modelList">
 						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></td>
-						<td class="text-center"><img alt="100001" class="img-circle"></td>
-						<td class="mfb-xxx text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">69854</td>
-						<td class="text-center">32564</td>
+						<!--<td class="text-center"><img alt="100001" class="img-circle"></td>-->
+						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
+						<td class="text-center">{{model.pcId}}</td>
+						<td class="text-center">{{model.appId}}</td>
+						<td class="text-center">{{model.juMeiProductId}}</td>
 						<td class="text-center">
-							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail('lg')">123456</button>
+							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail('lg')">{{model.productCode}}</button>
 						</td>
-						<td>ht1457941547p2442451</td>
-						<td>Jimmy Choo时尚单鞋</td>
-						<td>Jimmy Choo时尚单鞋</td>
+						<td>{{model.jmHashId}}</td>
+						<td>{{model.productLongName}}</td>
+						<td>{{model.productShortName}}</td>
 						<td>
 							<div class="table_main">
 								<ul>
-									<li>MSRP: 538</li>
-									<li>Retail Price：420</li>
-									<li>Sale Price: 538</li>
+									<li>MSRP: {{model.msrp}}</li>
+									<li>Retail Price：{{model.dealPrice}}</li>
+									<li>Sale Price: {{model.marketPrice}}</li>
 								</ul>
 							</div>
 						</td>
-						<td><input/></td>
+						<td><input ng-model="model.msrp"/></td>
 						<td>
 							<div class="table_main">
 							<ul>
-								<li>Red</li>
-								<li>红色</li>
+								<li>{{model.colorEn}}</li>
+								<li>{{model.attribute}}</li>
 							</ul>
 						   </div>
 						</td>
-						<td>7折</td>
+						<td>{{model.discount}}</td>
 						<td>
 							<small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;1、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;,&quot;2、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;,&quot;3、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;])" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
 								<div class="table_main">
 									<ul>
-									   <li>10</li>
+									   <li>{{model.skuCount}}</li>
 								    </ul>
 								</div>
 							</small>
 						</td>
-						<td>待再售</td>
+						<td>{{model.state=="1"?"待再售":"在售"}}</td>
 						<td>
 							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
 							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail('md')"><i class="fa fa-pencil"></i></button>
 							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-						</td>
-					</tr>
-					<tr>
-						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></td>
-						<td class="text-center"><img alt="100001" class="img-circle"></td>
-						<td class="mfb-xxx text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-						<td class="text-center">856423</td>
-						<td class="text-center">69854</td>
-						<td class="text-center">32564</td>
-						<td class="text-center">
-							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail('lg')">123456</button>
-						</td>
-						<td>ht1457941547p2442451</td>
-						<td>Jimmy Choo时尚单鞋</td>
-						<td>Jimmy Choo时尚单鞋</td>
-						<td>
-							<div class="table_main">
-								<ul>
-									<li>MSRP: 538</li>
-									<li>Retail Price：420</li>
-									<li>Sale Price: 538</li>
-								</ul>
-							</div>
-						</td>
-						<td><input/></td>
-						<td>
-							<div class="table_main">
-								<ul>
-									<li>Red</li>
-									<li>红色</li>
-								</ul>
-							</div>
-						</td>
-						<td>7折</td>
-						<td>
-							<small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;1、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;,&quot;2、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;,&quot;3、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;])" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
-								<div class="table_main">
-									<ul>
-										<li>10</li>
-									</ul>
-								</div>
-							</small>
-						</td>
-						<td>待再售</td>
-						<td>
-							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
-							<button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-							<button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-							<!--<select class="form-control text-vo">
-								<option>重刷</option>
-								<option>编辑</option>
-								<option>保存</option>
-								<option>删除</option>
-							</select>-->
 						</td>
 					</tr>
 					</tbody>
@@ -502,8 +447,8 @@
 		</tab>
 		</tabset>
 		</div>
-		<div class="m-t-xs">
-			<vpagination config="vm.errorPageOption"></vpagination>
-		</div>
+		<!--<div class="m-t-xs">-->
+			<!--<vpagination config="vm.errorPageOption"></vpagination>-->
+		<!--</div>-->
 	</div>
 </div><!-- end .wrapper-md -->

@@ -12,26 +12,26 @@
                 <if test="id != null">
                         AND id = #{id}
                     </if>
-                                <if test="jm_bt_promotion_id != null">
-                        AND id = #{jm_bt_promotion_id}
+                                <if test="jmBtPromotionId != null">
+                        AND jm_bt_promotion_id = #{jmBtPromotionId}
                     </if>
-                                <if test="begin_time != null">
-                        AND id = #{begin_time}
+                                <if test="beginTime != null">
+                        AND begin_time = #{beginTime}
                     </if>
-                                <if test="end_time != null">
-                        AND id = #{end_time}
+                                <if test="endTime != null">
+                        AND end_time = #{endTime}
                     </if>
-                                <if test="error_msg != null">
-                        AND id = #{error_msg}
+                                <if test="errorMsg != null">
+                        AND error_msg = #{errorMsg}
                     </if>
                                 <if test="state != null">
-                        AND id = #{state}
+                        AND state = #{state}
                     </if>
                                 <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if>
                         </where>
     </select>
@@ -43,32 +43,32 @@
                         AND id = #{id}
                     </if> 
                 
-                    <if test="jm_bt_promotion_id != null">
-                        AND id = #{jm_bt_promotion_id}
+                    <if test="jmBtPromotionId != null">
+                        AND jm_bt_promotion_id = #{jmBtPromotionId}
                     </if> 
                 
-                    <if test="begin_time != null">
-                        AND id = #{begin_time}
+                    <if test="beginTime != null">
+                        AND begin_time = #{beginTime}
                     </if> 
                 
-                    <if test="end_time != null">
-                        AND id = #{end_time}
+                    <if test="endTime != null">
+                        AND end_time = #{endTime}
                     </if> 
                 
-                    <if test="error_msg != null">
-                        AND id = #{error_msg}
+                    <if test="errorMsg != null">
+                        AND error_msg = #{errorMsg}
                     </if> 
                 
                     <if test="state != null">
-                        AND id = #{state}
+                        AND state = #{state}
                     </if> 
                 
                     <if test="created != null">
-                        AND id = #{created}
+                        AND created = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND id = #{creater}
+                        AND creater = #{creater}
                     </if> 
         </where> limit 1
     </select>
