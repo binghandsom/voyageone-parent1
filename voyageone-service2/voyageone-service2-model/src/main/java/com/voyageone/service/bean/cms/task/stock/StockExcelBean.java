@@ -10,32 +10,32 @@ public class StockExcelBean {
         property1, property2, property3, property4
     }
 
-    private String product_model;
-    private String product_code;
+    private String productModel;
+    private String productCode;
     private String sku;
-    private String cart_id;
+    private String cartId;
     private String property1;
     private String property2;
     private String property3;
     private String property4;
     private BigDecimal qty;
-    private BigDecimal separate_qty;
+    private BigDecimal separateQty;
     private String status;
 
-    public String getProduct_model() {
-        return product_model;
+    public String getProductModel() {
+        return productModel;
     }
 
-    public void setProduct_model(String product_model) {
-        this.product_model = product_model;
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
     }
 
-    public String getProduct_code() {
-        return product_code;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setProduct_code(String product_code) {
-        this.product_code = product_code;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public String getSku() {
@@ -46,12 +46,12 @@ public class StockExcelBean {
         this.sku = sku;
     }
 
-    public String getCart_id() {
-        return cart_id;
+    public String getCartId() {
+        return cartId;
     }
 
-    public void setCart_id(String cart_id) {
-        this.cart_id = cart_id;
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
     }
 
     public String getProperty1() {
@@ -94,12 +94,12 @@ public class StockExcelBean {
         this.qty = qty;
     }
 
-    public BigDecimal getSeparate_qty() {
-        return separate_qty;
+    public BigDecimal getSeparateQty() {
+        return separateQty;
     }
 
-    public void setSeparate_qty(BigDecimal separate_qty) {
-        this.separate_qty = separate_qty;
+    public void setSeparateQty(BigDecimal separateQty) {
+        this.separateQty = separateQty;
     }
 
     public String getStatus() {

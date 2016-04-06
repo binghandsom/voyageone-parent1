@@ -2420,7 +2420,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map> propertyList = (List<Map>) param.get("propertyList");
 
         for (StockExcelBean rowData : resultData) {
-            cart_id = rowData.getCart_id();
+            cart_id = rowData.getCartId();
             if (!mapCartCol.containsKey(cart_id)) {
                 continue;
             }
@@ -2431,8 +2431,8 @@ public class CmsTaskStockService extends BaseAppService {
                 row = FileUtils.row(sheet, lineIndex++);
                 colIndex = 0;
 
-                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProduct_model()); // Model
-                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProduct_code()); // Code
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProductModel()); // Model
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProductCode()); // Code
                 FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getSku()); // Sku
 
                 // 属性
@@ -2447,7 +2447,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparate_qty().toPlainString()));
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
 
                 CellStyle cellStyle = book.createCellStyle();
@@ -2460,7 +2460,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparate_qty().toPlainString()));
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
             }
         }
@@ -2495,10 +2495,10 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String, Map<String, StockExcelBean>> mapSkuInDB = new HashMap<String, Map<String, StockExcelBean>>();
         for (StockExcelBean rowData : resultData) {
             if (mapSkuInDB.containsKey(rowData.getSku())) {
-                mapSkuInDB.get(rowData.getSku()).put(rowData.getCart_id(), rowData);
+                mapSkuInDB.get(rowData.getSku()).put(rowData.getCartId(), rowData);
             } else {
                 mapSkuInDB.put(rowData.getSku(), new HashMap<String, StockExcelBean>() {{
-                    put(rowData.getCart_id(), rowData);
+                    put(rowData.getCartId(), rowData);
                 }});
             }
         }
@@ -2758,10 +2758,10 @@ public class CmsTaskStockService extends BaseAppService {
                 }
 
                 StockExcelBean bean = new StockExcelBean();
-                bean.setProduct_model(model);
-                bean.setProduct_code(code);
+                bean.setProductModel(model);
+                bean.setProductCode(code);
                 bean.setSku(sku);
-                bean.setCart_id(cartId);
+                bean.setCartId(cartId);
                 for (int c = 3; c <= colPlatform[0] - 2; c++) {
                     // 属性
                     bean.setProperty(getCellCommentValue(rowHeader, c), getCellValue(row, c));
@@ -2769,9 +2769,9 @@ public class CmsTaskStockService extends BaseAppService {
                 bean.setQty(new BigDecimal(usableStock));
                 if (isDYNAMIC) {
                     // 动态
-                    bean.setSeparate_qty(new BigDecimal("-1"));
+                    bean.setSeparateQty(new BigDecimal("-1"));
                 } else {
-                    bean.setSeparate_qty(new BigDecimal(separate_qty));
+                    bean.setSeparateQty(new BigDecimal(separate_qty));
                     bean.setStatus(STATUS_READY);
                 }
 
@@ -2786,10 +2786,10 @@ public class CmsTaskStockService extends BaseAppService {
                 if (beanInDB == null) {
                     throw new BusinessException("Sku=" + sku + "的DB数据的平台信息错误！");
                 }
-                if (!model.equals(beanInDB.getProduct_model())) {
+                if (!model.equals(beanInDB.getProductModel())) {
                     throw new BusinessException("变更方式导入时,Model不能变更！" + "Sku=" + sku);
                 }
-                if (!code.equals(beanInDB.getProduct_code())) {
+                if (!code.equals(beanInDB.getProductCode())) {
                     throw new BusinessException("变更方式导入时,Code不能变更！" + "Sku=" + sku);
                 }
                 if (!sku.equals(beanInDB.getSku())) {
@@ -2823,7 +2823,7 @@ public class CmsTaskStockService extends BaseAppService {
                         }
                     } else {
                         // 非动态
-                        if (StringUtils.isEmpty(dbStatus) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
+                        if (StringUtils.isEmpty(dbStatus) || !separate_qty.equals(beanInDB.getSeparateQty().toPlainString())) {
                             // DB动态或数量不一致
                             isUpdate = true;
                         }
@@ -2832,10 +2832,10 @@ public class CmsTaskStockService extends BaseAppService {
 
                 if (isUpdate) {
                     StockExcelBean bean = new StockExcelBean();
-                    bean.setProduct_model(model);
-                    bean.setProduct_code(code);
+                    bean.setProductModel(model);
+                    bean.setProductCode(code);
                     bean.setSku(sku);
-                    bean.setCart_id(cartId);
+                    bean.setCartId(cartId);
                     for (int c = 3; c <= colPlatform[0] - 2; c++) {
                         // 属性
                         bean.setProperty(getCellCommentValue(rowHeader, c), getCellValue(row, c));
@@ -2843,9 +2843,9 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setQty(new BigDecimal(usableStock));
                     if (isDYNAMIC) {
                         // 动态
-                        bean.setSeparate_qty(new BigDecimal("-1"));
+                        bean.setSeparateQty(new BigDecimal("-1"));
                     } else {
-                        bean.setSeparate_qty(new BigDecimal(separate_qty));
+                        bean.setSeparateQty(new BigDecimal(separate_qty));
                         if (STATUS_SEPARATE_SUCCESS.equals(dbStatus)) {
                             bean.setStatus(STATUS_CHANGED);
                             if(mapSku.containsKey(cartId)) {
@@ -2896,8 +2896,8 @@ public class CmsTaskStockService extends BaseAppService {
                     mapSaveData.put("modifier", creater);
                     for (StockExcelBean bean : saveData) {
                         mapSaveData.put("sku", bean.getSku());
-                        mapSaveData.put("cartId", bean.getCart_id());
-                        mapSaveData.put("separateQty", bean.getSeparate_qty());
+                        mapSaveData.put("cartId", bean.getCartId());
+                        mapSaveData.put("separateQty", bean.getSeparateQty());
                         mapSaveData.put("status", StringUtils.null2Space(bean.getStatus()));
 
                         updateImportData(mapSaveData);
@@ -2929,7 +2929,7 @@ public class CmsTaskStockService extends BaseAppService {
                             throw new BusinessException("导入文件有数据异常");
                         }
 
-                        mapSaveData.put("task_id", task_id);
+                        mapSaveData.put("taskId", task_id);
                         mapSaveData.put("creater", creater);
                         mapSaveData.put("channelId", channelId);
 
@@ -2958,7 +2958,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param saveData 保存对象
      */
     private void insertImportData(List<Map<String, Object>> saveData) {
-        cmsBtStockSeparateItemDao.insertStockSeparateItemFromExcel(saveData);
+        cmsBtStockSeparateItemDao.insertStockSeparateItemByList(saveData);
     }
 
     /**
