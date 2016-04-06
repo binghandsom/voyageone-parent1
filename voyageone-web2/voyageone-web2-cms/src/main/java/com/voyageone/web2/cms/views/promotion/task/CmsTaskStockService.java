@@ -670,7 +670,7 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
                 }else{
                     String[] separateValue = value.split("%");
-                    if (StringUtils.isEmpty(separateValue[0])||separateValue[0].getBytes().length>2) {
+                    if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])||separateValue[0].getBytes().length>2) {
                         throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
                     }
                 }
@@ -679,7 +679,7 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException("增优先顺为大于0的整数！");
                 }
                 //减优先顺
-                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
+                if (StringUtils.isEmpty(subtractPriority)||!StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
                     throw new BusinessException("减优先顺为大于0的整数！");
                 }
                 //隔离结束时间必须是时间格式
