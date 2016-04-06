@@ -1,10 +1,7 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
@@ -43,6 +40,15 @@ public class StockSeparateService extends BaseTaskService {
 
     private static final String ERROR_MSG = "此sku在别的隔离平台有暂时不能隔离的数据";
 
+    /** 等待隔离状态隔离失败件数 */
+    private int cntError;
+    /** 隔离成功状态重新隔离件数 */
+    private int cntSuccess;
+    /** 隔离件数(包含此sku下的动态平台，即隔离表的更新件数) */
+    private int cntSeparate;
+    /** 推送件数 */
+    private int cntSend;
+
     /**
      * 获取子系统
      */
@@ -66,6 +72,11 @@ public class StockSeparateService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        cntError = 0;
+        cntSuccess = 0;
+        cntSeparate = 0;
+        cntSend = 0;
+
         Map<String, Object> param = new HashMap<>();
         param.put("status", stockInfoService.STATUS_WAITING_SEPARATE);
 
@@ -135,6 +146,10 @@ public class StockSeparateService extends BaseTaskService {
             executeByChannel(channelId, resultDataByChannel.get(channelId));
         }
 
+        $info("处理了等待隔离状态隔离失败件数为%d件", cntError);
+        $info("处理了隔离成功状态重新隔离件数为%d件", cntSuccess);
+        $info("处理了隔离件数(包含此sku下的动态平台，即隔离表的更新件数)为%d件", cntSeparate);
+        $info("处理了推送件数为%d件", cntSend);
     }
 
     /**
@@ -223,7 +238,7 @@ public class StockSeparateService extends BaseTaskService {
                         } else {
                             updateParam.put("skuList", listErrorSku.subList(index, listErrorSku.size()));
                         }
-                        cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                        cntError += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                     }
                 }
 
@@ -241,7 +256,7 @@ public class StockSeparateService extends BaseTaskService {
                         } else {
                             updateParam.put("skuList", listSuccessStatusSku.subList(index, listSuccessStatusSku.size()));
                         }
-                        cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                        cntSuccess += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                     }
                 }
 
@@ -286,6 +301,7 @@ public class StockSeparateService extends BaseTaskService {
         List<Integer> listShareCartId = stockInfoService.getShareCartId(channelId, null, null);
 
         $info("更新处理开始,渠道是%s", channelId);
+        List<Map<String, Object>> listImsBtLogSynInventory = new ArrayList<>();
         try {
             transactionRunner.runWithTran(() -> {
                 // 计算隔离库存,更新
@@ -334,7 +350,6 @@ public class StockSeparateService extends BaseTaskService {
                                 // 更新cms_bt_stock_separate_item库存隔离数据表
                                 Map<String, Object> updateParam = new HashMap<>();
                                 updateParam.put("qty", skuStockUsableAll.get(sku));
-                                updateParam.put("status", stockInfoService.STATUS_SEPARATING);
                                 updateParam.put("modifier", getTaskName());
                                 updateParam.put("taskId", taskId);
                                 updateParam.put("sku", sku);
@@ -344,10 +359,11 @@ public class StockSeparateService extends BaseTaskService {
                                 if (separateQty == null) {
                                     // 动态
                                     separateQty = cartDisplayQty.get(-1);
-                                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                                    cntSeparate += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
 
                                     // 更新ims_bt_log_syn_inventory
-                                    stockInfoService.insertImsBtLogSynInventory(
+                                    listImsBtLogSynInventory.add(
+                                        stockInfoService.createMapImsBtLogSynInventory(
                                             channelId,
                                             cartId,
                                             sku,
@@ -355,13 +371,15 @@ public class StockSeparateService extends BaseTaskService {
                                             stockInfoService.SYN_TYPE_ALL,
                                             null,
                                             null,
-                                            getTaskName());
+                                            getTaskName()));
                                 } else {
+                                    updateParam.put("status", stockInfoService.STATUS_SEPARATING);
                                     updateParam.put("separateQty", separateQty);
-                                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                                    cntSeparate += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
 
                                     // 更新ims_bt_log_syn_inventory
-                                    stockInfoService.insertImsBtLogSynInventory(
+                                    listImsBtLogSynInventory.add(
+                                        stockInfoService.createMapImsBtLogSynInventory(
                                             channelId,
                                             cartId,
                                             sku,
@@ -369,7 +387,7 @@ public class StockSeparateService extends BaseTaskService {
                                             stockInfoService.SYN_TYPE_ALL,
                                             cartSeq.get(cartId),
                                             stockInfoService.STATUS_SEPARATING,
-                                            getTaskName());
+                                            getTaskName()));
                                 }
                             }
                         }
@@ -378,17 +396,28 @@ public class StockSeparateService extends BaseTaskService {
                             // 共享平台
                             Integer separateQty = cartDisplayQty.get(-1);
                             // 更新ims_bt_log_syn_inventory
-                            stockInfoService.insertImsBtLogSynInventory(
-                                    channelId,
-                                    cartId,
-                                    sku,
-                                    separateQty,
-                                    stockInfoService.SYN_TYPE_ALL,
-                                    null,
-                                    null,
-                                    getTaskName());
+                            listImsBtLogSynInventory.add(
+                                stockInfoService.createMapImsBtLogSynInventory(
+                                        channelId,
+                                        cartId,
+                                        sku,
+                                        separateQty,
+                                        stockInfoService.SYN_TYPE_ALL,
+                                        null,
+                                        null,
+                                        getTaskName()));
+                        }
+
+                        // 一个sku结束
+                        if (listImsBtLogSynInventory.size() > 500) {
+                            cntSend += stockInfoService.insertImsBtLogSynInventory(listImsBtLogSynInventory);
+                            listImsBtLogSynInventory.clear();
                         }
                     }
+
+                    // 一个task结束
+                    cntSend += stockInfoService.insertImsBtLogSynInventory(listImsBtLogSynInventory);
+                    listImsBtLogSynInventory.clear();
                 }
             });
         } catch (Exception e) {

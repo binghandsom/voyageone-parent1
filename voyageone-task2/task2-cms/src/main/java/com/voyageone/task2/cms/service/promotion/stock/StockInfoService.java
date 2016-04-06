@@ -275,7 +275,7 @@ public class StockInfoService {
     }
 
     /**
-     * ims_bt_log_syn_inventory插入处理
+     * ims_bt_log_syn_inventory插入Map生成
      *
      * @param channelId 渠道id
      * @param cartId 平台
@@ -286,16 +286,26 @@ public class StockInfoService {
      * @param separateStatus 隔离状态(2：隔离中, 6：还原中， null：隔离对象外或增量时)
      * @param creater 创建者
      */
-    public void insertImsBtLogSynInventory(String channelId, Integer cartId, String sku, Integer qty, String synType, Integer separateSeq, String separateStatus, String creater) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("channelId",channelId);
-        param.put("cartId",cartId);
-        param.put("sku",sku);
-        param.put("qty",qty);
-        param.put("synType",synType);
-        param.put("separateSeq",separateSeq);
-        param.put("separateStatus",separateStatus);
-        param.put("creater",creater);
-        imsBtLogSynInventoryDao.insert(param);
+    public Map<String, Object> createMapImsBtLogSynInventory(String channelId, Integer cartId, String sku, Integer qty, String synType, Integer separateSeq, String separateStatus, String creater) {
+        Map<String, Object> retMap = new HashMap<>();
+        retMap.put("channelId",channelId);
+        retMap.put("cartId",cartId);
+        retMap.put("sku",sku);
+        retMap.put("qty",qty);
+        retMap.put("synType",synType);
+        retMap.put("separateSeq",separateSeq);
+        retMap.put("separateStatus",separateStatus);
+        retMap.put("creater",creater);
+        return retMap;
+    }
+
+    /**
+     * ims_bt_log_syn_inventory插入处理
+     *
+     * @param listData 更新对象
+     * @return 更新件数
+     */
+    public int insertImsBtLogSynInventory(List<Map<String, Object>> listData) {
+        return imsBtLogSynInventoryDao.insertByList(listData);
     }
 }
