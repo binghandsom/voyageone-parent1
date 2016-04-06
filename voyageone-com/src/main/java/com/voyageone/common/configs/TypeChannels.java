@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -54,8 +55,18 @@ public class TypeChannels {
         keySet.forEach(k->{
             if(k.startsWith(type + CacheKeyEnums.SKIP + channel_id + CacheKeyEnums.SKIP)) keyList.add(k);
         });
-        Collections.sort(keyList);
-        return CollectionUtils.isEmpty(keyList)?null: CacheHelper.getBeans(KEY,keyList, selfClass);
+        List<TypeChannelBean> beans=CacheHelper.getBeans(KEY,keyList, selfClass);
+        return CollectionUtils.isEmpty(beans)
+                ? null
+                : beans
+                    .stream()
+                    .sorted((a,b)->{
+                        if(a.getType_id()>b.getType_id()) return 1;
+                        if(a.getType_id()==b.getType_id()&&a.getDisplay_order()>b.getDisplay_order()) return 1;
+                        if(a.getType_id()==b.getType_id()&&a.getDisplay_order()==b.getDisplay_order()) return a.getValue().compareTo(b.getValue());
+                        return -1;
+                    })
+                    .collect(Collectors.toList());
     }
 
     /**
