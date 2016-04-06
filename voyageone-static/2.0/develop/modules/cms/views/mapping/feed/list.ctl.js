@@ -61,9 +61,15 @@ define([
              * 更新默认 Mapping
              */
             resetDefaultMapping: function(mapping) {
+                var defMappingIndex = 0;
                 if (!(mapping instanceof MappingBean)) mapping = new MappingBean(mapping);
-                var defMappingIndex = this.mappings.indexOf(this.defaultMapping);
-                this.mappings[defMappingIndex] = this.defaultMapping = this.selectedMapping = mapping;
+                if (!this.mappings) {
+                    this.mappings = [];
+                } else {
+                    defMappingIndex = this.mappings.indexOf(this.defaultMapping);
+                }
+                this.mappings[defMappingIndex] = mapping;
+                this.defaultMapping = this.selectedMapping = mapping;
             }
         };
 

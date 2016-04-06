@@ -145,9 +145,6 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
 
         /**
          * 生成类目数据包含model product数据
-         *
-         * @param categoryPath
-         * @return
          */
         protected List<CmsBtFeedInfoModel> getCategoryInfo(String categoryPath) throws Exception {
 
@@ -188,7 +185,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
                     updateFull(itemIds);
                     productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
                 }catch (Exception e){
-                    logger.error(e.getMessage());
+                    $error(e.getMessage());
                     issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 }
             }
@@ -198,8 +195,6 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
 
         /**
          * 导入成功的FEED数据保存起来
-         *
-         * @param itemIds
          */
         @Transactional
         protected void updateFull(List<String> itemIds) {

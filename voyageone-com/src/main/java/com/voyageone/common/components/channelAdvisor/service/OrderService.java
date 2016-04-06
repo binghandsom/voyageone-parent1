@@ -12,7 +12,7 @@ import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.JaxbUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sn3 on 2015-08-14.
@@ -27,7 +27,7 @@ public class OrderService extends CaBase {
      * @param configs 配置信息bean
      * @return OrderResponseItem bean对象
      */
-    public APIResultOfArrayOfOrderResponseItem getOrderList(OrderCriteria orderCriteria, HashMap<String, ThirdPartyConfigBean> configs) throws Exception {
+    public APIResultOfArrayOfOrderResponseItem getOrderList(OrderCriteria orderCriteria, Map<String, ThirdPartyConfigBean> configs) throws Exception {
         String responseXmlStr = reqCaApiOnTimeoutRepert(configs.get(CaConstants.OrderList.URL).getProp_val1(),
                                                         configs.get(CaConstants.NAMESPACE).getProp_val1() + "GetOrderList",
                                                         createParamXmlStr(orderCriteria, configs));
@@ -36,7 +36,7 @@ public class OrderService extends CaBase {
     }
 
     //设置请求参数，创建参数xml
-    private String createParamXmlStr(OrderCriteria orderCriteria, HashMap<String, ThirdPartyConfigBean> configs) {
+    private String createParamXmlStr(OrderCriteria orderCriteria, Map<String, ThirdPartyConfigBean> configs) {
         try {
             //设置Hearder内容 apiCredentials 对象
             APICredentials apiCredentials = new APICredentials();
@@ -56,9 +56,9 @@ public class OrderService extends CaBase {
     private String beanToXml(APICredentials aPICredentials, GetOrderList getOrderList){
         try {
             OrderListSoapenv soapenv = new OrderListSoapenv(aPICredentials, getOrderList);
-            String xmlStr = JaxbUtil.convertToXml(soapenv, "UTF-8");
+            return JaxbUtil.convertToXml(soapenv, "UTF-8");
             //logger.info("参数xml内容：" + xmlStr);
-            return xmlStr;
+            //return xmlStr;
         }catch (Exception e){
             throw new RuntimeException("将bean转化成Xml错误" + e);
         }

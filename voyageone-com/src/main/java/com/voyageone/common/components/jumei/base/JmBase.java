@@ -10,8 +10,8 @@ import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import java.util.TreeMap;
  */
 public class JmBase {
 
-    protected Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final int C_MAX_API_REPEAT_TIME = 3;
 

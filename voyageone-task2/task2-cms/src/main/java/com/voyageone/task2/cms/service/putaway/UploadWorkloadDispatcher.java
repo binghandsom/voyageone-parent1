@@ -4,8 +4,8 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.SkuInventoryDao;
 import com.voyageone.common.components.issueLog.IssueLog;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +18,10 @@ import java.util.*;
  */
 @Repository
 public class UploadWorkloadDispatcher {
-    private Map<StoreKey, List<UploadJob>> upJobMap;
-    private static Log logger = LogFactory.getLog(UploadWorkloadDispatcher.class);
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final Map<StoreKey, List<UploadJob>> upJobMap;
     private int jobCountPerCartChannel;
     private final static int DEFAULT_JOB_COUNT_PER_CART_CHANNEL = 3;
 
@@ -30,7 +32,7 @@ public class UploadWorkloadDispatcher {
     private JobStateCb jobStateCb;
 
     //用于向主线程发送信号
-    private Object mainThreadSingal;
+    private final Object mainThreadSingal;
 
     @Autowired
     private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
@@ -98,14 +100,12 @@ public class UploadWorkloadDispatcher {
      * 根据store和任务状态分发，一个store的多个任务根据任务状态要配给两个线程
      * 如果任务处于上传图片状态，交由UploadImageHandler处理，否则，交由UploadProductHandler
      * */
-   public void dispatchWorkload(WorkLoadBean workLoadBean)
-   {
+   public void dispatchWorkload(WorkLoadBean workLoadBean) {
        StoreKey storeKey;
        storeKey = new StoreKey(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
        List<UploadJob> uploadJobs = upJobMap.get(storeKey);
        synchronized (upJobMap) {
-           if (uploadJobs == null)
-           {
+           if (uploadJobs == null) {
                uploadJobs = new ArrayList<>();
                upJobMap.put(storeKey, uploadJobs);
            }
@@ -122,7 +122,6 @@ public class UploadWorkloadDispatcher {
            }
        }
        logger.debug("add workload to UploadProductHandler, storeKey:" + storeKey + ", workloadBean:" + workLoadBean);
-
    }
 
     /**
@@ -175,7 +174,7 @@ public class UploadWorkloadDispatcher {
             try {
                 mainThreadSingal.wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }

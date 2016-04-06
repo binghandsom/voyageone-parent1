@@ -1,64 +1,58 @@
 package com.voyageone.common.configs.Enums;
 
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import java.util.Map;
-
 /**
  * @author aooer 2016/3/10.
  * @version 2.0.0
  * @since 2.0.0
  */
-public enum CacheKeyEnums {
+/**
+ * 对应 ct_cart 表中存在的配置名称
+ */
+public class CacheKeyEnums {
 
-    ConfigData_FeedConfigs,
+    public final static String CONFIG_ALL_KEY_REGEX = "ConfigData_*";
 
-    ConfigData_Codes,
+    /* 公用分隔符，防止因分割符产生的bug而声明 */
+    public final static String SKIP = "$-SKIP-$";
 
-    ConfigData_Type,
+    public enum KeyEnum {
 
-    ConfigData_TypeChannel,
+        ConfigData_FeedConfigs,
 
-    ConfigData_ThirdPartyConfigs,
+        ConfigData_Codes,
 
-    ConfigData_ImsCategoryConfigs,
+        ConfigData_Type,
 
-    ConfigData_Properties,
+        ConfigData_TypeChannel,
 
-    ConfigData_CmsChannelConfigs,
+        ConfigData_ThirdPartyConfigs,
 
-    ConfigData_StoreConfigConfigs,
+        ConfigData_ImsCategoryConfigs,
 
-    ConfigData_StoreConfigs,
+        ConfigData_Properties,
 
-    ConfigData_CarrierConfigs,
+        ConfigData_CmsChannelConfigs,
 
-    ConfigData_OrderChannelConfigConfigs,
+        ConfigData_StoreConfigConfigs,
 
-    ConfigData_OrderChannelConfigs,
+        ConfigData_StoreConfigs,
 
-    ConfigData_DiscountRateConfigs,
+        ConfigData_CarrierConfigs,
 
-    ConfigData_PortConfigs,
+        ConfigData_OrderChannelConfigConfigs,
 
-    ConfigData_ShopConfigConfigs,
+        ConfigData_OrderChannelConfigs,
 
-    ConfigData_ShopConfigs,
+        ConfigData_DiscountRateConfigs,
 
-    ConfigData_CartConfigs,
+        ConfigData_PortConfigs,
 
-    ConfigData_$ModifyTime$
-    ;
+        ConfigData_ShopConfigConfigs,
 
-    /**
-     * 根据枚举Key删除，
-     * @return boolean true代表删除成功，false代表删除失败
-     */
-    public boolean delete(){
-        RedisTemplate<String, Map<String, Object>> template=CacheTemplateFactory.getCacheTemplate();
-        if(template.hasKey(this.toString()))
-            template.delete(this.toString());
-        return !template.hasKey(this.toString());
+        ConfigData_ShopConfigs,
+
+        ConfigData_CartConfigs,
+
+        ConfigData_$ModifyTime$;
     }
 }

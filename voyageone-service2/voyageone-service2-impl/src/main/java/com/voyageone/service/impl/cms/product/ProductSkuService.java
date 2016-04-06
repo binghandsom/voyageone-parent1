@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author chuanyu.liang 15/12/9
  * @version 2.0.1
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class ProductSkuService extends BaseService {

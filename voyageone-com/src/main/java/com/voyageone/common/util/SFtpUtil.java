@@ -2,8 +2,8 @@ package com.voyageone.common.util;
 
 import com.jcraft.jsch.*;
 import com.voyageone.common.configs.beans.FtpBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.*;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -13,7 +13,8 @@ import java.util.*;
  */
 public class SFtpUtil {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final static Logger logger = LoggerFactory.getLogger(SFtpUtil.class);
+
     private final String seperator = "/";
 
     /**
@@ -47,8 +48,8 @@ public class SFtpUtil {
                     logger.info(ftpBean.getUpload_filename() + " Ftp 上传文件成功");
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
-                    logger.info(ftpBean.getUpload_filename() + " Ftp 上传文件失败");
+                    logger.error(e.getMessage(), e);
+                    logger.error(ftpBean.getUpload_filename() + " Ftp 上传文件失败");
                 }
             }
         }
@@ -138,7 +139,7 @@ public class SFtpUtil {
         logger.info("  remotePath=" + ftpBean.getDown_remotepath());
         logger.info("  localPath=" + ftpBean.getDown_localpath());
         logger.info("  fileName=" + ftpBean.getDown_filename());
-        int result = 0;
+        int result;
 
         try {
             //下载文件为空，下载全部文件
@@ -152,7 +153,7 @@ public class SFtpUtil {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw e;
         }
 

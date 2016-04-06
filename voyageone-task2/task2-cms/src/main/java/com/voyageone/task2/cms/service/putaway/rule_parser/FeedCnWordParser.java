@@ -5,8 +5,8 @@ import com.voyageone.ims.rule_expression.FeedCnWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,10 @@ import java.util.Map;
  * Created by Leo on 15-6-18.
  */
 public class FeedCnWordParser {
-    private CmsBtProductModel cmsBtProductModel;
 
-    private Log logger = LogFactory.getLog(FeedCnWordParser.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private CmsBtProductModel cmsBtProductModel;
 
     public FeedCnWordParser(CmsBtProductModel cmsBtProductModel) {
         this.cmsBtProductModel = cmsBtProductModel;

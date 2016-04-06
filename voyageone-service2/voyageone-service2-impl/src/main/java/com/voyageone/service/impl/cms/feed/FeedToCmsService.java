@@ -13,6 +13,8 @@ import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class FeedToCmsService {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
@@ -167,7 +171,7 @@ public class FeedToCmsService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 failProduct.add(product);
             }
         }

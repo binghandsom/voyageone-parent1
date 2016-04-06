@@ -46,17 +46,10 @@ public class GiltOrderService extends GiltBase{
      */
     public GiltOrder patchOrder(GiltPatchOrderRequest request) throws Exception {
         request.check();
-        GiltOrder order=null;
         Map param=JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
         param.remove("id");
-        String result=reqPatchGiltApi(URI +"/"+request.getId(),JacksonUtil.bean2Json(param));
-        try {
-            order=JacksonUtil.json2Bean(result,GiltOrder.class);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
-        return order;
+        String result=reqPatchGiltApi(URI + "/" + request.getId(), JacksonUtil.bean2Json(param));
+        return JacksonUtil.json2Bean(result,GiltOrder.class);
     }
 
     /**
@@ -71,7 +64,7 @@ public class GiltOrderService extends GiltBase{
         Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
         Map<String,String> params=new HashMap<String,String>();
         params.putAll(map);
-        String result=reqGiltApi(URI,params);
+        String result=reqGiltApi(URI, params);
         return JacksonUtil.jsonToBeanList(result,GiltOrder.class);
     }
 

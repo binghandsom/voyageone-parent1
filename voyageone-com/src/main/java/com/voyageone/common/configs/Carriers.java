@@ -5,10 +5,8 @@ import com.voyageone.common.configs.Enums.CarrierEnums;
 import com.voyageone.common.configs.beans.CarrierBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -19,33 +17,22 @@ import java.util.*;
  */
 public class Carriers {
 
-    private static final Log logger = LogFactory.getLog(Carriers.class);
+    private static final Class selfClass = Carriers.class;
+
+    private static final Logger log = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_CarrierConfigs.toString();
-
-    private static HashOperations<String, String, CarrierBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CarrierConfigs.toString();
     /**
      * 初始化相关的基本信息和配置信息
      */
-    static {
-        if (!checkExist()) {
-            List<CarrierBean> allCarriers = ConfigDaoFactory.getCarrierDao().getAll();
-            Map<String, CarrierBean> carrierBeanMap = new HashMap<>();
-            allCarriers.forEach(bean->{
-                carrierBeanMap.put(buildKey(bean.getOrder_channel_id(), bean.getCarrier()), bean);
-            });
-            CacheHelper.reFreshSSB(KEY, carrierBeanMap);
-            logger.info("Carrier 读取数量: " + hashOperations.size(KEY));
-        }
-
+    public static void reload() {
+        List<CarrierBean> allCarriers = ConfigDaoFactory.getCarrierDao().getAll();
+        Map<String, CarrierBean> carrierBeanMap = new HashMap<>();
+        allCarriers.forEach(bean -> carrierBeanMap.put(buildKey(bean.getOrder_channel_id(), bean.getCarrier()), bean));
+        CacheHelper.reFreshSSB(KEY, carrierBeanMap);
+        log.info("Carrier 读取数量: " + CacheHelper.getSize(KEY));
     }
-
-    private static boolean checkExist() {
-        return CacheTemplateFactory.getCacheTemplate().hasKey(KEY);
-    }
-
 
     /**
      * build redis hash Key
@@ -53,7 +40,7 @@ public class Carriers {
      * @return key
      */
     private static String buildKey(String order_channel_id, String name) {
-        return order_channel_id + CacheHelper.SKIP + name;
+        return order_channel_id + CacheKeyEnums.SKIP + name;
     }
 
     /**
@@ -64,7 +51,7 @@ public class Carriers {
      * @return CarrierBean
      */
     public static CarrierBean getCarrier(String order_channel_id, CarrierEnums.Name name) {
-        return hashOperations.get(KEY, buildKey(order_channel_id, name.toString()));
+        return CacheHelper.getBean(KEY, buildKey(order_channel_id, name.toString()), selfClass);
     }
 
     /**
@@ -75,18 +62,18 @@ public class Carriers {
      */
     public static List<CarrierBean> getCarrier(String order_channel_id) {
         List<CarrierBean> carriersList = new ArrayList<>();
-        Set<String> keys = hashOperations.keys(KEY);
+        Set<String> keys = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keys)) {
-            logger.warn("未初始化CarrierBean");
+            log.warn("未初始化CarrierBean");
             return carriersList;
         }
         List<String> filterKeys = new ArrayList<>();
         for (String key : keys) {
-            if (key.startsWith(order_channel_id+CacheHelper.SKIP)) filterKeys.add(key);
+            if (key.startsWith(order_channel_id+ CacheKeyEnums.SKIP)) filterKeys.add(key);
         }
         if (!filterKeys.isEmpty()) {
             Collections.sort(filterKeys);
-            carriersList = hashOperations.multiGet(KEY, filterKeys);
+            carriersList = CacheHelper.getBeans(KEY, filterKeys, selfClass);
         }
         return carriersList;
     }

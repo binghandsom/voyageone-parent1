@@ -9,11 +9,11 @@ import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
 import net.minidev.json.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,7 +28,7 @@ import java.util.List;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class MasterCatSchemaBuildFromTmallServiceTest {
 
-    private static Log logger = LogFactory.getLog(MasterCatSchemaBuildFromTmallServiceTest.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;

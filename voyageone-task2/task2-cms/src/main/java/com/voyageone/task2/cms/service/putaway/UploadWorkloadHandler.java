@@ -5,8 +5,8 @@ import com.voyageone.task2.cms.bean.tcb.TaskStatus;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +17,8 @@ import java.util.List;
  * Note: 为了防止死锁发生，synchronized多个对象时的顺序必须符合pri_running_queue > running_queue > suspend_queue
  */
 public abstract class UploadWorkloadHandler extends Thread{
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected  List<TaskControlBlock> running_queue;
     //优先级高的运行队列
@@ -29,7 +31,6 @@ public abstract class UploadWorkloadHandler extends Thread{
 
     protected boolean allowRun;
     protected TaskStatus taskStatus;
-    private static Log logger = LogFactory.getLog(UploadWorkloadHandler.class);
 
     private IssueLog issueLog;
 
@@ -92,7 +93,6 @@ public abstract class UploadWorkloadHandler extends Thread{
 
     protected void abortTcb(TaskControlBlock currentTcb, RuntimeException re) {
         logger.error(re.getMessage(), re);
-        re.printStackTrace();
         issueLog.log(re, ErrorType.BatchJob, SubSystem.CMS);
         stopTcb(currentTcb);
     }
@@ -376,7 +376,7 @@ public abstract class UploadWorkloadHandler extends Thread{
                     logger.info(getName() + " is blocked");
                     queue_lock.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
             logger.debug("release lock " + queue_lock);

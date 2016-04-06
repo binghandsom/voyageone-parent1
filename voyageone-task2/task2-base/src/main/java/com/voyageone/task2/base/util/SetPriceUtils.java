@@ -23,7 +23,7 @@ public class SetPriceUtils {
     }
 
     /**
-     * @description 根据order_number，以SKU汇总取得价格
+     * 根据order_number，以SKU汇总取得价格
      * @param order_channel_id  渠道ID
      * @param fileFlg 0，3 正常订单
      *                  1，2 退货订单
@@ -131,7 +131,7 @@ public class SetPriceUtils {
     }
 
     /**
-     * @description 根据order_number，以SKU汇总取得价格
+     * 根据order_number，以SKU汇总取得价格
      * @param order_channel_id  渠道ID
      * @param fileFlg 0，3 正常订单
      *                  1，2 退货订单

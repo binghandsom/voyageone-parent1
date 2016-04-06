@@ -17,28 +17,24 @@ import java.util.List;
 @Component
 public class TbSaleService extends TbBase {
 
-
     /**
      * 获取当前会话用户出售中的商品列表
-     * @param strOrderChannelId
-     * @param strCardId
-     * @param strFieldList
-     * @return
+     * @param strOrderChannelId String
+     * @param strCardId String
+     * @param lPageIndex Long
+     * @param strFieldList String
      * @throws ApiException
      */
     public List<Item> getOnsaleProduct(String strOrderChannelId, String strCardId, Long lPageIndex, String strFieldList)throws ApiException{
-
-        ItemsOnsaleGetResponse response = null;
-
         ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
 
         ItemsOnsaleGetRequest req=new ItemsOnsaleGetRequest();
         req.setPageNo(lPageIndex);
         req.setPageNo(lPageIndex);
-        req.setPageSize((long)200);
+        req.setPageSize((long) 200);
         req.setFields(strFieldList);
 
-        response = reqTaobaoApi(shopInfo, req);
+        ItemsOnsaleGetResponse response = reqTaobaoApi(shopInfo, req);
 
         return response.getItems();
     }
