@@ -1229,9 +1229,26 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
 
         // 获取当页表示的库存隔离数据
+        // 因为性能问题，当按某种状态查询时，用sku in ('sku1','sku2'.....)
+        String skuInfo = "";
+        if (!StringUtils.isEmpty((String) param.get("status"))) {
+            Map<String,Object> sqlParam = new HashMap<String,Object>();
+            sqlParam.put("sql", getSkuSql(param, "1"));
+            List<Object> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
+            for (Object sku : skuList) {
+                skuInfo += "'" + ((String)sku) + "',";
+            }
+            // 去掉最后的逗号
+            if (skuList.size() > 0) {
+                skuInfo = skuInfo.substring(0, skuInfo.length() - 1);
+            }
+            if (skuList.size() == 0) {
+                return stockList;
+            }
+        }
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         // 库存隔离明细一页表示的Sku的Sql
-        sqlParam.put("sql", getStockPageSkuSql(param, "1"));
+        sqlParam.put("sql", getStockPageSkuSql(param, "1", skuInfo));
         List<Map<String,Object>> stockCommonList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
         // 实时库存状态查询时用
         param.put("stockCommonList", stockCommonList);
@@ -1351,9 +1368,26 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku基本信息（含逻辑库存）
         List<Map<String, Object>> stockRealList = (List<Map<String, Object>> ) param.get("stockCommonList");
         if (stockRealList == null) {
+            // 因为性能问题，当按某种状态查询时，用sku in ('sku1','sku2'.....)
+            String skuInfo = "";
+            if (!StringUtils.isEmpty((String) param.get("status"))) {
+                Map<String,Object> sqlParam = new HashMap<String,Object>();
+                sqlParam.put("sql", getSkuSql(param, "2"));
+                List<Object> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
+                for (Object sku : skuList) {
+                    skuInfo += "'" + ((String)sku) + "',";
+                }
+                // 去掉最后的逗号
+                if (skuList.size() > 0) {
+                    skuInfo = skuInfo.substring(0, skuInfo.length() - 1);
+                }
+                if (skuList.size() == 0) {
+                    return realStockList;
+                }
+            }
             Map<String, Object> sqlParam = new HashMap<String, Object>();
             // 库存隔离明细一页表示的Sku的Sql
-            sqlParam.put("sql", getStockPageSkuSql(param, "2"));
+            sqlParam.put("sql", getStockPageSkuSql(param, "2", skuInfo));
             stockRealList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
             if (stockRealList == null || stockRealList.size() == 0) {
                 return realStockList;
@@ -3135,9 +3169,10 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @param param 客户端参数
      * @param flg 1:库存隔离明细; 2:实时库存状态
+     * @param  skuInfo sku in（skuInfo）
      * @return 库存隔离明细一页表示的Sku的Sql
      */
-    private String getStockPageSkuSql(Map param, String flg){
+    private String getStockPageSkuSql(Map param, String flg, String skuInfo){
         List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
         String sql = "select t1.product_model, t1.product_code, t1.sku, t1.cart_id, t1.property1, t1.property2, t1.property3, t1.property4, ";
         int index = 1;
@@ -3149,22 +3184,27 @@ public class CmsTaskStockService extends BaseAppService {
         sql += " (select qty_china from wms_bt_inventory_center_logic t50 where order_channel_id = '" + param.get("channelId") + "' and t50.sku = t1.sku) qty_china,";
         sql += " t1.qty";
         sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s1 ";
-        sql += getWhereSql(param, false);
-        if (!StringUtils.isEmpty((String) param.get("status"))) {
-//            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
-//                    " and status = '" + (String) param.get("status") + "')";        }
-            sql += " and exists (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s2 " + getWhereSql(param, false) +
-                    " and status = '" + (String) param.get("status") + "' and s1.seq = s2.seq)";        }
-        sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
-        sql += " order by sku";
-        if ("1".equals(flg)) {
-            String start = String.valueOf(param.get("start1"));
-            String length = String.valueOf(param.get("length1"));
-            sql += " limit " + start + "," + length + ") t1 ";
+        if (StringUtils.isEmpty((String) param.get("status"))) {
+            sql += getWhereSql(param, false);
+            sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
+            sql += " order by sku";
+            if ("1".equals(flg)) {
+                String start = String.valueOf(param.get("start1"));
+                String length = String.valueOf(param.get("length1"));
+                sql += " limit " + start + "," + length + ") t1 ";
+            } else {
+                String start = String.valueOf(param.get("start2"));
+                String length = String.valueOf(param.get("length2"));
+                sql += " limit " + start + "," + length + ") t1 ";
+            }
         } else {
-            String start = String.valueOf(param.get("start2"));
-            String length = String.valueOf(param.get("length2"));
-            sql += " limit " + start + "," + length + ") t1 ";
+            sql += " where sku in (" + skuInfo + ")";
+            sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
+            sql += " order by sku ) t1 ";
+//            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
+//                    " and status = '" + (String) param.get("status") + "')";
+//          sql += " and exists (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s2 " + getWhereSql(param, false) +
+//                    " and status = '" + (String) param.get("status") + "' and s1.seq = s2.seq)";        }
         }
         index = 1;
         for (Map<String,Object> platformInfo : platformList) {
@@ -3181,6 +3221,27 @@ public class CmsTaskStockService extends BaseAppService {
             sql +=" left join (select value,name from com_mt_value where type_id= '63' and lang_id = '" + param.get("lang") + "') z" + String.valueOf(index)
                     + " on t" + String.valueOf(index) + ".status = z" + String.valueOf(index) + ".value";
             index++;
+        }
+        return sql;
+    }
+
+    /**
+     * 取得Sku的Sql
+     *
+     * @param param 客户端参数
+     * @return Sku的Sql
+     */
+    private String getSkuSql(Map param, String flg){
+        String sql = "select distinct sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
+        " and status = '" + (String) param.get("status") + "' order by sku ";
+        if ("1".equals(flg)) {
+            String start = String.valueOf(param.get("start1"));
+            String length = String.valueOf(param.get("length1"));
+            sql += " limit " + start + "," + length;
+        } else {
+            String start = String.valueOf(param.get("start2"));
+            String length = String.valueOf(param.get("length2"));
+            sql += " limit " + start + "," + length;
         }
         return sql;
     }
