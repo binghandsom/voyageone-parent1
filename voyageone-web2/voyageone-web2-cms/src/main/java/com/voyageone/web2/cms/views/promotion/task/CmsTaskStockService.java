@@ -16,6 +16,7 @@ import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -160,6 +161,8 @@ public class CmsTaskStockService extends BaseAppService {
     private  static final String SHARE_TYPE="2";
     /** 活动类型 1：价格披露 2：隔离库存 3：特价宝*/
     private  static final String TASK_TYPE="2";
+    /** 结束状态  0: 未结束 */
+    public static final String NOT_END = "0";
     /**
      *
      * @param param
@@ -187,7 +190,7 @@ public class CmsTaskStockService extends BaseAppService {
             //根据活动ID取得cms_bt_promotion隔离的CartID
             Map<String,Object> separateCartIdMap =getPromotionIdByCartID(selFlag);
             //取得隔离和未隔离的数据
-            allSeparateInfo=getSeparateCartByTypeChannel(separateCartIdMap, typeChannelBeanList);
+            allSeparateInfo=getSeparateCartByTypeChannel(separateCartIdMap, typeChannelBeanList,channelId);
         }else if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
             //取得TaskID
             int taskId=(int) param.get("taskId");
@@ -288,7 +291,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param typeChannelBeanList
      * @return
      */
-    private List<Map> getSeparateCartByTypeChannel(Map<String, Object> separateCartIdMap, List<TypeChannelBean> typeChannelBeanList) {
+    private List<Map> getSeparateCartByTypeChannel(Map<String, Object> separateCartIdMap, List<TypeChannelBean> typeChannelBeanList,String channelId) {
 
         //取得隔离渠道的数据的集合
         List<Map> separatePlatformList = new ArrayList<>();
@@ -301,45 +304,60 @@ public class CmsTaskStockService extends BaseAppService {
         //取得隔离渠道的数据
         for(TypeChannelBean cartId :typeChannelBeanList){
             for(Map.Entry<String, Object> entry : separateCartIdMap.entrySet()){
-                Map<String,String> separatePlatformMap  = new HashMap<>();
-                String promotionId =entry.getKey();
-                HashMap<String,Object> separateMap =(HashMap<String, Object>) entry.getValue();
-                String sepCartId=separateMap.get("cart_id").toString();
-                revertTime=separateMap.get("activity_end").toString();
-                if(sepCartId.equals(cartId.getValue().toString())){
-                    //平台id
-                    separatePlatformMap.put("cartId", cartId.getValue());
-                    //平台名
-                    separatePlatformMap.put("cartName",cartId.getName());
-                    //隔离比例
-                    separatePlatformMap.put("value","");
-                    //类型（1：隔离，2：共享）
-                    separatePlatformMap.put("type","1");
-                    //还原时间
-                    separatePlatformMap.put("revertTime", revertTime);
-                    //活动ID
-                    separatePlatformMap.put("promotionId", promotionId);
-                    //取得隔离渠道的名称
-                    separateCartName.put(cartId.getValue(),cartId.getName());
-                    //取得隔离渠道的数据的集合
+                    Map<String,String> separatePlatformMap  = new HashMap<>();
+                    HashMap<String,Object> separateMap =(HashMap<String, Object>) entry.getValue();
+                    String sepCartId=separateMap.get("cart_id").toString();
+                    revertTime=separateMap.get("activity_end").toString();
+                    if(sepCartId.equals(cartId.getValue().toString())){
+                        //平台id
+                        separatePlatformMap.put("cartId", cartId.getValue());
+                        //平台名
+                        separatePlatformMap.put("cartName",cartId.getName());
+                        //隔离比例
+                        separatePlatformMap.put("value","");
+                        //类型（1：隔离，2：共享）
+                        separatePlatformMap.put("type","1");
+                        //还原时间
+                        separatePlatformMap.put("revertTime", revertTime);
+                        //活动ID
+                        separatePlatformMap.put("promotionId", entry.getKey());
+                        //取得隔离渠道的名称
+                        separateCartName.put(cartId.getValue(),cartId.getName());
+                        //取得隔离渠道的数据的集合
                     separatePlatformList.add(separatePlatformMap);
                 }
             }
             //取得隔离和共享渠道的名称
             isAllSeparateCartName.put(cartId.getValue(),cartId.getName());
         }
-
+        //取得共享渠道下已经隔离的平台
+        List<Integer> shareList = getSeparateCartId(channelId);
         //取得共享渠道名称
         StringBuffer shareCartName= new StringBuffer();
         for(Map.Entry<String, String> isAllSqEntry : isAllSeparateCartName.entrySet()){
+            //隔离渠道
             if(separateCartName.keySet().contains(isAllSqEntry.getKey())){
                 continue;
             }else{
-                //取得共享渠道名称
-                shareCartName.append(isAllSqEntry.getValue()+"|");
+                //共享渠道
+                if(shareList.size()>0){
+                    Boolean isFlg =true;
+                    for(int i=0;i<shareList.size();i++){
+                        if(isAllSqEntry.getKey().equals(shareList.get(i))){
+                            isFlg =false;
+                            break;
+                        }
+                    }
+                    if(isFlg){
+                        //取得共享渠道名称
+                        shareCartName.append(isAllSqEntry.getValue()+"|");
+                    }
+                }else{
+                    //取得共享渠道名称
+                    shareCartName.append(isAllSqEntry.getValue()+"|");
+                }
             }
         }
-
         //取得共享渠道的数据
         if(shareCartName.toString().length()!=0){
             // 去掉最后一个|
@@ -364,7 +382,28 @@ public class CmsTaskStockService extends BaseAppService {
         //返回共享和隔离的数据集合
         return separatePlatformList;
     }
+    /**
+     * 取得该渠道下已经隔离的平台
+     *
+     * @param channelId 渠道id
+     * @return List<渠道id>
+     */
+    public List<Integer> getSeparateCartId(String channelId) {
+        List<Integer> listSeparateCartId = new ArrayList<>();
 
+        Map<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("channelIdWhere", channelId);
+        sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
+        List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        resultData.forEach(data -> {
+            Integer cartId = (Integer) data.get("cart_id");
+            if (!listSeparateCartId.contains(cartId)) {
+                listSeparateCartId.add(cartId);
+            }
+        });
+
+        return listSeparateCartId;
+    }
     /**
      * 根据TaskID取得初始画面的值
      * @param taskId
@@ -518,8 +557,10 @@ public class CmsTaskStockService extends BaseAppService {
     public void saveSeparateInfoByPromotionInfo(Map param, String lang) {
         //判断隔离任务:1新规的场 2合更新的场合
         String promotionType = (String) param.get("promotionType");
-        //只拿到SKU的场合
+        //只导入SKU的场合
         Boolean onlySku= (Boolean) param.get("onlySku");
+        //channelID
+        String channelID = (String) param.get("channel_id");
         //画面入力信息的CHECK
         checkPromotionInfo(param, lang);
         //判断隔离任务:1新规的场 2合更新的场合
@@ -529,7 +570,7 @@ public class CmsTaskStockService extends BaseAppService {
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
             saveInsertStockSeparatePlatFormByPromotionInfo(param, lang);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-            importSkuByPromotionInfo(param, lang,onlySku);
+            importSkuByPromotionInfo(param, lang,onlySku,channelID);
         }else if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
             //更新的场合
             saveUpdateTasksByPromotionInfo(param, lang,promotionType);
@@ -650,21 +691,21 @@ public class CmsTaskStockService extends BaseAppService {
             String value=separatePlatformList.get(i).get("value").toString();
             //类型（1：隔离，2：共享）
             String type= separatePlatformList.get(i).get("type").toString();
-            // 还原时间
-            String revertTime="";
-            boolean contains = separatePlatformList.get(i).containsKey("revertTime");
-            if(contains){
-                if(separatePlatformList.get(i).get("revertTime").equals("revertTime")){
-                    revertTime=separatePlatformList.get(i).get("revertTime").toString();
-                }
-            }else{
-                throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
-            }
             //增优先顺
             String addPriority=separatePlatformList.get(i).get("addPriority").toString();
             //减优先顺
             String subtractPriority=separatePlatformList.get(i).get("subtractPriority").toString();
             if(type.equals(SEPARATE_TYPE)){
+                // 还原时间
+                String revertTime="";
+                boolean contains = separatePlatformList.get(i).containsKey("revertTime");
+                if(contains){
+                    if(separatePlatformList.get(i).get("revertTime").equals("revertTime")){
+                        revertTime=separatePlatformList.get(i).get("revertTime").toString();
+                    }
+                }else{
+                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
+                }
                 //隔离平台的隔离比例
                 if(value.equals("%")){
                     throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
@@ -717,7 +758,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param
      * @param lang
      */
-    private void importSkuByPromotionInfo(Map param, String lang,Boolean onlySku) {
+    private void importSkuByPromotionInfo(Map param, String lang,Boolean onlySku,String channelID) {
         //取得所有的隔离promotionIds
         List<String> promotionIdList=getSeparatePlatformInfoByPromotionInfo(param);
         //根据promotionIds取得隔离平台的SKU
@@ -728,11 +769,14 @@ public class CmsTaskStockService extends BaseAppService {
         HashMap<String,Object> codeHash= getCodeHashByPromotionIds(promotionIdList);
         //根据SkuHash和codeHash取得AllSkuHash
         HashMap<String,Object> allSkuHash=getSkuByCodeForAllSkuInfo(skuHash, codeHash);
+        //根据channelID取得可用的库存
+        Map<String, Integer> skuStockUsableAll =getUsableStock(channelID);;
         //根据platformList绑定所有的SKU
-        HashMap<String,Object> allSkuProHash =getAllSkuInfoByPlatFormList(param,allSkuHash);
+        HashMap<String,Object> allSkuProHash =getAllSkuInfoByPlatFormList(param, allSkuHash,skuStockUsableAll);
         //根据allSkuProHash和SeparateHashMaps将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-        saveStockSeparateItem(separateHashMaps,allSkuProHash,onlySku);
+        saveStockSeparateItem(separateHashMaps, allSkuProHash, onlySku);
     }
+
     /**
      * 取得所有选择的活动ID
      * @param param
@@ -865,12 +909,126 @@ public class CmsTaskStockService extends BaseAppService {
         return aSkuProHash;
     }
     /**
+     * 取得可用库存
+     *
+     * @param channelId 渠道id
+     * @return 可用库存Map<sku,usableStock>
+     */
+    public Map<String,Integer> getUsableStock(String channelId) {
+        //检索用param
+        Map<String,Object> sqlParam = new HashMap<>();
+        //skuList
+        Set<String> setSku = new HashSet<>();
+        //取得逻辑库存
+        Map<String,Integer> skuLogicStockAll = new HashMap<>();
+        sqlParam.put("channelId", channelId);
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = wmsBtInventoryCenterLogicDao.selectItemDetail(sqlParam);
+        if (listLogicInventory != null && listLogicInventory.size() > 0) {
+            for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
+                String sku = logicInventory.getSku();
+                setSku.add(sku);
+                Integer logicStock = logicInventory.getQtyChina();
+                Integer logicStockAll = skuLogicStockAll.get(sku);
+                if (logicStockAll != null) {
+                    skuLogicStockAll.put(sku, logicStockAll + logicStock);
+                } else {
+                    skuLogicStockAll.put(sku, logicStock);
+                }
+            }
+        }
+
+        // 隔离库存
+        Map<String,Integer> skuStockSeparateAll = new HashMap<>();
+        sqlParam.clear();
+        sqlParam.put("channelId", channelId);
+        // 状态 = 2：隔离成功
+        sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
+        sqlParam.put("tableNameSuffix", "");
+        List<Map<String,Object>> listStockSeparate = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+        // sku库存隔离信息（所有任务所有平台的数据）
+        if (listStockSeparate != null && listStockSeparate.size() > 0) {
+            for (Map<String, Object> stockInfo : listStockSeparate) {
+                String sku = (String) stockInfo.get("sku");
+                setSku.add(sku);
+                Integer separateQty = (Integer) stockInfo.get("separate_qty");
+                Integer separateQtyAll = skuStockSeparateAll.get(sku);
+                if (separateQtyAll != null) {
+                    skuStockSeparateAll.put(sku, separateQtyAll + separateQty);
+                } else {
+                    skuStockSeparateAll.put(sku, separateQty);
+                }
+            }
+        }
+
+        // 取得增量隔离库存
+        Map<String,Integer> skuStockIncrementAll = new HashMap<>();
+        sqlParam.clear();
+        sqlParam.put("channelId", channelId);
+        // 状态 = 3：增量成功
+        sqlParam.put("status", STATUS_INCREMENT_SUCCESS);
+        sqlParam.put("tableNameSuffix", "");
+        List<Map<String,Object>> listStockIncrement = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+        if (listStockIncrement != null && listStockIncrement.size() > 0) {
+            for (Map<String, Object> stockIncrementInfo : listStockIncrement) {
+                String sku = (String) stockIncrementInfo.get("sku");
+                setSku.add(sku);
+                Integer incrementQty = (Integer) stockIncrementInfo.get("increment_qty");
+                Integer incrementQtyAll = skuStockIncrementAll.get(sku);
+                if (incrementQtyAll != null) {
+                    skuStockIncrementAll.put(sku, incrementQtyAll + incrementQty);
+                } else {
+                    skuStockIncrementAll.put(sku, incrementQty);
+                }
+            }
+        }
+
+        // 取得销售数量
+        Map<String,Integer> skuStockSalesAll = new HashMap<>();
+        sqlParam.clear();
+        sqlParam.put("channelId", channelId);
+        sqlParam.put("endFlg", NOT_END);
+        List<Map<String, Object>> listStockSalesQuantity = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam);
+        if (listStockSalesQuantity != null && listStockSalesQuantity.size() > 0) {
+            for (Map<String, Object> stockSaleInfo : listStockSalesQuantity) {
+                String sku = (String) stockSaleInfo.get("sku");
+                setSku.add(sku);
+                Integer qty = (Integer) stockSaleInfo.get("qty");
+                Integer qtyAll = skuStockSalesAll.get(sku);
+                if (qtyAll != null) {
+                    skuStockSalesAll.put(sku, qtyAll + qty);
+                } else {
+                    skuStockSalesAll.put(sku, qty);
+                }
+            }
+        }
+
+        // 可用库存数 = 逻辑库存 - （隔离库存 + 增量隔离库 - 销售数量)
+        Map<String, Integer> skuStockUsableAll = new HashMap<>();
+        for (String sku : setSku) {
+            Integer usable = getMapValue(skuLogicStockAll, sku) - (getMapValue(skuStockSeparateAll, sku) + getMapValue(skuStockIncrementAll, sku) - getMapValue(skuStockSalesAll, sku));
+            if (usable < 0) {
+                usable = 0;
+            }
+            skuStockUsableAll.put(sku, usable);
+        }
+
+        return skuStockUsableAll;
+    }
+    private Integer getMapValue(Map<String, Integer> map, String key) {
+        Integer ret = map.get(key);
+        if (ret == null) {
+            ret = 0;
+        }
+        return ret;
+    }
+    /**
      * 根据SKU取得所有的属性
      * @param param
      * @param allSkuProHash
-     * @return
+     * @param skuStockUsableAll
+     * @return aSkuProHash
      */
-    private HashMap<String, Object> getAllSkuInfoByPlatFormList(Map param, Map<String, Object> allSkuProHash) {
+    private HashMap<String, Object> getAllSkuInfoByPlatFormList(Map param, Map<String, Object> allSkuProHash, Map<String, Integer> skuStockUsableAll) {
         //取得SKU级别的SKU对应的属性
         HashMap<String,Object> aSkuProHash = new HashMap();
         //取得画面的数据集合
@@ -881,6 +1039,12 @@ public class CmsTaskStockService extends BaseAppService {
         String user= (String)param.get("userName");
         //公司平台销售渠道
         String channel_id= (String)param.get("channel_id");
+        //可用库存
+        int usableStockInt;
+        //隔离比例
+        int separate_percent;
+        //隔离库存
+        int separate_qty;
         for(Map.Entry<String,Object>allSkuProEntry:allSkuProHash.entrySet()){
             for(int i=0;i<separatePlatformList.size();i++){
                 //取得活动ID
@@ -888,19 +1052,19 @@ public class CmsTaskStockService extends BaseAppService {
                 if(SEPARATE_TYPE.equals(separatePlatformList.get(i).get("type").toString())){
                     //取得活动ID
                     promotionId=separatePlatformList.get(i).get("promotionId").toString();
-                    HashMap<String,String> proMap = new HashMap<>();
+                    HashMap<String,Object> proMap = new HashMap<>();
                     HashMap<String,Object> proMapValue = new HashMap<>();
                     proMapValue= (HashMap<String, Object>) allSkuProEntry.getValue();
                     //任务ID
-                    proMap.put("task_id",task_id);
+                    proMap.put("task_id", task_id);
                     //公司平台销售渠道
-                    proMap.put("channel_id",channel_id);
+                    proMap.put("channel_id", channel_id);
                     //product_model
                     proMap.put("product_model",proMapValue.get("product_model").toString());
                     //product_code
-                    proMap.put("product_code",proMapValue.get("product_code").toString());
+                    proMap.put("product_code", proMapValue.get("product_code").toString());
                     //sku
-                    proMap.put("sku",allSkuProEntry.getKey());
+                    proMap.put("sku", allSkuProEntry.getKey());
                     //销售渠道
                     proMap.put("cart_id",separatePlatformList.get(i).get("cartId").toString());
                     //属性1（品牌）
@@ -919,6 +1083,14 @@ public class CmsTaskStockService extends BaseAppService {
                     proMap.put("modifier",user);
                     //隔离比例
                     proMap.put("value",separatePlatformList.get(i).get("value").toString());
+                    //可用库存(取得可用库存)
+                    usableStockInt=skuStockUsableAll.get(allSkuProEntry.getKey());
+                    proMap.put("qty", usableStockInt);
+                    //隔离库存比例
+                    separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString());
+                    //隔离库存
+                    separate_qty=Math.round((usableStockInt*separate_percent)/100);
+                    proMap.put("separate_qty", separate_qty);
                     //取得所有SKU的属性
                     aSkuProHash.put(allSkuProEntry.getKey()+":"+promotionId,proMap);
                 }
@@ -933,18 +1105,13 @@ public class CmsTaskStockService extends BaseAppService {
      * @param allSkuProHash
      */
     private void saveStockSeparateItem(Map<String, Object> separateHashMaps, Map<String, Object> allSkuProHash,Boolean onlySku) {
+        List<Map<String, Object>> allSku =new ArrayList<>();
         //循环所有的SKU
         for(Map.Entry<String,Object>allSkuProHashEntry: allSkuProHash.entrySet()){
             //判断是否在隔离
             HashMap<String,Object> aSkuProHash = new HashMap();
             HashMap<String,Object> proMapValue = new HashMap<>();
             proMapValue= (HashMap<String, Object>) allSkuProHashEntry.getValue();
-            //可用库存
-            int usableStockInt;
-            //隔离库存
-            int separate_qty;
-            //隔离比例
-            int separate_percent;
             if(separateHashMaps.keySet().contains(allSkuProHashEntry.getKey())){
                 //任务ID
                 aSkuProHash.put("taskId",proMapValue.get("task_id").toString());
@@ -971,17 +1138,13 @@ public class CmsTaskStockService extends BaseAppService {
                 //预留库存2
                 aSkuProHash.put("qty2","");
                 //可用库存(取得可用库存)
-                usableStockInt=Integer.parseInt(getUsableStock(allSkuProHashEntry.getKey(), ""));
-                aSkuProHash.put("qty", usableStockInt);
+                aSkuProHash.put("qty", proMapValue.get("qty").toString());
                 //隔离库存比例
-                separate_percent=Integer.parseInt(proMapValue.get("value").toString());
-                //隔离库存
-                separate_qty=Math.round((usableStockInt*separate_percent)/100);
                 //判断是否只导入SKU
                 if(onlySku){
                     aSkuProHash.put("separateQty",0);
                 }else{
-                    aSkuProHash.put("separateQty",separate_qty);
+                    aSkuProHash.put("separateQty",proMapValue.get("qty").toString());
                 }
                 //Error信息
                 aSkuProHash.put("error_msg","");
@@ -992,13 +1155,12 @@ public class CmsTaskStockService extends BaseAppService {
                 //还原时间
                 aSkuProHash.put("revertTime",proMapValue.get("revertTime").toString());
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
-                aSkuProHash.put("status","0");
+                aSkuProHash.put("status", "0");
                 //创建者
-                aSkuProHash.put("creater",proMapValue.get("creater").toString());
+                aSkuProHash.put("creater", proMapValue.get("creater").toString());
                 //更新者
                 aSkuProHash.put("modifier",proMapValue.get("modifier").toString());
-                //将数据插入cms_bt_stock_separate_item表中
-                cmsBtStockSeparateItemDao.insertStockSeparateItem(aSkuProHash);
+                allSku.add(aSkuProHash);
             }else{
                 //任务ID
                 aSkuProHash.put("taskId",proMapValue.get("task_id").toString());
@@ -1040,12 +1202,22 @@ public class CmsTaskStockService extends BaseAppService {
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
                 aSkuProHash.put("status","0");
                 //创建者
-                aSkuProHash.put("creater",proMapValue.get("creater").toString());
+                aSkuProHash.put("creater", proMapValue.get("creater").toString());
                 //更新者
-                aSkuProHash.put("modifier",proMapValue.get("modifier").toString());
-                //将数据插入cms_bt_stock_separate_item表中
-                cmsBtStockSeparateItemDao.insertStockSeparateItem(aSkuProHash);
+                aSkuProHash.put("modifier", proMapValue.get("modifier").toString());
+                allSku.add(aSkuProHash);
             }
+            //批量更新
+            if (allSku.size() > 500) {
+                //将数据插入cms_bt_stock_separate_item表中
+                cmsBtStockSeparateItemDao.insertStockSeparateItemByList(allSku);
+                allSku.clear();
+            }
+        }
+        if (allSku.size() > 0) {
+            //将数据插入cms_bt_stock_separate_item表中
+            cmsBtStockSeparateItemDao.insertStockSeparateItemByList(allSku);
+            allSku.clear();
         }
 
     }
@@ -1275,9 +1447,26 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
 
         // 获取当页表示的库存隔离数据
+        // 因为性能问题，当按某种状态查询时，用sku in ('sku1','sku2'.....)
+        String skuInfo = "";
+        if (!StringUtils.isEmpty((String) param.get("status"))) {
+            Map<String,Object> sqlParam = new HashMap<String,Object>();
+            sqlParam.put("sql", getSkuSql(param, "1"));
+            List<Object> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
+            for (Object sku : skuList) {
+                skuInfo += "'" + ((String)sku) + "',";
+            }
+            // 去掉最后的逗号
+            if (skuList.size() > 0) {
+                skuInfo = skuInfo.substring(0, skuInfo.length() - 1);
+            }
+            if (skuList.size() == 0) {
+                return stockList;
+            }
+        }
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         // 库存隔离明细一页表示的Sku的Sql
-        sqlParam.put("sql", getStockPageSkuSql(param, "1"));
+        sqlParam.put("sql", getStockPageSkuSql(param, "1", skuInfo));
         List<Map<String,Object>> stockCommonList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
         // 实时库存状态查询时用
         param.put("stockCommonList", stockCommonList);
@@ -1397,9 +1586,26 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku基本信息（含逻辑库存）
         List<Map<String, Object>> stockRealList = (List<Map<String, Object>> ) param.get("stockCommonList");
         if (stockRealList == null) {
+            // 因为性能问题，当按某种状态查询时，用sku in ('sku1','sku2'.....)
+            String skuInfo = "";
+            if (!StringUtils.isEmpty((String) param.get("status"))) {
+                Map<String,Object> sqlParam = new HashMap<String,Object>();
+                sqlParam.put("sql", getSkuSql(param, "2"));
+                List<Object> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
+                for (Object sku : skuList) {
+                    skuInfo += "'" + ((String)sku) + "',";
+                }
+                // 去掉最后的逗号
+                if (skuList.size() > 0) {
+                    skuInfo = skuInfo.substring(0, skuInfo.length() - 1);
+                }
+                if (skuList.size() == 0) {
+                    return realStockList;
+                }
+            }
             Map<String, Object> sqlParam = new HashMap<String, Object>();
             // 库存隔离明细一页表示的Sku的Sql
-            sqlParam.put("sql", getStockPageSkuSql(param, "2"));
+            sqlParam.put("sql", getStockPageSkuSql(param, "2", skuInfo));
             stockRealList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
             if (stockRealList == null || stockRealList.size() == 0) {
                 return realStockList;
@@ -1456,7 +1662,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的增量隔离库存（含非本任务的）
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("skuList", skuList);
-        sqlParam1.put("channelId", param.get("channelId"));
+        sqlParam2.put("channelId", param.get("channelId"));
         // 状态 = 3：增量成功,5：还原,
         sqlParam2.put("statusList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         sqlParam2.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -3181,9 +3387,10 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @param param 客户端参数
      * @param flg 1:库存隔离明细; 2:实时库存状态
+     * @param  skuInfo sku in（skuInfo）
      * @return 库存隔离明细一页表示的Sku的Sql
      */
-    private String getStockPageSkuSql(Map param, String flg){
+    private String getStockPageSkuSql(Map param, String flg, String skuInfo){
         List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
         String sql = "select t1.product_model, t1.product_code, t1.sku, t1.cart_id, t1.property1, t1.property2, t1.property3, t1.property4, ";
         int index = 1;
@@ -3195,22 +3402,28 @@ public class CmsTaskStockService extends BaseAppService {
         sql += " (select qty_china from wms_bt_inventory_center_logic t50 where order_channel_id = '" + param.get("channelId") + "' and t50.sku = t1.sku) qty_china,";
         sql += " t1.qty";
         sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s1 ";
-        sql += getWhereSql(param, false);
-        if (!StringUtils.isEmpty((String) param.get("status"))) {
-//            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
-//                    " and status = '" + (String) param.get("status") + "')";        }
-            sql += " and exists (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s2 " + getWhereSql(param, false) +
-                    " and status = '" + (String) param.get("status") + "' and s1.seq = s2.seq)";        }
-        sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
-        sql += " order by sku";
-        if ("1".equals(flg)) {
-            String start = String.valueOf(param.get("start1"));
-            String length = String.valueOf(param.get("length1"));
-            sql += " limit " + start + "," + length + ") t1 ";
+        if (StringUtils.isEmpty((String) param.get("status"))) {
+            sql += getWhereSql(param, false);
+            sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
+            sql += " order by sku";
+            if ("1".equals(flg)) {
+                String start = String.valueOf(param.get("start1"));
+                String length = String.valueOf(param.get("length1"));
+                sql += " limit " + start + "," + length + ") t1 ";
+            } else {
+                String start = String.valueOf(param.get("start2"));
+                String length = String.valueOf(param.get("length2"));
+                sql += " limit " + start + "," + length + ") t1 ";
+            }
         } else {
-            String start = String.valueOf(param.get("start2"));
-            String length = String.valueOf(param.get("length2"));
-            sql += " limit " + start + "," + length + ") t1 ";
+            sql += " where task_id = " + String.valueOf(param.get("taskId"));
+            sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
+            sql += " and sku in (" + skuInfo + ")";
+            sql += " order by sku ) t1 ";
+//            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
+//                    " and status = '" + (String) param.get("status") + "')";
+//          sql += " and exists (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s2 " + getWhereSql(param, false) +
+//                    " and status = '" + (String) param.get("status") + "' and s1.seq = s2.seq)";        }
         }
         index = 1;
         for (Map<String,Object> platformInfo : platformList) {
@@ -3227,6 +3440,27 @@ public class CmsTaskStockService extends BaseAppService {
             sql +=" left join (select value,name from com_mt_value where type_id= '63' and lang_id = '" + param.get("lang") + "') z" + String.valueOf(index)
                     + " on t" + String.valueOf(index) + ".status = z" + String.valueOf(index) + ".value";
             index++;
+        }
+        return sql;
+    }
+
+    /**
+     * 取得Sku的Sql
+     *
+     * @param param 客户端参数
+     * @return Sku的Sql
+     */
+    private String getSkuSql(Map param, String flg){
+        String sql = "select distinct sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
+        " and status = '" + (String) param.get("status") + "' order by sku ";
+        if ("1".equals(flg)) {
+            String start = String.valueOf(param.get("start1"));
+            String length = String.valueOf(param.get("length1"));
+            sql += " limit " + start + "," + length;
+        } else {
+            String start = String.valueOf(param.get("start2"));
+            String length = String.valueOf(param.get("length2"));
+            sql += " limit " + start + "," + length;
         }
         return sql;
     }
@@ -3443,6 +3677,7 @@ public class CmsTaskStockService extends BaseAppService {
         return value.replaceAll("\\\\", "\\\\\\\\").replaceAll("'","\\\\'").replaceAll("\"","\\\\\"")
                 .replaceAll("%","\\\\%").replaceAll("_","\\\\_");
     }
+
 
 
 
