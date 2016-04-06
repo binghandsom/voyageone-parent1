@@ -23,8 +23,9 @@ import java.util.Map;
 public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     private CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_LIST_BY_WHERE)
-    public AjaxResponse getListByWhere(@RequestBody Map params) {
-        return success(serviceCmsBtJmPromotionProduct.getListByWhere(params));
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
+    public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
+
+        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
     }
 }

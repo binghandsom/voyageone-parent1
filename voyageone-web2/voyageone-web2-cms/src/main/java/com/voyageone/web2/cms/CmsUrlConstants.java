@@ -45,7 +45,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
 
                 String GET_LIST_BY_WHERE = "getListByWhere";
-
+                String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE="getPromotionProductInfoListByWhere";
                 String INSERT = "insert";
 
                 String UPDATE = "update";

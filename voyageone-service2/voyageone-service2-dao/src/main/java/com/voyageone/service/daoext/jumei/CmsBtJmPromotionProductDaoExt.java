@@ -11,4 +11,5 @@ import java.util.Map;
 public interface CmsBtJmPromotionProductDaoExt {
     public CmsBtJmPromotionProductModel getByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
     public List getListByWhere(Map<String, Object> map);
+    public List getPromotionProductInfoListByWhere(Map<String, Object> map);
 }

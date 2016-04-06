@@ -126,7 +126,7 @@
       },
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
-        "getListByWhere": "getListByWhere"
+        "getListByWhere": "getPromotionProductInfoListByWhere"
       }
     },
     "task": {

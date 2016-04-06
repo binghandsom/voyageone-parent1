@@ -19,6 +19,7 @@ define([
         $scope.search = function () {
             console.log("searchInfo");
             console.log($scope.searchInfo);
+            loadSearchInfo();
             jmPromotionDetailService.getListByWhere($scope.searchInfo).then(function (res) {
                 console.log(res);
                 $scope.vm.modelList = res.data;
@@ -26,6 +27,26 @@ define([
             }, function (res) {
             })
         };
+        function loadSearchInfo()
+        {
+            $scope.searchInfo.synchStateList=[];
+            if( $scope.searchInfo.synchState0)
+            {
+                $scope.searchInfo.synchStateList.push(0)
+            }
+            if( $scope.searchInfo.synchState1)
+            {
+                $scope.searchInfo.synchStateList.push(1)
+            }
+            if( $scope.searchInfo.synchState2)
+            {
+                $scope.searchInfo.synchStateList.push(2)
+            }
+            if( $scope.searchInfo.synchState3)
+            {
+                $scope.searchInfo.synchStateList.push(3)
+            }
+        }
     }
 
     detailController.$inject = ['$scope', 'jmPromotionService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];

@@ -73,4 +73,65 @@
             </if>
         </where>
     </select>
+
+    <select id="getPromotionProductInfoListByWhere" resultType="MapModel">
+        SELECT a.`id`,b.`category_lv1_name`,a.`pc_id`,a.`app_id`,b.`jumei_product_id`,b.`product_code`,a.`jm_hash_id`,b.`product_long_name`,
+b.`product_short_name`,b.`msrp`,a.`deal_price`,a.`market_price`,b.`color_en`,b.`attribute`,a.`discount`,a.`sku_count`,a.`state`,a.`synch_state`
+FROM `cms_bt_jm_promotion_product` AS a
+JOIN `cms_bt_jm_product` AS b ON a.`cms_bt_jm_product_id`=b.`id`
+        <where>
+            <if test="categoryLv1Name!=null">
+              and b.category_lv1_name =#{categoryLv1Name}
+            </if>
+            <if test="synchStateList.size()!=0">
+            and  a.synch_state in
+            <foreach item="item" index="i" collection="synchStateList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            </if>
+            <if test="beginDiscount!=null">
+                and a.discount>=#{beginDiscount}
+            </if>
+            <if test="endDiscount!=null">
+                b.discount&lt;=#{endDiscount};
+            </if>
+            <if test="priceType=='msrp'">
+                <if test="beginPrice!=null">
+                   b.msrp>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    b.msrp&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="priceType=='marketPrice'">
+                <if test="beginPrice!=null">
+                    a.market_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    a.market_price&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="priceType=='dealPrice'">
+                <if test="beginPrice!=null">
+                    b.deal_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    b.deal_price&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="productNameCn!=null">
+                b.product_name_cn  like CONCAT(#{productNameCn},'%')
+            </if>
+            <if test="state!=null">
+                a.state=#{state}
+            </if>
+            <if test="brandName!=null">
+                b.brand_name=#{brandName}
+            </if>
+            <if test="colorEn!=null">
+                b.color_en=#{colorEn}
+            </if>
+        </where>
+    </select>
 </mapper>

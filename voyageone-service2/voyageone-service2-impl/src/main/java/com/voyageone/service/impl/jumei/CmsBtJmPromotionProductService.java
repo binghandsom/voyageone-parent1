@@ -34,5 +34,10 @@ public class CmsBtJmPromotionProductService {
     public List<MapModel> getListByWhere(Map<String, Object> map) {
         return daoExt.getListByWhere(map);
     }
+    public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
+        //synchState0
+        //synchState0
+        return daoExt.getPromotionProductInfoListByWhere(map);
+    }
 }
 
