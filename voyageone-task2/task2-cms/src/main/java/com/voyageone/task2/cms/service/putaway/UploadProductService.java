@@ -47,7 +47,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Autowired
     private PromotionDetailService promotionDetailService;
 
-    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
+    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
 
@@ -109,6 +109,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     }
                 }
             }
+
+            // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 START
+            if (mainSxProduct != null) {
+                if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
+                    if (!"23".equals(mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId().toString())) {
+                        continue;
+                    }
+                }
+            }
+            // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 END
 
             workload.setMainProduct(mainSxProduct);
 
