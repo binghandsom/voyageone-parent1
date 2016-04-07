@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.jumei;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.*;
 import com.voyageone.service.impl.Excel.ExcelColumn;
@@ -388,7 +389,7 @@ public class CmsBtJmPromotionImportTaskService {
     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.getByPromotionId(promotionId);
     }
-
+    @VOTransactional
     public void  saveList(List<CmsBtJmPromotionImportTaskModel> list) {
         for (CmsBtJmPromotionImportTaskModel model : list) {
                  dao.insert(model);

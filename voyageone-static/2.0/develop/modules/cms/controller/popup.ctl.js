@@ -910,8 +910,30 @@ define([
         $scope.openJmPromotionDetail = function (context) {
             return openModel(popActions.jumei.jmPromotionDetail.detail, context);
         };
-        $scope.openJmPromotionProductImport = function (context) {
-            return openModel(popActions.jumei.jmPromotionDetail.import, context);
-        };
+
+        $scope.openJmPromotionProductImport = openJmPromotionProductImport;
+        function openJmPromotionProductImport(context,fnInitial) {
+            require([popActions.jumei.jmPromotionDetail.import.controllerUrl], function () {
+                var modalInstance = $uibModal.open({
+                    templateUrl: popActions.jumei.jmPromotionDetail.import.templateUrl,
+                    controller: popActions.jumei.jmPromotionDetail.import.controller,
+                    resolve: {
+                        context: function () {
+                            return context;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+            });
+        }
+        //$scope.openJmPromotionProductImport = function (context) {
+        //    return openModel(popActions.jumei.jmPromotionDetail.import, context);
+        //};
     }
 });
