@@ -9,16 +9,15 @@
            <div class="form-group">
                <label class="col-sm-2 control-label">平台</label>
                <div class="col-sm-9">
-                   <select class="form-control">
-                       <option>天猫</option>
-                       <option>京东</option>
+                   <select class="form-control" ng-model="vm.promotionList">
+                       <option ng-repeat="platform in vm.promotionList" value={{platform.cartName}}>{{platform.cartName}}</option>
                    </select>
                 </div>
            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">增量类型</label>
                 <div class="col-sm-6">
-                    <select class="form-control">
+                    <select class="form-control" ng-model="vm.promotionList">
                         <option>百分比增量</option>
                         <option>数值增量</option>
                     </select>

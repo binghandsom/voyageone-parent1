@@ -239,7 +239,7 @@
         </foreach>
     </select>
     <select id="select_cms_bt_promotion_sku_bt_all_sku_promotionIds" parameterType="List" resultType="HashMap">
-        select distinct product_sku,product_code
+        select distinct product_sku,product_code,product_model
         from voyageone_cms2.cms_bt_promotion_sku
         where promotion_id in
         <foreach collection="list" item="skuItem" open="(" separator="," close=")">

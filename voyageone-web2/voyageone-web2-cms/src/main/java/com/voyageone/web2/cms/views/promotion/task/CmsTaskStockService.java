@@ -700,9 +700,7 @@ public class CmsTaskStockService extends BaseAppService {
                 String revertTime="";
                 boolean contains = separatePlatformList.get(i).containsKey("revertTime");
                 if(contains){
-                    if(separatePlatformList.get(i).get("revertTime").equals("revertTime")){
-                        revertTime=separatePlatformList.get(i).get("revertTime").toString();
-                    }
+                    revertTime=separatePlatformList.get(i).get("revertTime").toString();
                 }else{
                     throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
                 }
@@ -1133,10 +1131,6 @@ public class CmsTaskStockService extends BaseAppService {
                 aSkuProHash.put("property3",proMapValue.get("property3").toString());
                 //属性4（SIZE）
                 aSkuProHash.put("property4",proMapValue.get("property4").toString());
-                //预留库存1
-                aSkuProHash.put("qty1","");
-                //预留库存2
-                aSkuProHash.put("qty2","");
                 //可用库存(取得可用库存)
                 aSkuProHash.put("qty", proMapValue.get("qty").toString());
                 //隔离库存比例
@@ -1146,14 +1140,6 @@ public class CmsTaskStockService extends BaseAppService {
                 }else{
                     aSkuProHash.put("separateQty",proMapValue.get("qty").toString());
                 }
-                //Error信息
-                aSkuProHash.put("error_msg","");
-                //Error发生时间
-                aSkuProHash.put("error_time","");
-                //隔离时间
-                aSkuProHash.put("separate_time", "");
-                //还原时间
-                aSkuProHash.put("revertTime",proMapValue.get("revertTime").toString());
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
                 aSkuProHash.put("status", "0");
                 //创建者
@@ -1182,23 +1168,11 @@ public class CmsTaskStockService extends BaseAppService {
                 aSkuProHash.put("property3",proMapValue.get("property3").toString());
                 //属性4（SIZE）
                 aSkuProHash.put("property4",proMapValue.get("property4").toString());
-                //预留库存1
-                aSkuProHash.put("qty1","");
-                //预留库存2
-                aSkuProHash.put("qty2","");
                 //可用库存
                 aSkuProHash.put("qty", "-1");
                 //隔离库存
                 //隔离库存
                 aSkuProHash.put("separateQty","-1");
-                //Error信息
-                aSkuProHash.put("error_msg","");
-                //Error发生时间
-                aSkuProHash.put("error_time","");
-                //隔离时间
-                aSkuProHash.put("separate_time", "");
-                //还原时间
-                aSkuProHash.put("restore_time",proMapValue.get("revertTime").toString());
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
                 aSkuProHash.put("status","0");
                 //创建者
