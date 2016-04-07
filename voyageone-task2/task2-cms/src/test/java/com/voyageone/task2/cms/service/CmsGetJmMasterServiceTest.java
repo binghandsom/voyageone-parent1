@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.JmCategoryDao;
 import com.voyageone.task2.cms.dao.JmMasterDao;
-import com.voyageone.components.jumei.Bean.JmCategoryBean;
+import com.voyageone.components.jumei.bean.JmCategoryBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;

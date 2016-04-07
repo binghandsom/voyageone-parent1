@@ -11,11 +11,11 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.service.dao.cms.CmsMtDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformSpecialFieldDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.DictService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.CmsMtDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -47,16 +47,16 @@ import static java.util.stream.Collectors.toMap;
 public class CmsPlatformPropMappingService extends BaseAppService {
 
     @Autowired
-    private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
+    private PlatformCategoryService platformCategoryService;
 
     @Autowired
     private CmsMtPlatformMappingDao platformMappingDao;
 
     @Autowired
-    private CmsMtCategorySchemaDao categorySchemaDao;
+    private CategorySchemaService categorySchemaService;
 
     @Autowired
-    private CmsMtDictDao dictDao;
+    private DictService dictService;
 
     @Autowired
     private CmsMtPlatformSpecialFieldDao platformSpecialFieldDao;
@@ -73,13 +73,12 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     public Map<String, Object> getPlatformCategory(String categoryId, int cartId, UserSessionBean user) throws TopSchemaException {
 
         CmsMtPlatformMappingModel platformMappingModel =
-                platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
+                platformMappingDao.selectMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
 
         if (platformMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel =
-                platformCategorySchemaDao.getPlatformCatSchemaModel(platformMappingModel.getPlatformCategoryId(), cartId);
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(platformMappingModel.getPlatformCategoryId(), cartId);
 
         // 转换类目属性
         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
@@ -114,8 +113,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @return CmsMtCategorySchemaModel
      */
     public CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
-
-        return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+        return categorySchemaService.getCmsMtCategorySchema(categoryId);
     }
 
     /**
@@ -124,7 +122,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     public List<CmsMtDictModel> getDictList(UserSessionBean user) {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(user.getSelChannelId());
-        return dictDao.selectByChannel(params);
+        return dictService.getModesByChannel(params);
     }
 
     /**
@@ -244,8 +242,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
             // 构建的话需要完整的属性树
 
             CmsMtPlatformCategorySchemaModel platformCatSchemaModel =
-                    platformCategorySchemaDao.getPlatformCatSchemaModel(platformMappingModel.getPlatformCategoryId(),
-                            paramBean.getCartId());
+                    platformCategoryService.getPlatformCatSchema(platformMappingModel.getPlatformCategoryId(), paramBean.getCartId());
 
             // 转换类目属性
             Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
@@ -457,7 +454,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     public int setMatchOver(String mainCategoryId, Integer matchOver, Integer cartId, UserSessionBean user) {
 
         CmsMtPlatformMappingModel platformMappingModel =
-                platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
+                platformMappingDao.selectMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
 
         if (platformMappingModel == null)
             throw new BusinessException("没找到 Mapping");

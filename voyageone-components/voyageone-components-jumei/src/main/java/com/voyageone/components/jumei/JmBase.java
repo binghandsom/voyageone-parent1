@@ -9,10 +9,8 @@ import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ComponentBase;
-import com.voyageone.components.jumei.Bean.JMErrorResult;
-import com.voyageone.components.jumei.Bean.NotSignString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.voyageone.components.jumei.bean.JMErrorResult;
+import com.voyageone.components.jumei.bean.NotSignString;
 
 import java.net.URLEncoder;
 import java.util.HashMap;

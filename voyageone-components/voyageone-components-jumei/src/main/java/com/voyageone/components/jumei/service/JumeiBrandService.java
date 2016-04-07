@@ -2,7 +2,7 @@ package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.jumei.Bean.JmBrandBean;
+import com.voyageone.components.jumei.bean.JmBrandBean;
 import com.voyageone.components.jumei.JmBase;
 import org.springframework.stereotype.Service;
 

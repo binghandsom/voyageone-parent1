@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by Jonas on 9/11/15.
  */
 @Service
-public class DictManageService extends BaseService {
+public class DictService extends BaseService {
 
     @Autowired
     private CmsMtDictDao cmsMtDictDao;

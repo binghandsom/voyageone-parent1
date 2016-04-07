@@ -50,7 +50,7 @@ public class CategorySchemaService extends BaseService {
 
         CmsCategoryInfoBean categorySchema = new CmsCategoryInfoBean();
         // 获取product 对应的 schema
-        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(categoryId);
+        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchema(categoryId);
 
         // 获取共通schema.
         CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
@@ -93,7 +93,7 @@ public class CategorySchemaService extends BaseService {
      * @param categoryId String
      * @return CmsMtCategorySchemaModel
      */
-    public CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
+    public CmsMtCategorySchemaModel getCmsMtCategorySchema(String categoryId) {
 
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 

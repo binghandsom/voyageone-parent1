@@ -1,8 +1,8 @@
 package com.voyageone.task2.cms.bean;
 
-import com.voyageone.components.jumei.Bean.JmBrandBean;
-import com.voyageone.components.jumei.Bean.JmCurrencyBean;
-import com.voyageone.components.jumei.Bean.JmWarehouseBean;
+import com.voyageone.components.jumei.bean.JmBrandBean;
+import com.voyageone.components.jumei.bean.JmCurrencyBean;
+import com.voyageone.components.jumei.bean.JmWarehouseBean;
 
 /**
  * @author james.li on 2016/1/25.

@@ -3,7 +3,7 @@ package com.voyageone.components.jumei.service;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.jumei.Bean.*;
+import com.voyageone.components.jumei.bean.*;
 import com.voyageone.components.jumei.JmBase;
 import org.springframework.stereotype.Component;
 
