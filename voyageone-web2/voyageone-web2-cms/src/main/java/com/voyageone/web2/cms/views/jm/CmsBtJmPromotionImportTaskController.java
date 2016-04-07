@@ -35,6 +35,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
     public AjaxResponse getByPromotionId(@RequestBody int promotionId) {
         return success(service.getByPromotionId(promotionId));
     }
+
     @RequestMapping("downloadExcel")
     public void downloadExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String source = request.getParameter("source");
@@ -48,44 +49,22 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
     @RequestMapping("upload")
     public AjaxResponse upload(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        List<String> listFileName=new ArrayList<>();
+        String userName = getUser().getUserName();
         String path = Properties.readValue(CmsConstants.Props.CMS_JM_IMPORT_PATH);
-        //创建一个通用的多部分解析器
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        //判断 request 是否有文件上传,即多部分请求
-        if(multipartResolver.isMultipart(request)){
-            //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
-            //取得request中的所有文件名
-            Iterator<String> iter = multiRequest.getFileNames();
-            while(iter.hasNext()){
-                //记录上传过程起始时的时间，用来计算上传时间
-                int pre = (int) System.currentTimeMillis();
-                //取得上传文件
-                MultipartFile file = multiRequest.getFile(iter.next());
-                if(file != null) {
-                    //取得当前上传文件的文件名称
-                    String myFileName = file.getOriginalFilename();
-                    //如果名称不为“”,说明该文件存在，否则说明该文件不存在
-                    if (myFileName.trim() != "") {
-                        System.out.println(myFileName);
-                        //重命名上传后的文件名
-                        String fileName = "demoUpload" + file.getOriginalFilename();
-                        String timerstr = DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS");
-                        //定义上传路径
-                        String filepath = path + "/" + timerstr + fileName;
-                        File localFile = new File(filepath);
-                        file.transferTo(localFile);
-                        listFileName.add(timerstr + fileName);
-                    }
-                }
-                //记录上传该文件后的时间
-                int finaltime = (int) System.currentTimeMillis();
-                System.out.println(finaltime - pre);
-            }
+        List<String> listFileName = FileUtils.uploadFile(request, path);//上传文件
+        List<CmsBtJmPromotionImportTaskModel> listModel = new ArrayList<>();
+        CmsBtJmPromotionImportTaskModel model = null;
+        for (String fileName : listFileName) {
+            model = new CmsBtJmPromotionImportTaskModel();
+            model.setFileName(fileName);
+            model.setCmsBtJmPromotionId(promotionId);
+            model.setCreater(userName);
+            model.setCreated(new Date());
+            listModel.add(model);
         }
-        Map<String, List<String>> reponse=null;// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
-        // 返回用户信息
+        service.saveList(listModel);
+        Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
+        reponse.put("result", true);
         return success(reponse);
     }
 }

@@ -2,14 +2,21 @@ package com.voyageone.common.util;
 
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.help.DateHelp;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -390,5 +397,40 @@ public final class FileUtils {
                 os.close();
             }
         }
+    }
+    public  static   List<String> uploadFile(HttpServletRequest request, String path) throws IOException {
+        List<String> listFileName=new ArrayList<>();
+        //创建一个通用的多部分解析器
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        //判断 request 是否有文件上传,即多部分请求
+        if(multipartResolver.isMultipart(request)){
+            //转换成多部分request
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
+            //取得request中的所有文件名
+            Iterator<String> iter = multiRequest.getFileNames();
+            while(iter.hasNext()){
+                //记录上传过程起始时的时间，用来计算上传时间
+                int pre = (int) System.currentTimeMillis();
+                //取得上传文件
+                MultipartFile file = multiRequest.getFile(iter.next());
+                if(file != null) {
+                    //取得当前上传文件的文件名称
+                    String myFileName = file.getOriginalFilename();
+                    //如果名称不为“”,说明该文件存在，否则说明该文件不存在
+                    if (myFileName.trim() != "") {
+                        System.out.println(myFileName);
+                        //重命名上传后的文件名
+                        String fileName =file.getOriginalFilename();
+                        String timerstr = DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS");
+                        //定义上传路径
+                        String filepath = path + "/" + timerstr + fileName;
+                        File localFile = new File(filepath);
+                        file.transferTo(localFile);
+                        listFileName.add(timerstr + fileName);
+                    }
+                }
+            }
+        }
+        return listFileName;
     }
 }

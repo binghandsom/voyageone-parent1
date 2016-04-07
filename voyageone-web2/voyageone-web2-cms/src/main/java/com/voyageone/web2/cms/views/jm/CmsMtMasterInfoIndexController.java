@@ -1,5 +1,4 @@
 package com.voyageone.web2.cms.views.jm;
-
 import com.voyageone.service.impl.jumei.CmsMtMasterInfoService;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -10,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 @RestController
 @RequestMapping(
         value = CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.ROOT,

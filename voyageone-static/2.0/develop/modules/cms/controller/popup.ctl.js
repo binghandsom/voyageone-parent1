@@ -307,7 +307,7 @@ define([
                         "size": 'md',
                         "backdrop": "static"
                     },
-                    import:{
+                    "import":{
                         "templateUrl": "views/pop/jm/import.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/jm/import.ctl",
                         "controller": 'popPromotionDetailImportCtl',

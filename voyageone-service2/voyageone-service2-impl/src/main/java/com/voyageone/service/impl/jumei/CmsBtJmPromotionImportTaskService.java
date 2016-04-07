@@ -388,5 +388,10 @@ public class CmsBtJmPromotionImportTaskService {
     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.getByPromotionId(promotionId);
     }
-}
 
+    public void  saveList(List<CmsBtJmPromotionImportTaskModel> list) {
+        for (CmsBtJmPromotionImportTaskModel model : list) {
+                 dao.insert(model);
+        }
+    }
+}
