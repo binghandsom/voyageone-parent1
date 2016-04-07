@@ -4,7 +4,7 @@ import com.voyageone.base.dao.BaseDao;
 import com.voyageone.task2.cms.bean.ProductBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.sears.bean.ProductResponse;
+import com.voyageone.components.sears.bean.ProductResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

@@ -93,7 +93,7 @@ public class CategorySchemaService extends BaseService {
      * @param categoryId String
      * @return CmsMtCategorySchemaModel
      */
-    private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
+    public CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
 
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 

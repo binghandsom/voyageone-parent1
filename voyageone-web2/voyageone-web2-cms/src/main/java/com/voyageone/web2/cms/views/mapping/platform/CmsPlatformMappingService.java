@@ -69,7 +69,6 @@ class CmsPlatformMappingService extends BaseAppService {
                         .collect(toList());
 
         // 获取所有渠道和平台下的 mapping 关系, 画面需要显示
-
         Map<String, CmsMtPlatformCategoryTreeModel> platformMap = getPlatformMap(user.getSelChannel(), cartId);
 
         Map<String, Object> mappings = platformMappingDao.selectMappings(user.getSelChannel(), cartId)

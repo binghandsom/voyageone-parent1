@@ -10,7 +10,7 @@ import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.enums.Operation;
 import com.voyageone.cms.enums.SrcType;
 import com.voyageone.common.Constants;
-import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;

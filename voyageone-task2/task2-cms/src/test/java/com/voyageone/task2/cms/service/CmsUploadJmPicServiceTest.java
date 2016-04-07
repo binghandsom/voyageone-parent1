@@ -1,11 +1,10 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
-import com.voyageone.common.components.jumei.JumeiImageFileService;
+import com.voyageone.components.jumei.Bean.JmImageFileBean;
+import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.service.CmsUploadJmPicService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
