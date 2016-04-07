@@ -486,6 +486,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             // 格式copy用sheet删除
             book.removeSheetAt(1);
 
+            $info("文档写入完成");
+
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 

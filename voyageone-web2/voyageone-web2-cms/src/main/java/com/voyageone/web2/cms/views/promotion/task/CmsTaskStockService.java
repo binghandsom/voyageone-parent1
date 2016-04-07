@@ -2498,7 +2498,7 @@ public class CmsTaskStockService extends BaseAppService {
 
         try (InputStream inputStream = new FileInputStream(templatePath);
             SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
-            // Titel行
+            // Title行
             Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book, book.getXSSFWorkbook().getSheetAt(1), param);
             // 数据行
             writeExcelStockInfoRecord(book, book.getXSSFWorkbook().getSheetAt(1), param, resultData, mapCartCol);
@@ -2633,6 +2633,16 @@ public class CmsTaskStockService extends BaseAppService {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
                 FileUtils.cell(row, mapCartCol.get("-1"), cellStyleDynamicLock).setCellValue(DYNAMIC);
+
+                // 列宽
+                if (lineIndex % 100 == 0 || lineIndex - 1 == resultData.size() / platformList.size()) {
+                    for (int i = 0; i < cntCol; i++) {
+                        double width = SheetUtil.getColumnWidth(sheet, i, false);
+                        if (width > widthCol[i]) {
+                            widthCol[i] = width;
+                        }
+                    }
+                }
             } else {
                 // 同一个sku，不同平台
                 // 平台
@@ -2640,16 +2650,6 @@ public class CmsTaskStockService extends BaseAppService {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
-                }
-            }
-
-            // 列宽
-            if (lineIndex % 100 == 0 || lineIndex - 1 == resultData.size()) {
-                for (int i = 0; i < cntCol; i++) {
-                    double width = SheetUtil.getColumnWidth(sheet, i, false);
-                    if (width > widthCol[i]) {
-                        widthCol[i] = width;
-                    }
                 }
             }
         }
