@@ -137,9 +137,10 @@
       }
     },
     "cmsBtJmPromotionExportTask":{
-      "cmsBtJmPromotionExportTaskService":{
-        "root":"/cms/CmsBtJmPromotionExportTask/index",
-        "getByPromotionId":"getByPromotionId"
+      "cmsBtJmPromotionExportTaskService": {
+        "root": "/cms/CmsBtJmPromotionExportTask/index",
+        "getByPromotionId": "getByPromotionId",
+        "addExport": "addExport"
       }
     },
     "task": {

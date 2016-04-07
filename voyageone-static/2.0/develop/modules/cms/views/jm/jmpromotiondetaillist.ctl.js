@@ -41,6 +41,14 @@ define([
             }, function (res) {
             })
         }
+        $scope.addExport=function(templateType) {
+            var model={templateType:templateType,cmsBtJmPromotionId:$scope.vm.promotionId};
+            cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
+                $scope.searchExport();
+            }, function (res) {
+
+            });
+        }
         $scope.downloadImportExcel=function(id){
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadExcel",angular.toJson({id:id}));

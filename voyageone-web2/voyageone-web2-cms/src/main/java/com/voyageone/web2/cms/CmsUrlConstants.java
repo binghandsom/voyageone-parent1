@@ -68,6 +68,7 @@ interface CmsBtJmPromotionImportTask{
             interface  INDEX {
                 String ROOT="/cms/CmsBtJmPromotionExportTask/index";
                 String GET_BY_PROMOTIONID="getByPromotionId";
+                String ADDEXPORT="addExport";
             }
         }
     }

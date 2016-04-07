@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.jumei.CmsBtJmPromotionExportTaskService;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +42,6 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
     public void downloadExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
-
         CmsBtJmPromotionExportTaskModel model=service.get(Integer.parseInt(hm.get("id").toString()));
         String path = Properties.readValue(CmsConstants.Props.CMS_JM_EXPORT_PATH);
         String fileName = model.getFileName().trim();
@@ -48,6 +49,13 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         File excelFile = new File(filePath);
       com.voyageone.common.util.FileUtils.downloadFile(response, fileName, filePath);
     }
-
-
+    @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.ADDEXPORT)
+    @ResponseBody
+    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) {
+        CallResult result = new CallResult();
+        model.setCreater(getUser().getUserName());
+        model.setCreated(new java.util.Date());
+        service.insert(model);
+        return success(result);
+    }
 }

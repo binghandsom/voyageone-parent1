@@ -31,7 +31,7 @@ public class CmsBtJmPromotionExportTaskService {
     public int update(CmsBtJmPromotionExportTaskModel entity) {
         return dao.update(entity);
     }
-    public int create(CmsBtJmPromotionExportTaskModel entity) {
+    public int insert(CmsBtJmPromotionExportTaskModel entity) {
         return dao.insert(entity);
     }
     public void Export(int JmBtPromotionExportTaskId) throws FileNotFoundException {
