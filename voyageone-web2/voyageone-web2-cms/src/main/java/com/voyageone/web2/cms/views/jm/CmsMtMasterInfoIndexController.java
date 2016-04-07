@@ -46,7 +46,7 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         params.setModifier(getUser().getUserName());
         return success(service.update(params));
     }
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.UPDATE)
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
         CmsMtMasterInfoModel params= service.select(id);
         params.setModifier(getUser().getUserName());
