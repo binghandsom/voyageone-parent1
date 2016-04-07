@@ -204,6 +204,12 @@ public interface CmsUrlConstants {
 
             String EXPORT_PRODUCTS = "exportProducts";
         }
+
+        interface FEED {
+            String ROOT = "/cms/search/feed";
+            String INIT = "init";
+            String SEARCH = "search";
+        }
     }
 
     // 匹配关系设置

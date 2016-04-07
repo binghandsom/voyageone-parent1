@@ -10,21 +10,11 @@
             <div id="vo_fixProdPanel">
                 <!-- product photos -->
                 <div class="col-sm-12 ">
-                    <div class="col-sm-8 col-sm-offset-2 table-bordered imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/sf4290cybckl_main_1'); width:400px;height: 400px;;">
-
+                    <div class="col-sm-8 col-sm-offset-2 table-bordered imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{vm.imageMain}}'); width:400px;height: 400px;;">
                     </div>
-                    <div class="col-sm-12" style="margin: 10px 41px;">
-                        <div class="col-sm-3 table-bordered">
-                             <img src="http://image.sneakerhead.com/is/image/sneakerhead/sf4290cybckl_a3" style="height: 50px;margin-right: 10px;">
-                        </div>
-                        <div class="col-sm-3 table-bordered">
-                             <img src="http://image.sneakerhead.com/is/image/sneakerhead/sf4290cybckl_a3" style="height: 50px;margin-right: 10px;">
-                        </div>
-                        <div class="col-sm-3 table-bordered">
-                            <img src="http://image.sneakerhead.com/is/image/sneakerhead/sf4290cybckl_a3" style="height: 50px;margin-right: 10px;">
-                        </div>
-                        <div class="col-sm-3 table-bordered">
-                            <img src="http://image.sneakerhead.com/is/image/sneakerhead/sf4290cybckl_a3" style="height: 50px;margin-right: 10px;">
+                    <div class="col-sm-12" style="margin: 10px 41px;" ng-if="vm.imageList.length > 0">
+                        <div class="col-sm-3 table-bordered" ng-repeat="imgName in vm.imageList">
+                             <img src="http://image.sneakerhead.com/is/image/sneakerhead/{{imgName}}" style="height: 50px;margin-right: 10px;">
                         </div>
                     </div>
                 </div>

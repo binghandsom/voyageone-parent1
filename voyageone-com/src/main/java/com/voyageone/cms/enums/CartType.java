@@ -16,8 +16,9 @@ public enum CartType {
     TMALLG("TMallG", "天猫国际", "TG", 23),
 
     JINGDONG("JingDong", "京东", "JD", 24),
-
     JINGDONGG("JingDongG", "京东国际", "JG", 26),
+
+    MINIMALL("MiniMall", "MiniMall", "MM", 28),
 
     MASTER("Master", "主数据", "MT", 0),
 

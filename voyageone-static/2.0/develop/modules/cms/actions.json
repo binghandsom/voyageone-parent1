@@ -30,6 +30,11 @@
         "exportProducts":"exportProducts",
         "getCustColumnsInfo":"getCustColumnsInfo",
         "saveCustColumnsInfo":"saveCustColumnsInfo"
+      },
+      "$feedSearchService": {
+        "root": "/cms/search/feed/",
+        "init": "init",
+        "search": "search"
       }
     },
     "group": {

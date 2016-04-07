@@ -121,6 +121,9 @@ public class CmsSearchAdvanceService extends BaseAppService{
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
+        // 判断是否是minimall用户
+        masterData.put("isminimall", 1);
+
         return masterData;
     }
 
