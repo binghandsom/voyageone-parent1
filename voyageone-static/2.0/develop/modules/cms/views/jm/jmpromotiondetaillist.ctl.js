@@ -41,6 +41,28 @@ define([
             }, function (res) {
             })
         }
+        $scope.downloadImportExcel=function(id){
+            ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
+            ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadExcel",angular.toJson({id:id}));
+        }
+        $scope.downloadExportExcel=function(id){
+            ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
+            ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel",angular.toJson({id:id}));
+        }
+        function ExportExcel(action,source)//导出excel方法
+        {
+            var Form = document.createElement("FORM");
+            document.body.appendChild(Form);
+            Form.method = "POST";
+            var newElement = $("<input name='source' type='hidden' />")[0];
+            Form.appendChild(newElement);
+            newElement.value = source;
+            var IsExcelElement = $("<input name='IsExcel' type='hidden' />")[0];
+            Form.appendChild(IsExcelElement);
+            IsExcelElement.value = 1;
+            Form.action = action;
+            Form.submit();
+        };
         function loadSearchInfo()
         {
             $scope.searchInfo.synchStateList=[];

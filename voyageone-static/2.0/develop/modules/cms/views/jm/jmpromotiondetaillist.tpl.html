@@ -317,7 +317,7 @@
 						<td class="text-center">{{model.beginTime}}</td>
 						<td class="text-center">{{model.endTime}}</td>
 						<td class="text-center">{{model.errorMsg}}</td>
-						<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
+						<td class="text-center"><button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
 					</tr>
 					</tbody>
 				</table>
@@ -344,7 +344,7 @@
 								<td class="text-center">{{model.beginTime}}</td>
 								<td class="text-center">{{model.endTime}}</td>
 								<td class="text-center">{{model.errorMsg}}</td>
-								<td class="text-center"><button title="下载" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
+								<td class="text-center"><button title="下载" ng-click="downloadExportExcel(model.id);" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
 							</tr>
 							</tbody>
 						</table>
