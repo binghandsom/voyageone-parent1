@@ -1,13 +1,8 @@
 package com.voyageone.task2.cms.service.promotion.stock;
-
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.SimpleTransaction;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
@@ -25,7 +20,7 @@ import java.util.*;
  * @version 0.0.1, 16/3/31
  */
 @Service
-public class StockIncrementSeparateService extends BaseTaskService {
+public class StockIncrementService extends BaseTaskService {
 
     @Autowired
     private StockInfoService stockInfoService;
@@ -64,7 +59,7 @@ public class StockIncrementSeparateService extends BaseTaskService {
      */
     @Override
     public String getTaskName() {
-        return "CmsStockIncrementSeparateJob";
+        return "CmsStockIncrementJob";
     }
 
     /**
@@ -80,39 +75,41 @@ public class StockIncrementSeparateService extends BaseTaskService {
         List<Map<String, Object>> stockIncrementList = getStockSeparateIncrementData();
         $info("取得 等待增量 处理件数：%d件", stockIncrementList.size());
 
-        // 按渠道id,整理Map<channelId, List<stockIncrementData>>
-        Map<String, List<Map<String, Object>>> stockIncrementMapByChannel = new HashMap<>();
+        if (stockIncrementList.size() > 0) {
+            // 按渠道id,整理Map<channelId, List<stockIncrementData>>
+            Map<String, List<Map<String, Object>>> stockIncrementMapByChannel = new HashMap<>();
 
-        for (Map<String, Object> stockIncrement : stockIncrementList) {
-            String channelId = (String) stockIncrement.get("channel_id");
+            for (Map<String, Object> stockIncrement : stockIncrementList) {
+                String channelId = (String) stockIncrement.get("channel_id");
 
-            if (stockIncrementMapByChannel.containsKey(channelId)) {
-                stockIncrementMapByChannel.get(channelId).add(stockIncrement);
-            } else {
-                List<Map<String, Object>> stockIncrementListByChannel = new ArrayList<>();
-                stockIncrementListByChannel.add(stockIncrement);
-                stockIncrementMapByChannel.put(channelId, stockIncrementListByChannel);
+                if (stockIncrementMapByChannel.containsKey(channelId)) {
+                    stockIncrementMapByChannel.get(channelId).add(stockIncrement);
+                } else {
+                    List<Map<String, Object>> stockIncrementListByChannel = new ArrayList<>();
+                    stockIncrementListByChannel.add(stockIncrement);
+                    stockIncrementMapByChannel.put(channelId, stockIncrementListByChannel);
+                }
             }
-        }
 
-        // 取得 有增量接口的平台
-        List<TypeBean> typeBeanList = Types.getTypeList(69, "en");
-        for(TypeBean typeBean : typeBeanList) {
-            cartList.add(new Integer(typeBean.getValue()));
-        }
+            // 取得 有增量接口的平台
+            List<TypeBean> typeBeanList = Types.getTypeList(69, "en");
+            for (TypeBean typeBean : typeBeanList) {
+                cartList.add(new Integer(typeBean.getValue()));
+            }
 
-        simpleTransaction.openTransaction();
+            simpleTransaction.openTransaction();
             try {
-            // 按渠道id更新等待增量的数据
-            for (String channelId : stockIncrementMapByChannel.keySet()) {
-                executeByChannel(channelId, stockIncrementMapByChannel.get(channelId));
+                // 按渠道id更新等待增量的数据
+                for (String channelId : stockIncrementMapByChannel.keySet()) {
+                    executeByChannel(channelId, stockIncrementMapByChannel.get(channelId));
+                }
+            } catch (Exception e) {
+                $info("*****CmsStockIncrementSeparateJob任务异常终了*****");
+                simpleTransaction.rollback();
+                throw e;
             }
-        }catch (Exception e) {
-            $info("*****CmsStockIncrementSeparateJob任务异常终了*****");
-            simpleTransaction.rollback();
-            throw e;
+            simpleTransaction.commit();
         }
-        simpleTransaction.commit();
 
         $info("处理了增量件数：%d件", cntIncrement);
         $info("处理了推送件数：%d件", cntSend);
@@ -127,22 +124,20 @@ public class StockIncrementSeparateService extends BaseTaskService {
      * @param stockIncrementList 渠道id对应的增量数据列表
      */
     private void executeByChannel(String channelId, List<Map<String, Object>> stockIncrementList) {
-//        // 取得渠道id 对应的所有销售平台
-//        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-//        List<String> listCartId = new ArrayList<>();
-//        cartList.forEach(cartInfo -> listCartId.add(cartInfo.getValue()));
 
         // 增量任务id列表
-        Set<String> subTaskIdList = new HashSet<String>();
+        Set<Integer> subTaskIdList = new HashSet<>();
         for (Map<String, Object> stockIncrement : stockIncrementList) {
-            String subTaskId = (String) stockIncrement.get("sub_task_id");
+            Integer subTaskId = (Integer) stockIncrement.get("sub_task_id");
             subTaskIdList.add(subTaskId);
         }
 
-        $info("开始取得可用隔离库存值");
+        $info("开始取得一般隔离库存值");
         // 根据增量任务id列表，取得状态为"隔离成功"的隔离数据的隔离库存值，生成Map<sku + cartId, 隔离库存值>
         // 部分平台的Api接口未提供增量的接口，刷增量库存的时候，需要加算隔离库存值
         Map<String, Integer> stockInfoMap = new HashMap<>();
+//        // 取得增量任务的增量类型（1：按比例增量隔离； 2：按数量增量隔离），生成Map<subTaskId, Type>
+//        Map<Integer, String> typeInfoMap = new HashMap<>();
         List<Map<String, Object>> stockList = getStockSeparateData(subTaskIdList);
         for (Map<String, Object> stock : stockList) {
             String sku = (String) stock.get("sku");
@@ -150,7 +145,7 @@ public class StockIncrementSeparateService extends BaseTaskService {
             Integer separateQty = (Integer) stock.get("separate_qty");
             stockInfoMap.put(sku + cartId, separateQty);
         }
-        $info("隔离库存值取得完毕");
+        $info("一般隔离库存值取得完毕");
 
         // 取得可用库存
         $info("开始取得可用库存数据");
@@ -174,12 +169,16 @@ public class StockIncrementSeparateService extends BaseTaskService {
             Integer oldIncrementQty = (Integer) stockIncrement.get("increment_qty");
             // 固定值隔离标志位
             String fixFlg = (String) stockIncrement.get("fix_flg");
+            // 类型
+            String type = (String) stockIncrement.get("type");
             // 实际可用库存
             Integer usableQty = skuStockUsableAll.get(sku);
-
+            if (usableQty == null) {
+                usableQty = 0;
+            }
 
             // 计算实际增量库存
-            Integer incrementQty = calculateIncrementQty(oldUsableQty, oldIncrementQty, usableQty, fixFlg);
+            Integer incrementQty = calculateIncrementQty(oldUsableQty, oldIncrementQty, usableQty, fixFlg, type);
             // 共享平台库存
             Integer shareQty = usableQty - incrementQty;
             if (shareQty < 0) {
@@ -193,12 +192,12 @@ public class StockIncrementSeparateService extends BaseTaskService {
             // 更新成功的场合
             if (updateCnt > 0) {
                 // 将增量库存数据插入ims_bt_log_syn_inventory表
-                insertIncrementSeparateInventoryData(imsBtLogSynInventoryList, channelId, cartId, sku, incrementQty, seq);
+                insertIncrementSeparateInventoryData(imsBtLogSynInventoryList, stockInfoMap, channelId, cartId, sku, incrementQty, seq);
 
                 // 将共享平台的库存数据插入ims_bt_log_syn_inventory表
                 $info("共享平台数量：" + shareCartIdList.size());
                 for (Integer shareCartId : shareCartIdList) {
-                    insertShareInventoryData(imsBtLogSynInventoryList, channelId, shareCartId, sku, shareQty, seq);
+                    insertShareInventoryData(imsBtLogSynInventoryList, channelId, shareCartId, sku, shareQty);
                 }
 
                 // 500件以上插入
@@ -232,16 +231,16 @@ public class StockIncrementSeparateService extends BaseTaskService {
      * @param subTaskIdList 增量任务id列表
      * @return 状态为"隔离成功"的隔离数据列表
      */
-    private List<Map<String, Object>> getStockSeparateData(Set<String> subTaskIdList) {
+    private List<Map<String, Object>> getStockSeparateData(Set<Integer> subTaskIdList) {
 
         // 任务id列表
-        List<Integer> taskIdList = new ArrayList<>();
+        Set<Integer> taskIdList = new HashSet<>();
         // 取得增量任务id对应的任务id
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("subTaskIdList", subTaskIdList);
         List<Map<String, Object>> stockTaskList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
         for (Map<String, Object>stockTask : stockTaskList) {
-            taskIdList.add((Integer)stockTask.get("sub_task_id"));
+            taskIdList.add((Integer)stockTask.get("task_id"));
         }
 
         // 根据任务id列表，取得状态为"隔离成功"的隔离数据列表
@@ -258,16 +257,22 @@ public class StockIncrementSeparateService extends BaseTaskService {
      * @param oldIncrementQty 旧的增量库存
      * @param usableQty 实际可用库存
      * @param fixFlg 固定值隔离标志位
+     * @param type 类型(1：按比例增量隔离； 2：按数量增量隔离)
      * @return 实际增量库存
      */
-    private Integer calculateIncrementQty(Integer oldUsableQty,  Integer oldIncrementQty, Integer usableQty, String fixFlg) {
+    private Integer calculateIncrementQty(Integer oldUsableQty,  Integer oldIncrementQty, Integer usableQty, String fixFlg, String type) {
         // 旧的可用库存 = 实际可用库存的场合，实际增量库存 = 旧的增量库存
-        if (oldUsableQty.intValue() == usableQty.intValue()) {
+        if (oldUsableQty - usableQty == 0) {
             return oldIncrementQty;
         }
         // 固定值隔离标志位 = 1：按固定值进行增量隔离的场合，实际增量库存 = 旧的增量库存
         if (StockInfoService.TYPE_FIX_VALUE.equals(fixFlg)) {
             return oldIncrementQty;
+        }
+
+        // 若是按比例分配，无论“实时可用库存” 大于或者小于 旧的可用库存, 都按比例进行再计算
+        if (usableQty > oldUsableQty) {
+
         }
 
         Integer incrementQty = null;
@@ -302,6 +307,7 @@ public class StockIncrementSeparateService extends BaseTaskService {
      * 将增量库存数据插入ims_bt_log_syn_inventory表
      *
      * @param imsBtLogSynInventoryList 增量库存插入列表
+     * @param stockInfoMap 一般隔离库存值Map<sku + cartId, 隔离库存值>
      * @param channelId 渠道id
      * @param cartId 平台id
      * @param sku Sku
@@ -309,7 +315,13 @@ public class StockIncrementSeparateService extends BaseTaskService {
      * @param seq Seq
      */
     private void insertIncrementSeparateInventoryData(List<Map<String, Object>> imsBtLogSynInventoryList,
-                    String channelId, Integer cartId, String sku, Integer incrementQty, Integer seq) {
+                 Map<String, Integer> stockInfoMap, String channelId, Integer cartId, String sku, Integer incrementQty, Integer seq) {
+
+        // 该渠道不提供增量接口
+        if (!cartList.contains(cartId)) {
+            incrementQty += stockInfoMap.get(sku + cartId);
+        }
+
         imsBtLogSynInventoryList.add(
                 stockInfoService.createMapImsBtLogSynInventory(
                         channelId,
@@ -330,10 +342,9 @@ public class StockIncrementSeparateService extends BaseTaskService {
      * @param cartId 平台id
      * @param sku Sku
      * @param shareQty 共享库存
-     * @param seq Seq
      */
-    private void insertShareInventoryData(List<Map<String, Object>> imsBtLogSynInventoryList, String channelId,
-                                          Integer cartId, String sku, Integer shareQty, Integer seq) {
+    private void insertShareInventoryData(List<Map<String, Object>> imsBtLogSynInventoryList,
+                  String channelId, Integer cartId, String sku, Integer shareQty) {
         imsBtLogSynInventoryList.add(
                 stockInfoService.createMapImsBtLogSynInventory(
                         channelId,
