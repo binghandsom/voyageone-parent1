@@ -1376,9 +1376,8 @@ public class CmsTaskStockService extends BaseAppService {
     public List<Map<String,Object>> getPropertyList(String channelId, String lang){
         List<Map<String,Object>> propertyList = new ArrayList<Map<String,Object>>();
         // 取得动态属性
-        List<TypeChannelBean> dynamicPropertyList = TypeChannels.getTypeList("dynamicProperty", (String) channelId);
+        List<TypeChannelBean> dynamicPropertyList = TypeChannels.getTypeWithLang("dynamicProperty", (String) channelId, lang);
         for (TypeChannelBean dynamicProperty : dynamicPropertyList) {
-            if (lang.equals(dynamicProperty.getLang_id())) {
                 Map<String, Object> propertyItem = new HashMap<String, Object>();
                 propertyItem.put("property", dynamicProperty.getValue());
                 propertyItem.put("name", dynamicProperty.getName());
@@ -1387,7 +1386,6 @@ public class CmsTaskStockService extends BaseAppService {
                 propertyItem.put("show", true);
                 propertyItem.put("value", "");
                 propertyList.add(propertyItem);
-            }
         }
         return propertyList;
     }
