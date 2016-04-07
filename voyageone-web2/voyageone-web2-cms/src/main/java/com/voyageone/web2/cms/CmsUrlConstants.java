@@ -36,7 +36,9 @@ public interface CmsUrlConstants {
                 String INSERT = "insert";
 
                 String UPDATE = "update";
+                String DELETE="delete";
                 String GET = "get";
+
             }
 
             interface DETAIL {

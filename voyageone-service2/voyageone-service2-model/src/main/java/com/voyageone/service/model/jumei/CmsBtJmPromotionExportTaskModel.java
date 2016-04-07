@@ -91,6 +91,12 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
         */
      private boolean isExport;
     
+    
+ /**
+导出模板类型:0:导入模板1：价格修正模板 2:专场模板
+        */
+     private int templateType;
+    
         
          /**
            
@@ -306,6 +312,20 @@ this.created=DateHelp.getDefaultDate();
         public void setIsExport(boolean isExport)
         {
          this.isExport=isExport;
+        }
+    
+        
+         /**
+           导出模板类型:0:导入模板1：价格修正模板 2:专场模板
+        */
+        public int getTemplateType()
+        {
+         
+        return this.templateType;
+        }
+        public void setTemplateType(int templateType)
+        {
+         this.templateType=templateType;
         }
     
 }

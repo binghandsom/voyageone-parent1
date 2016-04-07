@@ -27,14 +27,14 @@ define([
             }, function (res) {
             })
         };
-        $scope.selectImport=function(){
+        $scope.searchImport=function(){
             cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
                // console.log(res);
                 $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
             }, function (res) {
             })
         }
-        $scope.selectExport=function(){
+        $scope.searchExport=function(){
             cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
                 // console.log(res);
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;

@@ -118,6 +118,12 @@ data_type为3，value1是NULL,data_type为其它，value2是jm_url聚美服务�
         */
      private String modifier;
     
+    
+ /**
+
+        */
+     private boolean isActive;
+    
         
          /**
            
@@ -410,6 +416,20 @@ else
 this.modifier="";
 }
 
+        }
+    
+        
+         /**
+           
+        */
+        public boolean getIsActive()
+        {
+         
+        return this.isActive;
+        }
+        public void setIsActive(boolean isActive)
+        {
+         this.isActive=isActive;
         }
     
 }

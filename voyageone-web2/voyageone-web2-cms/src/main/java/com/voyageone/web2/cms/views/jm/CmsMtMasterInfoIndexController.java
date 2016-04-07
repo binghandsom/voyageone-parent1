@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.service.impl.jumei.CmsMtMasterInfoService;
+import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -45,7 +46,13 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         params.setModifier(getUser().getUserName());
         return success(service.update(params));
     }
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.UPDATE)
+    public AjaxResponse delete(@RequestBody int id) {
+        CmsMtMasterInfoModel params= service.select(id);
+        params.setModifier(getUser().getUserName());
+        params.setIsActive(false);
+        return success(service.update(params));
+    }
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.GET)
     public Object get(@RequestBody int id) {//@RequestParam("id")
         return success(service.select(id));
