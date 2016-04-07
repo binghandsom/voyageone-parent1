@@ -460,7 +460,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
-
         StringBuffer result = new StringBuffer();
 
         // 设置platform检索条件
@@ -478,16 +477,20 @@ public class CmsSearchAdvanceService extends BaseAppService{
             resultPlatforms.append(",");
         }
 
-        // 获取publishTime start
-        if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
-            resultPlatforms.append(",");
-        }
-
-        // 获取publishTime End
-        if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
-            resultPlatforms.append(",");
+        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
+            resultPlatforms.append("\"publishTime\":{" );
+            // 获取publishTime start
+            if (searchValue.getPublishTimeStart() != null) {
+                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+            }
+            // 获取publishTime End
+            if (searchValue.getPublishTimeTo() != null) {
+                if (searchValue.getPublishTimeStart() != null) {
+                    resultPlatforms.append(",");
+                }
+                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+            }
+            resultPlatforms.append("},");
         }
 
         if (isMain) {
@@ -534,7 +537,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取price start
-        if(searchValue.getPriceType() != null
+        if (searchValue.getPriceType() != null
                 && searchValue.getPriceStart() != null) {
             result.append(MongoUtils.splicingValue("fields." + searchValue.getPriceType() + "St", searchValue.getPriceStart(), "$gte"));
             result.append(",");
@@ -547,16 +550,20 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append(",");
         }
 
-        // 获取createdTime start
         if (searchValue.getCreateTimeStart() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart() + " 00.00.00", "$gte"));
-            result.append(",");
-        }
-
-        // 获取createdTime End
-        if (searchValue.getCreateTimeTo() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo() + " 23.59.59", "$lte"));
-            result.append(",");
+            result.append("\"created\":{" );
+            // 获取createdTime start
+            if (searchValue.getCreateTimeStart() != null) {
+                result.append(MongoUtils.splicingValue("$gte", searchValue.getCreateTimeStart() + " 00.00.00"));
+            }
+            // 获取createdTime End
+            if (searchValue.getCreateTimeTo() != null) {
+                if (searchValue.getCreateTimeStart() != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", searchValue.getCreateTimeTo() + " 23.59.59"));
+            }
+            result.append("},");
         }
 
         // 获取inventory
