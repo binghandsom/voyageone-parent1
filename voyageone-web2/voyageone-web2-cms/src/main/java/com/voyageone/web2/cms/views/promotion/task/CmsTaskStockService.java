@@ -23,6 +23,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2502,14 +2503,6 @@ public class CmsTaskStockService extends BaseAppService {
             // 数据行
             writeExcelStockInfoRecord(book, book.getXSSFWorkbook().getSheetAt(1), param, resultData, mapCartCol);
 
-            // 自适应列宽
-            List<Map> propertyList = (List<Map>) param.get("propertyList");
-            List<Map> platformList = (List<Map>) param.get("platformList");
-            int cntCol = 3 + propertyList.size() + platformList.size() + 2;
-            for (int i = 0; i < cntCol; i++) {
-                book.getSheetAt(0).autoSizeColumn(i);
-            }
-
             // 格式copy用sheet删除
             book.removeSheetAt(1);
 
@@ -2605,6 +2598,9 @@ public class CmsTaskStockService extends BaseAppService {
         CellStyle cellStyleNumLock = sheetModel.getRow(0).getCell(6).getCellStyle(); // 数值（锁定）的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
+        List<Map> platformList = (List<Map>) param.get("platformList");
+        int cntCol = 3 + propertyList.size() + platformList.size() + 2; // 总列数
+        double[] widthCol = new double[cntCol];
 
         for (StockExcelBean rowData : resultData) {
             cart_id = rowData.getCartId();
@@ -2646,6 +2642,40 @@ public class CmsTaskStockService extends BaseAppService {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
             }
+
+            // 列宽
+            if (lineIndex % 100 == 0 || lineIndex - 1 == resultData.size()) {
+                for (int i = 0; i < cntCol; i++) {
+                    double width = SheetUtil.getColumnWidth(sheet, i, false);
+                    if (width > widthCol[i]) {
+                        widthCol[i] = width;
+                    }
+                }
+            }
+        }
+
+        // 设置列宽
+        for (int i = 0; i < cntCol; i++) {
+            setColumnWidth(sheet, i, widthCol[i]);
+        }
+    }
+
+    /**
+     * 设置列宽
+     *
+     * @param sheet sheet
+     * @param column 列号
+     * @param width 列宽
+     */
+    public void setColumnWidth(Sheet sheet, int column, double width) {
+        if (width != -1.0D) {
+            width *= 256.0D;
+            char maxColumnWidth = '\uff00';
+            if (width > (double) maxColumnWidth) {
+                width = (double) maxColumnWidth;
+            }
+
+            sheet.setColumnWidth(column, (int) width);
         }
     }
 
