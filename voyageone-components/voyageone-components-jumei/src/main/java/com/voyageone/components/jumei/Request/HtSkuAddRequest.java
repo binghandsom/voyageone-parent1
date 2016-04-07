@@ -1,7 +1,4 @@
-package com.voyageone.common.components.jumei.Request;
-
-import com.voyageone.common.components.jumei.Bean.HtDealUpdate_DealInfo;
-import com.voyageone.common.util.JacksonUtil;
+package com.voyageone.components.jumei.Request;
 
 import java.io.IOException;
 import java.util.HashMap;

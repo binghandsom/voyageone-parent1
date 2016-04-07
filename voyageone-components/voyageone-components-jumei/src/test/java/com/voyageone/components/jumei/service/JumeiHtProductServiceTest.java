@@ -1,22 +1,19 @@
-package com.voyageone.common.components.jumei;
+package com.voyageone.components.jumei.service;
 
-import com.voyageone.common.components.jumei.Bean.HtDealCopyDeal_DealInfo;
-import com.voyageone.common.components.jumei.Bean.HtProductUpdate_ProductInfo;
-import com.voyageone.common.components.jumei.Reponse.HtDealCopyDealResponse;
-import com.voyageone.common.components.jumei.Reponse.HtProductUpdateResponse;
-import com.voyageone.common.components.jumei.Request.HtDealCopyDealRequest;
-import com.voyageone.common.components.jumei.Request.HtProductUpdateRequest;
+
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.Bean.HtProductUpdate_ProductInfo;
+import com.voyageone.components.jumei.JumeiHtProductService;
+import com.voyageone.components.jumei.Reponse.HtProductUpdateResponse;
+import com.voyageone.components.jumei.Request.HtProductUpdateRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Date;
-
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtProductServiceTest {
     @Autowired
     JumeiHtProductService service;

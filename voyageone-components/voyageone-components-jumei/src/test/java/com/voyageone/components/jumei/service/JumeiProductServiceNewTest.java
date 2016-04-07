@@ -1,9 +1,8 @@
-package com.voyageone.common.components.jumei;
+package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JacksonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

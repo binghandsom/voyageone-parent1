@@ -1,4 +1,4 @@
-package com.voyageone.common.components.jumei.Reponse;
+package com.voyageone.components.jumei.Reponse;
 
 import com.voyageone.common.util.JacksonUtil;
 
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by dell on 2016/3/29.
  */
-public class HtSkuAddResponse extends  JMResponse {
+public class HtSkuAddResponse extends JMResponse {
 
     @Override
     public void setBody(String body) throws IOException {

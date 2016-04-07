@@ -1,12 +1,13 @@
-package com.voyageone.common.components.jumei;
+package com.voyageone.components.jumei.service;
 
-import com.voyageone.common.components.jumei.Bean.HtDealCopyDeal_DealInfo;
-import com.voyageone.common.components.jumei.Reponse.HtDealCopyDealResponse;
-import com.voyageone.common.components.jumei.Request.HtDealCopyDealRequest;
-import com.voyageone.common.components.jumei.Request.HtDealUpdateRequest;
-import com.voyageone.common.components.jumei.Reponse.HtDealUpdateResponse;
-import com.voyageone.common.components.jumei.Bean.HtDealUpdate_DealInfo;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.Bean.HtDealCopyDeal_DealInfo;
+import com.voyageone.components.jumei.Bean.HtDealUpdate_DealInfo;
+import com.voyageone.components.jumei.JumeiHtDealService;
+import com.voyageone.components.jumei.Reponse.HtDealCopyDealResponse;
+import com.voyageone.components.jumei.Reponse.HtDealUpdateResponse;
+import com.voyageone.components.jumei.Request.HtDealCopyDealRequest;
+import com.voyageone.components.jumei.Request.HtDealUpdateRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtDealServiceTest {
     @Autowired
     JumeiHtDealService htDealService;

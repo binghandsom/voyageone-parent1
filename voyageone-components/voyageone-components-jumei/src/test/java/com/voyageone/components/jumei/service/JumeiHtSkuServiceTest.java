@@ -1,20 +1,17 @@
-package com.voyageone.common.components.jumei;
+package com.voyageone.components.jumei.service;
 
-import com.voyageone.common.components.jumei.Bean.HtProductUpdate_ProductInfo;
-import com.voyageone.common.components.jumei.Reponse.HtProductUpdateResponse;
-import com.voyageone.common.components.jumei.Reponse.HtSkuAddResponse;
-import com.voyageone.common.components.jumei.Request.HtProductUpdateRequest;
-import com.voyageone.common.components.jumei.Request.HtSkuAddRequest;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.JumeiHtSkuService;
+import com.voyageone.components.jumei.Reponse.HtSkuAddResponse;
+import com.voyageone.components.jumei.Request.HtSkuAddRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtSkuServiceTest {
 
     @Autowired

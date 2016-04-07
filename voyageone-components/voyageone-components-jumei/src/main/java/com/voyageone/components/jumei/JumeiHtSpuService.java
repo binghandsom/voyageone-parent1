@@ -1,10 +1,8 @@
-package com.voyageone.common.components.jumei;
-import com.voyageone.common.components.jumei.Reponse.HtProductUpdateResponse;
-import com.voyageone.common.components.jumei.Reponse.HtSpuAddResponse;
-import com.voyageone.common.components.jumei.Request.HtProductUpdateRequest;
-import com.voyageone.common.components.jumei.Request.HtSpuAddRequest;
-import com.voyageone.common.components.jumei.base.JmBase;
+package com.voyageone.components.jumei;
+
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.Reponse.HtSpuAddResponse;
+import com.voyageone.components.jumei.Request.HtSpuAddRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

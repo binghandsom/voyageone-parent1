@@ -1,10 +1,8 @@
-package com.voyageone.common.components.jumei;
-
-import com.voyageone.common.components.jumei.Reponse.HtSkuAddResponse;
-import com.voyageone.common.components.jumei.Reponse.HtSpuAddResponse;
-import com.voyageone.common.components.jumei.Request.HtSkuAddRequest;
-import com.voyageone.common.components.jumei.Request.HtSpuAddRequest;
+package com.voyageone.components.jumei.service;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.JumeiHtSpuService;
+import com.voyageone.components.jumei.Reponse.HtSpuAddResponse;
+import com.voyageone.components.jumei.Request.HtSpuAddRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtSpuServiceTest {
     @Autowired
     JumeiHtSpuService service;

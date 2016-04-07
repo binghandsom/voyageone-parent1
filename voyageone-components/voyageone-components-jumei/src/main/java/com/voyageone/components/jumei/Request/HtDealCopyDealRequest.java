@@ -1,10 +1,11 @@
-package com.voyageone.common.components.jumei.Request;
-import com.voyageone.common.components.jumei.Bean.HtDealCopyDeal_DealInfo;
-import com.voyageone.common.components.jumei.Bean.HtDealUpdate_DealInfo;
+package com.voyageone.components.jumei.Request;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.jumei.Bean.HtDealCopyDeal_DealInfo;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * Created by dell on 2016/3/29.
  */

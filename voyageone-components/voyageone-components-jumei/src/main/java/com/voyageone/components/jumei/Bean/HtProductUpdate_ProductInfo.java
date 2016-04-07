@@ -1,4 +1,4 @@
-package com.voyageone.common.components.jumei.Bean;
+package com.voyageone.components.jumei.Bean;
 
 /**
  * Created by dell on 2016/3/29.
