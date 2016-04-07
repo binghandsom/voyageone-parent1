@@ -6,7 +6,7 @@ define([
         var parentModel=context;
         $scope.vm={"messager":""};
         var uploader = $scope.uploader = new FileUploader({
-            url: '/cms/promotion/detail/uploadPromotion'
+            url: '/cms/CmsBtJmPromotionImportTask/index/upload'
         });
         $scope.initialize  = function () {
 

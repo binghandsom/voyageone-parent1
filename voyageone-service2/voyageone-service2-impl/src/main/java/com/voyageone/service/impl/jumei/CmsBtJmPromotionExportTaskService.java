@@ -36,7 +36,7 @@ public class CmsBtJmPromotionExportTaskService {
     }
     public void Export(int JmBtPromotionExportTaskId) throws FileNotFoundException {
         CmsBtJmPromotionExportTaskModel model = dao.select(1);
-        String fileName = "/usr/JMExport" + "/Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmss") + ".xls";
+        String fileName = "/usr/JMExport" + "/Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
         ExportExcelInfo<Map<String, Object>> productInfo = exportProduct(fileName);
         ExportExcelInfo<Map<String, Object>> skuInfo = exportSku(fileName);
         try {

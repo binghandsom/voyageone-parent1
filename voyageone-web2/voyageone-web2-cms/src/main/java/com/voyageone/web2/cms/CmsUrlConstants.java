@@ -69,6 +69,19 @@ interface CmsBtJmPromotionImportTask{
             }
         }
     }
+    interface CMSMTMASTERINFO {
+        interface LIST {
+            interface INDEX {
+                String ROOT = "/cms/cmsmtmasterinfo/index";
+                String INIT = "init";
+                String GET_LIST_BY_WHERE = "getListByWhere";
+                String INSERT = "insert";
+                String UPDATE = "update";
+                String GET = "get";
+                String UPDATEJMIMG="updateJMImg";
+            }
+        }
+    }
     // 活动管理
     interface PROMOTION {
         interface LIST {
