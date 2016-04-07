@@ -92,6 +92,11 @@ public class StockInfoService {
     /** syn_type 2: 增量 */
     public static final String SYN_TYPE_ADD = "2";
 
+    /** 0：按动态值进行增量隔离 */
+    public static final String TYPE_DYNAMIC = "0";
+    /** 1：按固定值进行增量隔离 */
+    public static final String TYPE_FIX_VALUE = "1";
+
     /**
      * 取得可用库存
      *
