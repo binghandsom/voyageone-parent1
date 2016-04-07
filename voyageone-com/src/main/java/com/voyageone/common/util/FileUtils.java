@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -362,5 +363,32 @@ public final class FileUtils {
 
         return cell;
     }
-
+    public static void downloadFile(HttpServletResponse response, String fileName, String filePath) throws IOException {
+        OutputStream os = null;
+        InputStream inputStream = null;
+        try {
+            File excelFile = new File(filePath);
+            os = response.getOutputStream();
+            response.reset();
+            response.setHeader("Content-Disposition", "attachment; filename=" +fileName);
+            response.setContentType("application/octet-stream; charset=utf-8");
+            //os.write(FileUtils.readFileToByteArray(excelFile));
+            // os.flush();
+            inputStream = new FileInputStream(excelFile);
+            byte[] b = new byte[2048];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (os != null) {
+                os.close();
+            }
+        }
+    }
 }
