@@ -1,5 +1,6 @@
 package com.voyageone.common.components.jd;
 
+import com.voyageone.components.ComponentConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.request.JdRequest;
 import com.jd.open.api.sdk.response.AbstractResponse;
 import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.tmall.base.TbCommon;
 import com.voyageone.common.configs.beans.ShopBean;
 
 /**
@@ -58,7 +58,7 @@ public abstract class JdBase {
      */
     protected <T extends AbstractResponse> T reqApi(ShopBean shopBean, JdRequest<T> request) throws JdException {
 
-        return reqApi(shopBean, request, TbCommon.C_MAX_API_ERROR);
+        return reqApi(shopBean, request, ComponentConstants.C_MAX_API_ERROR);
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class JdBase {
         for (int intApiErrorCount = 0; intApiErrorCount < maxTryCount; intApiErrorCount++) {
 
         	try {
-	            JdClient client = getDefaultClient(shopBean, TbCommon.C_CONNECT_TIMEOUT, TbCommon.C_READ_TIMEOUT);
+	            JdClient client = getDefaultClient(shopBean, ComponentConstants.C_CONNECT_TIMEOUT, ComponentConstants.C_READ_TIMEOUT);
 	
 	            T response = client.execute(request);
 

@@ -21,7 +21,7 @@ import com.voyageone.task2.cms.dao.ProductPublishDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.model.CmsBusinessLogModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;

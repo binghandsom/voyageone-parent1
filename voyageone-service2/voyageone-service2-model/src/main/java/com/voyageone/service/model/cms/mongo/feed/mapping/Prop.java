@@ -1,6 +1,6 @@
 package com.voyageone.service.model.cms.mongo.feed.mapping;
 
-import com.voyageone.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 
 import java.util.List;

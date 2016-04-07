@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.mapping.dictionary;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.bean.DictionaryMasterPropBean;
-import com.voyageone.cms.enums.DictionaryMasterProp;
+import com.voyageone.service.bean.cms.DictionaryMasterPropBean;
+import com.voyageone.service.model.cms.enums.DictionaryMasterProp;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
