@@ -2635,7 +2635,7 @@ public class CmsTaskStockService extends BaseAppService {
                 FileUtils.cell(row, mapCartCol.get("-1"), cellStyleDynamicLock).setCellValue(DYNAMIC);
 
                 // 列宽
-                if (lineIndex % 100 == 0 || lineIndex - 1 == resultData.size() / platformList.size()) {
+                if (lineIndex % 100 == 0) {
                     for (int i = 0; i < cntCol; i++) {
                         double width = SheetUtil.getColumnWidth(sheet, i, false);
                         if (width > widthCol[i]) {
@@ -2656,6 +2656,10 @@ public class CmsTaskStockService extends BaseAppService {
 
         // 设置列宽
         for (int i = 0; i < cntCol; i++) {
+            double width = SheetUtil.getColumnWidth(sheet, i, false);
+            if (width > widthCol[i]) {
+                widthCol[i] = width;
+            }
             setColumnWidth(sheet, i, widthCol[i]);
         }
     }
@@ -3280,18 +3284,13 @@ public class CmsTaskStockService extends BaseAppService {
 
         try (InputStream inputStream = new FileInputStream(templatePath);
              SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
-            // Titel行
-            writeExcelStockErrorInfoHead(book.getXSSFWorkbook());
+            // Title行
+            writeExcelStockErrorInfoHead(book, book.getXSSFWorkbook().getSheetAt(1));
             // 数据行
-            writeExcelStockErrorInfoRecord(book.getXSSFWorkbook(), resultData, mapPlatform);
-
-            // 自适应列宽
-            for (int i = 0; i < 7; i++) {
-                book.getXSSFWorkbook().getSheetAt(0).autoSizeColumn(i);
-            }
+            writeExcelStockErrorInfoRecord(book, book.getXSSFWorkbook().getSheetAt(1), resultData, mapPlatform);
 
             // 格式copy用sheet删除
-            book.getXSSFWorkbook().removeSheetAt(1);
+            book.removeSheetAt(1);
 
             $info("文档写入完成");
 
@@ -3309,13 +3308,16 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * Error日志Excel的第一行Title部写入
      */
-    private void writeExcelStockErrorInfoHead(Workbook book) {
+    private void writeExcelStockErrorInfoHead(Workbook book, Sheet sheetModel) {
         Sheet sheet = book.getSheetAt(0);
         Row row = FileUtils.row(sheet, 0);
-        CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
+        CellStyle cellStyleProperty = sheetModel.getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
         // 内容输出
-        int index = 3;
+        int index = 0;
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Model"); // Model
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Code"); // Code
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Sku"); // Sku
         // 平台
         FileUtils.cell(row, index++, cellStyleProperty).setCellValue(PLATFORM);
         // 隔离类型
@@ -3333,13 +3335,14 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * Error日志Excel的数据写入
      */
-    private void writeExcelStockErrorInfoRecord(Workbook book, List<Map<String, Object>> resultData, Map<String, String> mapPlatform) {
+    private void writeExcelStockErrorInfoRecord(Workbook book, Sheet sheetModel, List<Map<String, Object>> resultData, Map<String, String> mapPlatform) {
         Sheet sheet = book.getSheetAt(0);
         int lineIndex = 1; // 行号
         int colIndex; // 列号
         Row row;
+        double[] widthCol = new double[7];
 
-        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(5).getCellStyle(); // 数据（不锁定）的cellStyle
+        CellStyle cellStyleData = sheetModel.getRow(0).getCell(5).getCellStyle(); // 数据（不锁定）的cellStyle
 
         for (Map<String, Object> rowData : resultData) {
             row = FileUtils.row(sheet, lineIndex++);
@@ -3348,7 +3351,7 @@ public class CmsTaskStockService extends BaseAppService {
             FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("model")); // Model
             FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("code")); // Code
             FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("sku")); // Sku
-            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(mapPlatform.get((String) rowData.get("cartId"))); // 平台
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(StringUtils.null2Space(mapPlatform.get(String.valueOf(rowData.get("cartId"))))); // 平台
 
             // 隔离类型
             if ("1".equals((String) rowData.get("type"))) {
@@ -3361,6 +3364,25 @@ public class CmsTaskStockService extends BaseAppService {
 
             FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("errorMsg")); // 错误信息
             FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("errorTime")); // 发生时间
+
+            // 列宽
+            if (lineIndex % 100 == 0) {
+                for (int i = 0; i < 7; i++) {
+                    double width = SheetUtil.getColumnWidth(sheet, i, false);
+                    if (width > widthCol[i]) {
+                        widthCol[i] = width;
+                    }
+                }
+            }
+        }
+
+        // 设置列宽
+        for (int i = 0; i < 7; i++) {
+            double width = SheetUtil.getColumnWidth(sheet, i, false);
+            if (width > widthCol[i]) {
+                widthCol[i] = width;
+            }
+            setColumnWidth(sheet, i, widthCol[i]);
         }
     }
 

@@ -514,7 +514,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
         String cartId = (String) param.get("cartId");
-        String cartName = (String) param.get("cartName");
+        String cartName = StringUtils.null2Space((String) param.get("cartName"));
 
         // 内容输出
         int index = 0;
@@ -593,7 +593,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             }
 
             // 列宽
-            if (lineIndex % 100 == 0 || lineIndex - 1 == resultData.size()) {
+            if (lineIndex % 100 == 0) {
                 for (int i = 0; i < cntCol; i++) {
                     double width = SheetUtil.getColumnWidth(sheet, i, false);
                     if (width > widthCol[i]) {
@@ -605,6 +605,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         // 设置列宽
         for (int i = 0; i < cntCol; i++) {
+            double width = SheetUtil.getColumnWidth(sheet, i, false);
+            if (width > widthCol[i]) {
+                widthCol[i] = width;
+            }
             cmsTaskStockService.setColumnWidth(sheet, i, widthCol[i]);
         }
     }
