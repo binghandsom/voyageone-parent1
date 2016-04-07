@@ -4,12 +4,17 @@
 
     <select id="cms_bt_stock_separate_increment_item_selectStockSeparateIncrement" resultType="HashMap" parameterType="HashMap">
         select
+            t1.seq,
+            t1.sub_task_id,
+            t1.channel_id,
             t1.sku,
+            t1.qty,
             t1.increment_qty,
             t1.fix_flg,
             t1.status,
             t2.cart_id,
-            t2.task_id
+            t2.task_id,
+            t2.type
         from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
         inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
         where 1=1
