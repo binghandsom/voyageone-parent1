@@ -2,7 +2,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -407,7 +407,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //产品库存
     public Integer getQuantity() {
-        return getAttribute("quantity");
+        return Integer.parseInt(getAttribute("quantity").toString());
     }
     public void setQuantity(Integer quantity) {
         setAttribute("quantity", quantity);

@@ -1,10 +1,9 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
-import com.voyageone.common.components.jumei.JumeiProductService;
+import com.voyageone.components.jumei.Bean.JmGetProductInfoRes;
+import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.service.CmsUploadJmProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,10 +5,8 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.OrderChannelDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,40 +19,26 @@ import java.util.Set;
  */
 public class Channels {
 
-    private static final Log logger = LogFactory.getLog(Channels.class);
+    private static final Class selfClass = Channels.class;
+
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_OrderChannelConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString();
 
-    private static HashOperations<String, String, OrderChannelBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            OrderChannelDao orderChannelDao = ConfigDaoFactory.getOrderChannelDao();
-            Map<String, OrderChannelBean> orderChannelBeanMap = new HashMap<>();
-            orderChannelDao.getAll().forEach(
-                    bean -> {
-                        orderChannelBeanMap
-                                .put(
-                                        buildKey(bean.getOrder_channel_id()),
-                                        bean
-                                );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, orderChannelBeanMap);
-            logger.info("orderChannel 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        OrderChannelDao orderChannelDao = ConfigDaoFactory.getOrderChannelDao();
+        Map<String, OrderChannelBean> orderChannelBeanMap = new HashMap<>();
+        orderChannelDao.getAll().forEach(
+                bean ->
+                    orderChannelBeanMap.put(
+                            bean.getOrder_channel_id(),
+                            bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, orderChannelBeanMap);
+        logger.info("orderChannel 读取数量: " + CacheHelper.getSize(KEY));
     }
-
-    /**
-     * build redis hash Key
-     *
-     * @return key
-     */
-    private static String buildKey(String id) {
-        return id;
-    }
-
     /**
      * 获取指定渠道的基本信息
      *
@@ -62,7 +46,7 @@ public class Channels {
      * @return OrderChannel
      */
     public static OrderChannelBean getChannel(String id) {
-        return hashOperations.get(KEY, buildKey(id));
+        return CacheHelper.getBean(KEY, id, selfClass);
     }
 
     /**
@@ -71,7 +55,7 @@ public class Channels {
      * @return Set
      */
     public static Set<String> getChannelIdSet() {
-        return hashOperations.keys(KEY);
+        return CacheHelper.getKeySet(KEY, selfClass);
     }
 
 }

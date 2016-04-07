@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author chuanyu.liang 15/12/9
  * @version 2.0.1
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class ProductSkuService extends BaseService {
@@ -391,6 +391,11 @@ public class ProductSkuService extends BaseService {
                             }
                             if (skuModel.getClientRetailPrice() != null) {
                                 updateMap.put("skus.$.client_retail_price", skuModel.getClientRetailPrice());
+                            }
+
+                            // 涨价降价标志
+                            if (skuModel.getPriceChgFlg() != null) {
+                                updateMap.put("skus.$.priceChgFlg", skuModel.getPriceChgFlg());
                             }
 
                             if (updateMap.size() > 0) {

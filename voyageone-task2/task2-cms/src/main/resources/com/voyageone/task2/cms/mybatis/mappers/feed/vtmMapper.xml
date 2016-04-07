@@ -21,6 +21,7 @@
         <result column="Dosage Units" property="DosageUnits"/>
         <result column="Suggested Use" property="SuggestedUse"/>
         <result column="Warnings" property="Warnings"/>
+        <result column="clientProductURL" property="clientProductURL"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -61,6 +62,7 @@
         ,${price_net}  as price_net
         ,${price_current}  as price_current
         ,${price_msrp}  as price_msrp
+        ,${client_product_url}  as clientProductURL
         ,CONCAT(#{channel_id},'-',${i_sku}) as i_sku
         ,${i_itemcode} as i_itemcode
         ,${i_size} as i_size

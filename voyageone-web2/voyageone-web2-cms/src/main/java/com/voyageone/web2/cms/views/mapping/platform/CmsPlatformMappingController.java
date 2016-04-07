@@ -30,12 +30,17 @@ public class CmsPlatformMappingController extends CmsController {
     @Autowired
     private CmsPlatformPropMappingService platformPropMappingService;
 
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_CARTS)
+    public AjaxResponse getCarts() {
+        return success(platformMappingService.getCarts(getUser(), getLang()));
+    }
+
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAIN_CATEGORY)
     public AjaxResponse getMainFinalCategoryMap(@RequestBody Map<String, Integer> params) {
 
         Integer cartId = params.get("cartId");
 
-        return success(platformMappingService.getMainFinalCategoryMap(cartId, getUser(), getLang()));
+        return success(platformMappingService.getMainFinalCategoryMap(cartId, getUser()));
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_OTHER_MAPPING_PATH)

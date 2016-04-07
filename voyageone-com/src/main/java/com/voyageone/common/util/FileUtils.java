@@ -2,13 +2,12 @@ package com.voyageone.common.util;
 
 
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.help.DateHelp;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,13 +25,13 @@ import java.util.List;
 
 public final class FileUtils {
 
-    private static Log logger = LogFactory.getLog(FileUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     /**
      * @param preFileName 源文件名
      * @param filePath 文件所在目录
      * @return 以【XXXX_】开头的文件组
-     * @description 文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
+     *          文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
      */
     public static List getFileGroup(String preFileName, String filePath) {
         ArrayList<String> fileNameList = new ArrayList<>();
@@ -54,7 +53,7 @@ public final class FileUtils {
     /**
      * @param filePath 文件所在目录
      * @return 该目录下的文件组
-     * @description filePath下的文件组返回
+     *                 filePath下的文件组返回
      */
     public static List getFileGroup2(String filePath, String postfix) {
         ArrayList<String> fileNameList = new ArrayList<>();
@@ -187,19 +186,17 @@ public final class FileUtils {
     public static void copyFileByBcbg(String srcFile, String targetFile) throws IOException {
 
         try (FileInputStream inStream = new FileInputStream(srcFile);
-             FileOutputStream fs = new FileOutputStream(targetFile)){
+            FileOutputStream fs = new FileOutputStream(targetFile)){
             int byteRead;
             File oldFile = new File(srcFile);
             if (oldFile.exists()) {
-//                FileInputStream inStream = new FileInputStream(srcFile);
-//                FileOutputStream fs = new FileOutputStream(targetFile);
                 byte[] buffer = new byte[1444];
                 while ((byteRead = inStream.read(buffer)) != -1) {
                     fs.write(buffer, 0, byteRead);
                 }
                 //inStream.close();
-                //fs.close();
             }
+            fs.close();
         } catch (Exception e) {
             //inStream.close();
             //fs.close();

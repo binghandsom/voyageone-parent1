@@ -77,7 +77,7 @@ public class CmsFieldEditService extends BaseAppService {
 
             Object[] field = getPropValue(params);
             // 获取产品的信息
-            CmsBtProductModel productModel = productService.getProductById(userInfo.getSelChannelId(), productId);;
+            CmsBtProductModel productModel = productService.getProductById(userInfo.getSelChannelId(), productId);
 
             // TODO 批量更新操作重置approved->ready这步暂时不执行,因为运营如果批量操作再批量approved,工作量比较大,以后有需要时再放开
             // 更新状态以外的属性时,check产品状态如果为Approved,则将产品状态设置成Ready
@@ -93,9 +93,9 @@ public class CmsFieldEditService extends BaseAppService {
                 CmsBtProductModel_Group group = productModel.getGroups();
                 for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {
                     if ("Onsale".equals(field[1].toString()))
-                        platform.setPlatformActive(com.voyageone.cms.CmsConstants.PlatformActive.Onsale);
+                        platform.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Onsale);
                     else if ("Instock".equals(field[1].toString()))
-                        platform.setPlatformActive(com.voyageone.cms.CmsConstants.PlatformActive.Instock);
+                        platform.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Instock);
                 }
             } else {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);
@@ -157,7 +157,7 @@ public class CmsFieldEditService extends BaseAppService {
             }
             return field;
         } catch (Exception e) {
-            logger.error("CmsPropChangeService: " + e.getMessage());
+            $error("CmsPropChangeService: " + e.getMessage());
         }
 
         return null;

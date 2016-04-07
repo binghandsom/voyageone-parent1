@@ -7,7 +7,7 @@ package com.voyageone.service.bean.cms.product;
  *
  * @author chuanyu.liang
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductTransDistrBean {
 

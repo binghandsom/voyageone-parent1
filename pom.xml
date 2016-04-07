@@ -83,6 +83,19 @@
         <voyageone.service2.model.version>0.0.1-SNAPSHOT</voyageone.service2.model.version>
         <voyageone.service2.dao.version>0.0.1-SNAPSHOT</voyageone.service2.dao.version>
 
+        <!-- voyageone.service version -->
+        <voyageone.components.base.version>0.0.1-SNAPSHOT</voyageone.components.base.version>
+        <voyageone.components.jd.version>0.0.1-SNAPSHOT</voyageone.components.jd.version>
+        <voyageone.components.channeladvisor.version>0.0.1-SNAPSHOT</voyageone.components.channeladvisor.version>
+        <voyageone.components.cn.version>0.0.1-SNAPSHOT</voyageone.components.cn.version>
+        <voyageone.components.eexpress.version>0.0.1-SNAPSHOT</voyageone.components.eexpress.version>
+        <voyageone.components.gilt.version>0.0.1-SNAPSHOT</voyageone.components.gilt.version>
+        <voyageone.components.jumei.version>0.0.1-SNAPSHOT</voyageone.components.jumei.version>
+        <voyageone.components.sears.version>0.0.1-SNAPSHOT</voyageone.components.sears.version>
+        <voyageone.components.tmall.version>0.0.1-SNAPSHOT</voyageone.components.tmall.version>
+        <voyageone.components.yimei.version>0.0.1-SNAPSHOT</voyageone.components.yimei.version>
+
+
     </properties>
 
     <dependencyManagement>

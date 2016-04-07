@@ -161,9 +161,6 @@ public class GiltInsert extends BaseTaskService {
 
         /**
          * 生成类目数据包含model product数据
-         *
-         * @param categoryPath
-         * @return
          */
         protected List<CmsBtFeedInfoModel> getCategoryInfo(String categoryPath) throws Exception {
 
@@ -179,7 +176,7 @@ public class GiltInsert extends BaseTaskService {
 
             $info("准备 <构造> 类目树");
             List<String> categoriePaths = getCategories();
-            logger.info("共"+categoriePaths.size()+"个类目");
+            $info("共"+categoriePaths.size()+"个类目");
 
             List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
             // 准备接收失败内容
@@ -215,7 +212,7 @@ public class GiltInsert extends BaseTaskService {
                 updateFull(itemIds);
                 productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                $error(e.getMessage());
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             } finally {
                 productSucceeList.clear();
@@ -225,8 +222,6 @@ public class GiltInsert extends BaseTaskService {
 
         /**
          * 导入成功的FEED数据保存起来
-         *
-         * @param itemIds
          */
         @Transactional
         private void updateFull(List<String> itemIds) {

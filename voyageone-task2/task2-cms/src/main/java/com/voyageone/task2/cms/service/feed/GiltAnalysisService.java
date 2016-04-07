@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.common.components.gilt.GiltSkuService;
-import com.voyageone.common.components.gilt.bean.GiltCategory;
-import com.voyageone.common.components.gilt.bean.GiltImage;
-import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
-import com.voyageone.common.components.gilt.bean.GiltSku;
+import com.voyageone.components.gilt.service.GiltSkuService;
+import com.voyageone.components.gilt.bean.GiltCategory;
+import com.voyageone.components.gilt.bean.GiltImage;
+import com.voyageone.components.gilt.bean.GiltPageGetSkusRequest;
+import com.voyageone.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
@@ -112,9 +112,9 @@ public class GiltAnalysisService extends BaseTaskService {
             superFeedImport(taskControlList);
             $info("产品信息插入完成");
 
-    //        logger.info("transform开始");
+    //        $info("transform开始");
     //        transformer.new Context(GILT, this).transform();
-    //        logger.info("transform结束");
+    //        $info("transform结束");
 
     //        insertService.new Context(GILT).postNewProduct();
         }else{
@@ -124,7 +124,7 @@ public class GiltAnalysisService extends BaseTaskService {
 
 
     private void onStartupInThread() throws Exception {
-        int delay = getDelaySecond();
+        //int delay = getDelaySecond();
         while(true) {
             giltFeedDao.clearTemp();
 
@@ -178,7 +178,7 @@ public class GiltAnalysisService extends BaseTaskService {
             } catch (Exception e) {
                 if(losePageCount == ALLOWLOSEPAGECOUNT){
                     String msg = "已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求webService库存数据失败！" + e;
-                    logger.info("----------" + msg + "----------");
+                    $info("----------" + msg + "----------");
                     throw new RuntimeException(e);
                 }
                 losePageCount ++;
@@ -199,7 +199,7 @@ public class GiltAnalysisService extends BaseTaskService {
             try {
                 onStartupInThread();
             } catch (Exception e) {
-                e.printStackTrace();
+                $error(e);
             }
         });
 

@@ -8,8 +8,8 @@ import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.TextWord;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +20,8 @@ import java.util.Set;
  */
 public class ExpressionParser {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private TextWordParser textWordParser;
     private DictWordParser dictWordParser;
     private CustomWordParser customWordParser;
@@ -28,8 +30,6 @@ public class ExpressionParser {
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
     private CustomValueSystemParam customValueSystemParam;
-
-    private static Log logger = LogFactory.getLog(ExpressionParser.class);
 
     public ExpressionParser(String orderChannelId, int cartId, SxProductBean mainSxProduct, List<SxProductBean> sxProductBeans) {
         customValueSystemParam = new CustomValueSystemParam();
@@ -101,13 +101,11 @@ public class ExpressionParser {
                     }
                 }
 
-                if (resultStr != null) {
-                    if (plainValue != null) {
-                        resultStr.append(plainValue);
-                    }
-                    else {
-                        return null;
-                    }
+                if (plainValue != null) {
+                    resultStr.append(plainValue);
+                }
+                else {
+                    return null;
                 }
             }
         }
@@ -141,7 +139,7 @@ public class ExpressionParser {
         StringBuilder encodedString = new StringBuilder();
 
         for (String mappedPropValue : mappedPropValues) {
-            encodedString.append(mappedPropValue + seperator);
+            encodedString.append(mappedPropValue).append(seperator);
         }
         return encodedString.substring(0, encodedString.length() - seperator.length());
     }

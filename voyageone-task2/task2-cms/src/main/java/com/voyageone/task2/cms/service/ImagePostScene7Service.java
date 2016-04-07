@@ -15,10 +15,10 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.cms.dao.ImageDao;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ import com.voyageone.common.util.HttpUtils;
 @Service
 public class ImagePostScene7Service {
 
-	private static Log logger = LogFactory.getLog(ImagePostScene7Service.class);
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private ImageDao imageDao;
@@ -50,8 +50,6 @@ public class ImagePostScene7Service {
 
 	/**
 	 * 取出要处理的图片url列表
-	 *
-	 * @return
 	 */
 	public List<Map<String, String>> getImageUrls(String orderChannelId) {
 		return imageDao.getImageUrls(orderChannelId);
@@ -59,8 +57,6 @@ public class ImagePostScene7Service {
 
 	/**
 	 * 根据图片url上传scene7图片文件
-	 *
-	 * @return
 	 *
 	 */
 	public boolean getAndSendImage(String orderChannelId, List<Map<String, String>> imageUrlList, List<String> successImageUrlList,
@@ -95,7 +91,7 @@ public class ImagePostScene7Service {
 			FtpUtil ftpUtil = new FtpUtil();
 			FTPClient ftpClient = new FTPClient();
 
-			String imageUrl = "";
+			String imageUrl;
 
 			try {
 				//建立连接
@@ -108,9 +104,8 @@ public class ImagePostScene7Service {
 						ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 						ftpClient.setConnectTimeout(120000);
 
-						for (int i = 0; i < imageUrlList.size(); i++) {
-							imageUrl = String.valueOf(imageUrlList.get(i).get("image_url"));
-
+						for (Map<String, String> anImageUrlList : imageUrlList) {
+							imageUrl = String.valueOf(anImageUrlList.get("image_url"));
 
 							if (StringUtils.isNullOrBlank2(imageUrl)) {
 								successImageUrlList.add(imageUrl);
@@ -135,7 +130,7 @@ public class ImagePostScene7Service {
 									// 错误次数到达重试次数
 									if ((errTimes + 1) >= retryTimes) {
 										// 记录url错误图片以便删除这张图片相关记录
-										urlErrorList.add(imageUrlList.get(i));
+										urlErrorList.add(anImageUrlList);
 
 										// 记录次数结构体清空该图片
 										fileNotFoundUrlMap.remove(imageUrl);
@@ -172,9 +167,9 @@ public class ImagePostScene7Service {
 
 							int lastSlash = imageUrl.lastIndexOf("/");
 							String fileName;
-							if(ChannelConfigEnums.Channel.GILT.getId().equalsIgnoreCase(imageUrlList.get(i).get("channel_id"))){
-								fileName = String.valueOf(imageUrlList.get(i).get("image_name"))+".jpg";
-							}else{
+							if (ChannelConfigEnums.Channel.GILT.getId().equalsIgnoreCase(anImageUrlList.get("channel_id"))) {
+								fileName = String.valueOf(anImageUrlList.get("image_name")) + ".jpg";
+							} else {
 								fileName = imageUrl.substring(lastSlash + 1);
 							}
 							if (fileName.contains("?")) {
@@ -225,11 +220,6 @@ public class ImagePostScene7Service {
 
 	/**
 	 * 更新已上传图片发送标志
-	 *
-	 * @param orderChannelId
-	 * @param successImageUrlList
-	 * @param taskName
-	 * @return
 	 */
 	public int updateImageSendFlag(String orderChannelId, List<String> successImageUrlList, String taskName) {
 		return imageDao.updateImageSendFlag(orderChannelId, successImageUrlList, taskName);
@@ -237,10 +227,6 @@ public class ImagePostScene7Service {
 
 	/**
 	 * 删除错误url图片
-	 *
-	 * @param orderChannelId
-	 * @param urlErrorList
-	 * @return
 	 */
 	public void deleteUrlErrorImage(String orderChannelId, List<Map<String, String>> urlErrorList) {
 		for (Map<String, String> urlError : urlErrorList) {

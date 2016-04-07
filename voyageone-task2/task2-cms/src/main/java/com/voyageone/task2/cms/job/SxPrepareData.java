@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.job;
 
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;

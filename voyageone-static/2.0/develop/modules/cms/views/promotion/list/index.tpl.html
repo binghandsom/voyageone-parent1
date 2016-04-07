@@ -24,14 +24,14 @@
 									<label class="col-sm-4 control-label" translate="TXT_CREATE_TIME"></label>
 									<div class="col-sm-8 form-inline">
 										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" datepicker-popup ng-model="searchInfo.createdStart"
+											<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.createdStart"
 												   max-date="searchInfo.createdEnd" date-model-format="yyyy-MM-dd" is-open="datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>&nbsp;~&nbsp;
 										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" datepicker-popup ng-model="searchInfo.createdEnd"
+											<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.createdEnd"
 												   min-date="searchInfo.createdStart" date-model-format="yyyy-MM-dd" is-open="datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -105,7 +105,7 @@
 				</tr>
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
-				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : false}">
+				<tr ng-repeat="promotion in vm.promotionList">
 					<!-- TODO 库存隔离正在开发中-->
 					<!--<td class="text-left mfb-x"><label class="checkbox-inline c-checkbox">-->
 						<!--<input type="checkbox" ng-controller="selectRowsCtrl">-->
@@ -128,7 +128,7 @@
 							<!--<span class="caret"></span>-->
 							<!--</button>-->
 							<ul uib-dropdown-menu>
-								<li><a href ng-click="openTask(promotion)" translate="BTN_CREATE_TASK"></a></li>
+								<li><a href ng-click="openNewBeatTask(promotion)" translate="BTN_CREATE_BEAT_TASK"></a></li>
 								<li ng-if="promotion.tejiabaoId != 0" ><a href ng-click="teJiaBaoInit(promotion.promotionId)" translate="BTN_CREATE_TE_JIA_BAO_TASK"></a></li>
 							</ul>
 						</div>

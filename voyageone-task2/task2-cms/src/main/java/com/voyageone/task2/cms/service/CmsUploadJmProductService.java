@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.components.jumei.Bean.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.JmPicBean;
@@ -12,9 +13,8 @@ import com.voyageone.task2.cms.model.JmBtProductImportModel;
 import com.voyageone.task2.cms.model.JmBtSkuImportModel;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.jumei.Bean.*;
-import com.voyageone.common.components.jumei.Enums.JumeiImageType;
-import com.voyageone.common.components.jumei.JumeiProductService;
+import com.voyageone.components.jumei.Enums.JumeiImageType;
+import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -86,12 +86,12 @@ public class CmsUploadJmProductService extends BaseTaskService {
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())){
-                logger.info(taskControlBean.getCfg_val1());
+                $info(taskControlBean.getCfg_val1());
                 channels.add(taskControlBean.getCfg_val1());
             }
         }
         List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
-        logger.info("---------------cnt:" + jmBtProductImports.size());
+        $info("---------------cnt:" + jmBtProductImports.size());
         ShopBean shopBean = Shops.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 //        shopBean.setAppKey("131");
 //        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
@@ -112,7 +112,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         Map<String, Object> param = new HashMap<>();
         param.put("count", count);
         param.put("channels", channelIds);
-        logger.info("param:" + JacksonUtil.bean2Json(param));
+        $info("param:" + JacksonUtil.bean2Json(param));
         return jmUploadProductDao.getNotUploadProduct(param);
     }
 
@@ -123,7 +123,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             if(jmBtProductImport.getSkuImportModelList() == null || jmBtProductImport.getSkuImportModelList().size() == 0){
                 throw new BusinessException("没有找到SKU数据 code：" + jmBtProductImport.getProductCode());
             }
-            logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
+            $info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
             // 取得上新的数据
             JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
 
@@ -136,7 +136,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 copyJumeiSkuInfo(jmBtProductImport,jmProductBean);
             }catch (BusinessException e){
                 if(e.getMessage().indexOf("103087")>=0) {
-                    logger.info("聚美上新失败 调用取得聚美产品信息接口");
+                    $info("聚美上新失败 调用取得聚美产品信息接口");
                     JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductByName(shopBean, jmProductBean.getName());
                     jmBtProductImport.setJumeiProductId(jmGetProductInfoRes.getProduct_id());
                     jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmGetProductInfoRes.getHash_ids());
@@ -150,12 +150,12 @@ public class CmsUploadJmProductService extends BaseTaskService {
             jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
 //            succeedProduct.add(jmBtProductImport);
             updateFlg(jmBtProductImport);
-            logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
+            $info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
             issueLog.log(e, ErrorType.BatchJob, getSubSystem(), jmBtProductImport.getChannelId() + "  " + jmBtProductImport.getProductCode());
 
-            if(e.getMessage().indexOf("产品审核失败")>=0 || e.getMessage().indexOf("jumei_hash_id不正确")>=0){
+            if(e.getMessage().contains("产品审核失败") || e.getMessage().contains("jumei_hash_id不正确")){
                 jmBtProductImport.setSynFlg("1");
             }else{
                 jmBtProductImport.setSynFlg("3");

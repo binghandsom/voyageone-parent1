@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.enums.CartType;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
@@ -34,12 +34,11 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -50,12 +49,10 @@ import java.util.*;
  * Created by lewis on 15-12-16.
  */
 @Service
-public class CmsProductDetailService {
+public class CmsProductDetailService extends BaseAppService {
 
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
-
-    private Log logger = LogFactory.getLog(CmsProductDetailService.class);
 
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
@@ -204,7 +201,7 @@ public class CmsProductDetailService {
 
         List<Map<String, Object>> inventoryList = new ArrayList<Map<String, Object>>(0);
         if (skuList == null || skuList.isEmpty()) {
-            logger.info("当前商品没有Sku信息 prodId=" + prodId);
+            $info("当前商品没有Sku信息 prodId=" + prodId);
             return inventoryList;
         }
 
@@ -469,7 +466,7 @@ public class CmsProductDetailService {
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的品牌方信息不存在！";
-            logger.warn(errMsg);
+            $warn(errMsg);
             return feedAttributes;
         }
 
@@ -603,7 +600,7 @@ public class CmsProductDetailService {
         if (schemaModel == null) {
             // product 对应的schema信息不存在时的异常处理.
             String errMsg = "category id: " + categoryId + "对应的类目信息不存在！";
-            logger.error(errMsg);
+            $error(errMsg);
             throw new BusinessException(errMsg);
         }
 
@@ -626,7 +623,7 @@ public class CmsProductDetailService {
             //product 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的产品信息不存在！";
 
-            logger.error(errMsg);
+            $error(errMsg);
 
             throw new BusinessException(errMsg);
         }
@@ -648,7 +645,7 @@ public class CmsProductDetailService {
             //common schema 不存在时异常处理.
             String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
 
-            logger.error(errMsg);
+            $error(errMsg);
 
             throw new BusinessException(errMsg);
         }

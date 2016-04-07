@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VoRollingFileSink extends AbstractSink implements Configurable {
 
-    private static final Logger logger = LoggerFactory.getLogger(VoRollingFileSink.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private File directory;
 

@@ -3,6 +3,8 @@ package com.voyageone.web2.base.ajax;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.web2.base.message.DisplayType;
 import com.voyageone.web2.base.message.MessageModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -15,6 +17,9 @@ import java.io.PrintWriter;
  * @version 2.0.0 2015-12-05 15:07:45
  */
 public class AjaxResponse {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * 消息code
      */
@@ -106,7 +111,7 @@ public class AjaxResponse {
             out = response.getWriter();
             out.print(mapper.writeValueAsString(this));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (out != null) {
                 out.close();

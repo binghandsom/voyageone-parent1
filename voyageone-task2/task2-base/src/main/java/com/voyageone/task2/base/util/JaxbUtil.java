@@ -8,6 +8,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -21,12 +23,11 @@ import java.io.StringWriter;
  */
 public class JaxbUtil {
 
+	private final static Logger logger = LoggerFactory.getLogger(JaxbUtil.class);
+
 	/**
 	 * JavaBean转换成xml
 	 * 默认编码UTF-8
-	 * @param obj
-	 * @param writer
-	 * @return 
 	 */
 	public static String convertToXml(Object obj) {
 		return convertToXml(obj, "UTF-8");
@@ -34,9 +35,6 @@ public class JaxbUtil {
 
 	/**
 	 * JavaBean转换成xml
-	 * @param obj
-	 * @param encoding 
-	 * @return 
 	 */
 	public static String convertToXml(Object obj, String encoding) {
 		String result = null;
@@ -50,7 +48,7 @@ public class JaxbUtil {
 			marshaller.marshal(obj, writer);
 			result = writer.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;
@@ -58,9 +56,6 @@ public class JaxbUtil {
 
 	/**
 	 * xml转换成JavaBean
-	 * @param xml
-	 * @param c
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T converyToJavaBean(String xml, Class<T> c) {
@@ -70,7 +65,7 @@ public class JaxbUtil {
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			t = (T) unmarshaller.unmarshal(new StringReader(xml));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return t;
@@ -83,7 +78,7 @@ public class JaxbUtil {
 		try {
 			result = (NodeList) xpath.evaluate(express, source, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;
@@ -96,7 +91,7 @@ public class JaxbUtil {
 		try {
 			result = (Node) xpath.evaluate(express, source, XPathConstants.NODE);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;

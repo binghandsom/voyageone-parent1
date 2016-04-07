@@ -4,6 +4,7 @@
 			result.data.forEach(function(e){
 				$("#cacheManager").append("<tr><td>"+e+"</td><td><a style='text-decoration:underline;color:#3399FF;' href='/cms/system/cache/init?cacheKey="+e+"'>清空缓存</a></td></tr>");
 			});
+			$("#cacheManager").append("<tr><td colspan='2'><a style='text-decoration:underline;color:#3399FF;' href='/cms/system/cache/init?delAll=dsa'>清空所有配置缓存</a></td></tr>");
 		});
 	});
 

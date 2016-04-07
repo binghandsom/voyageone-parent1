@@ -3,8 +3,8 @@ package com.voyageone.web2.cms.views.mapping.feed;
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.*;
 public class CmsFeedMappingService extends BaseAppService {
 
     @Autowired
-    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
+    private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
     private ChannelCategoryService cmsBtChannelCategoryService;
@@ -43,15 +43,12 @@ public class CmsFeedMappingService extends BaseAppService {
     private FeedMappingService feedMappingService;
 
     List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
-
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectTopCategories(user.getSelChannelId());
-
-        return treeModelx.getCategoryTree();
+        return feedCategoryTreeService.getOnlyTopFeedCategories(user.getSelChannelId());
     }
 
     List<FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectTopCategory(user.getSelChannelId(), topCategoryId);
+        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeService.getFeedCategory(user.getSelChannelId(), topCategoryId);
 
         if (treeModelx.getCategoryTree().isEmpty())
             throw new BusinessException("未找到类目");
