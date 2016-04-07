@@ -130,6 +130,7 @@ public class CmsTaskStockService extends BaseAppService {
     private static final String EXCEL_IMPORT_ADD = "1";
     /** Excel变更方式导入 */
     private static final String EXCEL_IMPORT_UPDATE = "2";
+
     /** Excel的Title部可用库存显示文字 */
     private static final String USABLESTOCK = "Usable Stock";
     /** Excel的Title部其他平台显示文字 */
@@ -2497,20 +2498,20 @@ public class CmsTaskStockService extends BaseAppService {
         try (InputStream inputStream = new FileInputStream(templatePath);
             SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
             // Titel行
-            Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book.getXSSFWorkbook(), param);
+            Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book, book.getXSSFWorkbook().getSheetAt(1), param);
             // 数据行
-            writeExcelStockInfoRecord(book.getXSSFWorkbook(), param, resultData, mapCartCol);
+            writeExcelStockInfoRecord(book, book.getXSSFWorkbook().getSheetAt(1), param, resultData, mapCartCol);
 
             // 自适应列宽
             List<Map> propertyList = (List<Map>) param.get("propertyList");
             List<Map> platformList = (List<Map>) param.get("platformList");
             int cntCol = 3 + propertyList.size() + platformList.size() + 2;
             for (int i = 0; i < cntCol; i++) {
-                book.getXSSFWorkbook().getSheetAt(0).autoSizeColumn(i);
+                book.getSheetAt(0).autoSizeColumn(i);
             }
 
             // 格式copy用sheet删除
-            book.getXSSFWorkbook().removeSheetAt(1);
+            book.removeSheetAt(1);
 
             $info("文档写入完成");
 
@@ -2530,7 +2531,7 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @return Map<cart_id, colIndex列号>
      */
-    private Map<String, Integer> writeExcelStockInfoHead(Workbook book, Map param) {
+    private Map<String, Integer> writeExcelStockInfoHead(Workbook book, Sheet sheetModel, Map param) {
         Map<String, Integer> mapCartCol = new HashMap<String, Integer>();
 
         Sheet sheet = book.getSheetAt(0);
@@ -2538,13 +2539,16 @@ public class CmsTaskStockService extends BaseAppService {
         CreationHelper helper = book.getCreationHelper();
 
         Row row = FileUtils.row(sheet, 0);
-        CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
+        CellStyle cellStyleProperty = sheetModel.getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
         List<Map> platformList = (List<Map>) param.get("platformList");
 
         // 内容输出
-        int index = 3;
+        int index = 0;
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Model"); // Model
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Code"); // Code
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Sku"); // Sku
 
         // 属性
         for (Map property : propertyList) {
@@ -2552,21 +2556,23 @@ public class CmsTaskStockService extends BaseAppService {
 
             Comment comment = drawing.createCellComment(helper.createClientAnchor());
             comment.setString(helper.createRichTextString((String) property.get("property")));
-            row.getCell(index - 1).setCellComment(comment);
+            comment.setRow(0);
+            comment.setColumn(index - 1);
         }
 
         // 可用库存
         FileUtils.cell(row, index++, cellStyleProperty).setCellValue(USABLESTOCK);
 
         // 平台
-        CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
+        CellStyle cellStylePlatform = sheetModel.getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
         for (Map platform : platformList) {
             mapCartCol.put((String) platform.get("cartId"), Integer.valueOf(index));
-            FileUtils.cell(row, index++, cellStylePlatform).setCellValue((String) platform.get("cartName"));
+            FileUtils.cell(row, index++, cellStylePlatform).setCellValue(StringUtils.null2Space((String) platform.get("cartName")));
 
             Comment comment = drawing.createCellComment(helper.createClientAnchor());
             comment.setString(helper.createRichTextString((String) platform.get("cartId")));
-            row.getCell(index - 1).setCellComment(comment);
+            comment.setRow(0);
+            comment.setColumn(index - 1);
         }
         mapCartCol.put("-1", index);
         FileUtils.cell(row, index++, cellStylePlatform).setCellValue(OTHER);
@@ -2581,7 +2587,7 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * 库存隔离Excel的数据写入
      */
-    private void writeExcelStockInfoRecord(Workbook book, Map param, List<StockExcelBean> resultData, Map<String, Integer> mapCartCol) {
+    private void writeExcelStockInfoRecord(Workbook book, Sheet sheetModel, Map param, List<StockExcelBean> resultData, Map<String, Integer> mapCartCol) {
 
         Sheet sheet = book.getSheetAt(0);
         String preSku = "";
@@ -2590,10 +2596,13 @@ public class CmsTaskStockService extends BaseAppService {
         int colIndex = 0; // 列号
         Row row = null;
 
-        CellStyle cellStyleDynamic = book.getSheetAt(1).getRow(0).getCell(1).getCellStyle(); // 动态的CellStyle
-        CellStyle cellStyleDataLock = book.getSheetAt(1).getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
-        CellStyle cellStyleNum = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数值（不锁定）的cellStyle
-        CellStyle cellStyleNumLock = book.getSheetAt(1).getRow(0).getCell(6).getCellStyle(); // 数值（锁定）的cellStyle
+        CellStyle cellStyleDynamic = sheetModel.getRow(0).getCell(1).getCellStyle(); // 动态的CellStyle
+        CellStyle cellStyleDynamicLock = book.createCellStyle(); // 动态的CellStyle(锁定)
+        cellStyleDynamicLock.cloneStyleFrom(cellStyleDynamic);
+        cellStyleDynamicLock.setLocked(true);
+        CellStyle cellStyleDataLock = sheetModel.getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
+        CellStyle cellStyleNum = sheetModel.getRow(0).getCell(3).getCellStyle(); // 数值（不锁定）的cellStyle
+        CellStyle cellStyleNumLock = sheetModel.getRow(0).getCell(6).getCellStyle(); // 数值（锁定）的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
 
@@ -2627,11 +2636,7 @@ public class CmsTaskStockService extends BaseAppService {
                 } else {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparateQty().toPlainString()));
                 }
-
-                CellStyle cellStyle = book.createCellStyle();
-                cellStyle.cloneStyleFrom(cellStyleDynamic);
-                cellStyle.setLocked(true);
-                FileUtils.cell(row, mapCartCol.get("-1"), cellStyle).setCellValue(DYNAMIC);
+                FileUtils.cell(row, mapCartCol.get("-1"), cellStyleDynamicLock).setCellValue(DYNAMIC);
             } else {
                 // 同一个sku，不同平台
                 // 平台
