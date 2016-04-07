@@ -76,9 +76,9 @@ public class TypeChannels {
      */
     public static List<TypeChannelBean> getTypeList(String type, String channel_id) {
         return getTypeChannelBeans(type, channel_id);
-    }
+     }
 
-    /**
+     /**
      * @param type       类型名
      * @param channel_id 渠道id
      * @param name       类型名称
