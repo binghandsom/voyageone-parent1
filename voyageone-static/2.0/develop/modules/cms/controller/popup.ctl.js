@@ -306,6 +306,13 @@ define([
                         "controller": 'popPromotionDetailCtl',
                         "size": 'md',
                         "backdrop": "static"
+                    },
+                    import:{
+                        "templateUrl": "views/pop/jm/import.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/import.ctl",
+                        "controller": 'popPromotionDetailImportCtl',
+                        "size": 'md',
+                        "backdrop": "static"
                     }
                 }
             }
@@ -902,6 +909,9 @@ define([
 
         $scope.openJmPromotionDetail = function (context) {
             return openModel(popActions.jumei.jmPromotionDetail.detail, context);
+        };
+        $scope.openJmPromotionProductImport = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.import, context);
         };
     }
 });
