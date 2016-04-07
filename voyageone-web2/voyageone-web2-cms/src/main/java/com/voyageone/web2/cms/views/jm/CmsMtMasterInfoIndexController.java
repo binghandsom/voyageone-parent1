@@ -34,7 +34,6 @@ public class CmsMtMasterInfoIndexController extends CmsController {
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.INSERT)
     public AjaxResponse insert(@RequestBody CmsMtMasterInfoModel params) {
         String channelId = getUser().getSelChannelId();
-        // params.put("channelId", channelId);
         params.setChannelId(channelId);
         params.setModifier(getUser().getUserName());
         params.setCreater(getUser().getUserName());

@@ -147,7 +147,6 @@
             ,`value2`=#{value2}
             ,`syn_flg`=#{synFlg}
             ,`error_message`=#{errorMessage}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
          where id=#{id}   
    </update>
