@@ -20,6 +20,8 @@ public class CmsBtPromotionGroupModel extends BaseModel {
 
     private String orgChannelId;
 
+    private String channelName;
+
     private Integer cartId;
 
     private int promotionId;
@@ -64,6 +66,14 @@ public class CmsBtPromotionGroupModel extends BaseModel {
 
     public void setCartId(Integer cartId) {
         this.cartId = cartId;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     public CmsBtPromotionGroupModel(){

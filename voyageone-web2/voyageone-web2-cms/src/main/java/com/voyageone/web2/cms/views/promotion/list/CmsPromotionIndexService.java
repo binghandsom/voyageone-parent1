@@ -92,6 +92,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 
         Map<String, Object> param = new HashMap<>();
         param.put("promotionId", promotionId);
+        param.put("orgChannelId",channelId);
 
         CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.selectById(param);
         List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.selectPromotionCodeSkuList(param);
@@ -105,7 +106,7 @@ public class CmsPromotionIndexService extends BaseAppService {
             int rowIndex = 1;
             for (int i = 0; i < promotionCodes.size(); i++) {
                 promotionCodes.get(i).setCartId(cmsBtPromotionModel.getCartId());
-                promotionCodes.get(i).setChannelId(cmsBtPromotionModel.getChannelId());
+//                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
                 boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), rowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -158,7 +159,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 
                 FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());
 
-                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getChannelId());
+                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getOrgChannelId());
 
                 FileUtils.cell(row, CmsConstants.CellNum.catPathCellNum, unlock).setCellValue(item.getCatPath());
 

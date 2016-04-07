@@ -183,8 +183,8 @@ public class PromotionDetailService extends BaseService {
             if(codes.size() > 0){
                 productTagService.delete(channelId, productIdTagsMap, modifier);
             }
-            cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getModelId());
-            cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getModelId());
+            cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getProductModel());
+            cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getProductModel());
 
 
         }

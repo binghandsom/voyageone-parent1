@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
@@ -49,6 +50,7 @@ public class CmsPromotionDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
+
 
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
         List<CmsBtPromotionCodeModel> resultBean = cmsPromotionDetailService.getPromotionCode(params);

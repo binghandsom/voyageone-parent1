@@ -219,7 +219,7 @@
                                            target="_blank">{{group.productModel | limitTo: 30}}{{group.productModel.length > 30 ? '...' : ''}}
                                         </a>
 									</span>&nbsp;
-                                    <span class="label label-yellow-new m-l-md">&nbsp;shoecity&nbsp;</span>
+                                    <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{group.channelName}}&nbsp;</span>
                                     <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{group.catPath}}</span>
                                 </td>
                             </tr>
@@ -317,7 +317,7 @@
 											<a href="#/product/detail/{{code.productId}}" title="{{code.productName}}"
                                                target="_blank">{{code.productName | limitTo: 30}}{{code.productName.length > 30 ? '...' : ''}}</a>
 										</span>
-                                    <span class="label label-yellow-new m-t-xs m-l-xs">&nbsp;Shoecity&nbsp;</span>
+                                    <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{code.channelName}}&nbsp;</span>
                                     <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{code.catPath}}</span>
                                 </td>
                             </tr>

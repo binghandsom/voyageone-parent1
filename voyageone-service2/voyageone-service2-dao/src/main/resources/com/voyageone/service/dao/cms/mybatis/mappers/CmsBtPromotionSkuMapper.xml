@@ -230,8 +230,8 @@
         <if test="productSku != null and productSku != ''">
           and product_sku = #{productSku,jdbcType=VARCHAR}
         </if>
-        <if test="modelId != null and modelId != ''">
-            and model_id = #{modelId,jdbcType=INTEGER}
+        <if test="productModel != null">
+            and product_model = #{productModel,jdbcType=VARCHAR}
         </if>
         <if test="productId != null and productId != ''">
             and product_id = #{productId,jdbcType=INTEGER}
