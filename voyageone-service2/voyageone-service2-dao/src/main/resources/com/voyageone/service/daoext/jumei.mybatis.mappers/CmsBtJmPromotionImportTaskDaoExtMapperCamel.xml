@@ -6,7 +6,7 @@
     </resultMap>
 	
     <select id="getByPromotionId" resultMap="ResultMap">
-        select id,cms_bt_jm_promotion_id,is_import,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created        from cms_bt_jm_promotion_import_task
+        select *  from cms_bt_jm_promotion_import_task
         <where>
             <if test="cmsBtJmPromotionId!=null">
                  AND cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}

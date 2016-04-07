@@ -10,9 +10,8 @@ public class CmsBtJmPromotionImportTaskModel implements Serializable
    public CmsBtJmPromotionImportTaskModel()
     {
         setFileName(""); 
-        setFilePath(""); 
         setErrorMsg(""); 
-        setFailuresPath(""); 
+        setFailuresFileName(""); 
         setBeginTime(DateHelp.getDefaultDate());
         setEndTime(DateHelp.getDefaultDate());
         setCreater(""); 
@@ -46,12 +45,6 @@ public class CmsBtJmPromotionImportTaskModel implements Serializable
     
     
  /**
-文件路径
-        */
-     private String filePath;
-    
-    
- /**
 异常信息
         */
      private String errorMsg;
@@ -72,7 +65,7 @@ public class CmsBtJmPromotionImportTaskModel implements Serializable
  /**
 导入失败的行记录  存储的文件
         */
-     private String failuresPath;
+     private String failuresFileName;
     
     
  /**
@@ -169,27 +162,6 @@ this.fileName="";
     
         
          /**
-           文件路径
-        */
-        public String getFilePath()
-        {
-         
-        return this.filePath;
-        }
-        public void setFilePath(String filePath)
-        {
-        if(filePath!=null){
-this.filePath=filePath;
- }
-else
-{
-this.filePath="";
-}
-
-        }
-    
-        
-         /**
            异常信息
         */
         public String getErrorMsg()
@@ -241,19 +213,19 @@ this.errorMsg="";
          /**
            导入失败的行记录  存储的文件
         */
-        public String getFailuresPath()
+        public String getFailuresFileName()
         {
          
-        return this.failuresPath;
+        return this.failuresFileName;
         }
-        public void setFailuresPath(String failuresPath)
+        public void setFailuresFileName(String failuresFileName)
         {
-        if(failuresPath!=null){
-this.failuresPath=failuresPath;
+        if(failuresFileName!=null){
+this.failuresFileName=failuresFileName;
  }
 else
 {
-this.failuresPath="";
+this.failuresFileName="";
 }
 
         }

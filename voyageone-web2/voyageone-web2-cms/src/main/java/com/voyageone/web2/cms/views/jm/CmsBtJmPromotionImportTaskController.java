@@ -46,6 +46,17 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String path = importPath + "/" + fileName;//"/Product20160324164706.xls";
         FileUtils.downloadFile(response, fileName, path);
     }
+    @RequestMapping("downloadImportErrorExcel")
+    public void downloadImportErrorExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String source = request.getParameter("source");
+        HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
+        CmsBtJmPromotionImportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
+        String importPath = Properties.readValue(CmsConstants.Props.CMS_JM_IMPORT_PATH);
+        String fileName = model.getFailuresFileName().trim();
+        String path = importPath + "/" + fileName;//"/Product20160324164706.xls";
+        FileUtils.downloadFile(response, fileName, path);
+    }
+
     @RequestMapping("upload")
     public AjaxResponse upload(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
