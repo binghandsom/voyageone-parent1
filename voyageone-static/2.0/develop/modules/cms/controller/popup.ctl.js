@@ -932,8 +932,18 @@ define([
                 })
             });
         }
-        //$scope.openJmPromotionProductImport = function (context) {
-        //    return openModel(popActions.jumei.jmPromotionDetail.import, context);
+        //$scope.openJmPromotionProductImport = function (context,fnInitial) {
+        //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);
+        //    promise.then(function success(data) {
+        //        data.then(function () {
+        //            if (fnInitial) {
+        //                fnInitial();
+        //            }
+        //        })
+        //    }, function error(msg) {
+        //        console.error(msg);
+        //    });
+        //
         //};
     }
 });
