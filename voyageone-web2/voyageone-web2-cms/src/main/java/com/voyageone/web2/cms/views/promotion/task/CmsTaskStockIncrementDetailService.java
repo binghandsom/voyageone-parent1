@@ -478,19 +478,19 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         try (InputStream inputStream = new FileInputStream(templatePath);
              SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
             // Titel行
-            writeExcelStockIncrementInfoHead(book.getXSSFWorkbook(), param);
+            writeExcelStockIncrementInfoHead(book, book.getXSSFWorkbook().getSheetAt(1), param);
             // 数据行
-            writeExcelStockIncrementInfoRecord(book.getXSSFWorkbook(), param, resultData);
+            writeExcelStockIncrementInfoRecord(book, book.getXSSFWorkbook().getSheetAt(1), param, resultData);
 
             // 自适应列宽
             List<Map> propertyList = (List<Map>) param.get("propertyList");
             int cntCol = 3 + propertyList.size() + 3;
             for (int i = 0; i < cntCol; i++) {
-                book.getXSSFWorkbook().getSheetAt(0).autoSizeColumn(i);
+                book.getSheetAt(0).autoSizeColumn(i);
             }
 
             // 格式copy用sheet删除
-            book.getXSSFWorkbook().removeSheetAt(1);
+            book.removeSheetAt(1);
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -507,21 +507,24 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * 增量库存隔离Excel的第一行Title部写入
      */
-    private void writeExcelStockIncrementInfoHead(Workbook book, Map param) {
+    private void writeExcelStockIncrementInfoHead(Workbook book, Sheet sheetModel, Map param) {
 
         Sheet sheet = book.getSheetAt(0);
         Drawing drawing = sheet.createDrawingPatriarch();
         CreationHelper helper = book.getCreationHelper();
 
         Row row = FileUtils.row(sheet, 0);
-        CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
+        CellStyle cellStyleProperty = sheetModel.getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
         String cartId = (String) param.get("cartId");
         String cartName = (String) param.get("cartName");
 
         // 内容输出
-        int index = 3;
+        int index = 0;
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Model"); // Model
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Code"); // Code
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Sku"); // Sku
 
         // 属性
         for (Map property : propertyList) {
@@ -529,18 +532,20 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
             Comment comment = drawing.createCellComment(helper.createClientAnchor());
             comment.setString(helper.createRichTextString((String) property.get("property")));
-            row.getCell(index - 1).setCellComment(comment);
+            comment.setRow(0);
+            comment.setColumn(index - 1);
         }
 
         // 可调配库存
         FileUtils.cell(row, index++, cellStyleProperty).setCellValue(USABLESTOCK);
 
         // 平台
-        CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
+        CellStyle cellStylePlatform = sheetModel.getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
         FileUtils.cell(row, index++, cellStylePlatform).setCellValue(cartName);
         Comment comment = drawing.createCellComment(helper.createClientAnchor());
         comment.setString(helper.createRichTextString(cartId));
-        row.getCell(index - 1).setCellComment(comment);
+        comment.setRow(0);
+        comment.setColumn(index - 1);
 
         // 固定值增量
         FileUtils.cell(row, index++, cellStylePlatform).setCellValue(FIXED_TEXT);
@@ -553,15 +558,15 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * 增量库存隔离Excel的数据写入
      */
-    private void writeExcelStockIncrementInfoRecord(Workbook book, Map param, List<StockIncrementExcelBean> resultData) {
+    private void writeExcelStockIncrementInfoRecord(Workbook book, Sheet sheetModel, Map param, List<StockIncrementExcelBean> resultData) {
 
         Sheet sheet = book.getSheetAt(0);
         int lineIndex = 1; // 行号
         int colIndex = 0; // 列号
         Row row;
 
-        CellStyle cellStyleDataLock = book.getSheetAt(1).getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
-        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
+        CellStyle cellStyleDataLock = sheetModel.getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
+        CellStyle cellStyleData = sheetModel.getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
 
