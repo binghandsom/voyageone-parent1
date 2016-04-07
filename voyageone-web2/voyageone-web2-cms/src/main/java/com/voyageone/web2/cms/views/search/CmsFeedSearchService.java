@@ -19,6 +19,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
@@ -79,7 +80,21 @@ public class CmsFeedSearchService extends BaseAppService {
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
         // 获取category list
-        masterData.put("categoryList", cmsFeedCustPropService.getTopCategories(userInfo));
+        List<CmsMtFeedCategoryModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
+        if (!feedCatList.isEmpty()) {
+            feedCatList.remove(0);
+        }
+        List<Integer> delFlgList = new ArrayList<Integer>();
+        for (int i = 0, leng = feedCatList.size(); i < leng; i ++) {
+            if (feedCatList.get(i).getIsChild() == 0) {
+                // 非子节点
+                delFlgList.add(i);
+            }
+        }
+        for (int leng = delFlgList.size(), i = leng - 1; i >= 0; i --) {
+            feedCatList.remove(delFlgList.get(i).intValue());
+        }
+        masterData.put("categoryList", feedCatList);
 
         return masterData;
     }
