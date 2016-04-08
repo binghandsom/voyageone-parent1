@@ -70,6 +70,9 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> fields, int cartId) {
         for (Field field : fields) {
+            if ("hscode".equals(field.getId())) {
+                continue;
+            }
             List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
 
             PlatformSkuInfoModel tmallSkuInfo = null;
