@@ -9,8 +9,8 @@ import java.util.Map;
 
 public enum EnumJMSpecialImageImportColumn {
     ProductCode("product_code", 1, "jm_bt_sku", "商品Code",EnumExcelColumnType.ColumnType_String,false),//商品Code                    jm_bt_sku
-    ProductImageUrlKey1("product_image_url_key1",2,"jm_bt_images","商品图片1"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-    ProductImageUrlKey2("product_image_url_key2",3,"jm_bt_images","商品图片2"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+    ProductImageUrlKey1("product_image_url_key1",2,"jm_bt_images","商品图片1",EnumExcelColumnType.ColumnType_String,false),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+    ProductImageUrlKey2("product_image_url_key2",3,"jm_bt_images","商品图片2",EnumExcelColumnType.ColumnType_String,false),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
     ProductImageUrlKey3("product_image_url_key3",4,"jm_bt_images","商品图片3"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
     ProductImageUrlKey4("product_image_url_key4",5,"jm_bt_images","商品图片4"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
     ProductImageUrlKey5("product_image_url_key5",6,"jm_bt_images","商品图片5"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
