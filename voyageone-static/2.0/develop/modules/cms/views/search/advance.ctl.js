@@ -123,7 +123,7 @@ define([
                 for (idx in $scope.vm.groupList) {
                     var grpObj = $scope.vm.groupList[idx];
                     grpObj.grpImgList = res.data.grpImgList[idx];
-                    grpObj.grpProdChgInfo = res.data.grpProdChgInfoList[idx];
+                    grpObj._grpProdChgInfo = res.data.grpProdChgInfoList[idx];
                 }
 
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -152,7 +152,9 @@ define([
                 });
                 for (idx in $scope.vm.productList) {
                     var prodObj = $scope.vm.productList[idx];
-                    prodObj.prodChgInfo = res.data.prodChgInfoList[idx];
+                    prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
+                    prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
+                    prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 }
 
                 $scope.vm.productPageOption.total = res.data.productListTotal;
@@ -160,7 +162,7 @@ define([
 
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 1150) + 'px';
             })
         }
 
@@ -201,6 +203,11 @@ define([
                     });
                     groupInfo.custArr = custArr;
                 });
+                for (idx in $scope.vm.groupList) {
+                    var grpObj = $scope.vm.groupList[idx];
+                    grpObj.grpImgList = res.data.grpImgList[idx];
+                    grpObj._grpProdChgInfo = res.data.grpProdChgInfoList[idx];
+                }
             });
         }
 
@@ -234,6 +241,12 @@ define([
                     });
                     prodInfo.custArr = custArr;
                 });
+                for (idx in $scope.vm.productList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
+                    prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
+                    prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
+                }
             });
         }
 
