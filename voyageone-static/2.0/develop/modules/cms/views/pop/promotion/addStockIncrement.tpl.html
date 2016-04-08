@@ -2,24 +2,23 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;新建增量隔离任务</h5>
+        <h5 class="modal-title"><i class="fa fa-codepen" translate="TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK"></i></h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
            <div class="form-group">
-               <label class="col-sm-2 control-label">平台</label>
+               <label class="col-sm-2 control-label"translate="TXT_PLATFORM"></label>
                <div class="col-sm-9">
-                   <select class="form-control" ng-model="vm.promotionList">
-                       <option ng-repeat="platform in vm.promotionList" value={{platform.cartName}}>{{platform.cartName}}</option>
+                   <select class="form-control"ng-model="vm.cartName" ng-options="name as a.cartName for a in vm.promotionList">
                    </select>
                 </div>
            </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">增量类型</label>
+                <label class="col-sm-2 control-label" translate="TXT_INCREMENT_TYPE"></label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="vm.promotionList">
-                        <option>百分比增量</option>
-                        <option>数值增量</option>
+                    <select class="form-control">
+                        <option>{{'TXT_INCREMENT_PERCENTAGE' | translate}}</option>
+                        <option>{{'TXT_QUANTITY_INCREMENT' | translate}}</option>
                     </select>
                 </div>
                 <div class="col-sm-3">
@@ -27,15 +26,15 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">任务名</label>
+                <label class="col-sm-2 control-label"translate="TXT_TASK_NAME"></label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" placeholder="双十一增量任务">
+                    <input type="text" class="form-control" placeholder="{{'TXT_TASK_NAME' | translate}}">
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove" translate="BTN_CANCEL"></i> </button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk" translate="BTN_SAVE"></i></button>
     </div>
 </div><!-- .vo_modal -->

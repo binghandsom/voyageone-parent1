@@ -79,7 +79,6 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_TASK)
     public AjaxResponse initNewTask(@RequestBody Map param){
-
         Map<String, Object> resultBean =new HashMap<>();
         //公司平台销售渠道
         param.put("channel_id", this.getUser().getSelChannelId());
@@ -164,7 +163,7 @@ public class CmsTaskStockController extends CmsController {
         //公司平台销售渠道
         param.put("channel_id", this.getUser().getSelChannelId());
         //调用CmsTaskStockService
-        cmsTaskStockService.saveSeparateInfoByPromotionInfo(param, getLang());
+        cmsTaskStockService.saveSeparateInfoByPromotionInfo(param);
         //返回数据的类型
         return success(param);
     }

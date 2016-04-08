@@ -165,11 +165,18 @@ public class CmsTaskStockService extends BaseAppService {
     private  static final String TASK_TYPE="2";
     /** 结束状态  0: 未结束 */
     public static final String NOT_END = "0";
+    /** com_mt_value表 type_id**/
+    public static final int com_mt_value_type_id =59;
+    /** com_mt_value表 lang_id**/
+    public static final String com_mt_value_lang_id = "en";
+    /** com_mt_value表 name**/
+    public static final String com_mt_value_name = "60";
+
     /**
-     *
+     * 新建库存隔离任务前初始化数据取得
      * @param param
      * @param language
-     * @return
+     * @return data
      */
     public Map<String, Object> getSeparateInfoByPromotionID(Map param,String language){
         //返回的结果集合
@@ -181,7 +188,9 @@ public class CmsTaskStockService extends BaseAppService {
         //公司平台销售渠道
         String channelId=(String) param.get("channel_id");
         //共同方法TypeChannel.getTypeListSkuCarts取得该公司的所有销售渠道
-        List<TypeChannelBean> typeChannelBeanList =getCartNameByChannelId(language,channelId);
+        List<TypeChannelBean> typeChannelBeanList =getCartNameByChannelId(language, channelId);
+        //取得活动结束时间的指定分钟数后还原
+        String min = Types.getValue(com_mt_value_type_id, com_mt_value_name, com_mt_value_lang_id);
         //判断隔离任务:1新规的场 2合更新的场合
         String promotionType = (String) param.get("promotionType");
         if(promotionType.equals(TYPE_PROMOTION_INSERT)){
@@ -192,16 +201,17 @@ public class CmsTaskStockService extends BaseAppService {
             //根据活动ID取得cms_bt_promotion隔离的CartID
             Map<String,Object> separateCartIdMap =getPromotionIdByCartID(selFlag);
             //取得隔离和未隔离的数据
-            allSeparateInfo=getSeparateCartByTypeChannel(separateCartIdMap, typeChannelBeanList,channelId);
-        }else if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
+            allSeparateInfo=getSeparateCartByTypeChannel(separateCartIdMap, typeChannelBeanList,channelId,min);
+        }
+        if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
             //取得TaskID
             int taskId=(int) param.get("taskId");
             //取得活动名称
             taskName=(String) param.get("taskName");
             //根据TaskID取得初始画面的值
             List<Map<String,Object>> allSeparateCartIdMap=getCartNameBytaskId(String.valueOf(taskId));
-            //取得在画面显示的数据
-            allSeparateInfo = getAllSeparateInfo(typeChannelBeanList, allSeparateCartIdMap,promotionType);
+            //取得新建库存隔离任务的数据
+            allSeparateInfo = getAllSeparateInfo(typeChannelBeanList, allSeparateCartIdMap);
         }
         //循环取得隔离的数据反应到初始画面
         data = initSeparateDataMap(allSeparateInfo,promotionType,taskName);
@@ -222,15 +232,17 @@ public class CmsTaskStockService extends BaseAppService {
         return typeChannelBeanList;
     }
     /**
-     * 判断cms_bt_stock_separate_platform_info表中取得是否有对应的任务ID
+     * 新建库存隔离任务前初始化前的Check
      * @param selFlag
      */
     private void checkSeparatePromotionID(Map<String, Boolean> selFlag,String channelId){
-        //是否选择重复的店铺渠道
-        Map<String,Object> repeatList  = new HashMap<>();
+        List repeatList= new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得活动开始时间
             HashMap<String, String> promotionInfo= cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
+            //取得活动的ID
+            int cartId=Integer.parseInt(String.valueOf(promotionInfo.get("cart_id")));
+            //日期的格式
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             //取得活动开始时间
             String activityStart=promotionInfo.get("activity_start").toString()+" 00:00:00";
@@ -239,16 +251,11 @@ public class CmsTaskStockService extends BaseAppService {
             String sysTime=fmt.format(date);
             Calendar activityStartCalendar = Calendar.getInstance();
             Calendar sysTimeCalendar = Calendar.getInstance();
-            //根据活动ID取得隔离的CartID=
-            if(repeatList.size()==0){
-                repeatList.put(promotionInfo.get("cart_id"),entry.getKey());
-            }else{
-                if(repeatList.keySet().contains(promotionInfo.get("cart_id"))){
-                    throw new BusinessException("已经选择重复的店铺渠道,请确认");
-                }else{
-                    repeatList.put(promotionInfo.get("cart_id"),entry.getKey());
-                }
-            }
+            //根据活动ID取得隔离的CartID
+            if(repeatList.contains(cartId))
+                throw new BusinessException("已经选择重复的店铺渠道,请确认");
+            else
+                repeatList.add(cartId);
             //还原时间检查
             try {
                 //取得活动开始时间
@@ -256,19 +263,16 @@ public class CmsTaskStockService extends BaseAppService {
                 //当前时间
                 sysTimeCalendar.setTime(fmt.parse(sysTime));
                 int result=activityStartCalendar.compareTo(sysTimeCalendar);
-                if(result>=0){
-                    throw new BusinessException("参加的活动已经开始");
-                }
-            } catch (ParseException e) {
+                if(result<=0)
+                    throw new BusinessException("参加的活动已经开始或结束");
+            }catch (ParseException e) {
                 throw new BusinessException("时间格式不正确,请重新确认");
             }
-            int cartId=Integer.parseInt(String.valueOf(promotionInfo.get("cart_id")));
             //判断活动是否开始或者是否已经隔离
             List<Map<String, Object>> separateInfo= cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatFormInfoById(cartId,sysTime,channelId);
             //取得返回值
-            if (separateInfo.size()!=0) {
+            if (separateInfo.size()!=0)
                 throw new BusinessException("隔离平台任务已经存在,请确认");
-            }
 
         }
     }
@@ -279,21 +283,21 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private Map<String, Object> getPromotionIdByCartID(Map<String, Boolean> selFlag) {
         Map<String,Object> platformList  = new HashMap<>();
-        Map<String,String> cartNameMap = new HashMap<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得隔离的CartID
-            cartNameMap=cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
+            Map<String,String> cartNameMap=cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
             platformList.put(entry.getKey(),cartNameMap);
         }
         return platformList;
     }
     /**
-     *
+     * //新建库存隔离任务前初始化取得隔离和未隔离的数据
      * @param separateCartIdMap
      * @param typeChannelBeanList
-     * @return
+     * @param id
+     * @return separatePlatformList
      */
-    private List<Map> getSeparateCartByTypeChannel(Map<String, Object> separateCartIdMap, List<TypeChannelBean> typeChannelBeanList,String channelId) {
+    private List<Map> getSeparateCartByTypeChannel(Map<String, Object> separateCartIdMap, List<TypeChannelBean> typeChannelBeanList, String channelId, String id) {
 
         //取得隔离渠道的数据的集合
         List<Map> separatePlatformList = new ArrayList<>();
@@ -302,14 +306,22 @@ public class CmsTaskStockService extends BaseAppService {
         //取得隔离和共享渠道的名称
         HashMap<String,String> isAllSeparateCartName=new HashMap();
         // 还原时间
-        String revertTime="";
+        String afterRevertTime="";
+        int min;
+        //取得活动结束时间的指定分钟数后还原
+        if(id==""||null==id){
+            min=0;
+        }else{
+            min=Integer.parseInt(id);
+        }
         //取得隔离渠道的数据
         for(TypeChannelBean cartId :typeChannelBeanList){
             for(Map.Entry<String, Object> entry : separateCartIdMap.entrySet()){
                     Map<String,String> separatePlatformMap  = new HashMap<>();
                     HashMap<String,Object> separateMap =(HashMap<String, Object>) entry.getValue();
                     String sepCartId=separateMap.get("cart_id").toString();
-                    revertTime=separateMap.get("activity_end").toString();
+                    String revertTime=separateMap.get("activity_end").toString();
+                    afterRevertTime = addDateMin(revertTime, min);
                     if(sepCartId.equals(cartId.getValue().toString())){
                         //平台id
                         separatePlatformMap.put("cartId", cartId.getValue());
@@ -320,7 +332,7 @@ public class CmsTaskStockService extends BaseAppService {
                         //类型（1：隔离，2：共享）
                         separatePlatformMap.put("type","1");
                         //还原时间
-                        separatePlatformMap.put("revertTime", revertTime);
+                        separatePlatformMap.put("revertTime", afterRevertTime);
                         //活动ID
                         separatePlatformMap.put("promotionId", entry.getKey());
                         //取得隔离渠道的名称
@@ -345,15 +357,14 @@ public class CmsTaskStockService extends BaseAppService {
                 if(shareList.size()>0){
                     Boolean isFlg =true;
                     for(int i=0;i<shareList.size();i++){
-                        if(isAllSqEntry.getKey().equals(shareList.get(i))){
+                        if(isAllSqEntry.getKey().equals(shareList.get(i)))
                             isFlg =false;
                             break;
-                        }
                     }
-                    if(isFlg){
-                        //取得共享渠道名称
+                    //取得共享渠道名称
+                    if(isFlg)
                         shareCartName.append(isAllSqEntry.getValue()+"|");
-                    }
+
                 }else{
                     //取得共享渠道名称
                     shareCartName.append(isAllSqEntry.getValue()+"|");
@@ -369,13 +380,13 @@ public class CmsTaskStockService extends BaseAppService {
             // 平台id
             isNotSeparatePlatformMap.put("cartId", "-1");
             // 平台名
-            isNotSeparatePlatformMap.put("cartName",cartName.toString());
+            isNotSeparatePlatformMap.put("cartName",cartName);
             // 隔离比例
             isNotSeparatePlatformMap.put("value","");
             // 类型（1：隔离，2：共享）
             isNotSeparatePlatformMap.put("type", "2");
             // 还原时间
-            isNotSeparatePlatformMap.put("revertTime",revertTime);
+            isNotSeparatePlatformMap.put("revertTime",afterRevertTime);
             // 活动ID
             isNotSeparatePlatformMap.put("promotionId","");
             //共享渠道的数据的集合
@@ -384,6 +395,30 @@ public class CmsTaskStockService extends BaseAppService {
         //返回共享和隔离的数据集合
         return separatePlatformList;
     }
+
+    /**
+     * 取得活动结束时间的指定分钟数后还原
+     * @param revertTime
+     * @return minute
+     */
+    private String addDateMin(String revertTime, int min) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = format.parse(revertTime);
+        } catch (Exception e) {
+            throw new BusinessException("活动时间格式不正确");
+        }
+        if (date == null)
+            throw new BusinessException("活动时间为空,请重新确认");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MINUTE, min);
+        date = cal.getTime();
+        String afterRevertTime = format.format(date).toString();
+        return afterRevertTime;
+    }
+
     /**
      * 取得该渠道下已经隔离的平台
      *
@@ -417,23 +452,27 @@ public class CmsTaskStockService extends BaseAppService {
         return allSeparateCartIdMap;
     }
     /**
-     *
+     * 取得新建库存隔离任务的数据
      * @param typeChannelBeanList
      * @param allSeparateCartIdMap
-     * @return
+     * @return separatePlatformList
      */
-    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap,String promotionType) {
-        List<Map<String,Object>> allSeparateInfo =new ArrayList<>();
-        String activityEnd="";
+    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap){
         List<Map> separatePlatformList = new ArrayList<>();
         HashMap<String,String> sq=new HashMap();
         HashMap<String,String> isAllSq=new HashMap();
+        //增优先
         String addPriority="";
+        //减优先
         String subtractPriority="";
+        //还原时间
+        String revertTime="";
         for(TypeChannelBean cartId :typeChannelBeanList){
             for(int i=0;i<allSeparateCartIdMap.size();i++){
                 String cart_id=allSeparateCartIdMap.get(i).get("cart_id").toString();
+                revertTime=allSeparateCartIdMap.get(i).get("revertTime").toString();
                 Map<String,String> separatePlatformMap  = new HashMap<>();
+                //取得隔离渠道的数据
                 if(cart_id.equals(cartId.getValue().toString())){
                     //平台id
                     separatePlatformMap.put("cartId", cartId.getValue());
@@ -444,7 +483,7 @@ public class CmsTaskStockService extends BaseAppService {
                     //类型（1：隔离，2：共享）
                     separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
                     //还原时间
-                    separatePlatformMap.put("revertTime", allSeparateCartIdMap.get(i).get("revertTime").toString());
+                    separatePlatformMap.put("revertTime", revertTime);
                     //增优先
                     separatePlatformMap.put("addPriority", allSeparateCartIdMap.get(i).get("addPriority").toString());
                     //减优先
@@ -453,13 +492,15 @@ public class CmsTaskStockService extends BaseAppService {
                     separatePlatformList.add(separatePlatformMap);
                 }
                 if((cart_id.equals("-1"))){
+                    //增优先
                     addPriority=allSeparateCartIdMap.get(i).get("addPriority").toString();
+                    //减优先
                     subtractPriority=allSeparateCartIdMap.get(i).get("subtractPriority").toString();
                 }
             }
             isAllSq.put(cartId.getValue(),cartId.getName());
         }
-        // 获取未隔离的名称
+        //获取未隔离的名称
         StringBuffer sbCartName= new StringBuffer();
         for(Map.Entry<String, String> isAllSqEntry : isAllSq.entrySet()){
             if(sq.keySet().contains(isAllSqEntry.getKey())){
@@ -468,6 +509,7 @@ public class CmsTaskStockService extends BaseAppService {
                 sbCartName.append(isAllSqEntry.getValue()+"|");
             }
         }
+        //取得共享渠道的数据
         if(sbCartName.toString().length()!=0){
             //去掉最后一个|
             String cartName=sbCartName.substring(0,sbCartName.length()-1);
@@ -482,13 +524,14 @@ public class CmsTaskStockService extends BaseAppService {
             //类型（1：隔离，2：共享）
             isNotSeparatePlatformMap.put("type", "2");
             //还原时间
-            isNotSeparatePlatformMap.put("revertTime",activityEnd);
+            isNotSeparatePlatformMap.put("revertTime",revertTime);
             //增优先
             isNotSeparatePlatformMap.put("addPriority",addPriority);
             //减优先
             isNotSeparatePlatformMap.put("subtractPriority",subtractPriority);
             separatePlatformList.add(isNotSeparatePlatformMap);
         }
+        //返回共享和隔离的数据集合
         return separatePlatformList;
     }
 
@@ -553,10 +596,9 @@ public class CmsTaskStockService extends BaseAppService {
      *
      *
      * @param param
-     * @param lang
      * @return
      */
-    public void saveSeparateInfoByPromotionInfo(Map param, String lang) {
+    public void saveSeparateInfoByPromotionInfo(Map param) {
         //判断隔离任务:1新规的场 2合更新的场合
         String promotionType = (String) param.get("promotionType");
         //只导入SKU的场合
@@ -564,26 +606,27 @@ public class CmsTaskStockService extends BaseAppService {
         //channelID
         String channelID = (String) param.get("channel_id");
         //画面入力信息的CHECK
-        checkPromotionInfo(param, lang);
-        //判断隔离任务:1新规的场 2合更新的场合
+        checkPromotionInfo(param);
+        //判断隔离任务:新规的场
         if(promotionType.equals(TYPE_PROMOTION_INSERT)){
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
-            saveInsertTasksByPromotionInfo(param, lang);
+            saveInsertTasksByPromotionInfo(param);
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
-            saveInsertStockSeparatePlatFormByPromotionInfo(param, lang);
+            saveInsertStockSeparatePlatFormByPromotionInfo(param);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-            importSkuByPromotionInfo(param, lang,onlySku,channelID);
-        }else if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
+            importSkuByPromotionInfo(param,onlySku,channelID);
+        }
+        //判断隔离任务:合更新的场合
+        if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
             //更新的场合
-            saveUpdateTasksByPromotionInfo(param, lang,promotionType);
+            saveUpdateTasksByPromotionInfo(param);
         }
     }
     /**
-     * 根据活动名称将对应的活动信息反应到cms_bt_tasks
+     * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
      * @param param
-     * @param lang
      */
-    private void saveInsertTasksByPromotionInfo(Map param, String lang) {
+    private void saveInsertTasksByPromotionInfo(Map param) {
         CmsBtTasksModel cmsBtTasksModel = new CmsBtTasksModel();
         //任务名
         cmsBtTasksModel.setTask_name((String) param.get("taskName"));
@@ -602,12 +645,10 @@ public class CmsTaskStockService extends BaseAppService {
         cmsBtTasksDao.insert(cmsBtTasksModel);
     }
     /**
-     *根据活动名称将对应的活动信息反应到cms_bt_stock_separate_platform_info
-     *
+     * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
      * @param param
-     * @param lang
      */
-    private void saveInsertStockSeparatePlatFormByPromotionInfo(Map param, String lang) {
+    private void saveInsertStockSeparatePlatFormByPromotionInfo(Map param) {
         //根据活动名称取得对应的TaskID
         String taskID=cmsBtTasksDao.selectCmsBtTaskByTaskName((String) param.get("taskName"));
         //将取得的taskId放入param
@@ -669,18 +710,15 @@ public class CmsTaskStockService extends BaseAppService {
      * 画面入力check
      *
      * @param param
-     * @param lang
      */
-    private void checkPromotionInfo(Map param, String lang) {
-        List<Map> separatePlatformList = new ArrayList<>();
-        separatePlatformList= (List<Map>) param.get("promotionList");
+    private void checkPromotionInfo(Map param) {
+        List<Map> separatePlatformList =separatePlatformList= (List<Map>) param.get("promotionList");
         String taskName = (String) param.get("taskName");
         //任务名称
         if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
             throw new BusinessException("必须输入且长度小于1000！");
         }
         //增优先顺
-        Map<String,String> addPriorityMap =new HashMap<>();
         int[] addPriorityList=new int[separatePlatformList.size()];
         //减优先顺
         int[] subtractPriorityList=new int[separatePlatformList.size()];
@@ -711,7 +749,8 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
                 }else{
                     String[] separateValue = value.split("%");
-                    if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])||separateValue[0].getBytes().length>2) {
+                    if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])
+                            ||separateValue[0].getBytes().length>2||separateValue.length>1) {
                         throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
                     }
                 }
@@ -753,18 +792,19 @@ public class CmsTaskStockService extends BaseAppService {
         }
     }
     /**
-     * 页面只导入SKU的场合
+     * //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
      *
      * @param param
-     * @param lang
      */
-    private void importSkuByPromotionInfo(Map param, String lang,Boolean onlySku,String channelID) {
+    private void importSkuByPromotionInfo(Map param,Boolean onlySku,String channelID) {
         //取得所有的隔离promotionIds
         List<String> promotionIdList=getSeparatePlatformInfoByPromotionInfo(param);
         //根据promotionIds取得隔离平台的SKU
-        HashMap<String,Object> separateHashMaps=getSeparateSkuHashMapsBypPromotionIds(promotionIdList);
-        //根据promotion_id取得所有平台的SKU
-        HashMap<String,Object> skuHash = getSkuHashMapsByPromotionIds(promotionIdList);
+        HashMap<String,Object> skuHashMaps=getSeparateSkuHashMapsBypPromotionIds(promotionIdList);
+        //取得所有去掉重复项的SKU
+        HashMap<String,Object> skuHash = (HashMap<String, Object>) skuHashMaps.get("allSkuHashMaps");
+        //取得隔离的SKU
+        HashMap<String,Object> separateHashMaps = (HashMap<String, Object>) skuHashMaps.get("SeparateHashMaps");
         //根据promotion_id取得平台code对应的属性
         HashMap<String,Object> codeHash= getCodeHashByPromotionIds(promotionIdList);
         //根据SkuHash和codeHash取得AllSkuHash
@@ -776,9 +816,8 @@ public class CmsTaskStockService extends BaseAppService {
         //根据allSkuProHash和SeparateHashMaps将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
         saveStockSeparateItem(separateHashMaps, allSkuProHash, onlySku);
     }
-
     /**
-     * 取得所有选择的活动ID
+     * 取得所有的隔离promotionIds
      * @param param
      * @return promotionIdList
      */
@@ -804,44 +843,35 @@ public class CmsTaskStockService extends BaseAppService {
     private HashMap<String, Object> getSeparateSkuHashMapsBypPromotionIds(List<String> promotionIdList) {
         //根据选择的活动ID取得隔离的SKU
         List<Map<String, Object>> skuList= cmsBtPromotionSkuDao.selectCmsBtPromotionSkuByPromotionIds(promotionIdList);
+        //取得隔离的SKU
         HashMap<String,Object> SeparateHashMaps = new HashMap();
+        //取得去掉重复项的SKU
+        HashMap<String,Object> allSkuHashMaps = new HashMap();
+        //取得隔离SKU和去掉重复项的SKU
+        HashMap<String,Object> skuMap=  new HashMap();
         for(int i=0;i<skuList.size();i++){
+            HashMap<String,String> pro = new HashMap<>();
             //取得对应的活动product_sku
             String product_sku =skuList.get(i).get("product_sku").toString();
             //取得对应的活动promotion_id
             String promotion_id =skuList.get(i).get("promotion_id").toString();
             //拼接SKU取得对应的活动ID
             SeparateHashMaps.put((product_sku+":"+promotion_id),promotion_id);
-        }
-        //返回隔离SKU对应promotionId集合
-        return SeparateHashMaps;
-    }
-    /**
-     * 根据promotion_id取得所有平台的SKU
-     * @param promotionIdList
-     * @return allSkuHashMaps
-     */
-    private HashMap<String, Object> getSkuHashMapsByPromotionIds(List<String> promotionIdList) {
-        //根据选择的活动ID取得隔离的SKU
-        List<Map<String, Object>> skuList= cmsBtPromotionSkuDao.selectCmsBtPromotionAllSkuByPromotionIdS(promotionIdList);
-        //取得所有参加隔离活动的SKU
-        HashMap<String,Object> allSkuHashMaps = new HashMap();
-        for(int i=0;i<skuList.size();i++){
-            //取得对应的活动product_sku
-            String product_sku =skuList.get(i).get("product_sku").toString();
-            HashMap<String,String> pro = new HashMap<>();
+
             //取得对应的活动product_code
             pro.put("product_code",skuList.get(i).get("product_code").toString());
             //取得对应的活动product_model
             pro.put("product_model",skuList.get(i).get("product_model").toString());
-            //拼接SKU取得对应的活动ID
             allSkuHashMaps.put(product_sku,pro);
         }
-        //返回隔离SKU对应的Code
-        return allSkuHashMaps;
+        skuMap.put("SeparateHashMaps",SeparateHashMaps);
+        skuMap.put("allSkuHashMaps",allSkuHashMaps);
+
+        //返回隔离SKU对应promotionId集合
+        return skuMap;
     }
     /**
-     * 根据promotion_id取得所有隔离的code对应的属性
+     * 根据promotion_id取得平台code对应的属性
      * @param promotionIdList
      * @return codeHash
      */
@@ -871,7 +901,7 @@ public class CmsTaskStockService extends BaseAppService {
     }
 
     /**
-     *取得SKU级别的SKU对应的属性
+     * 根据SkuHash和codeHash取得AllSkuHash
      * @param skuHash
      * @param codeHash
      * @return aSkuProHash
@@ -909,8 +939,7 @@ public class CmsTaskStockService extends BaseAppService {
         return aSkuProHash;
     }
     /**
-     * 取得可用库存
-     *
+     * 根据channelID取得可用的库存
      * @param channelId 渠道id
      * @return 可用库存Map<sku,usableStock>
      */
@@ -1030,7 +1059,7 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private HashMap<String, Object> getAllSkuInfoByPlatFormList(Map param, Map<String, Object> allSkuProHash, Map<String, Integer> skuStockUsableAll) {
         //取得SKU级别的SKU对应的属性
-        HashMap<String,Object> aSkuProHash = new HashMap();
+        HashMap<String,Object> skuProHash = new HashMap();
         //取得画面的数据集合
         List<Map> separatePlatformList= (List<Map>) param.get("promotionList");
         //任务ID
@@ -1040,7 +1069,7 @@ public class CmsTaskStockService extends BaseAppService {
         //公司平台销售渠道
         String channel_id= (String)param.get("channel_id");
         //可用库存
-        int usableStockInt;
+        String usableStockInt;
         //隔离比例
         int separate_percent;
         //隔离库存
@@ -1084,20 +1113,24 @@ public class CmsTaskStockService extends BaseAppService {
                     //隔离比例
                     proMap.put("value",separatePlatformList.get(i).get("value").toString());
                     //可用库存(取得可用库存)
-                    usableStockInt=skuStockUsableAll.get(allSkuProEntry.getKey());
+                    if(null==skuStockUsableAll.get(allSkuProEntry.getKey())){
+                        throw new BusinessException("此SKU在逻辑库存里不存在:"+allSkuProEntry.getKey());
+                    }else{
+                        usableStockInt=String.valueOf(skuStockUsableAll.get(allSkuProEntry.getKey()));
+                    }
                     proMap.put("qty", usableStockInt);
                     //隔离库存比例
                     separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString());
                     //隔离库存
-                    separate_qty=Math.round((usableStockInt*separate_percent)/100);
+                    separate_qty=Math.round((Long.parseLong(usableStockInt)*separate_percent)/100);
                     proMap.put("separate_qty", separate_qty);
                     //取得所有SKU的属性
-                    aSkuProHash.put(allSkuProEntry.getKey()+":"+promotionId,proMap);
+                    skuProHash.put(allSkuProEntry.getKey()+":"+promotionId,proMap);
                 }
             }
         }
         //返回SKU的结果结合
-        return aSkuProHash;
+        return skuProHash;
     }
     /**
      * 根据SKU取得库存隔离数将隔离数据插入表中
@@ -1110,8 +1143,7 @@ public class CmsTaskStockService extends BaseAppService {
         for(Map.Entry<String,Object>allSkuProHashEntry: allSkuProHash.entrySet()){
             //判断是否在隔离
             HashMap<String,Object> aSkuProHash = new HashMap();
-            HashMap<String,Object> proMapValue = new HashMap<>();
-            proMapValue= (HashMap<String, Object>) allSkuProHashEntry.getValue();
+            HashMap<String,Object> proMapValue= (HashMap<String, Object>) allSkuProHashEntry.getValue();
             if(separateHashMaps.keySet().contains(allSkuProHashEntry.getKey())){
                 //任务ID
                 aSkuProHash.put("taskId",proMapValue.get("task_id").toString());
@@ -1140,7 +1172,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if(onlySku){
                     aSkuProHash.put("separateQty",0);
                 }else{
-                    aSkuProHash.put("separateQty",proMapValue.get("qty").toString());
+                    aSkuProHash.put("separateQty",proMapValue.get("separate_qty").toString());
                 }
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
                 aSkuProHash.put("status", "0");
@@ -1195,14 +1227,12 @@ public class CmsTaskStockService extends BaseAppService {
             cmsBtStockSeparateItemDao.insertStockSeparateItemByList(allSku);
             allSku.clear();
         }
-
     }
     /**
      * 更新数据库cms_bt_stock_separate_platform_info
      * @param param
-     * @param lang
      */
-    private void saveUpdateTasksByPromotionInfo(Map param, String lang,String promotionType) {
+    private void saveUpdateTasksByPromotionInfo(Map param) {
         //用户名
         String user=(String)param.get("userName");
         //取得TaskID

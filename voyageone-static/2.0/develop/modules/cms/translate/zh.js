@@ -251,9 +251,9 @@ define(function(){
         "TXT_INCREMENT_SUCCESS":"增量成功",
         "TXT_INCREMENT_FAILURE":"增量失败",
         "TXT_UPDATE_FIX_VALUE":"更新固定值",
-
-
-
+        "TXT_INCREMENT_TYPE":"增量类型",
+        "TXT_INCREMENT_PERCENTAGE":"增量百分比",
+        "TXT_QUANTITY_INCREMENT":"数量增量",
 
         "TXT_SEPARATE_PROPORTION":"隔离比例",
         "TXT_REVERT_TIME":"还原时间",
@@ -402,7 +402,6 @@ define(function(){
         "BTN_START_REFRESH_ALL": "启动/重刷所有",
         "BTN_REVERT_ALL": "还原所有",
         "BTN_START_INCREMENT_ALL": "启动增量所有",
-
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
         "BEATING": "正在执行",
