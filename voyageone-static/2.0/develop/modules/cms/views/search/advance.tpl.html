@@ -69,7 +69,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" >查询价格变动</label>
 							<div class="col-sm-8">
-								<div class="col-sm-5">
+								<div style="width:150px">
 									<select class="form-control" ng-model="vm.searchInfo.priceChgFlg">
 										<option value="0" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										<option value="1">涨价</option>
@@ -166,6 +166,17 @@
 								<!--<label class="checkbox-inline c-checkbox" ng-repeat="tag in vm.masterData.tagList">-->
 									<!--<input type="checkbox" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}-->
 								<!--</label>-->
+							</div>
+						</div>
+						<div class="form-group" ng-if="vm.masterData.isminimall == 1">
+							<label class="col-sm-3 control-label">Original Channel</label>
+							<div class="col-sm-8 form-inline" style="padding-left:0px">
+								<div class="col-sm-5">
+									<select class="form-control" style="width:150px" ng-model="vm.searchInfo.orgChaId"
+											ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
 							</div>
 						</div>
 					</div><!-- .form-group -->

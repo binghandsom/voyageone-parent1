@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -123,7 +124,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
         // 判断是否是minimall用户
-        masterData.put("isminimall", userInfo.getSelChannelId().equals(ChannelConfigEnums.Channel.VOYAGEONE.getId()) ? 1 : 0);
+        boolean isMiniMall = userInfo.getSelChannelId().equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        masterData.put("isminimall", isMiniMall ? 1 : 0);
+        if (isMiniMall) {
+            masterData.put("channelList", Channels.getChannelList());
+        }
 
         return masterData;
     }
@@ -682,6 +687,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
         String transFlg = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTransStsFlg());
         if (transFlg != null) {
             result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            result.append(",");
+        }
+
+        // MINI MALL 店铺时查询原始CHANNEL
+        if (searchValue.getOrgChaId() != null && !"000".equals(searchValue.getOrgChaId())) {
+            result.append(MongoUtils.splicingValue("orgChannelId", searchValue.getOrgChaId()));
             result.append(",");
         }
 
