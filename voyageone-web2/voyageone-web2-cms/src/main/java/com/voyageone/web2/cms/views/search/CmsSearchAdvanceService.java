@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
@@ -65,7 +66,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
+    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
@@ -122,7 +123,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
         // 判断是否是minimall用户
-        masterData.put("isminimall", 1);
+        masterData.put("isminimall", userInfo.getSelChannelId().equals(ChannelConfigEnums.Channel.VOYAGEONE.getId()) ? 1 : 0);
 
         return masterData;
     }
@@ -211,7 +212,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
             if (ptmList != null) {
                 for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
+                    if (ptmObj.getCartId() == cartId) {
                         grpId = ptmObj.getGroupId();
                         break;
                     }
@@ -257,7 +258,9 @@ public class CmsSearchAdvanceService extends BaseAppService{
     public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
         List[] rslt = null;
         List<List<Map<String, String>>> imgList = new ArrayList<List<Map<String, String>>>();
-        List<Map<String, Integer>> chgFlgList = new ArrayList<Map<String, Integer>>();
+        List<Integer> chgFlgList = new ArrayList<Integer>();
+        List<Integer> mainFlgList = new ArrayList<Integer>();
+        List<String> orgChaNameList = new ArrayList<String>();
 
         JomgoQuery queryObj = new JomgoQuery();
         if (hasImgFlg) {
@@ -267,8 +270,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
             rslt[1] = imgList;
         } else {
             queryObj.setProjection("{'fields.images1':1,'_id':0}");
-            rslt = new List[1];
+            rslt = new List[3];
             rslt[0] = chgFlgList;
+            rslt[1] = mainFlgList;
+            rslt[2] = orgChaNameList;
         }
 
         for (CmsBtProductModel groupObj : groupsList) {
@@ -276,11 +281,23 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
             if (ptmList != null) {
                 for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
+                    if (ptmObj.getCartId() == cartId) {
                         grpId = ptmObj.getGroupId();
+                        if (ptmObj.getIsMain()) {
+                            mainFlgList.add(1);
+                        } else {
+                            mainFlgList.add(0);
+                        }
                         break;
                     }
                 }
+            }
+
+            ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
+            if (channel == null) {
+                orgChaNameList.add("");
+            } else {
+                orgChaNameList.add(channel.getFullName());
             }
 
             boolean hasChg = false;
@@ -309,13 +326,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
                     }
                 }
 
-                Map<String, Integer> map = new HashMap<String, Integer>(1);
                 if (hasChg) {
-                    map.put("_chgFlg", 1);
+                    chgFlgList.add(1);
                 } else {
-                    map.put("_chgFlg", 0);
+                    chgFlgList.add(0);
                 }
-                chgFlgList.add(map);
                 imgList.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -348,13 +363,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
             imgList.add(images1Arr);
 
-            Map<String, Integer> map = new HashMap<String, Integer>(1);
             if (hasChg) {
-                map.put("_chgFlg", 1);
+                chgFlgList.add(1);
             } else {
-                map.put("_chgFlg", 0);
+                chgFlgList.add(0);
             }
-            chgFlgList.add(map);
         }
         return rslt;
     }

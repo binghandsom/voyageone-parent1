@@ -18,6 +18,16 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private String catPath;
     private String orgChannelId;
 
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    private String platformName;
+
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
     private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
