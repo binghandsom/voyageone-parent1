@@ -196,7 +196,7 @@ public class CmsBtJmPromotionImportTaskService {
             }
             //活动商品  cms_bt_jm_promotion_product
             loadSavePromotionProductInfoByImportModel(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, saveInfo, oldProductModel, importProductModel);
-            //sku     cms_bt_jm_promotion_sku
+            //sku     cms_bt_jm_promotion_sku  cms_bt_jm_sku
             loadSaveSkuInfoByImportModel(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, listSkuModel, saveInfo, importProductModel);
             //cms_mt_master_info
             loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveInfo);

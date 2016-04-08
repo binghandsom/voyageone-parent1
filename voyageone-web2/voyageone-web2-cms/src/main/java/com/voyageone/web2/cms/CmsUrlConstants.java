@@ -86,6 +86,17 @@ interface CmsBtJmPromotionImportTask{
             }
         }
     }
+    interface CMSMTJMCONFIG {
+        interface LIST {
+            interface INDEX {
+                String ROOT = "/cms/cmsmtjmconfig/index";
+                String INSERT = "insert";
+                String UPDATE = "update";
+                String GETBYKEY="getByKey";
+
+            }
+        }
+    }
     // 活动管理
     interface PROMOTION {
         interface LIST {
