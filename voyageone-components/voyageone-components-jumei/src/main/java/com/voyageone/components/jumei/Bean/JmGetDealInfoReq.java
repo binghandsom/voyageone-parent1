@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Bean;
+package com.voyageone.components.jumei.bean;
 
 import com.voyageone.common.util.StringUtils;
 

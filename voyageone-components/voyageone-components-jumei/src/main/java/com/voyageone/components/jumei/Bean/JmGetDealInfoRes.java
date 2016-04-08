@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Bean;
+package com.voyageone.components.jumei.bean;
 
 /**
  * @author aooer 2016/1/28.

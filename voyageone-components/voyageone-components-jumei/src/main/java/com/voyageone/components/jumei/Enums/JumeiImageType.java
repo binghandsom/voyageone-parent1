@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Enums;
+package com.voyageone.components.jumei.enums;
 
 /**
  * @author james.li on 2016/1/28.
