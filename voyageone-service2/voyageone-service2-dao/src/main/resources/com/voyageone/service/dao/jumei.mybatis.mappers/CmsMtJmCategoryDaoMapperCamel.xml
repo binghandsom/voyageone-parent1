@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,name,level,parent_category_id,seo_keywords,seo_description,created,creater,modified,modifier        from cms_mt_jm_category
+        select `id`,`name`,`level`,`parent_category_id`,`seo_keywords`,`seo_description`,`created`,`creater`,`modified`,`modifier`        from cms_mt_jm_category
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -42,7 +42,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,name,level,parent_category_id,seo_keywords,seo_description,created,creater,modified,modifier from cms_mt_jm_category 
+        select `id`,`name`,`level`,`parent_category_id`,`seo_keywords`,`seo_description`,`created`,`creater`,`modified`,`modifier` from cms_mt_jm_category 
         <where>
                 
                     <if test="id != null">
@@ -87,7 +87,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,name,level,parent_category_id,seo_keywords,seo_description,created,creater,modified,modifier from cms_mt_jm_category where id=#{id}
+        select `id`,`name`,`level`,`parent_category_id`,`seo_keywords`,`seo_description`,`created`,`creater`,`modified`,`modifier` from cms_mt_jm_category where id=#{id}
     </select>
 
      <update id="update">
@@ -99,7 +99,6 @@
             ,`parent_category_id`=#{parentCategoryId}
             ,`seo_keywords`=#{seoKeywords}
             ,`seo_description`=#{seoDescription}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
          where id=#{id}   
    </update>

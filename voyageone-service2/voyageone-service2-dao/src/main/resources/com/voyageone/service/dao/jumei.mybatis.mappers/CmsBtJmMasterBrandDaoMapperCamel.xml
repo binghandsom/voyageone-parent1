@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,name,jm_master_brand_id,en_name,created,creater,modified,modifier        from cms_bt_jm_master_brand
+        select `id`,`name`,`jm_master_brand_id`,`en_name`,`created`,`creater`,`modified`,`modifier`        from cms_bt_jm_master_brand
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -36,7 +36,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,name,jm_master_brand_id,en_name,created,creater,modified,modifier from cms_bt_jm_master_brand 
+        select `id`,`name`,`jm_master_brand_id`,`en_name`,`created`,`creater`,`modified`,`modifier` from cms_bt_jm_master_brand 
         <where>
                 
                     <if test="id != null">
@@ -73,7 +73,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,name,jm_master_brand_id,en_name,created,creater,modified,modifier from cms_bt_jm_master_brand where id=#{id}
+        select `id`,`name`,`jm_master_brand_id`,`en_name`,`created`,`creater`,`modified`,`modifier` from cms_bt_jm_master_brand where id=#{id}
     </select>
 
      <update id="update">
@@ -83,7 +83,6 @@
             `name`=#{name}
             ,`jm_master_brand_id`=#{jmMasterBrandId}
             ,`en_name`=#{enName}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
          where id=#{id}   
    </update>

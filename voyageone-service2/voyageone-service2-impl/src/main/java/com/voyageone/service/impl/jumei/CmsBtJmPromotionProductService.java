@@ -27,17 +27,19 @@ public class CmsBtJmPromotionProductService {
         return dao.update(entity);
     }
 
-    public int create(CmsBtJmPromotionProductModel entity) {
+    public int insert(CmsBtJmPromotionProductModel entity) {
         return dao.insert(entity);
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
         return daoExt.getListByWhere(map);
     }
+
     public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
-        //synchState0
-        //synchState0
         return daoExt.getPromotionProductInfoListByWhere(map);
+    }
+    public int delete(int id) {
+        return dao.delete(id);
     }
 }
 

@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier        from cms_mt_template_images
+        select `id`,`platform_id`,`channel_id`,`template_type`,`image_template_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`        from cms_mt_template_images
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -42,7 +42,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier from cms_mt_template_images 
+        select `id`,`platform_id`,`channel_id`,`template_type`,`image_template_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier` from cms_mt_template_images 
         <where>
                 
                     <if test="id != null">
@@ -87,7 +87,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier from cms_mt_template_images where id=#{id}
+        select `id`,`platform_id`,`channel_id`,`template_type`,`image_template_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier` from cms_mt_template_images where id=#{id}
     </select>
 
      <update id="update">
@@ -99,7 +99,6 @@
             ,`template_type`=#{templateType}
             ,`image_template_url`=#{imageTemplateUrl}
             ,`syn_flg`=#{synFlg}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
          where id=#{id}   
    </update>

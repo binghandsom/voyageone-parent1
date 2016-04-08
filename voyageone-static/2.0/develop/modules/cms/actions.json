@@ -117,17 +117,19 @@
       }
     },
     "jmpromotion": {
-      "jmPromotionService" : {
+      "jmPromotionService": {
         "root": "/cms/jmpromotion/index",
         "init": "init",
-        "get":"get",
+        "get": "get",
         "getListByWhere": "getListByWhere",
         "insert": "insert",
         "update": "update"
       },
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
-        "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere"
+        "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
+        "delete": "delete",
+        "updateDealPrice": "updateDealPrice"
       }
     },
     "cmsBtJmPromotionImportTask":{

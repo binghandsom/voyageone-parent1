@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier        from cms_mt_jm_master_plat
+        select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier`        from cms_mt_jm_master_plat
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -45,7 +45,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier from cms_mt_jm_master_plat 
+        select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier` from cms_mt_jm_master_plat 
         <where>
                 
                     <if test="id != null">
@@ -94,7 +94,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier from cms_mt_jm_master_plat where id=#{id}
+        select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier` from cms_mt_jm_master_plat where id=#{id}
     </select>
 
      <update id="update">
@@ -107,7 +107,6 @@
             ,`name2`=#{name2}
             ,`name3`=#{name3}
             ,`name4`=#{name4}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
          where id=#{id}   
    </update>

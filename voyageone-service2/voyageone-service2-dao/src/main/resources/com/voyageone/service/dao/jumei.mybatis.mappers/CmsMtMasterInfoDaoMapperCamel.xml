@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier,is_active        from cms_mt_master_info
+        select `id`,`platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`,`value1`,`value2`,`syn_flg`,`error_message`,`created`,`creater`,`modified`,`modifier`,`active`        from cms_mt_master_info
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -57,13 +57,13 @@
                                 <if test="modifier != null">
                         AND modifier = #{modifier}
                     </if>
-                                <if test="isActive != null">
-                        AND is_active = #{isActive}
+                                <if test="active != null">
+                        AND active = #{active}
                     </if>
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier,is_active from cms_mt_master_info 
+        select `id`,`platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`,`value1`,`value2`,`syn_flg`,`error_message`,`created`,`creater`,`modified`,`modifier`,`active` from cms_mt_master_info 
         <where>
                 
                     <if test="id != null">
@@ -130,13 +130,13 @@
                         AND modifier = #{modifier}
                     </if> 
                 
-                    <if test="isActive != null">
-                        AND is_active = #{isActive}
+                    <if test="active != null">
+                        AND active = #{active}
                     </if> 
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier,is_active from cms_mt_master_info where id=#{id}
+        select `id`,`platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`,`value1`,`value2`,`syn_flg`,`error_message`,`created`,`creater`,`modified`,`modifier`,`active` from cms_mt_master_info where id=#{id}
     </select>
 
      <update id="update">
@@ -155,7 +155,7 @@
             ,`syn_flg`=#{synFlg}
             ,`error_message`=#{errorMessage}
             ,`modifier`=#{modifier}
-            ,`is_active`=#{isActive}
+            ,`active`=#{active}
          where id=#{id}   
    </update>
 
@@ -183,7 +183,7 @@
               `creater`,
               `modified`,
               `modifier`,
-              `is_active`
+              `active`
         )
         VALUES(
               #{platformId},
@@ -201,7 +201,7 @@
               #{creater},
               #{modified},
               #{modifier},
-              #{isActive}
+              #{active}
         )
     </insert>
 </mapper>

@@ -27,6 +27,22 @@ define([
             }, function (res) {
             })
         };
+        $scope.del = function (data) {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') +data.productCode).result.then(function () {
+                var index = _.indexOf($scope.vm.modelList, data);
+                data.isDelete = 1;
+                jmPromotionDetailService.delete(data.id).then(function () {
+                    $scope.vm.modelList.splice(index, 1);
+                }, function (res) {
+                })
+            })
+        };
+        $scope.updateDealPrice = function (data) {
+            jmPromotionDetailService.updateDealPrice({id:data.id,dealPrice:data.dealPrice}).then(function () {
+                data.isSave=false;
+            }, function (res) {
+            })
+        };
         $scope.searchImport=function(){
             cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
                // console.log(res);

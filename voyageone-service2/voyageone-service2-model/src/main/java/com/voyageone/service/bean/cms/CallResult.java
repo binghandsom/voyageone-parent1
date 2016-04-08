@@ -7,6 +7,10 @@ public class CallResult {
      boolean result;
     String msg;
 
+    public  CallResult()
+    {
+        this.result=true;
+    }
     public boolean isResult() {
         return result;
     }

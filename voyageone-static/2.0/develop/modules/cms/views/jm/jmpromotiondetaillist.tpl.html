@@ -257,12 +257,12 @@
 							<div class="table_main">
 								<ul>
 									<li>MSRP: {{model.msrp}}</li>
-									<li>Retail Price：{{model.dealPrice}}</li>
-									<li>Sale Price: {{model.marketPrice}}</li>
+									<li>Deal Price：{{model.dealPrice}}</li>
+									<li>arket Price: {{model.marketPrice}}</li>
 								</ul>
 							</div>
 						</td>
-						<td><input ng-model="model.msrp"/></td>
+						<td><input ng-model="model.dealPrice" ng-change="model.isSave=true;"/></td>
 						<td>
 							<div class="table_main">
 							<ul>
@@ -285,8 +285,8 @@
 						<td>
 							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
 							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail('md')"><i class="fa fa-pencil"></i></button>
-							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-							<button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+							<button title="保存" ng-disabled="!model.isSave" class="btn btn-vo btn-xs"       ng-click="updateDealPrice(model);" ><i class="glyphicon glyphicon-floppy-disk"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs"   ng-click="del(model)"              ><i class="fa fa-trash-o"></i>                     </button>
 						</td>
 					</tr>
 					</tbody>
@@ -358,8 +358,5 @@
 				</tab>
 		</tabset>
 		</div>
-		<!--<div class="m-t-xs">-->
-			<!--<vpagination config="vm.errorPageOption"></vpagination>-->
-		<!--</div>-->
 	</div>
 </div><!-- end .wrapper-md -->

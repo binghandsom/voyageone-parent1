@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,name,activity_pc_id,activity_app_id,cms_bt_jm_master_brand_Id,cms_bt_jm_master_brand_Name,brand,category,activity_start,activity_end,pre_period_start,pre_period_end,shipping_system_id,created,creater,modified,modifier,is_delete        from cms_bt_jm_promotion
+        select `id`,`channel_id`,`name`,`activity_pc_id`,`activity_app_id`,`cms_bt_jm_master_brand_Id`,`cms_bt_jm_master_brand_Name`,`brand`,`category`,`activity_start`,`activity_end`,`pre_period_start`,`pre_period_end`,`shipping_system_id`,`created`,`creater`,`modified`,`modifier`,`is_delete`        from cms_bt_jm_promotion
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -69,7 +69,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,channel_id,name,activity_pc_id,activity_app_id,cms_bt_jm_master_brand_Id,cms_bt_jm_master_brand_Name,brand,category,activity_start,activity_end,pre_period_start,pre_period_end,shipping_system_id,created,creater,modified,modifier,is_delete from cms_bt_jm_promotion 
+        select `id`,`channel_id`,`name`,`activity_pc_id`,`activity_app_id`,`cms_bt_jm_master_brand_Id`,`cms_bt_jm_master_brand_Name`,`brand`,`category`,`activity_start`,`activity_end`,`pre_period_start`,`pre_period_end`,`shipping_system_id`,`created`,`creater`,`modified`,`modifier`,`is_delete` from cms_bt_jm_promotion 
         <where>
                 
                     <if test="id != null">
@@ -150,7 +150,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,name,activity_pc_id,activity_app_id,cms_bt_jm_master_brand_Id,cms_bt_jm_master_brand_Name,brand,category,activity_start,activity_end,pre_period_start,pre_period_end,shipping_system_id,created,creater,modified,modifier,is_delete from cms_bt_jm_promotion where id=#{id}
+        select `id`,`channel_id`,`name`,`activity_pc_id`,`activity_app_id`,`cms_bt_jm_master_brand_Id`,`cms_bt_jm_master_brand_Name`,`brand`,`category`,`activity_start`,`activity_end`,`pre_period_start`,`pre_period_end`,`shipping_system_id`,`created`,`creater`,`modified`,`modifier`,`is_delete` from cms_bt_jm_promotion where id=#{id}
     </select>
 
      <update id="update">
@@ -170,7 +170,6 @@
             ,`pre_period_start`=#{prePeriodStart}
             ,`pre_period_end`=#{prePeriodEnd}
             ,`shipping_system_id`=#{shippingSystemId}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
             ,`is_delete`=#{isDelete}
          where id=#{id}   

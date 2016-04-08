@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,source_id,api_type,error_msg,error_code,remark        from cms_bt_jm_api_log
+        select `id`,`source_id`,`api_type`,`error_msg`,`error_code`,`remark`        from cms_bt_jm_api_log
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -30,7 +30,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,source_id,api_type,error_msg,error_code,remark from cms_bt_jm_api_log 
+        select `id`,`source_id`,`api_type`,`error_msg`,`error_code`,`remark` from cms_bt_jm_api_log 
         <where>
                 
                     <if test="id != null">
@@ -59,7 +59,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,source_id,api_type,error_msg,error_code,remark from cms_bt_jm_api_log where id=#{id}
+        select `id`,`source_id`,`api_type`,`error_msg`,`error_code`,`remark` from cms_bt_jm_api_log where id=#{id}
     </select>
 
      <update id="update">
