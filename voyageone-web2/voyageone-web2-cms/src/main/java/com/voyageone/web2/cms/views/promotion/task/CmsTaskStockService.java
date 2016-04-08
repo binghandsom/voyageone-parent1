@@ -1694,7 +1694,11 @@ public class CmsTaskStockService extends BaseAppService {
 
                 // 加入到sku库存增量隔离信息（该任务下的各个平台的数据）
                 if (currentTaskId.equals(taskId)) {
-                    skuStockIncrementByPlatform.put(sku + cartId, incrementQty);
+                    if (skuStockIncrementByPlatform.containsKey(sku + cartId)) {
+                        skuStockIncrementByPlatform.put(sku + cartId, skuStockIncrementByPlatform.get(sku + cartId) + incrementQty);
+                    } else {
+                        skuStockIncrementByPlatform.put(sku + cartId, incrementQty);
+                    }
                 }
             }
         }
