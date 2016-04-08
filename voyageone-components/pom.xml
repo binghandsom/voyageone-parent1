@@ -21,6 +21,7 @@
         <module>voyageone-components-jd</module>
         <module>voyageone-components-jumei</module>
         <module>voyageone-components-sears</module>
+        <module>voyageone-components-intltarget</module>
         <module>voyageone-components-tmall</module>
         <module>voyageone-components-yimei</module>
     </modules>
