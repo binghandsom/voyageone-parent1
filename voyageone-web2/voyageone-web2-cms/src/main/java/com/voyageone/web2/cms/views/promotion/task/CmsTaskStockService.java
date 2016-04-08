@@ -402,7 +402,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @return minute
      */
     private String addDateMin(String revertTime, int min) {
-        revertTime += " 00:00:00";
+        revertTime += " 23:59:59";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
