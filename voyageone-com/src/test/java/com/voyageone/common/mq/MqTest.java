@@ -26,9 +26,8 @@ public class MqTest extends TestCase {
     @Test
     public void testSendMessage() throws Exception {
         Map<String,Object> message=new HashMap<String,Object>();
-        message.put("promotionId","111");
-        message.put("code","35476451212");
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_PROMOTION, message);
+        message.put("id","111");
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
     }
 
 }
