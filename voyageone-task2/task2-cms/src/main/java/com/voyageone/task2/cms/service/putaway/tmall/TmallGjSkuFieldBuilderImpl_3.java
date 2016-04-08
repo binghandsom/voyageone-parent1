@@ -112,6 +112,9 @@ public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> fields, int cartId) {
         for (Field field : fields) {
+            if ("hscode".equals(field.getId())) {
+                continue;
+            }
             if (isIgnore(field.getId())) {
                 logger.info("Ignore sku prop: " + field.getId());
                 continue;
