@@ -58,7 +58,4 @@ public class CmsBtPromotionSkuDao extends ServiceBaseDao {
     public List<Map<String, Object>> selectCmsBtPromotionSkuByPromotionIds(List promotionIdList){
         return selectList("select_cms_bt_promotion_sku_bt_promotionIds", promotionIdList);
     }
-    public List<Map<String, Object>> selectCmsBtPromotionAllSkuByPromotionIdS(List promotionIdList){
-        return selectList("select_cms_bt_promotion_sku_bt_all_sku_promotionIds", promotionIdList);
-    }
 }
