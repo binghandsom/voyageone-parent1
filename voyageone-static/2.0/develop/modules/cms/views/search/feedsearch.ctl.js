@@ -75,13 +75,6 @@ define([
          * 检索
          */
         function search() {
-            // 对应根据父类目检索
-            var catInfo = _getCatPath($scope.vm.searchInfo.category);
-            if (catInfo) {
-                $scope.vm.searchInfo.catPath = catInfo.catPath;
-            } else {
-                $scope.vm.searchInfo.catPath = null;
-            }
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
             if ($scope.vm.searchInfo.fuzzySearch != undefined) {
@@ -128,10 +121,6 @@ define([
                     feedInfo.attsList = attsList;
                 });
             })
-        }
-
-        function _getCatPath (catId) {
-            return _.findWhere($scope.vm.masterData.categoryList, {catId: catId});
         }
 
     };

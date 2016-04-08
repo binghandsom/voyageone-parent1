@@ -294,6 +294,7 @@ define(function(){
         "BTN_SAVE": "保存",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",
+        "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
         "BTN_OK": "确定",
