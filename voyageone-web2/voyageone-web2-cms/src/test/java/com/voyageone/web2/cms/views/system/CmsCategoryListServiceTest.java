@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.system;
 
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.web2.cms.views.system.category.CmsCategoryListService;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
@@ -24,8 +23,6 @@ public class CmsCategoryListServiceTest {
     @Autowired
     CmsCategoryListService cmsCategoryListService;
 
-    @Autowired
-    CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
     @Test
     public void testGetCategoryList() throws Exception {
         Map<String,Object> param = new HashMap<>();
