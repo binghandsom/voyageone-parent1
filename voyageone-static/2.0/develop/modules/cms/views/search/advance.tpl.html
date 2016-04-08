@@ -290,9 +290,23 @@
 						</li>
 					</ul>
 				</div>&nbsp;
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_JM_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
+					</button>
+					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
+					<!--<span class="caret"></span>-->
+					<!--</button>-->
+					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
+						<li ng-repeat="promotion in vm.masterData.promotionList">
+							<a href ng-click="openAddToPromotion('md', promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+						</li>
+					</ul>
+				</div>&nbsp;
 				<button class="btn btn-default" ng-click="openBulkUpdate('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)"><i class="fa fa-pencil-square"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
 				<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
 			</div><!-- /right-btn -->
+
 			<!--tab-->
 			<tab ng-click="vm.currTab = 'group'">
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
@@ -327,6 +341,7 @@
 									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'WaitingPublish'}">
 										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
 									</span>
+									<span class="label label-success m-t-xs m-r-sm ">&nbsp;Shoecity&nbsp;</span>
 									<span class="m-r-sm" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
@@ -429,6 +444,8 @@
 										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
+										<span class="label label-danger m-t-xs m-r-sm m-l-sm">&nbsp;M&nbsp;</span>
+										<span class="label label-success m-t-xs m-r-sm ">&nbsp;Shoecity&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="productInfo.groups.platforms[0].numIId"></a>
 									    </span>&nbsp;

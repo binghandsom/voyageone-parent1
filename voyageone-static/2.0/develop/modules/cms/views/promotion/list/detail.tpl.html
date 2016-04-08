@@ -211,6 +211,7 @@
                                                ng-click="selectOne(group.modelId, vm.groupSelList)">
                                         <span class="fa fa-check"></span>
                                     </label>
+                                    <span class="label label-success m-t-xs m-r-sm">&nbsp;Shoecity&nbsp;</span>
 									<span class="m-r-sm" ng-if="group.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{group.numIid}}" target="_blank"  ng-bind="group.numIid"></a>
 									</span>&nbsp;
@@ -304,9 +305,8 @@
                                                ng-click="selectOne(code.productCode, vm.codeSelList)">
                                         <span class="fa fa-check"></span>
                                     </label>
-									<span class="label m-r-sm" ng-class="{'label-success-new': code.platformStatus == 'Onsale','label-yellow-new': code.platformStatus == 'Instock', 'label-danger-new': code.platformStatus == 'Waitingpublish'}">
-										&nbsp;{{code.platformStatus}}&nbsp;
-									</span>
+                                    <span class="label label-danger m-t-xs m-l-sm m-r-sm">&nbsp;M&nbsp;</span>
+                                    <span class="label label-success m-t-xs m-r-sm">&nbsp;Shoecity&nbsp;</span>
 									<span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
 									</span>&nbsp;
