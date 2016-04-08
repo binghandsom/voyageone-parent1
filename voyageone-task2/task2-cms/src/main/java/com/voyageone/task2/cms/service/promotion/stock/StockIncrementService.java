@@ -144,7 +144,7 @@ public class StockIncrementService extends BaseTaskService {
         }
 
         $info("开始取得一般隔离库存值");
-        // 部分平台的Api接口未提供增量的接口，刷增量库存的时候，需要加算(隔离库存值 - 平台销售量)
+        // 部分平台的Api接口未提供增量的接口，刷增量库存的时候，需要加算(隔离库存值 + 已增量的值 - 平台销售量)
         // 根据增量任务id列表，取得状态为"隔离成功"的隔离数据的隔离库存值，生成Map<sku + cartId, 隔离库存值>
         Map<String, Integer> stockInfoMap = new HashMap<>();
         List<Map<String, Object>> stockList = getStockSeparateData(subTaskIdList);
@@ -153,6 +153,20 @@ public class StockIncrementService extends BaseTaskService {
             String cartId = String.valueOf(stock.get("cart_id"));
             Integer separateQty = (Integer) stock.get("separate_qty");
             stockInfoMap.put(sku + cartId, separateQty);
+        }
+
+        // 根据渠道id，取得已增量数据，生成Map<sku + cartId, 已增量的值>
+        Map<String, Integer> stockIncreasedInfoMap = new HashMap<>();
+        List<Map<String, Object>> stockIncreasedList = getStockIncrementData(channelId);
+        for (Map<String, Object> stockIncreased : stockIncreasedList) {
+            String sku = (String) stockIncreased.get("sku");
+            String cartId = String.valueOf(stockIncreased.get("cart_id"));
+            Integer incrementQty = (Integer) stockIncreased.get("increment_qty");
+            if (stockIncreasedInfoMap.get(sku + cartId) != null) {
+                stockIncreasedInfoMap.put(sku + cartId, incrementQty + stockInfoMap.get(sku + cartId));
+            } else {
+                stockIncreasedInfoMap.put(sku + cartId, incrementQty);
+            }
         }
 
         // 根据渠道id，取得平台销售量，生成Map<sku + cartId, 平台销售量>
@@ -206,16 +220,16 @@ public class StockIncrementService extends BaseTaskService {
             }
             // 如果增量为0件，更新到增量库存隔离数据表，同时更新状态为"3：增量成功"
             if (incrementQty == 0) {
-                cntIncrement += updateStockIncrementInfo(subTaskId, sku, incrementQty);
+                cntIncrement += updateStockIncrementInfo(subTaskId, sku, usableQty, incrementQty);
             } else {
                 // 将计算后的实际增量库存 更新到增量库存隔离数据表，同时更新状态为"2：增量中"
-                Integer updateCnt = updateStockIncrementInfo(subTaskId, sku, incrementQty);
+                Integer updateCnt = updateStockIncrementInfo(subTaskId, sku, usableQty, incrementQty);
                 cntIncrement += updateCnt;
 
                 // 更新成功的场合
                 if (updateCnt > 0) {
                     // 将增量库存数据插入ims_bt_log_syn_inventory表
-                    insertIncrementSeparateInventoryData(imsBtLogSynInventoryList, stockInfoMap, salesInfoMap, channelId, cartId, sku, incrementQty, seq);
+                    insertIncrementSeparateInventoryData(imsBtLogSynInventoryList, stockInfoMap, stockIncreasedInfoMap, salesInfoMap, channelId, cartId, sku, incrementQty, seq);
 
                     // 将共享平台的库存数据插入ims_bt_log_syn_inventory表
                     for (Integer shareCartId : shareCartIdList) {
@@ -269,8 +283,24 @@ public class StockIncrementService extends BaseTaskService {
         // 根据任务id列表，取得状态为"隔离成功"的隔离数据列表
         Map<String, Object> sqlParam1 = new HashMap<>();
         sqlParam1.put("taskIdList", taskIdList);
+        sqlParam1.put("status", StockInfoService.STATUS_SEPARATE_SUCCESS);
         List<Map<String, Object>> stockList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam1);
         return  stockList;
+    }
+
+    /**
+     * 根据渠道id，取得已增量数据列表
+     *
+     * @param channelId 渠道id
+     * @return 已增量数据列表
+     */
+    private List<Map<String, Object>> getStockIncrementData(String channelId) {
+        // 根据渠道id，取得平台销售量列表
+        Map<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("channelId", channelId);
+        sqlParam.put("status", StockInfoService.STATUS_INCREMENT_SUCCESS);
+        List<Map<String, Object>> stockIncreasedList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+        return  stockIncreasedList;
     }
 
 
@@ -325,27 +355,26 @@ public class StockIncrementService extends BaseTaskService {
                 if (oldIncrementQty <= oldUsableQty) {
                     incrementQty = usableQty * oldIncrementQty / oldUsableQty;
                 } else {
-                    // 旧的增量库存 > 旧的可用库存
-                    // 实时可用库存 大于 旧的增量库存, 实际增量库存 = 旧的增量库存
-                    if (usableQty > oldIncrementQty) {
-                        incrementQty = oldIncrementQty;
-                    } else {
-                        // 实时可用库存 小于等于 旧的增量库存, 实际增量库存 = 实时可用库存
-                        incrementQty = usableQty;
-                    }
+                    // 旧的增量库存 > 旧的可用库存, 则实际增量库存 = 实时可用库存
+                    incrementQty = usableQty;
                 }
             }
         } else {
             // 若是按数值增量
-            // 实时可用库存 大于 旧的增量库存, 实际增量库存 = 旧的增量库存
-            if (usableQty > oldIncrementQty) {
-                incrementQty = oldIncrementQty;
+            // 旧的增量库存 <= 旧的可用库存
+            if (oldIncrementQty <= oldUsableQty) {
+                // 实时可用库存 大于 旧的增量库存, 实际增量库存 = 旧的增量库存
+                if (usableQty > oldIncrementQty) {
+                    incrementQty = oldIncrementQty;
+                } else {
+                    // 实时可用库存 小于等于 旧的增量库存, 实际增量库存 = 实时可用库存
+                    incrementQty = usableQty;
+                }
             } else {
-                // 实时可用库存 小于等于 旧的增量库存, 实际增量库存 = 实时可用库存
+                // 旧的增量库存 > 旧的可用库存, 则实际增量库存 = 实时可用库存
                 incrementQty = usableQty;
             }
         }
-
 
         return  incrementQty;
     }
@@ -355,10 +384,11 @@ public class StockIncrementService extends BaseTaskService {
      *
      * @param subTaskId 增量任务id
      * @param sku Sku
+     * @param usableQty  实际可用库存
      * @param incrementQty 实际增量库存
      * @return 更新结果
      */
-    private Integer updateStockIncrementInfo(Integer subTaskId, String sku, Integer incrementQty) {
+    private Integer updateStockIncrementInfo(Integer subTaskId, String sku, Integer usableQty, Integer incrementQty) {
         Map<String, Object> sqlParam = new HashMap<>();
         if (incrementQty == 0) {
             // 状态更新为"3：增量成功"
@@ -370,6 +400,8 @@ public class StockIncrementService extends BaseTaskService {
             // 状态更新为"2：增量中"
             sqlParam.put("status", StockInfoService.STATUS_INCREASING);
         }
+        // 实际可用库存
+        sqlParam.put("qty", usableQty);
         // 实际增量库存
         sqlParam.put("incrementQty", incrementQty);
         sqlParam.put("modifier", getTaskName());
@@ -387,6 +419,7 @@ public class StockIncrementService extends BaseTaskService {
      *
      * @param imsBtLogSynInventoryList 增量库存插入列表
      * @param stockInfoMap 一般隔离库存值Map<sku + cartId, 隔离库存值>
+     * @param stockIncreasedInfoMap 已增量值Map<sku + cartId, 已增量值>
      * @param salesInfoMap 平台销售数量Map<sku + cartId, 平台销售数量>
      * @param channelId 渠道id
      * @param cartId 平台id
@@ -395,7 +428,8 @@ public class StockIncrementService extends BaseTaskService {
      * @param seq Seq
      */
     private void insertIncrementSeparateInventoryData(List<Map<String, Object>> imsBtLogSynInventoryList,
-                 Map<String, Integer> stockInfoMap, Map<String, Integer> salesInfoMap, String channelId, Integer cartId, String sku, Integer incrementQty, Integer seq) {
+                 Map<String, Integer> stockInfoMap, Map<String, Integer> stockIncreasedInfoMap, Map<String, Integer> salesInfoMap,
+                 String channelId, Integer cartId, String sku, Integer incrementQty, Integer seq) {
 
         // 该渠道不提供增量接口
         if (!cartList.contains(cartId)) {
@@ -405,20 +439,26 @@ public class StockIncrementService extends BaseTaskService {
                 stockValue = stockInfoMap.get(sku + cartId);
             }
 
+            // 已增量值
+            Integer stockIncreasedValue = 0;
+            if (stockIncreasedInfoMap.containsKey(sku + cartId)) {
+                stockIncreasedValue = stockIncreasedInfoMap.get(sku + cartId);
+            }
+
             // 平台销售数量
             Integer salesValue = 0;
             if (salesInfoMap.containsKey(sku + cartId)) {
                 salesValue = salesInfoMap.get(sku + cartId);
             }
 
-            // 出现数值不整合，不能讲负值刷到平台上
-            if (stockValue - salesValue < 0) {
-                logger.error("一般隔离库存值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
-                throw new BusinessException("一般隔离库存值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
+            // 出现数值不整合，不能将负值刷到平台上
+            if (stockValue + stockIncreasedValue - salesValue < 0) {
+                logger.error("一般隔离库存值 + 已增量值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
+                throw new BusinessException("一般隔离库存值 + 已增量值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
             }
 
             // 增量库存 = 一般隔离库存值 - 平台销售数量 + DB中的增量库存值
-            incrementQty += stockValue - salesValue;
+            incrementQty += stockValue + stockIncreasedValue - salesValue;
         }
 
         imsBtLogSynInventoryList.add(
@@ -450,7 +490,7 @@ public class StockIncrementService extends BaseTaskService {
                         cartId,
                         sku,
                         shareQty,
-                        StockInfoService.SYN_TYPE_ADD,
+                        StockInfoService.SYN_TYPE_ALL,
                         null,
                         null,
                         getTaskName()));
