@@ -4,6 +4,7 @@ package com.voyageone.components.intltarget;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ComponentBase;
+import org.apache.http.client.utils.HttpClientUtils;
 
 import java.util.Map;
 
@@ -25,15 +26,10 @@ public class TargetBase extends ComponentBase {
      */
     protected String reqGiltApi(String api_url,Map<String, String> params) throws Exception {
         //String api_url_root = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "api_url");
-        //String app_key = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "app_key");
         String api_url_root=TARGETHOST;
         String app_key = "";
 
         String call_url = TARGETHOST + api_url;
-
-        if (StringUtils.isNullOrBlank2(app_key)) {
-            throw new IllegalArgumentException("authorization Key不能为空");
-        }
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
@@ -47,7 +43,7 @@ public class TargetBase extends ComponentBase {
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.get(call_url, parm_url.toString(), app_key);
+        String result = HttpUtils.targetGet(call_url, parm_url.toString(), "application/json");
 
         return result;
     }

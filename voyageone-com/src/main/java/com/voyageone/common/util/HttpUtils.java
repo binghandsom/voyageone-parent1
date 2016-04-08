@@ -125,6 +125,24 @@ public class HttpUtils {
         return null;
     }
 
+    public static String targetGet(String url, String param,String accept) {
+        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "GET");
+            connection.setRequestProperty("Accept",accept);
+            connection.connect();
+            return readConnection(connection.getInputStream());
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
     public static String put(String url, String jsonParam,String authorization)
     {
 
