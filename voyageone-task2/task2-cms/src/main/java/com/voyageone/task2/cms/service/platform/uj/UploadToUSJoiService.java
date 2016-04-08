@@ -44,7 +44,7 @@ public class UploadToUSJoiService {
     @Autowired
     private MongoSequenceService commSequenceMongoService;
 
-    public String upload(SxWorkLoadBean sxWorkLoadBean) {
+    public void upload(SxWorkLoadBean sxWorkLoadBean) {
 
         List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId());
 
@@ -100,7 +100,7 @@ public class UploadToUSJoiService {
                 productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
             } else {
                 productModel.setProdId(pr.getProdId());
-                productModel.setGroups(new CmsBtProductModel_Group());
+                productModel.setGroups(pr.getGroups());
                 ProductUpdateBean requestModel = new ProductUpdateBean();
                 requestModel.setProductModel(productModel);
                 requestModel.setModifier(sxWorkLoadBean.getModifier());
@@ -110,10 +110,14 @@ public class UploadToUSJoiService {
 
 
         }
-        return "";
     }
 
 
+    /**
+     * 找出需要上到minmall的产品和sku
+     * @param productModels
+     * @return
+     */
     private List<CmsBtProductModel> getUSjoiProductModel(List<CmsBtProductModel> productModels) {
 
         List<CmsBtProductModel> usJoiProductModes = new ArrayList<>();
