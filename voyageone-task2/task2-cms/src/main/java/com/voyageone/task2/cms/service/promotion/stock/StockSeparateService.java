@@ -313,7 +313,7 @@ public class StockSeparateService extends BaseTaskService {
                     List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
                     Map<Integer, Integer> mapPlatAdd = new TreeMap<>(); // 增顺
                     Map<Integer, Integer> mapPlatSub = new TreeMap<>(); // 减顺
-                    for(Map<String, Object> platformInfo : listTaskInfo) {
+                    for (Map<String, Object> platformInfo : listTaskInfo) {
                         Integer cartId = (Integer) platformInfo.get("cart_id");
                         Integer add = (Integer) platformInfo.get("add_priority");
                         Integer sub = (Integer) platformInfo.get("subtract_priority");
@@ -345,7 +345,7 @@ public class StockSeparateService extends BaseTaskService {
 
                         // 更新
                         for (Integer cartId : mapPlatAdd.values()) {
-                           // 此任务设定的隔离平台
+                            // 此任务设定的隔离平台
                             if (cartId != -1) {
                                 // 更新cms_bt_stock_separate_item库存隔离数据表
                                 Map<String, Object> updateParam = new HashMap<>();
@@ -363,15 +363,15 @@ public class StockSeparateService extends BaseTaskService {
 
                                     // 更新ims_bt_log_syn_inventory
                                     listImsBtLogSynInventory.add(
-                                        stockInfoService.createMapImsBtLogSynInventory(
-                                            channelId,
-                                            cartId,
-                                            sku,
-                                            separateQty,
-                                            stockInfoService.SYN_TYPE_ALL,
-                                            null,
-                                            null,
-                                            getTaskName()));
+                                            stockInfoService.createMapImsBtLogSynInventory(
+                                                    channelId,
+                                                    cartId,
+                                                    sku,
+                                                    separateQty,
+                                                    stockInfoService.SYN_TYPE_ALL,
+                                                    null,
+                                                    null,
+                                                    getTaskName()));
                                 } else {
                                     updateParam.put("status", stockInfoService.STATUS_SEPARATING);
                                     updateParam.put("separateQty", separateQty);
@@ -379,15 +379,15 @@ public class StockSeparateService extends BaseTaskService {
 
                                     // 更新ims_bt_log_syn_inventory
                                     listImsBtLogSynInventory.add(
-                                        stockInfoService.createMapImsBtLogSynInventory(
-                                            channelId,
-                                            cartId,
-                                            sku,
-                                            separateQty,
-                                            stockInfoService.SYN_TYPE_ALL,
-                                            cartSeq.get(cartId),
-                                            stockInfoService.STATUS_SEPARATING,
-                                            getTaskName()));
+                                            stockInfoService.createMapImsBtLogSynInventory(
+                                                    channelId,
+                                                    cartId,
+                                                    sku,
+                                                    separateQty,
+                                                    stockInfoService.SYN_TYPE_ALL,
+                                                    cartSeq.get(cartId),
+                                                    stockInfoService.STATUS_SEPARATING,
+                                                    getTaskName()));
                                 }
                             }
                         }
@@ -397,15 +397,15 @@ public class StockSeparateService extends BaseTaskService {
                             Integer separateQty = cartDisplayQty.get(-1);
                             // 更新ims_bt_log_syn_inventory
                             listImsBtLogSynInventory.add(
-                                stockInfoService.createMapImsBtLogSynInventory(
-                                        channelId,
-                                        cartId,
-                                        sku,
-                                        separateQty,
-                                        stockInfoService.SYN_TYPE_ALL,
-                                        null,
-                                        null,
-                                        getTaskName()));
+                                    stockInfoService.createMapImsBtLogSynInventory(
+                                            channelId,
+                                            cartId,
+                                            sku,
+                                            separateQty,
+                                            stockInfoService.SYN_TYPE_ALL,
+                                            null,
+                                            null,
+                                            getTaskName()));
                         }
 
                         // 一个sku结束
@@ -416,8 +416,10 @@ public class StockSeparateService extends BaseTaskService {
                     }
 
                     // 一个task结束
-                    cntSend += stockInfoService.insertImsBtLogSynInventory(listImsBtLogSynInventory);
-                    listImsBtLogSynInventory.clear();
+                    if (listImsBtLogSynInventory.size() > 0) {
+                        cntSend += stockInfoService.insertImsBtLogSynInventory(listImsBtLogSynInventory);
+                        listImsBtLogSynInventory.clear();
+                    }
                 }
             });
         } catch (Exception e) {
@@ -444,7 +446,7 @@ public class StockSeparateService extends BaseTaskService {
         if (share < 0) share = 0;
         ret.put(-1, share);
 
-        if (skuUsableOld == skuUsable) {
+        if (skuUsableOld.intValue() == skuUsable.intValue()) {
             return ret;
         }
 
