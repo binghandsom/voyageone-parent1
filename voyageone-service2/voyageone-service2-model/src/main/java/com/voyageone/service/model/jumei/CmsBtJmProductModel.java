@@ -45,6 +45,7 @@ public class CmsBtJmProductModel implements Serializable
         setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
+        setSpecialNote(""); 
 
     }
  
@@ -305,6 +306,12 @@ SN库存同步用
 0:初始化导入 1:图片上传完成 2:JM上传完成
         */
      private int synFlg;
+    
+    
+ /**
+
+        */
+     private String specialNote;
     
         
          /**
@@ -1151,6 +1158,27 @@ this.modifier="";
         public void setSynFlg(int synFlg)
         {
          this.synFlg=synFlg;
+        }
+    
+        
+         /**
+           
+        */
+        public String getSpecialNote()
+        {
+         
+        return this.specialNote;
+        }
+        public void setSpecialNote(String specialNote)
+        {
+        if(specialNote!=null){
+this.specialNote=specialNote;
+ }
+else
+{
+this.specialNote="";
+}
+
         }
     
 }

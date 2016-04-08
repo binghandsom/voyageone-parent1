@@ -42,14 +42,9 @@ public enum EnumJMProductImportColumn   {
     SpecialNote("special_note","cms_mt_master_info","特别说明 用于聚美上新"),//AC
     Msrp("msrp","cms_bt_jm_product","海外官网价格"),//AD                                                           cms_bt_jm_product
     Limit("limit","cms_bt_jm_promotion_product","Deal每人限购"),//jm_bt_promotion_product
-    PropertyImage("property_image","jm_bt_images","使用方法_商品参数图"),     //jm_bt_images  image url 进入jm_bt_images（产品图片）   image type是 3
-    ProductImageUrlKey1("product_image_url_key1","jm_bt_images","商品图片1"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-    ProductImageUrlKey2("product_image_url_key2","jm_bt_images","商品图片2"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-    ProductImageUrlKey3("product_image_url_key3","jm_bt_images","商品图片3"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-    ProductImageUrlKey4("product_image_url_key4","jm_bt_images","商品图片4"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-    ProductImageUrlKey5("product_image_url_key5","jm_bt_images","商品图片5"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-    ProductImageUrlKey6("product_image_url_key6","jm_bt_images","商品图片6");//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
-
+    HsCode("hs_code","cms_bt_jm_product","海关报关编号"),
+    HsName("hs_name","cms_bt_jm_product","海关报关类目名称"),
+    HsUnit("hs_unit","cms_bt_jm_product","海关报关单位");
 
     private ExcelColumn<Map> excelColumn;
 

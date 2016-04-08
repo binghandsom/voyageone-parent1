@@ -7,6 +7,7 @@ import com.voyageone.service.impl.Excel.ExportExcelInfo;
 import com.voyageone.service.impl.Excel.ExportFileExcelUtil;
 import com.voyageone.service.impl.jumei.enumjm.EnumJMProductImportColumn;
 import com.voyageone.service.impl.jumei.enumjm.EnumJMSkuImportColumn;
+import com.voyageone.service.impl.jumei.enumjm.EnumJMSpecialImageImportColumn;
 import com.voyageone.service.model.jumei.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,8 +40,9 @@ public class CmsBtJmPromotionExportTaskService {
         String fileName = "/usr/JMExport" + "/Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
         ExportExcelInfo<Map<String, Object>> productInfo = exportProduct(fileName);
         ExportExcelInfo<Map<String, Object>> skuInfo = exportSku(fileName);
+        ExportExcelInfo<Map<String, Object>> specialImageInfo=  exportSpecialImage(fileName);
         try {
-            ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo);
+            ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo,specialImageInfo);
         } catch (ExcelException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -65,6 +67,17 @@ public class CmsBtJmPromotionExportTaskService {
         info.setSheet("Sku");
         info.setDisplayColumnName(true);
         for (EnumJMSkuImportColumn o : listEnumColumn) {
+            info.addExcelColumn(o.getExcelColumn());
+        }
+        return info;
+    }
+    private ExportExcelInfo<Map<String, Object>> exportSpecialImage(String fileName) {
+        List<EnumJMSpecialImageImportColumn> listEnumColumn = EnumJMSpecialImageImportColumn.getList();
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        info.setFileName("Product");
+        info.setSheet("SpecialImage");
+        info.setDisplayColumnName(true);
+        for (EnumJMSpecialImageImportColumn o : listEnumColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
         return info;
