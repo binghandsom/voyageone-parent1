@@ -88,6 +88,10 @@ define([
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
                         self.inventoryList = res.data.inventoryList;
+                        self._orgChaName = res.data.orgChaName;
+                        self._isminimall = res.data.isminimall;
+                        self._isMain = res.data.isMain;
+
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
 

@@ -8,8 +8,8 @@
                 <div class="container-fluid m-t-sm m-l-xs m-r-xs">
                     <div class="col-sm-12">
                         <div class="col-sm-12  m-b-sm font-bold text-vo">
-                            <span class="label label-danger m-t-xs m-r-sm pull-left">&nbsp;M&nbsp;</span>
-                            <span class="label label-yellow-new m-t-xs pull-left">&nbsp;Shoecity&nbsp;</span>
+                            <span class="label label-danger m-t-xs m-r-sm pull-left" ng-if="ctrl._isMain == 1">&nbsp;M&nbsp;</span>
+                            <span class="label label-yellow-new m-t-xs pull-left" ng-if="ctrl._isminimall == 1">&nbsp;{{ctrl._orgChaName}}&nbsp;</span>
                         </div>
                         <div class="col-sm-12  m-b-sm font-bold text-vo">
                             <span>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}</b>
