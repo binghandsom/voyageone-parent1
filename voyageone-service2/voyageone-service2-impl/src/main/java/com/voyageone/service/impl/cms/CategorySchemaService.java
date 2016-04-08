@@ -50,7 +50,7 @@ public class CategorySchemaService extends BaseService {
 
         CmsCategoryInfoBean categorySchema = new CmsCategoryInfoBean();
         // 获取product 对应的 schema
-        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(categoryId);
+        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchema(categoryId);
 
         // 获取共通schema.
         CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
@@ -93,14 +93,14 @@ public class CategorySchemaService extends BaseService {
      * @param categoryId String
      * @return CmsMtCategorySchemaModel
      */
-    private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
+    public CmsMtCategorySchemaModel getCmsMtCategorySchema(String categoryId) {
 
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
         if (schemaModel == null){
             // product 对应的schema信息不存在时的异常处理.
             String errMsg = "category id: " + categoryId +"对应的类目信息不存在！";
-            logger.error(errMsg);
+            $error(errMsg);
             throw new BusinessException(errMsg);
         }
 
@@ -119,7 +119,7 @@ public class CategorySchemaService extends BaseService {
             //common schema 不存在时异常处理.
             String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
 
-            logger.error(errMsg);
+            $error(errMsg);
 
             throw new BusinessException(errMsg);
         }

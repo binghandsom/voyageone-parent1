@@ -8,27 +8,32 @@
         <version>0.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>voyageone-components</artifactId>
-    <name>VoyageOne - Components</name>
-    <packaging>jar</packaging>
-    <version>${voyageone.components.version}</version>
+    <name>VoyageOne Components</name>
+    <packaging>pom</packaging>
+    <url>http://maven.apache.org</url>
+    <version>2.0.0-SNAPSHOT</version>
+    <modules>
+        <module>voyageone-components-base</module>
+        <module>voyageone-components-channeladvisor</module>
+        <module>voyageone-components-cn</module>
+        <module>voyageone-components-eexpress</module>
+        <module>voyageone-components-gilt</module>
+        <module>voyageone-components-jd</module>
+        <module>voyageone-components-jumei</module>
+        <module>voyageone-components-sears</module>
+        <module>voyageone-components-tmall</module>
+        <module>voyageone-components-yimei</module>
+    </modules>
+    <properties>
+        <!--<voyageone.service2.base.version>0.0.1-SNAPSHOT</voyageone.service2.base.version>-->
+        <!--<voyageone.service2.api.version>0.0.1-SNAPSHOT</voyageone.service2.api.version>-->
+        <!--<voyageone.service2.impl.version>0.0.1-SNAPSHOT</voyageone.service2.impl.version>-->
+        <!--<voyageone.service2.model.version>0.0.1-SNAPSHOT</voyageone.service2.model.version>-->
+        <!--<voyageone.service2.dao.version>0.0.1-SNAPSHOT</voyageone.service2.dao.version>-->
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-com</artifactId>
-            <version>${voyageone.common.version}</version>
-        </dependency>
+
+
     </dependencies>
-    <build>
-        <finalName>voyageone-components</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

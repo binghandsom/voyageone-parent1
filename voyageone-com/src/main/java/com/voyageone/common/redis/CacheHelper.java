@@ -1,7 +1,7 @@
 package com.voyageone.common.redis;
 
-import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,7 +29,6 @@ public class CacheHelper {
         CacheHelper.template = template;
     }
 
-    @SuppressWarnings("unchecked")
     public static RedisTemplate<String, Map<String, Object>> getCacheTemplate() {
         return template;
     }
@@ -59,6 +58,12 @@ public class CacheHelper {
     public static <T> T getBean(String key, String cellKey, Class self) {
         reloadData(key, self);
         return (T) getHashOperation().get(key, cellKey);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T isExists(String key, String cellKey, Class self) {
+        reloadData(key, self);
+        return (T) getHashOperation().hasKey(key, cellKey);
     }
 
     @SuppressWarnings("unchecked")
@@ -94,9 +99,7 @@ public class CacheHelper {
      */
     @SuppressWarnings("unchecked")
     private static void callCache(String cacheKey, Map mapData) {
-        if (StringUtil.isEmpty(cacheKey)) return;
-        if (mapData != null) {
-            getHashOperation().putAll(cacheKey, mapData);
-        }
+        if (StringUtil.isEmpty(cacheKey)|| MapUtils.isEmpty(mapData)) return;
+        getHashOperation().putAll(cacheKey, mapData);
     }
 }

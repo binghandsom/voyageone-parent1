@@ -1,9 +1,8 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.transaction.SimpleTransaction;
-import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
@@ -24,33 +23,31 @@ import java.util.*;
 public class CmsFeedCustPropService extends BaseAppService {
 
     @Autowired
-    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
+    private FeedCategoryTreeService feedCategoryTreeService;
     @Autowired
-    private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
-    @Autowired
-    private SimpleTransaction simpleTransaction;
+    private FeedCustomPropService feedCustomPropService;
 
-    private Map attrMap = null;
+    private Map<String, List<String>> attrMap = null;
 
     public Map<String, Object> getFeedCustProp(Map<String, String> params, UserSessionBean userInfo) {
         Map<String, Object> result = new HashMap<>();
-        String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
-        int splitFlg = NumberUtils.toInt((String) params.get("unsplitFlg"), 0);
+        String catPath = StringUtils.trimToNull(params.get("cat_path"));
+        int splitFlg = NumberUtils.toInt(params.get("unsplitFlg"), 0);
         if (splitFlg == 1) {
             // 合并为一个list输出
-            List<Map<String, Object>> list = this.selectAllAttr(userInfo.getSelChannelId(), catPath);
+            List<Map<String, Object>> list = feedCustomPropService.getAllAttr(userInfo.getSelChannelId(), catPath);
             List<Map<String, Object>> valList = convertList(list, true, "0".equals(catPath));
 
             result.put("valList", valList);
         }else {
             // 分为两个list输出
-            List<Map<String, Object>> list1 = this.selectOrigProp(userInfo.getSelChannelId(), "0");
-            List<Map<String, Object>> list2 = this.selectTransProp(userInfo.getSelChannelId(), "0");
+            List<Map<String, Object>> list1 = feedCustomPropService.getOrigProp(userInfo.getSelChannelId(), "0");
+            List<Map<String, Object>> list2 = feedCustomPropService.getTransProp(userInfo.getSelChannelId(), "0");
             List<Map<String, Object>> valList = convertList(list2, true, true);
             List<Map<String, Object>> unvalList = convertList(list1, false, true);
 
             // 判断是否全店铺共通属性
-            String commFlg = this.getSameAttr(userInfo.getSelChannelId());
+            String commFlg = feedCustomPropService.getSameAttr(userInfo.getSelChannelId());
             if (!"1".equals(commFlg)) {
                 if (!"0".equals(catPath)) {
                     List<Map<String, Object>> initAttrList = null;
@@ -62,12 +59,11 @@ public class CmsFeedCustPropService extends BaseAppService {
                             attrMap = null;
                             getSubCatTree(childList, catPath);
                             if (attrMap != null) {
-                                initAttrList = new ArrayList<Map<String, Object>>(attrMap.size());
-                                Iterator iter = attrMap.keySet().iterator();
-                                while (iter.hasNext()) {
-                                    HashMap objMap = new HashMap();
+                                initAttrList = new ArrayList<>(attrMap.size());
+                                for (String o : attrMap.keySet()) {
+                                    Map<String, Object> objMap = new HashMap<>();
                                     objMap.put("prop_id", "");
-                                    objMap.put("prop_original", (String) iter.next());
+                                    objMap.put("prop_original", o);
                                     objMap.put("cat_path", catPath);
                                     initAttrList.add(objMap);
                                 }
@@ -75,13 +71,13 @@ public class CmsFeedCustPropService extends BaseAppService {
                         }
                     }
                     // 过滤已翻译的属性
-                    List<Map<String, Object>> custArr1 = this.selectOrigProp(userInfo.getSelChannelId(), catPath);
-                    List<Map<String, Object>> custArr2 = this.selectTransProp(userInfo.getSelChannelId(), catPath);
+                    List<Map<String, Object>> custArr1 = feedCustomPropService.getOrigProp(userInfo.getSelChannelId(), catPath);
+                    List<Map<String, Object>> custArr2 = feedCustomPropService.getTransProp(userInfo.getSelChannelId(), catPath);
                     if (custArr1 == null) {
-                        custArr1 = new ArrayList<Map<String, Object>>();
+                        custArr1 = new ArrayList<>();
                     }
                     if (custArr2 == null) {
-                        custArr2 = new ArrayList<Map<String, Object>>();
+                        custArr2 = new ArrayList<>();
                     }
                     List<Map<String, Object>> valList2 = convertList(custArr2, true, false);
                     List<Map<String, Object>> unvalList2 = convertList(custArr1, false, false);
@@ -129,7 +125,7 @@ public class CmsFeedCustPropService extends BaseAppService {
                     // 新规插入由前端去控制传进来的值为0
 //                    if ("0".equals(catPath) && "0".equals(cat_path)) {
                         // 新增属性,只能新增共通属性
-                        if (this.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
+                        if (feedCustomPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
                             $warn("该属性亦存在 " + item.toString());
                         } else {
                             addList.add(item);
@@ -157,7 +153,7 @@ public class CmsFeedCustPropService extends BaseAppService {
                 if (propId == null) {
                     if ("0".equals(catPath) && "0".equals(cat_path)) {
                         // 新增属性,只能新增共通属性
-                        if (this.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
+                        if (feedCustomPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
                             $warn("该属性亦存在 " + item.toString());
                         } else {
                             addList.add(item);
@@ -173,7 +169,7 @@ public class CmsFeedCustPropService extends BaseAppService {
                 }
             }
         }
-        this.saveAttr(addList, updList, catPath, userInfo);
+        feedCustomPropService.saveAttr(addList, updList, catPath, userInfo.getSelChannelId(), userInfo.getUserName());
         return result;
     }
 
@@ -193,8 +189,8 @@ public class CmsFeedCustPropService extends BaseAppService {
 
     // 取得类目路径数据
     public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
-        List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
+//        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        List<CmsMtFeedCategoryModel> feedBeanList = feedCategoryTreeService.getTopFeedCategories(user.getSelChannelId());
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
         for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
             result.add(buildFeedCategoryBean(feedCategory));
@@ -203,9 +199,9 @@ public class CmsFeedCustPropService extends BaseAppService {
     }
 
     public List<CmsMtFeedCategoryModel> getCategoryList (UserSessionBean userInfo) {
-        HashMap dataMap = new HashMap(1);
-        List<CmsMtFeedCategoryModel> topTree = this.getTopFeedCategories(userInfo);
-        List<CmsMtFeedCategoryModel> rsltList = new ArrayList<CmsMtFeedCategoryModel>();
+        //HashMap dataMap = new HashMap(1);
+        List<CmsMtFeedCategoryModel> topTree = feedCategoryTreeService.getTopFeedCategories(userInfo.getSelChannelId());
+        List<CmsMtFeedCategoryModel> rsltList = new ArrayList<>();
         CmsMtFeedCategoryModel comMdl = new CmsMtFeedCategoryModel();
         comMdl.setPath("0");
         comMdl.setName("共通属性");
@@ -233,9 +229,9 @@ public class CmsFeedCustPropService extends BaseAppService {
         int limit = org.apache.commons.lang3.math.NumberUtils.toInt(params.get("limit"));
 
         // 查询共通属性及类目属性
-        List<Map<String, Object>> rslt1 = this.selectPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
+        List<Map<String, Object>> rslt1 = feedCustomPropService.getPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
         if (rslt1 == null) {
-            rslt1 = new ArrayList<Map<String, Object>>(0);
+            rslt1 = new ArrayList<>(0);
         }
 
         Map<String, Object> dataMap = new HashMap<>();
@@ -261,11 +257,11 @@ public class CmsFeedCustPropService extends BaseAppService {
         String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
 
         // 先判断该属性值是否已存在
-        if (this.isPropValueExist(propId, userInfo.getSelChannelId(), origValue)) {
+        if (feedCustomPropService.isPropValueExist(propId, userInfo.getSelChannelId(), origValue)) {
             throw new BusinessException("重复翻译的属性值");
         }
 
-        int rslt = this.addPropValue(propId, userInfo.getSelChannelId(), origValue, transValue, userInfo.getUserName());
+        int rslt = feedCustomPropService.addPropValue(propId, userInfo.getSelChannelId(), origValue, transValue, userInfo.getUserName());
         if (rslt == 0) {
             throw new BusinessException("新增翻译后的属性值不成功");
         }
@@ -277,69 +273,16 @@ public class CmsFeedCustPropService extends BaseAppService {
         String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
 
         // 先判断该属性值是否已存在
-        if (!this.isPropValueExist(valueId)) {
+        if (!feedCustomPropService.isPropValueExist(valueId)) {
             throw new BusinessException("该属性值不存在");
         }
 
-        int rslt = this.updatePropValue(valueId, transValue, userInfo.getUserName());
+        int rslt = feedCustomPropService.savePropValue(valueId, transValue, userInfo.getUserName());
         if (rslt == 0) {
             throw new BusinessException("更新翻译后的属性值不成功");
         }
 
         return new HashMap<>();
-    }
-
-    // 修改属性值
-    private int updatePropValue(int valueId, String transValue, String userName) {
-        Map<String, Object> sqlPara = new HashMap<String, Object>();
-        sqlPara.put("valueId", valueId);
-        sqlPara.put("transValue", transValue);
-        sqlPara.put("userName", userName);
-        return cmsBtFeedCustomPropDao.updatePropValue(sqlPara);
-    }
-
-    // 添加属性值
-    private int addPropValue(int propId, String chnId, String origValue, String transValue, String userName) {
-        Map<String, Object> sqlPara = new HashMap<String, Object>();
-        sqlPara.put("propId", propId);
-        sqlPara.put("channelId", chnId);
-        sqlPara.put("origValue", origValue);
-        sqlPara.put("transValue", transValue);
-        sqlPara.put("userName", userName);
-        return cmsBtFeedCustomPropDao.insertPropValue(sqlPara);
-    }
-
-    // 查询指定属性值是否存在
-    private boolean isPropValueExist(int propId, String chnId, String origValue) {
-        Map<String, Object> sqlPara = new HashMap<String, Object>();
-        sqlPara.put("propId", propId);
-        sqlPara.put("channelId", chnId);
-        sqlPara.put("origValue", origValue);
-        return cmsBtFeedCustomPropDao.isPropValueExist(sqlPara);
-    }
-
-    // 查询指定属性值是否存在
-    private boolean isPropValueExist(int valueId) {
-        Map<String, Object> sqlPara = new HashMap<String, Object>();
-        sqlPara.put("valueId", valueId);
-        return cmsBtFeedCustomPropDao.isPropValueExistById(sqlPara);
-    }
-
-    // 查询属性值
-    private List<Map<String, Object>> selectPropValue(String catPath, int tSts, String propName, String propValue, String chaId) {
-        Map<String, Object> sqlPara = new HashMap<String, Object>();
-        sqlPara.put("feedCatPath", catPath);
-        sqlPara.put("propName", propName);
-        sqlPara.put("propValue", propValue);
-        sqlPara.put("tSts", tSts);
-        sqlPara.put("channelId", chaId);
-        return cmsBtFeedCustomPropDao.selectPropValue(sqlPara);
-    }
-
-    // 取得类目路径数据
-    private List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
-        return treeModelx.getCategoryTree();
     }
 
     private void getSubCatTree2List(List<CmsMtFeedCategoryModel> childList, List<CmsMtFeedCategoryModel> rsltList) {
@@ -351,21 +294,13 @@ public class CmsFeedCustPropService extends BaseAppService {
         }
     }
 
-    // 根据类目路径查询属性信息
-    public List<Map<String, Object>> selectAllAttr(String channelId, String catPath) {
-        Map<String, Object> params = new HashMap<String, Object>(2);
-        params.put("channelId", channelId);
-        params.put("feedCatPath", catPath);
-        return cmsBtFeedCustomPropDao.selectAllAttr(params);
-    }
-
     private List<Map<String, Object>> convertList(List<Map<String, Object>> inputList, boolean hasValue, boolean isComm) {
-        List<Map<String, Object>> rslt = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> rslt = new ArrayList<>();
         if (inputList == null || inputList.size() == 0) {
             return rslt;
         }
         for (Map<String, Object> item : inputList) {
-            HashMap objMap = new HashMap();
+            Map<String, Object> objMap = new HashMap<>();
             objMap.put("prop_id", item.get("prop_id"));
             objMap.put("prop_original", item.get("feed_prop_original"));
             if (hasValue) {
@@ -381,37 +316,13 @@ public class CmsFeedCustPropService extends BaseAppService {
         return rslt;
     }
 
-    // 根据类目路径查询自定义未翻译属性信息
-    private List<Map<String, Object>> selectOrigProp(String channelId, String catPath) {
-        Map<String, Object> params = new HashMap<String, Object>(2);
-        params.put("channelId", channelId);
-        params.put("feedCatPath", catPath);
-        return cmsBtFeedCustomPropDao.selectOrigProp(params);
-    }
-
-    // 根据类目路径查询自定义已翻译属性信息
-    private List<Map<String, Object>> selectTransProp(String channelId, String catPath) {
-        Map<String, Object> params = new HashMap<String, Object>(2);
-        params.put("channelId", channelId);
-        params.put("feedCatPath", catPath);
-        return cmsBtFeedCustomPropDao.selectTransProp(params);
-    }
-
-    // 取得全店铺共通配置属性
-    private String getSameAttr(String channelId) {
-        Map<String, Object> params = new HashMap<String, Object>(2);
-        params.put("channelId", channelId);
-        String rslt = cmsBtFeedCustomPropDao.selectSameAttr(params);
-        return rslt;
-    }
-
     // 根据类目路径查询自定义未翻译属性信息(不包含共通属性)
     private CmsMtFeedCategoryTreeModelx selectCatAttr(String channelId, String categoryId) {
 //        Query query = new Query();
 //        Criteria criteria = Criteria.where("channelId").is(channelId);
 //        query.addCriteria(criteria);
 
-        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
+        return feedCategoryTreeService.getFeedCategory(channelId);
 //        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
         //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
     }
@@ -453,52 +364,10 @@ public class CmsFeedCustPropService extends BaseAppService {
         }
     }
 
-    // 查询指定类目属性是否存在
-    private boolean isAttrExist(Map<String, Object> params, String catPath, String chnId) {
-        Map<String, Object> sqlPara = new HashMap<String, Object>();
-        sqlPara.putAll(params);
-        sqlPara.put("cat_path", catPath);
-        sqlPara.put("channelId", chnId);
-        return cmsBtFeedCustomPropDao.isAttrExist(sqlPara);
-    }
 
-    // 保存属性
-    private void saveAttr( List<Map<String, Object>> addList,  List<Map<String, Object>> updList, String catPath, UserSessionBean userInfo) {
-        simpleTransaction.openTransaction();
-        try {
-            if (addList.size() > 0) {
-                Map<String, Object> params = new HashMap<String, Object>(4);
-                params.put("channelId", userInfo.getSelChannelId());
-                params.put("cat_path", catPath);
-                params.put("userName", userInfo.getUserName());
-                params.put("list", addList);
-                int tslt = cmsBtFeedCustomPropDao.insertAttr(params);
-                if (tslt != addList.size()) {
-                    $error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
-                } else {
-                    $debug("添加属性成功 实际更新件数=" + tslt);
-                }
-            }
-            if (updList.size() > 0) {
-                for (Map<String, Object> item : updList) {
-                    item.put("userName", userInfo.getUserName());
-                    int tslt = cmsBtFeedCustomPropDao.updateAttr(item);
-                    if (tslt != 1) {
-                        $error("修改属性结果失败，params=" + item.toString());
-                    }
-                }
-            }
-            simpleTransaction.commit();
-        } catch(Exception exp) {
-            $error("保存属性时失败", exp);
-            simpleTransaction.rollback();
-        }
-    }
 
     /**
      * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
-     * @param feedCategoryModel
-     * @return
      */
     private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel) {
 

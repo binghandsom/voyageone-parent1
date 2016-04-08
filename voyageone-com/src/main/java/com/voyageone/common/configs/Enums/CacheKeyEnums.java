@@ -53,6 +53,6 @@ public class CacheKeyEnums {
 
         ConfigData_CartConfigs,
 
-        ConfigData_$ModifyTime$;
+        ConfigData_UsJois;
     }
 }

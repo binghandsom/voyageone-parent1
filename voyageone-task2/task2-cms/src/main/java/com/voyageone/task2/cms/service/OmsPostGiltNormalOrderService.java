@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.components.gilt.bean.GiltOrder;
+import com.voyageone.components.gilt.bean.GiltOrderItem;
+import com.voyageone.components.gilt.bean.GiltPutOrderRequest;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Constants;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -8,9 +11,8 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.dao.OrderDao;
 import com.voyageone.task2.cms.formbean.OutFormOrderDetailOrderDetail;
 import com.voyageone.task2.cms.formbean.OutFormOrderdetailOrders;
-import com.voyageone.common.components.gilt.GiltOrderService;
-import com.voyageone.common.components.gilt.bean.*;
-import com.voyageone.common.components.gilt.exceptions.GiltException;
+import com.voyageone.components.gilt.service.GiltOrderService;
+import com.voyageone.components.gilt.exceptions.GiltException;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;

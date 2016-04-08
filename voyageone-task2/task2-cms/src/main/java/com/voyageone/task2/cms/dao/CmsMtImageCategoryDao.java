@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.cms.enums.ImageCategoryType;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.ShopBean;

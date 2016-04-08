@@ -29,6 +29,10 @@ public class CacheManagerController extends CmsController{
             CacheHelper.delete(request.getParameter("cacheKey"));
             return redirectTo("/modules/cms/app.html#/system/cache/index");
         }
+        if(!StringUtils.isEmpty(request.getParameter("delAll"))){
+            cacheKeySet().forEach(CacheHelper::delete);
+            return redirectTo("/modules/cms/app.html#/system/cache/index");
+        }
         return success(cacheKeySet());
     }
 

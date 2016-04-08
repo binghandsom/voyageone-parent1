@@ -16,7 +16,7 @@ import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.task2.cms.dao.BrandDao;
 import com.voyageone.task2.cms.model.PlatformCategoriesModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbCategoryService;
+import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;

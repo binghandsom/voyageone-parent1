@@ -1,7 +1,10 @@
 package com.voyageone.service.impl.cms.feed;
 
+import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropAndValueDao;
+import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +21,16 @@ import java.util.Map;
  * Created by zhujiaye on 16/2/26.
  */
 @Service
-public class FeedCustomPropService {
+public class FeedCustomPropService extends BaseService {
+
 	@Autowired
-	CmsBtFeedCustomPropAndValueDao cmsBtFeedCustomPropAndValueDao;
+	private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
+	@Autowired
+	private CmsBtFeedCustomPropAndValueDao cmsBtFeedCustomPropAndValueDao;
+
+
+	@Autowired
+	private SimpleTransaction simpleTransaction;
 
 	// 自定义属性
 	private List<CmsBtFeedCustomPropAndValueModel> customPropList;
@@ -328,6 +338,126 @@ public class FeedCustomPropService {
 		}
 
 		return result;
+	}
+
+	// 根据类目路径查询属性信息
+	public List<Map<String, Object>> getAllAttr(String channelId, String catPath) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("channelId", channelId);
+		params.put("feedCatPath", catPath);
+		return cmsBtFeedCustomPropDao.selectAllAttr(params);
+	}
+
+	// 查询属性值
+	public List<Map<String, Object>> getPropValue(String catPath, int tSts, String propName, String propValue, String chaId) {
+		Map<String, Object> sqlPara = new HashMap<>();
+		sqlPara.put("feedCatPath", catPath);
+		sqlPara.put("propName", propName);
+		sqlPara.put("propValue", propValue);
+		sqlPara.put("tSts", tSts);
+		sqlPara.put("channelId", chaId);
+		return cmsBtFeedCustomPropDao.selectPropValue(sqlPara);
+	}
+
+	// 根据类目路径查询自定义未翻译属性信息
+	public List<Map<String, Object>> getOrigProp(String channelId, String catPath) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("channelId", channelId);
+		params.put("feedCatPath", catPath);
+		return cmsBtFeedCustomPropDao.selectOrigProp(params);
+	}
+
+	// 根据类目路径查询自定义已翻译属性信息
+	public List<Map<String, Object>> getTransProp(String channelId, String catPath) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("channelId", channelId);
+		params.put("feedCatPath", catPath);
+		return cmsBtFeedCustomPropDao.selectTransProp(params);
+	}
+
+	// 取得全店铺共通配置属性
+	public String getSameAttr(String channelId) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("channelId", channelId);
+		return cmsBtFeedCustomPropDao.selectSameAttr(params);
+	}
+
+	// 查询指定属性值是否存在
+	public boolean isPropValueExist(int propId, String chnId, String origValue) {
+		Map<String, Object> sqlPara = new HashMap<>();
+		sqlPara.put("propId", propId);
+		sqlPara.put("channelId", chnId);
+		sqlPara.put("origValue", origValue);
+		return cmsBtFeedCustomPropDao.isPropValueExist(sqlPara);
+	}
+
+	// 查询指定属性值是否存在
+	public boolean isPropValueExist(int valueId) {
+		Map<String, Object> sqlPara = new HashMap<>();
+		sqlPara.put("valueId", valueId);
+		return cmsBtFeedCustomPropDao.isPropValueExistById(sqlPara);
+	}
+
+	// 查询指定类目属性是否存在
+	public boolean isAttrExist(Map<String, Object> params, String catPath, String chnId) {
+		Map<String, Object> sqlPara = new HashMap<>();
+		sqlPara.putAll(params);
+		sqlPara.put("cat_path", catPath);
+		sqlPara.put("channelId", chnId);
+		return cmsBtFeedCustomPropDao.isAttrExist(sqlPara);
+	}
+
+	// 添加属性值
+	public int addPropValue(int propId, String chnId, String origValue, String transValue, String userName) {
+		Map<String, Object> sqlPara = new HashMap<>();
+		sqlPara.put("propId", propId);
+		sqlPara.put("channelId", chnId);
+		sqlPara.put("origValue", origValue);
+		sqlPara.put("transValue", transValue);
+		sqlPara.put("userName", userName);
+		return cmsBtFeedCustomPropDao.insertPropValue(sqlPara);
+	}
+
+	// 修改属性值
+	public int savePropValue(int valueId, String transValue, String userName) {
+		Map<String, Object> sqlPara = new HashMap<>();
+		sqlPara.put("valueId", valueId);
+		sqlPara.put("transValue", transValue);
+		sqlPara.put("userName", userName);
+		return cmsBtFeedCustomPropDao.updatePropValue(sqlPara);
+	}
+
+	// 保存属性
+	public void saveAttr( List<Map<String, Object>> addList,  List<Map<String, Object>> updList, String catPath, String channelId, String userName) {
+		simpleTransaction.openTransaction();
+		try {
+			if (addList.size() > 0) {
+				Map<String, Object> params = new HashMap<>(4);
+				params.put("channelId", channelId);
+				params.put("cat_path", catPath);
+				params.put("userName", userName);
+				params.put("list", addList);
+				int tslt = cmsBtFeedCustomPropDao.insertAttr(params);
+				if (tslt != addList.size()) {
+					$error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
+				} else {
+					$debug("添加属性成功 实际更新件数=" + tslt);
+				}
+			}
+			if (updList.size() > 0) {
+				for (Map<String, Object> item : updList) {
+					item.put("userName", userName);
+					int tslt = cmsBtFeedCustomPropDao.updateAttr(item);
+					if (tslt != 1) {
+						$error("修改属性结果失败，params=" + item.toString());
+					}
+				}
+			}
+			simpleTransaction.commit();
+		} catch(Exception exp) {
+			$error("保存属性时失败", exp);
+			simpleTransaction.rollback();
+		}
 	}
 
 }

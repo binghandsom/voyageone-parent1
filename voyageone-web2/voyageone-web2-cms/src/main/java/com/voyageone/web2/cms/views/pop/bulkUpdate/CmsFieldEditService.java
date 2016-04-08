@@ -93,9 +93,9 @@ public class CmsFieldEditService extends BaseAppService {
                 CmsBtProductModel_Group group = productModel.getGroups();
                 for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {
                     if ("Onsale".equals(field[1].toString()))
-                        platform.setPlatformActive(com.voyageone.cms.CmsConstants.PlatformActive.Onsale);
+                        platform.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Onsale);
                     else if ("Instock".equals(field[1].toString()))
-                        platform.setPlatformActive(com.voyageone.cms.CmsConstants.PlatformActive.Instock);
+                        platform.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Instock);
                 }
             } else {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);

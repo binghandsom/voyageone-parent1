@@ -6,7 +6,7 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
 import com.voyageone.task2.cms.bean.platform.SxData;
-import com.voyageone.common.components.tmall.TbProductService;
+import com.voyageone.components.tmall.service.TbProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

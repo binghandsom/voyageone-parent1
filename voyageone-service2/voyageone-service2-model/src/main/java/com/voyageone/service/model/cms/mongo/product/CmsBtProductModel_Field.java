@@ -2,7 +2,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 
 import java.util.ArrayList;
 import java.util.List;
