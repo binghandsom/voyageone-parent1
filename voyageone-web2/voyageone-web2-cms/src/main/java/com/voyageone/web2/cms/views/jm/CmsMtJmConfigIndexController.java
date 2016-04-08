@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jm;
 
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.service.impl.jumei.CmsMtJmConfigService;
 import com.voyageone.service.model.jumei.CmsMtJmConfigModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -23,6 +24,16 @@ import java.util.Map;
 public class CmsMtJmConfigIndexController extends CmsController {
     @Autowired
     private CmsMtJmConfigService service;
+    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.INIT)
+    public AjaxResponse init() {
+
+        Map<String, Object> masterData = new HashMap<>();
+
+        // 获取Jm Shipping Stock
+        masterData.put("jmShippingStockList", TypeConfigEnums.MastType.jmShippingStock.getList(getLang()));
+
+        return success(masterData);
+    }
     @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.INSERT)
     public AjaxResponse insert(@RequestBody CmsMtJmConfigModel params) {
         String channelId = getUser().getSelChannelId();

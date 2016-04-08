@@ -1,79 +1,72 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal" ng-init="$ctrl.initialize()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="glyphicon glyphicon-share"></i>&nbsp;设定图片默认项</h5>
+        <h5 class="modal-title"><i class="glyphicon glyphicon-share"></i>&nbsp;{{'TXT_SET_DEFAULT_VALUE' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Channel ID</label>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="012" disabled>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Channel Name</label>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="BCBG" disabled>
-                </div>
-            </div>
            <div class="form-group">
-               <label class="col-sm-3 control-label vo_reqfield">发货仓库</label>
+               <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SHIP_STOCK"></label>
                <div class="col-sm-5">
-                   <select class="form-control">
-                       <option>聚美发货仓库ID</option>
-                       <option>聚美发货仓库ID</option>
-                       <option>聚美发货仓库ID</option>
+                   <select class="form-control m-r-xs" ng-model="$ctrl.imageConfig.value.jmShippingStock"
+                           ng-options="data.value as data.name for data in $ctrl.masterData.jmShippingStockList" ng-required="true">
+                       <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                    </select>
                 </div>
-               <label class="col-sm-4 control-label text-u-red text-left">(聚美发货仓库ID 必填)</label>
+               <label class="col-sm-4 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
            </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield">保质期限</label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_RELEASE_DATE"></label>
                 <div class="col-sm-7">
-                    <textarea class="form-control" rows="3" placeholder="无"></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.releaseDate" ng-required="true"></textarea>
                 </div>
-                <label class="col-sm-2 control-label text-u-red text-left">(必填)</label>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield">生产地区</label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PRODUCTION_AREA"></label>
                 <div class="col-sm-7">
-                    <textarea class="form-control" rows="3" placeholder="其他（详情请见商品标签）"></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.productionArea" ng-required="true"></textarea>
                 </div>
-                <label class="col-sm-2 control-label text-u-red text-left">(必填)</label>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield">适合人群</label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SUIT_CROWDS"></label>
                 <div class="col-sm-7">
-                    <textarea class="form-control" rows="3" placeholder="时尚潮流人士"></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.suitCrowds" ng-required="true"></textarea>
                 </div>
-                <label class="col-sm-2 control-label text-u-red text-left">(必填)</label>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield">白底方图模板</label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_WHITE_SQUARE_MODEL"></label>
                 <div class="col-sm-7">
-                    <textarea class="form-control" rows="3" placeholder="http://s7d5.scene7.com/is/image/sneakerhead/bcbg_jumei_790x1241?$790_1241$&$images="></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.whiteSquareModel" ng-required="true"></textarea>
                 </div>
-                <label class="col-sm-2 control-label text-u-red text-left">(必填)</label>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield">商品实拍图模板</label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PRODUCT_REALLY_MODEL"></label>
                 <div class="col-sm-7">
-                    <textarea class="form-control" rows="3" placeholder="http://s7d5.scene7.com/is/image/sneakerhead/bcbg_jumei_790x1241?$790_1241$&$images="></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.productReallyModel" ng-required="true"></textarea>
                 </div>
-                <label class="col-sm-2 control-label text-u-red text-left">(必填)</label>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">商品竖图模板</label>
-                <div class="col-sm-8">
-                    <textarea class="form-control" rows="3" placeholder="http://s7d5.scene7.com/is/image/sneakerhead/BCBG_jumeimoban_750x1000?$jumei%5F750x1000$&$layer_5_src="></textarea>
+                <label class="col-sm-3 control-label" translate="TXT_PRODUCT_UPRIGHT_MODEL"></label>
+                <div class="col-sm-7">
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.productUprightModel"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" translate="TXT_SPECIAL_NOTE"></label>
+                <div class="col-sm-7">
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.SpecialNote"></textarea>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="$ctrl.ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_OK' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->

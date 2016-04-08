@@ -90,6 +90,7 @@ interface CmsBtJmPromotionImportTask{
         interface LIST {
             interface INDEX {
                 String ROOT = "/cms/cmsmtjmconfig/index";
+                String INIT = "init";
                 String INSERT = "insert";
                 String UPDATE = "update";
                 String GETBYKEY="getByKey";

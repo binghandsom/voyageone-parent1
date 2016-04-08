@@ -145,6 +145,23 @@
         "addExport": "addExport"
       }
     },
+    "imageManager": {
+      "$CmsMtMasterInfoService": {
+        "root": "/cms/cmsmtmasterinfo/index",
+        "search": "getListByWhere",
+        "addImage": "insert",
+        "saveImage": "update",
+        "deleteImage": "delete",
+        "updateJMImg": "updateJMImg"
+      },
+      "$CmsMtJmConfigService": {
+        "root": "/cms/cmsmtjmconfig/index",
+        "init": "init",
+        "insert": "insert",
+        "update": "update",
+        "getByKey": "getByKey"
+      }
+    },
     "task": {
       "taskService": {
         "root": "/cms/promotion/task",

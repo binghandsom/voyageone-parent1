@@ -64,5 +64,9 @@
                 AND modified &lt;= #{endModified}
             </if>
         </where>
+        GROUP BY data_type, image_index
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
     </select>
 </mapper>

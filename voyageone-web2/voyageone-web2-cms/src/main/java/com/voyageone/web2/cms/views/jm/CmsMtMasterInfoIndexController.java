@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.service.impl.jumei.CmsMtMasterInfoService;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,8 +59,13 @@ public class CmsMtMasterInfoIndexController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.UPDATEJMIMG)
-    public Object updateJMImg(@RequestBody int id) {
-        CmsMtMasterInfoModel model = service.select(id);
+    public Object updateJMImg(@RequestBody CmsMtMasterInfoModel params) {
+        // 先更新一次再刷新图片
+        String channelId = getUser().getSelChannelId();
+        params.setChannelId(channelId);
+        params.setModifier(getUser().getUserName());
+        service.update(params);
+
         Map<String, Object> map = new HashMap<>();
         map.put("result", true);
         return success(map);

@@ -285,7 +285,7 @@ define([
                     "batch": {
                         "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
-                        "controller": 'popPromotionDefaultSettingCtl',
+                        "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
                         "size": 'md',
                         "backdrop": "static"
                     }

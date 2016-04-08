@@ -74,7 +74,7 @@
     "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
-    "controller": "productDetailController as ctrl"
+    "controller": "productDetailController as $ctrl"
   },
   "mapping_feed_list": {
     "hash": "/mapping/feed",
@@ -182,6 +182,7 @@
   "jm_image_manage": {
     "hash": "/jm/image_manage",
     "templateUrl": "views/jm/jmimagemanage.tpl.html",
-    "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl"
+    "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl",
+    "controller": "jmImageManageController as $ctrl"
   }
 }

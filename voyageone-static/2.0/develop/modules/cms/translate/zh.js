@@ -182,7 +182,7 @@ define(function(){
         "TXT_SORT_3": "排序属性3",
         "TXT_SORT_ASC": "升序",
         "TXT_SORT_DESC": "降序",
-        "TXT_REQUIRED": "必填",
+        "TXT_REQUIRED": "(必填)",
         "TXT_BEAT_TASK": "价格披露",
         "TXT_UNIQUE": "唯一",
         "TXT_TEMPLATE": "模板",
@@ -230,6 +230,28 @@ define(function(){
         "TXT_BASE_ATTRIBUTE": "共通属性",
         "TXT_CUST_ATTRIBUTE": "自定义属性",
         "TXT_TRANSSTS_ATTRIBUTE": "翻译状态",
+        "TXT_IMAGE_MANAGER" : "图片管理",
+        "TXT_WAITING_UPLOAD": "待上传",
+        "TXT_UPLOAD_SUCCESS": "上传成功",
+        "TXT_UPLOAD_FAILED": "上传失败",
+        "TXT_DATA_TYPE": "数据类型",
+        "TXT_SPECIAL_DESCRIPTION": "特殊说明",
+        "TXT_BRAND_STORY": "品牌故事图",
+        "TXT_SIZE_CHART": "尺码图",
+        "TXT_SHIPPING_DESCRIPTION": "物流介绍",
+        "TXT_INDEX": "编号",
+        "TXT_ORIGIN_IMAGE_URL": "原始图片地址",
+        "TXT_JM_IMAGE_URL": "聚美图片地址",
+        "TXT_SET_DEFAULT_VALUE": "设定图片默认项",
+        "TXT_SHIP_STOCK": "发货仓库",
+        "TXT_RELEASE_DATE": "保质期限",
+        "TXT_PRODUCTION_AREA": "生产地区",
+        "TXT_SUIT_CROWDS": "适合人群",
+        "TXT_WHITE_SQUARE_MODEL": "白底方图模板",
+        "TXT_PRODUCT_REALLY_MODEL": "商品实拍图模板",
+        "TXT_PRODUCT_UPRIGHT_MODEL": "商品竖图模板",
+        "TXT_SPECIAL_NOTE": "特殊说明",
+
 
 
         "TXT_MSG_SEARCH": "检索...",
@@ -262,7 +284,7 @@ define(function(){
         "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
         "TXT_MSG_UNVALID_CONDITION": "无效的条件.",
         "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
-        "TXT_MSG_DO_DELETE": "您确定要删除 ",
+        "TXT_MSG_DO_DELETE": "您确定要删除: ",
         "TXT_MSG_LONG_TITLE":"长标题",
         "TXT_MSG_MIDDLE_TITLE":"中标题",
         "TXT_MSG_SHORT_TITLE":"短标题",
@@ -279,6 +301,7 @@ define(function(){
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入 ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
+        "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功.",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -326,6 +349,7 @@ define(function(){
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",
+        "BTN_SET_DEFAULT_VALUE": "设定默认项",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
