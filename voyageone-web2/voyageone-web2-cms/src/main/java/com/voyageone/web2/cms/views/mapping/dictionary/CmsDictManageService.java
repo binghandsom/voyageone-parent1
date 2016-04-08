@@ -7,7 +7,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.impl.cms.CustomWordService;
-import com.voyageone.service.impl.cms.DictManageService;
+import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.model.cms.CmsMtDictModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class CmsDictManageService extends BaseAppService {
 
     @Autowired
-    private DictManageService dictManageService;
+    private DictService dictService;
 
     @Autowired
     private CustomWordService customWordService;
@@ -41,7 +41,7 @@ public class CmsDictManageService extends BaseAppService {
      */
     public CmsMtDictModel getDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
         cmsMtDictModel.setOrder_channel_id(user.getSelChannelId());
-        return dictManageService.getDict(cmsMtDictModel);
+        return dictService.getDict(cmsMtDictModel);
     }
 
     /**
@@ -69,7 +69,7 @@ public class CmsDictManageService extends BaseAppService {
         params.setOrder_channel_id(channel_id);
         params.setLang(language);
 
-        return dictManageService.getModesAndTotalCountByChannel(params);
+        return dictService.getModesAndTotalCountByChannel(params);
     }
 
     /**
@@ -84,7 +84,7 @@ public class CmsDictManageService extends BaseAppService {
         cmsMtDictModel.setCreater(user.getUserName());
         cmsMtDictModel.setModifier(user.getUserName());
 
-        if (dictManageService.addDict(cmsMtDictModel) < 1) {
+        if (dictService.addDict(cmsMtDictModel) < 1) {
             // TODO 以后所有的异常msg统一修改
             throw new BusinessException("插入一条新的字典数据失败!");
         }
@@ -99,7 +99,7 @@ public class CmsDictManageService extends BaseAppService {
     public int delDict(CmsMtDictModel cmsMtDictModel, UserSessionBean userInfo) {
         cmsMtDictModel.setOrder_channel_id(userInfo.getSelChannelId());
         cmsMtDictModel.setModifier(userInfo.getUserName());
-        return dictManageService.removeDict(cmsMtDictModel);
+        return dictService.removeDict(cmsMtDictModel);
     }
 
     /**
@@ -112,7 +112,7 @@ public class CmsDictManageService extends BaseAppService {
     public int setDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
         cmsMtDictModel.setOrder_channel_id(user.getSelChannelId());
         cmsMtDictModel.setModifier(user.getUserName());
-        return dictManageService.saveDict(cmsMtDictModel);
+        return dictService.saveDict(cmsMtDictModel);
     }
 
     /**
@@ -136,7 +136,7 @@ public class CmsDictManageService extends BaseAppService {
         params.setOrder_channel_id(userInfo.getSelChannelId());
         params.setLang(language);
         params.setCart_id(cmsSessionBean.getPlatformType().get("cartId").toString());
-        resultInfo.put("dictionaryProps", dictManageService.getModesByChannel(params));
+        resultInfo.put("dictionaryProps", dictService.getModesByChannel(params));
 
         return resultInfo;
     }

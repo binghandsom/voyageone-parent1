@@ -65,7 +65,7 @@ class CmsFeedPropMappingService extends BaseAppService {
         String categoryId = convertPathToId(mainCategoryPath);
 
         // 查询主类目信息
-        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaService.getCmsMtCategorySchemaModel(categoryId);
+        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaService.getCmsMtCategorySchema(categoryId);
 
         // 拍平主类目的字段信息
         // 并构造画面特供模型

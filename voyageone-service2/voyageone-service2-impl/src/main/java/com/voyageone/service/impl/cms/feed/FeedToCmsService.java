@@ -9,6 +9,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -35,7 +36,7 @@ import static java.util.stream.Collectors.toList;
  * @since 2.0.0
  */
 @Service
-public class FeedToCmsService {
+public class FeedToCmsService extends BaseService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

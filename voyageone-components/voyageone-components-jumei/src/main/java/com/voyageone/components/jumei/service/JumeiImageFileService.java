@@ -2,8 +2,8 @@ package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.jumei.Bean.JmImageFileBean;
-import com.voyageone.components.jumei.Bean.NotSignString;
+import com.voyageone.components.jumei.bean.JmImageFileBean;
+import com.voyageone.components.jumei.bean.NotSignString;
 import com.voyageone.components.jumei.JmBase;
 import org.springframework.stereotype.Service;
 

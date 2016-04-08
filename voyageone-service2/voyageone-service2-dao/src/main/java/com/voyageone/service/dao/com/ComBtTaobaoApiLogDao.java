@@ -1,7 +1,5 @@
 package com.voyageone.service.dao.com;
 
-import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.com.ComBtTaobaoApiLogModel;
 import org.springframework.stereotype.Repository;
@@ -14,11 +12,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class ComBtTaobaoApiLogDao  extends ServiceBaseDao {
-
-    @Override
-    protected String namespace() {
-        return Constants.getDaoNameSpace(SubSystem.COM);
-    }
 
     public int insert(ComBtTaobaoApiLogModel model) {
         return insert("com_bt_taobao_api_log_insert", model);

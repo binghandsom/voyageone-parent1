@@ -5,9 +5,9 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.jumei.Bean.JmGetProductInfoRes;
-import com.voyageone.components.jumei.Bean.JmProductBean;
-import com.voyageone.components.jumei.Bean.JmProductBean_Spus;
+import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
+import com.voyageone.components.jumei.bean.JmProductBean;
+import com.voyageone.components.jumei.bean.JmProductBean_Spus;
 import com.voyageone.components.jumei.JmBase;
 import org.springframework.stereotype.Service;
 

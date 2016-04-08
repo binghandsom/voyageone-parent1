@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.components.jumei.Bean.JmCategoryBean;
+import com.voyageone.components.jumei.bean.JmCategoryBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

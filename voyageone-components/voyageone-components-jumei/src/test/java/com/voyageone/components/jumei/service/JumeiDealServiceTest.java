@@ -2,8 +2,8 @@ package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
-import com.voyageone.components.jumei.Bean.JmGetDealInfoReq;
-import com.voyageone.components.jumei.Bean.JmGetDealInfoRes;
+import com.voyageone.components.jumei.bean.JmGetDealInfoReq;
+import com.voyageone.components.jumei.bean.JmGetDealInfoRes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

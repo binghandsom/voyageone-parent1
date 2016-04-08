@@ -11,10 +11,13 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonPropDefDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +44,9 @@ public class CategorySchemaService extends BaseService {
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
+    @Autowired
+    private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
+
     /**
      * 通过
      * @param categoryId String
@@ -50,7 +56,7 @@ public class CategorySchemaService extends BaseService {
 
         CmsCategoryInfoBean categorySchema = new CmsCategoryInfoBean();
         // 获取product 对应的 schema
-        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(categoryId);
+        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchema(categoryId);
 
         // 获取共通schema.
         CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
@@ -93,7 +99,7 @@ public class CategorySchemaService extends BaseService {
      * @param categoryId String
      * @return CmsMtCategorySchemaModel
      */
-    public CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
+    public CmsMtCategorySchemaModel getCmsMtCategorySchema(String categoryId) {
 
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
@@ -179,7 +185,7 @@ public class CategorySchemaService extends BaseService {
                         ComplexValue defComplexValue = new ComplexValue();
                         Map<String,Field> complexValueMap = new HashMap<>();
                         List<Field> complexFields = complexField.getFields();
-                        setDefaultValueFieldMap(complexFields,complexValueMap);
+                        setDefaultValueFieldMap(complexFields, complexValueMap);
                         defComplexValue.setFieldMap(complexValueMap);
                         complexField.setDefaultValue(defComplexValue);
 
@@ -239,7 +245,7 @@ public class CategorySchemaService extends BaseService {
 
                         complexField.setDefaultValue(complexValue);
 
-                        complexValueMap.put(complexField.getId(),complexField);
+                        complexValueMap.put(complexField.getId(), complexField);
                     }
                     break;
                 case MULTICOMPLEX:
@@ -252,7 +258,7 @@ public class CategorySchemaService extends BaseService {
                         setDefaultValueFieldMap(subFields,subComplexValueMap);
 
                         multiComplexField.addDefaultComplexValue(complexValue);
-                        complexValueMap.put(multiComplexField.getId(),multiComplexField);
+                        complexValueMap.put(multiComplexField.getId(), multiComplexField);
 
                     }
                     break;
@@ -275,6 +281,22 @@ public class CategorySchemaService extends BaseService {
         skuSchema.add(skuField);
 
         return skuSchema;
+    }
+
+    public List<CmsMtCommonPropDefModel> getALLCommonPropDef() {
+        return cmsMtCommonPropDefDao.selectAll();
+    }
+
+    public List<JSONObject> getSchemaList(String columnResult,String query, Integer skip, Integer limit) {
+        return cmsMtCategorySchemaDao.getSchemaList(columnResult, query, skip, limit);
+    }
+
+    public Long getCategoryCount(String params) {
+        return cmsMtCategorySchemaDao.getCategoryCount(params);
+    }
+
+    public void saveCategorySchema(CmsMtCategorySchemaModel cmsMtCategorySchemaModel) {
+        cmsMtCategorySchemaDao.update(cmsMtCategorySchemaModel);
     }
 
 }
