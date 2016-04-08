@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-base</artifactId>
-            <version>${voyageone.service2.impl.version}</version>
+            <version>${voyageone.components.base.version}</version>
         </dependency>
     </dependencies>
 
