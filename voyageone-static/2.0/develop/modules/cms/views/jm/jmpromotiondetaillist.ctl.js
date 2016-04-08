@@ -16,6 +16,9 @@ define([
                 });
             $scope.search();
         };
+        $scope.clear = function () {
+            $scope.searchInfo = {};
+        };
         $scope.search = function () {
            // console.log("searchInfo");
            // console.log($scope.searchInfo);
