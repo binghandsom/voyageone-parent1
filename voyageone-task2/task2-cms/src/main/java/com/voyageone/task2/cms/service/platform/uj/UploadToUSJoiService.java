@@ -46,63 +46,61 @@ public class UploadToUSJoiService {
 
     public String upload(SxWorkLoadBean sxWorkLoadBean) {
 
-        List<Integer> carts = new ArrayList<>();
-
-        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(ChannelConfigEnums.Channel.VOYAGEONE.getId(), "D", "en");
-        typeChannelBeanList.forEach(typeChannelBean -> {
-            if (!"0".equalsIgnoreCase(typeChannelBean.getValue()) && !"1".equalsIgnoreCase(typeChannelBean.getValue())) {
-                carts.add(Integer.parseInt(typeChannelBean.getValue()));
-            }
-        });
-
         List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId());
 
         //从group中过滤出需要上的usjoi的产品
         productModels = getUSjoiProductModel(productModels);
 
         for (CmsBtProductModel productModel : productModels) {
-            creatGroup(productModel);
-            productModel.setChannelId(ChannelConfigEnums.Channel.VOYAGEONE.getId());
-            productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
-
-            List<ProductPriceBean> productPrices = new ArrayList<>();
-            List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
-
-            productModel.getSkus().forEach(sku -> {
-                ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
-
-                skuPriceBean.setSkuCode(sku.getSkuCode());
-
-                skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
-                sku.setClientMsrpPrice(null);
-
-                skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
-                sku.setClientNetPrice(null);
-
-                skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
-                sku.setClientRetailPrice(null);
-
-                skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
-                sku.setPriceMsrp(null);
-
-                skuPriceBean.setPriceRetail(sku.getPriceRetail());
-                sku.setPriceRetail(null);
-
-                skuPriceBean.setPriceSale(sku.getPriceSale());
-                sku.setPriceSale(null);
-
-                skuPriceBeans.add(skuPriceBean);
-                sku.setSkuCarts(carts);
-            });
-
             productModel.set_id(null);
 
             CmsBtProductModel pr = cmsBtProductDao.selectProductByCode(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode());
             if (pr == null) {
+                creatGroup(productModel);
+                productModel.setChannelId(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+                productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
+
+                List<ProductPriceBean> productPrices = new ArrayList<>();
+                List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
+
+                productModel.getSkus().forEach(sku -> {
+                    ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
+
+                    skuPriceBean.setSkuCode(sku.getSkuCode());
+
+                    skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+                    sku.setClientMsrpPrice(null);
+
+                    skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+                    sku.setClientNetPrice(null);
+
+                    skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+                    sku.setClientRetailPrice(null);
+
+                    skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+                    sku.setPriceMsrp(null);
+
+                    skuPriceBean.setPriceRetail(sku.getPriceRetail());
+                    sku.setPriceRetail(null);
+
+                    skuPriceBean.setPriceSale(sku.getPriceSale());
+                    sku.setPriceSale(null);
+
+                    skuPriceBeans.add(skuPriceBean);
+                    sku.setSkuCarts(null);
+                });
+
                 productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
                 productService.createProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel, sxWorkLoadBean.getModifier());
+
+                ProductPriceBean priceBean = new ProductPriceBean();
+                priceBean.setProductId(productModel.getProdId());
+                priceBean.setSkuPrices(skuPriceBeans);
+                productPrices.add(priceBean);
+                productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
             } else {
                 productModel.setProdId(pr.getProdId());
+                productModel.setGroups(new CmsBtProductModel_Group());
                 ProductUpdateBean requestModel = new ProductUpdateBean();
                 requestModel.setProductModel(productModel);
                 requestModel.setModifier(sxWorkLoadBean.getModifier());
@@ -110,11 +108,7 @@ public class UploadToUSJoiService {
                 productService.updateProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), requestModel);
             }
 
-            ProductPriceBean priceBean = new ProductPriceBean();
-            priceBean.setProductId(productModel.getProdId());
-            priceBean.setSkuPrices(skuPriceBeans);
-            productPrices.add(priceBean);
-            productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
+
         }
         return "";
     }
@@ -131,6 +125,7 @@ public class UploadToUSJoiService {
                         .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TI.getId())))
                         .collect(toList());
                 if (skus.size() > 0) {
+                    skus.forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setSkuCarts(null));
                     productModel.setSkus(skus);
                     usJoiProductModes.add(productModel);
                 }
@@ -138,6 +133,39 @@ public class UploadToUSJoiService {
         }
         return usJoiProductModes;
 
+    }
+
+    /**
+     * 根据model, 到product表中去查找, 看看这家店里, 是否有相同的model已经存在
+     * 如果已经存在, 返回 找到了的那个group id
+     * 如果不存在, 返回 -1
+     *
+     * @param channelId channel id
+     * @param modelCode 品牌方给的model
+     * @param cartId    cart id
+     * @return group id
+     */
+    private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
+
+        // 先去看看是否有存在的了
+        CmsBtProductModel product = cmsBtProductDao.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
+
+        if (product == null
+                || product.getGroups() == null
+                || product.getGroups().getPlatforms() == null
+                || product.getGroups().getPlatforms().size() == 0) {
+            return -1;
+        }
+
+        // 看看是否能找到
+        for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+            if (platform.getCartId() == Integer.parseInt(cartId)) {
+                return platform.getGroupId();
+            }
+        }
+
+        // 找到product但是找不到指定cart, 也认为是找不到 (按理说是不会跑到这里的)
+        return -1;
     }
 
     private void creatGroup(CmsBtProductModel productModel) {
@@ -202,38 +230,5 @@ public class UploadToUSJoiService {
         group.setPlatforms(platformList);
 
         productModel.setGroups(group);
-    }
-
-    /**
-     * 根据model, 到product表中去查找, 看看这家店里, 是否有相同的model已经存在
-     * 如果已经存在, 返回 找到了的那个group id
-     * 如果不存在, 返回 -1
-     *
-     * @param channelId channel id
-     * @param modelCode 品牌方给的model
-     * @param cartId    cart id
-     * @return group id
-     */
-    private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
-
-        // 先去看看是否有存在的了
-        CmsBtProductModel product = cmsBtProductDao.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
-
-        if (product == null
-                || product.getGroups() == null
-                || product.getGroups().getPlatforms() == null
-                || product.getGroups().getPlatforms().size() == 0) {
-            return -1;
-        }
-
-        // 看看是否能找到
-        for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
-            if (platform.getCartId() == Integer.parseInt(cartId)) {
-                return platform.getGroupId();
-            }
-        }
-
-        // 找到product但是找不到指定cart, 也认为是找不到 (按理说是不会跑到这里的)
-        return -1;
     }
 }
