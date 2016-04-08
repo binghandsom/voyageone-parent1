@@ -29,7 +29,6 @@ public class JmBtPromotionImportService extends BaseMQTaskService {
 
     @Override
     public String getTaskName() {
-        return "JmBtPromotionImportTaskJOB";
+        return "CmsJmBtPromotionImportTask";
     }
-
 }
