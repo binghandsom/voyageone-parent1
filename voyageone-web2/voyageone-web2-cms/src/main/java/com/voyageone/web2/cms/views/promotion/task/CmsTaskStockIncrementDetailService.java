@@ -18,6 +18,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -477,20 +478,15 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         try (InputStream inputStream = new FileInputStream(templatePath);
              SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
-            // Titel行
+            // Title行
             writeExcelStockIncrementInfoHead(book, book.getXSSFWorkbook().getSheetAt(1), param);
             // 数据行
             writeExcelStockIncrementInfoRecord(book, book.getXSSFWorkbook().getSheetAt(1), param, resultData);
 
-            // 自适应列宽
-            List<Map> propertyList = (List<Map>) param.get("propertyList");
-            int cntCol = 3 + propertyList.size() + 3;
-            for (int i = 0; i < cntCol; i++) {
-                book.getSheetAt(0).autoSizeColumn(i);
-            }
-
             // 格式copy用sheet删除
             book.removeSheetAt(1);
+
+            $info("文档写入完成");
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -518,7 +514,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
         String cartId = (String) param.get("cartId");
-        String cartName = (String) param.get("cartName");
+        String cartName = StringUtils.null2Space((String) param.get("cartName"));
 
         // 内容输出
         int index = 0;
@@ -569,6 +565,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         CellStyle cellStyleData = sheetModel.getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
+        int cntCol = 3 + propertyList.size() + 3; // 总列数
+        double[] widthCol = new double[cntCol];
 
         for (StockIncrementExcelBean rowData : resultData) {
             row = FileUtils.row(sheet, lineIndex++);
@@ -593,6 +591,25 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 // 按固定值进行增量隔离
                 FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(YES);
             }
+
+            // 列宽
+            if (lineIndex % 100 == 0) {
+                for (int i = 0; i < cntCol; i++) {
+                    double width = SheetUtil.getColumnWidth(sheet, i, false);
+                    if (width > widthCol[i]) {
+                        widthCol[i] = width;
+                    }
+                }
+            }
+        }
+
+        // 设置列宽
+        for (int i = 0; i < cntCol; i++) {
+            double width = SheetUtil.getColumnWidth(sheet, i, false);
+            if (width > widthCol[i]) {
+                widthCol[i] = width;
+            }
+            cmsTaskStockService.setColumnWidth(sheet, i, widthCol[i]);
         }
     }
 
