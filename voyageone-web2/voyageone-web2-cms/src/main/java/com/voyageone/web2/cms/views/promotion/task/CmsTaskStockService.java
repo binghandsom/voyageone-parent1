@@ -402,6 +402,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @return minute
      */
     private String addDateMin(String revertTime, int min) {
+        revertTime += " 00:00:00";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
@@ -610,23 +611,23 @@ public class CmsTaskStockService extends BaseAppService {
         //判断隔离任务:新规的场
         if(promotionType.equals(TYPE_PROMOTION_INSERT)){
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
-            saveInsertTasksByPromotionInfo(param);
+            insertTasksByPromotionInfo(param);
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
-            saveInsertStockSeparatePlatFormByPromotionInfo(param);
+            insertStockSeparatePlatFormByPromotionInfo(param);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
             importSkuByPromotionInfo(param,onlySku,channelID);
         }
         //判断隔离任务:合更新的场合
         if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
             //更新的场合
-            saveUpdateTasksByPromotionInfo(param);
+            updateTasksByPromotionInfo(param);
         }
     }
     /**
      * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
      * @param param
      */
-    private void saveInsertTasksByPromotionInfo(Map param) {
+    private void insertTasksByPromotionInfo(Map param) {
         CmsBtTasksModel cmsBtTasksModel = new CmsBtTasksModel();
         //任务名
         cmsBtTasksModel.setTask_name((String) param.get("taskName"));
@@ -648,7 +649,7 @@ public class CmsTaskStockService extends BaseAppService {
      * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
      * @param param
      */
-    private void saveInsertStockSeparatePlatFormByPromotionInfo(Map param) {
+    private void insertStockSeparatePlatFormByPromotionInfo(Map param) {
         //根据活动名称取得对应的TaskID
         String taskID=cmsBtTasksDao.selectCmsBtTaskByTaskName((String) param.get("taskName"));
         //将取得的taskId放入param
@@ -712,7 +713,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param
      */
     private void checkPromotionInfo(Map param) {
-        List<Map> separatePlatformList =separatePlatformList= (List<Map>) param.get("promotionList");
+        List<Map> separatePlatformList = (List<Map>) param.get("promotionList");
         String taskName = (String) param.get("taskName");
         //任务名称
         if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
@@ -1232,7 +1233,7 @@ public class CmsTaskStockService extends BaseAppService {
      * 更新数据库cms_bt_stock_separate_platform_info
      * @param param
      */
-    private void saveUpdateTasksByPromotionInfo(Map param) {
+    private void updateTasksByPromotionInfo(Map param) {
         //用户名
         String user=(String)param.get("userName");
         //取得TaskID
