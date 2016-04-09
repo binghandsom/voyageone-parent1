@@ -101,6 +101,13 @@ public abstract class BaseMongoPartDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.executeCommand(commandStr);
     }
 
+    public CommandResult renameCollection(String channelId, String newCollectionName) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        String newCollectionNameT = mongoTemplate.getCollectionName(newCollectionName, channelId);
+        String commandStr = String.format("{ renameCollection : '%s', to: '%s', dropTarget: true}", collectionName, newCollectionNameT);
+        return mongoTemplate.executeCommand(commandStr);
+    }
+
     public WriteResult deleteWithQuery(String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.remove(strQuery, collectionName);
