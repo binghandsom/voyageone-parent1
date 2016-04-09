@@ -59,7 +59,7 @@ public class CmsBtProductDaoTest {
         String queryStr = "{\"$or\":[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[\"aa\"]},\"fields.translator\":{\"$in\":[null,\"\"]}},{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$in\":[\"123\"]},\"fields.translateTime\":{\"$lt\":\"2016-01-07 16:26:34\"}}]}";
         List lst = cmsBtProductDao.select(queryStr, "013");
         String strUpdate = "{\"$set\":{\"fields.translator\":\"liangchuanyu1\", \"fields.translateTime\":\"2016-01-07 16:26:36\"}}";
-        WriteResult isresult = cmsBtProductDao.updateFirst("013", queryStr, strUpdate);
+        WriteResult isresult = cmsBtProductDao.updateFirst(queryStr, strUpdate, "013");
         System.out.println(isresult);
     }
 }

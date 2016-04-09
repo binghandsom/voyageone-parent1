@@ -82,7 +82,6 @@ public class BaseJomgoPartTemplate {
         return collectionName;
     }
 
-
     public MongoCollection getCollection(String collectionName) {
         return jongo.getCollection(collectionName);
     }
