@@ -47,7 +47,7 @@ public class ExcelImportUtil {
             errorMsg = rowToModel(mapExcelColumn, listProductColumn, row, model,mapFiled);//行转model
             if (!StringUtils.isEmpty(errorMsg)) {//转换失败   保存错误行
                 Map<String, Object> errorMap = getErrorMap(row, mapExcelColumn);//row转map
-                errorMap.put(errorMsg, errorMsg);
+                errorMap.put("errorMsg", errorMsg);
                 listErrorMap.add(errorMap);//加入转换错误行集合
                 errorMsg = "";
             } else {//转换成功

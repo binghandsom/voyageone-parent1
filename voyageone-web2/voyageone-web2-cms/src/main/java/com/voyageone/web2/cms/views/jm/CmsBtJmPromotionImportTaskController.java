@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.help.DateHelp;
+import com.voyageone.common.mq.MqSender;
+import com.voyageone.common.mq.enums.MqRoutingKey;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.jumei.CmsBtJmPromotionImportTaskService;
@@ -11,6 +13,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +33,8 @@ import java.util.*;
 public class CmsBtJmPromotionImportTaskController extends CmsController {
     @Autowired
     private CmsBtJmPromotionImportTaskService service;
-
+    @Autowired
+    private MqSender sender;
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionImportTask.LIST.INDEX.GET_BY_PROMOTIONID)
     public AjaxResponse getByPromotionId(@RequestBody int promotionId) {
         return success(service.getByPromotionId(promotionId));
@@ -56,7 +60,6 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String path = importPath + "/" + fileName;//"/Product20160324164706.xls";
         FileUtils.downloadFile(response, fileName, path);
     }
-
     @RequestMapping("upload")
     public AjaxResponse upload(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -74,6 +77,11 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
             listModel.add(model);
         }
         service.saveList(listModel);
+        for (CmsBtJmPromotionImportTaskModel taskModel : listModel) {
+            Map<String, Object> message = new HashMap<String, Object>();
+            message.put("id", taskModel.getId());
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
+        }
         Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
         reponse.put("result", true);
         return success(reponse);

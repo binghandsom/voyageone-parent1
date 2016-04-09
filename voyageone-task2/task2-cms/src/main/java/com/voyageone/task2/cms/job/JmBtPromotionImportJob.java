@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @version 2.0.0
  * @since 2.0.0
  */
-@Component
+@Component("jmBtPromotionImportJob")
 public class JmBtPromotionImportJob extends BaseMQTaskJob {
 
     @Autowired

@@ -20,7 +20,7 @@
     <import resource="classpath*:mq-config.xml" />
     <!-- Redis Config -->
     <import resource="classpath*:redis-config.xml" />
-
+    <!--<import resource="classpath*:mq-job.xml" />-->
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />-->

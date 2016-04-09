@@ -87,7 +87,7 @@ public class ExportFileExcelUtil {
         else
         {
             HSSFSheet sheet = wwb.createSheet(info.getSheet());//sheetName, i
-            fillSheet(sheet, null, info);
+            fillSheet(sheet, info.getDataSource(), info);
         }
     }
 

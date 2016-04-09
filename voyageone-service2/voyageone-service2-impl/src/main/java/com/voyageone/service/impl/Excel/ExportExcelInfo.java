@@ -84,4 +84,12 @@ public class ExportExcelInfo<TRow> {
         column.setColumnType(columnType);
         return column;
     }
+    public ExcelColumn<TRow> getErrorColumn() {
+        ExcelColumn<TRow> column = new ExcelColumn<TRow>();
+        column.setText("异常信息");
+        column.setColumnName("errorMsg");//errorMsg
+        column.setColumnType(EnumExcelColumnType.ColumnType_String);
+        column.setCamelColumnName("errorMsg");
+        return column;
+    }
 }

@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.Excel;
 
 import com.voyageone.common.util.CamelUtil;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by admin on 2015/10/9.
@@ -58,6 +59,10 @@ public class ExcelColumn<T> {
     }
 
     public String getCamelColumnName() {
+        if(StringUtils.isEmpty(camelColumnName))
+        {
+            return  this.getColumnName();
+        }
         return camelColumnName;
     }
 

@@ -2,8 +2,10 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.jumei.CmsBtJmPromotionImportTaskService;
 import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +19,15 @@ import java.util.Map;
 @Service
 public class JmBtPromotionImportService extends BaseMQTaskService {
 
+    @Autowired
+    CmsBtJmPromotionImportTaskService service;
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
-        System.out.println("收到消息："+ JacksonUtil.bean2Json(message));
-        this.getControls();
+        System.out.println("收到消息：" + JacksonUtil.bean2Json(message));
+        // this.getControls();
 
+        int id = (int) Double.parseDouble(message.get("id").toString());
+        service.importFile(id);
     }
 
     @Override

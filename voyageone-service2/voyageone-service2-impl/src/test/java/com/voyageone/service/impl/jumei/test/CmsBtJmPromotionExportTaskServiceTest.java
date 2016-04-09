@@ -16,6 +16,6 @@ public class CmsBtJmPromotionExportTaskServiceTest {
     CmsBtJmPromotionExportTaskService service;
     @Test
     public  void  test() throws FileNotFoundException {
-        service.Export(1);
+        service.export(1);
     }
 }

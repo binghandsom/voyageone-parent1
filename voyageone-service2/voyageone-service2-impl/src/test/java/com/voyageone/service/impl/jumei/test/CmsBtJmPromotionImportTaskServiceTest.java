@@ -18,6 +18,6 @@ public class CmsBtJmPromotionImportTaskServiceTest {
 
     @Test
     public  void  test() throws Exception {
-        service.Import(18);
+        service.importFile(18);
     }
 }

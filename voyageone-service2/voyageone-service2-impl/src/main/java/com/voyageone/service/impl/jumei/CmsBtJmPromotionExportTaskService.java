@@ -26,62 +26,82 @@ public class CmsBtJmPromotionExportTaskService {
     CmsBtJmPromotionExportTaskDao dao;
     @Autowired
     CmsBtJmPromotionExportTaskDaoExt daoExt;
+
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
     }
+
     public int update(CmsBtJmPromotionExportTaskModel entity) {
         return dao.update(entity);
     }
+
     public int insert(CmsBtJmPromotionExportTaskModel entity) {
         return dao.insert(entity);
     }
-    public void Export(int JmBtPromotionExportTaskId) throws FileNotFoundException {
+
+    public void export(int JmBtPromotionExportTaskId) throws FileNotFoundException {
         CmsBtJmPromotionExportTaskModel model = dao.select(1);
         String fileName = "/usr/JMExport" + "/Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
-        ExportExcelInfo<Map<String, Object>> productInfo = exportProduct(fileName);
-        ExportExcelInfo<Map<String, Object>> skuInfo = exportSku(fileName);
-        ExportExcelInfo<Map<String, Object>> specialImageInfo=  exportSpecialImage(fileName);
+        export(fileName, null, null, null,false);
+    }
+
+    public void export(String fileName, List<Map<String, Object>> dataSourceProduct, List<Map<String, Object>> dataSourceSku, List<Map<String, Object>> dataSourceSpecialImageInfo,boolean isErrorColumn) {
+        ExportExcelInfo<Map<String, Object>> productInfo = getExportProductInfo(fileName, dataSourceProduct);
+        ExportExcelInfo<Map<String, Object>> skuInfo = getExportSkuInfo(fileName, dataSourceSku);
+        ExportExcelInfo<Map<String, Object>> specialImageInfo = getExportSpecialImageInfo(fileName, dataSourceSpecialImageInfo);
+        if (isErrorColumn) {
+            productInfo.addExcelColumn(productInfo.getErrorColumn());
+            skuInfo.addExcelColumn(skuInfo.getErrorColumn());
+            specialImageInfo.addExcelColumn(specialImageInfo.getErrorColumn());
+        }
         try {
-            ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo,specialImageInfo);
+            ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo, specialImageInfo);
         } catch (ExcelException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private ExportExcelInfo<Map<String, Object>> exportProduct(String fileName) {
+
+    private ExportExcelInfo<Map<String, Object>> getExportProductInfo(String fileName, List<Map<String, Object>> dataSource) {
         List<EnumJMProductImportColumn> listEnumJMProductImportColumn = EnumJMProductImportColumn.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("Product");
         info.setDisplayColumnName(true);
+        info.setDataSource(dataSource);
         for (EnumJMProductImportColumn o : listEnumJMProductImportColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
         return info;
     }
-    private ExportExcelInfo<Map<String, Object>> exportSku(String fileName) {
+
+    private ExportExcelInfo<Map<String, Object>> getExportSkuInfo(String fileName, List<Map<String, Object>> dataSource) {
         List<EnumJMSkuImportColumn> listEnumColumn = EnumJMSkuImportColumn.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("Sku");
         info.setDisplayColumnName(true);
+        info.setDataSource(dataSource);
         for (EnumJMSkuImportColumn o : listEnumColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
         return info;
     }
-    private ExportExcelInfo<Map<String, Object>> exportSpecialImage(String fileName) {
+
+    private ExportExcelInfo<Map<String, Object>> getExportSpecialImageInfo(String fileName, List<Map<String, Object>> dataSource) {
         List<EnumJMSpecialImageImportColumn> listEnumColumn = EnumJMSpecialImageImportColumn.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("SpecialImage");
         info.setDisplayColumnName(true);
+        info.setDataSource(dataSource);
         for (EnumJMSpecialImageImportColumn o : listEnumColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
         return info;
     }
+
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.getByPromotionId(promotionId);
     }
