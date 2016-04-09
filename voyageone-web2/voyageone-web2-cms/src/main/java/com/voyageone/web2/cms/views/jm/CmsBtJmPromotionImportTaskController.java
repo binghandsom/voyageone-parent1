@@ -55,10 +55,10 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
         CmsBtJmPromotionImportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
-        String importPath = Properties.readValue(CmsConstants.Props.CMS_JM_IMPORT_PATH);
+        String path = Properties.readValue(CmsConstants.Props.CMS_JM_EXPORT_PATH);
         String fileName = model.getFailuresFileName().trim();
-        String path = importPath + "/" + fileName;//"/Product20160324164706.xls";
-        FileUtils.downloadFile(response, fileName, path);
+        String filepath = path + "/" + fileName;//"/Product20160324164706.xls";
+        FileUtils.downloadFile(response, fileName, filepath);
     }
     @RequestMapping("upload")
     public AjaxResponse upload(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
