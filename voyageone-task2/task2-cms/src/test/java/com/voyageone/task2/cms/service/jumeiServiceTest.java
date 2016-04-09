@@ -1,9 +1,9 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
-import com.voyageone.common.components.jumei.JumeiProductService;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
+import com.voyageone.components.jumei.service.JumeiProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class jumeiServiceTest {
      @Autowired
-    JumeiProductService productService;
+     JumeiProductService productService;
 
     @Test
     public void testGet() throws Exception {

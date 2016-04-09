@@ -1,8 +1,8 @@
 package com.voyageone.components.jumei.service;
 
-import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
-import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
+import com.voyageone.components.jumei.bean.JmProductBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Created by DELL on 2016/1/26.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiProductServiceNewTest {
 
     @Autowired
@@ -49,7 +49,8 @@ public class JumeiProductServiceNewTest {
 //        }
        // product.setCategory_v3_4_id(21);
         //product.setBrand_id();
-        JmGetProductInfoRes productBean = productService.productNewUpload(shopBean,product);
+        //JmGetProductInfoRes productBean =
+        productService.productNewUpload(shopBean,product);
     }
 //    @Test
 //    public void testGet2() throws Exception {

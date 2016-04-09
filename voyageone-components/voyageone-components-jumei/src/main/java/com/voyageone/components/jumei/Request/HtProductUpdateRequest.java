@@ -1,6 +1,6 @@
 package com.voyageone.components.jumei.Request;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.jumei.Bean.HtProductUpdate_ProductInfo;
+import com.voyageone.components.jumei.bean.HtProductUpdate_ProductInfo;
 
 import java.io.IOException;
 import java.util.HashMap;

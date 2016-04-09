@@ -122,7 +122,7 @@ data_type为3，value1是NULL,data_type为其它，value2是jm_url聚美服务�
  /**
 
         */
-     private boolean isActive;
+     private boolean active;
     
         
          /**
@@ -422,14 +422,14 @@ this.modifier="";
          /**
            
         */
-        public boolean getIsActive()
+        public boolean getActive()
         {
          
-        return this.isActive;
+        return this.active;
         }
-        public void setIsActive(boolean isActive)
+        public void setActive(boolean active)
         {
-         this.isActive=isActive;
+         this.active=active;
         }
     
 }

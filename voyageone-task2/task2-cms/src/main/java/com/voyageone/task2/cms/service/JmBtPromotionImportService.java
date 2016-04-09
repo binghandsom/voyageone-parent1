@@ -20,6 +20,8 @@ public class JmBtPromotionImportService extends BaseMQTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
         System.out.println("收到消息："+ JacksonUtil.bean2Json(message));
+        this.getControls();
+
     }
 
     @Override

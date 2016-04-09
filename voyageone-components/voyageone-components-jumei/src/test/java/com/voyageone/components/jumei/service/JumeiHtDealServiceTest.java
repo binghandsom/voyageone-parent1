@@ -1,8 +1,8 @@
 package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.components.jumei.Bean.HtDealCopyDeal_DealInfo;
-import com.voyageone.components.jumei.Bean.HtDealUpdate_DealInfo;
+import com.voyageone.components.jumei.bean.HtDealCopyDeal_DealInfo;
+import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.Reponse.HtDealCopyDealResponse;
 import com.voyageone.components.jumei.Reponse.HtDealUpdateResponse;

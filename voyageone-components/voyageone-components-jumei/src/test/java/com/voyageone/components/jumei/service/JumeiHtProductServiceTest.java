@@ -2,7 +2,7 @@ package com.voyageone.components.jumei.service;
 
 
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.components.jumei.Bean.HtProductUpdate_ProductInfo;
+import com.voyageone.components.jumei.bean.HtProductUpdate_ProductInfo;
 import com.voyageone.components.jumei.JumeiHtProductService;
 import com.voyageone.components.jumei.Reponse.HtProductUpdateResponse;
 import com.voyageone.components.jumei.Request.HtProductUpdateRequest;

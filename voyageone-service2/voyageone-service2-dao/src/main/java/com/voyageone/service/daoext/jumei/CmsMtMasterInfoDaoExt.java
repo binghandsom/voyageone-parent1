@@ -10,6 +10,6 @@ import java.util.Map;
 @Repository
 public interface CmsMtMasterInfoDaoExt {
     public CmsMtMasterInfoModel getByKey(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType);
-    public CmsMtMasterInfoModel getByKeySizeType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType, String sizeType);
+    public CmsMtMasterInfoModel getByKeySizeType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType, @Param("sizeType") String sizeType);
     List getListByWhere(Map<String, Object> map);
 }
