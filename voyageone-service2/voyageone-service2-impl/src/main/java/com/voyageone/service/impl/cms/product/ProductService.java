@@ -641,6 +641,7 @@ public class ProductService extends BaseService {
                 if (carts.contains(platform.getCartId()) && isNeed) {
                     model.setChannelId(channelId);
                     model.setGroupId(platform.getGroupId());
+                    model.setCartId(platform.getCartId());
                     model.setPublishStatus(0);
                     model.setCreater(modifier);
                     model.setModifier(modifier);
