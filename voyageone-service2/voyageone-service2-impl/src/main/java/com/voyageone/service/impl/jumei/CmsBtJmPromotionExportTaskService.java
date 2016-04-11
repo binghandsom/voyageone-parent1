@@ -3,21 +3,21 @@ import com.voyageone.common.help.DateHelp;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionExportTaskDaoExt;
+import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.Excel.ExcelException;
 import com.voyageone.service.impl.Excel.ExportExcelInfo;
 import com.voyageone.service.impl.Excel.ExportFileExcelUtil;
-import com.voyageone.service.impl.jumei.enumjm.EnumJMProductImportColumn;
-import com.voyageone.service.impl.jumei.enumjm.EnumJMSkuImportColumn;
-import com.voyageone.service.impl.jumei.enumjm.EnumJMSkuPriceExportColumn;
-import com.voyageone.service.impl.jumei.enumjm.EnumJMSpecialImageImportColumn;
+import com.voyageone.service.impl.jumei.enumjm.*;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,8 @@ public class CmsBtJmPromotionExportTaskService {
     CmsBtJmPromotionExportTaskDaoExt daoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-
+    @Autowired
+    CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
     }
@@ -48,7 +49,7 @@ public class CmsBtJmPromotionExportTaskService {
     public void export(int JmBtPromotionExportTaskId) throws IOException, ExcelException {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
         String fileName = "Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
-        String filePath="/usr/JMExport/"+fileName;
+        String filePath = "/usr/JMExport/" + fileName;
         model.setBeginTime(new Date());
         int TemplateType = model.getTemplateType();
         try {
@@ -59,11 +60,17 @@ public class CmsBtJmPromotionExportTaskService {
                 ExportExcelInfo<Map<String, Object>> info = getSkuPriceInfo(list);
                 ExportFileExcelUtil.exportExcel(filePath, info);
                 model.setFileName(fileName);
-
             } else if (TemplateType == 2) {//专场模板
+                List<Map<String, Object>> list = daoExtCmsBtJmPromotionProduct.getExportInfoListByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> pcList = new ArrayList<>();
+                List<Map<String, Object>> appList = new ArrayList<>();
+                loadPCAppList(list, pcList, appList);
+                ExportExcelInfo<Map<String, Object>> infoPC = getJMPCPromotionProcuctExportInfo(pcList, "PC端模块");
+                ExportExcelInfo<Map<String, Object>> infoApp = getJMPCPromotionProcuctExportInfo(appList, "App端模块");
+                ExportFileExcelUtil.exportExcel(filePath, infoPC, infoApp);
+                model.setFileName(fileName);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
             model.setErrorCode(1);
             ex.printStackTrace();
@@ -71,6 +78,30 @@ public class CmsBtJmPromotionExportTaskService {
         model.setIsExport(true);
         model.setEndTime(new Date());
         dao.update(model);
+    }
+    public void loadPCAppList( List<Map<String, Object>> list,List<Map<String, Object>> mapPcList,List<Map<String, Object>> mapAppList) {
+        //`app_id`,`pc_id`
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for (Map<String, Object> map : list) {
+            if (!StringUtils.isEmpty(map.get("appId"))) {
+                mapAppList.add(map);
+            }
+            if (!StringUtils.isEmpty(map.get("pcId"))) {
+                mapPcList.add(map);
+            }
+        }
+    }
+    private ExportExcelInfo<Map<String, Object>> getJMPCPromotionProcuctExportInfo( List<Map<String, Object>> dataSource,String sheetName) {
+        List<EnumJMPCPromotionProcuctExportColumn> listEnumColumn = EnumJMPCPromotionProcuctExportColumn.getList();
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        info.setFileName("Product");
+        info.setSheet(sheetName);
+        info.setDisplayColumnName(true);
+        info.setDataSource(dataSource);
+        for (EnumJMPCPromotionProcuctExportColumn o : listEnumColumn) {
+            info.addExcelColumn(o.getExcelColumn());
+        }
+        return info;
     }
     private ExportExcelInfo<Map<String, Object>> getSkuPriceInfo( List<Map<String, Object>> dataSource) {
         List<EnumJMSkuPriceExportColumn> listEnumColumn = EnumJMSkuPriceExportColumn.getList();
