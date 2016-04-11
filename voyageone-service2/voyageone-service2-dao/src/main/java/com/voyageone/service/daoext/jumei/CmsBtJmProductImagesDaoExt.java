@@ -6,4 +6,5 @@ import java.util.List;
 @Repository
 public interface CmsBtJmProductImagesDaoExt {
     public CmsBtJmProductImagesModel getByKey(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("imageType") int imageType, @Param("imageIndex") int imageIndex);
+    public List<CmsBtJmProductImagesModel> getListByPromotionId(int promotionId);
 }

@@ -57,7 +57,7 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
     
     
  /**
-1:导出成功  2:导出失败
+1:导出失败
         */
      private int errorCode;
     
@@ -204,7 +204,7 @@ this.errorMsg="";
     
         
          /**
-           1:导出成功  2:导出失败
+           1:导出失败
         */
         public int getErrorCode()
         {

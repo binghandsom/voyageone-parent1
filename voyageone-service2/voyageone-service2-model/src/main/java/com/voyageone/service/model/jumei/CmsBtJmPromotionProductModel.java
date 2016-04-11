@@ -140,9 +140,15 @@ APP端模块ID
     
     
  /**
-sku数量
+sku数
         */
      private int skuCount;
+    
+    
+ /**
+库存数量
+        */
+     private int quantity;
     
         
          /**
@@ -475,7 +481,7 @@ this.errorMsg="";
     
         
          /**
-           sku数量
+           sku数
         */
         public int getSkuCount()
         {
@@ -485,6 +491,20 @@ this.errorMsg="";
         public void setSkuCount(int skuCount)
         {
          this.skuCount=skuCount;
+        }
+    
+        
+         /**
+           库存数量
+        */
+        public int getQuantity()
+        {
+         
+        return this.quantity;
+        }
+        public void setQuantity(int quantity)
+        {
+         this.quantity=quantity;
         }
     
 }

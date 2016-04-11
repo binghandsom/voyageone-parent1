@@ -141,4 +141,10 @@ FROM `cms_bt_jm_promotion_product`  AS a
 JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
 WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
     </select>
+    <select id="getListCmsBtJmImportProductByPromotionId" resultType="MapModel">
+ SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`
+FROM `cms_bt_jm_promotion_product`  AS a
+JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
+WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
+    </select>
 </mapper>

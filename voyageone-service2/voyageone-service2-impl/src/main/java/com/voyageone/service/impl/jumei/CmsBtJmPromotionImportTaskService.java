@@ -185,6 +185,7 @@ public class CmsBtJmPromotionImportTaskService {
                 }
             }
             for (CmsBtJmProductImagesModel model : saveInfo.getListCmsBtJmProductImagesModel()) {
+                model.setCmsBtJmProductId(saveInfo.getProductModel().getId());
                 if (model.getId() == 0) {
                     daoCmsBtJmProductImages.insert(model);
                 } else {
@@ -500,6 +501,7 @@ public class CmsBtJmPromotionImportTaskService {
             promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
             promotionSkuModel.setCmsBtJmPromotionId(modelCmsBtJmPromotion.getId());
             promotionSkuModel.setSkuCode(importSkuModel.getSkuCode());
+            promotionSkuModel.setChannelId(modelCmsBtJmPromotion.getChannelId());
             //promotionSkuModel.setCmsBtJmProductId();
             //promotionSkuModel.setCmsBtJmSkuId();
             promotionSkuModel.setCreated(new Date());

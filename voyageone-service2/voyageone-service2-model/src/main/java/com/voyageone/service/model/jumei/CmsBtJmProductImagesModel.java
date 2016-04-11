@@ -47,7 +47,7 @@ public class CmsBtJmProductImagesModel implements Serializable
     
     
  /**
-图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图 8:商品介绍图）
+图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图 8:商品定制图）
         */
      private int imageType;
     
@@ -104,6 +104,12 @@ public class CmsBtJmProductImagesModel implements Serializable
 商品图片urlKey
         */
      private String productImageUrlKey;
+    
+    
+ /**
+
+        */
+     private int cmsBtJmProductId;
     
         
          /**
@@ -184,7 +190,7 @@ this.imageTypeName="";
     
         
          /**
-           图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图 8:商品介绍图）
+           图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图 8:商品定制图）
         */
         public int getImageType()
         {
@@ -362,6 +368,20 @@ else
 this.productImageUrlKey="";
 }
 
+        }
+    
+        
+         /**
+           
+        */
+        public int getCmsBtJmProductId()
+        {
+         
+        return this.cmsBtJmProductId;
+        }
+        public void setCmsBtJmProductId(int cmsBtJmProductId)
+        {
+         this.cmsBtJmProductId=cmsBtJmProductId;
         }
     
 }

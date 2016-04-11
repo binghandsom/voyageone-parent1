@@ -2,6 +2,7 @@ package com.voyageone.service.impl.jumei;
 import com.voyageone.common.help.DateHelp;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.dao.jumei.*;
+import com.voyageone.service.daoext.jumei.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
@@ -17,10 +18,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 /**
  * Created by dell on 2016/3/18.
  */
@@ -34,6 +33,8 @@ public class CmsBtJmPromotionExportTaskService {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
+    @Autowired
+    CmsBtJmProductImagesDaoExt daoExtCmsBtJmProductImages;
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
     }
@@ -54,7 +55,11 @@ public class CmsBtJmPromotionExportTaskService {
         int TemplateType = model.getTemplateType();
         try {
             if (TemplateType == 0) {//导入模板
-                export(filePath, null, null, null, false);
+                List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.getListCmsBtJmImportProductByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.getListCmsBtJmImportSkuByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> listSpecialImage = getListSpecialImage(model.getCmsBtJmPromotionId(), listProduct);
+                export(filePath, listProduct, listSku, listSpecialImage, false);
+                model.setFileName(fileName);
             } else if (TemplateType == 1) {//价格修正模板
                 List<Map<String, Object>> list = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionId(model.getCmsBtJmPromotionId());
                 ExportExcelInfo<Map<String, Object>> info = getSkuPriceInfo(list);
@@ -79,6 +84,41 @@ public class CmsBtJmPromotionExportTaskService {
         model.setEndTime(new Date());
         dao.update(model);
     }
+     List<Map<String,Object>> getListSpecialImage(int promotionId,List<Map<String,Object>> listProduct) {
+         List<Map<String, Object>> result = new ArrayList<>();
+         List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel = daoExtCmsBtJmProductImages.getListByPromotionId(promotionId);
+         for (Map<String, Object> mapProduct : listProduct) {
+             String prodcutCode = mapProduct.get("productCode").toString();
+             List<CmsBtJmProductImagesModel> codeProductImagesList = getListCmsBtJmProductImagesModelByProdcutCode(listCmsBtJmProductImagesModel, prodcutCode);
+             Map<String, Object> mapSpecialImage = null;
+             for (CmsBtJmProductImagesModel model : codeProductImagesList) {
+                 mapSpecialImage = new HashMap<>();
+                 if (model.getImageType() == 3)//参数图
+                 {
+                     mapSpecialImage.put("propertyImage" + model.getImageIndex(), model.getOriginUrl());
+                 } else if (model.getImageType() == 8)//商品定制图
+                 {
+                     mapSpecialImage.put("specialImage" + model.getImageIndex(), model.getOriginUrl());
+                 } else if (model.getImageType() == 1 || model.getImageType() == 2 || model.getImageType() == 7)//1:白底方图 ；2:商品详情图；7：竖图
+                 {
+                     mapSpecialImage.put("productImageUrlKey" + model.getImageIndex(), model.getProductImageUrlKey());
+                 } else {
+                     continue;
+                 }
+             }
+             result.add(mapSpecialImage);
+         }
+         return result;
+     }
+     public List<CmsBtJmProductImagesModel> getListCmsBtJmProductImagesModelByProdcutCode( List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel ,String productCode) {
+         List<CmsBtJmProductImagesModel> result = new ArrayList<>();
+         for (CmsBtJmProductImagesModel model : listCmsBtJmProductImagesModel) {
+             if (model.getProductCode().equals(productCode)) {
+                 result.add(model);
+             }
+         }
+         return result;
+     }
     public void loadPCAppList( List<Map<String, Object>> list,List<Map<String, Object>> mapPcList,List<Map<String, Object>> mapAppList) {
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (Map<String, Object> map : list) {

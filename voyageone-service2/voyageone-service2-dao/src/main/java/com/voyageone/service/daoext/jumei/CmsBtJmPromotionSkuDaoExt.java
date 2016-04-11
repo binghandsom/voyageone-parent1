@@ -17,4 +17,6 @@ public interface CmsBtJmPromotionSkuDaoExt {
     public List<Map<String, Object>> getJmSkuPriceInfoListByPromotionId(@Param("promotionId") int promotionId);
 
     public int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
+
+    public List getListCmsBtJmImportSkuByPromotionId(int promotionId);
 }
