@@ -1,0 +1,56 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;Jumei Activity Product Price Modify</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-8 col-sm-offset-1"> Jumei Activity Price :</label>
+            </div>
+            <div class="row form-group">
+                <form role="form" class="form-horizontal">
+                    <div class="col-lg-10 col-sm-offset-1">
+                        <div class="input-group">
+                              <span class="input-group-addon">
+                                <input type="radio" aria-label="...">
+                              </span>
+                            <input type="text" class="form-control" aria-label="...">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                              <span class="input-group-addon">
+                                <input type="radio" aria-label="...">
+                              </span>
+                            <input type="text" class="form-control" aria-label="...">
+                            <span class="input-group-addon">%&nbsp;OFF</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">&nbsp;of&nbsp;</span>
+                            <select class="form-control">
+                                <option value="品牌一">品牌一</option>
+                                <option value="品牌二">品牌二</option>
+                                <option value="品牌三">品牌三</option>
+                            </select>
+                            <span class="input-group-addon bg-danger">(INT)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+    </div>
+</div><!-- .vo_modal -->
