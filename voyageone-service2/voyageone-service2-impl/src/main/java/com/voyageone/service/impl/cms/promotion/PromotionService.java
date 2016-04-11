@@ -6,9 +6,11 @@ package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionLogDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.model.cms.CmsBtPromotionLogModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class PromotionService extends BaseService {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private CmsBtPromotionLogDao cmsBtPromotionLogDao;
 
     /**
      * 添加或者修改
@@ -139,4 +144,12 @@ public class PromotionService extends BaseService {
         return cmsBtPromotionDao.deleteById(param);
     }
 
+    public Map<String, Object> getPromotionLogMap(Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<>();
+        List<CmsBtPromotionLogModel> promotionList = cmsBtPromotionLogDao.selectPromotionLog(params);
+        int count = cmsBtPromotionLogDao.selectPromotionLogCnt(params);
+        result.put("list", promotionList);
+        result.put("total", count);
+        return result;
+    }
 }

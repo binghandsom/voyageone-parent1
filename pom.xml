@@ -92,6 +92,7 @@
         <voyageone.components.gilt.version>0.0.1-SNAPSHOT</voyageone.components.gilt.version>
         <voyageone.components.jumei.version>0.0.1-SNAPSHOT</voyageone.components.jumei.version>
         <voyageone.components.sears.version>0.0.1-SNAPSHOT</voyageone.components.sears.version>
+        <voyageone.components.intltarget.version>0.0.1-SNAPSHOT</voyageone.components.intltarget.version>
         <voyageone.components.tmall.version>0.0.1-SNAPSHOT</voyageone.components.tmall.version>
         <voyageone.components.yimei.version>0.0.1-SNAPSHOT</voyageone.components.yimei.version>
 
@@ -447,8 +448,8 @@
             </dependency>
             <dependency>
                 <groupId>com.voyageone</groupId>
-                <artifactId>jd-open-api-sdk</artifactId>
-                <version>2.0</version>
+                <artifactId>jd-open-api-sdk-20160408</artifactId>
+                <version>20160408</version>
             </dependency>
 
             <dependency>

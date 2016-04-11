@@ -58,9 +58,11 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
             Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 
             String lang = val == null ||
-                    !val.equals(LANGUAGE.EN) ||
-                    !val.equals(LANGUAGE.CN) ||
-                    !val.equals(LANGUAGE.JP)
+                    (
+                            !val.equals(LANGUAGE.EN) &&
+                            !val.equals(LANGUAGE.CN) &&
+                            !val.equals(LANGUAGE.JP)
+                    )
                     ? LANGUAGE.EN
                     : val.toString();
 

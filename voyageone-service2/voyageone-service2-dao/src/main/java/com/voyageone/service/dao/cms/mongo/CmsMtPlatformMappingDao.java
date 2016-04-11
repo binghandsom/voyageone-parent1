@@ -67,13 +67,13 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingMo
      * @param mainCategoryId     主数据类目 ID
      * @param platformCategoryId 平台类目 ID
      * @param cartId             平台 ID
-     * @param selChannel         渠道
+     * @param channelId         渠道
      * @return 模型
      */
-    public CmsMtPlatformMappingModel selectMapping(String mainCategoryId, String platformCategoryId, Integer cartId, ChannelConfigEnums.Channel selChannel) {
+    public CmsMtPlatformMappingModel selectMapping(String mainCategoryId, String platformCategoryId, int cartId, String channelId) {
         return selectOneWithQuery(String.format(
                 "{ channelId: '%s', mainCategoryId: '%s', platformCartId: %s, platformCategoryId: '%s' }",
-                selChannel.getId(), mainCategoryId, cartId, platformCategoryId
+                channelId, mainCategoryId, cartId, platformCategoryId
         ));
     }
 }
