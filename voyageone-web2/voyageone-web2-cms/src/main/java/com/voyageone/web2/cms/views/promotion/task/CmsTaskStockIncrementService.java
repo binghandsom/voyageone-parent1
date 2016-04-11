@@ -96,21 +96,25 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         String incrementPercent = (String) param.get("incrementPercent");
         //任务名称
         if (StringUtils.isEmpty(incrementTaskID)||incrementTaskID.getBytes().length>=1000) {
-            throw new BusinessException("必须输入且长度小于1000！");
+            // 任务名必须输入且长度小于1000
+            throw new BusinessException("7000012");
         }
         //数量增量
         if (StringUtils.isEmpty(incrementCount) || !StringUtils.isDigit(incrementCount)
                 ||incrementCount.getBytes().length>1||Long.parseLong(incrementCount)>0) {
-            throw new BusinessException("增量必须为大于0的整数！");
+            // 增量必须为大于0的整数
+            throw new BusinessException("7000055！");
         }
         //百分比增量
         if(incrementPercent.equals("%")){
-            throw new BusinessException("增量比例必须填且为大于0小于100整数！");
+            // 增量比例必须输入且为大于0小于100整数
+            throw new BusinessException("7000056");
         }else{
             String[] IncrementValue = incrementPercent.split("%");
             if (StringUtils.isEmpty(IncrementValue[0])|| !StringUtils.isDigit(IncrementValue[0])
                     ||IncrementValue[0].getBytes().length>2||IncrementValue.length>1||Long.parseLong(IncrementValue[0])>0) {
-                throw new BusinessException("增量比例必须填且为大于0小于100整数！");
+                // 增量比例必须输入且为大于0小于100整数
+                throw new BusinessException("7000056");
             }
         }
     }
@@ -157,13 +161,15 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                                                     CmsTaskStockService.STATUS_REVERT));
         Integer seq = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam);
         if (seq != null) {
-            throw new BusinessException("已经开始增量库存隔离，不能删除增量任务！");
+            // 已经开始增量库存隔离，不能删除增量任务
+            throw new BusinessException("7000057");
         }
 
         // 子任务id对应的增量库存隔离数据是否移到history表
         boolean historyFlg = cmsTaskStockIncrementDetailService.isHistoryExist(subTaskId);
         if (historyFlg) {
-            throw new BusinessException("已经开始增量库存隔离，不能删除增量任务！");
+            // 已经开始增量库存隔离，不能删除增量任务
+            throw new BusinessException("7000057");
         }
 
         simpleTransaction.openTransaction();
