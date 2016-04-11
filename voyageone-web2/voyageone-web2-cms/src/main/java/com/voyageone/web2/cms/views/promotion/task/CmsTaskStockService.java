@@ -1933,8 +1933,12 @@ public class CmsTaskStockService extends BaseAppService {
 
                         // 画面的隔离库存 != DB的隔离库存是进行更新 并且 不是动态的场合（状态不是空白）
                         if (!separationQty.equals(separateQtyDB) && !StringUtils.isEmpty(status)) {
-                            // 状态为"2:隔离中"或者"6:还原中"的数据不能进行变更
-                            if(STATUS_SEPARATING.equals(statusDB) || STATUS_REVERTING.equals(statusDB)) {
+                            // 状态为"1:等待隔离","2:隔离中"或者"5:等待还原","6:还原中"的数据不能进行变更
+                            if(STATUS_WAITING_SEPARATE.equals(statusDB)
+                                    || STATUS_SEPARATING.equals(statusDB)
+                                    || STATUS_WAITING_REVERT.equals(statusDB)
+                                    || STATUS_REVERTING.equals(statusDB)
+                                    ) {
                                 // 状态为 还原中 或者 隔离中 的明细不能进行编辑
                                 throw new BusinessException("7000024");
                             }
