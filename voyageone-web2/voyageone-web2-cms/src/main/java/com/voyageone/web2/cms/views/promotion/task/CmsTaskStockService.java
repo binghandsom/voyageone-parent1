@@ -741,7 +741,11 @@ public class CmsTaskStockService extends BaseAppService {
                 String revertTime="";
                 boolean contains = separatePlatformList.get(i).containsKey("revertTime");
                 if(contains){
-                    revertTime=separatePlatformList.get(i).get("revertTime").toString();
+                    if(null==separatePlatformList.get(i).get("revertTime")){
+                        throw new BusinessException("还原时间必须入力！");
+                    }else{
+                        revertTime=separatePlatformList.get(i).get("revertTime").toString();
+                    }
                 }else{
                     throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
                 }
