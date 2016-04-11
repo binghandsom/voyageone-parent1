@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
-import com.voyageone.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.MappingPropType;
 
 /**
  * 获取具体到字段的 Mapping 设定的请求参数

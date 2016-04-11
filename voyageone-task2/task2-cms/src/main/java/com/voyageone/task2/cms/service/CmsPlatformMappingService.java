@@ -81,7 +81,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                     for (CmsMtPlatformCategoryTreeModel finallyCategory : finallyCategories) {
                         // 该叶子节点mapping关系没有生成过的场合
                         if (cmsMtPlatformMappingDao.isExist(channelId, cartId, finallyCategory.getCatId()) == 0) {
-//                        if (cmsMtPlatformMappingDao.getMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
+//                        if (cmsMtPlatformMappingDao.selectMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
                             $info(finallyCategory.getCatPath());
                             finallyCategory.setCartId(platformCategory.getCartId());
                             // 生成mapping关系数据并插入

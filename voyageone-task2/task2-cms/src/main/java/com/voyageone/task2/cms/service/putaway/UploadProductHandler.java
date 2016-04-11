@@ -70,7 +70,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
 
             //设置平台分类
             //进一步初始化上新的数据，放在此处必放在UploadProductService中要好，因为此处已经分线程，速度更快，UploadProductService只做最基本的任务初始化
-            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.getMappingByMainCatId(workLoadBean.getOrder_channel_id(), uploadJob.getCart_id(), masterCId);
+            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId(workLoadBean.getOrder_channel_id(), uploadJob.getCart_id(), masterCId);
             workLoadBean.setCmsMtPlatformMappingModel(cmsMtPlatformMappingModel);
 
             List<String> skus = new ArrayList<>();

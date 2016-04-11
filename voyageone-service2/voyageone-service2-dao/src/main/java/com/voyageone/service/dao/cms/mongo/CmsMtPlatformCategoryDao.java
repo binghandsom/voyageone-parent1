@@ -1,10 +1,8 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

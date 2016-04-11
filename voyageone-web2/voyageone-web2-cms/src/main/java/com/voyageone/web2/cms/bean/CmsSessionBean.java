@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean;
 
-import com.voyageone.cms.enums.CartType;
+import com.voyageone.service.model.cms.enums.CartType;
 
 import java.io.Serializable;
 import java.util.HashMap;

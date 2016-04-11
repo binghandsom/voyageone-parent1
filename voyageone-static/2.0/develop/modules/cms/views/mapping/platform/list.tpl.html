@@ -12,7 +12,7 @@
                         <select class="form-control m-r-xxs"
                                 ng-model="$ctrl.selected.cart"
                                 ng-change="$ctrl.loadCategories()"
-                                ng-options="v.value as v.name for (k,v) in $ctrl.carts"></select>
+                                ng-options="v.value as v.name for v in $ctrl.carts"></select>
                         <select class="form-control m-r-xxs"
                                 ng-model="$ctrl.matched.category"
                                 ng-options="v as k for (k, v) in $ctrl.options.category"></select>

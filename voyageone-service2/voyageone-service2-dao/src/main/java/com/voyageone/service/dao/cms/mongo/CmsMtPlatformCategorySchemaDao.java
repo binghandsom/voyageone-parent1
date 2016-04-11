@@ -1,11 +1,9 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import net.minidev.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,11 +13,6 @@ import java.util.List;
  */
 @Repository
 public class CmsMtPlatformCategorySchemaDao extends BaseMongoDao<CmsMtPlatformCategorySchemaModel> {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsMtPlatformCategorySchemaModel.class;
-    }
 
     public WriteResult deletePlatformCategorySchemaByCartId(Integer cartId){
         String queryStr = "{cartId:"+cartId+"}";

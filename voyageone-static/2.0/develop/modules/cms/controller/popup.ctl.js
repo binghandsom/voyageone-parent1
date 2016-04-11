@@ -296,7 +296,7 @@ define([
         })
         .controller('popupCtrl', popupCtrl);
 
-    function popupCtrl($scope, $modal, popActions, $q, $translate, alert) {
+    function popupCtrl($scope, $uibModal, popActions, $q, $translate, alert) {
 
         function openModel(config, context) {
 
@@ -308,7 +308,7 @@ define([
 
             var defer = $q.defer();
             require([config.controllerUrl], function () {
-                defer.resolve($modal.open(config).result);
+                defer.resolve($uibModal.open(config).result);
             });
             return defer.promise;
         }
@@ -320,7 +320,7 @@ define([
         $scope.openAuthority = openAuthority;
         function openAuthority(viewSize, data) {
             require([popActions.authority.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.authority.new.templateUrl,
                     controller: popActions.authority.new.controller,
                     size: viewSize,
@@ -340,7 +340,7 @@ define([
         $scope.openAddattributevaluenew = openAddattributevaluenew;
         function openAddattributevaluenew(viewSize, data) {
             require([popActions.addattributevaluenew.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.addattributevaluenew.new.templateUrl,
                     controller: popActions.addattributevaluenew.new.controller,
                     size: viewSize,
@@ -355,7 +355,7 @@ define([
         $scope.openAddattributevaluenews = openAddattributevaluenews;
         function openAddattributevaluenews(viewSize, data) {
             require([popActions.addattributevaluenews.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.addattributevaluenews.new.templateUrl,
                     controller: popActions.addattributevaluenews.new.controller,
                     size: viewSize,
@@ -370,7 +370,7 @@ define([
         $scope.openAddattributevalue = openAddattributevalue;
         function openAddattributevalue(viewSize, data) {
             require([popActions.addattributevalue.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.addattributevalue.new.templateUrl,
                     controller: popActions.addattributevalue.new.controller,
                     size: viewSize,
@@ -391,7 +391,7 @@ define([
         function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
             require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
                 if (selList && selList.length) {
-                    var modalInstance = $modal.open({
+                    var modalInstance = $uibModal.open({
                         templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
                         controller: popActions.bulkUpdate.addToPromotion.controller,
                         size: viewSize,
@@ -428,7 +428,7 @@ define([
         function openBulkUpdate(viewSize, selList, fnInitial) {
             require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
                 if (selList && selList.length) {
-                    var modalInstance = $modal.open({
+                    var modalInstance = $uibModal.open({
                         templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
                         controller: popActions.bulkUpdate.fieldEdit.controller,
                         size: viewSize,
@@ -497,7 +497,7 @@ define([
         $scope.openConfiguration = openConfiguration;
         function openConfiguration(viewSize, data) {
             require([popActions.configuration.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.configuration.new.templateUrl,
                     controller: popActions.configuration.new.controller,
                     size: viewSize,
@@ -517,7 +517,7 @@ define([
         $scope.openDictValue = openDictValue;
         function openDictValue(viewSize, fnInitial, $index, data) {
             require([popActions.dictionary.value.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.dictionary.value.templateUrl,
                     controller: popActions.dictionary.value.controller,
                     size: viewSize,
@@ -542,7 +542,7 @@ define([
         $scope.openDictCustom = openDictCustom;
         function openDictCustom(viewSize, fnInitial, $index, data) {
             require([popActions.dictionary.custom.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.dictionary.custom.templateUrl,
                     controller: popActions.dictionary.custom.controller,
                     size: viewSize,
@@ -612,7 +612,7 @@ define([
          */
         $scope.openCustomBaseProperty = openCustomBaseProperty;
         function openCustomBaseProperty(viewSize) {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: popActions.field.customColumn.templateUrl,
                 controllerUrl: popActions.field.customColumn.controllerUrl,
                 size: viewSize,
@@ -631,7 +631,7 @@ define([
         $scope.openTranslate = openTranslate;
         function openTranslate(viewSize, data) {
             require([popActions.field.feedDetail.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.field.feedDetail.templateUrl,
                     controller: popActions.field.feedDetail.controller,
                     size: viewSize,
@@ -651,7 +651,7 @@ define([
         $scope.openImport = openImport;
         function openImport(viewSize, data, fnInitial) {
             require([popActions.file.import.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.file.import.templateUrl,
                     controller: popActions.file.import.controller,
                     size: viewSize,
@@ -678,7 +678,7 @@ define([
         $scope.openHistoryPromotion = openHistoryPromotion;
         function openHistoryPromotion(viewSize, data) {
             require([popActions.history.promotion.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.history.promotion.templateUrl,
                     controller: popActions.history.promotion.controller,
                     size: viewSize,
@@ -698,7 +698,7 @@ define([
         $scope.openHistoryPrice = openHistoryPrice;
         function openHistoryPrice(viewSize, data, type) {
             require([popActions.history.price.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.history.price.templateUrl,
                     controller: popActions.history.price.controller,
                     size: viewSize,
@@ -720,7 +720,7 @@ define([
         $scope.openPromotion = openPromotion;
         function openPromotion(viewSize, cartList, data, fnInitial) {
             require([popActions.promotion.detail.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.promotion.detail.templateUrl,
                     controller: popActions.promotion.detail.controller,
                     size: viewSize,
@@ -746,7 +746,7 @@ define([
         /**
          * 打开promotion页面
          */
-        $scope.openTask = function (context) {
+        $scope.openNewBeatTask = function (context) {
             return openModel(popActions.promotion.newBeat, context);
         };
 
@@ -761,7 +761,7 @@ define([
         $scope.openMrbstock = openMrbstock;
         function openMrbstock(viewSize, data) {
             require([popActions.promotion.newMrbStock.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
                     controller: popActions.promotion.newMrbStock.controller,
                     size: viewSize,
@@ -781,7 +781,7 @@ define([
         $scope.openImportStock = openImportStock;
         function openImportStock(viewSize, data) {
             require([popActions.file.stock.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.file.stock.templateUrl,
                     controller: popActions.file.stock.controller,
                     size: viewSize,
@@ -801,7 +801,7 @@ define([
         $scope.openNewMrbStockSku = openNewMrbStockSku;
         function openNewMrbStockSku(viewSize, data) {
             require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.newMrbStockSku.templateUrl,
                     controller: popActions.promotion.newMrbStockSku.controller,
                     size: viewSize,
@@ -880,7 +880,7 @@ define([
         $scope.openCustomColumn = openCustomColumn;
         function openCustomColumn(viewSize, fnInitial) {
             require([popActions.custom.column.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.custom.column.templateUrl,
                     controller: popActions.custom.column.controller,
                     size: viewSize

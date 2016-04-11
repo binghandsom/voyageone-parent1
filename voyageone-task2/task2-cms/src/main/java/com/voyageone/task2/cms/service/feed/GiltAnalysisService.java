@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.common.components.gilt.GiltSkuService;
-import com.voyageone.common.components.gilt.bean.GiltCategory;
-import com.voyageone.common.components.gilt.bean.GiltImage;
-import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
-import com.voyageone.common.components.gilt.bean.GiltSku;
+import com.voyageone.components.gilt.service.GiltSkuService;
+import com.voyageone.components.gilt.bean.GiltCategory;
+import com.voyageone.components.gilt.bean.GiltImage;
+import com.voyageone.components.gilt.bean.GiltPageGetSkusRequest;
+import com.voyageone.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
