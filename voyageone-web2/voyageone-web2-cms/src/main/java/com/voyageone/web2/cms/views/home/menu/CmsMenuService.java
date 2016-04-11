@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.cms.enums.CartType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -26,10 +27,6 @@ public class CmsMenuService extends BaseAppService{
     @Autowired
     private CmsFeedCategoriesService cmsFeedCategoriesService;
 
-
-    //TODO 临时使用
-    private static final String CATEGORY_TYPE_FEED = "TH";
-
     /**
      * 获取该channel的category类型.
      * @param channelId
@@ -43,24 +40,23 @@ public class CmsMenuService extends BaseAppService{
      * 根据userId和ChannelId获取Menu列表.
      */
     public List<CmsMtCategoryTreeModel> getCategoryTreeList (String cTypeId, String channelId){
-
         try {
+            List<CmsMtCategoryTreeModel> categoryTreeList = null;
+            if (CartType.FEED.getShortName().equals(cTypeId)) {
+                // 获取Feed类目 (mongo:cms_mt_feed_category_tree)
+                categoryTreeList = cmsFeedCategoriesService.getFeedCategoryMap(channelId);
+            } else if (CartType.MASTER.getShortName().equals(cTypeId)) {
+                // 取得主数据的类目树 (mongo:cms_mt_category_tree)
+                categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
+            } else {
+                // 取得各平台类目数据 (mongo:cms_mt_platform_category_tree)
 
-            List<CmsMtCategoryTreeModel> categoryTreeList;
-
-            switch (cTypeId) {
-                case CATEGORY_TYPE_FEED:
-                    categoryTreeList = cmsFeedCategoriesService.getFeedCategoryMap(channelId);
-                    break;
-                default:
-                    // TODO 取得主数据的类目树,暂时使用feed的类目树
-                    categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
-                    break;
             }
 
             return categoryTreeList;
         } catch (IOException ex) {
-          throw new BusinessException("获取类目失败");
+            $error("获取类目失败", ex);
+            throw new BusinessException("获取类目失败");
         }
     }
 }
