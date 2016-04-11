@@ -118,6 +118,9 @@ public class StockRevertService extends BaseTaskService {
             executeByChannel(channelId, resultDataByChannel.get(channelId), new ArrayList<>(setTaskIdByChannel.get(channelId)), new ArrayList<>(setCartIdByChannel.get(channelId)));
         }
 
+        $info("处理了等待还原状态件数为%d件", cntRevert);
+        $info("处理了推送件数为%d件", cntSend);
+
     }
 
     /**

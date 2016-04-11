@@ -2832,7 +2832,7 @@ public class CmsTaskStockService extends BaseAppService {
                 // 数据行
                 boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku, mapSku);
                 if (isExecutingData && !hasExecutingData) {
-                    hasExecutingData = true;
+                    hasExecutingData = true; // batch处理中数据存在
                 }
             }
         }
@@ -2965,7 +2965,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      */
     private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku, Map<String, List<String>> mapSku) {
-        boolean isExecutingData = false; // 是否是隔离中或者还原中数据
+        boolean isExecutingData = false; // 是否是隔离中,还原中,等待隔离,等待还原的数据
 
         String model = getCellValue(row, 0); // Model
         String code = getCellValue(row, 1); // Code
@@ -3101,9 +3101,12 @@ public class CmsTaskStockService extends BaseAppService {
 
                 boolean isUpdate = false; // 更新对象
                 String dbStatus = beanInDB.getStatus();
-                if (STATUS_SEPARATING.equals(dbStatus) || STATUS_REVERTING.equals(dbStatus)) {
-                    // 隔离中或者还原中
-                    isExecutingData = true;
+                if (STATUS_SEPARATING.equals(dbStatus)
+                        || STATUS_REVERTING.equals(dbStatus)
+                        || STATUS_WAITING_SEPARATE.equals(dbStatus)
+                        || STATUS_WAITING_REVERT.equals(dbStatus)) {
+                    // 隔离中,还原中,等待隔离,等待还原
+                    isExecutingData = true; // batch处理中
                 } else {
                     if (isDYNAMIC) {
                         // 动态
