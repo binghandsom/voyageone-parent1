@@ -1,7 +1,7 @@
 package com.voyageone.common.configs;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -9,15 +9,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * KeyValue 配置文件的专用配置访问类
  * Created by Tester on 4/16/2015.
  */
 public class Properties {
-    private static final Log logger = LogFactory.getLog(Properties.class);
 
-    private static HashMap<String, String> keyValueMap;
+    private final static Logger logger = LoggerFactory.getLogger(Properties.class);
+
+    private static Map<String, String> keyValueMap;
 
     public static void init() throws IOException {
 

@@ -5,7 +5,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,23 +23,19 @@ import java.util.Map;
 public class CmsCategoryListService {
 
     @Autowired
-    CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
+    private CategorySchemaService categorySchemaService;
 
     public List<JSONObject> getCategoryList(Map<String,Object> param){
         String columnResult="{_id:1,catId:1,catFullPath:1}";
-        return cmsMtCategorySchemaDao.getSchemaList(columnResult,getSearchParams(param),(Integer)param.get("skip"),(Integer)param.get("limit"));
+        return categorySchemaService.getSchemaList(columnResult, getSearchParams(param), (Integer) param.get("skip"), (Integer) param.get("limit"));
     }
 
     public Long getCategoryCount(Map<String,Object> param){
-        return cmsMtCategorySchemaDao.getCategoryCount(getSearchParams(param));
+        return categorySchemaService.getCategoryCount(getSearchParams(param));
     }
 
-    public CmsMtCategorySchemaModel getMasterSchemaModelByCatId(String id){
-        return cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(id);
-    }
-
-    public JSONObject getMasterSchemaJsonObjectByCatId(String catId){
-        return cmsMtCategorySchemaDao.getMasterSchemaJsonObjectByCatId(catId);
+    public CmsMtCategorySchemaModel getMasterSchemaModelByCatId(String categoryId){
+        return categorySchemaService.getCmsMtCategorySchema(categoryId);
     }
 
     public CmsMtCategorySchemaModel updateCategorySchema(Map<String,Object> schemaModel, String operator){
@@ -48,23 +44,21 @@ public class CmsCategoryListService {
         // 检查数据没有没有被更新过
         if(schemaModel.get("modified").toString().equalsIgnoreCase(oldData.getModified())){
             CmsMtCategorySchemaModel masterSchemaModel = null;
-            if (schemaModel !=null){
-                List<Field> fields = SchemaJsonReader.readJsonForList((List) schemaModel.get("fields"));
-                String catFullPath = (String) schemaModel.get("catFullPath");
-                masterSchemaModel = new CmsMtCategorySchemaModel( schemaModel.get("catId").toString(),catFullPath,fields);
-                masterSchemaModel.setModifier(operator);
-                masterSchemaModel.setCreater((String) schemaModel.get("creater"));
-                masterSchemaModel.setCreated((String) schemaModel.get("created"));
-                masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
-                masterSchemaModel.set_id(schemaModel.get("_id").toString());
+            List<Field> fields = SchemaJsonReader.readJsonForList((List) schemaModel.get("fields"));
+            String catFullPath = (String) schemaModel.get("catFullPath");
+            masterSchemaModel = new CmsMtCategorySchemaModel( schemaModel.get("catId").toString(),catFullPath,fields);
+            masterSchemaModel.setModifier(operator);
+            masterSchemaModel.setCreater((String) schemaModel.get("creater"));
+            masterSchemaModel.setCreated((String) schemaModel.get("created"));
+            masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
+            masterSchemaModel.set_id(schemaModel.get("_id").toString());
 
-                List<Map<String, Object>> skuList = new ArrayList<>();
-                Map<String, Object> skuJson = (Map<String, Object>) schemaModel.get("sku");
-                skuList.add(skuJson);
-                List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
-                masterSchemaModel.setSku(skuFields.get(0));
-            }
-            cmsMtCategorySchemaDao.update(masterSchemaModel);
+            List<Map<String, Object>> skuList = new ArrayList<>();
+            Map<String, Object> skuJson = (Map<String, Object>) schemaModel.get("sku");
+            skuList.add(skuJson);
+            List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
+            masterSchemaModel.setSku(skuFields.get(0));
+            categorySchemaService.saveCategorySchema(masterSchemaModel);
             return masterSchemaModel;
         }
         throw new BusinessException("4000010",oldData.getModifier());
@@ -72,11 +66,9 @@ public class CmsCategoryListService {
 
     /**
      * 获取检索参数
-     * @param param
-     * @return
      */
     private String getSearchParams (Map<String,Object> param) {
-        StringBuffer sbResult = new StringBuffer();
+        StringBuilder sbResult = new StringBuilder();
         String cartName = String.valueOf(param.get("catName"));
         String catId = String.valueOf(param.get("catId"));
 

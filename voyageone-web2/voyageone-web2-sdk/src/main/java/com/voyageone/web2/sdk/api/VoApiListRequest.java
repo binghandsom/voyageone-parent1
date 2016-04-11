@@ -9,7 +9,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  *
  * @author chuanyu.liang
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public abstract class VoApiListRequest<T extends VoApiResponse> extends VoApiRequest<T> {
 

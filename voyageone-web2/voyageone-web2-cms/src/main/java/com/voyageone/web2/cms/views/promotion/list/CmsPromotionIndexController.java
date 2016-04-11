@@ -47,6 +47,16 @@ public class CmsPromotionIndexController extends CmsController {
         return success(cmsPromotionService.addOrUpdate(cmsBtPromotionModel));
     }
 
+    @RequestMapping(PROMOTION.LIST.INDEX.DEL_PROMOTION)
+    public AjaxResponse delPromotion(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
+        String channelId = getUser().getSelChannelId();
+        cmsBtPromotionModel.setChannelId(channelId);
+        cmsBtPromotionModel.setCreater(getUser().getUserName());
+        cmsBtPromotionModel.setModifier(getUser().getUserName());
+        return success(cmsPromotionService.delete(cmsBtPromotionModel));
+    }
+
+
     @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
     public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
             throws Exception {

@@ -2,7 +2,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -328,21 +328,19 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //lock商品
-    public boolean getLock() {
-        boolean result = false;
-        Integer lock = (Integer)getAttribute("lock");
-        if (lock != null && lock == 1) {
-            result = true;
+    public String getLock() {
+        Object lock = getAttribute("lock");
+        if (lock == null) {
+            return "";
         }
-        return result;
+        return lock.toString();
     }
 
-    public void setLock(boolean lock) {
-        int value = 0;
-        if (lock) {
-            value = 1;
+    public void setLock(String lock) {
+        if (lock == null) {
+            lock = "";
         }
-        setAttribute("lock", value);
+        setAttribute("lock", lock);
     }
 
     //状态 new/pending/ready/approved/deleted
@@ -409,7 +407,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //产品库存
     public Integer getQuantity() {
-        return getAttribute("quantity");
+        return Integer.parseInt(getAttribute("quantity").toString());
     }
     public void setQuantity(Integer quantity) {
         setAttribute("quantity", quantity);

@@ -15,9 +15,9 @@ import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.TmpOldCmsDataBean;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbProductService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -146,7 +146,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             //common schema 不存在时异常处理.
             String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
 
-            logger.error(errMsg);
+            $error(errMsg);
 
             throw new BusinessException(errMsg);
         }
@@ -354,7 +354,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 Set<Long> lngSet = new HashSet<>();
                 lngSet.add(cmsProduct.getProdId());
                 productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), lngSet, platform);
-                logger.info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
+                $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
 
                 break;
             }
@@ -378,7 +378,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         // 更新cms_tmp_old_cms_data表
         tmpOldCmsDataDao.setFinish(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id(), oldCmsDataBean.getCode());
 
-        logger.info(String.format("从天猫获取product数据到cms:[code:%s]", oldCmsDataBean.getCode()));
+        $info(String.format("从天猫获取product数据到cms:[code:%s]", oldCmsDataBean.getCode()));
 
         System.out.println("ok");
     }

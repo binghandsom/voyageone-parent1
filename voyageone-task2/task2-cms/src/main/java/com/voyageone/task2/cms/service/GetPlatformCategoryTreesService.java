@@ -16,14 +16,12 @@ import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.task2.cms.dao.BrandDao;
 import com.voyageone.task2.cms.model.PlatformCategoriesModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbCategoryService;
+import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +33,6 @@ import java.util.*;
 public class GetPlatformCategoryTreesService extends BaseTaskService{
 
     private final static String JOB_NAME = "getPlatformCategoryTreesTask";
-    private static Log logger = LogFactory.getLog(GetPlatformCategoryTreesService.class);
 
     @Autowired
     BrandDao brandDao;
@@ -67,7 +64,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         for (Iterator<ShopBean> it = shopList.iterator();it.hasNext();){
             ShopBean shop = it.next();
             if (StringUtils.isEmpty(shop.getAppKey())||StringUtils.isEmpty(shop.getAppSecret())){
-                logger.info("Cart "+shop.getCart_id()+" "+shop.getCart_name()+" 对应的app key 和 app secret key 不存在，不做处理！！！");
+                $info("Cart " + shop.getCart_id() + " " + shop.getCart_name() + " 对应的app key 和 app secret key 不存在，不做处理！！！");
                 it.remove();
             }
 
@@ -101,7 +98,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
 
         //正常结束
-        logger.info("正常结束");
+        $info("正常结束");
     }
 
     /**
@@ -129,17 +126,15 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
             // 循环一级类目，获取所有子类目
             for(ItemCat itemcat : sellerAuthorize.getItemCats()) {
                 List<ItemCat> subCats = tbCategoryService.getCategory(shop, itemcat.getCid());
-
                 // 返回错误的场合
                 if (subCats == null) {
                     return;
                 }
-
                 subCatsAll.addAll(subCats);
             }
 
             // 待处理列表
-            List<ItemCat> subCatsAllTodo = subCatsAll;
+            List<ItemCat> subCatsAllTodo = new ArrayList<>(subCatsAll);
             // 第三方平台path信息编辑
             // 循环列表
             while (true) {
@@ -199,10 +194,8 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
                     // 成功后移除
                     subCatsAllTodo.remove(i);
-
                 }
             }
-
         }
 
         /** 保存类目信息 */
@@ -230,10 +223,10 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         //删除原有类目信息
         WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
 
-        logger.info("批量删除类目 CART_ID 为："+shop.getCart_id()+"  channel id: "+shop.getOrder_channel_id() + " 的数据为: "+delCatRes.getN() + "条...");
+        $info("批量删除类目 CART_ID 为：" + shop.getCart_id() + "  channel id: " + shop.getOrder_channel_id() + " 的数据为: " + delCatRes.getN() + "条...");
 
         if(savePlatformCatModels.size()>0){
-            logger.info("保存最新的类目信息: "+ savePlatformCatModels.size() +"条记录。");
+            $info("保存最新的类目信息: " + savePlatformCatModels.size() + "条记录。");
             //保存最新的类目信息
             platformCategoryDao.insertWithList(savePlatformCatModels);
         }
@@ -250,8 +243,6 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
     /** add by lewis start 2015/11/27 */
     /**
      * 创建各渠道的平台类目层次关系.
-     *
-     * @param platformCatModelList
      */
     private List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList,int cartId,String channelId) {
         // 设置类目层次关系.
@@ -259,13 +250,12 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
         List<CmsMtPlatformCategoryTreeModel> removePlatformCatList = new ArrayList<>();
 
-        for (int i = 0; i < platformCatModelList.size(); i++) {
-            CmsMtPlatformCategoryTreeModel platformCat = platformCatModelList.get(i);
+        for (CmsMtPlatformCategoryTreeModel platformCat : platformCatModelList) {
             List<CmsMtPlatformCategoryTreeModel> subPlatformCatgories = new ArrayList<>();
-            for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext();) {
+            for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext(); ) {
 
                 CmsMtPlatformCategoryTreeModel subPlatformCatItem = (CmsMtPlatformCategoryTreeModel) assIterator.next();
-                if (subPlatformCatItem.getParentCatId().equals(platformCat.getCatId()) ) {
+                if (subPlatformCatItem.getParentCatId().equals(platformCat.getCatId())) {
                     subPlatformCatgories.add(subPlatformCatItem);
                     assIterator.remove();
                 }
@@ -275,7 +265,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
             if (!"0".equals(platformCat.getParentCatId())) {
                 //将所有非顶层类目的引用添加到待删除列表
                 removePlatformCatList.add(platformCat);
-            }else {
+            } else {
                 //设置顶层类目的信息
                 platformCat.setChannelId(channelId);
                 platformCat.setCartId(cartId);
@@ -286,10 +276,8 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
             }
 
             //为取得平台类目Schema方便，为每个叶子叶子结点添加channelId
-            if(platformCat.getIsParent().intValue()==0){
-
+            if (platformCat.getIsParent() == 0) {
                 platformCat.setChannelId(channelId);
-
             }
 
         }
@@ -303,8 +291,6 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
     /**
      * 去除重复的品牌
-     * @param brands
-     * @return
      */
     private List<Brand> removeListDuplicate(List<Brand> brands) {
         List<Brand> ret = new ArrayList<>();
@@ -340,10 +326,10 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
     public void doRebuidPlatformBrand(List<Brand> brands, ShopBean shop, String JOB_NAME) {
         //删除该店的所有品牌数据
         int delCount = brandDao.delBrandsByShop(shop);
-        logger.info("删除该店的所有品牌数据: " + delCount + "条。");
+        $info("删除该店的所有品牌数据: " + delCount + "条。");
         //插入该店的所有品牌数据
         if(brands != null && brands.size() > 0){
-            logger.info("插入该店的所有品牌数据,CartId: "+shop.getCart_id());
+            $info("插入该店的所有品牌数据,CartId: " + shop.getCart_id());
             brandDao.insertBrands(brands, shop, JOB_NAME);
         }
     }

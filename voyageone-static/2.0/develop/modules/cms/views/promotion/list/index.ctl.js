@@ -1,7 +1,8 @@
 
 define([
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function () {
+], function (_) {
 
     function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, alert) {
 
@@ -28,7 +29,7 @@ define([
 
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function (res) {
-                $scope.vm.promotionList = res.data;
+                $scope.vm.promotionList = _.where(res.data, {isAllPromotion: false});
                 $scope.groupPageOption.total = $scope.vm.promotionList.size;
             }, function (res) {
             })
@@ -38,7 +39,7 @@ define([
             confirm($translate.instant('TXT_MSG_DO_DELETE') + data.promotionName).result.then(function () {
                 var index = _.indexOf($scope.vm.promotionList, data);
                 data.isActive = false;
-                promotionService.updatePromotion(data).then(function () {
+                promotionService.delPromotion(data).then(function () {
                     $scope.vm.promotionList.splice(index, 1);
                     $scope.groupPageOption.total = $scope.vm.promotionList.size;
                 }, function (res) {

@@ -5,9 +5,9 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.JmPicBean;
 import com.voyageone.task2.cms.dao.JmPicDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
-import com.voyageone.common.components.jumei.Enums.JumeiImageType;
-import com.voyageone.common.components.jumei.JumeiImageFileService;
+import com.voyageone.components.jumei.bean.JmImageFileBean;
+import com.voyageone.components.jumei.enums.JumeiImageType;
+import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
@@ -16,8 +16,6 @@ import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -33,9 +31,6 @@ import java.util.regex.Pattern;
  */
 @Service
 public class CmsUploadJmPicService extends BaseTaskService {
-
-    /* slf4j Log */
-    private static final Logger LOG = LoggerFactory.getLogger(CmsUploadJmPicService.class);
 
     private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&*_''/‘’^\\()]");
 
@@ -97,7 +92,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
         }
         runWithThreadPool(threads, taskControlList);
         monitor.setTaskEnd();
-        LOG.info(monitor.toString());
+        $info(monitor.toString());
     }
 
     /**
@@ -114,9 +109,9 @@ public class CmsUploadJmPicService extends BaseTaskService {
         public void run() {
             List<JmPicBean> jmPicBeanList = jmPicDao.getJmPicsByImgKey(imageKey);
             if (CollectionUtils.isEmpty(jmPicBeanList)) {
-                LOG.warn("UploadTask -> run() -> jmPicBeanList为空");
+                $warn("UploadTask -> run() -> jmPicBeanList为空");
             } else {
-                LOG.info("UploadTask -> run() -> imageKey:" + imageKey);
+                $info("UploadTask -> run() -> imageKey:" + imageKey);
                 boolean noError = true;
                 String channelId=null;
                 for (JmPicBean jmPicBean : jmPicBeanList) {
@@ -125,14 +120,14 @@ public class CmsUploadJmPicService extends BaseTaskService {
                             channelId=jmPicBean.getChannelId();
                         //String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
                         String juUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean(jmPicBean));
-                        logger.info(juUrl);
+                        $info(juUrl);
                         jmPicDao.updateJmpicUploaded(juUrl, jmPicBean.getSeq(), getTaskName());
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
                         noError = false;
                         jmPicDao.updateJmpicFailedUploadModified(jmPicBean.getSeq(),getTaskName());
                         monitor.addErrorOne();
-                        LOG.error("UploadTask -> run() -> exception:" + e);
+                        $error("UploadTask -> run() -> exception:" + e);
                     }
                 }
                 if (noError) {
@@ -158,7 +153,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * @return jm_url
      * @throws IOException
      */
-    private static String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean) throws IOException {
+    private String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean) throws IOException {
         File file = new File("F:/jumei" + fileBean.getDirName());
         if (!file.exists()) {
             file.mkdirs();
@@ -170,7 +165,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             FileUtils.copyInputStreamToFile(fileBean.getInputStream(), new File(imgPath));
             return imgPath;
         } catch (IOException e) {
-            LOG.error("CmsUploadJmPicService -> mockImageFileUpload() Error:" + e);
+            $error("CmsUploadJmPicService -> mockImageFileUpload() Error:", e);
             return null;
         }
     }

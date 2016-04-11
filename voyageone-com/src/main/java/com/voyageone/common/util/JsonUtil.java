@@ -35,7 +35,7 @@ public final class JsonUtil {
         ArrayList<JsonObject> jsonList = new Gson().fromJson(jsonString, type);
 
         ArrayList<T> listCls = new ArrayList<T>();
-        if (jsonList != null && jsonList.size() > 0) {
+        if (jsonList != null && !jsonList.isEmpty()) {
             for (JsonObject json : jsonList) {
                 listCls.add(new Gson().fromJson(json, cls));
             }

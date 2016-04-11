@@ -1,5 +1,6 @@
 package com.voyageone.common.components;
 
+import com.voyageone.common.util.FixedLengthReaderUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class FixedLengthReaderTest {
     @Test
     public void testReadFile() throws Exception {
 
-        FixedLengthReader utils = new FixedLengthReader(true, false);
+        FixedLengthReaderUtil utils = new FixedLengthReaderUtil(true, false);
 
         int[] cols = {10, 5, 3, 10, 5, 3, 3};
 

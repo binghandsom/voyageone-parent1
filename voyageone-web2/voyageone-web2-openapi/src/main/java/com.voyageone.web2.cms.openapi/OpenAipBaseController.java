@@ -2,11 +2,10 @@ package com.voyageone.web2.cms.openapi;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author chuanyu.liang
  * @version 2.0.0
  */
-public abstract class OpenAipBaseController {
-
-    protected Log logger = LogFactory.getLog(getClass());
+public abstract class OpenAipBaseController extends VOAbsLoggable {
 
     /**
      * error Handler
@@ -28,9 +25,8 @@ public abstract class OpenAipBaseController {
     @ExceptionHandler(Exception.class)
     public VoApiResponse errorHandler(HttpServletRequest request, Exception exception) {
         String message = request.getRequestURL().toString();
-        System.out.println("Error Message:=" + message);
-        exception.printStackTrace();
-        logger.error(message, exception);
+        $error("Error Message:=" + message);
+        $error(message, exception);
         return buildError(request, exception);
     }
 

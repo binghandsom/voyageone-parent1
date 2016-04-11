@@ -4,16 +4,18 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.bean.Condition;
-import com.voyageone.cms.enums.MappingPropType;
-import com.voyageone.cms.enums.Operation;
-import com.voyageone.cms.enums.SrcType;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.service.bean.cms.Condition;
+import com.voyageone.service.model.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.Operation;
+import com.voyageone.service.model.cms.enums.SrcType;
 import com.voyageone.common.Constants;
-import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -149,7 +151,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name() + "产品导入主数据开始");
+            $info(channel.getFull_name() + "产品导入主数据开始");
 
             String channelId = this.channel.getOrder_channel_id();
 
@@ -193,7 +195,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 doSaveProductMainProp(feed, channelId, mapBrandMapping);
             }
 
-            logger.info(channel.getFull_name() + "产品导入主数据结束");
+            $info(channel.getFull_name() + "产品导入主数据结束");
 
         }
 
@@ -239,10 +241,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 记下log, 跳过当前记录
                     if (cmsProduct == null) {
 //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
                     } else {
 //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
-                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
                     }
 
                     return;
@@ -255,7 +257,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 没有共通mapping, 或者没有匹配完成
                         // 记下log, 跳过当前记录
 //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-                        logger.warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
 
                         return;
                     }
@@ -301,21 +303,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 }
 
-                logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+                $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
 
             } else {
                 // 不存在的场合, 新建一个product
                 cmsProduct = doCreateCmsBtProductModel(feed, mapping, mapBrandMapping);
                 if (cmsProduct == null) {
                     // 有出错, 跳过
-                    logger.error(getTaskName() + ":新增:编辑商品的时候出错:" + feed.getChannelId() + ":" + feed.getCode());
+                    $error(getTaskName() + ":新增:编辑商品的时候出错:" + feed.getChannelId() + ":" + feed.getCode());
 
                     return;
                 }
 
                 productService.createProduct(channelId, cmsProduct, getTaskName());
 
-                logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+                $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
 
             }
 
@@ -377,11 +379,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (mapBrandMapping.containsKey(feed.getBrand())) {
                     field.setBrand(mapBrandMapping.get(feed.getBrand()));
                 } else {
-                    logger.error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                    $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
                     // 记下log, 跳过当前记录
                     //                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-                    logger.warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                    $warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
                     return null;
                 }
@@ -419,7 +421,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     if (!StringUtils.isEmpty(strLongDesEn)) {
                         // TODO: 临时关掉017
                         if ("010".equals(feed.getChannelId())) {
-                            logger.info("英寸转厘米:原始:" + strLongDesEn);
+                            $info("英寸转厘米:原始:" + strLongDesEn);
                             transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
                         } else {
                             transBaiduOrg.add(strLongDesEn); // 长描述
@@ -499,7 +501,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 int cnt = tmpOldCmsDataDao.checkExist(feed.getChannelId(), feed.getCode());
                 if (cnt == 0) {
                     // 不存在, 直接跳出
-                    logger.warn(String.format("[CMS2.0][测试]feed->mapping, 未上新过, 不能直接导入.channel id: [%s], code:[%s]", feed.getChannelId(), feed.getCode()));
+                    $warn(String.format("[CMS2.0][测试]feed->mapping, 未上新过, 不能直接导入.channel id: [%s], code:[%s]", feed.getChannelId(), feed.getCode()));
                     return null;
                 }
             }
@@ -1113,7 +1115,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         } else {
                             // 记下log, 无视当前属性
 //                            logIssue(getTaskName(), String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
-                            logger.info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
+                            $info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
                         }
 
                         if (m_mulitComplex_run) {
@@ -1145,6 +1147,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param cmsProduct cms product信息
          */
         private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
+            // 查看配置表, 看看是否要自动审批价格
+            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBean(channelId, "AUTO_APPROVE_PRICE", "auto_approve_price");
+            boolean blnAutoApproveFlg;
+            if (autoApprovePrice == null || autoApprovePrice.getConfigValue1() == null || "0".equals(autoApprovePrice.getConfigValue1())) {
+                // 没有配置过, 或者 配置为空, 或者 配置了0 的场合
+                // 认为不自动审批价格 (注意: 即使不自动审批, 但如果价格击穿了, 仍然自动更新salePrice)
+                blnAutoApproveFlg = false;
+            } else {
+                // 其他的场合, 自动审批价格
+                blnAutoApproveFlg = true;
+            }
+
             ProductPriceBean model = new ProductPriceBean();
             ProductSkuPriceBean skuPriceModel;
 
@@ -1164,12 +1178,38 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 如果是新的SKU, 那么: PriceRetail -> priceSale
                 if (cmsProduct.getSku(sku.getSku()) == null) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                    skuPriceModel.setPriceChgFlg("");
                 } else if (cmsProduct.getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getSku(sku.getSku()).getPriceSale() == 0d) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                    skuPriceModel.setPriceChgFlg("");
                 } else {
                     // 之前有价格的场合, 判断是否需要把价格更新掉
-                    // TODO: 价格是否自动更新这段代码还没写
-                    // TODO: 价格击穿还没写
+
+                    // 旧sku
+                    CmsBtProductModel_Sku oldSku = cmsProduct.getSku(sku.getSku());
+
+                    // 旧价格取得
+                    Double oldPriceSale = oldSku.getPriceSale();
+
+                    if (sku.getPrice_current().compareTo(oldPriceSale) > 0) {
+                        // 新current price > 旧sale price的场合, 击穿 ("X" + 新current price - 旧sale price)
+                        // 更新标志位
+                        skuPriceModel.setPriceChgFlg("X" + (sku.getPrice_current() - oldPriceSale));
+
+                        // 更新price sale
+                        skuPriceModel.setPriceSale(sku.getPrice_current());
+
+                    } else if (sku.getPrice_current().compareTo(oldPriceSale) < 0) {
+                        // 新current price < 现sale price的场合, ("U"或"D" + ABS[ 新current - 旧sale price ])
+                        // 更新标志位
+                        skuPriceModel.setPriceChgFlg("D" + Math.abs(sku.getPrice_current() - oldPriceSale));
+
+                        // 更新price sale (设置了自动approve价格的场合)
+                        if (blnAutoApproveFlg) {
+                            skuPriceModel.setPriceSale(sku.getPrice_current());
+                        }
+                    }
+
                 }
 
                 model.addSkuPrice(skuPriceModel);

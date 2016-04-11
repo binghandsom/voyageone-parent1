@@ -68,7 +68,9 @@ public class TaskControlEnums {
         /**
          * 重试时间间隔
          */
-        retry_time_interval
+        retry_time_interval,
+
+        scheduled_time
     }
 
     /**

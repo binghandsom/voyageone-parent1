@@ -1,7 +1,7 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.Constants;
 import org.apache.commons.lang3.StringUtils;
 

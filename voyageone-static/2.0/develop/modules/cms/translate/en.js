@@ -267,6 +267,8 @@ define(function() {
         "TXT_INCREMENT_TYPE": "Increment Type",
         "TXT_INCREMENT_PERCENTAGE":"Increment percentage",
         "TXT_INCREMENT_CNT":"Increment count",
+        "TXT_TRANSSTS_ATTRIBUTE": "Translation status",
+
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_INVALID_FEILD": "Please check these fields [ <h4>{{fields}}</h4> ], then try SAVE. (。・`ω´・)",

@@ -81,7 +81,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
     // liang chang true
     private boolean unsafeMode = true;
     // liang change 5L
-    private long timeout =  TimeUnit.MILLISECONDS.convert(5L, TimeUnit.SECONDS);;
+    private long timeout =  TimeUnit.MILLISECONDS.convert(5L, TimeUnit.SECONDS);
     private boolean avroReflectionEnabled;
     private String avroSchemaUrl;
     RpcClient rpcClient = null;

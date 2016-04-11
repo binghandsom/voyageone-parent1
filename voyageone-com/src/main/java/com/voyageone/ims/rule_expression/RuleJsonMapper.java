@@ -3,6 +3,8 @@ package com.voyageone.ims.rule_expression;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -10,6 +12,9 @@ import java.io.IOException;
  * Created by Leo on 15-6-24.
  */
 public class RuleJsonMapper {
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     private ObjectMapper om;
 
     public RuleJsonMapper() {
@@ -17,43 +22,39 @@ public class RuleJsonMapper {
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public String serializeRuleWord(RuleWord word)
-    {
+    public String serializeRuleWord(RuleWord word) {
         try {
             return om.writeValueAsString(word);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public String serializeRuleExpression(RuleExpression expression)
-    {
+    public String serializeRuleExpression(RuleExpression expression) {
         try {
             return om.writeValueAsString(expression);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public RuleWord deserializeRuleWord(String json)
-    {
+    public RuleWord deserializeRuleWord(String json) {
         try {
             return om.readValue(json, RuleWord.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public RuleExpression deserializeRuleExpression(String json)
-    {
+    public RuleExpression deserializeRuleExpression(String json) {
         try {
             return om.readValue(json, RuleExpression.class);
         } catch (IOException e) {
-            System.out.println("json:" + json);
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            logger.error("json:" + json);
             return null;
         }
     }

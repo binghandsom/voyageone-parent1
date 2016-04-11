@@ -26,8 +26,6 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +38,6 @@ import java.util.*;
 public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implements MasterCategorySchemaBuildService{
 
     private final static String JOB_NAME = "buildMasterSchemaFromPlatformTask";
-
-    private static Log logger = LogFactory.getLog(MasterCatSchemaBuildFromTmallService.class);
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
@@ -67,18 +63,28 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     @Override
     public String getTaskName() {
-        return this.JOB_NAME;
+        return JOB_NAME;
     }
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        logger.info(this.JOB_NAME + " start...");
+        $info(JOB_NAME + " start...");
 
         this.buildMasterCatSchema();
 
-        logger.info(this.JOB_NAME + " finished...");
+        $info(JOB_NAME + " finished...");
 
+    }
+
+    //Field字段排序方法
+    private static void fieldsSort(List<Field> masterFields){
+        Collections.sort(masterFields,(a, b) ->{
+                //1.b为true, B前置
+                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
+                    return 1;
+                return -1;
+        });
     }
 
     public void buildMasterCatSchema() throws TopSchemaException {
@@ -89,7 +95,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         Boolean isSaveComProps =true;
 
         //删除原有数据
-        cmsMtCategorySchemaDao.deleteAll();
+//        cmsMtCategorySchemaDao.deleteAll();
 
         List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys();
 
@@ -114,7 +120,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                 comPropList.add(actionDefModel);
             }
 
-            ActionType actionType = ActionType.valueOf(Integer.valueOf(actionDefModel.getActionType()));
+            ActionType actionType = ActionType.valueOf(actionDefModel.getActionType());
 
             if(actionType != null){
                 switch (actionType){
@@ -135,6 +141,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             String id = schemaId.get("_id").toString();
             CmsMtPlatformCategorySchemaModel schemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(id);
             if (schemaModel != null){
+                if(isExist(schemaModel.getCatFullPath())) continue;
                 if (CartEnums.Cart.TG == CartEnums.Cart.getValueByID(schemaModel.getCartId().toString())) {
 
                     String itemSchema = schemaModel.getPropsItem();
@@ -280,22 +287,22 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     }
                     fieldsSort(masterFields);
                     masterModel.setFields(masterFields);
-                    masterModel.setCreater(this.JOB_NAME);
-                    masterModel.setModifier(this.JOB_NAME);
+                    masterModel.setCreater(JOB_NAME);
+                    masterModel.setModifier(JOB_NAME);
 
                     if (isSaveComProps){
-
-                        cmsMtCommonSchemaDao.deleteAll();
-                        CmsMtCommonSchemaModel comSchemaModel = new CmsMtCommonSchemaModel();
-                        comSchemaModel.setFields(comCategorySchema);
-                        WriteResult result = cmsMtCommonSchemaDao.insert(comSchemaModel);
+//                        cmsMtCommonSchemaDao.deleteAll();
+                        if(cmsMtCommonSchemaDao.count() == 0){
+                            CmsMtCommonSchemaModel comSchemaModel = new CmsMtCommonSchemaModel();
+                            comSchemaModel.setFields(comCategorySchema);
+                            cmsMtCommonSchemaDao.insert(comSchemaModel);
+                        }
                         isSaveComProps = false;
-
                     }
 
                     index++;
 
-                    logger.info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId());
+                    $info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId());
 
                     //保存主数据schema
                     cmsMtCategorySchemaDao.insert(masterModel);
@@ -305,24 +312,14 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     removeHistoryModel.setCatId(StringUtils.generCatId(schemaModel.getCatFullPath()));
                     removeHistoryModel.setCatFullPath(schemaModel.getCatFullPath());
                     removeHistoryModel.setFields(removeFields);
-                    removeHistoryModel.setCreater(this.JOB_NAME);
-                    removeHistoryModel.setModifier(this.JOB_NAME);
+                    removeHistoryModel.setCreater(JOB_NAME);
+                    removeHistoryModel.setModifier(JOB_NAME);
 
                     cmsMtPlatformFieldsRemoveHistoryDao.insert(removeHistoryModel);
                 }
             }
 
         }
-    }
-
-    //Field字段排序方法
-    private static void fieldsSort(List<Field> masterFields){
-        Collections.sort(masterFields,(a, b) ->{
-                //1.b为true, B前置
-                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
-                    return 1;
-                return -1;
-        });
     }
 
     //Sku Field字段排序方法
@@ -376,7 +373,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             }else {
                 Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
 
-                List<Field> subFields = null;
+                List<Field> subFields = new ArrayList<>();
 
                 if (parentField == null){
 
@@ -432,7 +429,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         FieldTypeEnum type = FieldTypeEnum.getEnum(defModel.getPropType());
 
-        if (!StringUtil.isEmpty(defModel.getDefaultValue())) {
+        if (!StringUtil.isEmpty(defModel.getDefaultValue()) && type != null) {
             switch (type) {
                 case LABEL:
                     LabelField labelField = (LabelField) field;
@@ -455,5 +452,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     }
 
+    private Boolean isExist(String catFullPath){
+        String parmat = String.format("{'catId':'%s'}", StringUtils.generCatId(catFullPath));
+        return cmsMtCategorySchemaDao.getCategoryCount(parmat) > 0;
+    }
 
 }

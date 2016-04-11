@@ -11,13 +11,11 @@ import com.voyageone.task2.cms.enums.TmallWorkloadStatus;
 import com.voyageone.task2.cms.model.ImageUrlMappingModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.tmall.TbPictureService;
+import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.task2.cms.bean.tcb.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.io.ByteArrayOutputStream;
@@ -29,7 +27,7 @@ import java.util.*;
  * Created by Leo on 2015/5/28.
  */
 public class UploadImageHandler extends UploadWorkloadHandler {
-    private static Log logger = LogFactory.getLog(UploadImageHandler.class);
+
     private UploadJob uploadJob;
     private TbPictureService tbPictureService;
 
@@ -90,7 +88,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         try {
             // add by lewis 2015/11/16 start...
             // check images
-            List<ImageUrlMappingModel> imageUrlMappingBeans = imageUrlMappingDao.getImageUrlMap(Integer.valueOf(uploadJob.getCart_id()),uploadJob.getChannel_id(),String.valueOf(uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getGroupId()));
+            List<ImageUrlMappingModel> imageUrlMappingBeans = imageUrlMappingDao.getImageUrlMap(uploadJob.getCart_id(),uploadJob.getChannel_id(),String.valueOf(uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getGroupId()));
 
             Map<String,String> imageUrlMap = new HashMap<>();
 
@@ -108,7 +106,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
                     uploadImageResult.add(srcUrl, destUrl);
 
                     ImageUrlMappingModel imageUrlInfo = new ImageUrlMappingModel();
-                    imageUrlInfo.setCartId(Integer.valueOf(uploadJob.getCart_id()));
+                    imageUrlInfo.setCartId(uploadJob.getCart_id());
                     imageUrlInfo.setChannelId(uploadJob.getChannel_id());
                     imageUrlInfo.setGroupId(String.valueOf(uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getGroupId()));
                     imageUrlInfo.setOrgImageUrl(decodeSrcUrl);
@@ -144,7 +142,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             uploadImageResult.setFailCause(failCause);
             logger.error("Fail to upload image: " + failCause);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             // add by lewis 2015/11/16 start...
             if(imageUrlSaveModels.size()>0)
@@ -184,7 +182,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         int waitTime = 0;
         int retry_times = 0;
         int max_retry_times = 3;
-        InputStream is = null;
+        InputStream is;
         do {
             try {
                 URL imgUrl = new URL(url);
@@ -212,9 +210,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
                         return null;
                     }
                 }
-                if (is != null) {
-                    is.close();
-                }
+                is.close();
             } catch (Exception e) {
                 logger.error("exception when upload image", e);
                 if ("Connection reset".equals(e.getMessage())) {

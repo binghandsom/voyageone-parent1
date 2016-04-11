@@ -33,16 +33,14 @@ public class CmsGroupDetailService {
     @Autowired
     private ProductService productService;
 
-    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
+    private final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups:retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus";
 
-    private final String searchProductIds = "channelId;prodId;fields.code";
+    private final static String searchProductIds = "channelId;prodId;fields.code";
 
     /**
      * 获取检索页面初始化的master data数据
-     * @param userInfo
-     * @return
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException {
 
@@ -58,10 +56,6 @@ public class CmsGroupDetailService {
 
     /**
      * 获取当前页的product列表
-     * @param params
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<CmsBtProductModel> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -77,10 +71,6 @@ public class CmsGroupDetailService {
 
     /**
      * 获取当前页的product列表
-     * @param params
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public long getProductCnt(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         String queryStr = getSearchValue(params, cmsSessionBean);
@@ -89,10 +79,6 @@ public class CmsGroupDetailService {
 
     /**
      * 获取该Group下面所有Id列表
-     * @param params
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<CmsBtProductModel> getProductIdList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -103,23 +89,20 @@ public class CmsGroupDetailService {
 
     /**
      * 获取group的检索条件
-     * @param params
-     * @param cmsSessionBean
-     * @return
      */
     private String getSearchValue (Map<String, Object> params, CmsSessionBean cmsSessionBean) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // 设置platform检索条件
-        StringBuffer resultPlatforms = new StringBuffer();
+        StringBuilder resultPlatforms = new StringBuilder();
 
         // 添加platform cart
         resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
         resultPlatforms.append(",");
 
         // 添加platform id
-        resultPlatforms.append(MongoUtils.splicingValue("groupId", Long.valueOf(Long.valueOf(params.get("id").toString()))));
+        resultPlatforms.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
         resultPlatforms.append(",");
 
         result.append(MongoUtils.splicingValue("groups.platforms"
@@ -131,8 +114,6 @@ public class CmsGroupDetailService {
 
     /**
      * update main product.
-     * @param params
-     * @return
      */
     public Map<String, Object> updateMainProduct(Map<String, Object> params, UserSessionBean userSession) {
 

@@ -59,14 +59,13 @@ public class ImsCategoryBean {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-
 		return this.clone(this);
 	}
 
 	/**
 	 * 克隆.
-	 * @param orgCategory
-	 * @return
+	 * @param orgCategory ImsCategoryBean
+	 * @return ImsCategoryBean
 	 */
 	private ImsCategoryBean clone(ImsCategoryBean orgCategory){
 
@@ -77,8 +76,6 @@ public class ImsCategoryBean {
 		List<ImsCategoryBean> categoryBeanList =new ArrayList<>();
 
 		for (ImsCategoryBean bean:orgCategory.getSubCategories()){
-
-			ImsCategoryBean subTarCategory = new ImsCategoryBean();
 			categoryBeanList.add(clone(bean));
 		}
 		target.setSubCategories(categoryBeanList);

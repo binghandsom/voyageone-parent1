@@ -12,13 +12,11 @@ import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.BrandDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbCategoryService;
-import com.voyageone.common.components.tmall.bean.ItemSchema;
+import com.voyageone.components.tmall.service.TbCategoryService;
+import com.voyageone.components.tmall.bean.ItemSchema;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.commons.beanutils.BeanUtils;
@@ -31,7 +29,6 @@ import java.util.*;
 public class GetPlatformCategorySchemaService extends BaseTaskService {
 
     private final static String JOB_NAME = "getPlatformCategorySchemaTask";
-    private static Log logger = LogFactory.getLog(GetPlatformCategorySchemaService.class);
 
     @Autowired
     BrandDao brandDao;
@@ -75,7 +72,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         }
 
         //正常结束
-        logger.info("正常结束");
+        $info("正常结束");
     }
 
 
@@ -87,7 +84,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
         List<CmsMtPlatformCategoryTreeModel> allLeaves = new ArrayList<>();
 
-        Set savedList = new HashSet<>();
+        Set<String> savedList = new HashSet<>();
 
         List<Map> allCategoryLeavesMap = new ArrayList<>();
 
@@ -119,14 +116,14 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         //删除已有的数据
         WriteResult delResult = cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCartId(cartId);
 
-        logger.info("批量删除Schema, CART_ID 为："+cartId+" 的数据为: "+delResult.getN() + "条...");
+        $info("批量删除Schema, CART_ID 为：" + cartId + " 的数据为: " + delResult.getN() + "条...");
 
         int i = 1;
         int cnt = allLeaves.size();
         for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allLeaves) {
 
             // 获取产品属性
-            logger.info("获取产品和商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
+            $info("获取产品和商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
             doSetPlatformPropTmSub(platformCategoriesModel);
 
             i++;
@@ -151,7 +148,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
         if (shopProp == null) {
-            logger.error("获取到店铺信息失败, channel_id:" + shopProp.getOrder_channel_id() + "  cart_id:" + shopProp.getCart_id());
+            $error("获取到店铺信息失败, shopProp == null");
         } else {
 
             // 调用API获取产品属性规则
@@ -160,13 +157,13 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             if (productXmlContent != null){
                 schemaModel.setPropsProduct(productXmlContent);
             } else {
-                logger.error("获取产品schema失败, CategoryId: "+platformCategoriesModel.getCatId());
+                $error("获取产品schema失败, CategoryId: " + platformCategoriesModel.getCatId());
             }
 
             // 属性规则信息
             String itemXmlContent = null;
 
-            ItemSchema result = null;
+            ItemSchema result;
 
             // 调用API获取产品属性规则
             String productIdStr =categoryProductMap.get(platformCategoriesModel.getCatId());
@@ -188,9 +185,9 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
                     itemXmlContent = result.getItemResult();
                 } else {
                     if (productIdStr != null){
-                        logger.error("获取商品schema失败, CategoryId: "+platformCategoriesModel.getCatId()+" productId: "+productIdStr + " 错误信息: " + result.getItemResult());
+                        $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " productId: " + productIdStr + " 错误信息: " + result.getItemResult());
                     } else {
-                        logger.error("获取商品schema失败, CategoryId: "+platformCategoriesModel.getCatId()+" 错误信息: " + result.getItemResult());
+                        $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " 错误信息: " + result.getItemResult());
                     }
 
                 }

@@ -18,10 +18,9 @@ public final class ImgUtils {
 	/**
 	 * 图片流取得
 	 *
-	 * @param request
-	 * @param response
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
 	 * @param imgPathPara 图片路径
-	 * @return
 	 */
 	public static boolean getPicStream(HttpServletRequest request,
 									   HttpServletResponse response,
@@ -59,23 +58,13 @@ public final class ImgUtils {
 			ips.close();
 
 			ret = true;
-		} catch (Exception e) {
-			throw e;
 		} finally {
 			if (out != null) {
-				try {
-					out.close();
-				} catch (Exception e){
-					throw e;
-				}
+				out.close();
 			}
 
 			if (ips != null) {
-				try {
-					ips.close();
-				} catch (Exception e){
-					throw e;
-				}
+				ips.close();
 			}
 		}
 		return ret;
@@ -85,7 +74,6 @@ public final class ImgUtils {
 	 * 图片路径判定 
 	 *
 	 * @param path path
-	 * @return
 	 */
 	public static boolean isLocalPath(String path) {
 		boolean ret = true;
@@ -193,8 +181,7 @@ public final class ImgUtils {
 	 */
 	public static String encodeToString(byte[] imageBytes) throws IOException {
 		BASE64Encoder encoder = new BASE64Encoder();
-		String imageString = encoder.encode(imageBytes);
-		return imageString;
+		return encoder.encode(imageBytes);
 	}
 
 //	/**
