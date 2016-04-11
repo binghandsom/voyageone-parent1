@@ -253,7 +253,8 @@ public class CmsTaskStockService extends BaseAppService {
             Calendar sysTimeCalendar = Calendar.getInstance();
             //根据活动ID取得隔离的CartID
             if(repeatList.contains(cartId))
-                throw new BusinessException("已经选择重复的店铺渠道,请确认");
+                // 不能选择重复的平台类型
+                throw new BusinessException("7000008");
             else
                 repeatList.add(cartId);
             //还原时间检查
@@ -264,15 +265,18 @@ public class CmsTaskStockService extends BaseAppService {
                 sysTimeCalendar.setTime(fmt.parse(sysTime));
                 int result=activityStartCalendar.compareTo(sysTimeCalendar);
                 if(result<=0)
-                    throw new BusinessException("参加的活动已经开始或结束");
+                    // 选择的活动已经开始或结束
+                    throw new BusinessException("7000009");
             }catch (ParseException e) {
-                throw new BusinessException("时间格式不正确,请重新确认");
+                // 时间格式不正确
+                throw new BusinessException("7000010");
             }
             //判断活动是否开始或者是否已经隔离
             List<Map<String, Object>> separateInfo= cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatFormInfoById(cartId,sysTime,channelId);
             //取得返回值
             if (separateInfo.size()!=0)
-                throw new BusinessException("隔离平台任务已经存在,请确认");
+                // 隔离平台任务已经存在
+                throw new BusinessException("7000011");
 
         }
     }
