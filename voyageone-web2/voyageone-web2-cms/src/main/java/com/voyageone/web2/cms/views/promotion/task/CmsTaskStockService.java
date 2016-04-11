@@ -268,7 +268,7 @@ public class CmsTaskStockService extends BaseAppService {
                     // 选择的活动已经开始或结束
                     throw new BusinessException("7000009");
             }catch (ParseException e) {
-                // 时间格式不正确
+                // 活动时间格式不正确
                 throw new BusinessException("7000010");
             }
             //判断活动是否开始或者是否已经隔离
@@ -412,10 +412,12 @@ public class CmsTaskStockService extends BaseAppService {
         try {
             date = format.parse(revertTime);
         } catch (Exception e) {
-            throw new BusinessException("活动时间格式不正确");
+            // 活动时间格式不正确
+            throw new BusinessException("7000010");
         }
         if (date == null)
-            throw new BusinessException("活动时间为空,请重新确认");
+            // 活动时间格式不正确
+            throw new BusinessException("7000010");
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.MINUTE, min);
@@ -721,7 +723,8 @@ public class CmsTaskStockService extends BaseAppService {
         String taskName = (String) param.get("taskName");
         //任务名称
         if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
-            throw new BusinessException("任务名称必须输入且长度小于1000！");
+            // 任务名称必须输入且长度小于1000
+            throw new BusinessException("7000012");
         }
         //增优先顺
         int[] addPriorityList=new int[separatePlatformList.size()];
@@ -746,34 +749,39 @@ public class CmsTaskStockService extends BaseAppService {
                 boolean contains = separatePlatformList.get(i).containsKey("revertTime");
                 if(contains){
                     if(null==separatePlatformList.get(i).get("revertTime")){
-                        throw new BusinessException("还原时间必须入力！");
+                        // 还原时间必须输入且类型必须是时间类型
+                        throw new BusinessException("7000013");
                     }else{
                         revertTime=separatePlatformList.get(i).get("revertTime").toString();
                     }
                 }else{
-                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
+                    // 还原时间必须输入且类型必须是时间类型
+                    throw new BusinessException("7000013");
                 }
                 //隔离平台的隔离比例
                 if(value.equals("%")){
-                    throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
+                    // 隔离平台的隔离比例必须填且为大于0小于100整数
+                    throw new BusinessException("7000014");
                 }else{
                     String[] separateValue = value.split("%");
                     if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])
                             ||separateValue[0].getBytes().length>2||separateValue.length>1) {
-                        throw new BusinessException("隔离平台的隔离比例必须填且为大于0小于100整数！");
+                        throw new BusinessException("7000014");
                     }
                 }
                 //增优先顺
                 if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.getBytes().length>1) {
-                    throw new BusinessException("增优先顺为大于0的整数！");
+                    // 增优先顺必须输入大于0的整数
+                    throw new BusinessException("7000015");
                 }
                 //减优先顺
                 if (StringUtils.isEmpty(subtractPriority)||!StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
-                    throw new BusinessException("减优先顺为大于0的整数！");
+                    // 减优先顺必须输入大于0的整数
+                    throw new BusinessException("7000016");
                 }
                 //还原时间
                 if (StringUtils.isEmpty(revertTime)) {
-                    throw new BusinessException("还原时间不能为空！");
+                    throw new BusinessException("7000013");
                 }
                 //隔离结束时间必须是时间格式
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -781,7 +789,7 @@ public class CmsTaskStockService extends BaseAppService {
                     format.setLenient(false);
                     format.parse(revertTime);
                 } catch (ParseException e){
-                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
+                    throw new BusinessException("7000013");
                 }
             }
             addPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("addPriority")));
@@ -792,7 +800,8 @@ public class CmsTaskStockService extends BaseAppService {
         for(int i=0;i<addPriorityList.length;i++){
             System.out.println(addPriorityList[i]);
             if(addPriorityList[i]!=(i+1)){
-                throw new BusinessException("增优先顺不是从1开始的连续自然数");
+                // 增优先顺不是从1开始的连续自然数
+                throw new BusinessException("7000017");
             }
         }
         Arrays.sort(subtractPriorityList);
@@ -800,7 +809,8 @@ public class CmsTaskStockService extends BaseAppService {
         for(int i=0;i<subtractPriorityList.length;i++){
             System.out.println(subtractPriorityList[i]);
             if(subtractPriorityList[i]!=(i+1)){
-                throw new BusinessException("减优先顺不是从1开始的连续自然数");
+                // 减优先顺不是从1开始的连续自然数
+                throw new BusinessException("7000018");
             }
         }
     }
@@ -1127,7 +1137,8 @@ public class CmsTaskStockService extends BaseAppService {
                     proMap.put("value",separatePlatformList.get(i).get("value").toString());
                     //可用库存(取得可用库存)
                     if(null==skuStockUsableAll.get(allSkuProEntry.getKey())){
-                        throw new BusinessException("此SKU在逻辑库存里不存在:"+allSkuProEntry.getKey());
+                        // SKU(%s)在逻辑库存表里不存在
+                        throw new BusinessException("7000019", allSkuProEntry.getKey());
                     }else{
                         usableStockInt=String.valueOf(skuStockUsableAll.get(allSkuProEntry.getKey()));
                     }
@@ -1318,13 +1329,15 @@ public class CmsTaskStockService extends BaseAppService {
         Integer seq = cmsBtStockSeparateItemDao.selectStockSeparateItemByStatus(sqlParam);
         // 库存隔离数据中是否存在状态为 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的数据,不允许删除任务
         if (seq != null) {
-            throw new BusinessException("不能删除任务！");
+            // 不能删除任务
+            throw new BusinessException("7000020");
         }
 
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart(String.valueOf(param.get("taskId")));
         if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，不能删除任务！");
+            // 活动已经开始，不能删除任务
+            throw new BusinessException("7000021");
         }
 
         simpleTransaction.openTransaction();
@@ -1840,7 +1853,8 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
         if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，不能编辑数据！");
+            // 活动已经开始，不能编辑数据
+            throw new BusinessException("7000022");
         }
 
         List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
@@ -1873,7 +1887,8 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("tableNameSuffix", "");
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                throw new BusinessException("明细对象不存在！");
+                // 明细对象不存在
+                throw new BusinessException("7000023");
             }
             // 这个页面所有sku的库存隔离信息Map
             Map<String, Object> skuDBInfo = new HashMap<String, Object>();
@@ -1906,7 +1921,8 @@ public class CmsTaskStockService extends BaseAppService {
                         if (!separationQty.equals(separateQtyDB) && !StringUtils.isEmpty(status)) {
                             // 状态为"2:隔离中"或者"6:还原中"的数据不能进行变更
                             if(STATUS_SEPARATING.equals(statusDB) || STATUS_REVERTING.equals(statusDB)) {
-                                throw new BusinessException("状态为 还原中 或者 隔离中 的明细不能进行编辑！");
+                                // 状态为 还原中 或者 隔离中 的明细不能进行编辑
+                                throw new BusinessException("7000024");
                             }
                             Map<String, Object> sqlParam1 = new HashMap<String, Object>();
                             sqlParam1.put("taskId", taskId);
@@ -1928,7 +1944,8 @@ public class CmsTaskStockService extends BaseAppService {
                                 String typeName = Types.getTypeName(63, (String) param.get("lang"), changedStatus);
                                 platformInfo.put("status", typeName);
                             } else {
-                                throw new BusinessException("明细对象不存在！");
+                                // 明细对象不存在
+                                throw new BusinessException("7000023");
                             }
 
                             // 导入前状态为"3: 隔离成功"的场合，更新隔离平台实际销售数据表(cms_bt_stock_sales_quantity)的end_flg为"1：结束"
@@ -1965,7 +1982,8 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart(taskId);
         if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，不能删除数据！");
+            // 活动已经开始，不能删除数据
+            throw new BusinessException("7000025");
         }
         simpleTransaction.openTransaction();
         try {
@@ -1976,7 +1994,8 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("tableNameSuffix", "");
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                throw new BusinessException("明细对象不存在");
+                // 明细对象不存在
+                throw new BusinessException("7000023");
             }
             for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
                 String status = (String) stockSeparateItem.get("status");
@@ -1987,7 +2006,8 @@ public class CmsTaskStockService extends BaseAppService {
                         && !STATUS_REVERT_SUCCESS.equals(status)
                         && !STATUS_REVERT_FAIL.equals(status)
                         && !STATUS_CHANGED.equals(status)) {
-                    throw new BusinessException("不能删除数据！");
+                    // 不能删除数据
+                    throw new BusinessException("7000026");
                 }
             }
 
@@ -1996,7 +2016,8 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("sku", sku);
             int delCount = cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam);
             if (delCount == 0) {
-                throw new BusinessException("明细对象不存在！");
+                // 明细对象不存在
+                throw new BusinessException("7000023");
             }
         } catch (BusinessException e) {
             simpleTransaction.rollback();
@@ -2085,7 +2106,8 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
         if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，不能新增库存隔离明细！");
+            // 活动已经开始，不能新增库存隔离明细
+            throw new BusinessException("7000027");
         }
 
         // 输入验证
