@@ -25,7 +25,7 @@ public class JmBtPromotionExportService extends BaseMQTaskService {
     CmsBtJmPromotionExportTaskService service;
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
-        System.out.println("收到消息：" + JacksonUtil.bean2Json(message));
+        System.out.println("CmsBtJmPromotionExportTaskService收到消息：" + JacksonUtil.bean2Json(message));
         int id = (int) Double.parseDouble(message.get("id").toString());
         service.export(id);
     }

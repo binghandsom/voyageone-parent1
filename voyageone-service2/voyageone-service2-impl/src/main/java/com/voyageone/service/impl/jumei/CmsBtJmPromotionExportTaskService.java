@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.jumei;
 import com.voyageone.common.help.DateHelp;
+import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
@@ -8,6 +9,7 @@ import com.voyageone.service.impl.Excel.ExportExcelInfo;
 import com.voyageone.service.impl.Excel.ExportFileExcelUtil;
 import com.voyageone.service.impl.jumei.enumjm.EnumJMProductImportColumn;
 import com.voyageone.service.impl.jumei.enumjm.EnumJMSkuImportColumn;
+import com.voyageone.service.impl.jumei.enumjm.EnumJMSkuPriceExportColumn;
 import com.voyageone.service.impl.jumei.enumjm.EnumJMSpecialImageImportColumn;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.util.MapModel;
@@ -44,27 +46,40 @@ public class CmsBtJmPromotionExportTaskService {
     }
 
     public void export(int JmBtPromotionExportTaskId) throws IOException, ExcelException {
-        CmsBtJmPromotionExportTaskModel model = dao.select(1);
-        String fileName = "/usr/JMExport" + "/Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
+        CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
+        String fileName = "Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
+        String filePath="/usr/JMExport/"+fileName;
+        model.setBeginTime(new Date());
         int TemplateType = model.getTemplateType();
-        if (TemplateType == 0) {//导入模板
-            export(fileName, null, null, null, false);
-        } else if (TemplateType == 1) {//价格修正模板
-            List<Map<String, Object>> list = null;//daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionId(model.getId());
-            ExportExcelInfo<Map<String, Object>> info = getSkuPriceInfo(list);
-            ExportFileExcelUtil.exportExcel(fileName, info);
-        } else if (TemplateType == 2) {//专场模板
+        try {
+            if (TemplateType == 0) {//导入模板
+                export(filePath, null, null, null, false);
+            } else if (TemplateType == 1) {//价格修正模板
+                List<Map<String, Object>> list = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionId(model.getCmsBtJmPromotionId());
+                ExportExcelInfo<Map<String, Object>> info = getSkuPriceInfo(list);
+                ExportFileExcelUtil.exportExcel(filePath, info);
+                model.setFileName(fileName);
 
+            } else if (TemplateType == 2) {//专场模板
+            }
         }
+        catch (Exception ex) {
+            model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
+            model.setErrorCode(1);
+            ex.printStackTrace();
+        }
+        model.setIsExport(true);
+        model.setEndTime(new Date());
+        dao.update(model);
     }
     private ExportExcelInfo<Map<String, Object>> getSkuPriceInfo( List<Map<String, Object>> dataSource) {
-        List<EnumJMSpecialImageImportColumn> listEnumColumn = EnumJMSpecialImageImportColumn.getList();
+        List<EnumJMSkuPriceExportColumn> listEnumColumn = EnumJMSkuPriceExportColumn.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("价格修正");
         info.setDisplayColumnName(true);
         info.setDataSource(dataSource);
-        for (EnumJMSpecialImageImportColumn o : listEnumColumn) {
+        for (EnumJMSkuPriceExportColumn o : listEnumColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
         return info;
