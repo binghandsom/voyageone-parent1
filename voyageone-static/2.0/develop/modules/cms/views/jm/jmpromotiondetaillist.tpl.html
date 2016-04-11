@@ -184,7 +184,7 @@
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;全量操作&nbsp;<span class="caret"></span>
 					</button>
 					<ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-						<li><a href="">全量清空</a></li>
+						<li><a href="" ng-click="deleteByPromotionId();">全量清空</a></li>
 						<li><a href="">全量上传</a></li>
 						<li><a href="">全量同步价格</a></li>
 						<li><a href="" ng-click="openDealExtension('')">全量Deal延期</a></li>
@@ -195,7 +195,7 @@
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;批量操作&nbsp;<span class="caret"></span>
 					</button>
 					<ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-						<li><a href="">批量清空</a></li>
+						<li><a href="" ng-click="deleteByProductIdList()">批量清空</a></li>
 						<li><a href="">批量上传</a></li>
 						<li><a href="">批量同步价格</a></li>
 						<li><a href=""  ng-click="openDealExtension('')">批量Deal延期</a></li>
@@ -220,7 +220,7 @@
 				<table class="table table-hover-new vo_table dropdown_table_main" style="width:1800px;margin-bottom:0px" ng-controller="popupCtrl">
 					<thead>
 					<tr>
-						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label>
+						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  /><span class="fa fa-check"></span></label>
 						</th>
 						<!--<th class="text-center">产品</th>-->
 						<th class="mfb-xxx text-left">聚美类目</th>
@@ -242,7 +242,7 @@
 					</thead>
 					<tbody ng-if="vm.modelList.length">
 					<tr ng-repeat="model in vm.modelList">
-						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></td>
+						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="model.isChecked"><span class="fa fa-check"></span></label></td>
 						<!--<td class="text-center"><img alt="100001" class="img-circle"></td>-->
 						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
 						<td class="text-center">{{model.pcId}}</td>

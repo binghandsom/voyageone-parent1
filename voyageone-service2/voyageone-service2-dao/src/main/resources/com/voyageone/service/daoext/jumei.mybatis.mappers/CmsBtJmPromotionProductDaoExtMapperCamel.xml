@@ -76,7 +76,7 @@
 
     <select id="getPromotionProductInfoListByWhere" resultType="MapModel">
         SELECT a.`id`,b.`category_lv1_name`,a.`pc_id`,a.`app_id`,b.`jumei_product_id`,b.`product_code`,a.`jm_hash_id`,b.`product_long_name`,
-b.`product_short_name`,b.`msrp`,a.`deal_price`,a.`market_price`,b.`color_en`,b.`attribute`,a.`discount`,a.`sku_count`,a.`state`,a.`synch_state`
+b.`product_short_name`,b.`msrp`,a.`deal_price`,a.`market_price`,b.`color_en`,b.`attribute`,a.`discount`,a.`sku_count`,a.`state`,a.`synch_state`,a.cms_bt_jm_product_id
 FROM `cms_bt_jm_promotion_product` AS a
 JOIN `cms_bt_jm_product` AS b ON a.`cms_bt_jm_product_id`=b.`id`
         <where>
@@ -147,4 +147,7 @@ FROM `cms_bt_jm_promotion_product`  AS a
 JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
 WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
     </select>
+    <delete id="deleteByPromotionId">
+      DELETE FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
+    </delete>
 </mapper>

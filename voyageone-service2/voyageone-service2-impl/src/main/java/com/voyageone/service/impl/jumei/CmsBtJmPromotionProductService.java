@@ -26,33 +26,33 @@ public class CmsBtJmPromotionProductService {
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
-
     public int update(CmsBtJmPromotionProductModel entity) {
         return dao.update(entity);
     }
-
     public int insert(CmsBtJmPromotionProductModel entity) {
         return dao.insert(entity);
     }
-
     public List<MapModel> getListByWhere(Map<String, Object> map) {
         return daoExt.getListByWhere(map);
     }
-
     public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
         return daoExt.getPromotionProductInfoListByWhere(map);
     }
     public int delete(int id) {
         return dao.delete(id);
     }
-
-      @VOTransactional
-    public int updateDealPrice(BigDecimal dealPrice,int id,String userName) {
-          CmsBtJmPromotionProductModel model = dao.select(id);
-          model.setDealPrice(dealPrice);
-          model.setModifier(userName);
-          dao.update(model);
-          return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
-      }
+    @VOTransactional
+    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
+        CmsBtJmPromotionProductModel model = dao.select(id);
+        model.setDealPrice(dealPrice);
+        model.setModifier(userName);
+        dao.update(model);
+        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
+    }
+    @VOTransactional
+    public void deleteByPromotionId(int promotionId) {
+        daoExt.deleteByPromotionId(promotionId);
+        daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
+    }
 }
 

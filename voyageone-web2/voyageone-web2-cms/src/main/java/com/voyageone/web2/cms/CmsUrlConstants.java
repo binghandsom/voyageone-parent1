@@ -53,6 +53,7 @@ public interface CmsUrlConstants {
                 String UPDATE = "update";
                 String UPDATEDEAlPRICE="updateDealPrice";
                 String GET = "get";
+                String DELETEBYPPROMOTIONID="deleteByPromotionId";
             }
         }
     }

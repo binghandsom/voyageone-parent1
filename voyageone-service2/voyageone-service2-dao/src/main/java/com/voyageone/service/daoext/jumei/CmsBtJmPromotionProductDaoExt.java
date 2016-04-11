@@ -18,4 +18,5 @@ public interface CmsBtJmPromotionProductDaoExt {
     public List getExportInfoListByPromotionId(int promotionId);
 
     public List getListCmsBtJmImportProductByPromotionId(int promotionId);
+    public  int deleteByPromotionId(int promotionId);
 }

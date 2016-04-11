@@ -30,6 +30,30 @@ define([
             }, function (res) {
             })
         };
+        $scope.deleteByProductIdList=function() {
+            var productIdList = [];
+            for (var i=0;i< $scope.vm.modelList.length;i++) {
+                if ($scope.vm.modelList[i].isChecked) {
+                    productIdList.push($scope.vm.modelList[i].cmsBtJmProductId);
+                }
+            }
+            var parameter={promotionId:$scope.vm.promotionId,productIdList:productIdList};
+           console.log(parameter);
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+                //jmPromotionDetailService.deleteByIdList($scope.vm.promotionId).then(function () {
+                //    $scope.vm.modelList = [];
+                //}, function (res) {
+                //})
+            });
+        }
+        $scope.deleteByPromotionId=function(){
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+                jmPromotionDetailService.deleteByPromotionId( $scope.vm.promotionId).then(function () {
+                    $scope.vm.modelList=[];
+                }, function (res) {
+                })
+            })
+        }
         $scope.del = function (data) {
             confirm($translate.instant('TXT_MSG_DO_DELETE') +data.productCode).result.then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);

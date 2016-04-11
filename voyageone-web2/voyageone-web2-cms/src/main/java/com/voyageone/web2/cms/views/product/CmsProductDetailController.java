@@ -20,10 +20,8 @@ import java.util.Map;
 @RestController
 @RequestMapping(method = RequestMethod.POST,value = CmsUrlConstants.PRODUCT.DETAIL.ROOT)
 public class CmsProductDetailController extends CmsController{
-
     @Autowired
     CmsProductDetailService productPropsEditService;
-
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params){
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
@@ -39,27 +37,17 @@ public class CmsProductDetailController extends CmsController{
 
         return success(categoryInfo);
     }
-
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_MASTER_INFO)
     public AjaxResponse doUpdateProductMasterInfo(@RequestBody Map requestMap){
-
         String channelId = getUser().getSelChannelId();
-
         String user = getUser().getUserName();
-
         String updateTime = productPropsEditService.updateProductMasterInfo(channelId, user, requestMap);
-
         Map<String,Object> updateInfo = new HashMap<>();
-
         updateInfo.put("modified",updateTime);
-
         return success(updateInfo);
-
     }
-
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_SKU_INFO)
     public AjaxResponse doUpdateProductSkuInfo(@RequestBody Map requestMap){
-
         String channelId = getUser().getSelChannelId();
         String user = getUser().getUserName();
         String categoryId = requestMap.get("categoryId").toString();
@@ -67,15 +55,10 @@ public class CmsProductDetailController extends CmsController{
         String categoryFullPath = requestMap.get("categoryFullPath").toString();
         Map skuMap = (Map) requestMap.get("skuFields");
         String modified = requestMap.get("modified").toString();
-
         String updateTime = productPropsEditService.updateProductSkuInfo(channelId, user, categoryId, productId, modified, categoryFullPath, skuMap);
-
         Map<String,Object> updateInfo = new HashMap<>();
-
         updateInfo.put("modified", updateTime);
-
         return success(updateInfo);
-
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_ALL_INFO)

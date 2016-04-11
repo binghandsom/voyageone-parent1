@@ -32,6 +32,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATE)
     public AjaxResponse update(@RequestBody CmsBtJmPromotionProductModel params) {
         String channelId = getUser().getSelChannelId();
@@ -41,6 +42,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATEDEAlPRICE)
     public AjaxResponse updateDealPrice(@RequestBody Map<String, Object> map) {
         int id = Integer.parseInt((String) map.get("id"));
@@ -52,9 +54,16 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
         serviceCmsBtJmPromotionProduct.delete(id);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
+    public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
+        serviceCmsBtJmPromotionProduct.deleteByPromotionId(promotionId);
         CallResult result = new CallResult();
         return success(result);
     }

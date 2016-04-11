@@ -13,10 +13,8 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionSkuDaoExt {
     public CmsBtJmPromotionSkuModel getBySkuCodeChannelIdCmsBtJmPromotionId(@Param("skuCode") String skuCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int CmsBtJmPromotionId);
-
     public List<Map<String, Object>> getJmSkuPriceInfoListByPromotionId(@Param("promotionId") int promotionId);
-
     public int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
-
     public List getListCmsBtJmImportSkuByPromotionId(int promotionId);
+    public int deleteByPromotionId(int promotionId);
 }

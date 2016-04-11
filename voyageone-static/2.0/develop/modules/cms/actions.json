@@ -129,7 +129,8 @@
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
         "delete": "delete",
-        "updateDealPrice": "updateDealPrice"
+        "updateDealPrice": "updateDealPrice",
+        "deleteByPromotionId":"deleteByPromotionId"
       }
     },
     "cmsBtJmPromotionImportTask":{
