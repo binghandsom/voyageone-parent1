@@ -278,9 +278,9 @@ public class StockInfoService {
      * 去除list值
      *
      * @param listSource 去除的list对象
-     * @param listRemove 要去出的值
+     * @param listRemove 要去除的值
      */
-    private void removeListValue(List<Integer> listSource, List<Integer> listRemove) {
+    public void removeListValue(List<Integer> listSource, List<Integer> listRemove) {
         listRemove.forEach(val -> listSource.remove(val));
     }
 

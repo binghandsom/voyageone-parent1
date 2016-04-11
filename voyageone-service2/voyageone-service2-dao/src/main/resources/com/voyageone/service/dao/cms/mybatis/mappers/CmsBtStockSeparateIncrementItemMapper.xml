@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="ExcelMap" type="com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean">
+        <result column="product_model" property="productModel" />
+        <result column="product_code" property="productCode" />
+        <result column="sku" property="sku" />
+        <result column="property1" property="property1" />
+        <result column="property2" property="property2" />
+        <result column="property3" property="property3" />
+        <result column="property4" property="property4" />
+        <result column="qty" property="qty" />
+        <result column="increment_qty" property="incrementQty" />
+        <result column="status" property="status" />
+        <result column="fix_flg" property="fixFlg" />
+    </resultMap>
 
     <select id="cms_bt_stock_separate_increment_item_selectStockSeparateIncrement" resultType="HashMap" parameterType="HashMap">
         select
@@ -152,7 +165,7 @@
         </if>
     </delete>
 
-    <select id="cms_bt_stock_separate_increment_item_selectExcelStockIncrementInfo" resultType="com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_increment_item_selectExcelStockIncrementInfo" resultMap="ExcelMap" parameterType="HashMap">
         select
         `product_model`,
         `product_code`,
@@ -192,13 +205,13 @@
         modifier
         ) value
         <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.sub_task_id},
+            (#{item.subTaskId},
             #{item.channelId},
-            #{item.product_model},
-            #{item.product_code},
+            #{item.productModel},
+            #{item.productCode},
             #{item.sku},
             #{item.qty},
-            #{item.increment_qty},
+            #{item.incrementQty},
             <if test="item.property1 != null" >
                 #{item.property1},
             </if>
@@ -229,7 +242,7 @@
             <if test="item.status == null" >
                 '',
             </if>
-            #{item.fix_flg},
+            #{item.fixFlg},
             now(),
             #{item.creater},
             now(),

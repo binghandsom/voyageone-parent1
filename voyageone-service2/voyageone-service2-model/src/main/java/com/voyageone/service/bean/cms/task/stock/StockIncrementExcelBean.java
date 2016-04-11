@@ -10,32 +10,32 @@ public class StockIncrementExcelBean {
         property1, property2, property3, property4
     }
 
-    private String product_model;
-    private String product_code;
+    private String productModel;
+    private String productCode;
     private String sku;
     private String property1;
     private String property2;
     private String property3;
     private String property4;
     private BigDecimal qty;
-    private BigDecimal increment_qty;
+    private BigDecimal incrementQty;
     private String status;
-    private String fix_flg;
+    private String fixFlg;
 
-    public String getProduct_model() {
-        return product_model;
+    public String getProductModel() {
+        return productModel;
     }
 
-    public void setProduct_model(String product_model) {
-        this.product_model = product_model;
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
     }
 
-    public String getProduct_code() {
-        return product_code;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setProduct_code(String product_code) {
-        this.product_code = product_code;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public String getSku() {
@@ -86,12 +86,12 @@ public class StockIncrementExcelBean {
         this.qty = qty;
     }
 
-    public BigDecimal getIncrement_qty() {
-        return increment_qty;
+    public BigDecimal getIncrementQty() {
+        return incrementQty;
     }
 
-    public void setIncrement_qty(BigDecimal increment_qty) {
-        this.increment_qty = increment_qty;
+    public void setIncrementQty(BigDecimal incrementQty) {
+        this.incrementQty = incrementQty;
     }
 
     public String getStatus() {
@@ -102,12 +102,12 @@ public class StockIncrementExcelBean {
         this.status = status;
     }
 
-    public String getFix_flg() {
-        return fix_flg;
+    public String getFixFlg() {
+        return fixFlg;
     }
 
-    public void setFix_flg(String fix_flg) {
-        this.fix_flg = fix_flg;
+    public void setFixFlg(String fixFlg) {
+        this.fixFlg = fixFlg;
     }
 
     public void setProperty(String propertyNa, String property) {

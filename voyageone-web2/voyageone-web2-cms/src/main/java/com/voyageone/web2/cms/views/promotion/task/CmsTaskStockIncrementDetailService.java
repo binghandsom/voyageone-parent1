@@ -572,8 +572,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             row = FileUtils.row(sheet, lineIndex++);
             colIndex = 0;
 
-            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProduct_model()); // Model
-            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProduct_code()); // Code
+            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProductModel()); // Model
+            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getProductCode()); // Code
             FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getSku()); // Sku
 
             // 属性
@@ -584,10 +584,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             // 可调配库存
             FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(Double.valueOf(rowData.getQty().toPlainString()));
             // 平台
-            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(Double.valueOf(rowData.getIncrement_qty().toPlainString()));
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(Double.valueOf(rowData.getIncrementQty().toPlainString()));
 
             // 固定值增量
-            if (FIXED.equals(rowData.getFix_flg())) {
+            if (FIXED.equals(rowData.getFixFlg())) {
                 // 按固定值进行增量隔离
                 FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(YES);
             }
@@ -869,10 +869,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 isAddData = true;
             } else {
                 // DB存在,更新数据
-                if (!model.equals(beanInDB.getProduct_model())) {
+                if (!model.equals(beanInDB.getProductModel())) {
                     throw new BusinessException("变更方式导入时,Model不能变更！" + "Sku=" + sku);
                 }
-                if (!code.equals(beanInDB.getProduct_code())) {
+                if (!code.equals(beanInDB.getProductCode())) {
                     throw new BusinessException("变更方式导入时,Code不能变更！" + "Sku=" + sku);
                 }
                 if (!sku.equals(beanInDB.getSku())) {
@@ -892,7 +892,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                     throw new BusinessException("变更方式导入时,可调配库存不能变更！" + "Sku=" + sku);
                 }
 
-                if (!increment_qty.equals(beanInDB.getIncrement_qty().toPlainString()) || !fix.equals(beanInDB.getFix_flg())) {
+                if (!increment_qty.equals(beanInDB.getIncrementQty().toPlainString()) || !fix.equals(beanInDB.getFixFlg())) {
                     // 数据变更，是更新对象
                     isUpdateData = true;
                 }
@@ -906,17 +906,17 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         if (isAddData || isUpdateData) {
             // 是更新对象
             StockIncrementExcelBean bean = new StockIncrementExcelBean();
-            bean.setProduct_model(model);
-            bean.setProduct_code(code);
+            bean.setProductModel(model);
+            bean.setProductCode(code);
             bean.setSku(sku);
             for (int index = 3; index <= colPlatform - 2; index++) {
                 // 属性
                 bean.setProperty(getCellCommentValue(rowHeader, index), getCellValue(row, index));
             }
             bean.setQty(new BigDecimal(usableStock));
-            bean.setIncrement_qty(new BigDecimal(increment_qty));
+            bean.setIncrementQty(new BigDecimal(increment_qty));
             bean.setStatus("0");
-            bean.setFix_flg(fix);
+            bean.setFixFlg(fix);
 
             if (isAddData) {
                 insertData.add(bean);
@@ -1003,7 +1003,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 throw new BusinessException("导入文件有数据异常");
             }
 
-            mapSaveData.put("sub_task_id", subTaskId);
+            mapSaveData.put("subTaskId", subTaskId);
             mapSaveData.put("creater", creater);
             mapSaveData.put("channelId", channelId);
 
@@ -1030,10 +1030,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     private void updateImportData(List<StockIncrementExcelBean> updateData, String subTaskId, String creater) {
         for (StockIncrementExcelBean bean : updateData) {
             Map<String, Object> mapSaveData =  new HashMap<String, Object>();
-            mapSaveData.put("sub_task_id", subTaskId);
+            mapSaveData.put("subTaskId", subTaskId);
             mapSaveData.put("sku", bean.getSku());
-            mapSaveData.put("incrementQty", bean.getIncrement_qty());
-            mapSaveData.put("fixFlg", bean.getFix_flg());
+            mapSaveData.put("incrementQty", bean.getIncrementQty());
+            mapSaveData.put("fixFlg", bean.getFixFlg());
             mapSaveData.put("modifier", creater);
 
             cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(mapSaveData);
