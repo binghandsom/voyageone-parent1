@@ -68,7 +68,7 @@
             t.creater,
             t.modified,
             t.modifier,
-            channel_id,
+            p.channel_id,
             cart_id,
             promotion_status,
             promotion_name,

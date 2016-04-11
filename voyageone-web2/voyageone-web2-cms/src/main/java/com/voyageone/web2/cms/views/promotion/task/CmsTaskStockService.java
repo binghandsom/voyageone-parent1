@@ -2461,49 +2461,6 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException("没有可以还原的数据！");
                 }
             }
-
-//            // 对库存隔离数据表进行数据还原
-//            Map<String, Object> sqlParam2 = new HashMap<String, Object>();
-//            // 选择一件sku进行库存还原的的场合,加入sku的条件
-//            if (!StringUtils.isEmpty(selSku)) {
-//                sqlParam2.put("sku", selSku);
-//            }
-//            // 更新状态为"4:等待还原"
-//            sqlParam2.put("status", STATUS_WAITING_REVERT);
-//            sqlParam2.put("modifier", param.get("userName"));
-//            // 更新条件
-//            sqlParam2.put("taskId", param.get("taskId"));
-//            // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
-//            sqlParam2.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_REVERT_FAIL));
-//            updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
-//            if (updateCnt == 0) {
-//                throw new BusinessException("没有可以还原的数据！");
-//            }
-
-//            // 对增量库存隔离数据表进行数据还原
-//            // 取得隔离对象对应的子任务id
-//            List<Integer> subTaskIdList = new ArrayList<Integer>();
-//            Map<String, Object> sqlParam = new HashMap<String, Object>();
-//            sqlParam.put("taskId", param.get("taskId"));
-//            List<Map<String, Object>> incrementTaskList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
-//            for (Map<String, Object> incrementTask : incrementTaskList) {
-//                subTaskIdList.add((Integer)incrementTask.get("sub_task_id"));
-//            }
-//
-//            Map<String, Object> sqlParam1 = new HashMap<String, Object>();
-//            // 选择一件sku进行库存还原的的场合,加入sku的条件
-//            if (!StringUtils.isEmpty(selSku)) {
-//                sqlParam1.put("sku", selSku);
-//            }
-//            // 更新状态为"5:还原"
-//            sqlParam1.put("status", STATUS_REVERT);
-//            sqlParam1.put("modifier", param.get("userName"));
-//            //更新条件
-//            sqlParam1.put("subTaskIdList", subTaskIdList);
-//            // 只对状态为"2:增量成功"的数据改变状态
-//            sqlParam1.put("statusWhere", STATUS_INCREMENT_SUCCESS);
-//            cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
-
         } catch (BusinessException e) {
             simpleTransaction.rollback();
             throw e;
@@ -3484,10 +3441,6 @@ public class CmsTaskStockService extends BaseAppService {
             sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
             sql += " and sku in (" + skuInfo + ")";
             sql += " order by sku ) t1 ";
-//            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
-//                    " and status = '" + (String) param.get("status") + "')";
-//          sql += " and exists (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s2 " + getWhereSql(param, false) +
-//                    " and status = '" + (String) param.get("status") + "' and s1.seq = s2.seq)";        }
         }
         index = 1;
         for (Map<String,Object> platformInfo : platformList) {
@@ -3528,22 +3481,6 @@ public class CmsTaskStockService extends BaseAppService {
         }
         return sql;
     }
-
-
-//    /**
-//     * 取得实时库存状态一页表示的Sku的Sql
-//     *
-//     * @param param 客户端参数
-//     * @return 一页表示的Sku的Sql
-//     */
-//    private String getRealStockPageSkuSql(Map param){
-//        String sql = "select sku from ( select distinct sku as sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
-//        sql += getWhereSql(param, true) + " order by product_code,sku) t1 ";
-//        String start = String.valueOf(param.get("start2"));
-//        String length = String.valueOf(param.get("length2"));
-//        sql += " limit " + start + "," + length;
-//        return sql;
-//    }
 
     /**
      * 取得各种状态统计数量的Sql
@@ -3741,37 +3678,5 @@ public class CmsTaskStockService extends BaseAppService {
         return value.replaceAll("\\\\", "\\\\\\\\").replaceAll("'","\\\\'").replaceAll("\"","\\\\\"")
                 .replaceAll("%","\\\\%").replaceAll("_","\\\\_");
     }
-
-
-
-
-//    /**
-//     * 状态文字转换
-//     *
-//     * @param status 转义前状态
-//     * @return 转换后的状态文字
-//     */
-//    private String getStatus(String status) {
-//        String changedStatus = "";
-//        if ("0".equals(status)) {
-//            changedStatus = "未进行";
-//        } else if ("1".equals(status)) {
-//            changedStatus = "等待隔离";
-//        } else if ("2".equals(status)) {
-//            changedStatus = "隔离成功";
-//        } else if ("3".equals(status)) {
-//            changedStatus = "隔离失败";
-//        } else if ("4".equals(status)) {
-//            changedStatus = "等待还原";
-//        } else if ("5".equals(status)) {
-//            changedStatus = "还原成功";
-//        } else if ("6".equals(status)) {
-//            changedStatus = "还原失败";
-//        } else if ("7".equals(status)) {
-//            changedStatus = "再修正";
-//        }
-//
-//        return changedStatus;
-//    }
 
 }
