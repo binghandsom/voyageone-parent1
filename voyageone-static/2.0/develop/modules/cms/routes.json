@@ -178,6 +178,16 @@
     "hash": "/system/cache/index",
     "templateUrl": "views/system/cache/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+  },
+  "system_channel_list": {
+    "hash": "/system/channel/index",
+    "templateUrl": "views/system/channel/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/channel/index.ctl"
+  },
+  "system_cart_setting": {
+    "hash": "/system/cart/index",
+    "templateUrl": "views/system/cart/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/cart/index.ctl"
   }
 
 }

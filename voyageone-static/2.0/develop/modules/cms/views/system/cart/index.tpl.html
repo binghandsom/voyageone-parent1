@@ -1,0 +1,72 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;{{'TXT_CATEGORY_INDEX' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-l-md m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CATEGORY_NAME"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="vm.searchInfo.catName">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CATEGORY_ID"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="vm.searchInfo.catId">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                                    <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <table class="table table-hover-new text-center">
+                <thead>
+                <tr>
+                    <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
+                    <th class="text-left" translate="TXT_CATEGORY_NAME"></th>
+                    <th class="text-left" translate="TXT_CATEGORY_ID"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in vm.categoryList">
+                    <td>{{$index+1+((categoryPageOption.curr - 1) * categoryPageOption.size)}}</td>
+                    <td class="text-u-l text-left"><a href="#/system/category/{{item.catId}}">{{item.catFullPath}}</a></td>
+                    <td class="text-left">{{item.catId}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <vpagination config="categoryPageOption" total="{{categoryPageOption.total}}"></vpagination>
+        </div><!-- /.box-body -->
+    </div>
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

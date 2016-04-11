@@ -1,0 +1,61 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$close()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"> SubChannelSetting</h5>
+    </div>
+    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg ng-pristine ng-valid">
+        <div class="form-group">
+            <div class="col-sm-10">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
+                            <div class="col-sm-7">
+                                <input class="form-control" ng-model="vm.searchInfo.catName" readonly>
+                            </div>
+                        </div><!-- .form-group -->
+                    </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" translate="TXT_FULL_NAME"></label>
+                        <div class="col-sm-7">
+                            <input class="form-control" ng-model="vm.searchInfo.catName" readonly>
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-7 col-sm-offset-2">
+                <div class="panel panel-default scroll-y scrollable">
+                   <div class="panel-body">
+                        <label class="col-sm-12">
+                            <div class="col-sm-10">
+                                <input type="checkbox"><span class="m-l">京东轻奢店</span>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="checkbox"><span class="m-l">京东生活店</span>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="checkbox"><span class="m-l">聚美美国馆</span>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="checkbox"><span class="m-l">天猫USJOI</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="modal-footer">
+        <button class="btn btn-default ng-binding" ng-click="cancel()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->
