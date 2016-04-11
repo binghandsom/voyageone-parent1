@@ -178,7 +178,7 @@ public class CmsTaskStockIncrementController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SAVE_TASK)
     public AjaxResponse saveTask(@RequestBody Map param) {
         //调用CmsTaskStockIncrementService
-//        cmsTaskStockIncrementService.saveIncrementInfoByTaskID(param);
+        cmsTaskStockIncrementService.saveIncrementInfoByTaskID(param);
         //返回数据的类型
         return success(param);
     }

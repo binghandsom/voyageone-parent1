@@ -11,7 +11,6 @@ import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

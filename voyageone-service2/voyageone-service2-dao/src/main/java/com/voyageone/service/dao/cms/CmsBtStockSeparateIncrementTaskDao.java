@@ -20,4 +20,12 @@ public class CmsBtStockSeparateIncrementTaskDao extends BaseDao {
     public int deleteStockSeparateIncrementTask(Map<String, Object> param) {
         return delete("cms_bt_stock_separate_increment_task_deleteStockSeparateIncrementTask", param);
     }
+
+    public int insertStockSeparateIncrementTask(Map<String, Object> param) {
+        return insert("insert_cms_bt_stock_separate_increment_task_by_taskId", param);
+    }
+
+    public int updateStockSeparateIncrementTask(Map<String, Object> param) {
+        return update("update_cms_bt_stock_separate_increment_task_by_taskId", param);
+    }
 }
