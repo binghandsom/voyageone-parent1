@@ -12,5 +12,6 @@
                  AND cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
         </where>
+        order by id desc
     </select>
 </mapper>

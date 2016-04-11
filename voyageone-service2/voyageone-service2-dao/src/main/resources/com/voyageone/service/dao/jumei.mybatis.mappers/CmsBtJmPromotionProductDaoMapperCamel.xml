@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`        from cms_bt_jm_promotion_product
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`        from cms_bt_jm_promotion_product
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -69,10 +69,13 @@
                                 <if test="skuCount != null">
                         AND sku_count = #{skuCount}
                     </if>
+                                <if test="quantity != null">
+                        AND quantity = #{quantity}
+                    </if>
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count` from cms_bt_jm_promotion_product 
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity` from cms_bt_jm_promotion_product 
         <where>
                 
                     <if test="id != null">
@@ -154,10 +157,14 @@
                     <if test="skuCount != null">
                         AND sku_count = #{skuCount}
                     </if> 
+                
+                    <if test="quantity != null">
+                        AND quantity = #{quantity}
+                    </if> 
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count` from cms_bt_jm_promotion_product where id=#{id}
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity` from cms_bt_jm_promotion_product where id=#{id}
     </select>
 
      <update id="update">
@@ -180,6 +187,7 @@
             ,`discount`=#{discount}
             ,`error_msg`=#{errorMsg}
             ,`sku_count`=#{skuCount}
+            ,`quantity`=#{quantity}
          where id=#{id}   
    </update>
 
@@ -210,7 +218,8 @@
               `pc_id`,
               `discount`,
               `error_msg`,
-              `sku_count`
+              `sku_count`,
+              `quantity`
         )
         VALUES(
               #{channelId},
@@ -231,7 +240,8 @@
               #{pcId},
               #{discount},
               #{errorMsg},
-              #{skuCount}
+              #{skuCount},
+              #{quantity}
         )
     </insert>
 </mapper>

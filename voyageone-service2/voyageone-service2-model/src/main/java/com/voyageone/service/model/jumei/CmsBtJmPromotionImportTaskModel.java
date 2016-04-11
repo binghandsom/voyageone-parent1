@@ -69,7 +69,7 @@ public class CmsBtJmPromotionImportTaskModel implements Serializable
     
     
  /**
-0:导入成功  1:读取文件错误 2：导入失败(生成失败记录文件)
+0:导入成功  1:导入异常    2：(生成失败记录文件)
         */
      private int errorCode;
     
@@ -232,7 +232,7 @@ this.failuresFileName="";
     
         
          /**
-           0:导入成功  1:读取文件错误 2：导入失败(生成失败记录文件)
+           0:导入成功  1:导入异常    2：(生成失败记录文件)
         */
         public int getErrorCode()
         {

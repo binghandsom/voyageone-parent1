@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey        from cms_bt_jm_product_images
+        select `id`,`channel_id`,`product_code`,`image_type_name`,`image_type`,`image_index`,`origin_url`,`jm_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`,`productImageUrlKey`,`cms_bt_jm_product_id`        from cms_bt_jm_product_images
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -51,10 +51,13 @@
                                 <if test="productImageUrlKey != null">
                         AND productImageUrlKey = #{productImageUrlKey}
                     </if>
+                                <if test="cmsBtJmProductId != null">
+                        AND cms_bt_jm_product_id = #{cmsBtJmProductId}
+                    </if>
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey from cms_bt_jm_product_images 
+        select `id`,`channel_id`,`product_code`,`image_type_name`,`image_type`,`image_index`,`origin_url`,`jm_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`,`productImageUrlKey`,`cms_bt_jm_product_id` from cms_bt_jm_product_images 
         <where>
                 
                     <if test="id != null">
@@ -112,10 +115,14 @@
                     <if test="productImageUrlKey != null">
                         AND productImageUrlKey = #{productImageUrlKey}
                     </if> 
+                
+                    <if test="cmsBtJmProductId != null">
+                        AND cms_bt_jm_product_id = #{cmsBtJmProductId}
+                    </if> 
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey from cms_bt_jm_product_images where id=#{id}
+        select `id`,`channel_id`,`product_code`,`image_type_name`,`image_type`,`image_index`,`origin_url`,`jm_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`,`productImageUrlKey`,`cms_bt_jm_product_id` from cms_bt_jm_product_images where id=#{id}
     </select>
 
      <update id="update">
@@ -130,9 +137,9 @@
             ,`origin_url`=#{originUrl}
             ,`jm_url`=#{jmUrl}
             ,`syn_flg`=#{synFlg}
-            ,`modified`=#{modified}
             ,`modifier`=#{modifier}
             ,`productImageUrlKey`=#{productImageUrlKey}
+            ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
          where id=#{id}   
    </update>
 
@@ -157,7 +164,8 @@
               `creater`,
               `modified`,
               `modifier`,
-              `productImageUrlKey`
+              `productImageUrlKey`,
+              `cms_bt_jm_product_id`
         )
         VALUES(
               #{channelId},
@@ -172,7 +180,8 @@
               #{creater},
               #{modified},
               #{modifier},
-              #{productImageUrlKey}
+              #{productImageUrlKey},
+              #{cmsBtJmProductId}
         )
     </insert>
 </mapper>

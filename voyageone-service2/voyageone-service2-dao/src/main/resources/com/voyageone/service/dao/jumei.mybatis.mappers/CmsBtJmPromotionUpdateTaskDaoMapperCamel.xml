@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater        from cms_bt_jm_promotion_update_task
+        select `id`,`jm_bt_promotion_id`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater`        from cms_bt_jm_promotion_update_task
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -36,7 +36,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater from cms_bt_jm_promotion_update_task 
+        select `id`,`jm_bt_promotion_id`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater` from cms_bt_jm_promotion_update_task 
         <where>
                 
                     <if test="id != null">
@@ -73,7 +73,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater from cms_bt_jm_promotion_update_task where id=#{id}
+        select `id`,`jm_bt_promotion_id`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater` from cms_bt_jm_promotion_update_task where id=#{id}
     </select>
 
      <update id="update">

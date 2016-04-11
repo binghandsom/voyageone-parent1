@@ -11,18 +11,127 @@ public class CmsBtJmImportSpecialImage {
     String  productImageUrlKey4;
     String  productImageUrlKey5;
     String  productImageUrlKey6;
+    String  productImageUrlKey7;
+    String  productImageUrlKey8;
+    String  productImageUrlKey9;
+    String  productImageUrlKey10;
     String specialImage1;//商品定制图片
     String specialImage2;
     String specialImage3;
     String specialImage4;
     String specialImage5;
     String specialImage6;
+    String specialImage7;
+    String specialImage8;
+    String specialImage9;
+    String specialImage10;
+
+    public String getProductImageUrlKey7() {
+        return productImageUrlKey7;
+    }
+
+    public void setProductImageUrlKey7(String productImageUrlKey7) {
+        this.productImageUrlKey7 = productImageUrlKey7;
+    }
+
+    public String getProductImageUrlKey8() {
+        return productImageUrlKey8;
+    }
+
+    public void setProductImageUrlKey8(String productImageUrlKey8) {
+        this.productImageUrlKey8 = productImageUrlKey8;
+    }
+
+    public String getProductImageUrlKey9() {
+        return productImageUrlKey9;
+    }
+
+    public void setProductImageUrlKey9(String productImageUrlKey9) {
+        this.productImageUrlKey9 = productImageUrlKey9;
+    }
+
+    public String getProductImageUrlKey10() {
+        return productImageUrlKey10;
+    }
+
+    public void setProductImageUrlKey10(String productImageUrlKey10) {
+        this.productImageUrlKey10 = productImageUrlKey10;
+    }
+
+    public String getSpecialImage7() {
+        return specialImage7;
+    }
+
+    public void setSpecialImage7(String specialImage7) {
+        this.specialImage7 = specialImage7;
+    }
+
+    public String getSpecialImage8() {
+        return specialImage8;
+    }
+
+    public void setSpecialImage8(String specialImage8) {
+        this.specialImage8 = specialImage8;
+    }
+
+    public String getSpecialImage9() {
+        return specialImage9;
+    }
+
+    public void setSpecialImage9(String specialImage9) {
+        this.specialImage9 = specialImage9;
+    }
+
+    public String getSpecialImage10() {
+        return specialImage10;
+    }
+
+    public void setSpecialImage10(String specialImage10) {
+        this.specialImage10 = specialImage10;
+    }
+
+    public String getPropertyImage7() {
+        return propertyImage7;
+    }
+
+    public void setPropertyImage7(String propertyImage7) {
+        this.propertyImage7 = propertyImage7;
+    }
+
+    public String getPropertyImage8() {
+        return propertyImage8;
+    }
+
+    public void setPropertyImage8(String propertyImage8) {
+        this.propertyImage8 = propertyImage8;
+    }
+
+    public String getPropertyImage9() {
+        return propertyImage9;
+    }
+
+    public void setPropertyImage9(String propertyImage9) {
+        this.propertyImage9 = propertyImage9;
+    }
+
+    public String getPropertyImage10() {
+        return propertyImage10;
+    }
+
+    public void setPropertyImage10(String propertyImage10) {
+        this.propertyImage10 = propertyImage10;
+    }
+
     String propertyImage1;//商品参数图
     String propertyImage2;
     String propertyImage3;
     String propertyImage4;
     String propertyImage5;
     String propertyImage6;
+    String propertyImage7;
+    String propertyImage8;
+    String propertyImage9;
+    String propertyImage10;
 
     public String getProductCode() {
         return productCode;
