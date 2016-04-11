@@ -11,7 +11,7 @@ import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsMtCommonPropDefDao;
+import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -35,7 +35,7 @@ import java.util.Map;
 public class CmsFieldEditService extends BaseAppService {
 
     @Autowired
-    private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
+    private CategorySchemaService categorySchemaService;
 
     @Autowired
     private ProductService productService;
@@ -47,7 +47,7 @@ public class CmsFieldEditService extends BaseAppService {
      */
     public List<CmsMtCommonPropDefModel> getPopOptions(String language, String channel_id) {
 
-        List<CmsMtCommonPropDefModel> modelList = cmsMtCommonPropDefDao.selectAll();
+        List<CmsMtCommonPropDefModel> modelList = categorySchemaService.getALLCommonPropDef();
         List<CmsMtCommonPropDefModel> resultList = new ArrayList<>();
 
         for (CmsMtCommonPropDefModel model : modelList) {
@@ -112,9 +112,6 @@ public class CmsFieldEditService extends BaseAppService {
 
     /**
      * 根据request值获取需要更新的Field数据
-     *
-     * @param params
-     * @return
      */
     private Object[] getPropValue(Map<String, Object> params) {
         try {
@@ -165,8 +162,6 @@ public class CmsFieldEditService extends BaseAppService {
 
     /**
      * 返回OptionField数据.
-     * @param field
-     * @return
      */
     private OptionsField getOptions (Field field, String language, String channelId) {
 
@@ -186,7 +181,7 @@ public class CmsFieldEditService extends BaseAppService {
             optionsField.setOptions(options);
         } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
             // 获取type channel bean
-            List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
+            List<TypeChannelBean> typeChannelBeanList;
             if (FIELD_SKU_CARTS.equals(field.getId())) {
                 typeChannelBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
             } else {
@@ -195,11 +190,13 @@ public class CmsFieldEditService extends BaseAppService {
 
             // 替换成field需要的样式
             List<Option> options = new ArrayList<>();
-            for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
-                Option opt = new Option();
-                opt.setDisplayName(typeChannelBean.getName());
-                opt.setValue(typeChannelBean.getValue());
-                options.add(opt);
+            if (typeChannelBeanList != null) {
+                for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                    Option opt = new Option();
+                    opt.setDisplayName(typeChannelBean.getName());
+                    opt.setValue(typeChannelBean.getValue());
+                    options.add(opt);
+                }
             }
             optionsField.setOptions(options);
         }

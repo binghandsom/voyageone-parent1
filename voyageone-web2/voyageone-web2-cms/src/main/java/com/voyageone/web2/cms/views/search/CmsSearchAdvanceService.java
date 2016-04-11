@@ -21,7 +21,6 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
-import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.ArrayUtils;
@@ -58,8 +57,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
     @Autowired
     private TagService tagService;
     @Autowired
-    private CmsFeedCustPropService cmsFeedCustPropService;
-    @Autowired
     private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
 
     // 查询产品信息时的缺省输出列
@@ -80,9 +77,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取检索页面初始化的master data数据
-     *
-     * @param userInfo
-     * @return
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException {
 
@@ -125,11 +119,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 返回当前页的group列表
-     *
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<CmsBtProductModel> getGroupList(List<CmsBtProductModel> productList, CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -196,9 +185,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 取得当前主商品所在组的所有商品的图片
-     *
-     * @param groupsList
-     * @return
      */
     public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
         JomgoQuery queryObj = new JomgoQuery();
@@ -250,9 +236,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
-     *
-     * @param groupsList
-     * @return
      */
     public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
         List[] rslt = null;
@@ -361,11 +344,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取当前页的product列表
-     *
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<CmsBtProductModel> getProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -379,11 +357,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取当前页的product列表Cnt
-     *
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public long getProductCnt(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         return productService.getCnt(userInfo.getSelChannelId(), getSearchQuery(searchValue, cmsSessionBean, false));
@@ -391,13 +364,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取数据文件内容
-     *
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
-     * @throws IOException
-     * @throws InvalidFormatException
      */
     public byte[] getCodeExcelFile(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean)
             throws IOException, InvalidFormatException {
@@ -469,17 +435,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
-     *
-     * @param searchValue
-     * @param cmsSessionBean
-     * @return
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // 设置platform检索条件
-        StringBuffer resultPlatforms = new StringBuffer();
+        StringBuilder resultPlatforms = new StringBuilder();
 
         // 添加platform cart
         resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
@@ -528,12 +490,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取其他检索条件
-     *
-     * @param searchValue
-     * @return
      */
     private String getSearchValueForMongo(CmsSearchInfoBean searchValue) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // 获取category Id
         if (searchValue.getCatPath() != null) {
@@ -688,7 +647,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      *
      * @param book          输出Excel文件对象
      * @param items         待输出DB数据
-     * @param cartId
+     * @param cartId        cartId
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
@@ -716,9 +675,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
              */
         Sheet sheet = book.getSheetAt(0);
 
-        for (int i = 0; i < items.size(); i++) {
-
-            CmsBtProductModel item = items.get(i);
+        for (CmsBtProductModel item : items) {
 
             Row row = FileUtils.row(sheet, startRowIndex);
 
@@ -799,12 +756,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取排序规则
-     *
-     * @param searchValue
-     * @return
      */
     private String setSortValue(CmsSearchInfoBean searchValue) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // 获取排序字段1
         if (searchValue.getSortOneName() != null) {
