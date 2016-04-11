@@ -314,7 +314,22 @@ define([
                         "size": 'md',
                         "backdrop": "static"
                     }
-                }
+                },
+                "dealextension":{
+                    "templateUrl": "views/pop/jm/dealextension.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
+                    "controller": 'popDealExtensionCtl'
+                },
+                "pricemodify":{
+                    "templateUrl": "views/pop/jm/pricemodify.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
+                    "controller": 'popPriceModifyCtl'
+                },
+                "imagesetting":{
+                    "templateUrl": "views/pop/jm/imagesetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/imagesetting.ctl",
+                    "controller": 'popImageSettingCtl'
+                },
             }
         })
         .controller('popupCtrl', popupCtrl);
@@ -901,6 +916,19 @@ define([
             return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
         };
 
+
+        //聚美一览中，deal延期
+        $scope.openDealExtension = function (context) {
+            return openModel(popActions.jumei.dealextension, context);
+        };
+        //聚美一览中，price
+        $scope.openPriceModify = function (context) {
+            return openModel(popActions.jumei.pricemodify, context);
+        };
+        //聚美图片管理中，追加按钮
+        $scope.openImageSetting = function (context) {
+            return openModel(popActions.jumei.imagesetting, context);
+        };
 
         $scope.openJmProductDetail = function (context) {
             return openModel(popActions.jumei.jmProductDetail.detail, context);

@@ -1,0 +1,63 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;Jumei Activity Common Image Setting</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label" popover-title="{{'TXT_PLATFORM_CATEGORY' | translate}}">{{'TXT_PLATFORM_CATEGORY' | translate}}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" readonly="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" popover-title="{{'TXT_PLATFORM_CATEGORY' | translate}}">{{'TXT_PLATFORM_CATEGORY' | translate}}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" readonly="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" popover-title="{{'TXT_PLATFORM_CATEGORY' | translate}}">{{'TXT_PLATFORM_CATEGORY' | translate}}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" readonly="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" popover-title="{{'TXT_PLATFORM_CATEGORY' | translate}}">{{'TXT_PLATFORM_CATEGORY' | translate}}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" readonly="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Data Type</label>
+                <div class="col-sm-7 input-group">
+                    <select class="form-control">
+                        <option value="品牌一">品牌一</option>
+                        <option value="品牌二">品牌二</option>
+                        <option value="品牌三">品牌三</option>
+                    </select>
+                    <span class="input-group-addon">(Data Type ID)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Index</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" readonly="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Origin URL</label>
+                <div class="col-sm-7">
+                    <textarea class="form-control" rows="8"></textarea>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+    </div>
+</div><!-- .vo_modal -->

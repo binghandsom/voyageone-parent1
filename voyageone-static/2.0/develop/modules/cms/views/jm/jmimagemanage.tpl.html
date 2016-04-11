@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="$ctrl.initialize()">
+<div class="wrapper-md" ng-init="initialize()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
@@ -127,10 +127,10 @@
 						<td><textarea class="form-control no-resize" rows="3" ng-model="imageData.value2" readonly></textarea></td>
 						<td ng-bind="imageData.modified"></td>
 						<td class="text-left" ng-bind="imageData.errorMessage"></td>
-						<td class="text-center">
+						<td class="text-center" ng-controller="popupCtrl">
 							<button title="重刷" class="btn btn-success btn-xs" ng-click="$ctrl.reUpload(imageData)" ng-disabled="imageData.value1 == ''"><i class="fa fa-refresh"></i></button>
 							<button title="保存" class="btn btn-vo btn-xs" ng-click="$ctrl.saveImage(imageData)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-							<button title="追加" class="btn btn-success btn-xs" ng-click="$ctrl.addImage(imageData, $index)"><i class="fa fa-plus"></i></button>
+							<button title="追加" class="btn btn-success btn-xs" ng-click="openImageSetting()"><i class="fa fa-plus"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs" ng-click="$ctrl.deleteImage(imageData)" ng-disabled="imageData.imageIndex == 1"><i class="fa  fa-trash-o"></i></button>
 						</td>
 					</tr>
