@@ -203,19 +203,98 @@ public class StockRevertService extends BaseTaskService {
                     throw new BusinessException("数据已经变化,请确认！");
                 }
 
+                Map<Integer, Map<String, Object>> mapDataByCart = new HashMap<>(); // Map<平台, data>
+                Map<Integer, Integer> cartSeq = new HashMap<>(); // Map<平台, seq>
                 for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
                     String sku = entry.getKey();
                     List<Map<String, Object>> listData = entry.getValue();
+                    Integer qty = skuStockUsableAll.get(sku); // 可用库存
+
+                    mapDataByCart.clear();
+                    cartSeq.clear();
+                    for (Map<String, Object> data : listData) {
+                        Integer cartId = (Integer) data.get("cart_id");
+                        mapDataByCart.put(cartId, data);
+                        cartSeq.put(cartId, (Integer) data.get("seq"));
+                    }
 
                     // 还原平台
-
+                    for (Integer revertCartId : listRevertCartId) {
+                        Map<String, Object> data = mapDataByCart.get(revertCartId);
+                        if (data == null) {
+                            // 动态隔离
+                            // 更新ims_bt_log_syn_inventory
+                            listImsBtLogSynInventory.add(
+                                    stockInfoService.createMapImsBtLogSynInventory(
+                                            channelId,
+                                            revertCartId,
+                                            sku,
+                                            qty,
+                                            stockInfoService.SYN_TYPE_ALL,
+                                            null,
+                                            null,
+                                            getTaskName()));
+                        } else {
+                            // 还原
+                            // 更新ims_bt_log_syn_inventory
+                            listImsBtLogSynInventory.add(
+                                    stockInfoService.createMapImsBtLogSynInventory(
+                                            channelId,
+                                            revertCartId,
+                                            sku,
+                                            qty,
+                                            stockInfoService.SYN_TYPE_ALL,
+                                            cartSeq.get(revertCartId),
+                                            stockInfoService.STATUS_REVERTING,
+                                            getTaskName()));
+                        }
+                    }
 
                     // 隔离中task的动态隔离数据
-
+                    Set<Integer> setCartDynamic = mapSkuDynamic.get(sku);
+                    if (setCartDynamic != null) {
+                        // 动态隔离数据
+                        for (Integer cartDynamic : setCartDynamic) {
+                            // 更新ims_bt_log_syn_inventory
+                            listImsBtLogSynInventory.add(
+                                    stockInfoService.createMapImsBtLogSynInventory(
+                                            channelId,
+                                            cartDynamic,
+                                            sku,
+                                            qty,
+                                            stockInfoService.SYN_TYPE_ALL,
+                                            null,
+                                            null,
+                                            getTaskName()));
+                        }
+                    }
 
                     // 共享平台
+                    for (Integer cartShare : listShareCartId) {
+                        // 更新ims_bt_log_syn_inventory
+                        listImsBtLogSynInventory.add(
+                                stockInfoService.createMapImsBtLogSynInventory(
+                                        channelId,
+                                        cartShare,
+                                        sku,
+                                        qty,
+                                        stockInfoService.SYN_TYPE_ALL,
+                                        null,
+                                        null,
+                                        getTaskName()));
+                    }
 
+                    // 一个sku结束
+                    if (listImsBtLogSynInventory.size() > 500) {
+                        cntSend += stockInfoService.insertImsBtLogSynInventory(listImsBtLogSynInventory);
+                        listImsBtLogSynInventory.clear();
+                    }
+                }
 
+                // end
+                if (listImsBtLogSynInventory.size() > 0) {
+                    cntSend += stockInfoService.insertImsBtLogSynInventory(listImsBtLogSynInventory);
+                    listImsBtLogSynInventory.clear();
                 }
             });
         } catch (Exception e) {

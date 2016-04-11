@@ -101,7 +101,7 @@ public class StockIncrementService extends BaseTaskService {
             // 取得 有增量接口的平台
             List<TypeBean> typeBeanList = Types.getTypeList(69, "en");
             if (typeBeanList.size() == 0) {
-                logger.error("请配置有增量接口的平台");
+                $error("请配置有增量接口的平台");
                 throw new BusinessException("请配置有增量接口的平台");
             }
             for (TypeBean typeBean : typeBeanList) {
@@ -453,7 +453,7 @@ public class StockIncrementService extends BaseTaskService {
 
             // 出现数值不整合，不能将负值刷到平台上
             if (stockValue + stockIncreasedValue - salesValue < 0) {
-                logger.error("一般隔离库存值 + 已增量值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
+                $error("一般隔离库存值 + 已增量值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
                 throw new BusinessException("一般隔离库存值 + 已增量值 - 平台销售数量 < 0, 数据不整合。渠道id:" + channelId + ",平台id:" + cartId + ",SKU:" + sku);
             }
 
