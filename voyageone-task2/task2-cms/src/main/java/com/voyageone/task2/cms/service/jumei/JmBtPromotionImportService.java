@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.JacksonUtil;

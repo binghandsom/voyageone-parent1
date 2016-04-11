@@ -9,4 +9,12 @@
         select  *   from cms_bt_jm_promotion_sku  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and sku_code=#{skuCode} limit 1
     </select>
 
+    <select id="getJmSkuPriceInfoListByPromotionId" resultType="MapModel">
+SELECT a.jm_hash_id as jmHashId,b.sku_code as skuCode,b.deal_price as dealPrice,b.market_price as marketPrice   FROM cms_bt_jm_promotion_product  AS a
+JOIN  `cms_bt_jm_promotion_sku` AS b ON a.`cms_bt_jm_product_id`=b.`cms_bt_jm_product_id`
+WHERE a.`cms_bt_jm_promotion_id`=#{promotionId}  AND b.`cms_bt_jm_promotion_id`=#{promotionId}
+    </select>
+    <update id="updateDealPrice">
+         UPDATE  `cms_bt_jm_promotion_sku` SET deal_price=#{dealPrice} WHERE `cms_bt_jm_product_id`=#{productId}
+    </update>
 </mapper>
