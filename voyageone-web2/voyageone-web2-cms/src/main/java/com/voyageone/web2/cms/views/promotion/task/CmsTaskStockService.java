@@ -2707,7 +2707,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map> paramPlatformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), List.class);
 
         // 库存隔离数据取得
-        logger.info("库存隔离数据取得开始, task_id=" + task_id);
+        $info("库存隔离数据取得开始, task_id=" + task_id);
         Map searchParam = new HashMap();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
         searchParam.put("whereSql", " where task_id= '" + task_id + "'");
@@ -2723,19 +2723,19 @@ public class CmsTaskStockService extends BaseAppService {
                 }});
             }
         }
-        logger.info("库存隔离数据取得结束");
+        $info("库存隔离数据取得结束");
 
-        logger.info("导入Excel取得并check的处理开始");
+        $info("导入Excel取得并check的处理开始");
         Map<String, List<String>> mapSku = new HashMap<String, List<String>>();
         List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
-        logger.info("导入Excel取得并check的处理结束");
+        $info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
-            logger.info("更新开始");
+            $info("更新开始");
             saveImportData(saveData, mapSku, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
-            logger.info(String.format("更新结束,更新了%d件", saveData.size()));
+            $info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
-            logger.info("没有更新对象");
+            $info("没有更新对象");
             throw new BusinessException("没有更新对象");
         }
     }
@@ -3168,7 +3168,7 @@ public class CmsTaskStockService extends BaseAppService {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("更新异常,请重新尝试！");
         }
     }
