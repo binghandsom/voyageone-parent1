@@ -184,7 +184,7 @@
         `product_model`,`product_code`,`sku`
     </select>
 
-    <insert id="cms_bt_stock_separate_increment_item_insertStockSeparateIncrementItemFromExcel" parameterType="List">
+    <insert id="cms_bt_stock_separate_increment_item_insertStockSeparateIncrementItemByList" parameterType="List">
         insert into voyageone_cms2.cms_bt_stock_separate_increment_item (
         sub_task_id,
         channel_id,

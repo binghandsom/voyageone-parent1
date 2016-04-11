@@ -258,7 +258,7 @@ define(function(){
         "TXT_SEPARATE_PROPORTION":"隔离比例",
         "TXT_REVERT_TIME":"还原时间",
         "TXT_INCREASING_PRIORITY":"增优先顺序",
-        "TXT_REDUCED_PRIORITY_ORDER":"减优先顺序",
+        "TXT_REDUCED_PRIORITY":"减优先顺序",
         "TXT_IMPORT_ONLY_SKU_AND_INVENTORY":"只导入SKU和库存",
         "TXT_SEPARATE":"隔离",
         "TXT_SHARE":"共享",
