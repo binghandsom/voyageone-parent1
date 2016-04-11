@@ -283,8 +283,8 @@ define([
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
-                        "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
+                        "templateUrl": "views/pop/jm/promotionDefaultSetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotionDefaultSetting.ctl",
                         "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
                         "size": 'md',
                         "backdrop": "static"
@@ -292,8 +292,8 @@ define([
                 },
                 "jmProductDetail": {
                     "detail": {
-                        "templateUrl": "views/pop/jm/productdetail.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/productdetail.ctl",
+                        "templateUrl": "views/pop/jm/productDetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/productDetail.ctl",
                         "controller": 'popProductDetailCtl',
                         "size": 'md',
                         "backdrop": "static"
@@ -301,8 +301,8 @@ define([
                 },
                 "jmPromotionDetail": {
                     "detail": {
-                        "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
+                        "templateUrl": "views/pop/jm/promotionDetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotionDetail.ctl",
                         "controller": 'popPromotionDetailCtl',
                         "size": 'md',
                         "backdrop": "static"
@@ -313,23 +313,25 @@ define([
                         "controller": 'popPromotionDetailImportCtl',
                         "size": 'md',
                         "backdrop": "static"
+                    },
+                    "dealExtension":{
+                        "templateUrl": "views/pop/jm/dealExtension.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/dealExtension.ctl",
+                        "controller": 'popDealExtensionCtl'
+                    },
+                    "priceModify":{
+                        "templateUrl": "views/pop/jm/priceModify.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/priceModify.ctl",
+                        "controller": 'popPriceModifyCtl'
                     }
                 },
-                "dealextension":{
-                    "templateUrl": "views/pop/jm/dealextension.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
-                    "controller": 'popDealExtensionCtl'
-                },
-                "pricemodify":{
-                    "templateUrl": "views/pop/jm/pricemodify.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
-                    "controller": 'popPriceModifyCtl'
-                },
-                "imagesetting":{
-                    "templateUrl": "views/pop/jm/imagesetting.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/jm/imagesetting.ctl",
-                    "controller": 'popImageSettingCtl'
-                },
+                "jmImageManage": {
+                    "imageSetting":{
+                        "templateUrl": "views/pop/jm/imageSetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/imageSetting.ctl",
+                        "controller": 'popImageSettingCtl as $ctrl'
+                    }
+                }
             }
         })
         .controller('popupCtrl', popupCtrl);
@@ -919,15 +921,15 @@ define([
 
         //聚美一览中，deal延期
         $scope.openDealExtension = function (context) {
-            return openModel(popActions.jumei.dealextension, context);
+            return openModel(popActions.jumei.jmPromotionDetail.dealExtension, context);
         };
         //聚美一览中，price
         $scope.openPriceModify = function (context) {
-            return openModel(popActions.jumei.pricemodify, context);
+            return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
         //聚美图片管理中，追加按钮
         $scope.openImageSetting = function (context) {
-            return openModel(popActions.jumei.imagesetting, context);
+            return openModel(popActions.jumei.jmImageManage.imageSetting, context);
         };
 
         $scope.openJmProductDetail = function (context) {

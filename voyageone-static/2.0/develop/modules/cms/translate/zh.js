@@ -251,6 +251,8 @@ define(function(){
         "TXT_PRODUCT_REALLY_MODEL": "商品实拍图模板",
         "TXT_PRODUCT_UPRIGHT_MODEL": "商品竖图模板",
         "TXT_SPECIAL_NOTE": "特殊说明",
+        "TXT_ACTIVITY_IMAGE_SETTING": "聚美共通图片设定",
+
 
 
 

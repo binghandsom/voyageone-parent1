@@ -230,6 +230,28 @@ define(function() {
         "TXT_BASE_ATTRIBUTE": "Common Attribute",
         "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
         "TXT_TRANSSTS_ATTRIBUTE": "Translation status",
+        "TXT_IMAGE_MANAGER" : "Image Manage",
+        "TXT_WAITING_UPLOAD": "Waiting Upload",
+        "TXT_UPLOAD_SUCCESS": "Upload Success",
+        "TXT_UPLOAD_FAILED": "Upload Failed",
+        "TXT_DATA_TYPE": "Data Type",
+        "TXT_SPECIAL_DESCRIPTION": "Special Description",
+        "TXT_BRAND_STORY": "Brand Story Image",
+        "TXT_SIZE_CHART": "Size Chart",
+        "TXT_SHIPPING_DESCRIPTION": "Shipping Description",
+        "TXT_INDEX": "Index",
+        "TXT_ORIGIN_IMAGE_URL": "Original Image Url",
+        "TXT_JM_IMAGE_URL": "JM Image Url",
+        "TXT_SET_DEFAULT_VALUE": "Set Image Default Value",
+        "TXT_SHIP_STOCK": "Shipping Stock",
+        "TXT_RELEASE_DATE": "Release Date",
+        "TXT_PRODUCTION_AREA": "Production Area",
+        "TXT_SUIT_CROWDS": "Suit Crowds",
+        "TXT_WHITE_SQUARE_MODEL": "White Square Model",
+        "TXT_PRODUCT_REALLY_MODEL": "Product Really Model",
+        "TXT_PRODUCT_UPRIGHT_MODEL": "Product Upright Model",
+        "TXT_SPECIAL_NOTE": "Special Note",
+        "TXT_ACTIVITY_IMAGE_SETTING": "JM Common Image Setting",
 
 
         "TXT_MSG_SEARCH": "Search...",
@@ -262,7 +284,7 @@ define(function() {
         "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
         "TXT_MSG_UNVALID_CONDITION": "Unvalid Condition.",
         "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
-        "TXT_MSG_DO_DELETE": "Do you want to delete ",
+        "TXT_MSG_DO_DELETE": "Do you want to delete : ",
         "TXT_MSG_LONG_TITLE":"Long title",
         "TXT_MSG_MIDDLE_TITLE":"Middle title",
         "TXT_MSG_SHORT_TITLE":"Short title",
@@ -279,6 +301,7 @@ define(function() {
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
+        "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "Image upload/refresh success.",
 
 
         "BTN_CREATE_TASK": "New Task",
@@ -326,6 +349,7 @@ define(function() {
         "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
         "BTN_GET_TASK": "Get Tasks",
         "BTN_COMPLETE": "Done",
+        "BTN_SET_DEFAULT_VALUE": "Set Default Value",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",
