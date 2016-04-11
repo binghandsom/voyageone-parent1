@@ -137,6 +137,8 @@ public class VtmWsdlInsert extends BaseTaskService {
             map.put("i_barcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_barcode)));
             map.put("image", (Feeds.getVal1(channel, FeedEnums.Name.images)));
             map.put("i_client_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
+            map.put("client_product_url", (Feeds.getVal1(channel, FeedEnums.Name.client_product_url)));
+
 
             map.put("price_client_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_client_msrp)));
             map.put("price_client_retail", (Feeds.getVal1(channel, FeedEnums.Name.price_client_retail)));
@@ -190,8 +192,14 @@ public class VtmWsdlInsert extends BaseTaskService {
             for (String categorPath : categoriePaths) {
 
                 // 每棵树的信息取得
-                $info("每棵树的信息取得开始");
-                List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
+                $info("每棵树的信息取得开始" + categorPath);
+                List<CmsBtFeedInfoModel> product;
+                try{
+                    product = getCategoryInfo(categorPath);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    throw e;
+                }
                 $info("每棵树的信息取得结束");
 
                 product.forEach(cmsBtFeedInfoModel -> {

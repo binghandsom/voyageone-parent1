@@ -238,20 +238,14 @@ public class ProductSkuService extends BaseService {
     /**
      *  更新group里的价格
      */
-    private void updateGroupPrice(String channelId, List<ProductPriceBean> productPrices){
-
-
-        HashMap<String, Object> productQueryMap = new HashMap<>();
-        CmsBtProductModel findModel;
+    private void updateGroupPrice(String channelId, List<ProductPriceBean> productPrices) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("prodId", "fields", "skus", "groups");
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for(ProductPriceBean model : productPrices){
-
-            productQueryMap.put("prodId", model.getProductId());
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
-            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
                 List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
                 bulkList.add(calculatePriceRange(products, platform.getGroupId()));
@@ -259,11 +253,10 @@ public class ProductSkuService extends BaseService {
         }
         if(bulkList.size() > 0){
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-            bulkList.clear();
         }
     }
 
-    private BulkUpdateModel calculatePriceRange(List<CmsBtProductModel> products, Long groupId){
+    private BulkUpdateModel calculatePriceRange(List<CmsBtProductModel> products, Long groupId) {
 
         Double priceSaleSt = null;
         Double priceSaleEd = null;
@@ -391,6 +384,11 @@ public class ProductSkuService extends BaseService {
                             }
                             if (skuModel.getClientRetailPrice() != null) {
                                 updateMap.put("skus.$.client_retail_price", skuModel.getClientRetailPrice());
+                            }
+
+                            // 涨价降价标志
+                            if (skuModel.getPriceChgFlg() != null) {
+                                updateMap.put("skus.$.priceChgFlg", skuModel.getPriceChgFlg());
                             }
 
                             if (updateMap.size() > 0) {

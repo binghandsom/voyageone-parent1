@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.AttributeDao;
-import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;

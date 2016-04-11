@@ -52,4 +52,8 @@ public class UsJois {
         return CacheHelper.isExists(KEY,buildKey(sub_channel_id),selfClass);
     }
 
+    public static UsJoiBean getUsJoiByOrgChannelId(String org_channel_id){
+        return CacheHelper.getBean(KEY,buildKey(org_channel_id),selfClass);
+    }
+
 }

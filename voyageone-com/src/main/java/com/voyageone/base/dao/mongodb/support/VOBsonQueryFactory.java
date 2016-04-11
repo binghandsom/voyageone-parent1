@@ -33,9 +33,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class VOBsonQueryFactory implements QueryFactory {
 
+    private static final Pattern pattern = Pattern.compile(":[ \\t]*#");
     private static final String DEFAULT_TOKEN = "#";
     private static final String MARSHALL_OPERATOR = "$marshall";
 
@@ -87,30 +90,34 @@ public class VOBsonQueryFactory implements QueryFactory {
         int pos;                // position of the last token found
 
         /**
-         * 去掉 # 传入参数功能 liang
-        while ((pos = query.indexOf(token, start)) != -1) {
-            if (paramPos >= parameters.length) {
-                throw new IllegalArgumentException("Not enough parameters passed to query: " + query);
+         * 修改 # 传入参数功能 添加check ":#" liang
+         */
+        Matcher matcher = pattern.matcher(query);
+        if (matcher.find()) {
+            while ((pos = query.indexOf(token, start)) != -1) {
+                if (paramPos >= parameters.length) {
+                    throw new IllegalArgumentException("Not enough parameters passed to query: " + query);
+                }
+
+                // Insert chars before the token
+                sb.append(query, start, pos);
+
+                // Check if the character preceding the token is one that separates values.
+                // Otherwise, it's a property name substitution
+                if (isValueToken(query, pos)) {
+                    // Will be resolved by the JSON parser below
+                    sb.append("{\"").append(MARSHALL_OPERATOR).append("\":").append(paramIncrement).append("}");
+                    paramIncrement = 0;
+                } else {
+                    // Resolve it now
+                    sb.append(parameters[paramPos]);
+                    paramIncrement++;
+                }
+
+                paramPos++;
+                start = pos + token.length();
             }
-
-            // Insert chars before the token
-            sb.append(query, start, pos);
-
-            // Check if the character preceding the token is one that separates values.
-            // Otherwise, it's a property name substitution
-            if (isValueToken(query, pos)) {
-                // Will be resolved by the JSON parser below
-                sb.append("{\"").append(MARSHALL_OPERATOR).append("\":").append(paramIncrement).append("}");
-                paramIncrement = 0;
-            } else {
-                // Resolve it now
-                sb.append(parameters[paramPos]);
-                paramIncrement++;
-            }
-
-            paramPos++;
-            start = pos + token.length();
-        }*/
+        }
 
         // Add remaining chars
         sb.append(query, start, query.length());

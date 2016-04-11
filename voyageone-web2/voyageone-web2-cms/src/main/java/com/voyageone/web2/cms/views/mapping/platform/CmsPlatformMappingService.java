@@ -4,10 +4,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -33,19 +33,20 @@ import static java.util.stream.Collectors.toMap;
  * @since 2.0.0
  */
 @Service("web2.cms.CmsPlatformMappingService")
-public class CmsPlatformMappingService extends BaseAppService {
+class CmsPlatformMappingService extends BaseAppService {
 
     @Autowired
-    private CmsMtPlatformCategoryDao platformCategoryDao;
+    private PlatformCategoryService platformCategoryService;
 
     @Autowired
-    private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
+    private PlatformMappingService platformMappingService;
 
     @Autowired
-    private CmsMtPlatformMappingDao platformMappingDao;
+    private ChannelCategoryService channelCategoryService;
 
-    @Autowired
-    private ChannelCategoryService cmsBtChannelCategoryService;
+    List<TypeChannelBean> getCarts(UserSessionBean user, String lang) {
+        return TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, lang);
+    }
 
     /**
      * 获取拍平的叶子类目和类目Mapping对应主数据类目名称
@@ -54,21 +55,19 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param user   用户配置
      * @return Map, Key: categoryMap, mappings
      */
-    public Map<String, Object> getMainFinalCategoryMap(Integer cartId, UserSessionBean user, String language) {
+    Map<String, Object> getMainFinalCategoryMap(Integer cartId, UserSessionBean user) {
 
         // 拍平
-
         List<CmsMtCategoryTreeModel> treeModelMap =
-                cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId())
+                channelCategoryService.getCategoriesByChannelId(user.getSelChannelId())
                         .stream()
                         .flatMap(this::flattenFinal)
                         .collect(toList());
 
         // 获取所有渠道和平台下的 mapping 关系, 画面需要显示
-
         Map<String, CmsMtPlatformCategoryTreeModel> platformMap = getPlatformMap(user.getSelChannel(), cartId);
 
-        Map<String, Object> mappings = platformMappingDao.selectMappings(user.getSelChannel(), cartId)
+        Map<String, Object> mappings = platformMappingService.getMappings(user.getSelChannel().getId(), cartId)
                 .stream()
                 .filter(m -> platformMap.containsKey(m.getPlatformCategoryId()))
                 .collect(toMap(
@@ -81,7 +80,6 @@ public class CmsPlatformMappingService extends BaseAppService {
         return new HashMap<String, Object>() {{
             put("categories", treeModelMap);
             put("mappings", mappings);
-            put("carts", TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
         }};
     }
 
@@ -92,9 +90,9 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param user           用户配置
      * @return Map 集合, 键 --> cartId, 值 --> platform category path
      */
-    public List<Map<String, Object>> getOtherPlatformMapping(String mainCategoryId, UserSessionBean user) {
+    List<Map<String, Object>> getOtherPlatformMapping(String mainCategoryId, UserSessionBean user) {
 
-        return platformMappingDao.getMappingByMainCatId(user.getSelChannel(), mainCategoryId)
+        return platformMappingService.getMappingsByMainCatId(user.getSelChannel().getId(), mainCategoryId)
                 .stream()
                 .map(m -> new HashMap<String, Object>(2) {{
                     put("platform", m.getPlatformCartId());
@@ -110,9 +108,8 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param cartId 平台 ID
      * @return 类目集合
      */
-    public List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(UserSessionBean user, Integer cartId) {
-
-        return platformCategoryDao.selectByChannel_CartId(user.getSelChannelId(), cartId);
+    List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(UserSessionBean user, Integer cartId) {
+        return platformCategoryService.getPlatformCategories(user.getSelChannelId(), cartId);
     }
 
     /**
@@ -124,7 +121,7 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param user   用户配置
      * @return 新/老 mapping 的 matchOver
      */
-    public boolean setPlatformMapping(String from, String to, Integer cartId, UserSessionBean user) {
+    boolean setPlatformMapping(String from, String to, Integer cartId, UserSessionBean user) {
 
         // 检查下数据
         if (StringUtils.isEmpty(from)) {
@@ -132,11 +129,9 @@ public class CmsPlatformMappingService extends BaseAppService {
         }
 
         // 取老数据
-        CmsMtPlatformMappingModel platformMappingModel =
-                platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, from);
+        CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, from);
 
         if (platformMappingModel == null) {
-
             // 如果没有, 那就新建数据
             platformMappingModel = new CmsMtPlatformMappingModel();
             platformMappingModel.setChannelId(user.getSelChannelId());
@@ -154,7 +149,7 @@ public class CmsPlatformMappingService extends BaseAppService {
         platformMappingModel.setMatchOver(0);
         platformMappingModel.setProps(new ArrayList<>(0));
 
-        platformMappingDao.update(platformMappingModel);
+        platformMappingService.savePlatformMapping(platformMappingModel);
 
         return false;
     }
@@ -166,10 +161,7 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @return 平台类目的路径
      */
     private String getPlatformPath(CmsMtPlatformMappingModel m) {
-
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategorySchemaDao.getPlatformCatSchemaModel(
-                m.getPlatformCategoryId(), m.getPlatformCartId());
-
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(m.getPlatformCategoryId(), m.getPlatformCartId());
         return platformCatSchemaModel == null ? "未找到平台类目" : platformCatSchemaModel.getCatFullPath();
     }
 
@@ -183,8 +175,7 @@ public class CmsPlatformMappingService extends BaseAppService {
     private Map<String, CmsMtPlatformCategoryTreeModel> getPlatformMap(ChannelConfigEnums.Channel channel, Integer cartId) {
 
         // --> 取平台所有类目
-        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModels =
-                platformCategoryDao.selectByChannel_CartId(channel.getId(), cartId);
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModels = platformCategoryService.getPlatformCategories(channel.getId(), cartId);
 
         // --> 所有平台类目 --> 取所有叶子 --> 拍平
         Stream<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModelStream =

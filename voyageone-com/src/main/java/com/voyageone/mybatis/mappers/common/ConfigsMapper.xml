@@ -171,19 +171,4 @@
         	   sort_order
           FROM voyageone_ims.ims_mt_categories
     </select>
-	<select id="com_platform_info" resultType="com.voyageone.common.bussiness.platformInfo.model.PlatformInfoModel" parameterType="int">
-		SELECT DISTINCT
-			m.category_id as categoryId,
-			m.platform_cid as platformCid,
-			v.platform_id as platformId,
-			v.cart_id as cartId,
-			v.platform as platformCode,
-			t.`comment` as platformName
-		FROM
-			voyageone_ims.ims_mt_category_mapping m
-		LEFT JOIN Synship.viw_com_cart_shop_channel_mapping v ON v.cart_id = m.platform_cart_id 
-		LEFT JOIN Synship.tm_platform t on t.platform_id = v.platform_id
-		WHERE
-			m.category_id = #{categoryId}
-	</select>
 </mapper>

@@ -63,16 +63,15 @@ public class VtmService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 清表
-        $info("维他命产品信息清表开始");
-        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
-        $info("维他命产品信息清表结束");
+
 
         // 插入数据库
         $info("维他命产品信息插入开始");
         int count = vtmSuperFeedImport();
-        $info("维他命产品信息插入完成");
+        $info("维他命产品信息插入完成 共"+count+"条数据");
         if( count > 0) {
+            // 清表
+
             // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
             // 1的sql文：
             // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
@@ -90,7 +89,8 @@ public class VtmService extends BaseTaskService {
             // 2             本次导入error的数据
             // 3             本次导入完全导入成功的数据
 
-            backupFeedFile(LUCKY_VITAMIN.getId());
+            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_upc);
+            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_category);
         }
     }
 
@@ -131,14 +131,17 @@ public class VtmService extends BaseTaskService {
         int count = 0;
         String sku = "first";
 
-        List<String> listImportUPC = getListImportUPC();
+        List<String> listImportUPC = getListImportUPC(FeedEnums.Name.file_id_import_upc);
+        List<String> listImportCategory = getListImportUPC(FeedEnums.Name.file_id_import_category);
 
-        if (listImportUPC.size() == 0) {
+        if (listImportUPC.size() == 0 && listImportCategory.size() == 0) {
 //            logger.error("UPC设定的Excel文件不正确");
 //            logIssue("cms 数据导入处理", "UPC设定的Excel文件不正确. ");
             return 0;
         }
-
+        $info("维他命产品信息清表开始");
+        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
+        $info("维他命产品信息清表结束");
 //        CsvReader reader;
         BufferedReader br = null;
         try {
@@ -167,7 +170,7 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setSKU(reader.get(i++));
                 sku = superfeedvtmbean.getSKU();
                 superfeedvtmbean.setUPC(reader.get(i++));
-                if (StringUtils.isEmpty(superfeedvtmbean.getUPC()) || !listImportUPC.contains(superfeedvtmbean.getUPC())) {
+                if (StringUtils.isEmpty(superfeedvtmbean.getUPC())) {
                     continue;
                 }
                 superfeedvtmbean.setEAN(reader.get(i++));
@@ -263,7 +266,10 @@ public class VtmService extends BaseTaskService {
                 if (isErrData(superfeedvtmbean)) {
                     continue;
                 }
-
+                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
+                {
+                    continue;
+                }
                 superfeed.add(superfeedvtmbean);
                 sku = sku + " read over, next. ";
 
@@ -302,14 +308,14 @@ public class VtmService extends BaseTaskService {
      *
      * @return listImportUPC
      */
-    private List<String> getListImportUPC() {
+    private List<String> getListImportUPC(FeedEnums.Name name) {
         List<String> listImportUPC = new ArrayList<String>();
 //        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.import_upc);
 //        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
 
         BufferedReader br = null;
         try {
-            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_upc);
+            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), name);
             String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
@@ -354,15 +360,24 @@ public class VtmService extends BaseTaskService {
         return false;
     }
 
-    private boolean backupFeedFile(String channel_id) {
+    private boolean categoryContains(List<String> exportCategorys, String categorys){
+        for(String exportCategory : exportCategorys){
+            if(categorys.indexOf(exportCategory) > -1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean backupFeedFile(String channel_id,FeedEnums.Name name) {
         $info("备份处理文件开始");
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id_import_upc));
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id,  name));
         String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id_import_upc));
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 

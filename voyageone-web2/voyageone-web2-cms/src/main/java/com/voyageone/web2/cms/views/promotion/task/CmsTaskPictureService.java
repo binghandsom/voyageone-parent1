@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
@@ -78,6 +78,7 @@ public class CmsTaskPictureService extends BaseAppService {
         List<CmsBtTasksModel> taskModels = taskDao.selectByName(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
+                user.getSelChannelId(),
                 PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
 
         if (!taskModels.isEmpty())
@@ -92,6 +93,7 @@ public class CmsTaskPictureService extends BaseAppService {
             taskBean.setActivity_end(taskBean.getPromotion().getActivityEnd());
 
         taskBean.setTask_type(PromotionTypeEnums.Type.JIAGEPILU);
+        taskBean.setChannelId(user.getSelChannelId());
         taskBean.setCreater(user.getUserName());
         taskBean.setModifier(user.getUserName());
 
@@ -103,6 +105,7 @@ public class CmsTaskPictureService extends BaseAppService {
         taskModels = taskDao.selectByName(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
+                user.getSelChannelId(),
                 taskBean.getTask_type().getTypeId());
 
         return new TaskBean(taskModels.get(0));

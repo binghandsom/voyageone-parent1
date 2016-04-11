@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.components.jumei.bean.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.JmPicBean;
@@ -12,9 +13,8 @@ import com.voyageone.task2.cms.model.JmBtProductImportModel;
 import com.voyageone.task2.cms.model.JmBtSkuImportModel;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.jumei.Bean.*;
-import com.voyageone.common.components.jumei.Enums.JumeiImageType;
-import com.voyageone.common.components.jumei.JumeiProductService;
+import com.voyageone.components.jumei.enums.JumeiImageType;
+import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;

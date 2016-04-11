@@ -91,7 +91,7 @@ public class CmsPromotionDetailController extends CmsController {
     @RequestMapping(PROMOTION.LIST.DETAIL.TE_JIA_BAO_INIT)
     public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
 
-        cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());
+        cmsPromotionDetailService.teJiaBaoInit(promotionId, getUser().getSelChannelId(), getUser().getUserName());
         // 返回用户信息
         return success(null);
     }
