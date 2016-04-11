@@ -85,6 +85,18 @@ define([
                         self.notify.success(this.translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     })
                 })
+            },
+
+            // 新加图片信息
+            openImage: function (imageData, openImageSetting) {
+                openImageSetting({
+                    imageData: {
+                        brandName: imageData.brandName,
+                        productType: imageData.productType,
+                        sizeType: imageData.sizeType,
+                        dataType: imageData.dataType.toString()
+                    }
+                }).then(this.search.bind(this));
             }
         };
 
