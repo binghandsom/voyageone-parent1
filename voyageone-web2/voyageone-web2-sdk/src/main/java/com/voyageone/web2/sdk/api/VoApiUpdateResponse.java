@@ -9,7 +9,7 @@ import com.voyageone.common.masterdate.schema.utils.JsonUtil;
  *
  * @author chuanyu.liang
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class VoApiUpdateResponse extends VoApiResponse {
 

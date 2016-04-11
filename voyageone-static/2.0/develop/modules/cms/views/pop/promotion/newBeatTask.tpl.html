@@ -17,7 +17,7 @@
                 <label class="col-sm-4 control-label"><span translate="TXT_TIME_START"></span></label>
                 <div class="col-sm-7">
                     <span class="input-group">
-                        <input max-date="$ctrl.taskBean.activity_end" ng-model="$ctrl.taskBean.activity_start" datepicker-popup is-open="datepicker1" readonly date-model-format="yyyy-MM-dd" class="form-control" title="开始时间 / Start Time">
+                        <input max-date="$ctrl.taskBean.activity_end" ng-model="$ctrl.taskBean.activity_start" uib-datepicker-popup is-open="datepicker1" readonly date-model-format="yyyy-MM-dd" class="form-control" title="开始时间 / Start Time">
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -28,7 +28,7 @@
                 <label class="col-sm-4 control-label"><span translate="TXT_TIME_END"></span></label>
                 <div class="col-sm-7">
                     <span class="input-group">
-                        <input min-date="$ctrl.taskBean.activity_start" ng-model="$ctrl.taskBean.activity_end" datepicker-popup is-open="datepicker2" readonly date-model-format="yyyy-MM-dd" class="form-control" title="结束时间 / End Time">
+                        <input min-date="$ctrl.taskBean.activity_start" ng-model="$ctrl.taskBean.activity_end" uib-datepicker-popup is-open="datepicker2" readonly date-model-format="yyyy-MM-dd" class="form-control" title="结束时间 / End Time">
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>

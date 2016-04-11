@@ -3,12 +3,12 @@ package com.voyageone.task2.cms.service.promotion.beat;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.PictureCategory;
 import com.taobao.api.response.PictureCategoryGetResponse;
-import com.voyageone.cms.enums.ImageCategoryType;
-import com.voyageone.common.components.tmall.TbPictureService;
-import com.voyageone.common.components.tmall.bean.TbGetPicCategoryParam;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
+import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.components.tmall.bean.TbGetPicCategoryParam;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.task2.base.LoggedService;
 import com.voyageone.task2.cms.dao.CmsMtImageCategoryDao;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Service
-public class ImageCategoryService extends LoggedService {
+public class ImageCategoryService extends VOAbsLoggable {
     @Autowired
     private CmsMtImageCategoryDao imageCategoryDao;
 

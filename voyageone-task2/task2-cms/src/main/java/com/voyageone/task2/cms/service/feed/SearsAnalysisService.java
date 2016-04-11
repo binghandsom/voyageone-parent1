@@ -1,12 +1,13 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.components.sears.bean.PaginationBean;
+import com.voyageone.components.sears.bean.ProductResponse;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.feed.SearsFeedDao;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.sears.SearsService;
-import com.voyageone.common.components.sears.bean.*;
+import com.voyageone.components.sears.service.SearsService;
 import com.voyageone.common.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,7 @@ public class SearsAnalysisService extends BaseTaskService {
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
         $info("获取feed数据结束了！");
-        logger.info(String.format("失败的feed(%d)件进行单个导入", failurepageList.size()));
+        $info(String.format("失败的feed(%d)件进行单个导入", failurepageList.size()));
 
         // 失败的数据再给一次机会
         if (failurepageList.size() > 0) {
@@ -167,8 +168,6 @@ public class SearsAnalysisService extends BaseTaskService {
 
     /**
      * feed列表取得并插入数据库
-     *
-     * @param page
      */
     private void feedListInsertTask(int page) {
         $info(page + "");
@@ -176,14 +175,12 @@ public class SearsAnalysisService extends BaseTaskService {
             ProductResponse product = searsService.getAllProducts(page, PageSize);
             searsSuperFeedDao.insertFeedList(product);
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
         }
     }
 
     /**
      * feed详细信息取得并插入数据库
-     *
-     * @param products
      */
     private void feedDetailsInsertTask(List<String> products) {
 //        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><products><product><itemId>000W245107170001" + page + "</itemId><product_details><productId>99900600ZK552000P</productId><brand>Vassarette</brand><description>The Tailored Camisole is a great layering piece under your tailored shirts. With soft, breathable fabric and built-up straps, you get the all-day comfort you desire. Wear with our matching Tailored Half Slip for an all over smooth look!</description><manufacturerName>MAYFAIR</manufacturerName><manufacturerPartNumber>24510718</manufacturerPartNumber><imageUrl>http://c.shld.net/rpx/i/s/i/spin/image/spin_prod_101591801</imageUrl><upc>090649160883</upc><weight>2</weight><category_id>113</category_id><categorization><id>113</id><vertical>Clothing</vertical><category>Women's Apparel</category><subcategory>Intimates</subcategory></categorization><mailable>false</mailable><storePickupEligible>true</storePickupEligible><salesRanking><verticalRanking /><categoryRanking /><subCategoryRanking /></salesRanking><productSpecifications><specification><label>Product Overview</label><key>Fabric Care</key><value>Machine wash</value></specification><specification><label>Product Overview</label><key>Material</key><value>Synthetics</value></specification><specification><key>Band Size</key><value>S</value></specification><specification><key>Fit</key><value>Women's</value></specification><specification><key>Color</key><value>White</value></specification></productSpecifications><htcCode /><modelNumber /><countryGroups /><countryOfOrigin /><imageWidth>0</imageWidth><imageHeight>0</imageHeight><price><sellPrice>10.0</sellPrice></price><availability><available>true</available><quantity>10</quantity></availability></product_details></product><product><itemId>000W245107170002" + page + "</itemId><product_details><productId>99900600ZK552001P</productId><brand>Vassarette</brand><description>The Tailored Camisole is a great layering piece under your tailored shirts. With soft, breathable fabric and built-up straps, you get the all-day comfort you desire. Wear with our matching Tailored Half Slip for an all over smooth look!</description><manufacturerName>MAYFAIR</manufacturerName><manufacturerPartNumber>24510718</manufacturerPartNumber><imageUrl>http://c.shld.net/rpx/i/s/i/spin/image/spin_prod_101591801</imageUrl><upc>090649160883</upc><weight>2</weight><category_id>113</category_id><categorization><id>113</id><vertical>Clothing</vertical><category>Women's Apparel</category><subcategory>Intimates</subcategory></categorization><mailable>true</mailable><storePickupEligible>true</storePickupEligible><salesRanking><verticalRanking /><categoryRanking /><subCategoryRanking /></salesRanking><productSpecifications><specification><label>Product Overview</label><key>Fabric Care</key><value>Machine wash</value></specification><specification><label>Product Overview</label><key>Material</key><value>Synthetics</value></specification><specification><key>Band Size</key><value>S</value></specification><specification><key>Fit</key><value>Women's</value></specification><specification><key>Color</key><value>White</value></specification></productSpecifications><htcCode /><modelNumber /><countryGroups /><countryOfOrigin /><imageWidth>0</imageWidth><imageHeight>0</imageHeight><price><sellPrice>10.0</sellPrice></price><availability><available>true</available><quantity>10</quantity></availability></product_details></product></products>";
@@ -195,9 +192,9 @@ public class SearsAnalysisService extends BaseTaskService {
             searsSuperFeedDao.insertAattribute(product);
 
         } catch (Exception e) {
+            $error(e);
             // 追加到错误的list中 下次启动后再访问
             failurepageList.addAll(products);
-            e.printStackTrace();
         }
     }
 }

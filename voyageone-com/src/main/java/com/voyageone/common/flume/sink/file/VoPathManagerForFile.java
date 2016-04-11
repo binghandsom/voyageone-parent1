@@ -14,14 +14,13 @@ public class VoPathManagerForFile {
 
     public static String getCurrentDate() {
         Calendar cal = Calendar.getInstance();
-        String currentDate = DateFormatUtils.format(cal, DATE_FORMAT);
-        return currentDate;
+        return DateFormatUtils.format(cal, DATE_FORMAT);
     }
 
     public File nextFile(String prefix) {
         String fileName = prefix;
         String extendName = "log";
-        if (prefix.indexOf(".") > 0) {
+        if (prefix.contains(".")) {
             fileName = prefix.substring(0, prefix.lastIndexOf("."));
             extendName = prefix.substring(prefix.lastIndexOf(".")+1);
         }

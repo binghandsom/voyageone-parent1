@@ -269,7 +269,7 @@
 
     <!-- 根据id修改状态 增加条件 is_active = 1-->
     <update id="delete_cms_bt_promotion_by_id" parameterType="Map" >
-        update voyageone_cms2.cms_bt_promotion set is_active = 0 where is_active = 1 and promotion_id = #{promotionId}
+        update voyageone_cms2.cms_bt_promotion set is_active = 0, modified = now(), modifier = #{modifier,jdbcType=VARCHAR} where is_active = 1 and promotion_id = #{promotionId}
     </update>
     <!--根据产品ID或者CartID-->
     <select id="select_cms_bt_promotion_by_cat_id" resultType="Map" parameterType="String" >

@@ -49,6 +49,18 @@
         ORDER BY a.display_order
     </select>
 
+    <!-- 查询指定类目已翻译属性 -->
+    <select id="cms_bt_feed_custom_prop_selectAttrByTrans" resultType="HashMap" parameterType="HashMap">
+        SELECT
+        a.feed_prop_original,
+        a.feed_prop_translation
+        FROM voyageone_cms2.cms_bt_feed_custom_prop a
+        WHERE a.channel_id = #{channelId}
+        AND a.feed_cat_path = #{feedCatPath}
+        AND (a.feed_prop_translation is not null AND LENGTH(trim(a.feed_prop_translation)) > 0)
+        ORDER BY a.display_order
+    </select>
+
     <!-- 查询指定类目未翻译属性 -->
     <select id="cms_bt_feed_custom_prop_selectWithCat1" resultType="HashMap" parameterType="HashMap">
         SELECT

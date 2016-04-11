@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.beat;
 
-import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.BeatFlag;
 
 /**
  * 价格披露请求参数模型(适配多请求)

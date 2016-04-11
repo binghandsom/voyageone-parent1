@@ -127,9 +127,18 @@ define([
              */
             function FeedPropMappingController($scope, $routeParams, feedMappingService, notify, $translate) {
 
+                var paramRegex = /(\d)\/(.+?)($|\/(.+))/;
+                var paramContent = $routeParams['params'];
+                var params = paramContent.match(paramRegex);
+
+                if (params.length !== 3 && params.length !== 5)
+                    throw '地址栏参数错误';
+
+                this.isCommon = (params[1] == 0);
+                this.mappingId = params[2];
+                this.feedCategoryPath = params[4];
+
                 this.$scope = $scope;
-                this.feedCategoryPath = $routeParams['feedCategoryPath'];
-                this.isCommon = $routeParams['commonFlg'] === '0';
                 this.feedMappingService = feedMappingService;
                 this.notify = notify;
                 this.$translate = $translate;
@@ -201,14 +210,15 @@ define([
 
                     self.feedMappingService.getMappings({
                         from: self.feedCategoryPath,
+                        mappingId: self.mappingId,
                         isCommon: self.isCommon
                     }).then(function(res) {
                         self.mappings = res.data;
                         self.mapping = self.isCommon ? self.mappings[0] : self.mappings.find(function(mapping){
-                            return mapping.scope.feedCategoryPath === self.feedCategoryPath;
+                            return mapping._id === self.mappingId;
                         });
                         self.matchOver = self.mapping.matchOver === 1;
-
+                        
                         self.changeMapping();
                     });
                 },
@@ -314,8 +324,7 @@ define([
                 switchMatchOver: function () {
                     var ttt = this;
                     ttt.feedMappingService.directMatchOver({
-                            from: ttt.feedCategoryPath,
-                            isCommon: ttt.isCommon
+                            mappingId: ttt.mapping._id
                         })
                         .then(function (res) {
                             if (res.data) {
@@ -323,7 +332,7 @@ define([
                                 // 通知列表页面切换 MatchOver
                                 var feedMappingController = opener && opener.feedMappingController;
                                 if (feedMappingController)
-                                    feedMappingController.setMatchOver(ttt.mapping.scope, ttt.matchOver);
+                                    feedMappingController.setMatchOver(ttt.mapping, ttt.matchOver);
                             }
                             else {
                                 ttt.notify.danger(ttt.$translate.instant('TXT_MSG_UPDATE_FAIL'));
@@ -350,7 +359,7 @@ define([
                     var self = this;
                     
                     self.feedMappingService.getMappingInfo({
-                        from: self.feedCategoryPath,
+                        mappingId: self.mapping._id,
                         to: self.mapping.scope.mainCategoryPath
                     }).then(function(res){
                         var map = res.data;

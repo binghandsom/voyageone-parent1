@@ -7,10 +7,8 @@ import com.voyageone.common.configs.beans.ShopConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.ShopConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -21,27 +19,24 @@ import java.util.*;
  * @since 2.0.0
  */
 public class ShopConfigs {
-    private static final Log logger = LogFactory.getLog(ShopConfigs.class);
+    private static final Class selfClass = ShopConfigs.class;
+
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_ShopConfigConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigConfigs.toString();
 
-    private static HashOperations<String, String, ShopConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            ShopConfigDao shopConfigDao = ConfigDaoFactory.getShopConfigDao();
-            Map<String, ShopConfigBean> shopConfigBeanMap = new HashMap<>();
-            shopConfigDao.getAll().forEach(bean -> {
-                        shopConfigBeanMap.put(
-                                buildKey(bean.getOrder_channel_id(), bean.getCart_id(), ShopConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
-                                bean
-                        );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, shopConfigBeanMap);
-            logger.info("shopConfig 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        ShopConfigDao shopConfigDao = ConfigDaoFactory.getShopConfigDao();
+        Map<String, ShopConfigBean> shopConfigBeanMap = new HashMap<>();
+        shopConfigDao.getAll().forEach(bean ->
+                    shopConfigBeanMap.put(
+                            buildKey(bean.getOrder_channel_id(), bean.getCart_id(),bean.getCfg_name(), bean.getCfg_val1()),
+                            bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, shopConfigBeanMap);
+        logger.info("shopConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -49,8 +44,8 @@ public class ShopConfigs {
      *
      * @return key
      */
-    private static String buildKey(String order_channel_id, String cart_id, ShopConfigEnums.Name name, String val1) {
-        return order_channel_id + CacheHelper.SKIP + cart_id + CacheHelper.SKIP+ name + CacheHelper.SKIP + val1;
+    private static String buildKey(String order_channel_id, String cart_id, String name, String val1) {
+        return order_channel_id + CacheKeyEnums.SKIP + cart_id + CacheKeyEnums.SKIP+ name + CacheKeyEnums.SKIP + val1;
     }
 
     /**
@@ -99,7 +94,7 @@ public class ShopConfigs {
      * @return String
      */
     public static String getVal2(String order_channel_id, String cart_id, ShopConfigEnums.Name name, String val1) {
-        ShopConfigBean bean = hashOperations.get(KEY, buildKey(order_channel_id, cart_id, name, val1));
+        ShopConfigBean bean = CacheHelper.getBean(KEY, buildKey(order_channel_id, cart_id, name.toString(), val1), selfClass);
         return (bean == null) ? "" : bean.getCfg_val2();
     }
 
@@ -109,14 +104,14 @@ public class ShopConfigs {
      * @return List<ShopConfigBean>
      */
     public static List<ShopConfigBean> getConfigs(String order_channel_id, String cart_id, ShopConfigEnums.Name name) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
 
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
-            if (k.startsWith(buildKey(order_channel_id, cart_id, name, ""))) keyList.add(k);
+            if (k.startsWith(buildKey(order_channel_id, cart_id, name.toString(), ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 }

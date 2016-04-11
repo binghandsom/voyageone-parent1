@@ -847,7 +847,7 @@ public class CmsTaskStockController extends CmsController {
         try {
             data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("导出异常！");
         }
         // 返回
@@ -1234,7 +1234,7 @@ public class CmsTaskStockController extends CmsController {
         try {
             data = cmsTaskStockService.getExcelFileStockErrorInfo(param);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("导出异常！");
         }
         // 返回

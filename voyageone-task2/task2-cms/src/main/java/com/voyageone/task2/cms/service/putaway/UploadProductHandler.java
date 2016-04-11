@@ -17,8 +17,6 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.*;
@@ -32,7 +30,6 @@ public class UploadProductHandler extends UploadWorkloadHandler{
     private UploadJob uploadJob;
     private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
     private SkuInventoryDao skuInventoryDao;
-    private Log logger = LogFactory.getLog(UploadProductHandler.class);
 
     private TmallProductService tmallProductService;
 
@@ -73,7 +70,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
 
             //设置平台分类
             //进一步初始化上新的数据，放在此处必放在UploadProductService中要好，因为此处已经分线程，速度更快，UploadProductService只做最基本的任务初始化
-            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.getMappingByMainCatId(workLoadBean.getOrder_channel_id(), uploadJob.getCart_id(), masterCId);
+            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId(workLoadBean.getOrder_channel_id(), uploadJob.getCart_id(), masterCId);
             workLoadBean.setCmsMtPlatformMappingModel(cmsMtPlatformMappingModel);
 
             List<String> skus = new ArrayList<>();
@@ -118,8 +115,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         //如果任务已经初始化过，那么直接交由平台的处理逻辑来处理
         ShopBean shopBean = Shops.getShop(uploadJob.getChannel_id(), uploadJob.getCart_id());
 
-        if (shopBean == null)
-        {
+        if (shopBean == null) {
             String failCause = "Can't find shopBean for cartId:" +  uploadJob.getCart_id() +
                     ", channelId:" + uploadJob.getChannel_id();
             abortJob(workLoadBean, workloadStatus, failCause);
@@ -128,7 +124,8 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         }
 
         try {
-            switch (PlatFormEnums.PlatForm.getValueByID(shopBean.getPlatform_id())) {
+            PlatFormEnums.PlatForm platForm = PlatFormEnums.PlatForm.getValueByID(shopBean.getPlatform_id());
+            switch (platForm) {
                 case TM:
                     tmallProductService.doJob(uploadProductTcb, this);
                     break;
@@ -209,8 +206,8 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         if (uploadImageTcb != null) {
             uploadJob.getUploadImageHandler().stopTcb(uploadImageTcb);
         }
-        re.printStackTrace();
-        logger.error(re.fillInStackTrace());
+
+        logger.error(re.getMessage(), re);
         //logIssue(re.getMessage());
     }
 

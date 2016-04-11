@@ -1,14 +1,10 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 /**
  * Created by lewis on 15-12-8.
@@ -22,9 +18,9 @@ public class CmsMtCommonPropDaoTest {
 
     @Test
     public void testGetActionModelList() throws Exception {
-        List<CmsMtCommonPropActionDefModel> delModelsById = cmsMtCommonPropDao.selectActionModelList();
+//        List<CmsMtCommonPropActionDefModel> delModelsById = cmsMtCommonPropDao.selectActionModelList();
 
-        Assert.assertTrue(delModelsById.size()>0);
+//        Assert.assertTrue(delModelsById.size()>0);
 
 //        for (MtCommPropActionDefModel model:delModelsById){
 //            Assert.assertTrue(StringUtils.isEmpty(model.getPlatformPropRefId()));

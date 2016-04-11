@@ -19,7 +19,7 @@ public final class MongoUtils {
 
         // 如果obj不为空才执行判断
         if (obj != null) {
-            StringBuffer result = new StringBuffer();
+            StringBuilder result = new StringBuilder();
 
             if (compareType.length == 0 || !"$or".equals(compareType[0]))
                 result.append("\"" + itemName + "\":");

@@ -253,7 +253,8 @@ public class CmsTaskStockService extends BaseAppService {
             Calendar sysTimeCalendar = Calendar.getInstance();
             //根据活动ID取得隔离的CartID
             if(repeatList.contains(cartId))
-                throw new BusinessException("已经选择重复的店铺渠道,请确认");
+                // 不能选择重复的平台类型
+                throw new BusinessException("7000008");
             else
                 repeatList.add(cartId);
             //还原时间检查
@@ -264,15 +265,18 @@ public class CmsTaskStockService extends BaseAppService {
                 sysTimeCalendar.setTime(fmt.parse(sysTime));
                 int result=activityStartCalendar.compareTo(sysTimeCalendar);
                 if(result<=0)
-                    throw new BusinessException("参加的活动已经开始或结束");
+                    // 选择的活动已经开始或结束
+                    throw new BusinessException("7000009");
             }catch (ParseException e) {
-                throw new BusinessException("时间格式不正确,请重新确认");
+                // 时间格式不正确
+                throw new BusinessException("7000010");
             }
             //判断活动是否开始或者是否已经隔离
             List<Map<String, Object>> separateInfo= cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatFormInfoById(cartId,sysTime,channelId);
             //取得返回值
             if (separateInfo.size()!=0)
-                throw new BusinessException("隔离平台任务已经存在,请确认");
+                // 隔离平台任务已经存在
+                throw new BusinessException("7000011");
 
         }
     }
@@ -2703,7 +2707,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map> paramPlatformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), List.class);
 
         // 库存隔离数据取得
-        logger.info("库存隔离数据取得开始, task_id=" + task_id);
+        $info("库存隔离数据取得开始, task_id=" + task_id);
         Map searchParam = new HashMap();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
         searchParam.put("whereSql", " where task_id= '" + task_id + "'");
@@ -2719,19 +2723,19 @@ public class CmsTaskStockService extends BaseAppService {
                 }});
             }
         }
-        logger.info("库存隔离数据取得结束");
+        $info("库存隔离数据取得结束");
 
-        logger.info("导入Excel取得并check的处理开始");
+        $info("导入Excel取得并check的处理开始");
         Map<String, List<String>> mapSku = new HashMap<String, List<String>>();
         List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
-        logger.info("导入Excel取得并check的处理结束");
+        $info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
-            logger.info("更新开始");
+            $info("更新开始");
             saveImportData(saveData, mapSku, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
-            logger.info(String.format("更新结束,更新了%d件", saveData.size()));
+            $info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
-            logger.info("没有更新对象");
+            $info("没有更新对象");
             throw new BusinessException("没有更新对象");
         }
     }
@@ -3164,7 +3168,7 @@ public class CmsTaskStockService extends BaseAppService {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("更新异常,请重新尝试！");
         }
     }

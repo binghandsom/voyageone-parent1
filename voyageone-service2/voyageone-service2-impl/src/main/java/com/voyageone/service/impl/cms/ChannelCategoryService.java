@@ -5,6 +5,7 @@ import com.jayway.jsonpath.TypeRef;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.CmsBtChannelCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtChannelCategoryModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ChannelCategoryService {
+public class ChannelCategoryService extends BaseService {
 
     @Autowired
     private CmsBtChannelCategoryDao cmsBtChannelCategoryDao;

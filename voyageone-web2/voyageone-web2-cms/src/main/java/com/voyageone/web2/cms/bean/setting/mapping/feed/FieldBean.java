@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
-import com.voyageone.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 /**

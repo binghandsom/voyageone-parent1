@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.enums.CartType;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
@@ -13,11 +13,10 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +26,7 @@ import java.util.*;
  * Created by lewis on 15-12-16.
  */
 @Service
-public class TranslationService {
-
-    Log logger = LogFactory.getLog(TranslationService.class);
+public class TranslationService extends BaseAppService {
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
@@ -113,7 +110,7 @@ public class TranslationService {
         }
 
         productTransDistrBean.setTranslator(userInfo.getUserName());
-        productTransDistrBean.setTranslateTimeHDiff(24);
+        productTransDistrBean.setTranslateTimeHDiff(48);
         productTransDistrBean.setDistributeRule(translateTaskBean.getDistributeRule());
         if (translateTaskBean.getDistributeCount() > 0){
             productTransDistrBean.setLimit(translateTaskBean.getDistributeCount());
@@ -148,7 +145,7 @@ public class TranslationService {
         }
 
         // 先查询该商品对应的group信息
-//        logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
+//        $debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
 //
 //
 //        DBObject excObj = new BasicDBObject();
@@ -177,7 +174,7 @@ public class TranslationService {
 //
 //        DBObject params = new BasicDBObject();
 //        if (groupId == 0) {
-//            logger.warn("TranslationService.saveTask() 无group信息 商品ProdId=" + taskBean.getProdId());
+//            $warn("TranslationService.saveTask() 无group信息 商品ProdId=" + taskBean.getProdId());
 //            // 只更新该商品信息
 //            params.put("prodId", taskBean.getProdId());
 //        } else {
@@ -375,7 +372,7 @@ public class TranslationService {
             //feed 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product code: " + productCode + " 对应的品牌方信息不存在！";
 
-            logger.warn(errMsg);
+            $warn(errMsg);
 
         }
 

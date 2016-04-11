@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * 主数据到平台的默认mapping数据做成
  *
  * @author james.li on 2015/12/10
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @Component("CmsPlatformMappingJob")
 public class CmsPlatformMappingJob extends BaseTaskJob {
