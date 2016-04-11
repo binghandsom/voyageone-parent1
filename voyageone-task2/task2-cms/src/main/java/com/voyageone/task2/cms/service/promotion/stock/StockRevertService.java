@@ -6,7 +6,9 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class StockRevertService extends BaseTaskService {
 
     @Autowired
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
+
+    @Autowired
+    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
 
     @Autowired
     private TransactionRunner transactionRunner;
@@ -136,28 +141,44 @@ public class StockRevertService extends BaseTaskService {
         // ★注意★：还原数据可能是隔离成功变成还原（活动未开始），也可能是活动结束变成的还原，所以sql根据task的还原时间来抽出的隔离平台是不正确的
         // 取得该渠道下未被隔离的平台(即共享平台)(去除待还原平台)
         List<Integer> listShareCartId = stockInfoService.getShareCartId(channelId, listCartIdAll, listRevertCartId);
-//        // 取得该渠道下未被还原的平台(即还原平台和共享平台以外的隔离平台)
-//        List<Integer> listSeparateCartId = new ArrayList<>();
-//        listSeparateCartId.addAll(listCartIdAll); // 所有平台
-//        stockInfoService.removeListValue(listSeparateCartId, listRevertCartId); // 去除还原平台
-//        stockInfoService.removeListValue(listSeparateCartId, listShareCartId); // 去除共享平台
+        // 取得该渠道下未被还原的平台(即还原平台和共享平台以外的隔离平台)
+        List<Integer> listSeparateCartId = new ArrayList<>();
+        listSeparateCartId.addAll(listCartIdAll); // 所有平台
+        stockInfoService.removeListValue(listSeparateCartId, listRevertCartId); // 去除待还原平台
+        stockInfoService.removeListValue(listSeparateCartId, listShareCartId); // 去除共享平台
 
-        // 取得该渠道下所有动态隔离的sku对应的平台
+        // 取得该渠道下隔离中的task
+        List<Integer> listSeparateTaskId = new ArrayList<>();
+        Map<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("channelIdWhere", channelId);
+        sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
+        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        listPlatform.forEach(data -> {
+            Integer taskId = (Integer) data.get("task_id");
+            if (!listSeparateTaskId.contains(taskId)) {
+                listSeparateTaskId.add(taskId);
+            }
+        });
+
+        // 取得该渠道下所有动态隔离的sku对应的平台(隔离中任务)
         Map<String, Set<Integer>> mapSkuDynamic = new HashMap<>();
         Map<String, Object> param = new HashMap<>();
         param.put("status", "");
-        param.put("channelId", channelId);
-        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
-        resultData.forEach(data -> {
+        param.put("taskIdList", listSeparateTaskId);
+        List<Map<String, Object>> listSkuDynamic = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
+        listSkuDynamic.forEach(data -> {
             String sku = (String) data.get("sku");
             Integer cartId = (Integer) data.get("cart_id");
-            Set<Integer> setCartDynamic = mapSkuDynamic.get(sku);
-            if (setCartDynamic == null) {
-                setCartDynamic = new HashSet<>();
-                setCartDynamic.add(cartId);
-                mapSkuDynamic.put(sku, setCartDynamic);
-            } else {
-                setCartDynamic.add(cartId);
+            if (listSeparateCartId.contains(cartId)) {
+                // 未被还原的平台
+                Set<Integer> setCartDynamic = mapSkuDynamic.get(sku);
+                if (setCartDynamic == null) {
+                    setCartDynamic = new HashSet<>();
+                    setCartDynamic.add(cartId);
+                    mapSkuDynamic.put(sku, setCartDynamic);
+                } else {
+                    setCartDynamic.add(cartId);
+                }
             }
         });
 
@@ -189,11 +210,16 @@ public class StockRevertService extends BaseTaskService {
                     // 还原平台
 
 
+                    // 隔离中task的动态隔离数据
+
+
+                    // 共享平台
+
 
                 }
             });
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             logIssue("cms 库存隔离batch", "渠道是"+ channelId +"的等待还原数据更新失败. " + e.getMessage());
         }
         $info("更新处理结束,渠道是%s", channelId);

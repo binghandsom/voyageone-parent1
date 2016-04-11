@@ -133,7 +133,7 @@ public class StockSeparateService extends BaseTaskService {
                 updateSeparateSuccessData(resultDataByChannel.get(channelId), channelId);
             } catch (Exception e) {
                 errorChannel.add(channelId);
-                logger.error(e.getMessage());
+                $error(e.getMessage());
                 logIssue("cms 库存隔离batch", "渠道是" + channelId + "的等待隔离数据整理失败. " + e.getMessage());
             }
         }
@@ -423,7 +423,7 @@ public class StockSeparateService extends BaseTaskService {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             logIssue("cms 库存隔离batch", "渠道是"+ channelId +"的等待隔离数据更新失败. " + e.getMessage());
         }
         $info("更新处理结束,渠道是%s", channelId);
