@@ -163,6 +163,13 @@
             <if test="taskId != null" >
                 and task_id = #{taskId}
             </if>
+            <if test="taskList != null and taskList.size() > 0" >
+                and (task_id in
+                <foreach collection="taskList" item="taskItem" open="(" separator="," close=")">
+                    #{taskItem}
+                </foreach>
+                )
+            </if>
             <if test="sku != null" >
                 and sku = #{sku}
             </if>

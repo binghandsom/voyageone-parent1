@@ -616,12 +616,20 @@ public class CmsTaskStockService extends BaseAppService {
         checkPromotionInfo(param);
         //判断隔离任务:新规的场
         if(promotionType.equals(TYPE_PROMOTION_INSERT)){
-            //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
-            insertTasksByPromotionInfo(param);
-            //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
-            insertStockSeparatePlatFormByPromotionInfo(param);
-            //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-            importSkuByPromotionInfo(param,onlySku,channelID);
+            simpleTransaction.openTransaction();
+            try {
+                //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
+                insertTasksByPromotionInfo(param);
+                //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
+                insertStockSeparatePlatFormByPromotionInfo(param);
+                //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
+                importSkuByPromotionInfo(param,onlySku,channelID);
+
+            }catch (Exception e) {
+                simpleTransaction.rollback();
+                throw e;
+            }
+            simpleTransaction.commit();
         }
         //判断隔离任务:合更新的场合
         if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
@@ -658,6 +666,8 @@ public class CmsTaskStockService extends BaseAppService {
     private void insertStockSeparatePlatFormByPromotionInfo(Map param) {
         //根据活动名称取得对应的TaskID
         String taskID=cmsBtTasksDao.selectCmsBtTaskByTaskName((String) param.get("taskName"));
+        //channelID
+        String channelID = (String) param.get("channel_id");
         //将取得的taskId放入param
         param.put("taskId", taskID);
         List<Map> separatePlatformList= (List<Map>) param.get("promotionList");
@@ -682,6 +692,8 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("add_priority",separatePlatformList.get(i).get("addPriority").toString());
                 //减优先顺
                 separatePlatformMap.put("subtract_priority",separatePlatformList.get(i).get("subtractPriority").toString());
+                //channelID
+                separatePlatformMap.put("channel_id",(String) param.get("channelID"));
                 //创建者
                 separatePlatformMap.put("creater",(String) param.get("userName"));
                 //更改者
@@ -705,6 +717,8 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("add_priority",separatePlatformList.get(i).get("addPriority").toString());
                 //减优先顺
                 separatePlatformMap.put("subtract_priority",separatePlatformList.get(i).get("subtractPriority").toString());
+                //channelID
+                separatePlatformMap.put("channel_id",(String) param.get("channelID"));
                 //创建者
                 separatePlatformMap.put("creater",(String) param.get("userName"));
                 //更改者
