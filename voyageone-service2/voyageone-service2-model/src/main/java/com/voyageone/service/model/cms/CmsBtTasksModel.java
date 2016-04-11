@@ -19,6 +19,8 @@ public class CmsBtTasksModel extends BaseModel {
 
     private int promotion_id;
 
+    private String  channelId;
+
     private Integer status;
 
     private String activity_start;
@@ -99,5 +101,13 @@ public class CmsBtTasksModel extends BaseModel {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 }
