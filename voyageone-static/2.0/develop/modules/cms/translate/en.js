@@ -266,7 +266,7 @@ define(function() {
         "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
         "TXT_INCREMENT_TYPE": "Increment Type",
         "TXT_INCREMENT_PERCENTAGE":"Increment percentage",
-        "TXT_QUANTITY_INCREMENT":"Quantity Increment",
+        "TXT_INCREMENT_CNT":"Increment count",
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_INVALID_FEILD": "Please check these fields [ <h4>{{fields}}</h4> ], then try SAVE. (。・`ω´・)",

@@ -253,7 +253,7 @@ define(function(){
         "TXT_UPDATE_FIX_VALUE":"更新固定值",
         "TXT_INCREMENT_TYPE":"增量类型",
         "TXT_INCREMENT_PERCENTAGE":"增量百分比",
-        "TXT_QUANTITY_INCREMENT":"数量增量",
+        "TXT_INCREMENT_CNT":"增量数量",
 
         "TXT_SEPARATE_PROPORTION":"隔离比例",
         "TXT_REVERT_TIME":"还原时间",
@@ -263,7 +263,6 @@ define(function(){
         "TXT_SEPARATE":"隔离",
         "TXT_SHARE":"共享",
         "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
-
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
         "TXT_UN_TRANSLATION": "待翻译总数",
         "TXT_TRANSLATED": "完成翻译总数",

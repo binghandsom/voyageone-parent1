@@ -717,7 +717,7 @@ public class CmsTaskStockService extends BaseAppService {
         String taskName = (String) param.get("taskName");
         //任务名称
         if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
-            throw new BusinessException("必须输入且长度小于1000！");
+            throw new BusinessException("任务名称必须输入且长度小于1000！");
         }
         //增优先顺
         int[] addPriorityList=new int[separatePlatformList.size()];
@@ -762,6 +762,10 @@ public class CmsTaskStockService extends BaseAppService {
                 //减优先顺
                 if (StringUtils.isEmpty(subtractPriority)||!StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
                     throw new BusinessException("减优先顺为大于0的整数！");
+                }
+                //还原时间
+                if (StringUtils.isEmpty(revertTime)) {
+                    throw new BusinessException("还原时间不能为空！");
                 }
                 //隔离结束时间必须是时间格式
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

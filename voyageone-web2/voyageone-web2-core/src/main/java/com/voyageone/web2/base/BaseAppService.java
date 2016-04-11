@@ -85,4 +85,6 @@ public abstract class BaseAppService extends BaseAppComponent {
     protected void $info(String template, Object... args) {
         logger.info(format(template, args));
     }
+
+
 }
