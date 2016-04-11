@@ -808,7 +808,7 @@ define([
         $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
         function openSkuMrbStockDetail(viewSize, taskId, cartId, data) {
             require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
                     controller: popActions.promotion.skuMrbStockDetail.controller,
                     size: viewSize,
@@ -833,7 +833,7 @@ define([
         $scope.openAddMrbStockIncrement = openAddMrbStockIncrement;
         function openAddMrbStockIncrement(viewSize, data) {
             require([popActions.promotion.addMrbStockIncrement.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
                     controller: popActions.promotion.addMrbStockIncrement.controller,
                     size: viewSize,
