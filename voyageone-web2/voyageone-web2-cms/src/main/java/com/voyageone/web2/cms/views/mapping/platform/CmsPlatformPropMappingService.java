@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.mapping.platform;
 
-import com.mongodb.WriteResult;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.ComplexField;
@@ -43,7 +42,7 @@ import static java.util.stream.Collectors.toMap;
  * @since 2.0.0
  */
 @Service("web2.cms.CmsPlatformPropMappingService")
-public class CmsPlatformPropMappingService extends BaseAppService {
+class CmsPlatformPropMappingService extends BaseAppService {
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
@@ -66,7 +65,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @return 携带所有信息的 Map 包含: categorySchema / properties / mapping
      * @throws TopSchemaException
      */
-    public Map<String, Object> getPlatformCategory(String categoryId, int cartId, UserSessionBean user) throws TopSchemaException {
+    Map<String, Object> getPlatformCategory(String categoryId, int cartId, UserSessionBean user) throws TopSchemaException {
 
         CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
 
@@ -107,16 +106,18 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @param categoryId 主数据类目
      * @return CmsMtCategorySchemaModel
      */
-    public CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
+    CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
         return categorySchemaService.getCmsMtCategorySchema(categoryId);
     }
 
     /**
      * 获取当前渠道的所有可用字典
      */
-    public List<CmsMtDictModel> getDictList(UserSessionBean user) {
+    List<CmsMtDictModel> getDictList(String cart_id, String lang, UserSessionBean user) {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(user.getSelChannelId());
+        params.setCart_id(cart_id);
+        params.setLang(lang);
         return dictService.getModesByChannel(params);
     }
 
@@ -129,7 +130,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @param user               用户
      * @return 信息模型
      */
-    public CmsMtPlatformMappingModel getPlatformMapping(String mainCategoryId, String platformCategoryId, Integer cartId, UserSessionBean user) {
+    CmsMtPlatformMappingModel getPlatformMapping(String mainCategoryId, String platformCategoryId, Integer cartId, UserSessionBean user) {
         return platformMappingService.getMapping(mainCategoryId, platformCategoryId, cartId, user.getSelChannel().getId());
     }
 
@@ -198,7 +199,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @param platformCategoryId 平台类目 ID
      * @return Mapping Map 属性 ID -> Type
      */
-    public Map<String, String> getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId) {
+    Map<String, String> getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId) {
 
         return platformMappingService.getPlatformSpecialField(cartId, platformCategoryId)
                 .stream()
@@ -213,7 +214,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @return 返回顶层 Mapping 模型
      * @throws TopSchemaException
      */
-    public MappingBean saveMapping(PlatformMappingBean paramBean, UserSessionBean user) throws TopSchemaException {
+    MappingBean saveMapping(PlatformMappingBean paramBean, UserSessionBean user) throws TopSchemaException {
 
         MappingBean orgMappingBean = paramBean.getMappingBean();
 

@@ -104,7 +104,7 @@ define([
             /**
              * 获取字典数据
              */
-            getDictList: function () {
+            getDictList: function (cart_id) {
 
                 var defer = this.$q.defer();
 
@@ -115,7 +115,9 @@ define([
                 if (dictList && dictList.length) {
                     defer.resolve(dictList);
                 } else {
-                    this.pmService.getDictList().then(function (res) {
+                    this.pmService.getDictList({
+                        cart_id: cart_id
+                    }).then(function (res) {
 
                         var dictList = res.data;
                         var first = dictList[0];
