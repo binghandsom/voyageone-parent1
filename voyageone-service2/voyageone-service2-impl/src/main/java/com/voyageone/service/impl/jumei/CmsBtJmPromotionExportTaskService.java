@@ -87,26 +87,36 @@ public class CmsBtJmPromotionExportTaskService {
      List<Map<String,Object>> getListSpecialImage(int promotionId,List<Map<String,Object>> listProduct) {
          List<Map<String, Object>> result = new ArrayList<>();
          List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel = daoExtCmsBtJmProductImages.getListByPromotionId(promotionId);
+         Map<String, Object> mapSpecialImage = null;
+         boolean isImage=false;
          for (Map<String, Object> mapProduct : listProduct) {
-             String prodcutCode = mapProduct.get("productCode").toString();
-             List<CmsBtJmProductImagesModel> codeProductImagesList = getListCmsBtJmProductImagesModelByProdcutCode(listCmsBtJmProductImagesModel, prodcutCode);
-             Map<String, Object> mapSpecialImage = null;
+             String productCode = mapProduct.get("productCode").toString();
+             List<CmsBtJmProductImagesModel> codeProductImagesList = getListCmsBtJmProductImagesModelByProdcutCode(listCmsBtJmProductImagesModel, productCode);
+             mapSpecialImage = mapSpecialImage = new HashMap<>();
+
+             isImage = false;
              for (CmsBtJmProductImagesModel model : codeProductImagesList) {
-                 mapSpecialImage = new HashMap<>();
+
                  if (model.getImageType() == 3)//参数图
                  {
+                     isImage = true;
                      mapSpecialImage.put("propertyImage" + model.getImageIndex(), model.getOriginUrl());
                  } else if (model.getImageType() == 8)//商品定制图
                  {
+                     isImage = true;
                      mapSpecialImage.put("specialImage" + model.getImageIndex(), model.getOriginUrl());
                  } else if (model.getImageType() == 1 || model.getImageType() == 2 || model.getImageType() == 7)//1:白底方图 ；2:商品详情图；7：竖图
                  {
+                     isImage = true;
                      mapSpecialImage.put("productImageUrlKey" + model.getImageIndex(), model.getProductImageUrlKey());
                  } else {
                      continue;
                  }
              }
-             result.add(mapSpecialImage);
+             if (isImage) {
+                 mapSpecialImage.put("productCode", productCode);
+                 result.add(mapSpecialImage);
+             }
          }
          return result;
      }
