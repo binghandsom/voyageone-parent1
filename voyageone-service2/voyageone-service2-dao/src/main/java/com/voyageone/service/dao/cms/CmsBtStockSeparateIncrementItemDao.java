@@ -46,7 +46,7 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
         return selectList("cms_bt_stock_separate_increment_item_selectExcelStockIncrementInfo", param);
     }
 
-    public int insertStockSeparateIncrementItemFromExcel(List<Map<String, Object>> param) {
-        return insert("cms_bt_stock_separate_increment_item_insertStockSeparateIncrementItemFromExcel", param);
+    public int insertStockSeparateIncrementItemByList(List<Map<String, Object>> param) {
+        return insert("cms_bt_stock_separate_increment_item_insertStockSeparateIncrementItemByList", param);
     }
 }

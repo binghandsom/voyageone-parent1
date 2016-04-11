@@ -1039,13 +1039,13 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
             listSaveData.add(mapSaveData);
             if (listSaveData.size() == 200) {
-                cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemFromExcel(listSaveData);
+                cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemByList(listSaveData);
                 listSaveData.clear();
             }
         }
 
         if (listSaveData.size() > 0) {
-            cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemFromExcel(listSaveData);
+            cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemByList(listSaveData);
             listSaveData.clear();
         }
     }

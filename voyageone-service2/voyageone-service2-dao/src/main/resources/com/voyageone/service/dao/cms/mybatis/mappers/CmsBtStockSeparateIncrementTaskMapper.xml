@@ -50,4 +50,63 @@
                 and task_id = #{taskId}
             </if>
     </delete>
+
+    <insert id="insert_cms_bt_stock_separate_increment_task_by_taskId" parameterType="HashMap">
+        insert into voyageone_cms2.cms_bt_stock_separate_increment_task (
+        sub_task_id,
+        task_id,
+        sub_task_name,
+        cart_id,
+        type,
+        value,
+        created,
+        creater,
+        modified,
+        modifier
+        )value(
+        #{sub_task_id},
+        #{task_id},
+        #{sub_task_name},
+        #{cart_id},
+        #{type},
+        #{value},
+        now(),
+        #{creater},
+        now(),
+        #{creater})
+    </insert>
+    <update id="update_cms_bt_stock_separate_increment_task_by_taskId">
+        update voyageone_cms2.cms_bt_stock_separate_increment_task
+        <set>
+            <if test="taskId != null" >
+                task_id = #{taskId},
+            </if>
+            <if test="subTaskName != null" >
+                sub_task_name = #{subTaskName},
+            </if>
+            <if test="cartId != null" >
+                revert_flg = #{cartId},
+            </if>
+            <if test="type != null" >
+                type = #{type},
+            </if>
+            <if test="value != null" >
+                value = #{value},
+            </if>
+            created = now(),
+            <if test="creater != null" >
+                creater = #{creater},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="taskId != null" >
+                and task_id = #{taskId}
+            </if>
+        </where>
+    </update>
 </mapper>
