@@ -15,18 +15,32 @@ public enum EnumJMSpecialImageImportColumn {//productImageUrlKey1
     ProductImageUrlKey4("product_image_url_key4",5,"jm_bt_images","商品图片4"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
     ProductImageUrlKey5("product_image_url_key5",6,"jm_bt_images","商品图片5"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
     ProductImageUrlKey6("product_image_url_key6",7,"jm_bt_images","商品图片6"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+    ProductImageUrlKey7("product_image_url_key7",8,"jm_bt_images","商品图片7"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+    ProductImageUrlKey8("product_image_url_key8",9,"jm_bt_images","商品图片8"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+    ProductImageUrlKey9("product_image_url_key9",10,"jm_bt_images","商品图片9"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+    ProductImageUrlKey10("product_image_url_key10",11,"jm_bt_images","商品图片10"),//jm_bt_images imageURLKey   进入jm_bt_images（产品图片） image type是 1、2   需要套模板
+
     SpecialImage1("special_image1", 8, "cms_bt_jm_product_images", "商品定制图1"),
     SpecialImage2("special_image2", 9, "cms_bt_jm_product_images", "商品定制图2"),
     SpecialImage3("special_image3", 10, "cms_bt_jm_product_images", "商品定制图3"),
     SpecialImage4("special_image4", 11, "cms_bt_jm_product_images", "商品定制图4"),
     SpecialImage5("special_image5",12, "cms_bt_jm_product_images", "商品定制图5"),
     SpecialImage6("special_image6", 13, "cms_bt_jm_product_images", "商品定制图6"),
+    SpecialImage7("special_image7", 13, "cms_bt_jm_product_images", "商品定制图7"),
+    SpecialImage8("special_image8", 13, "cms_bt_jm_product_images", "商品定制图8"),
+    SpecialImage9("special_image9", 13, "cms_bt_jm_product_images", "商品定制图9"),
+    SpecialImage10("special_image10", 13, "cms_bt_jm_product_images", "商品定制图10"),
+
     PropertyImage1("property_Image1", 14, "cms_bt_jm_product_images", "商品参数图1"),
     PropertyImage2("property_Image2", 15, "cms_bt_jm_product_images", "商品参数图2"),
     PropertyImage3("property_Image3", 16, "cms_bt_jm_product_images", "商品参数图3"),
     PropertyImage4("property_Image4", 17, "cms_bt_jm_product_images", "商品参数图4"),
     PropertyImage5("property_Image5", 18, "cms_bt_jm_product_images", "商品参数图5"),
-    PropertyImage6("property_Image6", 19, "cms_bt_jm_product_images", "商品参数图6");
+    PropertyImage6("property_Image6", 20, "cms_bt_jm_product_images", "商品参数图6"),
+    PropertyImage7("property_Image6", 21, "cms_bt_jm_product_images", "商品参数图6"),
+    PropertyImage8("property_Image6", 22, "cms_bt_jm_product_images", "商品参数图6"),
+    PropertyImage9("property_Image6", 23, "cms_bt_jm_product_images", "商品参数图6"),
+    PropertyImage10("property_Image6",24, "cms_bt_jm_product_images", "商品参数图6");
     public static int orderIndex;
     private ExcelColumn<Map> excelColumn;
     public ExcelColumn<Map> getExcelColumn() {

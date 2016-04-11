@@ -397,6 +397,10 @@ public class CmsBtJmPromotionImportTaskService {
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage4(), productCode, 3, 4);
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage5(), productCode, 3, 5);
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage6(), productCode, 3, 6);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage7(), productCode, 3, 7);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage8(), productCode, 3, 8);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage9(), productCode, 3, 9);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getPropertyImage10(), productCode, 3, 10);
 
         //商品定制图
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage1(), productCode, 8, 1);
@@ -405,6 +409,10 @@ public class CmsBtJmPromotionImportTaskService {
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage4(), productCode, 8, 4);
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage5(), productCode, 8, 5);
         addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage6(), productCode, 8, 6);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage7(), productCode, 8, 7);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage8(), productCode, 8, 8);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage9(), productCode, 8, 9);
+        addPropertyImage(modelCmsBtJmPromotion, saveInfo, specialImageModel.getSpecialImage10(), productCode, 8, 10);
 
         List<Integer> templateTypeList = new ArrayList();
         templateTypeList.add(1);//宝贝图
@@ -417,6 +425,10 @@ public class CmsBtJmPromotionImportTaskService {
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey4(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 4);
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey5(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 5);
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey6(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 6);
+        addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey7(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 7);
+        addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey8(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 8);
+        addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey9(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 9);
+        addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey10(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 10);
     }
 
     private void addPropertyImage(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, String propertyImage1, String productCode, int imageType, int imageIndex) {

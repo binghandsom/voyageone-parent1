@@ -80,7 +80,6 @@ public class CmsBtJmPromotionExportTaskService {
         dao.update(model);
     }
     public void loadPCAppList( List<Map<String, Object>> list,List<Map<String, Object>> mapPcList,List<Map<String, Object>> mapAppList) {
-        //`app_id`,`pc_id`
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (Map<String, Object> map : list) {
             if (!StringUtils.isEmpty(map.get("appId"))) {
