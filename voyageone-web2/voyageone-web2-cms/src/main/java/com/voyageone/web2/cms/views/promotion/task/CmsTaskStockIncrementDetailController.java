@@ -388,7 +388,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             data = cmsTaskStockIncrementDetailService.getExcelFileStockIncrementInfo(searchParam);
         } catch (Exception e) {
             $error(e.getMessage());
-            throw new BusinessException("导出异常！");
+            // 导出异常
+            throw new BusinessException("7000069");
         }
 
         // 返回

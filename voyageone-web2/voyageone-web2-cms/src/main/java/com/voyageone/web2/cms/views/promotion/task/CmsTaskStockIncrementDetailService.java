@@ -74,7 +74,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * Excel的Title部可调配库存显示文字
      */
-    private static final String USABLESTOCK = "可调配库存";
+    private static final String USABLESTOCK = "可用库存";
     /**
      * Excel的Title部固定值增量显示文字
      */
@@ -235,7 +235,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring((String) param.get("taskId"), (String) param.get("cartId"));
         if (!promotionDuringFlg) {
-            throw new BusinessException("活动未开始或者已经结束，不能编辑数据！");
+            // 活动未开始或者已经结束，不能编辑数据
+            throw new BusinessException("7000058");
         }
 
         // 取得选择sku的增量库存隔离信息
@@ -246,7 +247,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         List<Map<String, Object>> stockSeparateIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
         // 数据不存在的情况
         if (stockSeparateIncrementList == null || stockSeparateIncrementList.size() == 0) {
-            throw new BusinessException("明细对象不存在！");
+            // 明细对象不存在
+            throw new BusinessException("7000023");
         }
 
         // 状态(DB)
@@ -265,7 +267,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             if (!incrementQty.equals(incrementQtyDB) || !(fixFlg ? TYPE_FIX_VALUE:TYPE_DYNAMIC).equals(fixFlgDB)) {
                 // 状态为"0:未进行"以外的数据不能进行编辑
                 if(!CmsTaskStockService.STATUS_READY.equals(statusDB)) {
-                    throw new BusinessException("只有状态为未进行的明细才能进行编辑！");
+                    // 只有状态为未进行的明细才能进行编辑
+                    throw new BusinessException("7000059");
                 }
                 Map<String, Object> sqlParam1 = new HashMap<String, Object>();
                 sqlParam1.put("subTaskId", (String) param.get("subTaskId"));
@@ -274,7 +277,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 sqlParam1.put("fixFlg", fixFlg ? TYPE_FIX_VALUE:TYPE_DYNAMIC);
                 int updateCnt = cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
                 if (updateCnt != 1) {
-                    throw new BusinessException("明细对象不存在！");
+                    // 明细对象不存在
+                    throw new BusinessException("7000023");
                 }
             }
         } catch (BusinessException e) {
@@ -299,7 +303,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring(taskId, cartId);
         if (!promotionDuringFlg) {
-            throw new BusinessException("活动未开始或者已经结束，不能删除数据！");
+            // 活动未开始或者已经结束，不能删除数据
+            throw new BusinessException("7000060");
         }
         simpleTransaction.openTransaction();
         try {
@@ -311,14 +316,16 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             List<Map<String, Object>> stockSeparateIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
             // 数据不存在的情况
             if (stockSeparateIncrementList == null || stockSeparateIncrementList.size() == 0) {
-                throw new BusinessException("明细对象不存在！");
+                // 明细对象不存在
+                throw new BusinessException("7000023");
             }
 
             // 状态（DB）
             String statusDB = (String) stockSeparateIncrementList.get(0).get("status");
             // 只有状态为 0：未进行的数据可以删除
             if(!CmsTaskStockService.STATUS_READY.equals(statusDB)) {
-                throw new BusinessException("只有状态为未进行的明细才能进行删除！");
+                // 只有状态为未进行的明细才能进行删除
+                throw new BusinessException("7000061");
             }
 
             Map<String, Object> sqlParam1 = new HashMap<String, Object>();
@@ -326,7 +333,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             sqlParam.put("sku", sku);
             int delCount = cmsBtStockSeparateIncrementItemDao.deleteStockSeparateIncrementItem(sqlParam);
             if (delCount == 0) {
-                throw new BusinessException("明细对象不存在！");
+                // 明细对象不存在
+                throw new BusinessException("7000023");
             }
         } catch (BusinessException e) {
             simpleTransaction.rollback();
@@ -347,7 +355,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring((String) param.get("taskId"), (String) param.get("cartId"));
         if (!promotionDuringFlg) {
-            throw new BusinessException("活动未开始或者已经结束，不能进行库存增量操作！");
+            // 活动未开始或者已经结束，不能进行库存增量操作
+            throw new BusinessException("7000062");
         }
         simpleTransaction.openTransaction();
         try {
@@ -361,7 +370,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             sqlParam.put("statusList", Arrays.asList(CmsTaskStockService.STATUS_READY, CmsTaskStockService.STATUS_INCREMENT_FAIL));
             int updateCnt = cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam);
             if (updateCnt == 0) {
-                throw new BusinessException("没有可以进行库存增量的数据！");
+                // 没有可以进行库存增量的数据
+                throw new BusinessException("7000063");
             }
         } catch (BusinessException e) {
             simpleTransaction.rollback();
@@ -383,7 +393,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         // 增量库存值
         String incrementQty = (String) stockInfo.get("incrementQty");
         if (StringUtils.isEmpty(incrementQty) || !StringUtils.isDigit(incrementQty) || incrementQty.getBytes().length > 9 ) {
-            throw new BusinessException("增量隔离库存必须输入小于10位的整数！");
+            // 增量隔离库存必须输入小于10位的整数
+            throw new BusinessException("7000064");
         }
     }
 
@@ -630,7 +641,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring(taskId, paramPlatformInfo.get("cartId"));
         if (!promotionDuringFlg) {
-            throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
+            // 活动未开始或者已经结束，不能导入数据
+            throw new BusinessException("7000065");
         }
 
         // 取得增量库存隔离数据中是否存在状态为"0:未进行"以外的数据，则不允许导入
@@ -643,7 +655,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 CmsTaskStockService.STATUS_INCREMENT_FAIL,
                 CmsTaskStockService. STATUS_REVERT));
         if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam) != null ) {
-            throw new BusinessException("此增量任务已经进行，不能修改数据！");
+            // 此增量任务已经进行，不能修改数据
+            throw new BusinessException("7000066");
         }
 
         $info("增量库存隔离数据取得开始, sub_task_id=" + subTaskId);
@@ -671,7 +684,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         } else {
             // 没有更新对象
             $info("没有更新对象");
-            throw new BusinessException("没有更新对象");
+            // 没有更新对象
+            throw new BusinessException("7000040");
         }
 
     }
@@ -724,7 +738,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @return 平台对应列号
      */
     private int checkHeader(Row row, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo) {
-        String messageModelErr = "请使用正确格式的excel导入文件";
+        // 请使用正确格式的excel导入文件
+        String messageModelErr = "7000041";
         if (!"Model".equals(getCellValue(row, 0))
                 || !"Code".equals(getCellValue(row, 1))
                 || !"Sku".equals(getCellValue(row, 2))) {
@@ -812,19 +827,23 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
-            throw new BusinessException("Model必须输入且长度小于50！" + "Sku=" + sku);
+            // Model必须输入且长度小于50.Sku=[出错的sku]
+            throw new BusinessException("7000042", new String[]{"Model", "50", sku});
         }
         // Code输入check
         if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
-            throw new BusinessException("Code必须输入且长度小于50！" + "Sku=" + sku);
+            // Code必须输入且长度小于50.Sku=[出错的sku]
+            throw new BusinessException("7000042", new String[]{"Code", "50", sku});
         }
         // Sku输入check
         if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
-            throw new BusinessException("Sku必须输入且长度小于50！" + "Sku=" + sku);
+            // Sku必须输入且长度小于50.Sku=[出错的sku]
+            throw new BusinessException("7000042", new String[]{"Sku", "50", sku});
         }
 
         if (listExcelSku.contains(sku)) {
-            throw new BusinessException("Sku重复输入！" + "Sku=" + sku);
+            // Sku不能重复.Sku=[出错的sku]
+            throw new BusinessException("7000043", sku);
         } else {
             listExcelSku.add(sku);
         }
@@ -833,20 +852,23 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             // 属性
             String property = getCellValue(row, index);
             if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
-                throw new BusinessException(getCellValue(rowHeader, index) + "必须输入且长度小于500！" + "Sku=" + sku);
+                // [属性]必须输入且长度小于500.Sku=[出错的sku]
+                throw new BusinessException("7000042", new String[]{getCellValue(rowHeader, index), "500", sku});
             }
         }
 
-        // 可调配库存输入check
+        // 可用库存输入check
         String usableStock = getCellValue(row, colPlatform - 1);
         if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 9) {
-            throw new BusinessException("可调配库存必须输入小于10位的整数！" + "Sku=" + sku);
+            // 可用库存必须输入小于10位的整数.Sku=[出错的sku]
+            throw new BusinessException("7000044", sku);
         }
 
         // 增量隔离库存
         String increment_qty = getCellValue(row, colPlatform);
         if (StringUtils.isEmpty(increment_qty) || !StringUtils.isDigit(increment_qty) || increment_qty.getBytes().length > 9) {
-            throw new BusinessException("增量隔离库存必须输入小于10位的整数！" + "Sku=" + sku);
+            // 增量隔离库存必须输入小于10位的整数.Sku=[出错的sku]
+            throw new BusinessException("7000067", sku);
         }
 
         // 固定值增量
@@ -856,7 +878,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         } else if (YES.equals(fix)) {
             fix = TYPE_FIX_VALUE;
         } else {
-            throw new BusinessException("固定值增量请输入'" + YES + "'或不输入！" + "Sku=" + sku);
+            // 固定值增量请输入Yes或不输入.Sku=[出错的sku]
+            throw new BusinessException("7000068", new String[]{YES, sku});
         }
 
         boolean isAddData = false;
@@ -870,13 +893,16 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             } else {
                 // DB存在,更新数据
                 if (!model.equals(beanInDB.getProductModel())) {
-                    throw new BusinessException("变更方式导入时,Model不能变更！" + "Sku=" + sku);
+                    // 变更方式导入时,Model不能变更.Sku = [出错的sku]
+                    throw new BusinessException("7000049", new String[]{"Model", sku});
                 }
                 if (!code.equals(beanInDB.getProductCode())) {
-                    throw new BusinessException("变更方式导入时,Code不能变更！" + "Sku=" + sku);
+                    // 变更方式导入时,Code不能变更.Sku = [出错的sku]
+                    throw new BusinessException("7000049", new String[]{"Code", sku});
                 }
                 if (!sku.equals(beanInDB.getSku())) {
-                    throw new BusinessException("变更方式导入时,Sku不能变更！" + "Sku=" + sku);
+                    // 变更方式导入时,Sku不能变更.Sku = [出错的sku]
+                    throw new BusinessException("7000049", new String[]{"Sku", sku});
                 }
 
                 for (int index = 3; index <= colPlatform - 2; index++) {
@@ -884,12 +910,14 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                     String propertyNa = getCellCommentValue(rowHeader, index);
                     String property = getCellValue(row, index);
                     if (!property.equals(beanInDB.getProperty(propertyNa))) {
-                        throw new BusinessException("变更方式导入时," + getCellValue(rowHeader, index) + "不能变更！" + "Sku=" + sku);
+                        // 变更方式导入时,[属性]不能变更.Sku = [出错的sku]
+                        throw new BusinessException("7000049", new String[]{getCellValue(rowHeader, index), sku});
                     }
                 }
 
                 if (!usableStock.equals(beanInDB.getQty().toPlainString())) {
-                    throw new BusinessException("变更方式导入时,可调配库存不能变更！" + "Sku=" + sku);
+                    // 变更方式导入时,可用库存不能变更.Sku = [出错的sku]
+                    throw new BusinessException("7000050", sku);
                 }
 
                 if (!increment_qty.equals(beanInDB.getIncrementQty().toPlainString()) || !fix.equals(beanInDB.getFixFlg())) {
@@ -981,7 +1009,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             });
         } catch (Exception e) {
             $error(e.getMessage());
-            throw new BusinessException("更新异常,请重新尝试！");
+            // 更新异常
+            throw new BusinessException("7000054");
         }
     }
 
@@ -1000,7 +1029,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             try {
                 mapSaveData = PropertyUtils.describe(bean);
             } catch (Exception e) {
-                throw new BusinessException("导入文件有数据异常");
+                // 导入文件有数据异常
+                throw new BusinessException("7000053");
             }
 
             mapSaveData.put("subTaskId", subTaskId);

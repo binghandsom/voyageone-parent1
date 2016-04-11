@@ -848,7 +848,8 @@ public class CmsTaskStockController extends CmsController {
             data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
         } catch (Exception e) {
             $error(e.getMessage());
-            throw new BusinessException("导出异常！");
+            // 导出异常
+            throw new BusinessException("7000069");
         }
         // 返回
         return genResponseEntityFromBytes("StockInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
@@ -1235,7 +1236,8 @@ public class CmsTaskStockController extends CmsController {
             data = cmsTaskStockService.getExcelFileStockErrorInfo(param);
         } catch (Exception e) {
             $error(e.getMessage());
-            throw new BusinessException("导出异常！");
+            // 导出异常
+            throw new BusinessException("7000069");
         }
         // 返回
         return genResponseEntityFromBytes("StockErrorInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
