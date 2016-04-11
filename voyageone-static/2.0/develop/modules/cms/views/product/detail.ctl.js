@@ -87,6 +87,7 @@ define([
                 self.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
+                        self.inventoryList = res.data.inventoryList;
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
 
@@ -103,7 +104,7 @@ define([
                 // 尝试检查商品的 field 验证
                 var invalidNames = validSchema(self.productDetails);
 
-                if (invalidNames.length) {
+                if (invalidNames.length && self.productDetails.productStatus.statusInfo.isApproved) {
                     return self.alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
                 }
 

@@ -7,6 +7,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -23,6 +25,8 @@ import java.security.KeyStore;
  */
 public class HttpUtils {
 
+    private final static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
+
     static {
         HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> true);
     }
@@ -37,7 +41,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -56,7 +60,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -92,7 +96,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -112,7 +116,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -127,8 +131,8 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuffer sb = null;
-        String line = null;
+        StringBuilder sb;
+        String line;
 
         try {
 	            /*post向服务器请求数据*/
@@ -137,10 +141,10 @@ public class HttpUtils {
             request.setEntity(se);
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
-            request.setHeader("Authorization", "Basic " + authorization);;
-            CloseableHttpClient httpclient= HttpClients.createDefault();
+            request.setHeader("Authorization", "Basic " + authorization);
+            CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
-            int code = response.getStatusLine().getStatusCode();
+            //int code = response.getStatusLine().getStatusCode();
             // System.out.println("postCode= " + code);
 
             //从服务器获得输入流
@@ -148,35 +152,32 @@ public class HttpUtils {
             isr = new InputStreamReader(input);
             buffer = new BufferedReader(isr,10*1024);
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             while ((line = buffer.readLine()) != null) {
                 sb.append(line);
             }
 
+            return sb.toString();
 
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
             System.out.println("请求异常数据异常");
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         } finally {
             try {
                 if(buffer != null) {
                     buffer.close();
-                    buffer = null;
                 }
                 if(isr != null) {
                     isr.close();
-                    isr = null;
                 }
                 if(input != null) {
                     input.close();
-                    input = null;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
-        return sb.toString();
     }
 
     public static String patch(String url, String jsonParam,String authorization)
@@ -185,8 +186,8 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuffer sb = null;
-        String line = null;
+        StringBuilder sb;
+        String line;
 
         try {
 	            /*post向服务器请求数据*/
@@ -195,10 +196,10 @@ public class HttpUtils {
             request.setEntity(se);
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
-            request.setHeader("Authorization", "Basic " + authorization);;
+            request.setHeader("Authorization", "Basic " + authorization);
             CloseableHttpClient httpclient= HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
-            int code = response.getStatusLine().getStatusCode();
+            // int code = response.getStatusLine().getStatusCode();
             // System.out.println("postCode= " + code);
 
             //从服务器获得输入流
@@ -206,35 +207,31 @@ public class HttpUtils {
             isr = new InputStreamReader(input);
             buffer = new BufferedReader(isr,10*1024);
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             while ((line = buffer.readLine()) != null) {
                 sb.append(line);
             }
 
-
+            return sb.toString();
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
             System.out.println("请求异常数据异常");
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         } finally {
             try {
                 if(buffer != null) {
                     buffer.close();
-                    buffer = null;
                 }
                 if(isr != null) {
                     isr.close();
-                    isr = null;
                 }
                 if(input != null) {
                     input.close();
-                    input = null;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
-        return sb.toString();
     }
 
 
@@ -252,7 +249,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -521,7 +518,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -551,7 +548,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -594,7 +591,7 @@ public class HttpUtils {
 
     public static SSLSocketFactory getSsf(String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd)  {
 
-        SSLSocketFactory ssf = null;
+        SSLSocketFactory ssf;
 
         try {
             // 实例化 SSL 上下文  arg1:protocol arg2:provider
@@ -624,7 +621,7 @@ public class HttpUtils {
             //-----注入SSL Context
             ssf = sslContext.getSocketFactory();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
         return ssf;
@@ -643,14 +640,13 @@ public class HttpUtils {
                 readConent =  readConnection(inputStream);
             }
 
-            if (connection != null) {
-                connection.disconnect();
-            }
+            connection.disconnect();
+
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             if (connection != null) {
                 connection.disconnect();
             }
-            e.printStackTrace();
             throw e;
         }
 
@@ -702,9 +698,7 @@ public class HttpUtils {
     public static InputStream getInputStream(String urlString) throws IOException {
         URL url = new URL(urlString);
 
-        InputStream inputStream = url.openStream();
-
-        return inputStream;
+        return url.openStream();
     }
 
 }

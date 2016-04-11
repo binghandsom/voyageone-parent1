@@ -68,8 +68,9 @@ define([
             //Save保存按钮
             $scope.saveTask =function(){
                 taskStockService.saveTask($scope.vm).then(function(res){
+                    $scope.$close();
                 });
-                $scope.$close();
+
             }
 
         }else{

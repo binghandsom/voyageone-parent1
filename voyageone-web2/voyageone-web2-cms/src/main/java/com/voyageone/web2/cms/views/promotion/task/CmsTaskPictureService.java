@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;

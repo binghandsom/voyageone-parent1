@@ -133,6 +133,12 @@ public class FeedEnums {
         price_net,
         price_current,
         price_msrp,
-        import_brand
-        }
+        import_brand,
+        file_id_import_upc,
+        file_id_import_category,
+        client_product_url,
+        useDuty,
+        priceWithDuty,
+        priceWithoutDuty
+    }
 }

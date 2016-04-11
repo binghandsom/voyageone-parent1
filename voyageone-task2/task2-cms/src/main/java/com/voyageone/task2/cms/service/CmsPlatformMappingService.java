@@ -81,8 +81,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
                     for (CmsMtPlatformCategoryTreeModel finallyCategory : finallyCategories) {
                         // 该叶子节点mapping关系没有生成过的场合
                         if (cmsMtPlatformMappingDao.isExist(channelId, cartId, finallyCategory.getCatId()) == 0) {
-//                        if (cmsMtPlatformMappingDao.getMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
-                            logger.info(finallyCategory.getCatPath());
+//                        if (cmsMtPlatformMappingDao.selectMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
+                            $info(finallyCategory.getCatPath());
                             finallyCategory.setCartId(platformCategory.getCartId());
                             // 生成mapping关系数据并插入
                             {
@@ -105,7 +105,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 }
             }
         }
-        logger.info("platformMappingTask finish");
+        $info("platformMappingTask finish");
     }
 
     /**
@@ -116,8 +116,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
         CmsMtPlatformCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsMtPlatformCategoryDao.selectByChannel_CartId_CatId(channelId, cartId, categoryId);
 //        Object jsonObj = JsonPath.parse(JsonUtil.bean2Json(cmsMtFeedCategoryTreeModel)).json();
         LinkedList jsonArray = JsonPath.read(JsonUtil.bean2Json(cmsMtFeedCategoryTreeModel), "$..children[?(@.isParent == 0)]");
-        List<CmsMtPlatformCategoryTreeModel> child = JsonUtil.jsonToBeanList(JsonUtil.bean2Json(jsonArray), CmsMtPlatformCategoryTreeModel.class);
-        return child;
+        return JsonUtil.jsonToBeanList(JsonUtil.bean2Json(jsonArray), CmsMtPlatformCategoryTreeModel.class);
     }
 
     private CmsMtPlatformMappingModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree) throws Exception {

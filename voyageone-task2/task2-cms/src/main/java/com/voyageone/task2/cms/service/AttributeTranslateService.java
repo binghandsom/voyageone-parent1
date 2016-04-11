@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.AttributeDao;
-import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -91,7 +91,7 @@ public class AttributeTranslateService extends BaseTaskService {
             for (Future<String> fs : resultList) {
                 try {
                     //打印各个线程（任务）执行的结果
-                    logger.info(fs.get());
+                    $info(fs.get());
                 } finally {
                     if (es != null) {
                         es.shutdown();
@@ -106,8 +106,6 @@ public class AttributeTranslateService extends BaseTaskService {
 
     /**
      * 获得要翻译的数据
-     *
-     * @return
      */
     private List<Map<String, String>> getAttributeValue() {
         List<Map<String, String>> attributeValueList = attributeDao.getAttributeValue();
@@ -117,8 +115,6 @@ public class AttributeTranslateService extends BaseTaskService {
 
     /**
      * 更新需要翻译的字段
-     *
-     * @return
      */
     private boolean updateAttributeValueCn(List<Map<String, String>> resultList) {
         boolean isSuccess = false;
@@ -133,7 +129,7 @@ public class AttributeTranslateService extends BaseTaskService {
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            $error(ex.getMessage(), ex);
 
             logIssue(ex);
 
@@ -264,7 +260,7 @@ public class AttributeTranslateService extends BaseTaskService {
 
         @Override
         public String call() throws Exception {
-            logger.info("百度翻译 product attribute value 任务 thread-" + threadNo + " start");
+            $info("百度翻译 product attribute value 任务 thread-" + threadNo + " start");
 
             if (subTransStrList == null || subTransStrList.size() <= 0) {
                 return "thread-" + threadNo + " 要翻译的文言列表为空，不需要翻译";

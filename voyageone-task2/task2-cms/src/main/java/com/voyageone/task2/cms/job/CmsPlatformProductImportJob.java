@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * 从天猫拉取商品数据, 插入到主数据 (用于旧系统迁移到新系统)
  *
  * @author james.li on 2015/12/10
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @Component("CmsPlatformProductImportJob")
 public class CmsPlatformProductImportJob extends BaseTaskJob {

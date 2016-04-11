@@ -63,35 +63,35 @@ public class VtmService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 清表
-        $info("维他命产品信息清表开始");
-        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
-        $info("维他命产品信息清表结束");
+
 
         // 插入数据库
         $info("维他命产品信息插入开始");
         int count = vtmSuperFeedImport();
-        $info("维他命产品信息插入完成");
+        $info("维他命产品信息插入完成 共"+count+"条数据");
+        if( count > 0) {
+            // 清表
 
-        // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
-        // 1的sql文：
-        // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
-        // 2的sql文：
-        // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
-        logger.info("transform开始");
-        transformer.new Context(LUCKY_VITAMIN, this).transform();
-        logger.info("transform结束");
+            // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
+            // 1的sql文：
+            // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
+            // 2的sql文：
+            // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
+            $info("transform开始");
+            transformer.new Context(LUCKY_VITAMIN, this).transform();
+            $info("transform结束");
 
-        insertService.new Context(LUCKY_VITAMIN).postNewProduct();
-        // 更新完成，UpdateFlag结果：
-        // UpdateFlag    cms_zz_worktable_vtm_superfeed
-        // 0             已经加入的原有数据(未变化)
-        // 1             途中OK待加入的数据(追加和变更的数据)
-        // 2             本次导入error的数据
-        // 3             本次导入完全导入成功的数据
+            insertService.new Context(LUCKY_VITAMIN).postNewProduct();
+            // 更新完成，UpdateFlag结果：
+            // UpdateFlag    cms_zz_worktable_vtm_superfeed
+            // 0             已经加入的原有数据(未变化)
+            // 1             途中OK待加入的数据(追加和变更的数据)
+            // 2             本次导入error的数据
+            // 3             本次导入完全导入成功的数据
 
-        backupFeedFile(LUCKY_VITAMIN.getId());
-
+            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_upc);
+            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_category);
+        }
     }
 
     /**
@@ -110,7 +110,7 @@ public class VtmService extends BaseTaskService {
 //            } catch (Exception ex) {
 //                String message = "维他命产品文件插入失败, SKU= " + superfeed.getSKU();
 //                $info(message);
-//                logger.error(ex.getMessage());
+//                $error(ex.getMessage());
 //                logIssue("cms 数据导入处理", message + "  " + ex.getMessage());
 //            }
 //        }
@@ -131,8 +131,17 @@ public class VtmService extends BaseTaskService {
         int count = 0;
         String sku = "first";
 
-        List<String> listImportUPC = getListImportUPC();
+        List<String> listImportUPC = getListImportUPC(FeedEnums.Name.file_id_import_upc);
+        List<String> listImportCategory = getListImportUPC(FeedEnums.Name.file_id_import_category);
 
+        if (listImportUPC.size() == 0 && listImportCategory.size() == 0) {
+//            logger.error("UPC设定的Excel文件不正确");
+//            logIssue("cms 数据导入处理", "UPC设定的Excel文件不正确. ");
+            return 0;
+        }
+        $info("维他命产品信息清表开始");
+        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
+        $info("维他命产品信息清表结束");
 //        CsvReader reader;
         BufferedReader br = null;
         try {
@@ -161,7 +170,7 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setSKU(reader.get(i++));
                 sku = superfeedvtmbean.getSKU();
                 superfeedvtmbean.setUPC(reader.get(i++));
-                if (StringUtils.isEmpty(superfeedvtmbean.getUPC()) || !listImportUPC.contains(superfeedvtmbean.getUPC())) {
+                if (StringUtils.isEmpty(superfeedvtmbean.getUPC())) {
                     continue;
                 }
                 superfeedvtmbean.setEAN(reader.get(i++));
@@ -254,10 +263,13 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setQuantity(reader.get(i++));
                 superfeedvtmbean.setVoyageOneMSRP(reader.get(i++));
 
-                if(isErrData(superfeedvtmbean)) {
+                if (isErrData(superfeedvtmbean)) {
                     continue;
                 }
-
+                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
+                {
+                    continue;
+                }
                 superfeed.add(superfeedvtmbean);
                 sku = sku + " read over, next. ";
 
@@ -267,7 +279,9 @@ public class VtmService extends BaseTaskService {
                 }
             }
 
-            count = count + insertSuperFeedVtm(superfeed);
+            if (superfeed.size() > 0) {
+                count = count + insertSuperFeedVtm(superfeed);
+            }
 //            reader.close();
             $info("维他命产品文件读入完成");
         } catch (Exception ex) {
@@ -281,7 +295,7 @@ public class VtmService extends BaseTaskService {
                 message = "★★★★★从SKU=" + sku + " 开始未成功导入★★★★★";
             }
             $info(message);
-            logger.error(ex.getMessage());
+            $error(ex.getMessage());
             logIssue("cms 数据导入处理", "维他命产品文件读入失败. " + message + ex.getMessage());
         } finally {
             if (br != null) br.close();
@@ -294,10 +308,38 @@ public class VtmService extends BaseTaskService {
      *
      * @return listImportUPC
      */
-    private List<String> getListImportUPC() {
+    private List<String> getListImportUPC(FeedEnums.Name name) {
         List<String> listImportUPC = new ArrayList<String>();
-        List<FeedBean> configs = Feeds.getConfigs(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.import_upc);
-        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
+//        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.import_upc);
+//        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
+
+        BufferedReader br = null;
+        try {
+            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), name);
+            String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileFullName = String.format("%s/%s", filePath, fileName);
+
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(fileFullName)));
+
+            String b;
+            while ((b = br.readLine()) != null) {
+                listImportUPC.add(b);
+            }
+
+        }catch (FileNotFoundException ex) {
+            $info("upc清单不存在");
+        }catch (Exception ex) {
+            listImportUPC.clear();
+            $error(ex.getMessage());
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    $error(e.getMessage());
+                }
+            }
+        }
 
         return listImportUPC;
     }
@@ -318,21 +360,30 @@ public class VtmService extends BaseTaskService {
         return false;
     }
 
-    private boolean backupFeedFile(String channel_id) {
+    private boolean categoryContains(List<String> exportCategorys, String categorys){
+        for(String exportCategory : exportCategorys){
+            if(categorys.indexOf(exportCategory) > -1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean backupFeedFile(String channel_id,FeedEnums.Name name) {
         $info("备份处理文件开始");
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id,  name));
         String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 
         if (!file.renameTo(file_backup)) {
-//            logger.error("产品文件备份失败");
-            $info("产品文件备份失败");
+//            $error("产品文件备份失败");
+            $info("UPC文件备份失败");
         }
 
         $info("备份处理文件结束");

@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.model.UserConfigModel;
 import org.junit.Test;
@@ -32,8 +33,9 @@ public class CmsSearchIndexServiceTest {
         userConfigModel.setCfg_name("language_id");
         userConfigModel.setCfg_val1("en");
 
+        CmsSessionBean cmsSession = new CmsSessionBean();
 
-        Map<String, Object> resultInfo = cmsSearchIndexService.getMasterData(userInfo, "en");
+        Map<String, Object> resultInfo = cmsSearchIndexService.getMasterData(userInfo, cmsSession, "en");
 
         System.out.println(resultInfo.get("productStatusList"));
         System.out.println(resultInfo.get("publishStatusList"));

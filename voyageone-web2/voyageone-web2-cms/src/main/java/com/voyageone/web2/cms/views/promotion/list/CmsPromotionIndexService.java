@@ -75,8 +75,8 @@ public class CmsPromotionIndexService extends BaseAppService {
         }
     }
 
-    public int deleteById(Integer promotionId) {
-        return promotionService.deleteById(promotionId);
+    public int delete(CmsBtPromotionModel cmsBtPromotionModel) {
+        return promotionService.delete(cmsBtPromotionModel);
     }
 
     public byte[] getCodeExcelFile(Integer promotionId) throws IOException, InvalidFormatException {

@@ -10,7 +10,7 @@ import com.voyageone.web2.sdk.api.VoApiResponse;
  *
  * @author edward.lin
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductForWmsGetResponse extends VoApiResponse {
 

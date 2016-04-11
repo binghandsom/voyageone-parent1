@@ -9,8 +9,8 @@ import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.PromotionDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbItemService;
-import com.voyageone.common.components.tmall.TbPromotionService;
+import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.components.tmall.service.TbPromotionService;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -140,7 +140,7 @@ public class CmsPromotionMqService extends BaseMQTaskService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                $error(e);
                 if (failProduct.get(e.getMessage()) == null) {
                     List<String> temp = new ArrayList<>();
                     temp.add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
@@ -148,7 +148,7 @@ public class CmsPromotionMqService extends BaseMQTaskService {
                 } else {
                     failProduct.get(e.getMessage()).add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
                 }
-                logger.info(e.getMessage());
+                $info(e.getMessage());
             }
         });
         // 把成功的产品更新数据库

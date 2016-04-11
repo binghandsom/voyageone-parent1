@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CategoryTreeService {
+public class CategoryTreeService extends BaseService {
 
     @Autowired
     private CmsMtCategoryTreeDao cmsMtCategoryTreeDao;

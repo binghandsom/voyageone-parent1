@@ -677,39 +677,6 @@ public class CmsTaskStockController extends CmsController {
         return success(resultBean);
     }
 
-//    /**
-//     * @api {post} /cms/promotion/task_stock/initNewRecord 1.07 新建一条新隔离明细前初始化操作（取得隔离平台）
-//     * @apiName CmsTaskStockController.initNewRecord
-//     * @apiGroup promotion
-//     * @apiVersion 0.0.1
-//     * @apiPermission 认证商户
-//     * @apiParam (应用级参数) {String} taskId 任务id
-//     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
-//     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
-//     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
-//     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-//     * @apiSuccess (应用级返回字段) {Object} platformList 隔离平台信息（json数组）
-//     * @apiSuccessExample 成功响应更新请求
-//     * {
-//     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
-//     *  "data":{
-//     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
-//     *                     {"cartId":"27", "cartName":"聚美优品"} ]
-//     *  }
-//     * }
-//     * @apiExample  业务说明
-//     *  1.根据参数.任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
-//     * @apiExample 使用表
-//     *  cms_bt_stock_separate_platform_info
-//     *
-//     */
-//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_RECORD)
-//    public AjaxResponse initNewRecord(@RequestBody Map param) {
-//
-//        // 返回
-//        return success(null);
-//    }
-
     /**
      * @api {post} /cms/promotion/task_stock/getUsableStock 1.08 取得可用库存
      * @apiName CmsTaskStockController.getUsableStock
@@ -880,7 +847,7 @@ public class CmsTaskStockController extends CmsController {
         try {
             data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("导出异常！");
         }
         // 返回
@@ -1267,7 +1234,7 @@ public class CmsTaskStockController extends CmsController {
         try {
             data = cmsTaskStockService.getExcelFileStockErrorInfo(param);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("导出异常！");
         }
         // 返回

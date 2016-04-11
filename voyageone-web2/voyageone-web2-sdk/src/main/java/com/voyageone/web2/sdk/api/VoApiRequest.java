@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  *
  * @author chuanyu.liang
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public abstract class VoApiRequest<T extends VoApiResponse> {
 

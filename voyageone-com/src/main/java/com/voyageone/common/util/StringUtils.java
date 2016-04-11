@@ -1,7 +1,5 @@
 package com.voyageone.common.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
@@ -15,8 +13,6 @@ import java.util.regex.Pattern;
 public final class StringUtils {
 
     private static final Pattern special_symbol = Pattern.compile("[.]");
-
-    private static Log logger = LogFactory.getLog(StringUtils.class);
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -50,9 +46,6 @@ public final class StringUtils {
 
     /**
      * 空白Check
-     *
-     * @param chkParam
-     * @return
      */
     public static boolean isEmpty(String chkParam) {
         boolean ret = false;
@@ -66,22 +59,16 @@ public final class StringUtils {
 
     /**
      * 数字Check
-     *
-     * @param chkParam
-     * @return
      */
     public static boolean isDigit(String chkParam) {
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher match = pattern.matcher(chkParam);
 
-        return match.matches() != false;
+        return match.matches();
     }
 
     /**
      * 数值Check
-     *
-     * @param chkParam
-     * @return
      */
     public static boolean isNumeric(String chkParam) {
         boolean ret = true;
@@ -96,26 +83,17 @@ public final class StringUtils {
 
     /**
      * Web Service 用
-     *
-     * @param str
-     * @return
      */
     public static boolean isNullOrBlank2(String str) {
-        if (str == null || "".equals(str)) {
-            return true;
-        } else return "null".equals(str);
+        return str == null || "".equals(str) || "null".equals(str);
     }
 
     /**
      * ArrayList 转为 页面输出字符串
-     *
-     * @param errorList
-     * @return
      */
     public static String arrayListToString(ArrayList<String> errorList) {
         // 异常信息输出
-        String errorOutput = "";
-        StringBuffer outputBuff = new StringBuffer();
+        StringBuilder outputBuff = new StringBuilder();
         for (int i = 0; i < errorList.size(); i++) {
             if (i == 0) {
                 outputBuff.append(errorList.get(i));
@@ -124,21 +102,15 @@ public final class StringUtils {
                 outputBuff.append(errorList.get(i));
             }
         }
-        errorOutput = outputBuff.toString();
-
-        return errorOutput;
+        return outputBuff.toString();
     }
 
     /**
      * ArrayList 转为 页面输出字符串
-     *
-     * @param errorList
-     * @return
      */
     public static String arrayListToString2(ArrayList<String> errorList) {
         // 异常信息输出
-        String errorOutput = "";
-        StringBuffer outputBuff = new StringBuffer();
+        StringBuilder outputBuff = new StringBuilder();
         for (int i = 0; i < errorList.size(); i++) {
             if (i == 0) {
                 outputBuff.append(errorList.get(i));
@@ -147,20 +119,15 @@ public final class StringUtils {
                 outputBuff.append(errorList.get(i));
             }
         }
-        errorOutput = outputBuff.toString();
-
-        return errorOutput;
+        return outputBuff.toString();
     }
 
     /**
      * 小数点2位精度取得
-     *
-     * @param value
-     * @return
      */
     public static String getNumPrecision2(double value) {
 
-        BigDecimal b = new BigDecimal(value);
+        BigDecimal b = BigDecimal.valueOf(value);
 
         return String.valueOf(b.setScale(2, BigDecimal.ROUND_HALF_UP));
     }
@@ -180,7 +147,6 @@ public final class StringUtils {
      * DB 日期时间去除
      *
      * @param dbDate DB中日期值（含时间）
-     * @return
      */
     public static String trimDBDateTime(String dbDate) {
         String ret = "";
@@ -199,7 +165,6 @@ public final class StringUtils {
      * DB 日期时间毫秒去除
      *
      * @param dbDate DB中日期值（含时间）
-     * @return
      */
     public static String trimDBDateTimeMs(String dbDate) {
         String ret = "";
@@ -218,7 +183,6 @@ public final class StringUtils {
      * DB 日期取得
      *
      * @param dbDate DB中日期值（含时间）
-     * @return
      */
     public static String getDate(String dbDate) {
         String ret = "";
@@ -237,7 +201,6 @@ public final class StringUtils {
      * DB 时间取得
      *
      * @param dbDate DB中日期值（含时间）
-     * @return
      */
     public static String getTime(String dbDate) {
         String ret = "";
@@ -257,7 +220,6 @@ public final class StringUtils {
      *
      * @param dbDate DB中日期值（含时间）
      * @param dbTime DB中时间值（含时间）
-     * @return
      */
     public static String getDateTime(String dbDate, String dbTime) {
         String ret = "";
@@ -273,14 +235,13 @@ public final class StringUtils {
      * DB 金额取得
      *
      * @param dbMoney DB中金额（0.0000）
-     * @return
      */
     public static String getFormatedMoney(String dbMoney) {
         String ret = "";
 
         if (dbMoney != null) {
             double retD = Double.parseDouble(dbMoney);
-            BigDecimal b = new BigDecimal(retD);
+            BigDecimal b = BigDecimal.valueOf(retD);
 
             ret = String.valueOf(b.setScale(2, BigDecimal.ROUND_HALF_UP));
         }
@@ -341,26 +302,20 @@ public final class StringUtils {
     
     /**
      * 判断字符串中是否包含某些字符串
-     * @param str
-     * @param s
-     * @return
      */
     public static boolean containstr(String str,String[]... comp){
-        boolean flag=false;
         for (String[] s : comp) {
-            for (int i = 0; i < s.length; i++) {
-                if (str.contains(s[i])) {
+            for (String value : s) {
+                if (str.contains(value)) {
                     return true;
                 }
             }
 		}
-        return flag;
+        return false;
     }
     
     /**
      * 字符串首字母大写
-     * @param name
-     * @return
      */
     public static String uppercaseFirst(String name)  
     {  
@@ -369,9 +324,6 @@ public final class StringUtils {
 
     /**
      * 转换数据中的特殊字符
-     *
-     * @param data
-     * @return
      */
     public static String transferStr(String data) {
         if (StringUtils.isNullOrBlank2(data)) {
@@ -382,19 +334,11 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Discription: 指定的字符串累加
-     * </p>
-     *
-     * @param chr
-     * @param len
-     * @return
-     * @author :
-     * @update :
      */
     public static String strAdd(String chr, int len) {
         if (len > 0) {
-            StringBuffer ret = new StringBuffer(len);
+            StringBuilder ret = new StringBuilder(len);
             for (int i = 0; i < len; i++) {
                 ret.append(chr);
             }
@@ -405,16 +349,7 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Discription: 给字符串补足到指定的长度，从左边补足chr指定的字符
-     * </p>
-     *
-     * @param source
-     * @param chr
-     * @param len
-     * @return
-     * @author :
-     * @update :
      */
     public static String lPad(String source, String chr, int len) {
         int lenleft = len - source.length();
@@ -425,16 +360,7 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Discription: 给字符串补足到指定的长度，从右边补足chr指定的字符
-     * </p>
-     *
-     * @param source
-     * @param chr
-     * @param len
-     * @return
-     * @author :
-     * @update :
      */
     public static String rPad(String source, String chr, int len) {
         int lenleft = len - source.length();
@@ -445,15 +371,7 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Discription: 取得字符的Byte长度
-     * </p>
-     *
-     * @param content
-     * @param charsetName
-     * @return
-     * @author :
-     * @update :
      */
     public static int getByteLength(String content, String charsetName) {
         int byteLength = 0;
@@ -461,23 +379,14 @@ public final class StringUtils {
         try {
             byte[] byteContent = content.getBytes(charsetName);
             byteLength = byteContent.length;
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
 
         return byteLength;
     }
 
     /**
-     * <p>
      * Discription: <img></> 元素删除
-     * </p>
-     *
-     * @param content
-     * @param
-     * @return
-     * @author :
-     * @update :
      */
     public static String trimImgElement(String content) {
         String ret = content;
@@ -504,8 +413,6 @@ public final class StringUtils {
 	
 	/**
      * 把str中的【.】替换成【->】
-     * @param str
-     * @return
      */
     public static String replaceDot(String str){
         return special_symbol.matcher(str).replaceAll("->");
@@ -543,13 +450,37 @@ public final class StringUtils {
     public static String generCatId(String catPath) {
         return MD5.getMD5(catPath);
     }
-	
 
-//    public static void main(String[] args) {
-//        String content = "<img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <p>The envelope <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg>clutch is reimagined in smooth cork with splashes of vivid colors for an artistic finish.</p><ul><li>Magnetic snap closure.</li><li>Material: Cork.</li><li>Lining: Rayon.</li><li>Imported.</li></ul><br /><p>这款信封式手拿包的灵感来源于鲜艳的色彩飞溅在光滑的软木上，体现了现代艺术与自然的结合.</p><ul><li>磁扣闭合.</li><li>材质: 软木.</li><li>内衬: 人造丝.</li><li>进口原厂制作.</li></ul>  <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <br>";
-//
-//        String ret = trimImgElement(content);
-//        System.out.println(content);
-//        System.out.println(ret);
-//    }
+    public static String format(String msg, String... params) {
+        if ((params == null) || (params.length == 0)) {
+            return msg;
+        }
+        int i = 0;
+        for (int lens = params.length; i < lens; i++) {
+            StringBuilder idx = new StringBuilder();
+            idx.append("{");
+            idx.append(i);
+            idx.append("}");
+            msg = replace(msg, idx.toString(), params[i]);
+        }
+        return msg;
+    }
+
+    public static String replace(String val, String find, String rep) {
+        if ((val == null) || ("".equals(val))) {
+            return "";
+        }
+        StringBuilder ret = new StringBuilder();
+        int end = val.indexOf(find);
+        int start = 0;
+        while (end >= 0) {
+            ret.append(val.substring(start, end));
+            ret.append(rep);
+            start = end + find.length();
+            end = val.indexOf(find, start);
+        }
+        ret.append(val.substring(start));
+        return ret.toString();
+    }
+
 }

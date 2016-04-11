@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
 import com.voyageone.web2.base.BaseAppService;
@@ -28,6 +29,11 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     @Autowired
     private SimpleTransaction simpleTransaction;
 
+    /** 判断隔离任务:1新规的场合 */
+    private  static final String TYPE_INCREMENT_INSERT="1";
+    /** 判断隔离任务:2更新的场合 */
+    private  static final String TYPE_INCREMENT_UPDATE="2";
+
     /**
      * 检索增量库存隔离任务
      *
@@ -51,6 +57,86 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             taskList.add(task);
         }
         return taskList;
+    }
+
+    /**
+     * 新建/修改增量库存隔离任务
+     * @param param
+     */
+    public void saveIncrementInfoByTaskID(Map param){
+        //判断增量任务:新规场合
+        String promotionType = (String) param.get("promotionType");
+        //判断增量任务:增量任务ID
+        String incrementTaskID = (String) param.get("incrementTaskID");
+        //画面入力信息的CHECK
+        checkIncrementInfo(param,incrementTaskID);
+
+        if(promotionType.equals(TYPE_INCREMENT_INSERT)){
+            //根据增量任务id，将增量任务信息插入到cms_bt_stock_separate_increment_task表
+            insertIncrementByTaskID(param,incrementTaskID);
+            //根据增量任务id，抽出cms_bt_stock_separate_item表中的所有sku后，计算出各sku的可用库存数并且根据增量任务的设定。
+            // 计算出增量库存隔离数，插入到cms_bt_stock_separate_increment_item表中。（固定值隔离标志位=0：按动态值进行增量隔离）
+            insertStockSeparateByTaskID(param,incrementTaskID);
+        }
+        //判断增量任务:更新场合
+        if(promotionType.equals(TYPE_INCREMENT_UPDATE)){
+            //如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_stock_separate_increment_task表
+            updateIncrementByTaskID(param,incrementTaskID);
+        }
+    }
+
+    /**
+     * 画面入力信息的CHECK
+     * @param param
+     */
+    private void checkIncrementInfo(Map param,String incrementTaskID) {
+        //增量类型:增量数量
+        String incrementCount = (String) param.get("incrementCount");
+        //增量类型:增量百分比
+        String incrementPercent = (String) param.get("incrementPercent");
+        //任务名称
+        if (StringUtils.isEmpty(incrementTaskID)||incrementTaskID.getBytes().length>=1000) {
+            throw new BusinessException("必须输入且长度小于1000！");
+        }
+        //数量增量
+        if (StringUtils.isEmpty(incrementCount) || !StringUtils.isDigit(incrementCount)
+                ||incrementCount.getBytes().length>1||Long.parseLong(incrementCount)>0) {
+            throw new BusinessException("增量必须为大于0的整数！");
+        }
+        //百分比增量
+        if(incrementPercent.equals("%")){
+            throw new BusinessException("增量比例必须填且为大于0小于100整数！");
+        }else{
+            String[] IncrementValue = incrementPercent.split("%");
+            if (StringUtils.isEmpty(IncrementValue[0])|| !StringUtils.isDigit(IncrementValue[0])
+                    ||IncrementValue[0].getBytes().length>2||IncrementValue.length>1||Long.parseLong(IncrementValue[0])>0) {
+                throw new BusinessException("增量比例必须填且为大于0小于100整数！");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param param
+     */
+    private void insertStockSeparateByTaskID(Map param,String incrementTaskID) {
+
+    }
+
+    /**
+     * 如果是新建增量任务时（参数.增量任务id没有内容），将增量任务信息插入到cms_bt_stock_separate_increment_task表
+     * @param param
+     */
+    private void insertIncrementByTaskID(Map param,String incrementTaskID) {
+
+    }
+
+    /**
+     * 如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_stock_separate_increment_task表
+     * @param param
+     */
+    private void updateIncrementByTaskID(Map param,String incrementTaskID) {
+
     }
 
     /**

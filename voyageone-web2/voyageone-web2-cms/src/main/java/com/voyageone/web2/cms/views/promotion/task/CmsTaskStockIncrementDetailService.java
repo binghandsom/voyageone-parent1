@@ -646,7 +646,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             throw new BusinessException("此增量任务已经进行，不能修改数据！");
         }
 
-        logger.info("增量库存隔离数据取得开始, sub_task_id=" + subTaskId);
+        $info("增量库存隔离数据取得开始, sub_task_id=" + subTaskId);
         Map searchParam = new HashMap();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
         searchParam.put("whereSql", " where sub_task_id= '" + subTaskId + "'");
@@ -655,22 +655,22 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         for (StockIncrementExcelBean rowData : resultData) {
             mapSkuInDB.put(rowData.getSku(), rowData);
         }
-        logger.info("增量库存隔离数据取得结束");
+        $info("增量库存隔离数据取得结束");
 
-        logger.info("导入Excel取得并check的处理开始");
+        $info("导入Excel取得并check的处理开始");
         List<StockIncrementExcelBean> insertData = new ArrayList<>(); // insert数据
         List<StockIncrementExcelBean> updateData = new ArrayList<>(); // update数据
         readExcel(file, import_mode, paramPropertyList, paramPlatformInfo, mapSkuInDB, insertData, updateData);
-        logger.info("导入Excel取得并check的处理结束");
+        $info("导入Excel取得并check的处理结束");
 
         if (insertData.size() > 0 || updateData.size() > 0) {
             // 有更新对象
-            logger.info("更新开始");
+            $info("更新开始");
             saveImportData(insertData, updateData, import_mode, subTaskId, (String) param.get("userName"), (String) param.get("channelId"));
-            logger.info(String.format("更新结束,更新了%d件", insertData.size() + updateData.size()));
+            $info(String.format("更新结束,更新了%d件", insertData.size() + updateData.size()));
         } else {
             // 没有更新对象
-            logger.info("没有更新对象");
+            $info("没有更新对象");
             throw new BusinessException("没有更新对象");
         }
 
@@ -980,7 +980,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            $error(e.getMessage());
             throw new BusinessException("更新异常,请重新尝试！");
         }
     }

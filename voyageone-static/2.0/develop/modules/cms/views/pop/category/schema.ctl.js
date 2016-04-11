@@ -33,7 +33,7 @@ define([
         // 添加option
         $scope.addOption = function () {
             if(!$scope.vm.schema.options) $scope.vm.schema.options=[];
-            $scope.vm.schema.options.push($scope.newOption);
+            $scope.vm.schema.options.push({displayName: "", value: $scope.vm.schema.options.length});
             $scope.newOption = {};
         };
 

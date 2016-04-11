@@ -11,10 +11,13 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonPropDefDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +31,7 @@ import java.util.Map;
  *
  * @author lewis 2016/01/28
  * @version 2.0.1
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class CategorySchemaService extends BaseService {
@@ -41,6 +44,9 @@ public class CategorySchemaService extends BaseService {
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
+    @Autowired
+    private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
+
     /**
      * 通过
      * @param categoryId String
@@ -50,7 +56,7 @@ public class CategorySchemaService extends BaseService {
 
         CmsCategoryInfoBean categorySchema = new CmsCategoryInfoBean();
         // 获取product 对应的 schema
-        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(categoryId);
+        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchema(categoryId);
 
         // 获取共通schema.
         CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
@@ -93,14 +99,14 @@ public class CategorySchemaService extends BaseService {
      * @param categoryId String
      * @return CmsMtCategorySchemaModel
      */
-    private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
+    public CmsMtCategorySchemaModel getCmsMtCategorySchema(String categoryId) {
 
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
         if (schemaModel == null){
             // product 对应的schema信息不存在时的异常处理.
             String errMsg = "category id: " + categoryId +"对应的类目信息不存在！";
-            logger.error(errMsg);
+            $error(errMsg);
             throw new BusinessException(errMsg);
         }
 
@@ -119,7 +125,7 @@ public class CategorySchemaService extends BaseService {
             //common schema 不存在时异常处理.
             String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
 
-            logger.error(errMsg);
+            $error(errMsg);
 
             throw new BusinessException(errMsg);
         }
@@ -179,7 +185,7 @@ public class CategorySchemaService extends BaseService {
                         ComplexValue defComplexValue = new ComplexValue();
                         Map<String,Field> complexValueMap = new HashMap<>();
                         List<Field> complexFields = complexField.getFields();
-                        setDefaultValueFieldMap(complexFields,complexValueMap);
+                        setDefaultValueFieldMap(complexFields, complexValueMap);
                         defComplexValue.setFieldMap(complexValueMap);
                         complexField.setDefaultValue(defComplexValue);
 
@@ -239,7 +245,7 @@ public class CategorySchemaService extends BaseService {
 
                         complexField.setDefaultValue(complexValue);
 
-                        complexValueMap.put(complexField.getId(),complexField);
+                        complexValueMap.put(complexField.getId(), complexField);
                     }
                     break;
                 case MULTICOMPLEX:
@@ -252,7 +258,7 @@ public class CategorySchemaService extends BaseService {
                         setDefaultValueFieldMap(subFields,subComplexValueMap);
 
                         multiComplexField.addDefaultComplexValue(complexValue);
-                        complexValueMap.put(multiComplexField.getId(),multiComplexField);
+                        complexValueMap.put(multiComplexField.getId(), multiComplexField);
 
                     }
                     break;
@@ -275,6 +281,22 @@ public class CategorySchemaService extends BaseService {
         skuSchema.add(skuField);
 
         return skuSchema;
+    }
+
+    public List<CmsMtCommonPropDefModel> getALLCommonPropDef() {
+        return cmsMtCommonPropDefDao.selectAll();
+    }
+
+    public List<JSONObject> getSchemaList(String columnResult,String query, Integer skip, Integer limit) {
+        return cmsMtCategorySchemaDao.getSchemaList(columnResult, query, skip, limit);
+    }
+
+    public Long getCategoryCount(String params) {
+        return cmsMtCategorySchemaDao.getCategoryCount(params);
+    }
+
+    public void saveCategorySchema(CmsMtCategorySchemaModel cmsMtCategorySchemaModel) {
+        cmsMtCategorySchemaDao.update(cmsMtCategorySchemaModel);
     }
 
 }

@@ -6,6 +6,7 @@ import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.ReadOnlyRule;
 import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.rule.ValueTypeRule;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class CmsMtCommonPropActionDefRuleModel {
     private final String OPTIONS = "options";
     private final String TEXT = "text";
     private final String VALUE = "value";
+    private final String VALUE_TYPE = "valueTypeRule";
 
     private Map<String, Object> rulMap;
 
@@ -98,7 +100,10 @@ public class CmsMtCommonPropActionDefRuleModel {
                     field.add(rule);
                 }
             }
-
+            if(this.rulMap.get(this.VALUE_TYPE) != null){
+                ValueTypeRule rule = new ValueTypeRule(this.rulMap.get(this.VALUE_TYPE).toString());
+                field.add(rule);
+            }
             if (rulMap.get(this.OPTIONS) != null && field instanceof OptionsField){
 
                 OptionsField optField = (OptionsField)field;
