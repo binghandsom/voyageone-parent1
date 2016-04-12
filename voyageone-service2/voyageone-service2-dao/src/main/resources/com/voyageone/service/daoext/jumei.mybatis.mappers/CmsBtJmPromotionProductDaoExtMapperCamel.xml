@@ -150,4 +150,12 @@ WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
     <delete id="deleteByPromotionId">
       DELETE FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
     </delete>
+
+    <delete id="deleteByProductIdListInfo">
+        DELETE  FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
+        and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"
+                                                  open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    </delete>
 </mapper>

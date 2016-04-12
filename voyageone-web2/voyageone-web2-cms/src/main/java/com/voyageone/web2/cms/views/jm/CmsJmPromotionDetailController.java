@@ -5,6 +5,7 @@ import com.voyageone.service.impl.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
+import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -27,12 +29,10 @@ import java.util.stream.IntStream;
 public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     private CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
-
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
     }
-
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATE)
     public AjaxResponse update(@RequestBody CmsBtJmPromotionProductModel params) {
         String channelId = getUser().getSelChannelId();
@@ -42,7 +42,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
-
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATEDEAlPRICE)
     public AjaxResponse updateDealPrice(@RequestBody Map<String, Object> map) {
         int id = Integer.parseInt((String) map.get("id"));
@@ -54,7 +53,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
-
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
         serviceCmsBtJmPromotionProduct.delete(id);
@@ -64,6 +62,13 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
     public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
         serviceCmsBtJmPromotionProduct.deleteByPromotionId(promotionId);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+    ///cms/jmpromotion/detail/deleteByProductIdList
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPRODUCTIDLIST)
+    public  AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
+        serviceCmsBtJmPromotionProduct.deleteByProductIdList(parameter);
         CallResult result = new CallResult();
         return success(result);
     }

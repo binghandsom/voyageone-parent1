@@ -39,11 +39,16 @@ define([
             }
             var parameter={promotionId:$scope.vm.promotionId,productIdList:productIdList};
            console.log(parameter);
+            console.log(angular.toJson(parameter));
             confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
-                //jmPromotionDetailService.deleteByIdList($scope.vm.promotionId).then(function () {
-                //    $scope.vm.modelList = [];
-                //}, function (res) {
-                //})
+                jmPromotionDetailService.deleteByProductIdList(parameter).then(function () {
+                    for (var i=$scope.vm.modelList.length-1;i>=0;i--) {
+                        if ($scope.vm.modelList[i].isChecked) {
+                            $scope.vm.modelList.splice(i, 1);
+                        }
+                    }
+                }, function (res) {
+                })
             });
         }
         $scope.deleteByPromotionId=function(){

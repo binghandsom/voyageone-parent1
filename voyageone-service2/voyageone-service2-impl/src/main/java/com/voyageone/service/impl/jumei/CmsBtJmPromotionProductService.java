@@ -4,7 +4,9 @@ import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.service.model.util.MapModel;
+import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +55,11 @@ public class CmsBtJmPromotionProductService {
     public void deleteByPromotionId(int promotionId) {
         daoExt.deleteByPromotionId(promotionId);
         daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
+    }
+    @VOTransactional
+    public  void  deleteByProductIdList(ProductIdListInfo parameter) {
+        daoExt.deleteByProductIdListInfo(parameter);
+        daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
     }
 }
 

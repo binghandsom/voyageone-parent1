@@ -22,8 +22,8 @@
     <context:annotation-config/>
     <mvc:annotation-driven conversion-service="conversionService">
         <mvc:message-converters register-defaults="true">
-            <ref bean="jsonHttpMessageConverter"></ref>
             <ref bean="stringHttpMessageConverter"></ref>
+            <ref bean="jsonHttpMessageConverter"></ref>
         </mvc:message-converters>
     </mvc:annotation-driven>
     <!-- 静态资源 -->

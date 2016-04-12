@@ -2,6 +2,7 @@ package com.voyageone.service.daoext.jumei;
 
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionSkuModel;
+import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,5 @@ public interface CmsBtJmPromotionSkuDaoExt {
     public int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
     public List getListCmsBtJmImportSkuByPromotionId(int promotionId);
     public int deleteByPromotionId(int promotionId);
+    public int  deleteByProductIdListInfo(ProductIdListInfo parameter );
 }

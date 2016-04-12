@@ -130,7 +130,8 @@
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
         "delete": "delete",
         "updateDealPrice": "updateDealPrice",
-        "deleteByPromotionId":"deleteByPromotionId"
+        "deleteByPromotionId":"deleteByPromotionId",
+        "deleteByProductIdList":"deleteByProductIdList"
       }
     },
     "cmsBtJmPromotionImportTask":{
