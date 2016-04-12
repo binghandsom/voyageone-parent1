@@ -59,16 +59,22 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
-  "search_feedsearch": {
-    "hash": "/search/feedsearch",
-    "templateUrl": "views/search/feedsearch.tpl.html",
-    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
-  },
   "search_advance_param": {
     "url": "/search/advance/",
     "hash": "/search/advance/:type/:value",
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
+  },
+  "search_feedsearch": {
+    "hash": "/search/feedsearch",
+    "templateUrl": "views/search/feedsearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
+  },
+  "search_feedsearch_param": {
+    "url": "/search/feedsearch/",
+    "hash": "/search/feedsearch/:type/:value",
+    "templateUrl": "views/search/feedsearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
   },
   "group_detail": {
     "hash": "/group/detail/:id",

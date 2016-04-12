@@ -428,6 +428,7 @@ define([
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
+
         function initialize() {
             menuService.getPlatformType().then(function (data) {
                 $scope.menuInfo.platformTypeList = data;
@@ -452,9 +453,16 @@ define([
          * 跳转到search页面
          * @param catId
          */
-        function goSearchPage(catId) {
-            if(catId){
-                $location.path(cRoutes.search_advance_param.url + "1/" + catId);
+        function goSearchPage(catId, vType) {
+            if (catId) {
+                var catPath = encodeURIComponent(catId);
+                if (vType == 'feed') {
+                    $location.path(cRoutes.search_feedsearch_param.url + "1/" + catPath);
+                } else if (vType == 'master') {
+                    $location.path(cRoutes.search_advance_param.url + "1/" + catPath);
+                } else {
+                    $location.path(cRoutes.search_advance_param.url + "3/" + catPath);
+                }
             }
         }
     }
