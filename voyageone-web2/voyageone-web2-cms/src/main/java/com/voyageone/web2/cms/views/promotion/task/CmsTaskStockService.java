@@ -619,9 +619,9 @@ public class CmsTaskStockService extends BaseAppService {
             simpleTransaction.openTransaction();
             try {
                 //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
-                insertTasksByPromotionInfo(param);
+                String taskID=insertTasksByPromotionInfo(param);
                 //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
-                insertStockSeparatePlatFormByPromotionInfo(param);
+                insertStockSeparatePlatFormByPromotionInfo(param,taskID);
                 //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
                 importSkuByPromotionInfo(param,onlySku,channelID);
 
@@ -641,7 +641,8 @@ public class CmsTaskStockService extends BaseAppService {
      * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
      * @param param
      */
-    private void insertTasksByPromotionInfo(Map param) {
+    private String insertTasksByPromotionInfo(Map param) {
+        String taskID="";
         CmsBtTasksModel cmsBtTasksModel = new CmsBtTasksModel();
         //任务名
         cmsBtTasksModel.setTask_name((String) param.get("taskName"));
@@ -658,18 +659,19 @@ public class CmsTaskStockService extends BaseAppService {
         //创建者
         cmsBtTasksModel.setCreater((String) param.get("userName"));
         //更改者
-        cmsBtTasksModel.setModifier((String)param.get("userName"));
+        cmsBtTasksModel.setModifier((String) param.get("userName"));
         cmsBtTasksDao.insert(cmsBtTasksModel);
+        //任务ID
+        taskID=String.valueOf(cmsBtTasksModel.getTask_id());
+
+        return taskID;
     }
     /**
      * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
      * @param param
+     * @param taskID
      */
-    private void insertStockSeparatePlatFormByPromotionInfo(Map param) {
-        //根据活动名称取得对应的TaskID
-        String taskID=cmsBtTasksDao.selectCmsBtTaskByTaskName((String) param.get("taskName"));
-        //channelID
-        String channelID = (String) param.get("channel_id");
+    private void insertStockSeparatePlatFormByPromotionInfo(Map param,String taskID) {
         //将取得的taskId放入param
         param.put("taskId", taskID);
         List<Map> separatePlatformList= (List<Map>) param.get("promotionList");
