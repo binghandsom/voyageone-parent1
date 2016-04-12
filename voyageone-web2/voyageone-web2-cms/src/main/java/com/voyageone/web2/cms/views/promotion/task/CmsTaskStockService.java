@@ -653,6 +653,8 @@ public class CmsTaskStockService extends BaseAppService {
         cmsBtTasksModel.setActivity_start("");
         //活动结束时间
         cmsBtTasksModel.setActivity_end("");
+        //channelId
+        cmsBtTasksModel.setChannelId((String) param.get("channel_id"));
         //创建者
         cmsBtTasksModel.setCreater((String) param.get("userName"));
         //更改者
@@ -692,8 +694,6 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("add_priority",separatePlatformList.get(i).get("addPriority").toString());
                 //减优先顺
                 separatePlatformMap.put("subtract_priority",separatePlatformList.get(i).get("subtractPriority").toString());
-                //channelID
-                separatePlatformMap.put("channel_id",(String) param.get("channelID"));
                 //创建者
                 separatePlatformMap.put("creater",(String) param.get("userName"));
                 //更改者
@@ -717,8 +717,6 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("add_priority",separatePlatformList.get(i).get("addPriority").toString());
                 //减优先顺
                 separatePlatformMap.put("subtract_priority",separatePlatformList.get(i).get("subtractPriority").toString());
-                //channelID
-                separatePlatformMap.put("channel_id",(String) param.get("channelID"));
                 //创建者
                 separatePlatformMap.put("creater",(String) param.get("userName"));
                 //更改者
@@ -1222,8 +1220,6 @@ public class CmsTaskStockService extends BaseAppService {
             }else{
                 //任务ID
                 aSkuProHash.put("taskId",proMapValue.get("task_id").toString());
-                //渠道ID
-                aSkuProHash.put("channelId",proMapValue.get("channel_id").toString());
                 //model
                 aSkuProHash.put("productModel",proMapValue.get("product_model").toString());
                 //code
