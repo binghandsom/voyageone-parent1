@@ -10,10 +10,10 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Edward
@@ -51,13 +50,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
     @Autowired
     private ChannelCategoryService channelCategoryService;
     @Autowired
-    private CmsMtCommonPropDao cmsMtCommonPropDao;
+    private CommonPropService commonPropService;
     @Autowired
     private ProductService productService;
     @Autowired
     private TagService tagService;
     @Autowired
-    private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
+    private FeedCustomPropService feedCustomPropService;
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
@@ -67,13 +66,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
-    private int SELECT_PAGE_SIZE = 2000;
+    private final static int SELECT_PAGE_SIZE = 2000;
 
     // Excel 文件最大行数
-    private int MAX_EXCEL_REC_COUNT = 10000;
+    private final static int MAX_EXCEL_REC_COUNT = 10000;
 
-    // Sku 文件单线程用
-    ReentrantLock lock = new ReentrantLock();
+//    // Sku 文件单线程用
+//    ReentrantLock lock = new ReentrantLock();
 
     /**
      * 获取检索页面初始化的master data数据
@@ -131,10 +130,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if (productList.size() > 0) {
             // 再找出其主商品
             int cartId = (int) cmsSessionBean.getPlatformType().get("cartId");
-            List<Long> grpIdList = new ArrayList<Long>();
+            List<Long> grpIdList = new ArrayList<>();
             for (CmsBtProductModel prodObj : productList) {
                 CmsBtProductModel_Group gpList = prodObj.getGroups();
-                long grpId = 0;
+                //long grpId = 0;
                 if (gpList != null) {
                     List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
                     if (pltList != null && pltList.size() > 0) {
@@ -190,7 +189,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         JomgoQuery queryObj = new JomgoQuery();
         queryObj.setProjection("{'fields.images1':1,'_id':0}");
 
-        List<List<Map<String, String>>> rslt = new ArrayList<List<Map<String, String>>>();
+        List<List<Map<String, String>>> rslt = new ArrayList<>();
         for (CmsBtProductModel groupObj : groupsList) {
             long grpId = 0;
             List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
@@ -205,7 +204,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
                 $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
-                rslt.add(new ArrayList<Map<String, String>>(0));
+                rslt.add(new ArrayList<>(0));
                 continue;
             }
 
@@ -213,17 +212,17 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<CmsBtProductModel> imgList = productService.getList(channelId, queryObj);
             if (imgList == null || imgList.isEmpty()) {
                 $info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
-                rslt.add(new ArrayList<Map<String, String>>(0));
+                rslt.add(new ArrayList<>(0));
                 continue;
             }
 
-            List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> images1Arr = new ArrayList<>();
             for (CmsBtProductModel imgObj : imgList) {
                 CmsBtProductModel_Field fields = imgObj.getFields();
                 if (fields != null) {
                     List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
                     if (imgaes != null && imgaes.size() > 0) {
-                        Map<String, String> map = new HashMap<String, String>(1);
+                        Map<String, String> map = new HashMap<>(1);
                         map.put("value", imgaes.get(0).getName());
                         images1Arr.add(map);
                     }
@@ -238,9 +237,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
      */
     public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
-        List[] rslt = null;
-        List<List<Map<String, String>>> imgList = new ArrayList<List<Map<String, String>>>();
-        List<Map<String, Integer>> chgFlgList = new ArrayList<Map<String, Integer>>();
+        List[] rslt;
+        List<List<Map<String, String>>> imgList = new ArrayList<>();
+        List<Map<String, Integer>> chgFlgList = new ArrayList<>();
 
         JomgoQuery queryObj = new JomgoQuery();
         if (hasImgFlg) {
@@ -292,18 +291,18 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     }
                 }
 
-                Map<String, Integer> map = new HashMap<String, Integer>(1);
+                Map<String, Integer> map = new HashMap<>(1);
                 if (hasChg) {
                     map.put("_chgFlg", 1);
                 } else {
                     map.put("_chgFlg", 0);
                 }
                 chgFlgList.add(map);
-                imgList.add(new ArrayList<Map<String, String>>(0));
+                imgList.add(new ArrayList<>(0));
                 continue;
             }
 
-            List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> images1Arr = new ArrayList<>();
             for (CmsBtProductModel itemObj : infoList) {
                 List<CmsBtProductModel_Sku> skus = itemObj.getSkus();
                 if (skus != null) {
@@ -322,7 +321,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     if (fields != null) {
                         List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
                         if (imgaes != null && imgaes.size() > 0) {
-                            Map<String, String> map = new HashMap<String, String>(1);
+                            Map<String, String> map = new HashMap<>(1);
                             map.put("value", imgaes.get(0).getName());
                             images1Arr.add(map);
                         }
@@ -331,7 +330,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
             imgList.add(images1Arr);
 
-            Map<String, Integer> map = new HashMap<String, Integer>(1);
+            Map<String, Integer> map = new HashMap<>(1);
             if (hasChg) {
                 map.put("_chgFlg", 1);
             } else {
@@ -372,7 +371,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         long recCount = productService.getCnt(userInfo.getSelChannelId(), getSearchQuery(searchValue, cmsSessionBean, false));
 
-        int pageCount = 0;
+        int pageCount;
         if ((int) recCount % SELECT_PAGE_SIZE > 0) {
             pageCount = (int) recCount / SELECT_PAGE_SIZE + 1;
         } else {
@@ -577,7 +576,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         // 获取自定义查询条件
         List<Map<String, String>> custList = searchValue.getCustAttrMap();
         if (custList != null && custList.size() > 0) {
-            List<String> inputList = new ArrayList<String>();
+            List<String> inputList = new ArrayList<>();
             for (Map<String, String> item : custList) {
                 String inputVal = org.apache.commons.lang3.StringUtils.trimToNull(item.get("inputVal"));
                 if (inputVal != null) {
@@ -786,14 +785,14 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
-        return cmsMtCommonPropDao.selectCustColumns();
+        return commonPropService.getCustColumns();
     }
 
     // 取得用户自定义显示列设置
     public Map<String, Object> getUserCustColumns(int userId) {
-        Map<String, Object> rsMap = new HashMap<String, Object>();
+        Map<String, Object> rsMap = new HashMap<>();
 
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
+        List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userId);
         if (rsList == null || rsList.isEmpty()) {
             rsMap.put("custAttrList", new String[]{});
             rsMap.put("commList", new String[]{});
@@ -809,17 +808,14 @@ public class CmsSearchAdvanceService extends BaseAppService {
     // 根据类目路径查询已翻译的属性信息
     // 只查询feed_prop_original和feed_prop_translation
     public List<Map<String, Object>> selectAttrs(String channelId, String catPath) {
-        Map<String, Object> params = new HashMap<String, Object>(2);
-        params.put("channelId", channelId);
-        params.put("feedCatPath", catPath);
-        return cmsBtFeedCustomPropDao.selectAttrs(params);
+        return feedCustomPropService.getFeedCustomPropAttrs(channelId, catPath);
     }
 
     // 取得用户自定义显示列设置
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
-        String custAttrStr = null;
-        String commStr = null;
+        List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userId);
+        String custAttrStr;
+        String commStr;
         if (rsList == null || rsList.isEmpty()) {
             $debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
             custAttrStr = "";
@@ -830,19 +826,16 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
 
         // 设置自定义查询用的属性
-        List<Map<String, String>> custAttsQueryList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> custAttsQueryList = new ArrayList<>();
 
-        List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> customProps2 = new ArrayList<>();
         String[] custAttrList = custAttrStr.split(",");
         StringBuilder customPropsStr = new StringBuilder();
         if (custAttrList.length > 0) {
-            Map<String, Object> params = new HashMap<String, Object>(2);
-            params.put("channelId", channelId);
-            params.put("feedCatPath", "0");
-            List<Map<String, Object>> customProps = cmsBtFeedCustomPropDao.selectAttrs(params);
+            List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(channelId, "0");
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
-                Map atts = new HashMap<>(2);
+                Map<String, String> atts = new HashMap<>(2);
                 atts.put("configCode", "feed.cnAtts." + propId);
                 atts.put("configValue1", (String) props.get("feed_prop_translation"));
                 custAttsQueryList.add(atts);
@@ -855,16 +848,16 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 }
             }
         }
-        List<Map<String, Object>> commonProp2 = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> commonProp2 = new ArrayList<>();
         String[] commList = commStr.split(",");
         StringBuilder commonPropsStr = new StringBuilder();
         if (commList.length > 0) {
-            List<Map<String, Object>> commonProps = cmsMtCommonPropDao.selectCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
-                Map atts = new HashMap<>(2);
+                Map<String, String> atts = new HashMap<>(2);
                 atts.put("configCode", "fields." + propId);
-                atts.put("configValue1", (String) props.get("propName"));
+                atts.put("configValue1", (String)props.get("propName"));
                 custAttsQueryList.add(atts);
 
                 if (ArrayUtils.contains(commList, propId)) {
@@ -887,13 +880,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         String customStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(param1, ","));
         String commonStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(param2, ","));
 
-        List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> customProps2 = new ArrayList<>();
         StringBuilder customPropsStr = new StringBuilder();
         if (param1 != null && param1.length > 0) {
-            Map<String, Object> params = new HashMap<String, Object>(2);
-            params.put("channelId", userInfo.getSelChannelId());
-            params.put("feedCatPath", "0");
-            List<Map<String, Object>> customProps = cmsBtFeedCustomPropDao.selectAttrs(params);
+            List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "0");
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 if (ArrayUtils.contains(param1, propId)) {
@@ -905,10 +895,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
         }
 
-        List<Map<String, Object>> commonProp2 = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> commonProp2 = new ArrayList<>();
         StringBuilder commonPropsStr = new StringBuilder();
         if (param2 != null && param2.length > 0) {
-            List<Map<String, Object>> commonProps = cmsMtCommonPropDao.selectCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 if (ArrayUtils.contains(param2, propId)) {
@@ -923,12 +913,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
         cmsSessionBean.putAttribute("_adv_search_customProps", customProps2);
         cmsSessionBean.putAttribute("_adv_search_commonProps", commonProp2);
 
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userInfo.getUserId());
-        int rs = 0;
+        List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userInfo.getUserId());
+        int rs;
         if (rsList == null || rsList.isEmpty()) {
-            rs = cmsMtCommonPropDao.insertUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
+            rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         } else {
-            rs = cmsMtCommonPropDao.updateUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
+            rs = commonPropService.saveUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         }
         if (rs == 0) {
             $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
