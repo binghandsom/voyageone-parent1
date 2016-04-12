@@ -79,10 +79,16 @@ public class UploadToUSJoiService extends BaseTaskService{
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
 
         try {
+            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
             List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId());
 
             //从group中过滤出需要上的usjoi的产品
             productModels = getUSjoiProductModel(productModels);
+            if(productModels.size() == 0){
+                throw new BusinessException("没有找到需要上新的SKU");
+            }else{
+                $info("有"+productModels.size()+"个产品要复制");
+            }
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel.set_id(null);
@@ -101,7 +107,6 @@ public class UploadToUSJoiService extends BaseTaskService{
                     UsJoiBean usJoiBean = UsJois.getUsJoiByOrgChannelId(productModel.getOrgChannelId());
                     if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
                         cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-
                     }else{
                         cartIds = new ArrayList<>();
                     }
@@ -154,9 +159,11 @@ public class UploadToUSJoiService extends BaseTaskService{
             }
             sxWorkLoadBean.setPublishStatus(1);
             cmsBtSxWorkloadDao.updateSxWorkloadModel(sxWorkLoadBean);
+            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
         }catch (Exception e){
             sxWorkLoadBean.setPublishStatus(2);
             cmsBtSxWorkloadDao.updateSxWorkloadModel(sxWorkLoadBean);
+            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
             throw e;
         }
 
