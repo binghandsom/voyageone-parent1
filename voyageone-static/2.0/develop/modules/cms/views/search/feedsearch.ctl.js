@@ -95,8 +95,8 @@ define([
                     } else {
                         feedInfo.skusCnt = skusList.length;
                         _.forEach(skusList, function (skuInfo) {
-                            var skuDesc = 'MSRP(USD): ' + $.trim(skuInfo.price_client_msrp)  + ',  Retail Price(USD): ' + $.trim(skuInfo.price_client_retail) + ',  Cost Price(USD): ' + $.trim(skuInfo.price_net)
-                                + ',  MSRP(RMB): ' + $.trim(skuInfo.price_msrp) + ',  Retail Price(RMB): ' + $.trim(skuInfo.price_current);
+                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.price_client_msrp)  + ', ' + $.trim(skuInfo.price_client_retail) + ', ' + $.trim(skuInfo.price_net)
+                                + ', ' + $.trim(skuInfo.price_msrp) + ', ' + $.trim(skuInfo.price_current);
                             feedInfo._popSkuInfo.push(skuDesc);
                         });
                     }
