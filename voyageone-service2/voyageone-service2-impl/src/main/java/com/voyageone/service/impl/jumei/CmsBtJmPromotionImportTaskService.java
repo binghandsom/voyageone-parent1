@@ -177,13 +177,6 @@ public class CmsBtJmPromotionImportTaskService {
                     daoCmsBtJmPromotionSku.update(skuPromotionModel);
                 }
             }
-            for (CmsMtMasterInfoModel model : saveInfo.getListCmsMtMasterInfoModel()) {
-                if (model.getId() == 0) {
-                    daoCmsMtMasterInfo.insert(model);
-                } else {
-                    daoCmsMtMasterInfo.update(model);
-                }
-            }
             for (CmsBtJmProductImagesModel model : saveInfo.getListCmsBtJmProductImagesModel()) {
                 model.setCmsBtJmProductId(saveInfo.getProductModel().getId());
                 if (model.getId() == 0) {
@@ -192,6 +185,13 @@ public class CmsBtJmPromotionImportTaskService {
                     daoCmsBtJmProductImages.update(model);
                 }
             }
+//            for (CmsMtMasterInfoModel model : saveInfo.getListCmsMtMasterInfoModel()) {
+//                if (model.getId() == 0) {
+//                    daoCmsMtMasterInfo.insert(model);
+//                } else {
+//                    daoCmsMtMasterInfo.update(model);
+//                }
+//            }
             mapSkuCodeId.clear();
         }
     }

@@ -90,7 +90,7 @@ public class ExcelImportUtil {
                 }
                 try {
                     if (!StringUtils.isEmpty(content)) {
-                        ReflectUtil.setFieldValueByName(field, content, model);
+                        ReflectUtil.setFieldValueByName(field, content.trim(), model);
                     }
                 } catch (Exception e) {
                     errorMsg += column.getCamelColumnName() + ":" + e.getMessage();
@@ -157,16 +157,26 @@ public class ExcelImportUtil {
                 break;
             case HSSFCell.CELL_TYPE_FORMULA://公式型
                 //读公式计算值
-                double value= cell.getNumericCellValue();
-                if (Double.isNaN(value)) {//如果获取的数据值为非法值,则转换为获取字符串 //result.equals("NaN")
-                    result = cell.getRichStringCellValue().toString();
+                try {
+
+                    double value= cell.getNumericCellValue();
+                    if (Double.isNaN(value)) {//如果获取的数据值为非法值,则转换为获取字符串 //result.equals("NaN")
+                        result = cell.getRichStringCellValue().toString();
+                    }
+                    else
+                    {
+                        {
+                            DecimalFormat format = new DecimalFormat();
+                            format.applyPattern("###################.###################");
+                            result = format.format(value);
+                        }
+                    }
                 }
-                else
-                {
-                    DecimalFormat format = new DecimalFormat();
-                    format.applyPattern("###################.###################");
-                    result = format.format(value);
+                catch(Exception ex) {
+                    result = cell.toString();
                 }
+
+
                 break;
             case HSSFCell.CELL_TYPE_BLANK:
                 result = "";

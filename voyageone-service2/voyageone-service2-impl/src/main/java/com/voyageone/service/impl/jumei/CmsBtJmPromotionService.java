@@ -22,19 +22,15 @@ public class CmsBtJmPromotionService {
     CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     @Autowired
     CmsBtJmPromotionDaoExt daoExt;
-
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
         List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String,Object>());
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
-
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
-
-
 
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
@@ -58,6 +54,11 @@ public class CmsBtJmPromotionService {
             map.remove("state3"); //当前时间大于结束时间
         }
         return daoExt.getListByWhere(map);
+    }
+    
+    public  void JMAddProductAndDeal(int promotionId)
+    {
+
     }
 }
 
