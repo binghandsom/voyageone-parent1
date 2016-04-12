@@ -1226,6 +1226,8 @@ public class CmsTaskStockService extends BaseAppService {
                 aSkuProHash.put("productModel",proMapValue.get("product_model").toString());
                 //code
                 aSkuProHash.put("productCode",proMapValue.get("product_code").toString());
+                //渠道ID
+                aSkuProHash.put("channelId",proMapValue.get("channel_id").toString());
                 //sku
                 aSkuProHash.put("sku",proMapValue.get("sku").toString());
                 //cart_id
