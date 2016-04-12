@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.home.menu;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
@@ -56,19 +57,25 @@ public class CmsMenuController extends CmsController {
         masterData.setCatPath("master");
         masterData.setCatName("主类目数据");
 
-        // 获取Feed类目CategoryTreeList
-        List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
-        CmsMtCategoryTreeModel feedData = new CmsMtCategoryTreeModel();
-        feedData.setChildren(feedTreeList);
-        feedData.setIsParent(1);
-        feedData.setCatPath("feed");
-        feedData.setCatName("Feed类目数据");
-
         List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>(2);
         allTreeList.add(masterData);
-        allTreeList.add(feedData);
+
+        // 获取Feed类目CategoryTreeList
+        if (!channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+            List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
+            CmsMtCategoryTreeModel feedData = new CmsMtCategoryTreeModel();
+            feedData.setChildren(feedTreeList);
+            feedData.setIsParent(1);
+            feedData.setCatPath("feed");
+            feedData.setCatName("Feed类目数据");
+            allTreeList.add(feedData);
+        }
+
         resultBean.put("categoryTreeList", allTreeList);
 
+        // 判断是否是minimall用户
+        boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        resultBean.put("isminimall", isMiniMall ? 1 : 0);
         // 返回用户信息
         return success(resultBean);
     }
