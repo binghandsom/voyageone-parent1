@@ -324,7 +324,7 @@
           `product_model`,`product_code`,`sku`,`cart_id`
     </select>
 
-    <insert id="cms_bt_stock_separate_insertStockSeparateItemByList" parameterType="List">
+    <insert id="cms_bt_stock_separate_insertStockSeparateItemByList" parameterType="java.util.List">
         insert into voyageone_cms2.cms_bt_stock_separate_item (
         task_id,
         channel_id,
