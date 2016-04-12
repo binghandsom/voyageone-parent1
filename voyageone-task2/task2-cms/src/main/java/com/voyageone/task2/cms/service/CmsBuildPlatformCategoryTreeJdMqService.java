@@ -214,9 +214,15 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
         return categoryList;
     }
 
-    //	/**
-//	 * 获得各渠道的平台类目树
-//	 */
+    /**
+	 * 获得各渠道的平台类目树
+     *
+     * @param jdCategroyBeanList ArrayList<JdCategroyBean>    京东类目列表
+     *        cartId         String            CartId
+     *        channelId      String            渠道id
+     *        taskName       String            Task名
+     * @return List<CmsMtPlatformCategoryTreeModel>    京东类目树列表
+	 */
     public List<CmsMtPlatformCategoryTreeModel> getCmsMtPlatformCategoryTreeModelList(ArrayList<JdCategroyBean> jdCategroyBeanList, String cartId, String channelId, String taskName) {
 
         List<CmsMtPlatformCategoryTreeModel> platformCategoryMongoBeanList = new ArrayList<>();
@@ -246,6 +252,12 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
 
     /**
      * 创建各渠道的平台类目层次关系.
+     *
+     * @param platformCatModelList List<CmsMtPlatformCategoryTreeModel>    京东类目树列表
+     *        cartId         String            CartId
+     *        channelId      String            渠道id
+     *        taskName       String            Task名
+     * @return List<CmsMtPlatformCategoryTreeModel>    京东类目层次树列表
      */
     public List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, String cartId, String channelId, String taskName) {
         // 设置类目层次关系.
