@@ -29,9 +29,10 @@ public class CmsBtTasksDao extends ServiceBaseDao {
         return selectOne("cms_bt_tasks_select", parameters("task_id", task_id));
     }
 
-    public List<CmsBtTasksModel> selectByName(int promotion_id, String task_name, int task_type) {
+    public List<CmsBtTasksModel> selectByName(int promotion_id, String task_name, String channelId, int task_type) {
         return selectList("cms_bt_tasks_select", parameters(
                 "promotion_id", promotion_id,
+                "channelId", channelId,
                 "task_name", task_name,
                 "task_type", task_type + ""));
     }

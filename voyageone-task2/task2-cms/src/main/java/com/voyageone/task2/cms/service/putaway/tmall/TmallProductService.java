@@ -1374,7 +1374,7 @@ public class TmallProductService {
                         tmallUploadRunState.setStyle_code(styleCode);
                     }
                     // 测试代码不要提交 tom start
-                    styleCode = "test." + styleCode;
+//                    styleCode = "test." + styleCode;
                     // 测试代码不要提交 tom end
                     field.setValue(styleCode);
                     logger.debug("tmall style code[" + field.getId() + "]: " + field.getValue());
