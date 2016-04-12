@@ -20,7 +20,9 @@ define([
             //取得的TaskID
             taskId:null,
             //取得的TaskID
-            taskName:null
+            taskName:null,
+            //还原时间
+            revertTime:null
         };
         if(data){
             //判断隔离任务:1新规的场 2合更新的场合
@@ -31,6 +33,7 @@ define([
                     function (res) {
                         $scope.vm.promotionList = res.data.platformList;
                         $scope.vm.onlySku = true
+                        $scope.vm.revertTime=res.data.revertTime;
                     }
                 );
                 $scope.vm.taskId=data.task_id;
@@ -52,7 +55,8 @@ define([
                                 $scope.vm.promotionList = res.data.platformList;
                                 $scope.vm.onlySku = res.data.onlySku;
                                 $scope.vm.taskName=res.data.taskName;
-                            },
+                                $scope.vm.revertTime=res.data.revertTime;
+                    },
                             function (err) {
                                 if (err.message != null) {
                                     $scope.$close();
@@ -65,6 +69,7 @@ define([
                     }
                 }　;
             }
+
             //Save保存按钮
             $scope.saveTask =function(){
                 taskStockService.saveTask($scope.vm).then(function(res){
