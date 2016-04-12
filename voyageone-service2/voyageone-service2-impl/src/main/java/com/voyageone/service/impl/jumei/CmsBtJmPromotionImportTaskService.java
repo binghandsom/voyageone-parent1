@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.jumei;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.*;
 import com.voyageone.service.impl.Excel.ExcelColumn;
@@ -69,7 +71,8 @@ public class CmsBtJmPromotionImportTaskService {
     CmsBtJmProductImagesDaoExt daoExtCmsBtJmProductImages;
     @Autowired
     CmsBtJmPromotionExportTaskService serviceCmsBtJmPromotionExportTask;
-
+    @Autowired
+    TransactionRunner transactionRunner;
     public CmsBtJmPromotionImportTaskModel get(int id) {
         return dao.select(id);
     }
@@ -134,8 +137,9 @@ public class CmsBtJmPromotionImportTaskService {
         // List<CmsMtMasterInfoModel> listSaveCmsMtMasterInfoModel=new ArrayList<>();
         // List<CmsBtJmProductImportSaveInfo> listCmsBtJmProductImportSaveInfo=new ArrayList<>();
         CmsBtJmImportSaveInfo saveImportInfo = loadListSaveInfo(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, listProductModel, listSkuModel, listSpecialImageModel);
-        saveListCmsBtJmProductImportSaveInfo(saveImportInfo);//保存
-
+        transactionRunner.runWithTran(() -> {
+            saveListCmsBtJmProductImportSaveInfo(saveImportInfo);//保存
+        });
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0 | listSpecialErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
@@ -229,10 +233,10 @@ public class CmsBtJmPromotionImportTaskService {
             //2.  cms_bt_jm_promotion_sku  cms_bt_jm_sku
             List<CmsBtJmImportSku> productCmsBtJmImportSkuList = getListCmsBtJmImportSkuByProductCode(listSkuModel, importProductModel.getProductCode());
             loadSaveSkuInfoByImportModel(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
-            if(productCmsBtJmImportSkuList.size()>0)
-            {
+            if(productCmsBtJmImportSkuList.size()>0) {
                 saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
                 saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
+                saveInfo.getPromotionProductModel().setDiscount(BigDecimalUtil.divide( saveInfo.getPromotionProductModel().getDealPrice(), saveInfo.getPromotionProductModel().getMarketPrice(),2));
             }
             //3.cms_mt_master_info
             loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveImportInfo);
@@ -503,6 +507,8 @@ public class CmsBtJmPromotionImportTaskService {
                 promotionSkuModel.setState(oldSkuModel.getState());
             }
             promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
+            promotionSkuModel.setMarketPrice(new BigDecimal(importSkuModel.getMarketPrice()));
+            promotionSkuModel.setDiscount(BigDecimalUtil.divide( promotionSkuModel.getDealPrice(), promotionSkuModel.getMarketPrice(),2));
             promotionSkuModel.setCmsBtJmPromotionId(modelCmsBtJmPromotion.getId());
             promotionSkuModel.setSkuCode(importSkuModel.getSkuCode());
             promotionSkuModel.setChannelId(modelCmsBtJmPromotion.getChannelId());

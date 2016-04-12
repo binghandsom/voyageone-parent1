@@ -173,7 +173,7 @@ public class ExcelImportUtil {
                     }
                 }
                 catch(Exception ex) {
-                    result = cell.toString();
+                    result =cell.getRichStringCellValue().toString();
                 }
 
 
