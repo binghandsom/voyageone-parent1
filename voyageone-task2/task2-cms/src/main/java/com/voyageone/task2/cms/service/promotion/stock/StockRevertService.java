@@ -142,6 +142,7 @@ public class StockRevertService extends BaseTaskService {
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
         cartList.forEach(cartInfo -> listCartIdAll.add(Integer.parseInt(cartInfo.getValue())));
         // ★注意★：还原数据可能是隔离成功变成还原（活动未开始），也可能是活动结束变成的还原，所以sql根据task的还原时间来抽出的隔离平台是不正确的
+        // ★★★    因此以下逻辑把所有待还原的task，平台，都归类到隔离数据下面
         // 取得该渠道下未被隔离的平台(即共享平台)(去除待还原平台)
         List<Integer> listShareCartId = stockInfoService.getShareCartId(channelId, listCartIdAll, listRevertCartId);
         // 取得该渠道下未被还原的平台(即还原平台和共享平台以外的隔离平台)
@@ -152,6 +153,7 @@ public class StockRevertService extends BaseTaskService {
 
         // 取得该渠道下隔离中的task
         List<Integer> listSeparateTaskId = new ArrayList<>();
+        listSeparateTaskId.addAll(listTaskId);
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
@@ -207,37 +209,21 @@ public class StockRevertService extends BaseTaskService {
                 }
 
                 Map<Integer, Map<String, Object>> mapDataByCart = new HashMap<>(); // Map<平台, data>
-                Map<Integer, Integer> cartSeq = new HashMap<>(); // Map<平台, seq>
                 for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
                     String sku = entry.getKey();
                     List<Map<String, Object>> listData = entry.getValue();
                     Integer qty = skuStockUsableAll.get(sku); // 可用库存
 
                     mapDataByCart.clear();
-                    cartSeq.clear();
                     for (Map<String, Object> data : listData) {
                         Integer cartId = (Integer) data.get("cart_id");
                         mapDataByCart.put(cartId, data);
-                        cartSeq.put(cartId, (Integer) data.get("seq"));
                     }
 
                     // 还原平台
                     for (Integer revertCartId : listRevertCartId) {
                         Map<String, Object> data = mapDataByCart.get(revertCartId);
-                        if (data == null) {
-                            // 动态隔离
-                            // 更新ims_bt_log_syn_inventory
-                            listImsBtLogSynInventory.add(
-                                    stockInfoService.createMapImsBtLogSynInventory(
-                                            channelId,
-                                            revertCartId,
-                                            sku,
-                                            qty,
-                                            stockInfoService.SYN_TYPE_ALL,
-                                            null,
-                                            null,
-                                            getTaskName()));
-                        } else {
+                        if (data != null) {
                             // 还原
                             // 更新ims_bt_log_syn_inventory
                             listImsBtLogSynInventory.add(
@@ -247,7 +233,7 @@ public class StockRevertService extends BaseTaskService {
                                             sku,
                                             qty,
                                             stockInfoService.SYN_TYPE_ALL,
-                                            cartSeq.get(revertCartId),
+                                            (Integer) data.get("seq"),
                                             stockInfoService.STATUS_REVERTING,
                                             getTaskName()));
                         }
