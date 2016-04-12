@@ -120,7 +120,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         boolean isMiniMall = userInfo.getSelChannelId().equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
         masterData.put("isminimall", isMiniMall ? 1 : 0);
         if (isMiniMall) {
-            masterData.put("channelList", Channels.getChannelList());
+            masterData.put("channelList", Channels.getUsJoiChannelList());
         }
 
         return masterData;
