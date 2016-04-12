@@ -299,7 +299,6 @@ define(function() {
         "BTN_SAVE": "Save",
         "BTN_SEARCH": "Search",
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
-        "BTN_ADD_TO_JM_PROMOTION": "Join JM's Promotion",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "Bulk Update",
         "BTN_CHANGE_MASTER_CATEGORY": "Change Master Category",
         "BTN_CANCEL": "Cancel",
