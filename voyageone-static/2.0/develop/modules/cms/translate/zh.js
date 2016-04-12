@@ -304,6 +304,10 @@ define(function(){
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功.",
+        "TXT_ACTIVITY_NAME": "活动名称",
+        "TXT_PC_MODULE_ID": "PC端模块ID",
+        "TXT_APP_MODULE_ID": "APP端模块ID",
+        "TXT_PROMOTION_DISCOUNT": "是否有活动折扣",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -316,6 +320,7 @@ define(function(){
         "BTN_SAVE": "保存",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",
+        "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
         "BTN_OK": "确定",

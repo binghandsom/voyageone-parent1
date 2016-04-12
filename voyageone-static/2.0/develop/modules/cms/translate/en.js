@@ -314,6 +314,7 @@ define(function() {
         "BTN_SAVE": "Save",
         "BTN_SEARCH": "Search",
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
+        "BTN_ADD_TO_JM_PROMOTION": "Join JM's Promotion",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "Bulk Update",
         "BTN_CHANGE_MASTER_CATEGORY": "Change Master Category",
         "BTN_CANCEL": "Cancel",
@@ -350,6 +351,10 @@ define(function() {
         "BTN_GET_TASK": "Get Tasks",
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
+        "TXT_ACTIVITY_NAME": "Activity name",
+        "TXT_PC_MODULE_ID": "PC module ID",
+        "TXT_APP_MODULE_ID": "APP module ID",
+        "TXT_PROMOTION_DISCOUNT": "Promotion discount",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",
