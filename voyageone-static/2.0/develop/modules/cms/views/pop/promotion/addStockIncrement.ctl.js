@@ -24,18 +24,23 @@ define([
             //新建增量库存隔离任务:1新规的场 2合更新的场合
             promotionType:null
         }
-        //隔离渠道的ID的信息
-        angular.forEach(data.platformList, function(val,key) {
-            if(val){
-                $scope.vm.incrementCartIdList.push(val);
-            }
-        });
-        //隔离渠道的ID
-        $scope.vm.incrementCartId=$scope.vm.incrementCartIdList.cartId;
-
-        //取得对应的活动ID
-        $scope.vm.incrementTaskId=data.taskId;
-
+        //判断增量任务:1新规的场 2合更新的场合
+        if(data.sub_task_id){
+            $scope.vm.promotionType="2";
+        }else{
+            //增量任务:1新规的场
+            $scope.vm.promotionType="1";
+            //取得对应的活动ID
+            $scope.vm.incrementTaskId=data.taskId;
+            //隔离渠道的ID的信息
+            angular.forEach(data.platformList, function(val,key) {
+                if(val){
+                    $scope.vm.incrementCartIdList.push(val);
+                }
+            });
+            //隔离渠道的ID
+            $scope.vm.incrementCartId=$scope.vm.incrementCartIdList.cartId;
+        }
         //Save保存按钮
         $scope.saveTask =function(){
             taskStockIncrementService.saveTask($scope.vm).then(function(res){

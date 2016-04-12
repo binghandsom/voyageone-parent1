@@ -613,7 +613,7 @@ public class CmsTaskStockService extends BaseAppService {
         //channelID
         String channelID = (String) param.get("channel_id");
         //画面入力信息的CHECK
-        checkPromotionInfo(param);
+        checkPromotionInfo(param, onlySku);
         //判断隔离任务:新规的场
         if(promotionType.equals(TYPE_PROMOTION_INSERT)){
             simpleTransaction.openTransaction();
@@ -621,7 +621,7 @@ public class CmsTaskStockService extends BaseAppService {
                 //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
                 String taskID=insertTasksByPromotionInfo(param);
                 //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
-                insertStockSeparatePlatFormByPromotionInfo(param,taskID);
+                insertStockSeparatePlatFormByPromotionInfo(param,taskID,onlySku);
                 //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
                 importSkuByPromotionInfo(param,onlySku,channelID);
 
@@ -670,8 +670,9 @@ public class CmsTaskStockService extends BaseAppService {
      * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
      * @param param
      * @param taskID
+     * @param onlySku
      */
-    private void insertStockSeparatePlatFormByPromotionInfo(Map param,String taskID) {
+    private void insertStockSeparatePlatFormByPromotionInfo(Map param, String taskID, Boolean onlySku) {
         //将取得的taskId放入param
         param.put("taskId", taskID);
         List<Map> separatePlatformList= (List<Map>) param.get("promotionList");
@@ -687,7 +688,12 @@ public class CmsTaskStockService extends BaseAppService {
                 //类型（1：隔离，2：共享）
                 separatePlatformMap.put("type",separatePlatformList.get(i).get("type").toString());
                 //隔离比例
-                separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString());
+                if(onlySku){
+                    separatePlatformMap.put("separate_percent","0");
+                }else{
+                    separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString());
+                }
+
                 //还原时间
                 separatePlatformMap.put("revert_time",separatePlatformList.get(i).get("revertTime").toString());
                 //还原标志位
@@ -731,8 +737,9 @@ public class CmsTaskStockService extends BaseAppService {
      * 画面入力check
      *
      * @param param
+     * @param onlySku
      */
-    private void checkPromotionInfo(Map param) {
+    private void checkPromotionInfo(Map param, Boolean onlySku) {
         List<Map> separatePlatformList = (List<Map>) param.get("promotionList");
         String taskName = (String) param.get("taskName");
         //任务名称
@@ -773,14 +780,16 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException("7000013");
                 }
                 //隔离平台的隔离比例
-                if(value.equals("%")){
-                    // 隔离平台的隔离比例必须填且为大于0小于100整数
-                    throw new BusinessException("7000014");
-                }else{
-                    String[] separateValue = value.split("%");
-                    if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])
-                            ||separateValue[0].getBytes().length>2||separateValue.length>1) {
+                if(!onlySku){
+                    if(value.equals("%")){
+                        // 隔离平台的隔离比例必须填且为大于0小于100整数
                         throw new BusinessException("7000014");
+                    }else{
+                        String[] separateValue = value.split("%");
+                        if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])
+                                ||separateValue[0].getBytes().length>2||separateValue.length>1) {
+                            throw new BusinessException("7000014");
+                        }
                     }
                 }
                 //增优先顺
@@ -849,7 +858,7 @@ public class CmsTaskStockService extends BaseAppService {
         //根据channelID取得可用的库存
         Map<String, Integer> skuStockUsableAll =getUsableStock(channelID);;
         //根据platformList绑定所有的SKU
-        HashMap<String,Object> allSkuProHash =getAllSkuInfoByPlatFormList(param, allSkuHash,skuStockUsableAll);
+        HashMap<String,Object> allSkuProHash =getAllSkuInfoByPlatFormList(param, allSkuHash,skuStockUsableAll,onlySku);
         //根据allSkuProHash和SeparateHashMaps将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
         saveStockSeparateItem(separateHashMaps, allSkuProHash, onlySku);
     }
@@ -1092,9 +1101,11 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param
      * @param allSkuProHash
      * @param skuStockUsableAll
+     * @param onlySku
      * @return aSkuProHash
      */
-    private HashMap<String, Object> getAllSkuInfoByPlatFormList(Map param, Map<String, Object> allSkuProHash, Map<String, Integer> skuStockUsableAll) {
+    private HashMap<String, Object> getAllSkuInfoByPlatFormList(Map param, Map<String, Object> allSkuProHash
+            , Map<String, Integer> skuStockUsableAll, Boolean onlySku) {
         //取得SKU级别的SKU对应的属性
         HashMap<String,Object> skuProHash = new HashMap();
         //取得画面的数据集合
@@ -1157,11 +1168,16 @@ public class CmsTaskStockService extends BaseAppService {
                         usableStockInt=String.valueOf(skuStockUsableAll.get(allSkuProEntry.getKey()));
                     }
                     proMap.put("qty", usableStockInt);
-                    //隔离库存比例
-                    separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString());
-                    //隔离库存
-                    separate_qty=Math.round((Long.parseLong(usableStockInt)*separate_percent)/100);
-                    proMap.put("separate_qty", separate_qty);
+                    if(!onlySku){
+                        //隔离库存比例
+                        separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString());
+                        //隔离库存
+                        separate_qty=Math.round((Long.parseLong(usableStockInt)*separate_percent)/100);
+                        proMap.put("separate_qty", separate_qty);
+                    }else{
+                        proMap.put("separate_qty", "0");
+                    }
+
                     //取得所有SKU的属性
                     skuProHash.put(allSkuProEntry.getKey()+":"+promotionId,proMap);
                 }
