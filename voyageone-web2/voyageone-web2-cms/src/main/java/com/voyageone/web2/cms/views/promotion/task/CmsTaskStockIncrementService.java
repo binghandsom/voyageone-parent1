@@ -40,7 +40,10 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private  static final String TYPE_INCREMENT_INSERT="1";
     /** 判断隔离任务:2更新的场合 */
     private  static final String TYPE_INCREMENT_UPDATE="2";
-
+    /** 判断隔离任务:2更新的场合 */
+    private  static final String TYPE_INCREMENT_COUNT="1";
+    /** 判断隔离任务:2更新的场合 */
+    private  static final String TYPE_INCREMENT_PERCENT="2";
     /**
      * 检索增量库存隔离任务
      *
@@ -115,7 +118,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             throw new BusinessException("请选择增量的增量类型");
         }
         //增量类的判断
-        if(incrementType.equals("incrementPercent")){
+        if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
             //百分比增量
             if(incrementType.equals("%")){
                 // 增量比例必须输入且为大于0小于100整数
@@ -123,16 +126,16 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             }else{
                 String[] incrementValue = incrementValues.split("%");
                 if (StringUtils.isEmpty(incrementValue[0])|| !StringUtils.isDigit(incrementValue[0])
-                        ||incrementValue[0].getBytes().length>2||incrementValue.length>1) {
+                        ||incrementValue[0].getBytes().length>2||incrementValue.length>2) {
                     // 增量比例必须输入且为大于0小于100整数
                     throw new BusinessException("7000056");
                 }
             }
         }
-        if(incrementType.equals("incrementCount")){
+        if(incrementType.equals(TYPE_INCREMENT_COUNT)){
             //数量增量
             if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
-                    ||incrementValues.getBytes().length>1) {
+                    ||incrementValues.getBytes().length>2) {
                 // 增量必须为大于0的整数
                 throw new BusinessException("7000055");
             }
@@ -149,23 +152,21 @@ public class CmsTaskStockIncrementService extends BaseAppService {
      */
     private void insertIncrementTaskByTaskID(Map param) {
         Map<String, Object> mapSaveData =new HashMap<>();
-        //增量任务ID
-        mapSaveData.put("sub_task_id", param.get(""));
         //一般任务ID
-        mapSaveData.put("task_id", param.get(""));
+        mapSaveData.put("task_id", param.get("incrementTaskId"));
         //任务名
-        mapSaveData.put("sub_task_name", param.get(""));
+        mapSaveData.put("sub_task_name", param.get("incrementTaskName"));
         //平台ID
-        mapSaveData.put("cart_id", param.get(""));
+        mapSaveData.put("cart_id", param.get("incrementCartId"));
         //类型
-        mapSaveData.put("type", param.get(""));
+        mapSaveData.put("type", param.get("incrementType"));
         //隔离比例/隔离值
-        mapSaveData.put("value", param.get(""));
+        mapSaveData.put("value", param.get("incrementValue"));
         //创建者
-        mapSaveData.put("created", param.get(""));
+        mapSaveData.put("created", param.get("userName"));
         //更新者
-        mapSaveData.put("modified", param.get(""));
-        Integer seq = cmsBtStockSeparateIncrementTaskDao.insertStockSeparateIncrementTask(mapSaveData);
+        mapSaveData.put("modified", param.get("userName"));
+        cmsBtStockSeparateIncrementTaskDao.insertStockSeparateIncrementTask(mapSaveData);
     }
     /**
      * 如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_stock_separate_increment_task表
@@ -174,15 +175,14 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private void updateIncrementTaskByTaskID(Map param) {
         Map<String, Object> mapSaveData =new HashMap<>();
         //任务名
-        mapSaveData.put("sub_task_name", param.get(""));
+        mapSaveData.put("sub_task_name", param.get("incrementTaskName"));
         //增量任务ID
         mapSaveData.put("sub_task_id", param.get(""));
         //创建者
-        mapSaveData.put("created", param.get(""));
+        mapSaveData.put("created", param.get("userName"));
         //更新者
-        mapSaveData.put("modified", param.get(""));
+        mapSaveData.put("modified", param.get("userName"));
         Integer seq = cmsBtStockSeparateIncrementTaskDao.insertStockSeparateIncrementTask(mapSaveData);
-
     }
     /**
      *

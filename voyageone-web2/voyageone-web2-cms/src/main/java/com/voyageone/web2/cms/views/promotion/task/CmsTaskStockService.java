@@ -633,8 +633,15 @@ public class CmsTaskStockService extends BaseAppService {
         }
         //判断隔离任务:合更新的场合
         if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
-            //更新的场合
-            updateTasksByPromotionInfo(param);
+            simpleTransaction.openTransaction();
+            try {
+                //更新的场合
+                updateTasksByPromotionInfo(param);
+            }catch (Exception e) {
+                simpleTransaction.rollback();
+                throw e;
+            }
+            simpleTransaction.commit();
         }
     }
     /**
