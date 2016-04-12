@@ -293,6 +293,13 @@ define([
             }
 
         },
+        "system": {
+            "channelList": {
+                "templateUrl": "views/pop/system/channelList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                "controller": 'popChannelListCtl'
+            }
+        },
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -866,13 +873,14 @@ define([
             return openModel(popActions.search.codeDetail, context);
         };
 
-        /**
-         * 新增channel Feed查询输入页c规则弹出
-         * */
-        $scope.openNewFeedRule = function (context) {
-            return openModel(popActions.search.codeDetail, context);
-        };
 
+
+        /**
+         * 新增ChannelList页,设置操作弹出
+         * */
+        $scope.openChannelSetting = function (context) {
+            return openModel(popActions.system.channelList, context);
+        };
         /**
          * 弹出自定义属性列
          * @type {openCustomColumn}

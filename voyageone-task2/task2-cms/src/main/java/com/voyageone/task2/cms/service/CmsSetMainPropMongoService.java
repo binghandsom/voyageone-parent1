@@ -1197,7 +1197,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         skuPriceModel.setPriceChgFlg("X" + (sku.getPrice_current() - oldPriceSale));
 
                         // 更新price sale
-                        skuPriceModel.setPriceSale(sku.getPrice_current());
+                        // TODO: tom: 据说之后会有新方案, 暂时先按照这个flg来判断
+                        if (blnAutoApproveFlg) {
+                            skuPriceModel.setPriceSale(sku.getPrice_current());
+                        }
 
                     } else if (sku.getPrice_current().compareTo(oldPriceSale) < 0) {
                         // 新current price < 现sale price的场合, ("U"或"D" + ABS[ 新current - 旧sale price ])
