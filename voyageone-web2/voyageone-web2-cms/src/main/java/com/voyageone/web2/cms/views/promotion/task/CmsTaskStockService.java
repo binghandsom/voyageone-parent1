@@ -361,10 +361,9 @@ public class CmsTaskStockService extends BaseAppService {
                 if(shareList.size()>0){
                     Boolean isFlg =true;
                     for(int i=0;i<shareList.size();i++){
-                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i)))){
+                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i))))
                             isFlg =false;
                             break;
-                        }
                     }
                     //取得共享渠道名称
                     if(isFlg)
@@ -463,13 +462,12 @@ public class CmsTaskStockService extends BaseAppService {
      * 取得新建库存隔离任务的数据
      * @param typeChannelBeanList
      * @param allSeparateCartIdMap
-     * @param channelId
      * @return separatePlatformList
      */
-    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap, String channelId){
+    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap){
         List<Map> separatePlatformList = new ArrayList<>();
-        HashMap<String,String> separateCartName=new HashMap();
-        HashMap<String,String> isAllSeparateCartName=new HashMap();
+        HashMap<String,String> sq=new HashMap();
+        HashMap<String,String> isAllSq=new HashMap();
         //增优先
         String addPriority="";
         //减优先
@@ -497,7 +495,7 @@ public class CmsTaskStockService extends BaseAppService {
                     separatePlatformMap.put("addPriority", allSeparateCartIdMap.get(i).get("addPriority").toString());
                     //减优先
                     separatePlatformMap.put("subtractPriority", allSeparateCartIdMap.get(i).get("subtractPriority").toString());
-                    separateCartName.put(cartId.getValue(),cartId.getName());
+                    sq.put(cartId.getValue(),cartId.getName());
                     separatePlatformList.add(separatePlatformMap);
                 }
                 if((cart_id.equals("-1"))){
@@ -507,40 +505,21 @@ public class CmsTaskStockService extends BaseAppService {
                     subtractPriority=allSeparateCartIdMap.get(i).get("subtractPriority").toString();
                 }
             }
-            isAllSeparateCartName.put(cartId.getValue(),cartId.getName());
+            isAllSq.put(cartId.getValue(),cartId.getName());
         }
-        //取得共享渠道下已经隔离的平台
-        List<Integer> shareList = getSeparateCartId(channelId);
-        //取得共享渠道名称
-        StringBuffer shareCartName= new StringBuffer();
-        for(Map.Entry<String, String> isAllSqEntry : isAllSeparateCartName.entrySet()){
-            //隔离渠道
-            if(separateCartName.keySet().contains(isAllSqEntry.getKey())){
+        //获取未隔离的名称
+        StringBuffer sbCartName= new StringBuffer();
+        for(Map.Entry<String, String> isAllSqEntry : isAllSq.entrySet()){
+            if(sq.keySet().contains(isAllSqEntry.getKey())){
                 continue;
             }else{
-                //共享渠道
-                if(shareList.size()>0){
-                    Boolean isFlg =true;
-                    for(int i=0;i<shareList.size();i++){
-                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i)))){
-                            isFlg =false;
-                            break;
-                        }
-                    }
-                    //取得共享渠道名称
-                    if(isFlg)
-                        shareCartName.append(isAllSqEntry.getValue()+"|");
-
-                }else{
-                    //取得共享渠道名称
-                    shareCartName.append(isAllSqEntry.getValue()+"|");
-                }
+                sbCartName.append(isAllSqEntry.getValue()+"|");
             }
         }
         //取得共享渠道的数据
-        if(shareCartName.toString().length()!=0){
+        if(sbCartName.toString().length()!=0){
             //去掉最后一个|
-            String cartName=shareCartName.substring(0,shareCartName.length()-1);
+            String cartName=sbCartName.substring(0,sbCartName.length()-1);
             //获取隔离和未隔离的数据
             Map<String,String> isNotSeparatePlatformMap  = new HashMap<>();
             //平台id
