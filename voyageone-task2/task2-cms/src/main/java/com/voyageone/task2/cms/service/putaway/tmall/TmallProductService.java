@@ -33,11 +33,11 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbProductService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.modelbean.DictWordBean;
@@ -1374,7 +1374,7 @@ public class TmallProductService {
                         tmallUploadRunState.setStyle_code(styleCode);
                     }
                     // 测试代码不要提交 tom start
-                    styleCode = "test." + styleCode;
+//                    styleCode = "test." + styleCode;
                     // 测试代码不要提交 tom end
                     field.setValue(styleCode);
                     logger.debug("tmall style code[" + field.getId() + "]: " + field.getValue());
@@ -1462,7 +1462,11 @@ public class TmallProductService {
                         logger.info("已经有sku属性，忽略商品外部编码");
                         continue;
                     }
-                    InputField  field = (InputField) processFields;
+                    // bug修正 tom START
+//                    InputField  field = (InputField) processFields;
+
+                    InputField  field = (InputField) (processFields.get(0));
+                    // bug修正 tom END
                     List<SxProductBean> processProducts = workLoadBean.getProcessProducts();
                     if (processProducts.size() != 1) {
                         String errorCause = "包含商品外部编码的类目必须只有一个code";

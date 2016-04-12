@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.mapping.platform;
 
-import com.mongodb.WriteResult;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.ComplexField;
@@ -11,11 +10,10 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.service.dao.cms.CmsMtDictDao;
-import com.voyageone.service.dao.cms.CmsMtPlatformSpecialFieldDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.DictService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformMappingService;
 import com.voyageone.service.model.cms.CmsMtDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -44,22 +42,19 @@ import static java.util.stream.Collectors.toMap;
  * @since 2.0.0
  */
 @Service("web2.cms.CmsPlatformPropMappingService")
-public class CmsPlatformPropMappingService extends BaseAppService {
+class CmsPlatformPropMappingService extends BaseAppService {
 
     @Autowired
-    private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
+    private PlatformCategoryService platformCategoryService;
 
     @Autowired
-    private CmsMtPlatformMappingDao platformMappingDao;
+    private CategorySchemaService categorySchemaService;
 
     @Autowired
-    private CmsMtCategorySchemaDao categorySchemaDao;
+    private DictService dictService;
 
     @Autowired
-    private CmsMtDictDao dictDao;
-
-    @Autowired
-    private CmsMtPlatformSpecialFieldDao platformSpecialFieldDao;
+    private PlatformMappingService platformMappingService;
 
     /**
      * 获取平台类目和 Mapping 的所有信息
@@ -70,16 +65,14 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @return 携带所有信息的 Map 包含: categorySchema / properties / mapping
      * @throws TopSchemaException
      */
-    public Map<String, Object> getPlatformCategory(String categoryId, int cartId, UserSessionBean user) throws TopSchemaException {
+    Map<String, Object> getPlatformCategory(String categoryId, int cartId, UserSessionBean user) throws TopSchemaException {
 
-        CmsMtPlatformMappingModel platformMappingModel =
-                platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
+        CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
 
         if (platformMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel =
-                platformCategorySchemaDao.getPlatformCatSchemaModel(platformMappingModel.getPlatformCategoryId(), cartId);
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(platformMappingModel.getPlatformCategoryId(), cartId);
 
         // 转换类目属性
         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
@@ -113,18 +106,19 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @param categoryId 主数据类目
      * @return CmsMtCategorySchemaModel
      */
-    public CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
-
-        return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+    CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
+        return categorySchemaService.getCmsMtCategorySchema(categoryId);
     }
 
     /**
      * 获取当前渠道的所有可用字典
      */
-    public List<CmsMtDictModel> getDictList(UserSessionBean user) {
+    List<CmsMtDictModel> getDictList(String cart_id, String lang, UserSessionBean user) {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(user.getSelChannelId());
-        return dictDao.selectByChannel(params);
+        params.setCart_id(cart_id);
+        params.setLang(lang);
+        return dictService.getModesByChannel(params);
     }
 
     /**
@@ -136,8 +130,8 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @param user               用户
      * @return 信息模型
      */
-    public CmsMtPlatformMappingModel getPlatformMapping(String mainCategoryId, String platformCategoryId, Integer cartId, UserSessionBean user) {
-        return platformMappingDao.selectMapping(mainCategoryId, platformCategoryId, cartId, user.getSelChannel());
+    CmsMtPlatformMappingModel getPlatformMapping(String mainCategoryId, String platformCategoryId, Integer cartId, UserSessionBean user) {
+        return platformMappingService.getMapping(mainCategoryId, platformCategoryId, cartId, user.getSelChannel().getId());
     }
 
     /**
@@ -205,9 +199,9 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @param platformCategoryId 平台类目 ID
      * @return Mapping Map 属性 ID -> Type
      */
-    public Map<String, String> getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId) {
+    Map<String, String> getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId) {
 
-        return platformSpecialFieldDao.select(cartId, platformCategoryId, null, null)
+        return platformMappingService.getPlatformSpecialField(cartId, platformCategoryId)
                 .stream()
                 .collect(toMap(CmsMtPlatformSpecialFieldModel::getFieldId, CmsMtPlatformSpecialFieldModel::getType));
     }
@@ -220,7 +214,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * @return 返回顶层 Mapping 模型
      * @throws TopSchemaException
      */
-    public MappingBean saveMapping(PlatformMappingBean paramBean, UserSessionBean user) throws TopSchemaException {
+    MappingBean saveMapping(PlatformMappingBean paramBean, UserSessionBean user) throws TopSchemaException {
 
         MappingBean orgMappingBean = paramBean.getMappingBean();
 
@@ -244,8 +238,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
             // 构建的话需要完整的属性树
 
             CmsMtPlatformCategorySchemaModel platformCatSchemaModel =
-                    platformCategorySchemaDao.getPlatformCatSchemaModel(platformMappingModel.getPlatformCategoryId(),
-                            paramBean.getCartId());
+                    platformCategoryService.getPlatformCatSchema(platformMappingModel.getPlatformCategoryId(), paramBean.getCartId());
 
             // 转换类目属性
             Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
@@ -258,7 +251,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
         updateFinalMapping(mappingBean, orgMappingBean);
 
-        platformMappingDao.update(platformMappingModel);
+        platformMappingService.savePlatformMapping(platformMappingModel);
 
         List<String> top = new ArrayList<>();
         top.add(mappingPath.get(0));
@@ -449,23 +442,22 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
     private String getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId, String propertyId) {
 
-        String type = platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
+        String type = platformMappingService.getSpecialMappingType(cartId, platformCategoryId, propertyId);
 
         return StringUtils.isEmpty(type) ? "1" : type;
     }
 
     public int setMatchOver(String mainCategoryId, Integer matchOver, Integer cartId, UserSessionBean user) {
 
-        CmsMtPlatformMappingModel platformMappingModel =
-                platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
+        CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
 
         if (platformMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
         platformMappingModel.setMatchOver(matchOver);
 
-        WriteResult res = platformMappingDao.update(platformMappingModel);
+        int res = platformMappingService.savePlatformMapping(platformMappingModel);
 
-        return res.getN() > 0 ? matchOver : (matchOver == 1 ? 0 : 1);
+        return res > 0 ? matchOver : (matchOver == 1 ? 0 : 1);
     }
 }

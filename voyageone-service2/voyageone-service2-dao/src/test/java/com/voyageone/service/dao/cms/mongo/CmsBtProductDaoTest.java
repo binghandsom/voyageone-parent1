@@ -1,7 +1,9 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,7 @@ import java.util.List;
  * Created by lewis on 2016/2/1.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsBtProductDaoTest {
 
     @Autowired
@@ -37,13 +39,20 @@ public class CmsBtProductDaoTest {
         Assert.assertFalse(isReady);
     }
 
-//    @Test
-//    public void testGetOnSaleProducts() throws Exception {
-//
-//        List<CmsBtProductModel> products = cmsBtProductDao.getOnSaleProducts("013","05-58255");
-//
-//        System.out.println(products.size());
-//    }
+    @Test
+    public void testGetOnSaleProducts() throws Exception {
+        List<CmsBtProductModel> products = cmsBtProductDao.select("{\"fields.code\" : \"51A0HC13E1-00LC#NB0\"}", "010");
+
+        System.out.println(products.size());
+
+        JomgoQuery queryObject = new JomgoQuery();
+        //"_id" : 56e6b8d7eb99b2fdf432ddfe
+        ObjectId objectId = new ObjectId("56e6b8d7eb99b2fdf432ddfe");
+        queryObject.setObjectId(objectId);
+        CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, "010");
+
+        System.out.println(product);
+    }
 
     @Test
     public void testUpdateFirst() throws Exception {

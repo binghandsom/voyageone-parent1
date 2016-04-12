@@ -33,13 +33,11 @@ public class CmsBtFeedInfoDao extends BaseMongoPartDao<CmsBtFeedInfoModel> {
     }
 
     /**
-     *
-     * @param channelId
-     * @param modelCode
+     * updateFeedInfoUpdFlg
      */
     public int updateFeedInfoUpdFlg(String channelId,String[] modelCode){
 
-        StringBuffer sbQuery = new StringBuffer();
+        StringBuilder sbQuery = new StringBuilder();
         sbQuery.append("{");
         sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
         sbQuery.append(",");

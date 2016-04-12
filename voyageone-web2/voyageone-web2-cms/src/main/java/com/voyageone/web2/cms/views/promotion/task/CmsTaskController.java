@@ -31,7 +31,7 @@ public class CmsTaskController extends BaseController {
      */
     @RequestMapping(INDEX.PAGE)
     public AjaxResponse page(@RequestBody Map<String,Object> searchInfo) {
-        searchInfo.put("channel_id",getUser().getSelChannelId());
+        searchInfo.put("channelId",getUser().getSelChannelId());
         List<CmsBtTasksModel> models = taskService.getAllTasks(searchInfo);
         return success(models);
     }

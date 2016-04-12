@@ -72,26 +72,26 @@
 								<div style="width:150px">
 									<select class="form-control" ng-model="vm.searchInfo.priceChgFlg">
 										<option value="0" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-										<option value="1">涨价</option>
+										<!--<option value="1">涨价</option>-->
 										<option value="2">降价</option>
 										<option value="3">击穿</option>
 									</select>
 								</div>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label" >价格比较</label>
-							<div class="col-sm-8">
-								<div style="width:250px">
-									<select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">
-										<option value="0">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-										<option value="1">建议销售价等于实际销售价</option>
-										<option value="2">建议销售价小于实际销售价</option>
-										<option value="3">建议销售价大于实际销售价</option>
-									</select>
-								</div>
-							</div>
-						</div>
+						<!--<div class="form-group">-->
+							<!--<label class="col-sm-3 control-label" >价格比较</label>-->
+							<!--<div class="col-sm-8">-->
+								<!--<div style="width:250px">-->
+									<!--<select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">-->
+										<!--<option value="0">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+										<!--<option value="1">建议销售价等于实际销售价</option>-->
+										<!--<option value="2">建议销售价小于实际销售价</option>-->
+										<!--<option value="3">建议销售价大于实际销售价</option>-->
+									<!--</select>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -100,14 +100,14 @@
 							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
 							<div class="col-sm-8 form-inline">
 								<div class="col-sm-5 input-group">
-									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeStart" date-model-format="yyyy-MM-dd"
+									<input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.createTimeStart" date-model-format="yyyy-MM-dd"
 										   max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~&nbsp;
 								<div class="col-sm-5 input-group">
-									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeTo" date-model-format="yyyy-MM-dd"
+									<input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.createTimeTo" date-model-format="yyyy-MM-dd"
 										   min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -119,14 +119,14 @@
 							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
 							<div class="col-sm-8 form-inline">
 								<div class="col-sm-5 input-group">
-									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.publishTimeStart" date-model-format="yyyy-MM-dd"
+									<input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.publishTimeStart" date-model-format="yyyy-MM-dd"
 										   max-date="vm.searchInfo.publishTimeTo" is-open="datePicker3" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~&nbsp;
 								<div class="col-sm-5 input-group">
-									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.publishTimeTo" date-model-format="yyyy-MM-dd"
+									<input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.publishTimeTo" date-model-format="yyyy-MM-dd"
 										   min-date="vm.searchInfo.publishTimeStart" is-open="datePicker4" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>

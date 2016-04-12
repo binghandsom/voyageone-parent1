@@ -1,26 +1,37 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.UsJois;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.configs.beans.UsJoiBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.cms.bean.platform.SxWorkLoadBean;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -30,7 +41,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UploadToUSJoiService {
+public class UploadToUSJoiService extends BaseTaskService{
 
     @Autowired
     private ProductService productService;
@@ -44,97 +55,141 @@ public class UploadToUSJoiService {
     @Autowired
     private MongoSequenceService commSequenceMongoService;
 
-    public void upload(SxWorkLoadBean sxWorkLoadBean) {
+    @Autowired
+    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
 
-        List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId());
+    @Override
+    public SubSystem getSubSystem() {
+        return SubSystem.CMS;
+    }
 
-        //从group中过滤出需要上的usjoi的产品
-        productModels = getUSjoiProductModel(productModels);
+    @Override
+    public String getTaskName() {
+        return "CmsUploadProductToUSJoiJob";
+    }
 
-        for (CmsBtProductModel productModel : productModels) {
-            productModel.set_id(null);
+    @Override
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-            CmsBtProductModel pr = cmsBtProductDao.selectProductByCode(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode());
-            if (pr == null) {
-                creatGroup(productModel);
-                productModel.setChannelId(ChannelConfigEnums.Channel.VOYAGEONE.getId());
-                productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
+        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDao.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TI.getId()));
+        cmsBtSxWorkloadModels.forEach(this::upload);
 
-                List<ProductPriceBean> productPrices = new ArrayList<>();
-                List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
+    }
 
-                productModel.getSkus().forEach(sku -> {
-                    ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
+    public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
 
-                    skuPriceBean.setSkuCode(sku.getSkuCode());
+        try {
+            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId());
 
-                    skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
-                    sku.setClientMsrpPrice(null);
-
-                    skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
-                    sku.setClientNetPrice(null);
-
-                    skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
-                    sku.setClientRetailPrice(null);
-
-                    skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
-                    sku.setPriceMsrp(null);
-
-                    skuPriceBean.setPriceRetail(sku.getPriceRetail());
-                    sku.setPriceRetail(null);
-
-                    skuPriceBean.setPriceSale(sku.getPriceSale());
-                    sku.setPriceSale(null);
-
-                    skuPriceBeans.add(skuPriceBean);
-                    sku.setSkuCarts(null);
-                });
-
-                productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
-                productService.createProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel, sxWorkLoadBean.getModifier());
-
-                ProductPriceBean priceBean = new ProductPriceBean();
-                priceBean.setProductId(productModel.getProdId());
-                priceBean.setSkuPrices(skuPriceBeans);
-                productPrices.add(priceBean);
-                productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
-            } else {
-                productModel.setProdId(pr.getProdId());
-                productModel.setGroups(pr.getGroups());
-                ProductUpdateBean requestModel = new ProductUpdateBean();
-                requestModel.setProductModel(productModel);
-                requestModel.setModifier(sxWorkLoadBean.getModifier());
-                requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-                productService.updateProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), requestModel);
+            //从group中过滤出需要上的usjoi的产品
+            productModels = getUSjoiProductModel(productModels);
+            if(productModels.size() == 0){
+                throw new BusinessException("没有找到需要上新的SKU");
+            }else{
+                $info("有"+productModels.size()+"个产品要复制");
             }
 
+            for (CmsBtProductModel productModel : productModels) {
+                productModel.set_id(null);
 
+                CmsBtProductModel pr = cmsBtProductDao.selectProductByCode(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode());
+                if (pr == null) {
+                    creatGroup(productModel);
+                    productModel.setChannelId(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+                    productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
+
+                    List<ProductPriceBean> productPrices = new ArrayList<>();
+                    List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
+
+                    // 根据com_mt_us_joi_config表给sku 设cartId
+                    final List<Integer> cartIds;
+                    UsJoiBean usJoiBean = UsJois.getUsJoiByOrgChannelId(productModel.getOrgChannelId());
+                    if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
+                        cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+                    }else{
+                        cartIds = new ArrayList<>();
+                    }
+                    productModel.getSkus().forEach(sku -> {
+                        ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
+
+                        skuPriceBean.setSkuCode(sku.getSkuCode());
+
+                        skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+                        sku.setClientMsrpPrice(null);
+
+                        skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+                        sku.setClientNetPrice(null);
+
+                        skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+                        sku.setClientRetailPrice(null);
+
+                        skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+                        sku.setPriceMsrp(null);
+
+                        skuPriceBean.setPriceRetail(sku.getPriceRetail());
+                        sku.setPriceRetail(null);
+
+                        skuPriceBean.setPriceSale(sku.getPriceSale());
+                        sku.setPriceSale(null);
+
+                        skuPriceBeans.add(skuPriceBean);
+                        sku.setSkuCarts(cartIds);
+                    });
+
+                    productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
+                    productService.createProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel, sxWorkLoadBean.getModifier());
+
+                    ProductPriceBean priceBean = new ProductPriceBean();
+                    priceBean.setProductId(productModel.getProdId());
+
+
+                    priceBean.setSkuPrices(skuPriceBeans);
+                    productPrices.add(priceBean);
+                    productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
+                } else {
+                    productModel.setProdId(pr.getProdId());
+                    productModel.setGroups(pr.getGroups());
+                    ProductUpdateBean requestModel = new ProductUpdateBean();
+                    requestModel.setProductModel(productModel);
+                    requestModel.setModifier(sxWorkLoadBean.getModifier());
+                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
+                    productService.updateProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), requestModel);
+                }
+            }
+            sxWorkLoadBean.setPublishStatus(1);
+            cmsBtSxWorkloadDao.updateSxWorkloadModel(sxWorkLoadBean);
+            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+        }catch (Exception e){
+            sxWorkLoadBean.setPublishStatus(2);
+            cmsBtSxWorkloadDao.updateSxWorkloadModel(sxWorkLoadBean);
+            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            throw e;
         }
+
     }
 
 
     /**
      * 找出需要上到minmall的产品和sku
-     * @param productModels
-     * @return
+     * @param productModels 产品列表
+     * @return 产品列表
      */
     private List<CmsBtProductModel> getUSjoiProductModel(List<CmsBtProductModel> productModels) {
 
         List<CmsBtProductModel> usJoiProductModes = new ArrayList<>();
 
         // 找出approved 并且 sku的carts里包含 28（usjoi的cartid）
-        for (CmsBtProductModel productModel : productModels) {
-            if ("Approved".equalsIgnoreCase(productModel.getFields().getStatus())) {
-                List<CmsBtProductModel_Sku> skus = productModel.getSkus().stream()
-                        .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TI.getId())))
-                        .collect(toList());
-                if (skus.size() > 0) {
-                    skus.forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setSkuCarts(null));
-                    productModel.setSkus(skus);
-                    usJoiProductModes.add(productModel);
-                }
+        productModels.stream().filter(productModel -> "Approved".equalsIgnoreCase(productModel.getFields().getStatus())).forEach(productModel -> {
+            List<CmsBtProductModel_Sku> skus = productModel.getSkus().stream()
+                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TI.getId())))
+                    .collect(toList());
+            if (skus.size() > 0) {
+                skus.forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setSkuCarts(null));
+                productModel.setSkus(skus);
+                usJoiProductModes.add(productModel);
             }
-        }
+        });
         return usJoiProductModes;
 
     }
@@ -235,4 +290,6 @@ public class UploadToUSJoiService {
 
         productModel.setGroups(group);
     }
+
+
 }

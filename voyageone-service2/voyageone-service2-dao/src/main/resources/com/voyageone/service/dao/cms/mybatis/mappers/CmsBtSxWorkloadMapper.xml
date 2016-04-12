@@ -8,6 +8,7 @@
             seq as seq,
             channel_id as channelId,
             group_id as groupId,
+            cart_id as cartId,
             publish_status as publishStatus,
             creater,
             created,
@@ -19,6 +20,10 @@
         <if test="channel_id != null">
         AND
             channel_id=#{channel_id}
+        </if>
+        <if test="cartId != null">
+            AND
+            cart_id=#{cartId}
         </if>
             order by modified desc
             limit 0,#{record_count}
@@ -38,6 +43,7 @@
         <trim prefix="(" suffix=")" suffixOverrides="," >
             channel_id,
             group_id,
+            cart_id,
             publish_status,
             created,
             <if test="creater != null" >
@@ -51,6 +57,7 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             #{channelId,jdbcType=VARCHAR},
             #{groupId,jdbcType=INTEGER},
+            #{cartId,jdbcType=INTEGER},
             #{publishStatus,jdbcType=INTEGER},
             now(),
             <if test="creater != null" >
@@ -68,6 +75,7 @@
         <trim prefix="(" suffix=")" suffixOverrides="," >
             channel_id,
             group_id,
+            cart_id,
             publish_status,
             created,
             creater,
@@ -79,6 +87,7 @@
             (
             #{item.channelId,jdbcType=VARCHAR},
             #{item.groupId,jdbcType=INTEGER},
+            #{item.cartId,jdbcType=INTEGER},
             #{item.publishStatus,jdbcType=INTEGER},
             now(),
             #{item.creater,jdbcType=VARCHAR},

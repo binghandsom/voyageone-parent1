@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;

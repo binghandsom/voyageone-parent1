@@ -518,11 +518,11 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param promotionId 活动ID
      * @param operator    操作者
      */
-    public void teJiaBaoInit(Integer promotionId, String operator) {
+    public void teJiaBaoInit(Integer promotionId, String channelId, String operator) {
 
         simpleTransaction.openTransaction();
         try {
-            List<CmsBtTasksModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            List<CmsBtTasksModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
             if (tasks.size() == 0) {
                 CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
                 CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
@@ -533,6 +533,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 cmsBtTaskModel.setTask_name(cmsBtPromotionModel.getPromotionName());
                 cmsBtTaskModel.setActivity_start(cmsBtPromotionModel.getActivityStart());
                 cmsBtTaskModel.setActivity_end(cmsBtPromotionModel.getActivityEnd());
+                cmsBtTaskModel.setChannelId(channelId);
                 cmsBtTaskDao.insert(cmsBtTaskModel);
             }
 

@@ -1,15 +1,14 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
+import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,30 +27,27 @@ import java.util.Map;
 public final class CmsFeedCategoriesService extends BaseAppService {
 
     @Autowired
-    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
+    private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
-    private CmsBtFeedMappingDao cmsBtFeedMappingDao;
+    private FeedMappingService feedMappingService;
 
     @Autowired
     private ChannelCategoryService cmsBtChannelCategoryService;
 
     /**
      * 获取feed类目树形结构
-     * @param channelId
-     * @return
      */
     public List<CmsMtCategoryTreeModel> getFeedCategoryMap(String channelId) throws IOException {
 
         // 获取整个类目树
-        CmsMtFeedCategoryTreeModelx treeModelX = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
+        CmsMtFeedCategoryTreeModelx treeModelX = feedCategoryTreeService.getFeedCategory(channelId);
 
         if (treeModelX.getCategoryTree().isEmpty())
             throw new BusinessException("未找到类目");
 
         // 获取已经绑定的类目
-        List<CmsBtFeedMappingModel> feedMappingModels =
-                cmsBtFeedMappingDao.findMappingByChannelId(channelId);
+        List<CmsBtFeedMappingModel> feedMappingModels = feedMappingService.getFeedMappings(channelId);
 
         // 生成主类目的全路径和类目Id关联关系
         List<CmsMtCategoryTreeModel> mtCategoryList = cmsBtChannelCategoryService.getAllCategoriesByChannelId(channelId);
@@ -73,30 +69,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
     }
 
     /**
-     * 取得类目路径数据
-     * @param user
-     * @return
-     */
-    public List<CmsMtCategoryTreeModel> getFeedCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
-        List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
-        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
-        for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
-            result.add(buildFeedCategoryBean(feedCategory, null, false));
-        }
-        return result;
-    }
-
-    // 取得类目路径数据
-    public List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
-        return treeModelx.getCategoryTree();
-    }
-
-    /**
      * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
-     * @param feedCategoryModel
-     * @return
      */
     private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, String> feedMappingModelMap, Boolean setMainFlag) {
 
@@ -111,10 +84,11 @@ public final class CmsFeedCategoriesService extends BaseAppService {
         List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
         List<CmsMtCategoryTreeModel> newChild = new ArrayList<>();
 
-        if (children != null && !children.isEmpty())
+        if (children != null && !children.isEmpty()) {
             for (CmsMtFeedCategoryModel child : children) {
                 newChild.add(buildFeedCategoryBean(child, feedMappingModelMap, setMainFlag));
             }
+        }
         cmsMtCategoryTreeModel.setChildren(newChild);
 
         return cmsMtCategoryTreeModel;

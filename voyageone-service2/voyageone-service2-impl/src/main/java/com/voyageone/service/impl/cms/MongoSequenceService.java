@@ -1,11 +1,12 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.mongo.CommSequenceDao;
+import com.voyageone.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MongoSequenceService {
+public class MongoSequenceService extends BaseService {
 
     /**
      *  Sequence Name

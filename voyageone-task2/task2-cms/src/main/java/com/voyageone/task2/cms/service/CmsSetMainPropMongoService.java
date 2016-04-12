@@ -4,16 +4,18 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.bean.Condition;
-import com.voyageone.cms.enums.MappingPropType;
-import com.voyageone.cms.enums.Operation;
-import com.voyageone.cms.enums.SrcType;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.service.bean.cms.Condition;
+import com.voyageone.service.model.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.Operation;
+import com.voyageone.service.model.cms.enums.SrcType;
 import com.voyageone.common.Constants;
-import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -1145,6 +1147,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param cmsProduct cms product信息
          */
         private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
+            // 查看配置表, 看看是否要自动审批价格
+            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBean(channelId, "AUTO_APPROVE_PRICE", "auto_approve_price");
+            boolean blnAutoApproveFlg;
+            if (autoApprovePrice == null || autoApprovePrice.getConfigValue1() == null || "0".equals(autoApprovePrice.getConfigValue1())) {
+                // 没有配置过, 或者 配置为空, 或者 配置了0 的场合
+                // 认为不自动审批价格 (注意: 即使不自动审批, 但如果价格击穿了, 仍然自动更新salePrice)
+                blnAutoApproveFlg = false;
+            } else {
+                // 其他的场合, 自动审批价格
+                blnAutoApproveFlg = true;
+            }
+
             ProductPriceBean model = new ProductPriceBean();
             ProductSkuPriceBean skuPriceModel;
 
@@ -1164,12 +1178,41 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 如果是新的SKU, 那么: PriceRetail -> priceSale
                 if (cmsProduct.getSku(sku.getSku()) == null) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                    skuPriceModel.setPriceChgFlg("");
                 } else if (cmsProduct.getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getSku(sku.getSku()).getPriceSale() == 0d) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                    skuPriceModel.setPriceChgFlg("");
                 } else {
                     // 之前有价格的场合, 判断是否需要把价格更新掉
-                    // TODO: 价格是否自动更新这段代码还没写
-                    // TODO: 价格击穿还没写
+
+                    // 旧sku
+                    CmsBtProductModel_Sku oldSku = cmsProduct.getSku(sku.getSku());
+
+                    // 旧价格取得
+                    Double oldPriceSale = oldSku.getPriceSale();
+
+                    if (sku.getPrice_current().compareTo(oldPriceSale) > 0) {
+                        // 新current price > 旧sale price的场合, 击穿 ("X" + 新current price - 旧sale price)
+                        // 更新标志位
+                        skuPriceModel.setPriceChgFlg("X" + (sku.getPrice_current() - oldPriceSale));
+
+                        // 更新price sale
+                        // TODO: tom: 据说之后会有新方案, 暂时先按照这个flg来判断
+                        if (blnAutoApproveFlg) {
+                            skuPriceModel.setPriceSale(sku.getPrice_current());
+                        }
+
+                    } else if (sku.getPrice_current().compareTo(oldPriceSale) < 0) {
+                        // 新current price < 现sale price的场合, ("U"或"D" + ABS[ 新current - 旧sale price ])
+                        // 更新标志位
+                        skuPriceModel.setPriceChgFlg("D" + Math.abs(sku.getPrice_current() - oldPriceSale));
+
+                        // 更新price sale (设置了自动approve价格的场合)
+                        if (blnAutoApproveFlg) {
+                            skuPriceModel.setPriceSale(sku.getPrice_current());
+                        }
+                    }
+
                 }
 
                 model.addSkuPrice(skuPriceModel);

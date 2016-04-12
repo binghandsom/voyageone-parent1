@@ -1,12 +1,13 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.components.sears.bean.PaginationBean;
+import com.voyageone.components.sears.bean.ProductResponse;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.feed.SearsFeedDao;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.sears.SearsService;
-import com.voyageone.common.components.sears.bean.*;
+import com.voyageone.components.sears.service.SearsService;
 import com.voyageone.common.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -205,7 +205,7 @@ define([
 
                     case options.DICT:
 
-                        return me.ppService.getDictList().then(function (dictList) {
+                        return me.ppService.getDictList(me.context.cartId).then(function (dictList) {
                             var selectedName = me.ruleWord ? me.ruleWord.value : null;
                             var selectedDict = _.find(dictList, function (dict) {
                                 return dict.name === selectedName;

@@ -11,6 +11,7 @@ public class UsJoiBean {
     private String sub_channel_id;
     private String name;
     private int active;
+    private String cart_ids;
     private String created;
     private String creater;
     private String modified;
@@ -78,5 +79,13 @@ public class UsJoiBean {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getCart_ids() {
+        return cart_ids;
+    }
+
+    public void setCart_ids(String cart_ids) {
+        this.cart_ids = cart_ids;
     }
 }
