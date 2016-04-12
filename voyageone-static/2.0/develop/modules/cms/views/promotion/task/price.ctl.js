@@ -26,7 +26,7 @@ define([
 
             search();
         }
-
+        $scope.search=search;
         function search() {
             taskPriceService.getPriceList({
                 "promotionId": $routeParams.promotionId,
