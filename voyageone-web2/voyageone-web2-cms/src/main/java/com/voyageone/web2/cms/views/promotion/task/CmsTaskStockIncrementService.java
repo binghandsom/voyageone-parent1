@@ -83,10 +83,10 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //判断增量任务:新规场合
         if(promotionType.equals(TYPE_INCREMENT_INSERT)){
             //根据增量任务id，将增量任务信息插入到cms_bt_stock_separate_increment_task表
-            insertIncrementTaskByTaskID(param);
+            String subTaskId=insertIncrementTaskByTaskID(param);
             //根据增量任务id，抽出cms_bt_stock_separate_item表中的所有sku后，计算出各sku的可用库存数并且根据增量任务的设定。
             // 计算出增量库存隔离数，插入到cms_bt_stock_separate_increment_item表中。（固定值隔离标志位=0：按动态值进行增量隔离）
-            insertStockSeparateIncrementByTaskID(param);
+            insertStockSeparateIncrementByTaskID(param,subTaskId);
         }
         //判断增量任务:更新场合
         if(promotionType.equals(TYPE_INCREMENT_UPDATE)){
@@ -150,7 +150,8 @@ public class CmsTaskStockIncrementService extends BaseAppService {
      * 如果是新建增量任务时（参数.增量任务id没有内容），将增量任务信息插入到cms_bt_stock_separate_increment_task表
      * @param param
      */
-    private void insertIncrementTaskByTaskID(Map param) {
+    private String insertIncrementTaskByTaskID(Map param) {
+        String subTaskId="";
         Map<String, Object> mapSaveData =new HashMap<>();
         //一般任务ID
         mapSaveData.put("task_id", param.get("incrementTaskId"));
@@ -163,10 +164,14 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //隔离比例/隔离值
         mapSaveData.put("value", param.get("incrementValue"));
         //创建者
-        mapSaveData.put("created", param.get("userName"));
+        mapSaveData.put("creater", param.get("userName"));
         //更新者
-        mapSaveData.put("modified", param.get("userName"));
+        mapSaveData.put("modifier", param.get("userName"));
         cmsBtStockSeparateIncrementTaskDao.insertStockSeparateIncrementTask(mapSaveData);
+        //任务ID
+        subTaskId=String.valueOf(mapSaveData.get("sub_task_id"));
+
+        return subTaskId;
     }
     /**
      * 如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_stock_separate_increment_task表
@@ -187,15 +192,16 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     /**
      *
      * @param param
+     * @param subTaskId
      */
-    private void insertStockSeparateIncrementByTaskID(Map param) {
+    private void insertStockSeparateIncrementByTaskID(Map param, String subTaskId) {
 
         //channelID
         String channelID =param.get("").toString();
         //根据channelID取得可用的库存
         Map<String, Integer> skuStockUsableAll =cmsTaskStockService.getUsableStock(channelID);
         //根据任务ID和CartId取得该平台下的SKU
-        HashMap<String,Object> allSkuHash=getStockSeparateItemSkuByIncrementInfo(param, skuStockUsableAll);
+        HashMap<String,Object> allSkuHash=getStockSeparateItemSkuByIncrementInfo(param, skuStockUsableAll,subTaskId);
         //根据allSkuProHash和SeparateHashMaps将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_increment_item表
         saveStockSeparateIncrementItem(allSkuHash);
 
@@ -204,9 +210,10 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     /**
      * 根据任务ID和CartId取得该平台下的SKU
      * @param param
+     * @param subTaskId
      * @return skuList
      */
-    private  HashMap<String,Object>  getStockSeparateItemSkuByIncrementInfo(Map param,Map<String, Integer> skuStockUsableAll){
+    private  HashMap<String,Object>  getStockSeparateItemSkuByIncrementInfo(Map param, Map<String, Integer> skuStockUsableAll, String subTaskId){
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("taskId", param.get(""));
         sqlParam.put("cartId", param.get(""));
@@ -225,7 +232,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             //取得对应的活动product_sku
             String product_sku =skuList.get(i).get("product_sku").toString();
             //增量任务ID
-            skuPro.put("sub_task_id","");
+            skuPro.put("sub_task_id",subTaskId);
             //销售渠道
             skuPro.put("channel_id","");
             //产品model

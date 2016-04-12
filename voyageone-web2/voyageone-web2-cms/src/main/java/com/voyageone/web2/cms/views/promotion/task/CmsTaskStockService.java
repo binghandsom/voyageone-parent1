@@ -360,10 +360,9 @@ public class CmsTaskStockService extends BaseAppService {
                 //共享渠道
                 if(shareList.size()>0){
                     Boolean isFlg =true;
-                    for(int i=0;i<shareList.size();i++){
-                        if(isAllSqEntry.getKey().equals(shareList.get(i)))
-                            isFlg =false;
-                            break;
+                    if(shareList.contains(isAllSqEntry.getKey().toString())){
+                        isFlg =false;
+                        break;
                     }
                     //取得共享渠道名称
                     if(isFlg)
@@ -557,6 +556,7 @@ public class CmsTaskStockService extends BaseAppService {
         int addPriority=0;
         //减优先顺
         int subtractPriority=allSeparateCartIdMap.size();
+        String revertTime="";
         //循环取得数据反应到初始画面
         for(int i=0;i<allSeparateCartIdMap.size();i++){
             Map<String,String> separatePlatformMap  = new HashMap<>();
@@ -571,6 +571,7 @@ public class CmsTaskStockService extends BaseAppService {
             separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
             // 还原时间
             separatePlatformMap.put("revertTime", allSeparateCartIdMap.get(i).get("revertTime").toString());
+            revertTime=allSeparateCartIdMap.get(i).get("revertTime").toString();
             //活动ID
             if(promotionType.equals(TYPE_PROMOTION_INSERT)){
                 separatePlatformMap.put("promotionId",allSeparateCartIdMap.get(i).get("promotionId").toString());
@@ -596,6 +597,8 @@ public class CmsTaskStockService extends BaseAppService {
             data.put("taskName", name);
         }
         data.put("onlySku", false);
+        //活动的还原时间
+        data.put("revertTime", revertTime);
         return data;
     }
 
@@ -700,7 +703,6 @@ public class CmsTaskStockService extends BaseAppService {
                 }else{
                     separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString());
                 }
-
                 //还原时间
                 separatePlatformMap.put("revert_time",separatePlatformList.get(i).get("revertTime").toString());
                 //还原标志位
@@ -748,7 +750,10 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private void checkPromotionInfo(Map param, Boolean onlySku) {
         List<Map> separatePlatformList = (List<Map>) param.get("promotionList");
+        //活动名称
         String taskName = (String) param.get("taskName");
+        //活动的还原时间
+        String realRevertTime=(String) param.get("revertTime");
         //任务名称
         if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
             // 任务名称必须输入且长度小于1000
@@ -818,8 +823,25 @@ public class CmsTaskStockService extends BaseAppService {
                 try {
                     format.setLenient(false);
                     format.parse(revertTime);
+                    Date revertDate = format.parse(revertTime);
+                    Date realRevertDate = format.parse(realRevertTime);
+                    if (revertDate.getTime()>realRevertDate.getTime()) {
+                        throw new BusinessException("7000081", realRevertDate);
+                    }
                 } catch (ParseException e){
                     throw new BusinessException("7000013");
+                }
+            }
+            if(type.equals(SHARE_TYPE)){
+                //增优先顺
+                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.getBytes().length>1) {
+                    // 增优先顺必须输入大于0的整数
+                    throw new BusinessException("7000015");
+                }
+                //减优先顺
+                if (StringUtils.isEmpty(subtractPriority)||!StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
+                    // 减优先顺必须输入大于0的整数
+                    throw new BusinessException("7000016");
                 }
             }
             addPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("addPriority")));
