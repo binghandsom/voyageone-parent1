@@ -280,6 +280,13 @@ define([
                     "controller": 'popAddStockIncrementCtl'
                 }
             },
+            "search": {
+                "joinJM": {
+                    "templateUrl": "views/pop/search/joinJM.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
+                    "controller": 'popJoinJMCtl'
+                },
+            },
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
@@ -519,6 +526,13 @@ define([
          */
         $scope.openAddAttribute = function (context) {
             return openModel(popActions.custom.newAttribute, context);
+        };
+
+        /**
+         * 新增advance查询页,参加聚美活动弹出
+         * */
+        $scope.openJMActivity = function (context) {
+            return openModel(popActions.search.joinJM, context);
         };
 
         /**
