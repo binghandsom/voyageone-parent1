@@ -18,7 +18,7 @@ define([
             //增量类型
             incrementType:null,
             //增量数值
-            incrementValue:null,
+            incrementValue:'',
             //任务名
             incrementTaskName:null,
             //新建增量库存隔离任务:1新规的场 2合更新的场合
