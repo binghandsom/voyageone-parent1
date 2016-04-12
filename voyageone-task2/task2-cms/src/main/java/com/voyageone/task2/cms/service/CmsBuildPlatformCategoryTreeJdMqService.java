@@ -1,14 +1,17 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.category.Category;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jd.JdConstants;
 import com.voyageone.components.jd.bean.JdCategroyBean;
-import com.voyageone.components.jd.service.JdCategoryImplService;
 import com.voyageone.components.jd.service.JdCategoryService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -33,8 +36,10 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
 
     @Autowired
     JdCategoryService jdCategoryService;
+
     @Autowired
-    JdCategoryImplService jdCategoryImplService;
+    private PlatformCategoryService platformCategoryService;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -50,6 +55,11 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
         setJdCategoryInfo(taskControlList);
     }
 
+    /**
+     * 京东平台类目信息取得
+     *
+     * @param taskControlList taskcontrol信息
+     */
     protected void setJdCategoryInfo(List<TaskControlBean> taskControlList) throws Exception {
         // 获取京东系所有店铺
         List<ShopBean> shopList = Shops.getShopListByPlatform(PlatFormEnums.PlatForm.JD);
@@ -106,13 +116,173 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
         ArrayList<JdCategroyBean> jdCategroyBeanList = new ArrayList<>();
 
         // 编辑从京东取得的类目path信息
-        jdCategroyBeanList = jdCategoryImplService.getCategoryList(jdCategoryList, shop.getCart_id(), shop.getOrder_channel_id(), PlatFormEnums.PlatForm.JD.getId());
+        jdCategroyBeanList = this.getCategoryList(jdCategoryList, shop.getCart_id(), shop.getOrder_channel_id(), PlatFormEnums.PlatForm.JD.getId());
 
         // 获取类目树
-        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = jdCategoryImplService.getCmsMtPlatformCategoryTreeModelList(jdCategroyBeanList, shop.getCart_id(), shop.getOrder_channel_id(), this.getTaskName());
+        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.getCmsMtPlatformCategoryTreeModelList(jdCategroyBeanList, shop.getCart_id(), shop.getOrder_channel_id(), this.getTaskName());
 
         // 更新MangoDB类目数据
-        jdCategoryImplService.setMangoDBPlatformCatTrees(savePlatformCatModels, shop.getCart_id(), shop.getOrder_channel_id());
+        platformCategoryService.setMangoDBPlatformCatTrees(savePlatformCatModels, shop.getCart_id(), shop.getOrder_channel_id());
+    }
+
+    /**
+     * 取得平台类目模型信息
+     *
+     * @param jdCategoryList List<Category>    京东类目列表
+     *        cartId         String            CartId
+     *        channelId      String            渠道id
+     *        platformId     String            平台id
+     * @return ArrayList<Category>    京东类目列表
+     * @throws BusinessException 业务异常
+     */
+    public ArrayList<JdCategroyBean> getCategoryList(List<Category> jdCategoryList, String cartId, String channelId, String platformId) {
+        ArrayList<JdCategroyBean> categoryList = new ArrayList<>();
+
+        // 待处理列表
+        ArrayList<Category> jdCategoryAllTodo = new ArrayList<>(jdCategoryList);
+        // 第三方平台path信息编辑
+        // 循环列表
+        while (true) {
+            if (jdCategoryAllTodo.size() == 0) {
+                break;
+            }
+
+            int intMax = jdCategoryAllTodo.size() - 1;
+            for (int i = intMax; i >= 0; i--) {
+                Category itemCat = jdCategoryAllTodo.get(i);
+
+                JdCategroyBean jdCategroyBean = new JdCategroyBean();
+                // 父类目id
+                String platformParentId = String.valueOf(itemCat.getFid());
+
+                // 获取主数据的父类目id
+                boolean blnFound = false;
+                if ("0".equals(platformParentId)) {
+                    // 一级类目，没有父了
+                    jdCategroyBean.setCidPath(itemCat.getName());
+                    blnFound = true;
+                } else {
+                    for (JdCategroyBean cat : categoryList) {
+
+                        if (platformParentId.equals(cat.getPlatformCid())) {
+                            // 找到了父类目id
+                            // path信息
+                            jdCategroyBean.setCidPath(cat.getCidPath() + JdConstants.C_PROP_PATH_SPLIT_CHAR + itemCat.getName());
+
+                            blnFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                // 没找到父类目的场合
+                if (!blnFound) {
+                    // 跳过
+                    continue;
+                }
+
+                // 编辑
+                // 渠道id
+                jdCategroyBean.setChannelId(channelId);
+                // Cart_id
+                jdCategroyBean.setCartId(Integer.parseInt(cartId));
+                // 平台id
+                jdCategroyBean.setPlatformId(Integer.parseInt(platformId)); // 第三方平台Id
+                // 类目id
+                jdCategroyBean.setPlatformCid(String.valueOf(itemCat.getId()));
+                // 父类目id
+                jdCategroyBean.setParentCid(String.valueOf(itemCat.getFid()));
+                // 父类目区分
+                if (itemCat.isParent()) {
+                    jdCategroyBean.setIsParent(1);
+                } else {
+                    jdCategroyBean.setIsParent(0);
+                }
+                // 类目名
+                jdCategroyBean.setCidName(itemCat.getName());
+                // 排序
+                jdCategroyBean.setSortOrder(0);
+
+                // 追加到列表
+                categoryList.add(jdCategroyBean);
+
+                // 成功后移除
+                jdCategoryAllTodo.remove(i);
+            }
+        }
+
+        return categoryList;
+    }
+
+    //	/**
+//	 * 获得各渠道的平台类目树
+//	 */
+    public List<CmsMtPlatformCategoryTreeModel> getCmsMtPlatformCategoryTreeModelList(ArrayList<JdCategroyBean> jdCategroyBeanList, String cartId, String channelId, String taskName) {
+
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryMongoBeanList = new ArrayList<>();
+        for(JdCategroyBean category:jdCategroyBeanList)
+        {
+            CmsMtPlatformCategoryTreeModel mongoModel = new CmsMtPlatformCategoryTreeModel();
+            mongoModel.setCartId(Integer.parseInt(cartId));
+            mongoModel.setChannelId(channelId);
+            mongoModel.setCatId(category.getPlatformCid());
+            mongoModel.setCatName(category.getCidName());
+            mongoModel.setParentCatId(category.getParentCid());
+            mongoModel.setIsParent(category.getIsParent());
+            mongoModel.setCatPath(category.getCidPath());
+            mongoModel.setCreater(null);
+            mongoModel.setCreated(null);
+            mongoModel.setModifier(null);
+            mongoModel.setModified(null);
+
+            platformCategoryMongoBeanList.add(mongoModel);
+        }
+
+        // 创建各渠道的平台类目层次关系
+        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList, cartId, channelId, taskName);
+
+        return savePlatformCatModels;
+    }
+
+    /**
+     * 创建各渠道的平台类目层次关系.
+     */
+    public List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, String cartId, String channelId, String taskName) {
+        // 设置类目层次关系.
+        List<CmsMtPlatformCategoryTreeModel> assistPlatformCatList = new ArrayList<>(platformCatModelList);
+
+        List<CmsMtPlatformCategoryTreeModel> removePlatformCatList = new ArrayList<>();
+
+        for (CmsMtPlatformCategoryTreeModel platformCat : platformCatModelList) {
+            List<CmsMtPlatformCategoryTreeModel> subPlatformCatgories = new ArrayList<>();
+            for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext(); ) {
+
+                CmsMtPlatformCategoryTreeModel subPlatformCatItem = (CmsMtPlatformCategoryTreeModel) assIterator.next();
+                if (subPlatformCatItem.getParentCatId().equals(platformCat.getCatId())) {
+                    subPlatformCatgories.add(subPlatformCatItem);
+                    assIterator.remove();
+                }
+            }
+            platformCat.setChildren(subPlatformCatgories);
+            if (!"0".equals(platformCat.getParentCatId())) {
+                //将所有非顶层类目的引用添加到待删除列表
+                removePlatformCatList.add(platformCat);
+            } else {
+                //设置顶层类目的信息
+                platformCat.setChannelId(channelId);
+                platformCat.setCartId(Integer.parseInt(cartId));
+                platformCat.setCreater(taskName);
+                platformCat.setCreated(DateTimeUtil.getNow());
+                platformCat.setModifier(taskName);
+                platformCat.setModified(DateTimeUtil.getNow());
+            }
+            platformCat.setChannelId(channelId);
+        }
+
+        // 删除掉所有非顶层类目引用,只留下最顶层类目
+        platformCatModelList.removeAll(removePlatformCatList);
+
+        return platformCatModelList;
     }
 
 }
