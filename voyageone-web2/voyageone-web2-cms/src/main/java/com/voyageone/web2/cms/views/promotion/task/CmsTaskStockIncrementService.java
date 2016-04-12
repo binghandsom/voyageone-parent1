@@ -74,7 +74,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //判断增量任务:新规场合
         String promotionType = (String) param.get("promotionType");
         //判断增量任务:增量任务ID
-        String incrementTaskID = (String) param.get("incrementTaskID");
+        String incrementTaskID = (String) param.get("incrementTaskId");
         //画面入力信息的CHECK
         checkIncrementInfo(param, incrementTaskID);
         //判断增量任务:新规场合
@@ -95,37 +95,54 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     /**
      * 画面入力信息的CHECK
      * @param param
+     * @param incrementTaskID
      */
     private void checkIncrementInfo(Map param,String incrementTaskID) {
-        //增量类型:增量数量
-        String incrementCount = (String) param.get("incrementCount");
-        //增量类型:增量百分比
-        String incrementPercent = (String) param.get("incrementPercent");
+        //增量类型
+        String incrementType = (String) param.get("incrementType");
+        //增量数值
+        String incrementValues = (String) param.get("incrementValue");
+        //任务名
+        String incrementTaskName = (String) param.get("incrementTaskName");
+        //渠道的判断
+        if (null==param.get("incrementCartId")){
+            //请选择增量的隔离渠道
+            throw new BusinessException("请选择增量的隔离渠道");
+        }
+        //增量类型:增量数量(incrementPercent) 增量百分比(incrementCount)
+        if(null==param.get("incrementType")){
+            //请选择增量的增量类型
+            throw new BusinessException("请选择增量的增量类型");
+        }
+        //增量类的判断
+        if(incrementType.equals("incrementPercent")){
+            //百分比增量
+            if(incrementType.equals("%")){
+                // 增量比例必须输入且为大于0小于100整数
+                throw new BusinessException("7000056");
+            }else{
+                String[] incrementValue = incrementValues.split("%");
+                if (StringUtils.isEmpty(incrementValue[0])|| !StringUtils.isDigit(incrementValue[0])
+                        ||incrementValue[0].getBytes().length>2||incrementValue.length>1) {
+                    // 增量比例必须输入且为大于0小于100整数
+                    throw new BusinessException("7000056");
+                }
+            }
+        }
+        if(incrementType.equals("incrementCount")){
+            //数量增量
+            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
+                    ||incrementValues.getBytes().length>1) {
+                // 增量必须为大于0的整数
+                throw new BusinessException("7000055");
+            }
+        }
         //任务名称
-        if (StringUtils.isEmpty(incrementTaskID)||incrementTaskID.getBytes().length>=1000) {
+        if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>=1000) {
             // 任务名必须输入且长度小于1000
             throw new BusinessException("7000012");
         }
-        //数量增量
-        if (StringUtils.isEmpty(incrementCount) || !StringUtils.isDigit(incrementCount)
-                ||incrementCount.getBytes().length>1||Long.parseLong(incrementCount)>0) {
-            // 增量必须为大于0的整数
-            throw new BusinessException("7000055！");
-        }
-        //百分比增量
-        if(incrementPercent.equals("%")){
-            // 增量比例必须输入且为大于0小于100整数
-            throw new BusinessException("7000056");
-        }else{
-            String[] IncrementValue = incrementPercent.split("%");
-            if (StringUtils.isEmpty(IncrementValue[0])|| !StringUtils.isDigit(IncrementValue[0])
-                    ||IncrementValue[0].getBytes().length>2||IncrementValue.length>1||Long.parseLong(IncrementValue[0])>0) {
-                // 增量比例必须输入且为大于0小于100整数
-                throw new BusinessException("7000056");
-            }
-        }
     }
-
     /**
      * 如果是新建增量任务时（参数.增量任务id没有内容），将增量任务信息插入到cms_bt_stock_separate_increment_task表
      * @param param
