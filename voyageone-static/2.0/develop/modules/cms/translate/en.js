@@ -28,6 +28,8 @@ define(function() {
         "TXT_CATEGORY_INDEX": "Master Category List",
         "TXT_ERROR_MANAGER_MARKETING": "Error List(Marketing)",
         "TXT_ERROR_MANAGER_MAINTENANCE": "Error List(Maintenance)",
+        "TXT_CHANNEL_LIST": "Channel List",
+        "TXT_CART_SETTING": "Cart Setting",
         "TXT_CATEGORY": "Category",
         "TXT_PRODUCT_STATUS": "Product Status",
         "TXT_PLATFORM_STATUS": "Platform Status",
@@ -233,6 +235,9 @@ define(function() {
         "TXT_BASE_ATTRIBUTE": "Common Attribute",
         "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
         "TXT_TRANSSTS_ATTRIBUTE": "Translation status",
+        "TXT_CHANNEL_ID": "Channel ID",
+        "TXT_ALLOW_USJOI": "Allow USJOI",
+        "TXT_FULL_NAME": "Full name",
 
 
         "TXT_MSG_SEARCH": "Search...",
@@ -294,7 +299,6 @@ define(function() {
         "BTN_SAVE": "Save",
         "BTN_SEARCH": "Search",
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
-        "BTN_ADD_TO_JM_PROMOTION": "Join JM's Promotion",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "Bulk Update",
         "BTN_CHANGE_MASTER_CATEGORY": "Change Master Category",
         "BTN_CANCEL": "Cancel",

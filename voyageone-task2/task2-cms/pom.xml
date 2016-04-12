@@ -19,6 +19,30 @@
         </dependency>
 
         <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-gilt</artifactId>
+            <version>${voyageone.components.gilt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-jumei</artifactId>
+            <version>${voyageone.components.jumei.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-sears</artifactId>
+            <version>${voyageone.components.sears.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-tmall</artifactId>
+            <version>${voyageone.components.tmall.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>

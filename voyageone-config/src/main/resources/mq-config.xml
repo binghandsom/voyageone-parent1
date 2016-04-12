@@ -8,7 +8,7 @@
 
     <!-- 连接配置 -->
     <bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
-        <property name="host" value="10.0.0.44" />
+        <property name="host" value="10.0.0.59" />
         <property name="port" value="5672" />
         <property name="username" value="mqadmin" />
         <property name="password" value="pile12rdis" />

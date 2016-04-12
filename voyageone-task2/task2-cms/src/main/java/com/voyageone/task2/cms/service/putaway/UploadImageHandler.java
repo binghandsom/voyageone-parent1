@@ -11,7 +11,7 @@ import com.voyageone.task2.cms.enums.TmallWorkloadStatus;
 import com.voyageone.task2.cms.model.ImageUrlMappingModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.tmall.TbPictureService;
+import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;

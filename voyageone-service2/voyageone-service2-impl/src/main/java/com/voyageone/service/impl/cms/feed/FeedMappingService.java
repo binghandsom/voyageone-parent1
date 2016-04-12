@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Service("service.CmsFeedMappingService")
-public class FeedMappingService {
+public class FeedMappingService extends BaseService {
 
     @Autowired
     private CmsBtFeedMappingDao feedMappingDao;
@@ -68,5 +69,9 @@ public class FeedMappingService {
 
     public List<CmsBtFeedMappingModel> getMappingsWithoutProps(String feedCategoryPath, String selChannelId) {
         return feedMappingDao.findMappingsWithoutProps(feedCategoryPath, selChannelId);
+    }
+
+    public List<CmsBtFeedMappingModel> getFeedMappings(String channelId) {
+        return feedMappingDao.findMappingByChannelId(channelId);
     }
 }

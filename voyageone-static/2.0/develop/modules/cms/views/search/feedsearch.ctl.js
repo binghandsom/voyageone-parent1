@@ -8,11 +8,7 @@ define([
 
     function searchIndex($scope, $routeParams, $feedSearchService, $translate) {
         $scope.vm = {
-            searchInfo: {
-                compareType: null,
-                brand: null,
-                category: null
-            },
+            searchInfo: {},
             feedPageOption: {curr: 1, total: 0, size: 20, fetch: search},
             feedList: []
         };
@@ -27,21 +23,26 @@ define([
         function initialize() {
             // 默认设置成第一页
             $scope.vm.feedPageOption.curr = 1;
+            // 如果是来自category的检索
+            if ($routeParams.type == "1") {
+                $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
+            }
             $feedSearchService.init()
-                .then(function (res) {
-                    $scope.vm.masterData = res.data;
-                })
+            .then(function (res) {
+                $scope.vm.masterData = res.data;
+            })
+            .then(function() {
+                if ($routeParams.type == "1") {
+                    search();
+                }
+            })
         }
 
         /**
          * 清空画面上显示的数据
          */
         function clear() {
-            $scope.vm.searchInfo = {
-                compareType: null,
-                brand: null,
-                category: null
-            };
+            $scope.vm.searchInfo = {};
             // 默认设置成第一页
             $scope.vm.feedPageOption.curr = 1;
         }

@@ -2,14 +2,14 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.UsJois;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -66,7 +66,7 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
-        if(UsJois.isExists(conditionParams.get("channelId").toString())){
+        if(Channels.isUsJoi(conditionParams.get("channelId").toString())){
             conditionParams.put("orgChannelId", conditionParams.get("channelId"));
             conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
         }

@@ -58,7 +58,7 @@ public class SxGetProductInfo {
 		ShopBean shopBean = Shops.getShop(channelId, sxData.getCartId());
 		sxData.setShopBean(shopBean);
 		// 平台类目
-		CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.getMappingByMainCatId(
+		CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId(
 				channelId, sxData.getCartId(), sxData.getProductList().get(0).getCatId()
 		);
 		if (cmsMtPlatformMappingModel == null)  {

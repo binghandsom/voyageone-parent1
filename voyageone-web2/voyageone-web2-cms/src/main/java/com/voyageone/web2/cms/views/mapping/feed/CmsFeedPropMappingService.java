@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.mapping.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -11,9 +11,9 @@ import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.MD5;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
@@ -46,16 +46,13 @@ import static java.util.stream.Collectors.*;
 class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
-    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
+    private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
-    private CmsMtCategorySchemaDao categorySchemaDao;
+    private CategorySchemaService categorySchemaService;
 
     @Autowired
     private FeedMappingService feedMappingService;
-
-    @Autowired
-    private CmsFeedMappingService feedMappingService2;
 
     @Autowired
     private CommonSchemaService commonSchemaService;
@@ -65,11 +62,10 @@ class CmsFeedPropMappingService extends BaseAppService {
      */
     Map<String, Object> getMainCategoryInfo(String mainCategoryPath) {
 
-
         String categoryId = convertPathToId(mainCategoryPath);
 
         // 查询主类目信息
-        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaService.getCmsMtCategorySchema(categoryId);
 
         // 拍平主类目的字段信息
         // 并构造画面特供模型
@@ -171,7 +167,7 @@ class CmsFeedPropMappingService extends BaseAppService {
      */
     Map<String, List<String>> getFeedAttributes(String feedCategoryPath, String lang, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeService.getFeedCategory(userSessionBean.getSelChannelId());
 
         CmsMtFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
 
