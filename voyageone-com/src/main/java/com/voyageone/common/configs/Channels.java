@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author aooer 2016/3/17.
@@ -74,5 +75,10 @@ public class Channels {
         return getChannelList().stream()
                 .filter(orderChannelBean -> orderChannelBean.getIs_usjoi() == 1 && orderChannelBean.getOrder_channel_id().equalsIgnoreCase(org_channel_id))
                 .toArray().length > 0;
+    }
+
+    public static List<OrderChannelBean> getUsJoiChannelList() {
+        return getChannelList().stream()
+                .filter(orderChannelBean -> orderChannelBean.getIs_usjoi() == 1).collect(Collectors.toList());
     }
 }
