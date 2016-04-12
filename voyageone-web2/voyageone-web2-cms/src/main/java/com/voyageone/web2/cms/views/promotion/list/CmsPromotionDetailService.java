@@ -6,6 +6,7 @@ import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.*;
@@ -15,7 +16,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,7 +41,7 @@ import java.util.Map;
 public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
-    private CmsBtTasksDao cmsBtTaskDao;
+    private TaskService taskService;
 
     @Autowired
     private ProductTagService productTagService;
@@ -96,9 +96,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
         if (promotion == null) {
             $info("promotionId不存在：" + promotionId);
-            productPrices.forEach(m -> {
-                response.get("fail").add(m.getCode());
-            });
+            productPrices.forEach(m -> response.get("fail").add(m.getCode()));
             return response;
         }
         // 获取Tag列表
@@ -153,8 +151,8 @@ public class CmsPromotionDetailService extends BaseAppService {
         }
         // 获取Tag列表
         List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
-        String channelId = promotion.getChannelId();
-        Integer cartId = promotion.getCartId();
+//        String channelId = promotion.getChannelId();
+//        Integer cartId = promotion.getCartId();
 
         for (CmsBtPromotionGroupModel productModel : productModels) {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
@@ -314,15 +312,12 @@ public class CmsPromotionDetailService extends BaseAppService {
 //    }
 
     /**
-     * @param xls
-     * @return
-     * @throws Exception
+     * resolvePromotionXls2
      */
     private List<CmsBtPromotionGroupModel> resolvePromotionXls2(InputStream xls) throws Exception {
         List<CmsBtPromotionGroupModel> models = new ArrayList<>();
         Map<String, CmsBtPromotionGroupModel> hsModel = new HashMap<>();
-        Workbook wb = null;
-        wb = new XSSFWorkbook(xls);
+        Workbook wb = new XSSFWorkbook(xls);
         Sheet sheet1 = wb.getSheetAt(0);
         int rowNum = 0;
         for (Row row : sheet1) {
@@ -518,7 +513,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         simpleTransaction.openTransaction();
         try {
-            List<CmsBtTasksModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            List<CmsBtTasksModel> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
             if (tasks.size() == 0) {
                 CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
                 CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
@@ -530,7 +525,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 cmsBtTaskModel.setActivity_start(cmsBtPromotionModel.getActivityStart());
                 cmsBtTaskModel.setActivity_end(cmsBtPromotionModel.getActivityEnd());
                 cmsBtTaskModel.setChannelId(channelId);
-                cmsBtTaskDao.insert(cmsBtTaskModel);
+                taskService.addTask(cmsBtTaskModel);
             }
 
             Map<String, Object> param = new HashMap<>();
