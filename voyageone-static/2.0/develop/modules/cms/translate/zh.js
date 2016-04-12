@@ -28,7 +28,7 @@ define(function(){
         "TXT_CATEGORY_INDEX": "主类目一览",
         "TXT_ERROR_MANAGER_MARKETING": "异常一览（运营）",
         "TXT_ERROR_MANAGER_MAINTENANCE": "异常一览（维护）",
-        "TXT_CHANNEL_LIST": "渠道列表",
+        "TXT_CHANNEL_LIST": "渠道一览（维护）",
         "TXT_CART_SETTING": "Cart设置",
         "TXT_CATEGORY": "类目",
         "TXT_PRODUCT_STATUS": "产品状态",

@@ -873,12 +873,7 @@ define([
             return openModel(popActions.search.codeDetail, context);
         };
 
-        /**
-         * 新增channel Feed查询输入页规则弹出
-         * */
-        $scope.openNewFeedRule = function (context) {
-            return openModel(popActions.search.codeDetail, context);
-        };
+
 
         /**
          * 新增ChannelList页,设置操作弹出
