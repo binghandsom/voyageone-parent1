@@ -435,6 +435,7 @@ define([
             });
             menuService.getCategoryInfo().then(function (data) {
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
+                $scope.menuInfo.isminimall = data.isminimall;
             });
         }
 
