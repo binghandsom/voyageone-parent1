@@ -10,7 +10,7 @@ public class CmsBtJmProductImportSaveInfo {
     List<CmsBtJmSkuModel> listSkuModel;//规格
     CmsBtJmPromotionProductModel promotionProductModel;//活动商品
     List<CmsBtJmPromotionSkuModel> listPromotionSkuModel;//活动规格
-    List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel;//主数据库图片
+
 
     public List<CmsBtJmProductImagesModel> getListCmsBtJmProductImagesModel() {
         return listCmsBtJmProductImagesModel;
@@ -21,17 +21,11 @@ public class CmsBtJmProductImportSaveInfo {
     }
 
     List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel;//商品聚美图片
-    public List<CmsMtMasterInfoModel> getListCmsMtMasterInfoModel() {
-        return listCmsMtMasterInfoModel;
-    }
-    public void setListCmsMtMasterInfoModel(List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel) {
-        this.listCmsMtMasterInfoModel = listCmsMtMasterInfoModel;
-    }
+
 
     public CmsBtJmProductImportSaveInfo() {
         this.setListSkuModel(new ArrayList<>());
         this.setListPromotionSkuModel(new ArrayList<>());
-        this.setListCmsMtMasterInfoModel(new ArrayList<>());
         this.setListCmsBtJmProductImagesModel(new ArrayList<>());
     }
     public List<CmsBtJmSkuModel> getListSkuModel() {

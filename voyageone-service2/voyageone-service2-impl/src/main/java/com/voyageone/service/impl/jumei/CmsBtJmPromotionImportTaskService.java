@@ -10,10 +10,7 @@ import com.voyageone.service.impl.jumei.enumjm.EnumJMSkuImportColumn;
 import com.voyageone.service.impl.jumei.enumjm.EnumJMSpecialImageImportColumn;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.jumei.*;
-import com.voyageone.service.model.jumei.businessmodel.CmsBtJmImportProduct;
-import com.voyageone.service.model.jumei.businessmodel.CmsBtJmImportSku;
-import com.voyageone.service.model.jumei.businessmodel.CmsBtJmImportSpecialImage;
-import com.voyageone.service.model.jumei.businessmodel.CmsBtJmProductImportSaveInfo;
+import com.voyageone.service.model.jumei.businessmodel.*;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.velocity.util.ArrayListWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,21 +130,26 @@ public class CmsBtJmPromotionImportTaskService {
         List<Map<String, Object>> listSpecialErrorMap = new ArrayList<>();
         List<ExcelColumn> listSpecialColumn = EnumJMSpecialImageImportColumn.getListExcelColumn();
         ExcelImportUtil.importSheet(specialImageSheet, listSpecialColumn, listSpecialImageModel, listSpecialErrorMap, CmsBtJmImportSpecialImage.class);
-        List<CmsBtJmProductImportSaveInfo> listCmsBtJmProductImportSaveInfo = loadListSaveInfo(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, listProductModel, listSkuModel, listSpecialImageModel);
-        saveListCmsBtJmProductImportSaveInfo(listCmsBtJmProductImportSaveInfo);//保存
+
+        // List<CmsMtMasterInfoModel> listSaveCmsMtMasterInfoModel=new ArrayList<>();
+        // List<CmsBtJmProductImportSaveInfo> listCmsBtJmProductImportSaveInfo=new ArrayList<>();
+        CmsBtJmImportSaveInfo saveImportInfo = loadListSaveInfo(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, listProductModel, listSkuModel, listSpecialImageModel);
+        saveListCmsBtJmProductImportSaveInfo(saveImportInfo);//保存
 
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0 | listSpecialErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
-            serviceCmsBtJmPromotionExportTask.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, listSpecialErrorMap,true);
+            serviceCmsBtJmPromotionExportTask.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, listSpecialErrorMap, true);
             modelCmsBtJmPromotionImportTask.setFailuresFileName(failuresFileName);
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
+            modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
         }
+        modelCmsBtJmPromotionImportTask.setSuccessRows(listProductModel.size());
     }
 
-    private void saveListCmsBtJmProductImportSaveInfo(List<CmsBtJmProductImportSaveInfo> list) {
-        Map<String,Integer> mapSkuCodeId=new HashMap<>();
-        for (CmsBtJmProductImportSaveInfo saveInfo : list) {
+    private void saveListCmsBtJmProductImportSaveInfo(CmsBtJmImportSaveInfo saveImportInfo) {
+        Map<String, Integer> mapSkuCodeId = new HashMap<>();
+        for (CmsBtJmProductImportSaveInfo saveInfo : saveImportInfo.getListProductSaveInfo()) {
             if (saveInfo.getProductModel().getId() == 0) {
                 daoCmsBtJmProduct.insert(saveInfo.getProductModel());
             } else {
@@ -166,7 +168,7 @@ public class CmsBtJmPromotionImportTaskService {
                 } else {
                     daoCmsBtJmSku.update(skuModel);
                 }
-                mapSkuCodeId.put(skuModel.getSkuCode(),skuModel.getId());
+                mapSkuCodeId.put(skuModel.getSkuCode(), skuModel.getId());
             }
             for (CmsBtJmPromotionSkuModel skuPromotionModel : saveInfo.getListPromotionSkuModel()) {
                 skuPromotionModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
@@ -185,19 +187,22 @@ public class CmsBtJmPromotionImportTaskService {
                     daoCmsBtJmProductImages.update(model);
                 }
             }
-//            for (CmsMtMasterInfoModel model : saveInfo.getListCmsMtMasterInfoModel()) {
-//                if (model.getId() == 0) {
-//                    daoCmsMtMasterInfo.insert(model);
-//                } else {
-//                    daoCmsMtMasterInfo.update(model);
-//                }
-//            }
             mapSkuCodeId.clear();
+        }
+        for (CmsMtMasterInfoModel model : saveImportInfo.getMapSaveCmsMtMasterInfoModel().values()) {
+            if (model.getId() == 0) {
+                daoCmsMtMasterInfo.insert(model);
+            } else {
+                daoCmsMtMasterInfo.update(model);
+            }
         }
     }
 
-    private List<CmsBtJmProductImportSaveInfo> loadListSaveInfo(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, List<CmsBtJmImportProduct> listProductModel, List<CmsBtJmImportSku> listSkuModel, List<CmsBtJmImportSpecialImage> listSpecialImageModel) {
+    private CmsBtJmImportSaveInfo loadListSaveInfo(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, List<CmsBtJmImportProduct> listProductModel, List<CmsBtJmImportSku> listSkuModel, List<CmsBtJmImportSpecialImage> listSpecialImageModel) {
+        CmsBtJmImportSaveInfo saveImportInfo=new CmsBtJmImportSaveInfo();
         List<CmsBtJmProductImportSaveInfo> listCmsBtJmProductImportSaveInfo = new ArrayList<>();
+        List<CmsMtMasterInfoModel> listSaveCmsMtMasterInfoModel=new ArrayList<>();
+        saveImportInfo.setListProductSaveInfo(listCmsBtJmProductImportSaveInfo);
         CmsBtJmProductImportSaveInfo saveInfo = null;
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = null;
         CmsBtJmProductModel oldProductModel = null;
@@ -230,7 +235,7 @@ public class CmsBtJmPromotionImportTaskService {
                 saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
             }
             //3.cms_mt_master_info
-            loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveInfo);
+            loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveImportInfo);
 
             //4.cms_bt_jm_product_images
             List<CmsBtJmImportSpecialImage> productCmsBtJmImportSpecialImageList = getListCmsBtJmImportSpecialImageByProductCode(listSpecialImageModel, importProductModel.getProductCode());
@@ -241,7 +246,8 @@ public class CmsBtJmPromotionImportTaskService {
         }
         //cms_bt_jm_product_images
 
-        return listCmsBtJmProductImportSaveInfo;
+
+        return saveImportInfo;
     }
     public  void  loadSaveCmsBtJmImportSpecialImage(CmsBtJmProductImportSaveInfo saveInfo,List<CmsBtJmImportSpecialImage> productCmsBtJmImportSpecialImageList, CmsBtJmPromotionModel modelCmsBtJmPromotion) {
         for (CmsBtJmImportSpecialImage specialImage : productCmsBtJmImportSpecialImageList) {
@@ -280,7 +286,6 @@ public class CmsBtJmPromotionImportTaskService {
             oldProductModel.setHsUnit(importProductModel.getHsUnit());
         }
     }
-
     private void loadSavePromotionProductInfoByImportModel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmProductModel oldProductModel, CmsBtJmImportProduct importProductModel) {
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct;
         modelCmsBtJmPromotionProduct = daoExtCmsBtJmPromotionProduct.getByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
@@ -312,8 +317,7 @@ public class CmsBtJmPromotionImportTaskService {
             saveInfo.setPromotionProductModel(modelCmsBtJmPromotionProduct);//活动商品
         }
     }
-
-    public void loadCmsMtMasterInfoModel(CmsBtJmImportProduct importProductModel, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo) {
+    public void loadCmsMtMasterInfoModel(CmsBtJmImportProduct importProductModel, CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmImportSaveInfo saveImportInfo) {
 /*
 `cms_mt_master_info`
     data_type 数据类型（3:特殊说明；4：品牌故事图 ；5：尺码图； 6：物流介绍
@@ -326,6 +330,7 @@ public class CmsBtJmPromotionImportTaskService {
     2.4：品牌故事图 ；5：尺码图； 6：物流介绍  分别查询是否存在  不存在插入记录     value1和value2 默认为空
 * */
         //特殊说明 data_type=3
+
         CmsMtMasterInfoModel specialNote = daoExtCmsMtMasterInfo.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 3);
         //  CmsMtMasterInfoModel specialNote = new CmsMtMasterInfoModel();
         if (specialNote == null) {
@@ -336,7 +341,7 @@ public class CmsBtJmPromotionImportTaskService {
             specialNote.setChannelId(modelCmsBtJmPromotion.getChannelId());
             specialNote.setBrandName(importProductModel.getBrandName());
             specialNote.setProductType(importProductModel.getProductType());
-            saveInfo.getListCmsMtMasterInfoModel().add(specialNote);//特殊说明 data_type=3
+            saveImportInfo.add(specialNote);//特殊说明 data_type=3
         }
         //品牌故事图data_type=4
         CmsMtMasterInfoModel model4 = daoExtCmsMtMasterInfo.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 4);
@@ -347,7 +352,7 @@ public class CmsBtJmPromotionImportTaskService {
             model4.setChannelId(modelCmsBtJmPromotion.getChannelId());
             model4.setBrandName(importProductModel.getBrandName());
             model4.setProductType(importProductModel.getProductType());
-            saveInfo.getListCmsMtMasterInfoModel().add(model4);//品牌故事图data_type=4
+            saveImportInfo.add(model4);//品牌故事图data_type=4
         }
         //尺码图data_type=5
         CmsMtMasterInfoModel model5 = daoExtCmsMtMasterInfo.getByKeySizeType(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 5, importProductModel.getSizeType());
@@ -359,7 +364,7 @@ public class CmsBtJmPromotionImportTaskService {
             model5.setBrandName(importProductModel.getBrandName());
             model5.setSizeType(importProductModel.getSizeType());
             model5.setProductType(importProductModel.getProductType());
-            saveInfo.getListCmsMtMasterInfoModel().add(model5);//尺码图data_type=5
+            saveImportInfo.add(model5);//尺码图data_type=5
         }
         //物流介绍data_type=6
         CmsMtMasterInfoModel model6 = daoExtCmsMtMasterInfo.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 6);
@@ -370,10 +375,9 @@ public class CmsBtJmPromotionImportTaskService {
             model6.setChannelId(modelCmsBtJmPromotion.getChannelId());
             model6.setBrandName(importProductModel.getBrandName());
             model6.setProductType(importProductModel.getProductType());
-            saveInfo.getListCmsMtMasterInfoModel().add(model6);//物流介绍data_type=6
+            saveImportInfo.add(model6);//物流介绍data_type=6
         }
     }
-
     public void loadCmsBtJmImagesModel(CmsBtJmImportSpecialImage specialImageModel, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo) {
 /*
 1.表`cms_bt_jm_images`    `channel_id`

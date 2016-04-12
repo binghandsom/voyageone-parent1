@@ -25,9 +25,10 @@ public class JmBtPromotionImportService extends BaseMQTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
         System.out.println("收到消息：" + JacksonUtil.bean2Json(message));
         // this.getControls();
-
+        System.out.println("收到消息begin：" + JacksonUtil.bean2Json(message));
         int id = (int) Double.parseDouble(message.get("id").toString());
         service.importFile(id);
+        System.out.println("收到消息end：" + JacksonUtil.bean2Json(message));
     }
 
     @Override
