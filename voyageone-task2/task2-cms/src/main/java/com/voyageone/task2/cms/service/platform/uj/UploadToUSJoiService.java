@@ -3,12 +3,12 @@ package com.voyageone.task2.cms.service.platform.uj;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.UsJois;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.configs.beans.UsJoiBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
@@ -28,10 +28,8 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -104,7 +102,7 @@ public class UploadToUSJoiService extends BaseTaskService{
 
                     // 根据com_mt_us_joi_config表给sku 设cartId
                     final List<Integer> cartIds;
-                    UsJoiBean usJoiBean = UsJois.getUsJoiByOrgChannelId(productModel.getOrgChannelId());
+                    OrderChannelBean usJoiBean = Channels.getChannel(productModel.getOrgChannelId());
                     if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
                         cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
                     }else{

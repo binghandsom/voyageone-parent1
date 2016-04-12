@@ -20,6 +20,6 @@ public class UsJoisTest {
 
     @Test
     public void testIsExists() throws Exception {
-        System.out.println(UsJois.isExists("2"));
+        System.out.println(Channels.isUsJoi("010"));
     }
 }

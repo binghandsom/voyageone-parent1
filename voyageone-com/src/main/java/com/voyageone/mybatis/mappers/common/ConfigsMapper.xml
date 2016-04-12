@@ -2,10 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.common.sql">
 
-    <select id="us_joi_getAll" resultType="com.voyageone.common.configs.beans.UsJoiBean">
-        SELECT * FROM Synship.com_mt_us_joi_config where active=1 ORDER BY id
-    </select>
-
     <select id="tm_code_getAll" resultType="com.voyageone.common.configs.beans.CodeBean">
         SELECT * FROM tm_code ORDER BY id
     </select>
