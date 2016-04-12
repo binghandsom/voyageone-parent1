@@ -1,18 +1,20 @@
 package com.voyageone.components.intltarget;
 
-
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.ThirdPartyConfigs;
-import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ComponentBase;
-import com.voyageone.components.intltarget.error.TargetErrorResponse;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Retryable;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +50,7 @@ public abstract class TargetBase extends ComponentBase {
         //校验token
         if(StringUtils.isEmpty(api_token)) refreshToken();
         String call_url = TARGETHOST + api_url;
-        String result = HttpUtils.targetPost(call_url, JacksonUtil.bean2Json(mapBody), "application/json",api_token);
+        String result = targetPost(call_url, JacksonUtil.bean2Json(mapBody), "application/json",api_token);
         if(result.contains("Error")){//包含Error，尝试进行异常解析
             if(//第一次获取到的token
                     (result.contains("Forbidden")&&result.contains("SCOPE_1_ACCESS_LEVEL_REQUIRED"))
@@ -63,10 +65,40 @@ public abstract class TargetBase extends ComponentBase {
     private static void refreshToken() throws Exception {
         //重新赋值
         api_token = (String) JacksonUtil
-                .jsonToMap(
-                        HttpUtils.targetPost(authTokenUrl, JacksonUtil.bean2Json(authTokenMap), "application/json",null)
+                .jsonToMap(targetPost(authTokenUrl, JacksonUtil.bean2Json(authTokenMap), "application/json",null)
                 ).get("accessToken");
         throw new RuntimeException("刷新token");
+    }
+
+    public static String targetPost(String url, String jsonBody,String accept,String token) throws Exception {
+        HttpPost post=new HttpPost(new URI(url));
+
+        // setHeader Accept
+        post.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
+        // setHeader Authorization
+        if(!StringUtils.isEmpty(token)) post.setHeader("Authorization","Bearer " + token);
+
+        //setBody
+        post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
+
+        //测试启用代理
+        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
+
+        //post request
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpResponse response = httpclient.execute(post);
+
+        //从服务器获得输入流
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = buffer.readLine()) != null) {
+            sb.append(line);
+        }
+
+        //关闭流
+        buffer.close();
+        return sb.toString();
     }
 
 }

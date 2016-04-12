@@ -130,25 +130,6 @@ public class HttpUtils {
         return null;
     }
 
-    public static String targetPost(String url, String jsonBody,String accept,String token) throws Exception {
-        HttpPost post=new HttpPost(new URI(url));
-        post.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
-        if(!StringUtils.isEmpty(token)) post.setHeader("Authorization","Bearer " + token);
-        post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
-        //测试启用代理
-        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpResponse response = httpclient.execute(post);
-        //从服务器获得输入流
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
-        StringBuilder sb=new StringBuilder();
-        String line;
-        while ((line = buffer.readLine()) != null) sb.append(line);
-        //关闭流
-        buffer.close();
-        return sb.toString();
-    }
-
     public static String put(String url, String jsonParam,String authorization)
     {
 
