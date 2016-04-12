@@ -361,9 +361,10 @@ public class CmsTaskStockService extends BaseAppService {
                 if(shareList.size()>0){
                     Boolean isFlg =true;
                     for(int i=0;i<shareList.size();i++){
-                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i))))
-                            isFlg =false;
+                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i)))) {
+                            isFlg = false;
                             break;
+                        }
                     }
                     //取得共享渠道名称
                     if(isFlg)
