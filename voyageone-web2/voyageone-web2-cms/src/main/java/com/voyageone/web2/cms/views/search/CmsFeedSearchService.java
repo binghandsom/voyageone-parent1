@@ -3,48 +3,25 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
-import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
-import com.voyageone.service.impl.cms.ChannelCategoryService;
-import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
-import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
-import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author JiangJusheng
@@ -53,10 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 public class CmsFeedSearchService extends BaseAppService {
 
-    @Autowired
-    private ChannelCategoryService channelCategoryService;
-    @Autowired
-    private CmsMtCommonPropDao cmsMtCommonPropDao;
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
@@ -94,8 +67,8 @@ public class CmsFeedSearchService extends BaseAppService {
         for (int leng = delFlgList.size(), i = leng - 1; i >= 0; i --) {
             feedCatList.remove(delFlgList.get(i).intValue());
         }
-        masterData.put("categoryList", feedCatList);
 
+        masterData.put("categoryList", feedCatList);
         return masterData;
     }
 

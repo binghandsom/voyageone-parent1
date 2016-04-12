@@ -12,7 +12,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
 							<div class="col-sm-8">
-								<select search-contains="true" class="form-control" chosen ng-model="vm.searchInfo.catId" ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
+								<select search-contains="true" class="form-control" chosen ng-model="vm.searchInfo.catPath" ng-options="category.catPath as category.catPath for category in vm.masterData.categoryList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
 							</div>
@@ -391,8 +391,8 @@
 									</button><label ng-if="groupInfo._grpProdChgInfo == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 								</td>
 								<td class="text-left" style="display:inline-block;width:150px;">{{groupInfo.fields.brand}}</td>
-								<td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop1.value}}</td>
-								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop2.value}}</td>
+								<td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop1.value}}</td>
+								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
 
 								<td class="text-left" style="display:inline-block;width:150px;">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
@@ -490,8 +490,8 @@
 										</button><label ng-if="productInfo._prodChgInfo == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 									</td>
 									<td class="text-left m-t-lg" style="display:inline-block;width:180px; height:97px;">{{productInfo.platformName}}</td>
-									<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop1.value}}</td>
-									<td class="text-left m-t-lg" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop2.value}}</td>
+									<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop1.value}}</td>
+									<td class="text-left m-t-lg" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
 									<td class="text-center m-t-lg" style="display:inline-block;width:165px; height:97px;">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>

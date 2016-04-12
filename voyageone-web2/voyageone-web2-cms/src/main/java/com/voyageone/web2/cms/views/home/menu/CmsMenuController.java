@@ -53,6 +53,7 @@ public class CmsMenuController extends CmsController {
         CmsMtCategoryTreeModel masterData = new CmsMtCategoryTreeModel();
         masterData.setChildren(categoryTreeList);
         masterData.setIsParent(1);
+        masterData.setCatPath("master");
         masterData.setCatName("主类目数据");
 
         // 获取Feed类目CategoryTreeList
@@ -60,6 +61,7 @@ public class CmsMenuController extends CmsController {
         CmsMtCategoryTreeModel feedData = new CmsMtCategoryTreeModel();
         feedData.setChildren(feedTreeList);
         feedData.setIsParent(1);
+        feedData.setCatPath("feed");
         feedData.setCatName("Feed类目数据");
 
         List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>(2);

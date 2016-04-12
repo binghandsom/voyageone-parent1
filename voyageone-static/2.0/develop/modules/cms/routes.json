@@ -59,16 +59,22 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
-  "search_feedsearch": {
-    "hash": "/search/feedsearch",
-    "templateUrl": "views/search/feedsearch.tpl.html",
-    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
-  },
   "search_advance_param": {
     "url": "/search/advance/",
     "hash": "/search/advance/:type/:value",
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
+  },
+  "search_feedsearch": {
+    "hash": "/search/feedsearch",
+    "templateUrl": "views/search/feedsearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
+  },
+  "search_feedsearch_param": {
+    "url": "/search/feedsearch/",
+    "hash": "/search/feedsearch/:type/:value",
+    "templateUrl": "views/search/feedsearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
   },
   "group_detail": {
     "hash": "/group/detail/:id",
@@ -178,6 +184,16 @@
     "hash": "/system/cache/index",
     "templateUrl": "views/system/cache/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+  },
+  "system_channel_list": {
+    "hash": "/system/channel/index",
+    "templateUrl": "views/system/channel/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/channel/index.ctl"
+  },
+  "system_cart_setting": {
+    "hash": "/system/cart/index",
+    "templateUrl": "views/system/cart/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/cart/index.ctl"
   }
 
 }
