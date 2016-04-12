@@ -71,7 +71,7 @@ public class StockRevertService extends BaseTaskService {
         Map<String, Object> param = new HashMap<>();
         param.put("status", stockInfoService.STATUS_WAITING_REVERT);
 //        param.put("taskId", 33);
-        param.put("channelId", "066");
+//        param.put("channelId", "066");
 
         $info("开始取得等待隔离数据");
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
@@ -165,7 +165,7 @@ public class StockRevertService extends BaseTaskService {
             }
         });
 
-        // 取得该渠道下所有动态隔离的sku对应的平台(隔离中任务)
+        // 取得该渠道下所有动态隔离的sku对应的平台(隔离中还原中任务)
         Map<String, Set<Integer>> mapSkuDynamic = new HashMap<>();
         Map<String, Object> param = new HashMap<>();
         param.put("status", "");
@@ -174,8 +174,8 @@ public class StockRevertService extends BaseTaskService {
         listSkuDynamic.forEach(data -> {
             String sku = (String) data.get("sku");
             Integer cartId = (Integer) data.get("cart_id");
-            if (listSeparateCartId.contains(cartId)) {
-                // 未被还原的平台
+            if (!listShareCartId.contains(cartId)) {
+                // 不是共享平台(即已经被还原的平台)
                 Set<Integer> setCartDynamic = mapSkuDynamic.get(sku);
                 if (setCartDynamic == null) {
                     setCartDynamic = new HashSet<>();
