@@ -160,7 +160,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 inStr.append("]}");
 
                 JomgoQuery queryObj = new JomgoQuery();
-                queryObj.setProjection("{'prodId':1,'_id':0}");
+                queryObj.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
                 queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + cartId + ",'groupId':" + inStr.toString() + "}}}");
 
                 List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);

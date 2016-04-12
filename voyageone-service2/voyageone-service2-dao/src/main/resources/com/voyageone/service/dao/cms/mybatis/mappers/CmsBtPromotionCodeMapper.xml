@@ -21,6 +21,10 @@
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
+        t1.*, count(1) AS skuCount
+        FROM
+        (
+        SELECT
             a.seq,
             a.promotion_id,
             a.product_id,
@@ -49,13 +53,10 @@
             a.image_url_1 as image,
             b.tag_path,
             b.tag_name,
-            b.tag_path_name ,
-            count(1) as skuCount
+            b.tag_path_name
         FROM
           voyageone_cms2.cms_bt_promotion_code a
           LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku c on a.promotion_id = c.promotion_id and a.product_code = c.product_code
-
         <where>
             <if test="promotionId != null">
                 a.promotion_id =  #{promotionId,jdbcType=INTEGER}
@@ -74,10 +75,13 @@
                 )
             </if>
         </where>
-        GROUP BY a.promotion_id,a.product_code
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
+        ) t1
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku t2 ON t1.promotion_id = t2.promotion_id
+        AND t1.product_code = t2.product_code
+        GROUP BY t1.promotion_id,t1.product_code
     </select>
     <select id="select_cms_bt_promotion_code_cnt" resultType="int" parameterType="HashMap" >
         SELECT

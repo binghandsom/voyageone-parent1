@@ -248,6 +248,7 @@ define(function() {
         "TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY": "If you forward the parent category, has been mapped attributes will be lost.<br>Are you sure to continue?",
         "TXT_MSG_NO_FIND_FORWARD_CATEGORY": "No parent category can forward.",
         "TXT_MSG_DELETE_ITEM": "Are you sure to delete this item?",
+        "TXT_MSG_STARTUP_ITEM": "Are you sure you want to start all?",
         "TXT_MSG_DELETE_SUCCESS": "Delete is successful.",
         "TXT_MSG_NO_DATA_WITH_SAVE": "Please make sure these required items and the table are not empty.",
         "TXT_MSG_NO_PLATFORM_CATEGORY": "Do not get any platform category, please change to another platform, and try again.",
