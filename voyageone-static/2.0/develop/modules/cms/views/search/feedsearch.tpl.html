@@ -1,0 +1,215 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Feed 检索</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="vm.searchInfo.category"
+                                                ng-options="category.path as category.path for category in vm.masterData.categoryList">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Product Name</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope">Fuzzy Search</label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.fuzzySearch"></textarea>
+                                        <div class="text-warnings">
+                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询包括:款号Model(多项换行分割),产品Code(多项换行分割),产品名称（英文）,详情描述（英文）
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Price</label>
+                                    <div class="col-sm-8">
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="price_client_msrp" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> MSRP(USD)
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="price_client_retail" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Retail Price(USD)
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="price_net" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Cost Price(USD)
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="price_msrp" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> MSRP(RMB)
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="price_current" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Retail Price(RMB)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="input-group col-sm-4">
+                                            <input type="text" class="form-control" ng-maxvalue="vm.searchInfo.priceValueEnd" ng-checked="true" ng-model="vm.searchInfo.priceValueSta"></div>&nbsp;~&nbsp;
+                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-maxvalue="vm.searchInfo.priceValueSta" ng-checked="true" ng-model="vm.searchInfo.priceValueEnd"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Create Time</label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeSta" max-date="vm.searchInfo.createTimeEnd" date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>&nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeEnd" min-date="vm.searchInfo.createTimeSta" date-model-format="yyyy-MM-dd" is-open="datePicker2" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Update Time</label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.updateTimeSta" max-date="vm.searchInfo.updateTimeEnd" date-model-format="yyyy-MM-dd" is-open="datePicker3" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>&nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.updateTimeEnd" min-date="vm.searchInfo.updateTimeSta" date-model-format="yyyy-MM-dd" is-open="datePicker4" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
+                                    <div class="col-sm-8">
+                                        <select search-contains="true" chosen class="form-control" ng-model="vm.searchInfo.brand"
+                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Color</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.color">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Product Type</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.productType">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Size Type</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.sizeType">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
+                                <button class="btn btn-vo" ng-click="search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div><!-- .form-inline -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <div class="table-responsive">
+                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2000px;margin-bottom:0px" ng-controller="popupCtrl">
+                    <thead>
+                    <tr>
+                        <th class="text-center mfb-xt3">No.</th>
+                        <th>图片</th>
+                        <th>Category</th>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Model</th>
+                        <th>Short Description</th>
+                        <th style="width:200px">Long Description</th>
+                        <th>Color</th>
+                        <th>Origin</th>
+                        <th>Product Type</th>
+                        <th>Size Type</th>
+                        <th>Brand</th>
+                        <th>MSRP(USD)</th>
+                        <th>Retail Price(USD)</th>
+                        <th>Cost Price(USD)</th>
+                        <th>MSRP(RMB)</th>
+                        <th>Retail Price(RMB)</th>
+                        <th>SKU 数</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-if="vm.feedList.length == 0" style="padding-left:0px"><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
+                    <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
+                        <td class="text-center mfb-xt3">{{$index + 1}}</td>
+                        <td  ng-controller="popupCtrl" >
+                            <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
+                        </td>
+                        <td>{{feedInfo.category}}</td>
+                        <td ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
+                        <td ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
+                        <td>{{feedInfo.name}}</td>
+                        <td>{{feedInfo.model}}</td>
+                        <td>{{feedInfo.short_description}}</td>
+                        <td>{{feedInfo.long_description}}</td>
+                        <td>{{feedInfo.color}}</td>
+                        <td>{{feedInfo.origin}}</td>
+                        <td></td>
+                        <td>{{feedInfo.sizeType}}</td>
+                        <td>{{feedInfo.brand}}</td>
+                        <td>{{feedInfo.skus[0].price_client_msrp}}</td>
+                        <td>{{feedInfo.skus[0].price_client_retail}}</td>
+                        <td>{{feedInfo.skus[0].price_net}}</td>
+                        <td>{{feedInfo.skus[0].price_msrp}}</td>
+                        <td>{{feedInfo.skus[0].price_current}}</td>
+                        <td>
+                            <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
+                                <div class="table_main">
+                                    <ul>
+                                        <li><button class="btn btn-default btn-xs">{{feedInfo.skusCnt}}</button></li>
+                                    </ul>
+                                </div>
+                            </small>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.box-body -->
+        <div class="col-sm-12 m-t-lg m-b-lg">
+            <vpagination config="vm.feedPageOption"></vpagination>
+        </div>
+    </div>
+</div><!-- end .wrapper-md -->

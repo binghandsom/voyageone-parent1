@@ -53,7 +53,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
             String url = request.getRequestURI();
             String simpleMessage = exception.getMessage();
             if (StringUtils.isEmpty(simpleMessage)) simpleMessage = exception.toString();
-            $debug(String.format("%s => %s", url, simpleMessage), exception);
+            $error(String.format("%s => %s", url, simpleMessage), exception);
 
             Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 

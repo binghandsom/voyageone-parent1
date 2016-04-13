@@ -2,11 +2,14 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -35,12 +38,19 @@ public class CmsPromotionIndexService extends BaseAppService {
 
 
     @Autowired
-    private PromotionCodeService promotionCodeService;
+    CmsBtPromotionCodeDao cmsPromotionCodeDao;
 
     @Autowired
-    private PromotionService promotionService;
+    CmsBtPromotionDao cmsPromotionDao;
+
+    @Autowired
+    PromotionService promotionService;
     /**
      * 获取该channel的category类型.
+     *
+     * @param channelId
+     * @param language
+     * @return
      */
     public Map<String, Object> init(String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
@@ -56,6 +66,10 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
+        if(Channels.isUsJoi(conditionParams.get("channelId").toString())){
+            conditionParams.put("orgChannelId", conditionParams.get("channelId"));
+            conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        }
         return promotionService.getByCondition(conditionParams);
     }
 
@@ -71,13 +85,17 @@ public class CmsPromotionIndexService extends BaseAppService {
         return promotionService.delete(cmsBtPromotionModel);
     }
 
-    public byte[] getCodeExcelFile(Integer promotionId) throws IOException, InvalidFormatException {
+    public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
-        CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionId(promotionId);
-        List<CmsBtPromotionCodeModel> promotionCodes = promotionCodeService.getPromotionCodeListBySkus(promotionId);
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        param.put("orgChannelId",channelId);
+
+        CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.selectById(param);
+        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.selectPromotionCodeSkuList(param);
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
         $info("准备打开文档 [ %s ]", templatePath);
@@ -86,15 +104,15 @@ public class CmsPromotionIndexService extends BaseAppService {
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             int rowIndex = 1;
-            for (CmsBtPromotionCodeModel promotionCode : promotionCodes) {
-                promotionCode.setCartId(cmsBtPromotionModel.getCartId());
-                promotionCode.setChannelId(cmsBtPromotionModel.getChannelId());
-                boolean isContinueOutput = writeRecordToFile(book, promotionCode, rowIndex);
+            for (int i = 0; i < promotionCodes.size(); i++) {
+                promotionCodes.get(i).setCartId(cmsBtPromotionModel.getCartId());
+//                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
+                boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), rowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
                     break;
                 }
-                rowIndex += promotionCode.getSkus() != null ? promotionCode.getSkus().size() : 0;
+                rowIndex += promotionCodes.get(i).getSkus() != null ? promotionCodes.get(i).getSkus().size() : 0;
             }
 
             $info("文档写入完成");
@@ -128,7 +146,7 @@ public class CmsPromotionIndexService extends BaseAppService {
      * @return boolean 是否终止输出
      */
     private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodeModel item, int startRowIndex) {
-//        boolean isContinueOutput = true;
+        boolean isContinueOutput = true;
         Sheet sheet = book.getSheetAt(0);
 
         Row styleRow = FileUtils.row(sheet, 1);
@@ -141,7 +159,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 
                 FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());
 
-                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getChannelId());
+                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getOrgChannelId());
 
                 FileUtils.cell(row, CmsConstants.CellNum.catPathCellNum, unlock).setCellValue(item.getCatPath());
 
@@ -200,6 +218,6 @@ public class CmsPromotionIndexService extends BaseAppService {
             }
         }
 
-        return true;
+        return isContinueOutput;
     }
 }

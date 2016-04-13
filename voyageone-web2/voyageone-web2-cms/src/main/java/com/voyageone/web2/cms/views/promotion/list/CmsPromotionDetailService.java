@@ -358,6 +358,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtPromotionGroupModel getMode(Row row) {
 
         CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
+        model.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
         model.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
         model.setProductModel(row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue());
         if (row.getCell(CmsConstants.CellNum.numberIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
@@ -385,6 +386,8 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtPromotionCodeModel getCode(Row row) {
 
         CmsBtPromotionCodeModel code = new CmsBtPromotionCodeModel();
+
+        code.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
             code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
@@ -445,6 +448,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtPromotionSkuModel getSku(Row row) {
 
         CmsBtPromotionSkuModel sku = new CmsBtPromotionSkuModel();
+        sku.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
         if (row.getCell(CmsConstants.CellNum.inventoryCellNum) != null) {
             sku.setQty(getNumericCellValue(row.getCell(CmsConstants.CellNum.inventoryCellNum)).intValue());
         }

@@ -1,9 +1,11 @@
 package com.voyageone.task2.cms.bean.platform;
 
+import com.voyageone.base.dao.mysql.BaseModel;
+
 /**
  * Created by zhujiaye on 16/2/14.
  */
-public class SxWorkLoadBean {
+public class SxWorkLoadBean extends BaseModel{
 	private String channelId;
 	private Long groupId;									        // 天猫用groupId进行上新
 	private Long prodId;									        // 聚美用prodId进行上新
