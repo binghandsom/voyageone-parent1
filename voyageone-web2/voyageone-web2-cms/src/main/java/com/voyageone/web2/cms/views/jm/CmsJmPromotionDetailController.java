@@ -1,4 +1,6 @@
 package com.voyageone.web2.cms.views.jm;
+import com.voyageone.common.mq.MqSender;
+import com.voyageone.common.mq.enums.MqRoutingKey;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.impl.jumei.CmsBtJmPromotionService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -29,6 +32,8 @@ import java.util.stream.IntStream;
 public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     private CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
+    @Autowired
+    private MqSender sender;
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
@@ -79,6 +84,9 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
     public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
         serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id",promotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }
@@ -86,6 +94,9 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
     public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
         serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id",parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }

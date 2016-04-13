@@ -7,10 +7,11 @@
         select *  from cms_bt_jm_product_images where  channel_id=#{channelId} and  `product_code`=#{productCode}
         and   `image_type`=#{imageType} and  `image_index`=#{imageIndex} limit 1
     </select>
-
     <select id="getListByPromotionId" resultMap="ResultMap">
         SELECT b.* FROM `cms_bt_jm_promotion_product` AS a
 JOIN `cms_bt_jm_product_images` AS b ON a.`cms_bt_jm_product_id`=b.`cms_bt_jm_product_id`
 WHERE a.`cms_bt_jm_promotion_id`=#{promotionId}
     </select>
+
+
 </mapper>

@@ -54,9 +54,7 @@ define([
                 data.synFlgList = _returnKey(data.synFlgList);
                 data.start = (self.imageDataPageOption.curr - 1) * self.imageDataPageOption.size;
                 data.length = self.imageDataPageOption.size;
-                self.cmsMtMasterInfoService.search(data).then (function(res) {
-                    self.imageDataList = res.data;
-                });
+                 this.goPage();
                 self.cmsMtMasterInfoService.getCountByWhere(data).then (function(res) {
                     self.imageDataPageOption.total = res.data;
                 })

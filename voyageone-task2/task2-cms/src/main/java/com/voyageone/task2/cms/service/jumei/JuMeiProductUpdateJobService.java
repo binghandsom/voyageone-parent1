@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.jumei;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.bean.JmProductBean;
 import com.voyageone.components.jumei.bean.JmProductBean_DealInfo;
 import com.voyageone.components.jumei.bean.JmProductBean_Spus;
@@ -8,6 +9,7 @@ import com.voyageone.components.jumei.bean.JmProductBean_Spus_Sku;
 import com.voyageone.components.jumei.enums.EnumJuMeiMtMasterInfo;
 import com.voyageone.components.jumei.enums.EnumJuMeiProductImageType;
 import com.voyageone.components.jumei.enums.JumeiImageType;
+import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.service.impl.jumei.JuMeiProductUpdateService;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.JMProductUpdateInfo;
@@ -35,6 +37,10 @@ public class JuMeiProductUpdateJobService extends BaseMQTaskService {
     private static final String DESCRIPTION_IMAGES = "%s<br />";
     @Autowired
     JuMeiProductUpdateService service;
+    @Autowired
+    JumeiProductService serviceJumeiProduct;
+    @Autowired
+    JuMeiUploadImageJobService serviceJuMeiUploadImageJob;
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
         int id = (int) Double.parseDouble(message.get("id").toString());
@@ -49,19 +55,32 @@ public class JuMeiProductUpdateJobService extends BaseMQTaskService {
         return "JuMeiProductUpdateJobService";
     }
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
+        ShopBean shopBean=  service.getShopBean();
         //logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getListPromotionProduct();
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-            adddProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model);
+            adddProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model,shopBean);
         }
     }
-    private void adddProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model) throws Exception {
+    private void adddProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model,ShopBean shopBean) throws Exception {
         JMProductUpdateInfo updateInfo = service.getJMProductUpdateInfo(model);
         JmProductBean jmProductBean = selfBeanToJmBean(updateInfo, modelCmsBtJmPromotion, shippingSystemId);
+        for (CmsBtJmProductImagesModel imgemodel : updateInfo.getListCmsBtJmProductImages()) {
+            if (imgemodel.getSynFlg() == 0) { //上传图片
+                serviceJuMeiUploadImageJob.uploadImage(imgemodel, shopBean);
+                service.saveCmsBtJmProductImages(imgemodel);
+            }
+        }
+        for (CmsMtMasterInfoModel modelCmsMtMasterInfo : updateInfo.getListCmsMtMasterInfo()) {
+            if (modelCmsMtMasterInfo.getSynFlg() == 0) { //上传图片
+                serviceJuMeiUploadImageJob.uploadImage(modelCmsMtMasterInfo, shopBean);
+                service.saveCmsMtMasterInfo(modelCmsMtMasterInfo);
+            }
+        }
         setImages(updateInfo, jmProductBean);
-
+        serviceJumeiProduct.productNewUpload(shopBean, jmProductBean);
     }
     private JmProductBean selfBeanToJmBean(JMProductUpdateInfo info, CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId) throws Exception {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
@@ -78,7 +97,7 @@ public class JuMeiProductUpdateJobService extends BaseMQTaskService {
         List<JmProductBean_Spus> spus = new ArrayList<>();
         jmProductBean.setSpus(spus);
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {//.getSkuImportModelList()) {
-            CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getId());
+            CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(modelSku.getJmSpuNo());//jmBtSkuImportModel.getSku());
             spu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
@@ -192,7 +211,7 @@ public class JuMeiProductUpdateJobService extends BaseMQTaskService {
         List<CmsMtMasterInfoModel> listBRANDSTORY = getListCmsMtMasterInfoModel(info.getListCmsMtMasterInfo(), EnumJuMeiMtMasterInfo.BRANDSTORY.getId());
         if (listBRANDSTORY.size() != 0) {
             for (CmsMtMasterInfoModel jmPicBean : listBRANDSTORY) {
-                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue1()));
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue2()));
             }
         } else {
             throw new BusinessException("品牌图不存在");
@@ -205,7 +224,7 @@ public class JuMeiProductUpdateJobService extends BaseMQTaskService {
         List<CmsMtMasterInfoModel> listSIZE = getListCmsMtMasterInfoModel(info.getListCmsMtMasterInfo(), EnumJuMeiMtMasterInfo.SIZE.getId());
         if (listSIZE.size() != 0) {
             for (CmsMtMasterInfoModel jmPicBean : listSIZE) {
-                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue1()));
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue2()));
             }
         } else {
             //if(!jmBtProductImport.getSizeType().equalsIgnoreCase("One Size") && !jmBtProductImport.getSizeType().equalsIgnoreCase("OneSize")){
@@ -220,7 +239,7 @@ public class JuMeiProductUpdateJobService extends BaseMQTaskService {
         List<CmsMtMasterInfoModel> lisLOGISTICS = getListCmsMtMasterInfoModel(info.getListCmsMtMasterInfo(), EnumJuMeiMtMasterInfo.LOGISTICS.getId());
         if (lisLOGISTICS.size() != 0) {
             for (CmsMtMasterInfoModel jmPicBean : lisLOGISTICS) {
-                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue1()));
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue2()));
             }
         } else {
             throw new BusinessException("物流图不存在");
