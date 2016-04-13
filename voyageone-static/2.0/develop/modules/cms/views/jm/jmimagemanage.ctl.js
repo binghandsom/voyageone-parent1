@@ -32,7 +32,7 @@ define([
 
             this.searchInfo = {synFlgList: []};
             this.imageDataList = [];
-            this.imageDataPageOption = {curr: 1, total: 0, size: 20, fetch: this.search.bind(this)}
+            this.imageDataPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)}
         }
 
         JmImageManageController.prototype = {
@@ -96,7 +96,7 @@ define([
                         sizeType: imageData.sizeType,
                         dataType: imageData.dataType.toString()
                     }
-                }).then(this.search.bind(this));
+                }).then(this.initialize.bind(this));
             }
         };
 
