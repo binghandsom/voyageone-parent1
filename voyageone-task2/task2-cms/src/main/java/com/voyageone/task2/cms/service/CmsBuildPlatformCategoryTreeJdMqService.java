@@ -6,7 +6,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.JdConstants;
 import com.voyageone.components.jd.bean.JdCategroyBean;
@@ -245,56 +244,9 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
         }
 
         // 创建各渠道的平台类目层次关系
-        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList, cartId, channelId, taskName);
+        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = platformCategoryService.buildPlatformCatTrees(platformCategoryMongoBeanList, cartId, channelId, taskName);
 
         return savePlatformCatModels;
-    }
-
-    /**
-     * 创建各渠道的平台类目层次关系.
-     *
-     * @param platformCatModelList List<CmsMtPlatformCategoryTreeModel>    京东类目树列表
-     *        cartId         String            CartId
-     *        channelId      String            渠道id
-     *        taskName       String            Task名
-     * @return List<CmsMtPlatformCategoryTreeModel>    京东类目层次树列表
-     */
-    public List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, String cartId, String channelId, String taskName) {
-        // 设置类目层次关系.
-        List<CmsMtPlatformCategoryTreeModel> assistPlatformCatList = new ArrayList<>(platformCatModelList);
-
-        List<CmsMtPlatformCategoryTreeModel> removePlatformCatList = new ArrayList<>();
-
-        for (CmsMtPlatformCategoryTreeModel platformCat : platformCatModelList) {
-            List<CmsMtPlatformCategoryTreeModel> subPlatformCatgories = new ArrayList<>();
-            for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext(); ) {
-
-                CmsMtPlatformCategoryTreeModel subPlatformCatItem = (CmsMtPlatformCategoryTreeModel) assIterator.next();
-                if (subPlatformCatItem.getParentCatId().equals(platformCat.getCatId())) {
-                    subPlatformCatgories.add(subPlatformCatItem);
-                    assIterator.remove();
-                }
-            }
-            platformCat.setChildren(subPlatformCatgories);
-            if (!"0".equals(platformCat.getParentCatId())) {
-                //将所有非顶层类目的引用添加到待删除列表
-                removePlatformCatList.add(platformCat);
-            } else {
-                //设置顶层类目的信息
-                platformCat.setChannelId(channelId);
-                platformCat.setCartId(Integer.parseInt(cartId));
-                platformCat.setCreater(taskName);
-                platformCat.setCreated(DateTimeUtil.getNow());
-                platformCat.setModifier(taskName);
-                platformCat.setModified(DateTimeUtil.getNow());
-            }
-            platformCat.setChannelId(channelId);
-        }
-
-        // 删除掉所有非顶层类目引用,只留下最顶层类目
-        platformCatModelList.removeAll(removePlatformCatList);
-
-        return platformCatModelList;
     }
 
 }
