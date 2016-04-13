@@ -17,7 +17,7 @@
                     <span translate="TXT_CATEGORY_MANAGER"></span>
                 </a>
             </li>
-            <li  ng-repeat="item in menuInfo.categoryTreeList">
+            <li  ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
                 <a class="auto" ng-if="item.isParent == 1">
                     <span class="pull-right text-muted">
                       <i class="fa fa-fw fa-angle-right text"></i>
@@ -26,7 +26,7 @@
                     <i class="fa fa-plus icon-small text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
-                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catId)">
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, _catPath)">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
@@ -85,6 +85,12 @@
                 <a href="#/search/advance">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span translate="TXT_ADVANCE_SEARCH"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
+                <a href="#/search/feedsearch">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span>Feed检索</span>
                 </a>
             </li>
         </ul>
@@ -171,6 +177,12 @@
                     <span translate="TXT_CUSTOM_ATTRIBUTE_MANAGER"></span>
                 </a>
             </li>
+            <li ui-sref-active="active">
+                <a href="#/channel/feedImportRule/feedImportRuleList">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span translate="TXT_FEED_IMPORT_RULE"></span>
+                </a>
+            </li>
             <!--<li ui-sref-active="active">-->
                 <!--<a href="#/channel/common">-->
                     <!--<i class="fa fa-minus icon text-vo"></i>-->
@@ -225,6 +237,12 @@
                     <span translate="TXT_ERROR_MANAGER_MAINTENANCE"></span>
                 </a>
             </li>
+            <li ui-sref-active="active">
+                <a href="#/system/channel/index">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CHANNEL_LIST"></span>
+                </a>
+            </li>
         </ul>
     </li>
     <!-- 聚美专场管理 -->
@@ -270,7 +288,7 @@
             <i class="fa fa-plus icon-small text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
-        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catId)">
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,_catPath)">
             <i class="fa fa-minus icon text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>

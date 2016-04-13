@@ -19,30 +19,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-gilt</artifactId>
-            <version>${voyageone.components.gilt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-jumei</artifactId>
-            <version>${voyageone.components.jumei.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-sears</artifactId>
-            <version>${voyageone.components.sears.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-tmall</artifactId>
-            <version>${voyageone.components.tmall.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
@@ -75,7 +51,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.voyageone.task2.VoyageOneTaskService</mainClass>
+                                    <mainClass>com.voyageone.task2.VOCms2Startup</mainClass>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>

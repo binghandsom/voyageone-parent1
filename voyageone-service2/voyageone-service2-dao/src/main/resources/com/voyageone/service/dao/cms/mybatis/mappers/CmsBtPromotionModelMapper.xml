@@ -6,9 +6,12 @@
         <result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
         <result column="model_id" property="modelId" jdbcType="INTEGER" />
         <result column="product_model" property="productModel" jdbcType="VARCHAR" />
+        <result column="org_channel_id" property="orgChannelId" jdbcType="VARCHAR" />
+        <result column="full_name" property="channelName" jdbcType="VARCHAR" />
         <result column="cat_path" property="catPath" jdbcType="VARCHAR" />
         <result column="num_iid" property="numIid" jdbcType="VARCHAR" />
         <result column="syn_flg" property="synFlg" jdbcType="VARCHAR" />
+        <result column="org_channel_id" property="orgChannelId" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
@@ -17,6 +20,7 @@
     <select id="select_cms_bt_promotion_model" resultMap="bt_promotion_model_map" parameterType="HashMap" >
         SELECT
             promotion_id,
+            org_channel_id,
             model_id,
             product_model,
             cat_path,
@@ -45,11 +49,12 @@
     </resultMap>
     <select id="select_promotion_detail" resultMap="bt_promotion_model_detail_map" parameterType="HashMap">
         SELECT
-            t1.*, t2.*,t3.tag_name
+            t1.*, t2.*,t3.tag_name,t4.full_name
         FROM
             (
                 SELECT
                     b.promotion_id,
+                    b.org_channel_id,
                     b.model_id,
                     b.product_model,
                     b.cat_path,
@@ -61,6 +66,9 @@
                 <where>
                     <if test="promotionId != null">
                         promotion_id =  #{promotionId,jdbcType=INTEGER}
+                    </if>
+                    <if test="channelId != null and channelId != '' and channelId != '997'">
+                        and org_channel_id =  #{channelId,jdbcType=VARCHAR}
                     </if>
                     <if test="key !=null and key != ''">
                         and (
@@ -94,6 +102,7 @@
                 a.product_model
         ) t2 ON t1.product_model = t2.product_model
         AND t1.promotion_id = t2.promotion_id left join voyageone_cms2.cms_bt_tag t3 on t2.tag_id = t3.tag_id
+        LEFT JOIN tm_order_channel t4 on t1.org_channel_id = t4.order_channel_id
     </select>
     <select id="select_promotion_detail_cnt" resultType="int" parameterType="HashMap">
 
@@ -104,6 +113,9 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null and channelId != '' and channelId != '997'">
+                and org_channel_id =  #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="key !=null and key != ''">
                 and (
@@ -117,6 +129,9 @@
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 promotion_id,
+            </if>
+            <if test="orgChannelId != null" >
+                org_channel_id,
             </if>
             <if test="modelId != null" >
                 model_id,
@@ -145,6 +160,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
             </if>
             <if test="modelId != null" >
                 #{modelId,jdbcType=INTEGER},
@@ -176,6 +194,9 @@
         <set >
             <if test="promotionId != null" >
                 promotion_id = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                org_channel_id = #{orgChannelId,jdbcType=VARCHAR},
             </if>
             <if test="modelId != null" >
                 model_id = #{modelId,jdbcType=INTEGER},

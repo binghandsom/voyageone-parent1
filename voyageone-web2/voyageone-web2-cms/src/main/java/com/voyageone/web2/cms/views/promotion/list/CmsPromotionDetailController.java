@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
@@ -50,6 +51,7 @@ public class CmsPromotionDetailController extends CmsController {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
 
+
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
         List<CmsBtPromotionCodeModel> resultBean = cmsPromotionDetailService.getPromotionCode(params);
         Map<String,Object> result = new HashMap<>();
@@ -89,7 +91,7 @@ public class CmsPromotionDetailController extends CmsController {
     @RequestMapping(PROMOTION.LIST.DETAIL.TE_JIA_BAO_INIT)
     public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
 
-        cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());
+        cmsPromotionDetailService.teJiaBaoInit(promotionId, getUser().getSelChannelId(), getUser().getUserName());
         // 返回用户信息
         return success(null);
     }
