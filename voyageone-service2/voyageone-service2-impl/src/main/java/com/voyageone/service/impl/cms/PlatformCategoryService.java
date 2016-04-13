@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.BaseService;
@@ -37,11 +38,58 @@ public class PlatformCategoryService extends BaseService {
     }
 
     /**
+     * 创建各渠道的平台类目层次关系.
+     *
+     * @param platformCatModelList List<CmsMtPlatformCategoryTreeModel>    平台类目树列表
+     *        cartId         String            平台ID
+     *        channelId      String            渠道ID
+     *        taskName       String            任务名
+     * @return List<CmsMtPlatformCategoryTreeModel>    平台类目层次树列表
+     */
+    public List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, String cartId, String channelId, String taskName) {
+        // 设置类目层次关系.
+        List<CmsMtPlatformCategoryTreeModel> assistPlatformCatList = new ArrayList<>(platformCatModelList);
+
+        List<CmsMtPlatformCategoryTreeModel> removePlatformCatList = new ArrayList<>();
+
+        for (CmsMtPlatformCategoryTreeModel platformCat : platformCatModelList) {
+            List<CmsMtPlatformCategoryTreeModel> subPlatformCatgories = new ArrayList<>();
+            for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext(); ) {
+
+                CmsMtPlatformCategoryTreeModel subPlatformCatItem = (CmsMtPlatformCategoryTreeModel) assIterator.next();
+                if (subPlatformCatItem.getParentCatId().equals(platformCat.getCatId())) {
+                    subPlatformCatgories.add(subPlatformCatItem);
+                    assIterator.remove();
+                }
+            }
+            platformCat.setChildren(subPlatformCatgories);
+            if (!"0".equals(platformCat.getParentCatId())) {
+                //将所有非顶层类目的引用添加到待删除列表
+                removePlatformCatList.add(platformCat);
+            } else {
+                //设置顶层类目的信息
+                platformCat.setChannelId(channelId);
+                platformCat.setCartId(Integer.parseInt(cartId));
+                platformCat.setCreater(taskName);
+                platformCat.setCreated(DateTimeUtil.getNow());
+                platformCat.setModifier(taskName);
+                platformCat.setModified(DateTimeUtil.getNow());
+            }
+            platformCat.setChannelId(channelId);
+        }
+
+        // 删除掉所有非顶层类目引用,只留下最顶层类目
+        platformCatModelList.removeAll(removePlatformCatList);
+
+        return platformCatModelList;
+    }
+
+    /**
      * 更新MangoDB类目数据.
      *
      * @param savePlatformCatModels List<CmsMtPlatformCategoryTreeModel> 类目MODEL
      *        cartId String            平台ID
-     *        channelId String         渠道id
+     *        channelId String         渠道ID
      */
     public void setMangoDBPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels, String cartId, String channelId) {
 
