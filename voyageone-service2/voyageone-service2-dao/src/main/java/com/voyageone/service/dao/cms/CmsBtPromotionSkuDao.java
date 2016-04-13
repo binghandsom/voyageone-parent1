@@ -38,10 +38,10 @@ public class CmsBtPromotionSkuDao extends ServiceBaseDao {
         return delete("delete_cms_bt_promotion_sku", params);
     }
 
-    public int deletePromotionSkuByModelId(Integer promotionId, Long modelId){
+    public int deletePromotionSkuByModelId(Integer promotionId, String  productModel){
         CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
         params.setPromotionId(promotionId);
-        params.setModelId(modelId);
+        params.setProductModel(productModel);
         return delete("delete_cms_bt_promotion_sku", params);
     }
     public int deletePromotionSkuByProductId(Integer promotionId, Long productId){

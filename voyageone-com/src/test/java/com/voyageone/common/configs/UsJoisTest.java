@@ -1,10 +1,13 @@
 package com.voyageone.common.configs;
 
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +23,7 @@ public class UsJoisTest {
 
     @Test
     public void testIsExists() throws Exception {
-        System.out.println(UsJois.isExists("2"));
+        List<OrderChannelBean> aa = Channels.getUsJoiChannelList();
+        System.out.println();
     }
 }

@@ -18,6 +18,10 @@ public class CmsBtPromotionGroupModel extends BaseModel {
 
     private String channelId;
 
+    private String orgChannelId;
+
+    private String channelName;
+
     private Integer cartId;
 
     private int promotionId;
@@ -28,7 +32,7 @@ public class CmsBtPromotionGroupModel extends BaseModel {
 
     private String catPath;
 
-    private String numIid;
+    private String numIid = "";
 
     private Boolean synFlg;
 
@@ -48,12 +52,28 @@ public class CmsBtPromotionGroupModel extends BaseModel {
         this.channelId = channelId;
     }
 
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
+    }
+
     public Integer getCartId() {
         return cartId;
     }
 
     public void setCartId(Integer cartId) {
         this.cartId = cartId;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     public CmsBtPromotionGroupModel(){
@@ -64,22 +84,25 @@ public class CmsBtPromotionGroupModel extends BaseModel {
         // catPath
         this.setCatPath(productInfo.getCatPath());
 
+        // ProductModel
+        this.setProductModel(productInfo.getFields().getModel());
+        // SynFlg
+        this.setSynFlg(false);
+
+        this.promotionId = promotionId;
+
+        this.orgChannelId = productInfo.getOrgChannelId();
+
+        this.setCreater(operator);
+
+        this.setModifier(operator);
         CmsBtProductModel_Group_Platform platform = productInfo.getGroups().getPlatformByCartId(cartId);
         if(platform !=  null){
             // numIid
             this.setNumIid(platform.getNumIId() == null ? "": platform.getNumIId());
             // modelId
             this.setModelId(platform.getGroupId());
-            // ProductModel
-            this.setProductModel(productInfo.getFields().getModel());
-            // SynFlg
-            this.setSynFlg(false);
 
-            this.promotionId = promotionId;
-
-            this.setCreater(operator);
-
-            this.setModifier(operator);
         }
 
     }

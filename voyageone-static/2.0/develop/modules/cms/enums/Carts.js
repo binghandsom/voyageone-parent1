@@ -60,6 +60,11 @@ define(['underscore'], function (_) {
         JM: new Cart('JM', 27, '聚美优品'),
 
         /**
+         * Mini Mall
+         */
+        MM: new Cart('MM', 28, 'Mini Mall'),
+
+        /**
          * 获取枚举, desc 不支持
          * @param {string|number} val
          */

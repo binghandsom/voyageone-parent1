@@ -7,12 +7,21 @@ public class CmsBtSxWorkloadModel {
     private long seq;
     private String channel_id;
     private Long group_id;
+    private int cartId;
     private int publish_status;
     private String created;
     private String creater;
     private String modifier;
     private String modified;
 
+
+    public int getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
 
     public String getChannelId() {
         return channel_id;
