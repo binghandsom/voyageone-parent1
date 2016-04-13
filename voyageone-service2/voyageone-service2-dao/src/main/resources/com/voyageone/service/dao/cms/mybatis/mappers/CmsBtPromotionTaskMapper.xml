@@ -51,6 +51,7 @@
         a.task_type,
         a.`key`,
         b.promotion_price,
+        b.num_iid,
         a.syn_flg,
         a.err_msg,
         a.created,
@@ -72,7 +73,7 @@
             <if test="key != null and key != ''">
                 and a.`key` = #{key,jdbcType=VARCHAR}
             </if>
-        ORDER BY a.syn_flg,a.key
+        ORDER BY a.syn_flg desc,a.key
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>

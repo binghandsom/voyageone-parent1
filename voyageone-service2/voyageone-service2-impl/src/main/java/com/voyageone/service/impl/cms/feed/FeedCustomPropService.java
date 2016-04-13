@@ -460,4 +460,11 @@ public class FeedCustomPropService extends BaseService {
 		}
 	}
 
+	public List<Map<String, Object>> getFeedCustomPropAttrs(String channelId, String catPath) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("channelId", channelId);
+		params.put("feedCatPath", catPath);
+		return cmsBtFeedCustomPropDao.selectAttrs(params);
+	}
+
 }

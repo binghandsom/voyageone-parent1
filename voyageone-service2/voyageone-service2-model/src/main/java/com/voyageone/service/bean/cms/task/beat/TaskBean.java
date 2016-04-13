@@ -21,6 +21,8 @@ public class TaskBean {
 
     private int promotion_id;
 
+    private String channelId;
+
     private String activity_start;
 
     private String activity_end;
@@ -45,6 +47,7 @@ public class TaskBean {
         setTask_name(taskModel.getTask_name());
         setTask_type(PromotionTypeEnums.Type.valueOf(taskModel.getTask_type()));
         setPromotion_id(taskModel.getPromotion_id());
+        setChannelId(taskModel.getChannelId());
         setActivity_start(taskModel.getActivity_start());
         setActivity_end(taskModel.getActivity_end());
         setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
@@ -159,6 +162,7 @@ public class TaskBean {
         taskModel.setTask_name(getTask_name());
         taskModel.setTask_type(getTask_type().getTypeId());
         taskModel.setPromotion_id(getPromotion_id());
+        taskModel.setChannelId(getChannelId());
         taskModel.setActivity_start(getActivity_start());
         taskModel.setActivity_end(getActivity_end());
         taskModel.setConfig(JacksonUtil.bean2Json(getConfig()));
@@ -168,5 +172,13 @@ public class TaskBean {
         taskModel.setModifier(getModifier());
 
         return taskModel;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 }
