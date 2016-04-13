@@ -171,7 +171,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="vm.feedList.length == 0" style="padding-left:0px"><td colspan="16"><div class="col-sm-12 box-body" if-no-rows="vm.productList.length"></div></td></tr>
+                    <tr ng-if="vm.feedList.length == 0" style="padding-left:0px"><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
                     <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
                         <td class="text-center mfb-xt3">{{$index + 1}}</td>
                         <td  ng-controller="popupCtrl" >
