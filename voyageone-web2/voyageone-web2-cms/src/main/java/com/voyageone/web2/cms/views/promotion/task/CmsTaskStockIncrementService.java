@@ -40,10 +40,11 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private  static final String TYPE_INCREMENT_INSERT="1";
     /** 判断隔离任务:2更新的场合 */
     private  static final String TYPE_INCREMENT_UPDATE="2";
-    /** 0：按动态值进行增量隔离； 1：按固定值进行增量隔离 */
-    private  static final String TYPE_INCREMENT_COUNT="1";
-    /** 0：按动态值进行增量隔离； 1：按固定值进行增量隔离 */
-    private  static final String TYPE_INCREMENT_PERCENT="0";
+    /**1：按比例增量隔离 */
+    private  static final String TYPE_INCREMENT_PERCENT="1";
+    /**2：按数量增量隔离*/
+    private  static final String TYPE_INCREMENT_COUNT="2";
+
     /**
      * 检索增量库存隔离任务
      *
@@ -101,7 +102,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             try {
                 //如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_stock_separate_increment_task表
                 updateIncrementTaskByTaskID(param);
-            }catch (Exception e) {
+            } catch (Exception e) {
                 simpleTransaction.rollback();
                 throw e;
             }
@@ -291,7 +292,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
             skuPro.put("status","0");
             //0：按动态值进行增量隔离； 1：按固定值进行增量隔离
-            skuPro.put("fixFlg",incrementType);
+            skuPro.put("fixFlg","0");
             //创建者
             skuPro.put("creater",param.get("userName").toString());
             skuMap.put(product_sku,skuPro);
@@ -336,7 +337,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             //状态 0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原
             skuProHash.put("status",skuHash.get("status"));
             //固定值隔离标志位 0：按动态值进行增量隔离； 1：按固定值进行增量隔离
-            skuProHash.put("fixFlg",skuHash.get("fixFlg"));
+            skuProHash.put("fixFlg","0");
             //更新者
             skuProHash.put("creater",skuHash.get("creater"));
             //所有增量的Sku属性值
@@ -347,7 +348,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                 allSku.clear();
             }
         }
-        if (allSku.size() > 500) {
+        if (allSku.size() > 0) {
             cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemByList(allSku);
             allSku.clear();
         }

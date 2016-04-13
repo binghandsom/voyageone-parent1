@@ -162,7 +162,7 @@ public class StockIncrementService extends BaseTaskService {
             String cartId = String.valueOf(stockIncreased.get("cart_id"));
             Integer incrementQty = (Integer) stockIncreased.get("increment_qty");
             if (stockIncreasedInfoMap.get(sku + cartId) != null) {
-                stockIncreasedInfoMap.put(sku + cartId, incrementQty + stockInfoMap.get(sku + cartId));
+                stockIncreasedInfoMap.put(sku + cartId, incrementQty + stockIncreasedInfoMap.get(sku + cartId));
             } else {
                 stockIncreasedInfoMap.put(sku + cartId, incrementQty);
             }
