@@ -66,6 +66,12 @@
         <!-- 库存还原batch -->
         <task:scheduled ref="CmsStockRevertJob" method="run" cron="0 1/5 * * * ?"/>
 
+        <!-- 增量库存隔离batch -->
+        <task:scheduled ref="CmsStockIncrementJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 设定活动结束的隔离数据状态为等待还原batch -->
+        <task:scheduled ref="CmsStockWaitingRevertJob" method="run" cron="0 0/5 * * * ?"/>
+
 
     </task:scheduled-tasks>
 

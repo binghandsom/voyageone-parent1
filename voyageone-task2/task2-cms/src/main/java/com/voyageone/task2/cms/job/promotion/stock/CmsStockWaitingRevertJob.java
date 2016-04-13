@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.job.promotion.stock;
 
-        import com.voyageone.task2.base.BaseTaskJob;
-        import com.voyageone.task2.base.BaseTaskService;
-        import com.voyageone.task2.cms.service.promotion.stock.StockWaitingRevertService;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.stereotype.Component;
+import com.voyageone.task2.base.BaseTaskJob;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.cms.service.promotion.stock.StockWaitingRevertService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author jeff.duan
