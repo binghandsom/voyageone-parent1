@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.job.jumei;
 
 import com.voyageone.task2.base.BaseMQTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.cms.service.jumei.JmBtPromotionImportService;
+import com.voyageone.service.impl.jumei.JuMeiProductUpdatePlatefromService;
 import com.voyageone.task2.cms.service.jumei.JuMeiProductUpdateJobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 public class JuMeiProductUpdateJob extends BaseMQTaskJob {
 
     @Autowired
-    private JuMeiProductUpdateJobService juMeiProductUpdateJobService;
+    private JuMeiProductUpdateJobService service;
 
     @Override
     protected BaseTaskService getTaskService() {
-        return juMeiProductUpdateJobService;
+        return service;
     }
 }

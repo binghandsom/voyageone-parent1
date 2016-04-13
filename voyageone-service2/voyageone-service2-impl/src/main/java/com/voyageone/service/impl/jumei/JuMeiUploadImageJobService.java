@@ -1,27 +1,22 @@
-package com.voyageone.task2.cms.service.jumei;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.ShopConfigs;
+package com.voyageone.service.impl.jumei;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
+
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.enums.JumeiImageType;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
-import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.service.model.jumei.CmsBtJmProductImagesModel;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
-import com.voyageone.task2.cms.bean.JmPicBean;
-import org.apache.commons.logging.LogFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
+
 import java.io.InputStream;
-import java.util.List;
 import java.util.regex.Pattern;
 @Service
 public class JuMeiUploadImageJobService {
