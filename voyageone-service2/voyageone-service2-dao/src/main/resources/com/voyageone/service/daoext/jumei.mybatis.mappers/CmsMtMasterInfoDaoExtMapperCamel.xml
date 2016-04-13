@@ -121,7 +121,7 @@
         </if>
     </select>
 
-    <select id="getListCountByWhere" parameterType="HashMap" resultType="Integer">
+    <select id="getCountByWhere" parameterType="HashMap" resultType="Integer">
         select count(1)
         from cms_mt_master_info
         <where>
