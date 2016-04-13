@@ -2,12 +2,14 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -64,6 +66,10 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
+        if(Channels.isUsJoi(conditionParams.get("channelId").toString())){
+            conditionParams.put("orgChannelId", conditionParams.get("channelId"));
+            conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        }
         return promotionService.getByCondition(conditionParams);
     }
 
@@ -79,13 +85,14 @@ public class CmsPromotionIndexService extends BaseAppService {
         return promotionService.delete(cmsBtPromotionModel);
     }
 
-    public byte[] getCodeExcelFile(Integer promotionId) throws IOException, InvalidFormatException {
+    public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
         Map<String, Object> param = new HashMap<>();
         param.put("promotionId", promotionId);
+        param.put("orgChannelId",channelId);
 
         CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.selectById(param);
         List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.selectPromotionCodeSkuList(param);
@@ -99,7 +106,7 @@ public class CmsPromotionIndexService extends BaseAppService {
             int rowIndex = 1;
             for (int i = 0; i < promotionCodes.size(); i++) {
                 promotionCodes.get(i).setCartId(cmsBtPromotionModel.getCartId());
-                promotionCodes.get(i).setChannelId(cmsBtPromotionModel.getChannelId());
+//                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
                 boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), rowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -152,7 +159,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 
                 FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());
 
-                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getChannelId());
+                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getOrgChannelId());
 
                 FileUtils.cell(row, CmsConstants.CellNum.catPathCellNum, unlock).setCellValue(item.getCatPath());
 

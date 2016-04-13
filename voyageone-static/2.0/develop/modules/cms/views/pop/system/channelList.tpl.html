@@ -1,0 +1,61 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$close()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="glyphicon glyphicon-cog"></i><span class="label m-r-sm m-l" >&nbsp;Cart setting&nbsp;</span></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal m-l-md m-b-md ng-pristine ng-valid">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3">Juicy Counture</label>
+                                <span class="col-sm-1 badge">001</span>
+                                <label class="col-sm-3 m-l-lg">Allow USJOI</label>
+                                <span class="col-sm-1 badge">Yes</span>
+                            </div>
+                        </div><!-- .form-group -->
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group">
+            <div class="col-sm-12">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="row col-sm-12">
+                            <div class="col-sm-3">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="京东轻奢店" style=""><span class="fa fa-check"></span> 京东轻奢店
+                                </label>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="京东生活店" style=""><span class="fa fa-check"></span> 京东生活店
+                                </label>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="聚美美国馆" style=""><span class="fa fa-check"></span> 聚美美国馆
+                                </label>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="天猫USJOI" style=""><span class="fa fa-check"></span> 天猫USJOI
+                                </label>
+                            </div>
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+        <div class="modal-footer">
+        <button class="btn btn-default ng-binding" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->

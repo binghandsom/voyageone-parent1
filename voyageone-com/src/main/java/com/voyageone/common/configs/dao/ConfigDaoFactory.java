@@ -25,7 +25,6 @@ public class ConfigDaoFactory {
     private static ThirdPartConfigDao thirdPartConfigDao;
     private static TypeDao typeDao;
     private static TypeChannelDao channelValueDao;
-    private static UsJoiDao usJoiDao;
 
 
     @Autowired
@@ -83,14 +82,6 @@ public class ConfigDaoFactory {
     @Autowired
     private void setChannelValueDao(TypeChannelDao channelValueDao) {
         ConfigDaoFactory.channelValueDao = channelValueDao;
-    }
-    @Autowired
-    private void setUsJoiDao(UsJoiDao usJoiDao) {
-        ConfigDaoFactory.usJoiDao = usJoiDao;
-    }
-
-    public static UsJoiDao getUsJoiDao() {
-        return usJoiDao;
     }
 
     public static CarrierDao getCarrierDao() {

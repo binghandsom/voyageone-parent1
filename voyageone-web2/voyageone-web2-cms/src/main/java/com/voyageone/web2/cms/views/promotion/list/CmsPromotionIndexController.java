@@ -61,7 +61,7 @@ public class CmsPromotionIndexController extends CmsController {
     public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
             throws Exception {
 
-        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId);
+        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId, getUser().getSelChannelId());
         return genResponseEntityFromBytes(String.format("%s(%s).xlsx",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".xlsx"), data);
 
     }

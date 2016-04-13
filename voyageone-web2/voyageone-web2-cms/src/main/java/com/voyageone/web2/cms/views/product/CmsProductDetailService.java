@@ -4,6 +4,8 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -88,7 +90,7 @@ public class CmsProductDetailService extends BaseAppService {
      * @return
      * @throws BusinessException
      */
-    public CmsProductInfoBean getProductInfo(String channelId, Long prodId, String language) throws BusinessException {
+    public Map getProductInfo(String channelId, Long prodId, int cartId, String language) throws BusinessException {
 
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
 
@@ -185,7 +187,36 @@ public class CmsProductDetailService extends BaseAppService {
         productInfo.setModified(productValueModel.getModified());
         productInfo.setProductCode(productValueModel.getFields().getCode());
 
-        return productInfo;
+        Map infoMap = new HashMap();
+        infoMap.put("productInfo", productInfo);
+
+        ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(productValueModel.getOrgChannelId());
+        if (channel == null) {
+            infoMap.put("orgChaName", "");
+        } else {
+            infoMap.put("orgChaName", channel.getFullName());
+        }
+
+        // 判断是否是minimall用户
+        boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        infoMap.put("isminimall", isMiniMall ? 1 : 0);
+
+        boolean isMain = false;
+        CmsBtProductModel_Group gpList = productValueModel.getGroups();
+        if (gpList != null) {
+            List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
+            if (pltList != null && pltList.size() > 0) {
+                for (CmsBtProductModel_Group_Platform pltObj : pltList) {
+                    if (pltObj.getCartId() == cartId && pltObj.getIsMain()) {
+                        isMain = true;
+                        break;
+                    }
+                }
+            }
+        }
+        infoMap.put("isMain", isMain ? 1 : 0);
+
+        return infoMap;
     }
 
     /**
@@ -197,6 +228,10 @@ public class CmsProductDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsBtProductModel prodObj = cmsBtProductDao.selectProductById(channelId, prodId);
+        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+            // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
+            channelId = prodObj.getOrgChannelId();
+        }
         Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
 
         List<Map<String, Object>> inventoryList = new ArrayList<Map<String, Object>>(0);

@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -71,6 +72,10 @@ public class PromotionDetailService extends BaseService {
             productInfo = productService.getProductByCode(channelId, productCode);
         else
             productInfo = productService.getProductById(channelId, productId);
+
+        if(productInfo == null) {
+            throw new BusinessException("productCode:"+productCode+"不存在");
+        }
 
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupModel cmsBtPromotionGroupModel = new CmsBtPromotionGroupModel(productInfo, cartId, promotionId, modifier);
@@ -178,8 +183,8 @@ public class PromotionDetailService extends BaseService {
             if(codes.size() > 0){
                 productTagService.delete(channelId, productIdTagsMap, modifier);
             }
-            cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getModelId());
-            cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getModelId());
+            cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getProductModel());
+            cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getProductModel());
 
 
         }
