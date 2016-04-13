@@ -228,6 +228,10 @@ public class CmsProductDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsBtProductModel prodObj = cmsBtProductDao.selectProductById(channelId, prodId);
+        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+            // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
+            channelId = prodObj.getOrgChannelId();
+        }
         Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
 
         List<Map<String, Object>> inventoryList = new ArrayList<Map<String, Object>>(0);
