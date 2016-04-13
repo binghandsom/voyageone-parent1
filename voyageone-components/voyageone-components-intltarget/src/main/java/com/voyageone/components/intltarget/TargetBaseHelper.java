@@ -4,10 +4,21 @@ import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +43,7 @@ public class TargetBaseHelper {
     @Retryable
     public String callTargetApi(String api_url,Map mapBody,boolean isNeedToken) throws Exception {
         if(isNeedToken&&StringUtils.isEmpty(api_token)) refreshToken();//校验token
-        String result = HttpUtils.targetPost(ThirdPartyConfigs.getVal1("018", "api_url") + api_url, JacksonUtil.bean2Json(mapBody), "application/json",api_token);
+        String result = targetPost(ThirdPartyConfigs.getVal1("018", "api_url") + api_url, JacksonUtil.bean2Json(mapBody), "application/json",api_token);
         checkResult(result,isNeedToken); //检查结果
         return result;
     }
@@ -60,7 +71,7 @@ public class TargetBaseHelper {
         //重新赋值
         api_token = (String) JacksonUtil
                 .jsonToMap(
-                        HttpUtils.targetPost(
+                        targetPost(
                                 ThirdPartyConfigs.getVal1("018", "api_url")+"/guests/v3/auth?key="+ThirdPartyConfigs.getVal1("018", "app_key"),
                                 JacksonUtil.bean2Json(new HashMap<String,String>(){{put("logonId",ThirdPartyConfigs.getVal1("018", "logonId"));put("logonPassword",ThirdPartyConfigs.getVal1("018", "logonPassword"));}}),
                                 "application/json",
@@ -68,5 +79,36 @@ public class TargetBaseHelper {
                         )
                 ).get("accessToken");
         throw new RuntimeException("刷新token");
+    }
+
+    private static String targetPost(String url, String jsonBody,String accept,String token) throws Exception {
+        HttpPost post=new HttpPost(new URI(url));
+
+        // setHeader Accept
+        post.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
+        // setHeader Authorization
+        if(!StringUtils.isEmpty(token)) post.setHeader("Authorization","Bearer " + token);
+
+        //setBody
+        post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
+
+        //测试启用代理
+        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
+
+        //post request
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpResponse response = httpclient.execute(post);
+
+        //从服务器获得输入流
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = buffer.readLine()) != null) {
+            sb.append(line);
+        }
+
+        //关闭流
+        buffer.close();
+        return sb.toString();
     }
 }
