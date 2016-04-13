@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
  * @version 0.0.1, 16/3/31
  */
 @Component("CmsStockIncrementJob")
-public class CmsStockIncrementSeparateJob extends BaseTaskJob {
+public class CmsStockIncrementJob extends BaseTaskJob {
     @Autowired
-    private StockIncrementService stockIncrementSeparateService;
+    private StockIncrementService stockIncrementService;
 
     @Override
     protected BaseTaskService getTaskService() {
-        return stockIncrementSeparateService;
+        return stockIncrementService;
     }
 }

@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.service.promotion.stock;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;

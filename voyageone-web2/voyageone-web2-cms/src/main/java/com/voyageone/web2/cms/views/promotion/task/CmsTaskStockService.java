@@ -211,7 +211,7 @@ public class CmsTaskStockService extends BaseAppService {
             //根据TaskID取得初始画面的值
             List<Map<String,Object>> allSeparateCartIdMap=getCartNameBytaskId(String.valueOf(taskId));
             //取得新建库存隔离任务的数据
-            allSeparateInfo = getAllSeparateInfo(typeChannelBeanList, allSeparateCartIdMap);
+            allSeparateInfo = getAllSeparateInfo(typeChannelBeanList, allSeparateCartIdMap,channelId);
         }
         //循环取得隔离的数据反应到初始画面
         data = initSeparateDataMap(allSeparateInfo,promotionType,taskName);
@@ -361,9 +361,10 @@ public class CmsTaskStockService extends BaseAppService {
                 if(shareList.size()>0){
                     Boolean isFlg =true;
                     for(int i=0;i<shareList.size();i++){
-                        if(isAllSqEntry.getKey().equals(shareList.get(i)))
-                            isFlg =false;
+                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i)))) {
+                            isFlg = false;
                             break;
+                        }
                     }
                     //取得共享渠道名称
                     if(isFlg)
@@ -464,10 +465,12 @@ public class CmsTaskStockService extends BaseAppService {
      * @param allSeparateCartIdMap
      * @return separatePlatformList
      */
-    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap){
+    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap,String channelId){
         List<Map> separatePlatformList = new ArrayList<>();
-        HashMap<String,String> sq=new HashMap();
-        HashMap<String,String> isAllSq=new HashMap();
+        //取得隔离渠道的名称
+        HashMap<String,String> separateCartName=new HashMap();
+        //取得隔离和共享渠道的名称
+        HashMap<String,String> isAllSeparateCartName=new HashMap();
         //增优先
         String addPriority="";
         //减优先
@@ -495,7 +498,9 @@ public class CmsTaskStockService extends BaseAppService {
                     separatePlatformMap.put("addPriority", allSeparateCartIdMap.get(i).get("addPriority").toString());
                     //减优先
                     separatePlatformMap.put("subtractPriority", allSeparateCartIdMap.get(i).get("subtractPriority").toString());
-                    sq.put(cartId.getValue(),cartId.getName());
+                    //取得隔离渠道的名称
+                    separateCartName.put(cartId.getValue(),cartId.getName());
+                    //取得隔离渠道的数据的集合
                     separatePlatformList.add(separatePlatformMap);
                 }
                 if((cart_id.equals("-1"))){
@@ -505,21 +510,41 @@ public class CmsTaskStockService extends BaseAppService {
                     subtractPriority=allSeparateCartIdMap.get(i).get("subtractPriority").toString();
                 }
             }
-            isAllSq.put(cartId.getValue(),cartId.getName());
+            //取得隔离和共享渠道的名称
+            isAllSeparateCartName.put(cartId.getValue(),cartId.getName());
         }
-        //获取未隔离的名称
-        StringBuffer sbCartName= new StringBuffer();
-        for(Map.Entry<String, String> isAllSqEntry : isAllSq.entrySet()){
-            if(sq.keySet().contains(isAllSqEntry.getKey())){
+        //取得共享渠道下已经隔离的平台
+        List<Integer> shareList = getSeparateCartId(channelId);
+        //取得共享渠道名称
+        StringBuffer shareCartName= new StringBuffer();
+        for(Map.Entry<String, String> isAllSqEntry : isAllSeparateCartName.entrySet()){
+            //隔离渠道
+            if(separateCartName.keySet().contains(isAllSqEntry.getKey())){
                 continue;
             }else{
-                sbCartName.append(isAllSqEntry.getValue()+"|");
+                //共享渠道
+                if(shareList.size()>0){
+                    Boolean isFlg =true;
+                    for(int i=0;i<shareList.size();i++){
+                        if(isAllSqEntry.getKey().equals(String.valueOf(shareList.get(i)))){
+                            isFlg =false;
+                            break;
+                        }
+                    }
+                    //取得共享渠道名称
+                    if(isFlg)
+                        shareCartName.append(isAllSqEntry.getValue()+"|");
+
+                }else{
+                    //取得共享渠道名称
+                    shareCartName.append(isAllSqEntry.getValue()+"|");
+                }
             }
         }
         //取得共享渠道的数据
-        if(sbCartName.toString().length()!=0){
+        if(shareCartName.toString().length()!=0){
             //去掉最后一个|
-            String cartName=sbCartName.substring(0,sbCartName.length()-1);
+            String cartName=shareCartName.substring(0,shareCartName.length()-1);
             //获取隔离和未隔离的数据
             Map<String,String> isNotSeparatePlatformMap  = new HashMap<>();
             //平台id
@@ -557,6 +582,7 @@ public class CmsTaskStockService extends BaseAppService {
         int addPriority=0;
         //减优先顺
         int subtractPriority=allSeparateCartIdMap.size();
+        String revertTime="";
         //循环取得数据反应到初始画面
         for(int i=0;i<allSeparateCartIdMap.size();i++){
             Map<String,String> separatePlatformMap  = new HashMap<>();
@@ -571,6 +597,7 @@ public class CmsTaskStockService extends BaseAppService {
             separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
             // 还原时间
             separatePlatformMap.put("revertTime", allSeparateCartIdMap.get(i).get("revertTime").toString());
+            revertTime=allSeparateCartIdMap.get(i).get("revertTime").toString();
             //活动ID
             if(promotionType.equals(TYPE_PROMOTION_INSERT)){
                 separatePlatformMap.put("promotionId",allSeparateCartIdMap.get(i).get("promotionId").toString());
@@ -596,6 +623,8 @@ public class CmsTaskStockService extends BaseAppService {
             data.put("taskName", name);
         }
         data.put("onlySku", false);
+        //活动的还原时间
+        data.put("revertTime", revertTime);
         return data;
     }
 
@@ -633,8 +662,15 @@ public class CmsTaskStockService extends BaseAppService {
         }
         //判断隔离任务:合更新的场合
         if(promotionType.equals(TYPE_PROMOTION_UPDATE)){
-            //更新的场合
-            updateTasksByPromotionInfo(param);
+            simpleTransaction.openTransaction();
+            try {
+                //更新的场合
+                updateTasksByPromotionInfo(param);
+            }catch (Exception e) {
+                simpleTransaction.rollback();
+                throw e;
+            }
+            simpleTransaction.commit();
         }
     }
     /**
@@ -693,7 +729,6 @@ public class CmsTaskStockService extends BaseAppService {
                 }else{
                     separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString());
                 }
-
                 //还原时间
                 separatePlatformMap.put("revert_time",separatePlatformList.get(i).get("revertTime").toString());
                 //还原标志位
@@ -741,7 +776,10 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private void checkPromotionInfo(Map param, Boolean onlySku) {
         List<Map> separatePlatformList = (List<Map>) param.get("promotionList");
+        //活动名称
         String taskName = (String) param.get("taskName");
+        //活动的还原时间
+        String realRevertTime=(String) param.get("revertTime");
         //任务名称
         if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
             // 任务名称必须输入且长度小于1000
@@ -811,8 +849,25 @@ public class CmsTaskStockService extends BaseAppService {
                 try {
                     format.setLenient(false);
                     format.parse(revertTime);
+                    Date revertDate = format.parse(revertTime);
+                    Date realRevertDate = format.parse(realRevertTime);
+                    if (revertDate.getTime()<realRevertDate.getTime()) {
+                        throw new BusinessException("7000081", realRevertTime);
+                    }
                 } catch (ParseException e){
                     throw new BusinessException("7000013");
+                }
+            }
+            if(type.equals(SHARE_TYPE)){
+                //增优先顺
+                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)||addPriority.getBytes().length>1) {
+                    // 增优先顺必须输入大于0的整数
+                    throw new BusinessException("7000015");
+                }
+                //减优先顺
+                if (StringUtils.isEmpty(subtractPriority)||!StringUtils.isDigit(subtractPriority)||subtractPriority.getBytes().length>1) {
+                    // 减优先顺必须输入大于0的整数
+                    throw new BusinessException("7000016");
                 }
             }
             addPriorityList[i]=Integer.parseInt(String.valueOf(separatePlatformList.get(i).get("addPriority")));

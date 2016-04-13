@@ -25,8 +25,6 @@ import java.util.*;
 @Service
 public class StockInfoService {
 
-//    @Autowired
-//    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 

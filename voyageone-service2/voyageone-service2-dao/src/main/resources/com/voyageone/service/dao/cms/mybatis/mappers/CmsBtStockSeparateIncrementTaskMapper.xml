@@ -51,7 +51,7 @@
             </if>
     </delete>
 
-    <insert id="insert_cms_bt_stock_separate_increment_task_by_taskId" parameterType="HashMap">
+    <insert id="insert_cms_bt_stock_separate_increment_task_by_taskId" parameterType="HashMap" useGeneratedKeys="true" keyProperty="sub_task_id">
         insert into voyageone_cms2.cms_bt_stock_separate_increment_task (
         sub_task_id,
         task_id,

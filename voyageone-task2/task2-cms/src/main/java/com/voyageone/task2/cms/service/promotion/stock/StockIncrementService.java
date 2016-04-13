@@ -346,7 +346,6 @@ public class StockIncrementService extends BaseTaskService {
         if (StockInfoService.TYPE_INCREMENT_BY_RATION.equals(type)) {
             // 原可用库存为0
             if (oldUsableQty == 0) {
-                // TODO 要确认
                 //  实际增量库存 = 实际可用库存
                 incrementQty = usableQty;
             } else {
