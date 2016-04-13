@@ -125,10 +125,46 @@ public class ProductService extends BaseService {
      * @return code list
      */
     public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId) {
+
+        return getProductGroupIdCodesMapByCart(channelId,cartId,null);
+//        Map<String, List<String>> result = new LinkedHashMap<>();
+//
+//        JomgoQuery queryObject = new JomgoQuery();
+//        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+//        queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
+//
+//        Iterator<CmsBtProductModel> productsIt = cmsBtProductDao.selectCursor(queryObject, channelId);
+//        while (productsIt.hasNext()) {
+//            CmsBtProductModel product = productsIt.next();
+//            if (product.getGroups() != null
+//                    && product.getGroups().getPlatforms() != null
+//                    && product.getGroups().getPlatforms().size() > 0) {
+//                Long groupId = product.getGroups().getPlatforms().get(0).getGroupId();
+//                if (groupId != null) {
+//                    if (!result.containsKey(groupId.toString())) {
+//                        result.put(groupId.toString(), new ArrayList<>());
+//                    }
+//                    List<String> listCode = result.get(groupId.toString());
+//                    if (product.getFields() != null) {
+//                        listCode.add(product.getFields().getCode());
+//                    }
+//                }
+//            }
+//        }
+//
+//        return result;
+    }
+
+    public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId, String orgChannelId) {
         Map<String, List<String>> result = new LinkedHashMap<>();
 
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+
+        if(StringUtils.isEmpty(orgChannelId)){
+            queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+        }else{
+            queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + ",\"orgChannelId\":\"" + orgChannelId +"\"}");
+        }
         queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
 
         Iterator<CmsBtProductModel> productsIt = cmsBtProductDao.selectCursor(queryObject, channelId);

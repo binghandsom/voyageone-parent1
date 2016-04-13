@@ -135,7 +135,7 @@
                         <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
                             <div class="form-horizontal form-inline">
                                 <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-                                <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                <button class="btn btn-vo" ng-click="search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
                             </div><!-- .form-inline -->
                         </div>
                     </div>
@@ -171,7 +171,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="vm.feedList.length == 0" style="padding-left:0px"><td colspan="16"><div class="col-sm-12 box-body" if-no-rows="vm.productList.length"></div></td></tr>
+                    <tr ng-if="vm.feedList.length == 0" style="padding-left:0px"><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
                     <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
                         <td class="text-center mfb-xt3">{{$index + 1}}</td>
                         <td  ng-controller="popupCtrl" >
