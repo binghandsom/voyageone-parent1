@@ -4,23 +4,12 @@ import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
