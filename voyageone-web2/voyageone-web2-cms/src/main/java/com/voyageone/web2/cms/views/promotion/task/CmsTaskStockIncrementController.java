@@ -179,6 +179,8 @@ public class CmsTaskStockIncrementController extends CmsController {
     public AjaxResponse saveTask(@RequestBody Map param) {
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
+        //公司平台销售渠道
+        param.put("channel_id", this.getUser().getSelChannelId());
         //调用CmsTaskStockIncrementService
         cmsTaskStockIncrementService.saveIncrementInfoByTaskID(param);
         //返回数据的类型

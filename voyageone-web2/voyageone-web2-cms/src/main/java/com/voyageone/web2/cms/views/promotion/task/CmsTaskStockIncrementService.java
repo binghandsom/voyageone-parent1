@@ -195,9 +195,8 @@ public class CmsTaskStockIncrementService extends BaseAppService {
      * @param subTaskId
      */
     private void insertStockSeparateIncrementByTaskID(Map param, String subTaskId) {
-
         //channelID
-        String channelID =param.get("").toString();
+        String channelID =param.get("channel_id").toString();
         //根据channelID取得可用的库存
         Map<String, Integer> skuStockUsableAll =cmsTaskStockService.getUsableStock(channelID);
         //根据任务ID和CartId取得该平台下的SKU
@@ -215,11 +214,15 @@ public class CmsTaskStockIncrementService extends BaseAppService {
      */
     private  HashMap<String,Object>  getStockSeparateItemSkuByIncrementInfo(Map param, Map<String, Integer> skuStockUsableAll, String subTaskId){
         Map<String, Object> sqlParam = new HashMap<>();
-        sqlParam.put("taskId", param.get(""));
-        sqlParam.put("cartId", param.get(""));
+        //任务ID
+        sqlParam.put("taskId", param.get("incrementTaskId"));
+        //平台id
+        sqlParam.put("cartId", param.get("incrementCartId"));
+        //增量类型
         String incrementType=param.get("incrementType").toString();
+        //增量值
         String incrementValue=param.get("incrementValue").toString();
-        List<Map<String, Object>> skuList= cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+
         HashMap<String,Object> skuMap=  new HashMap();
         HashMap<String,Object> skuPro=  new HashMap();
         //隔离比例
@@ -228,19 +231,22 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         String usableStockInt;
         //增量库存
         int incrementQty;
+        //取得隔离渠道SKU
+        List<Map<String, Object>> skuList= cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+
         for(int i=0;i<skuList.size();i++){
             //取得对应的活动product_sku
-            String product_sku =skuList.get(i).get("product_sku").toString();
+            String product_sku =skuList.get(i).get("sku").toString();
             //增量任务ID
             skuPro.put("sub_task_id",subTaskId);
             //销售渠道
-            skuPro.put("channel_id","");
+            skuPro.put("channel_id",skuList.get(i).get("channel_id").toString());
             //产品model
-            skuPro.put("product_model","");
+            skuPro.put("product_model",skuList.get(i).get("product_model").toString());
             //产品code
-            skuPro.put("product_code","");
+            skuPro.put("product_code",skuList.get(i).get("product_code").toString());
             //产品Sku
-            skuPro.put("sku","");
+            skuPro.put("sku",product_sku);
             if(skuStockUsableAll.keySet().contains(product_sku)){
                 //可用库存(取得可用库存)
                 usableStockInt=String.valueOf(skuStockUsableAll.get(product_sku));
@@ -250,34 +256,33 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                 throw new BusinessException("7000019", product_sku);
             }
             //数值增量
-            if(incrementType.equals("incrementCount")){
-                skuPro.put("separate_qty", Integer.parseInt(incrementValue));
+            if(incrementType.equals(TYPE_INCREMENT_COUNT)){
+                skuPro.put("increment_qty", Integer.parseInt(incrementValue));
             }
             //百分比增量
-            if(incrementType.equals("incrementPercent")){
+            if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
                 //隔离库存比例
                 separate_percent=Integer.parseInt(incrementValue);
                 //隔离库存
                 incrementQty=Math.round((Long.parseLong(usableStockInt)*separate_percent)/100);
-                skuPro.put("separate_qty", incrementQty);
+                skuPro.put("increment_qty", incrementQty);
             }
             //属性1（品牌）
-            skuPro.put("property1","");
+            skuPro.put("property1",skuList.get(i).get("property1").toString());
             //属性2（英文短描述）
-            skuPro.put("property2","");
+            skuPro.put("property2",skuList.get(i).get("property2").toString());
             //属性3（性别）
-            skuPro.put("property3","");
+            skuPro.put("property3",skuList.get(i).get("property3").toString());
             //属性4（SIZE）
-            skuPro.put("property4","");
+            skuPro.put("property4",skuList.get(i).get("property4").toString());
             //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
-            skuPro.put("status","");
+            skuPro.put("status","0");
             //0：按动态值进行增量隔离； 1：按固定值进行增量隔离
-            skuPro.put("fix_flg","");
+            skuPro.put("fix_flg",incrementValue);
             //创建者
-            skuPro.put("creater","");
+            skuPro.put("creater",param.get("userName").toString());
             //更新者
-            skuPro.put("modifier","");
-
+            skuPro.put("modifier",param.get("userName").toString());
             skuMap.put(product_sku,skuPro);
         }
         return skuMap;

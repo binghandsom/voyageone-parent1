@@ -498,7 +498,7 @@ public class CmsTaskStockService extends BaseAppService {
                     //减优先
                     separatePlatformMap.put("subtractPriority", allSeparateCartIdMap.get(i).get("subtractPriority").toString());
                     //取得隔离渠道的名称
-                    isAllSeparateCartName.put(cartId.getValue(),cartId.getName());
+                    separateCartName.put(cartId.getValue(),cartId.getName());
                     //取得隔离渠道的数据的集合
                     separatePlatformList.add(separatePlatformMap);
                 }
