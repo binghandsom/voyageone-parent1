@@ -79,6 +79,7 @@ public class StockSeparateService extends BaseTaskService {
 
         Map<String, Object> param = new HashMap<>();
         param.put("status", stockInfoService.STATUS_WAITING_SEPARATE);
+//        param.put("taskId", 33);
 
         $info("开始取得等待隔离数据");
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);

@@ -752,28 +752,30 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         List<String> propertyList = new ArrayList<String>();
         int index = 3;
-        for (; index <= 6; index++) {
-            String comment = getCellCommentValue(row, index);
-            if (StringUtils.isEmpty(comment)) {
-                // 注解为空
-                if (propertyList.size() > 0) {
-                    // 已经有属性列，属性列结束
-                    break;
-                } else {
-                    // 没有属性列，此列也不是属性列，错误Excel
-                    throw new BusinessException(messageModelErr);
+        if (listPropertyKey.size() > 0) {
+            for (; index <= 6; index++) {
+                String comment = getCellCommentValue(row, index);
+                if (StringUtils.isEmpty(comment)) {
+                    // 注解为空
+                    if (propertyList.size() > 0) {
+                        // 已经有属性列，属性列结束
+                        break;
+                    } else {
+                        // 没有属性列，此列也不是属性列，错误Excel
+                        throw new BusinessException(messageModelErr);
+                    }
                 }
-            }
-            if (!listPropertyKey.contains(comment)) {
-                // 注解不是设定属性
-                throw new BusinessException(messageModelErr);
-            } else {
-                // 注解是设定属性
-                if (propertyList.contains(comment)) {
-                    // 已经存在相同属性列
+                if (!listPropertyKey.contains(comment)) {
+                    // 注解不是设定属性
                     throw new BusinessException(messageModelErr);
                 } else {
-                    propertyList.add(comment);
+                    // 注解是设定属性
+                    if (propertyList.contains(comment)) {
+                        // 已经存在相同属性列
+                        throw new BusinessException(messageModelErr);
+                    } else {
+                        propertyList.add(comment);
+                    }
                 }
             }
         }

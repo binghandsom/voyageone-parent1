@@ -73,9 +73,9 @@ public class StockRevertService extends BaseTaskService {
 //        param.put("taskId", 10);
 //        param.put("channelId", "066");
 
-        $info("开始取得等待隔离数据");
+        $info("开始取得等待还原数据");
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
-        $info("等待隔离数据取得完毕. %d件", resultData.size());
+        $info("等待还原数据取得完毕. %d件", resultData.size());
 
         // 按渠道,sku整理Map<channelId, Map<sku,resultData>>
         Map<String, Map<String, List<Map<String, Object>>>> resultDataByChannel = new HashMap<>();
