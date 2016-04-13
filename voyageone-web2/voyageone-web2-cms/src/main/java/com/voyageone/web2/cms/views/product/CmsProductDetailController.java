@@ -29,13 +29,15 @@ public class CmsProductDetailController extends CmsController{
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
 
         String channelId = getUser().getSelChannelId();
+        int cartId = (int) getCmsSession().getPlatformType().get("cartId");
+        Map<String, Object> categoryInfo = new HashMap<>();
 
-        Map<String,Object> categoryInfo = new HashMap<>();
-
-        CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId,getLang());
+        Map productInfo = productPropsEditService.getProductInfo(channelId, productId, cartId, getLang());
         List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(channelId, productId);
         categoryInfo.put("inventoryList", inventoryList);
-        categoryInfo.put("productInfo", productInfo);
+        categoryInfo.put("productInfo", productInfo.get("productInfo"));
+        productInfo.remove("productInfo");
+        categoryInfo.putAll(productInfo);
 
         return success(categoryInfo);
     }

@@ -2,6 +2,8 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
@@ -60,7 +62,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
+    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
@@ -114,6 +116,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
+        // 判断是否是minimall用户
+        boolean isMiniMall = userInfo.getSelChannelId().equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        masterData.put("isminimall", isMiniMall ? 1 : 0);
+        if (isMiniMall) {
+            masterData.put("channelList", Channels.getUsJoiChannelList());
+        }
+
         return masterData;
     }
 
@@ -160,7 +169,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 inStr.append("]}");
 
                 JomgoQuery queryObj = new JomgoQuery();
-                queryObj.setProjection("{'prodId':1,'_id':0}");
+                queryObj.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
                 queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + cartId + ",'groupId':" + inStr.toString() + "}}}");
 
                 List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
@@ -196,7 +205,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
             if (ptmList != null) {
                 for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
+                    if (ptmObj.getCartId() == cartId) {
                         grpId = ptmObj.getGroupId();
                         break;
                     }
@@ -240,7 +249,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
     public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
         List[] rslt = null;
         List<List<Map<String, String>>> imgList = new ArrayList<List<Map<String, String>>>();
-        List<Map<String, Integer>> chgFlgList = new ArrayList<Map<String, Integer>>();
+        List<Integer> chgFlgList = new ArrayList<Integer>();
+        List<Integer> mainFlgList = new ArrayList<Integer>();
+        List<String> orgChaNameList = new ArrayList<String>();
 
         JomgoQuery queryObj = new JomgoQuery();
         if (hasImgFlg) {
@@ -250,8 +261,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
             rslt[1] = imgList;
         } else {
             queryObj.setProjection("{'fields.images1':1,'_id':0}");
-            rslt = new List[1];
+            rslt = new List[3];
             rslt[0] = chgFlgList;
+            rslt[1] = mainFlgList;
+            rslt[2] = orgChaNameList;
         }
 
         for (CmsBtProductModel groupObj : groupsList) {
@@ -259,11 +272,23 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
             if (ptmList != null) {
                 for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
+                    if (ptmObj.getCartId() == cartId) {
                         grpId = ptmObj.getGroupId();
+                        if (ptmObj.getIsMain()) {
+                            mainFlgList.add(1);
+                        } else {
+                            mainFlgList.add(0);
+                        }
                         break;
                     }
                 }
+            }
+
+            ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
+            if (channel == null) {
+                orgChaNameList.add("");
+            } else {
+                orgChaNameList.add(channel.getFullName());
             }
 
             boolean hasChg = false;
@@ -292,13 +317,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     }
                 }
 
-                Map<String, Integer> map = new HashMap<String, Integer>(1);
                 if (hasChg) {
-                    map.put("_chgFlg", 1);
+                    chgFlgList.add(1);
                 } else {
-                    map.put("_chgFlg", 0);
+                    chgFlgList.add(0);
                 }
-                chgFlgList.add(map);
                 imgList.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -331,13 +354,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
             imgList.add(images1Arr);
 
-            Map<String, Integer> map = new HashMap<String, Integer>(1);
             if (hasChg) {
-                map.put("_chgFlg", 1);
+                chgFlgList.add(1);
             } else {
-                map.put("_chgFlg", 0);
+                chgFlgList.add(0);
             }
-            chgFlgList.add(map);
         }
         return rslt;
     }
@@ -438,7 +459,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
 
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
 
         // 设置platform检索条件
         StringBuilder resultPlatforms = new StringBuilder();
@@ -455,16 +476,20 @@ public class CmsSearchAdvanceService extends BaseAppService {
             resultPlatforms.append(",");
         }
 
-        // 获取publishTime start
-        if (searchValue.getPublishTimeStart() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
-            resultPlatforms.append(",");
-        }
-
-        // 获取publishTime End
-        if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
-            resultPlatforms.append(",");
+        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
+            resultPlatforms.append("\"publishTime\":{" );
+            // 获取publishTime start
+            if (searchValue.getPublishTimeStart() != null) {
+                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+            }
+            // 获取publishTime End
+            if (searchValue.getPublishTimeTo() != null) {
+                if (searchValue.getPublishTimeStart() != null) {
+                    resultPlatforms.append(",");
+                }
+                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+            }
+            resultPlatforms.append("},");
         }
 
         if (isMain) {
@@ -521,16 +546,20 @@ public class CmsSearchAdvanceService extends BaseAppService {
             result.append(",");
         }
 
-        // 获取createdTime start
         if (searchValue.getCreateTimeStart() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart() + " 00.00.00", "$gte"));
-            result.append(",");
-        }
-
-        // 获取createdTime End
-        if (searchValue.getCreateTimeTo() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo() + " 23.59.59", "$lte"));
-            result.append(",");
+            result.append("\"created\":{" );
+            // 获取createdTime start
+            if (searchValue.getCreateTimeStart() != null) {
+                result.append(MongoUtils.splicingValue("$gte", searchValue.getCreateTimeStart() + " 00.00.00"));
+            }
+            // 获取createdTime End
+            if (searchValue.getCreateTimeTo() != null) {
+                if (searchValue.getCreateTimeStart() != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", searchValue.getCreateTimeTo() + " 23.59.59"));
+            }
+            result.append("},");
         }
 
         // 获取inventory
@@ -636,6 +665,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
         String transFlg = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTransStsFlg());
         if (transFlg != null) {
             result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            result.append(",");
+        }
+
+        // MINI MALL 店铺时查询原始CHANNEL
+        if (searchValue.getOrgChaId() != null && !"000".equals(searchValue.getOrgChaId())) {
+            result.append(MongoUtils.splicingValue("orgChannelId", searchValue.getOrgChaId()));
             result.append(",");
         }
 
