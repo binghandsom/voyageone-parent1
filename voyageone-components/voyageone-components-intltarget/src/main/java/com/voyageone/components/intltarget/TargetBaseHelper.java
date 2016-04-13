@@ -12,6 +12,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -31,56 +33,79 @@ import java.util.Map;
 @EnableRetry
 public class TargetBaseHelper {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final static String HTTP_HEAD_ACCEPT = "application/json";
+
     private static String api_token;
 
     /**
      * 调用Target api 失败重试
+     *
      * @param api_url api路径
      * @param mapBody api请求body
      * @return 返回jsonstring
      * @throws Exception
      */
     @Retryable
-    public String callTargetApi(String api_url,Map mapBody,boolean isNeedToken) throws Exception {
-        if(isNeedToken&&StringUtils.isEmpty(api_token)) refreshToken();//校验token
-        String result = HttpUtils.post(ThirdPartyConfigs.getVal1("018", "api_url") + api_url, JacksonUtil.bean2Json(mapBody), "application/json", api_token);
-        checkResult(result,isNeedToken); //检查结果
+    public String callTargetApi(String api_url, Map mapBody, boolean isNeedToken) throws Exception {
+        if (isNeedToken && StringUtils.isEmpty(api_token)) {
+            refreshToken();//校验token
+        }
+        String result = HttpUtils.post(getConfigApiUrl("api_url") + api_url,
+                JacksonUtil.bean2Json(mapBody), HTTP_HEAD_ACCEPT, api_token);
+
+        //检查结果
+        checkResult(result, isNeedToken);
         return result;
     }
 
     /**
      * 检查返回结果是否合法
-     * @param result 结果jsonString
+     *
+     * @param result      结果jsonString
      * @param isNeedToken 是否需要token
      * @throws Exception
      */
-    private void checkResult(String result,boolean isNeedToken) throws Exception {
-        if(     /*需要token*/isNeedToken
-                &&/*包含Error，尝试进行异常解析*/result.contains("Error")
-                &&(/*第一次获取到的token*/(result.contains("Forbidden")
-                &&result.contains("SCOPE_1_ACCESS_LEVEL_REQUIRED"))
-                ||/*其他无效token*/(result.contains("Unauthorized")
-                &&result.contains("Invalid access token")))) refreshToken();
+    private void checkResult(String result, boolean isNeedToken) throws Exception {
+        //需要token 包含Error
+        if (isNeedToken && result.contains("Error")) {
+            logger.warn("checkResult:=" + result);
+            /*第一次获取到的token Forbidden*/
+            if (result.contains("Forbidden") && result.contains("SCOPE_1_ACCESS_LEVEL_REQUIRED")) {
+                refreshToken();
+                throw new RuntimeException("刷新token");
+            /*其他无效token*/
+            } else if (result.contains("Unauthorized") && result.contains("Invalid access token")) {
+                refreshToken();
+                throw new RuntimeException("刷新token");
+            }
+        }
     }
 
     /**
      * 刷新token
+     *
      * @throws Exception
      */
     private void refreshToken() throws Exception {
+        String url = getConfigApiUrl("api_url") + "/guests/v3/auth?key=" + getConfigApiUrl("app_key");
+        String body = JacksonUtil.bean2Json(new HashMap<String, String>() {{
+            put("logonId", getConfigApiUrl("logonId"));
+            put("logonPassword", getConfigApiUrl("logonPassword"));
+        }});
+        String reponseStr  = HttpUtils.post(
+                url,
+                body,
+                "application/json",
+                null
+                );
+
         //重新赋值
-        api_token = (String) JacksonUtil
-                .jsonToMap(
-                        HttpUtils.post(
-                                ThirdPartyConfigs.getVal1("018", "api_url") + "/guests/v3/auth?key=" + ThirdPartyConfigs.getVal1("018", "app_key"),
-                                JacksonUtil.bean2Json(new HashMap<String, String>() {{
-                                    put("logonId", ThirdPartyConfigs.getVal1("018", "logonId"));
-                                    put("logonPassword", ThirdPartyConfigs.getVal1("018", "logonPassword"));
-                                }}),
-                                "application/json",
-                                null
-                        )
-                ).get("accessToken");
-        throw new RuntimeException("刷新token");
+        api_token = (String)JacksonUtil.jsonToMap(reponseStr).get("accessToken");
+    }
+
+    private String getConfigApiUrl(String key) {
+        return ThirdPartyConfigs.getVal1("018", key);
     }
 }

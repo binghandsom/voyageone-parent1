@@ -2,12 +2,11 @@ package com.voyageone.components.intltarget.service;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.intltarget.TargetBase;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestAccount;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestAccountRequest;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddress;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddressRequest;
+import com.voyageone.components.intltarget.bean.guest.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * @author aooer 2016/4/8.
@@ -25,7 +24,7 @@ public class TargetGuestService extends TargetBase{
      * @throws Exception
      */
     public TargetGuestShippingAddress getGuestShippingAddress(TargetGuestShippingAddressRequest request) throws Exception {
-        return getApiResponseWithKey("/v3/addresses",request,TargetGuestShippingAddress.class,true);
+        return getApiResponseWithKey(Url+"/v3/addresses",request,TargetGuestShippingAddress.class,true);
     }
 
     /**
@@ -35,20 +34,25 @@ public class TargetGuestService extends TargetBase{
      * @throws Exception
      */
     public TargetGuestAccount createGuestAccount(TargetGuestAccountRequest request) throws Exception {
-        return getApiResponseWithKey("/v3",request,TargetGuestAccount.class,false);
+        return getApiResponseWithKey(Url+"/v3",request,TargetGuestAccount.class,false);
     }
 
     /**
-     * 获取api响应包含key
-     * @param url api路径
-     * @param reqdata 请求数据
-     * @param clazz 返回对象类型
-     * @param <E> 返回对象
-     * @return response
+     * 添加支付卡
+     * @param request 请求信息
+     * @return 支付卡信息
+     * @throws Exception
      */
-    private <E> E getApiResponseWithKey(String url,Object reqdata,Class<E> clazz,boolean isNeedToken) throws Exception {
-        String result=reqTargetApi(Url+url,JacksonUtil.jsonToMap(JacksonUtil.bean2Json(reqdata)),true,isNeedToken);
-        return StringUtils.isEmpty(result)?null: JacksonUtil.json2Bean(result,clazz);
+    public TargetGuestPaymentTender addGuestPaymentTender(TargetGuestPaymentTenderRequest request) throws Exception {
+        String result=reqTargetApi(Url+"/v3/tenders?type="+request.getType(),JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request)),true,true);
+        TargetGuestPaymentTender tender=new TargetGuestPaymentTender();
+        if(result.contains("CheckoutProfile"))
+            tender.setCheckoutProfile((List<TargetGuestPaymentProtocolData>) JacksonUtil.jsonToMap(result).get("CheckoutProfile"));
+        if(result.contains("contact"))
+            tender.setContact((List<TargetGuestPaymentContactAddress>) JacksonUtil.jsonToMap(result).get("contact"));
+        return tender;
     }
+
+
 
 }

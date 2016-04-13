@@ -1,10 +1,8 @@
 package com.voyageone.components.intltarget.service;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestAccount;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestAccountRequest;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddress;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddressRequest;
+import com.voyageone.components.intltarget.bean.guest.*;
+import com.voyageone.components.intltarget.enums.TargetGuestPaymentType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +57,33 @@ public class TargetGuestServiceTest {
         request.setSendMeEmail("false");
         TargetGuestAccount account=targetGuestService.createGuestAccount(request);
         System.out.println(JacksonUtil.bean2Json(account));
+    }
+
+    @Test
+    public void testAddGuestPaymentTender() throws Exception {
+
+        TargetGuestPaymentTenderRequest request=new TargetGuestPaymentTenderRequest();
+        request.setType(TargetGuestPaymentType.PC);
+        request.setCardNumber("371449635398431");
+        request.setCardName("smith");
+        request.setCardNickName("payment");
+        request.setCardType("American Express");
+        request.setExpiryMonth("5");
+        request.setExpiryYear("2020");
+        request.setDefaultPayment("Y");
+        request.setFirstName("john");
+        request.setMiddleName("a");
+        request.setLastName("smith");
+        request.setAddressLine(Arrays.asList("416 Water st.","Water St"));
+        request.setCity("New york");
+        request.setState("NY");
+        request.setZipCode("12345");
+        request.setPhone("9856895623");
+        request.setPhoneType("Home");
+        request.setSkipAddressValidation("Y");
+
+        TargetGuestPaymentTender tender=targetGuestService.addGuestPaymentTender(request);
+        System.out.println(JacksonUtil.bean2Json(tender));
+
     }
 }
