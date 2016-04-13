@@ -16,6 +16,17 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private Long prodId;
     private String catId;
     private String catPath;
+    private String orgChannelId;
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    private String platformName;
 
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
     private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
@@ -23,6 +34,15 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private List<String> tags = new ArrayList<>();
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
+
+    public String getOrgChannelId() {
+
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
+    }
 
     public CmsBtProductModel() {
     }

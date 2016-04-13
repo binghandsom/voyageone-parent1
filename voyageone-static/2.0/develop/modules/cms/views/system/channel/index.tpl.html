@@ -1,0 +1,112 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="container-fluid m-l-md m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="vm.searchInfo.catName">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="vm.searchInfo.catId">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control">
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-sm">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                                    <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <table class="table table-hover-new text-center table-bordered">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width:7%" translate="TXT_SEQ"></th>
+                    <th class="text-center" style="width:8%" translate="TXT_CHANNEL_ID"></th>
+                    <th class="text-center" style="width:10%" translate="TXT_NAME"></th>
+                    <th class="text-center" style="width:30%" translate="TXT_FULL_NAME"></th>
+                    <th class="text-center" style="width:25%" translate="TXT_ALLOW_USJOI"></th>
+                    <th class="text-center" style="width:20%" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>010</td>
+                    <td>SC</td>
+                    <td>ShoeCity</td>
+                    <td>
+                        <label class="col-sm-12">
+                            <div class="col-sm-5 col-sm-offset-3">
+                            <small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;创建时间:2015-12-18 11:14:46&quot;,&quot;发布时间:2015-11-12 16:19:00&quot;,&quot;销售时间:2015-11-18 16:19:00&quot;])" popover-trigger="mouseenter" popover-placement="top" class="ng-scope">
+                                <div class="table_main">
+                                    <ul>
+                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span class="ng-binding">Yes</span></div>
+                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span>No</span></div>
+                                    </ul>
+                                </div>
+                            </small>
+                            <div class="col-sm-3">
+                                <div tooltip-animation-class="fade" uib-tooltip-classes="" ng-class="{ in: isOpen() }" popover-html-popup="" title="" content-exp="contentExp()" placement="left" popup-class="" animation="animation" is-open="isOpen" origin-scope="origScope" style="visibility: visible; display: block; top: 550px; left: 827px;" class="ng-isolate-scope left fade popover in">
+                                    <div class="arrow"></div>
+                                    <div class="popover-inner">
+                                        <!-- ngIf: title -->
+                                        <div>创建时间:2015-12-18 11:14:46<br>发布时间:2015-11-12 16:19:00<br>销售时间:2015-11-18 16:19:00<br></div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </label>
+                    </td>
+                    <td ng-controller="popupCtrl">
+                        <button class="btn btn-success btn-xs ng-scope" ng-click="openChannelSetting('')"><i class="fa fa-pencil"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <vpagination config="categoryPageOption" total="{{categoryPageOption.total}}"></vpagination>
+        </div><!-- /.box-body -->
+    </div>
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

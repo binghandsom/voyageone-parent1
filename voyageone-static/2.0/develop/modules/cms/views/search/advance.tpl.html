@@ -12,7 +12,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
 							<div class="col-sm-8">
-								<select search-contains="true" class="form-control" chosen ng-model="vm.searchInfo.catId" ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
+								<select search-contains="true" class="form-control" chosen ng-model="vm.searchInfo.catPath" ng-options="category.catPath as category.catPath for category in vm.masterData.categoryList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
 							</div>
@@ -57,6 +57,10 @@
 										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
+								<select class="form-control" ng-model="option.inputOpts"
+										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
+									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+								</select>
 								<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>
 								<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
 								<button ng-if="$last" id="addCustDiv" class="btn btn-success" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
@@ -65,7 +69,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" >查询价格变动</label>
 							<div class="col-sm-8">
-								<div class="col-sm-5">
+								<div style="width:150px">
 									<select class="form-control" ng-model="vm.searchInfo.priceChgFlg">
 										<option value="0" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										<!--<option value="1">涨价</option>-->
@@ -164,6 +168,17 @@
 								<!--</label>-->
 							</div>
 						</div>
+						<div class="form-group" ng-if="vm.masterData.isminimall == 1">
+							<label class="col-sm-3 control-label">Original Channel</label>
+							<div class="col-sm-8 form-inline" style="padding-left:0px">
+								<div class="col-sm-5">
+									<select class="form-control" style="width:150px" ng-model="vm.searchInfo.orgChaId"
+											ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
 					</div><!-- .form-group -->
 				</div>
 				<div class="col-sm-4">
@@ -176,7 +191,6 @@
 									<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
 								</div>
 							</div>
-
 						</div>
 						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
@@ -290,6 +304,7 @@
 				<button class="btn btn-default" ng-click="openBulkUpdate('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)"><i class="fa fa-pencil-square"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
 				<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
 			</div><!-- /right-btn -->
+
 			<!--tab-->
 			<tab ng-click="vm.currTab = 'group'">
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
@@ -360,11 +375,11 @@
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})"
 											popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
 										{{groupInfo.groups.priceSale}}
-									</button><label ng-if="groupInfo.grpProdChgInfo._chgFlg == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+									</button><label ng-if="groupInfo._grpProdChgInfo == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 								</td>
 								<td class="text-left" style="display:inline-block;width:150px;">{{groupInfo.fields.brand}}</td>
-								<td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop1.value}}</td>
-								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop2.value}}</td>
+								<td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop1.value}}</td>
+								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
 
 								<td class="text-left" style="display:inline-block;width:150px;">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
@@ -406,6 +421,7 @@
 							<td class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></td>
 							<td class="text-center" translate="TXT_INVENTORY" style="display:inline-block;width:85px;padding-left:8px"></td>
 							<td class="text-center" translate="TXT_SALE_PRICE" style="display:inline-block;width:150px;padding-left:8px"></td>
+							<td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
 							<th class="text-left" ng-repeat="prop2 in vm.customProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}</th>
 							<td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
@@ -426,6 +442,8 @@
 										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
+										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo._prodMnFlg == 1">&nbsp;M&nbsp;</span>
+										<span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="productInfo.groups.platforms[0].numIId"></a>
 									    </span>&nbsp;
@@ -456,10 +474,11 @@
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})"
 												popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
 											{{productInfo.priceSale}}
-										</button><label ng-if="productInfo.prodChgInfo._chgFlg == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+										</button><label ng-if="productInfo._prodChgInfo == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 									</td>
-									<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop1.value}}</td>
-									<td class="text-left m-t-lg" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop2.value}}</td>
+									<td class="text-left m-t-lg" style="display:inline-block;width:180px; height:97px;">{{productInfo.platformName}}</td>
+									<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop1.value}}</td>
+									<td class="text-left m-t-lg" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
 									<td class="text-center m-t-lg" style="display:inline-block;width:165px; height:97px;">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>

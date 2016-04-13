@@ -47,7 +47,7 @@ define([
         function initialize () {
             // 如果来至category 或者 header的检索,将初始化检索条件
             if ($routeParams.type == "1") {
-                $scope.vm.searchInfo.catId = $routeParams.value;
+                $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
             } else if ($routeParams.type == "2") {
                 $scope.vm.searchInfo.codeList = $routeParams.value;
             }
@@ -87,12 +87,6 @@ define([
             // 默认设置成第一页
             $scope.vm.groupPageOption.curr = 1;
             $scope.vm.productPageOption.curr = 1;
-            // 对应根据父类目检索
-            var catInfo = _getCatPath($scope.vm.searchInfo.catId);
-            if (catInfo)
-                $scope.vm.searchInfo.catPath = catInfo.catPath;
-            else
-                $scope.vm.searchInfo.catPath = null;
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
             searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
@@ -123,7 +117,7 @@ define([
                 for (idx in $scope.vm.groupList) {
                     var grpObj = $scope.vm.groupList[idx];
                     grpObj.grpImgList = res.data.grpImgList[idx];
-                    grpObj.grpProdChgInfo = res.data.grpProdChgInfoList[idx];
+                    grpObj._grpProdChgInfo = res.data.grpProdChgInfoList[idx];
                 }
 
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -152,7 +146,9 @@ define([
                 });
                 for (idx in $scope.vm.productList) {
                     var prodObj = $scope.vm.productList[idx];
-                    prodObj.prodChgInfo = res.data.prodChgInfoList[idx];
+                    prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
+                    prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
+                    prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 }
 
                 $scope.vm.productPageOption.total = res.data.productListTotal;
@@ -160,7 +156,7 @@ define([
 
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 1150) + 'px';
             })
         }
 
@@ -201,6 +197,11 @@ define([
                     });
                     groupInfo.custArr = custArr;
                 });
+                for (idx in $scope.vm.groupList) {
+                    var grpObj = $scope.vm.groupList[idx];
+                    grpObj.grpImgList = res.data.grpImgList[idx];
+                    grpObj._grpProdChgInfo = res.data.grpProdChgInfoList[idx];
+                }
             });
         }
 
@@ -234,6 +235,12 @@ define([
                     });
                     prodInfo.custArr = custArr;
                 });
+                for (idx in $scope.vm.productList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
+                    prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
+                    prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
+                }
             });
         }
 
@@ -297,10 +304,6 @@ define([
             } else {
                 alert("最少保留一项")
             }
-        }
-
-        function _getCatPath (catId) {
-            return _.findWhere($scope.vm.masterData.categoryList, {catId: catId});
         }
 
     };

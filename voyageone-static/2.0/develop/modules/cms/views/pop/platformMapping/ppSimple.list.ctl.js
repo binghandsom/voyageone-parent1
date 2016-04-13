@@ -122,7 +122,7 @@ define([
                     }
 
                     // 是 Text 但未命中的话, 也为空
-                    lineEnds[i] = {type: 3, value: null};
+                    lineEnds[i - 1] = {type: 3, value: null};
                 }
             },
             /**
