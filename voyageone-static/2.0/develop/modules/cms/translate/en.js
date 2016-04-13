@@ -355,7 +355,8 @@ define(function() {
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
         "TXT_PROMOTION_DISCOUNT": "Promotion discount",
-
+         "TXT_Do_You_Want_To_Update_ All":"Do you want to  update all",
+        "TXT_Do_You_Want_To_Selected":"Do you want to update the selected",
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",
         "BEATING": "Running",

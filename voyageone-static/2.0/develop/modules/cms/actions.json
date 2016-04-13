@@ -131,7 +131,9 @@
         "delete": "delete",
         "updateDealPrice": "updateDealPrice",
         "deleteByPromotionId":"deleteByPromotionId",
-        "deleteByProductIdList":"deleteByProductIdList"
+        "deleteByProductIdList":"deleteByProductIdList",
+        "jmNewUpdateAll":"jmNewUpdateAll",
+        "jmNewByProductIdListInfo":"jmNewByProductIdListInfo"
       }
     },
     "cmsBtJmPromotionImportTask":{

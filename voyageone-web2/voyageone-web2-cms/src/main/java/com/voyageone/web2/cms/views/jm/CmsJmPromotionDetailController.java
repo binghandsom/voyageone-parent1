@@ -59,16 +59,33 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
+    //全部删除
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
     public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
         serviceCmsBtJmPromotionProduct.deleteByPromotionId(promotionId);
         CallResult result = new CallResult();
         return success(result);
     }
+    //部分商品删除
     ///cms/jmpromotion/detail/deleteByProductIdList
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPRODUCTIDLIST)
-    public  AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
+    public AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
         serviceCmsBtJmPromotionProduct.deleteByProductIdList(parameter);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+    //所有未上新商品上新
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
+    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
+        serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+    //部分商品上新
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
+    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
+        serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
         CallResult result = new CallResult();
         return success(result);
     }

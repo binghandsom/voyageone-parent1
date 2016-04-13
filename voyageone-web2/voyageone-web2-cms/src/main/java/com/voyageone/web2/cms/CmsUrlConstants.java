@@ -55,6 +55,8 @@ public interface CmsUrlConstants {
                 String GET = "get";
                 String DELETEBYPPROMOTIONID="deleteByPromotionId";
                 String DELETEBYPRODUCTIDLIST="deleteByProductIdList";
+                String JmNewUpdateAll="jmNewUpdateAll";
+                String JmNewByProductIdListInfo="jmNewByProductIdListInfo";
             }
         }
     }
