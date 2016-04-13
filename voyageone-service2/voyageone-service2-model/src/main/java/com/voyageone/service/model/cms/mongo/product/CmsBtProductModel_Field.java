@@ -243,6 +243,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("priceChange", priceChange);
     }
 
+    // clientProductUrl 官方网站链接
+    public String getClientProductUrl() {
+        return getAttribute("clientProductUrl");
+    }
+
+    public void setClientProductUrl(String clientProductUrl) {
+        setAttribute("clientProductUrl", clientProductUrl);
+    }
+
     //商品图片
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
         List<CmsBtProductModel_Field_Image> result = null;
