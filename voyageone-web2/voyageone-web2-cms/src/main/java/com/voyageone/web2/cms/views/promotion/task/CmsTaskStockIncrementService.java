@@ -348,7 +348,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                 allSku.clear();
             }
         }
-        if (allSku.size() > 500) {
+        if (allSku.size() > 0) {
             cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemByList(allSku);
             allSku.clear();
         }

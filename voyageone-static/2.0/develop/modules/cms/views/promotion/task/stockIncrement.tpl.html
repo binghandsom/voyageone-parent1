@@ -65,7 +65,7 @@
 								<a href="#/promotion/task_stock_increment_detail/{{task.subTaskId}}" target="_blank"><button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}</button></a>
 							</td>
 							<td class="text-center">
-								<button title="{{'BTN_EDIT' | translate}}" ng-click="$ctrl.editTask(task.subTaskId)" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>
+								<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md',task)"><i class="fa fa-pencil"></i></button>
 								<button title="{{'BTN_DELETE' | translate}}" ng-click="$ctrl.delTask(task.subTaskId)" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>
