@@ -116,6 +116,19 @@ public class PromotionService extends BaseService {
     }
 
     /**
+     * 根据PromotionId查询
+     *
+     * @param promotionId int
+     * @return CmsBtPromotionModel
+     */
+    public CmsBtPromotionModel getByPromotionIdOrgChannelId(int promotionId, String orgChannelId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("promotionId", promotionId);
+        params.put("orgChannelId",orgChannelId);
+        return cmsBtPromotionDao.selectById(params);
+    }
+
+    /**
      * 根据条件查询
      *
      * @param params Map

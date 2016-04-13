@@ -29,9 +29,10 @@ public class PromotionCodeService extends BaseService {
         return cmsBtPromotionCodeDao.selectPromotionCodeListCnt(params);
     }
 
-    public List<CmsBtPromotionCodeModel> getPromotionCodeListBySkus(int promotionId){
+    public List<CmsBtPromotionCodeModel> getPromotionCodeListByIdOrgChannelId(int promotionId, String orgChannelId){
         Map<String, Object> params = new HashMap<>();
         params.put("promotionId", promotionId);
+        params.put("orgChannelId",orgChannelId);
         return cmsBtPromotionCodeDao.selectPromotionCodeSkuList(params);
     }
 
