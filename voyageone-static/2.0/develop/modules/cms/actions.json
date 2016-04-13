@@ -156,7 +156,8 @@
         "addImage": "insert",
         "saveImage": "update",
         "deleteImage": "delete",
-        "updateJMImg": "updateJMImg"
+        "updateJMImg": "updateJMImg",
+        "getCountByWhere":"getCountByWhere"
       },
       "$CmsMtJmConfigService": {
         "root": "/cms/cmsmtjmconfig/index",

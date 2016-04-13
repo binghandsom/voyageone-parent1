@@ -28,7 +28,12 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         params.put("channelId", channelId);
         return success(service.getListByWhere(params));
     }
-
+    @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.GetCountByWhere)
+    public AjaxResponse getCountByWhere(@RequestBody Map params) {
+        String channelId = getUser().getSelChannelId();
+        params.put("channelId", channelId);
+        return success(service.getCountByWhere(params));
+    }
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.INSERT)
     public AjaxResponse insert(@RequestBody CmsMtMasterInfoModel params) {
         String channelId = getUser().getSelChannelId();
