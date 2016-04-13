@@ -185,7 +185,7 @@
 					</button>
 					<ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
 						<li><a href="" ng-click="deleteByPromotionId();">全量清空</a></li>
-						<li><a href="">全量上传</a></li>
+						<li><a href="" ng-click="jmNewUpdateAll()">全量上传</a></li>
 						<li><a href="">全量同步价格</a></li>
 						<li><a href="" ng-click="openDealExtension('')">全量Deal延期</a></li>
 					</ul>
@@ -196,7 +196,7 @@
 					</button>
 					<ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
 						<li><a href="" ng-click="deleteByProductIdList()">批量清空</a></li>
-						<li><a href="">批量上传</a></li>
+						<li><a href="" ng-click="jmNewByProductIdListInfo()">批量上传</a></li>
 						<li><a href="">批量同步价格</a></li>
 						<li><a href=""  ng-click="openDealExtension('')">批量Deal延期</a></li>
 						<li><a href="">批量变更属性</a></li>
@@ -222,6 +222,7 @@
 					<tr>
 						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  /><span class="fa fa-check"></span></label>
 						</th>
+						<th>状态</th>
 						<!--<th class="text-center">产品</th>-->
 						<th class="mfb-xxx text-left">聚美类目</th>
 						<th class="text-center">PC模块ID</th>
@@ -244,6 +245,10 @@
 					<tr ng-repeat="model in vm.modelList">
 						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="model.isChecked"><span class="fa fa-check"></span></label></td>
 						<!--<td class="text-center"><img alt="100001" class="img-circle"></td>-->
+						<td ng-if="model.synchState==0">未上传</td>
+						<td ng-if="model.synchState==1">待上传</td>
+						<td ng-if="model.synchState==2">上传成功</td>
+						<td ng-if="model.synchState==3">上传失败</td>
 						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
 						<td class="text-center">{{model.pcId}}</td>
 						<td class="text-center">{{model.appId}}</td>

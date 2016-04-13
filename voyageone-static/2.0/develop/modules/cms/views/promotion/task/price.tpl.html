@@ -47,7 +47,7 @@
 						</div>
 						<div class="col-sm-12">
 							<div class="form-inline m-b-xs text-center" ng-controller = "popupCtrl">
-								<!--<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 								<button class="btn btn-success" ng-click="updateAllStatus(1)"><i class="fa fa-refresh"></i> {{'TXT_STARTUP_ALL' | translate}}</button>
 								<button class="btn btn-danger"  ng-click="updateAllStatus(0)"><i class="fa fa-warning"></i> {{'TXT_STOP_ALL' | translate}}</button>
 							</div><!-- /right-btn -->
@@ -64,6 +64,7 @@
 			<tr>
 				<th class="text-center">Seq.</th>
 				<th>{{'TXT_PRODUCT_CODE' | translate}}</th>
+				<th>{{'TXT_NUM_IID' | translate}}</th>
 				<th class="text-center">{{'TXT_PROMOTION_PRICE' | translate}}</th>
 				<th>{{'TXT_STATUS' | translate}}</th>
 				<th>{{'TXT_ERROR_MESSAGE' | translate}}</th>
@@ -74,6 +75,7 @@
 			<tr ng-repeat="price in vm.priceList">
 				<td class="text-center">{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
 				<td>{{price.key}}</td>
+				<td><a ng-if="price.numIid" ng-href="https://detail.tmall.com/item.htm?id={{price.numIid}}" target="_blank"  >{{price.numIid}}</a></td>
 				<td class="text-right">{{price.promotionPrice | number: 2}}</td>
 				<td><span ng-if="price.synFlg == 0" class="badge badge-stop">{{'TXT_STOP'| translate}}</span><span ng-if="price.synFlg == 1" class="badge badge-refresh">{{"TXT_PENDING" | translate}}</span><span ng-if="price.synFlg == 2" class="badge badge-success">{{"TXT_SUCCESS" | translate}}</span><span ng-if="price.synFlg == 3" class="badge badge-failure">{{"TXT_FAIL" |　translate}}</span></td>
 				<td class="text-hs">{{price.errMsg}}</td>

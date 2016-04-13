@@ -24,6 +24,10 @@ public class OrderChannelBean {
 
     private String session_key;
 
+    private Integer is_usjoi;
+
+    private String cart_ids;
+
     public String getSession_key() {
         return session_key;
     }
@@ -102,5 +106,21 @@ public class OrderChannelBean {
 
     public void setScrect_key(String screct_key) {
         this.screct_key = screct_key;
+    }
+
+    public Integer getIs_usjoi() {
+        return is_usjoi;
+    }
+
+    public void setIs_usjoi(Integer is_usjoi) {
+        this.is_usjoi = is_usjoi;
+    }
+
+    public String getCart_ids() {
+        return cart_ids;
+    }
+
+    public void setCart_ids(String cart_ids) {
+        this.cart_ids = cart_ids;
     }
 }

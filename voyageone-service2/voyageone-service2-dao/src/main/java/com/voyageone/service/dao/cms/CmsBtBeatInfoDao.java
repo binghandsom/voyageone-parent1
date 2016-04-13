@@ -95,7 +95,7 @@ public class CmsBtBeatInfoDao extends ServiceBaseDao {
         ));
     }
 
-    public Integer updateCode(CmsBtBeatInfoModel model) {
+    public int updateCode(CmsBtBeatInfoModel model) {
         return update("cms_bt_beat_info_updateCode", model);
     }
 

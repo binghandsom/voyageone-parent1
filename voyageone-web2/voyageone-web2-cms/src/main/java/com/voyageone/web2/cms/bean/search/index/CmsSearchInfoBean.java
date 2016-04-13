@@ -66,6 +66,16 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
+    public String getOrgChaId() {
+        return orgChaId;
+    }
+
+    public void setOrgChaId(String orgChaId) {
+        this.orgChaId = orgChaId;
+    }
+    // MINI MALL 店铺时查询原始CHANNEL
+    private String orgChaId = null;
+
     public String getPromotion() {
         return promotion;
     }

@@ -30,6 +30,42 @@ define([
             }, function (res) {
             })
         };
+        $scope.jmNewByProductIdListInfo=function() {
+            var productIdList = [];
+            for (var i=0;i< $scope.vm.modelList.length;i++) {
+                if ($scope.vm.modelList[i].isChecked) {
+                    productIdList.push($scope.vm.modelList[i].cmsBtJmProductId);
+                }
+            }
+            var parameter={promotionId:$scope.vm.promotionId,productIdList:productIdList};
+            console.log(parameter);
+            console.log(angular.toJson(parameter));
+            confirm($translate.instant('TXT_Do_You_Want_To_Selected')).result.then(function () {
+                jmPromotionDetailService.jmNewByProductIdListInfo(parameter).then(function () {
+                    for (var i=$scope.vm.modelList.length-1;i>=0;i--) {
+                        if ($scope.vm.modelList[i].isChecked) {
+                            $scope.vm.modelList[i].synchState=1;
+                            $scope.vm.modelList[i].isChecked=false;
+                        }
+                    }
+                }, function (res) {
+                })
+            });
+        };
+        $scope.jmNewUpdateAll=function(){
+            confirm($translate.instant('TXT_Do_You_Want_To_Update_ All')).result.then(function () {
+                jmPromotionDetailService.jmNewUpdateAll( $scope.vm.promotionId).then(function () {
+                    for (var i=$scope.vm.modelList.length-1;i>=0;i--) {
+
+                            $scope.vm.modelList[i].synchState=1;
+
+                    }
+                }, function (res) {
+                })
+            })
+        };
+
+
         $scope.deleteByProductIdList=function() {
             var productIdList = [];
             for (var i=0;i< $scope.vm.modelList.length;i++) {

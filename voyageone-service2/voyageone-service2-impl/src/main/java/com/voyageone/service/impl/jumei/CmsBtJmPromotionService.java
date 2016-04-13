@@ -56,9 +56,6 @@ public class CmsBtJmPromotionService {
         return daoExt.getListByWhere(map);
     }
     
-    public  void JMAddProductAndDeal(int promotionId)
-    {
 
-    }
 }
 

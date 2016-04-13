@@ -32,7 +32,7 @@ define([
 
             this.searchInfo = {synFlgList: []};
             this.imageDataList = [];
-            this.imageDataPageOption = {curr: 1, total: 0, size: 20, fetch: this.search.bind(this)}
+            this.imageDataPageOption = {curr: 1, total: 0, size: 10, fetch: this.goPage.bind(this)}
         }
 
         JmImageManageController.prototype = {
@@ -54,10 +54,20 @@ define([
                 data.synFlgList = _returnKey(data.synFlgList);
                 data.start = (self.imageDataPageOption.curr - 1) * self.imageDataPageOption.size;
                 data.length = self.imageDataPageOption.size;
-                self.cmsMtMasterInfoService.search(data).then (function(res) {
-                    self.imageDataList = res.data.masterInfoList;
-                    self.imageDataPageOption.total = res.data.masterInfoListTotal;
+                 this.goPage();
+                self.cmsMtMasterInfoService.getCountByWhere(data).then (function(res) {
+                    self.imageDataPageOption.total = res.data;
                 })
+            },
+            goPage:function(){
+                var self = this;
+                var data = angular.copy(self.searchInfo);
+                data.synFlgList = _returnKey(data.synFlgList);
+                data.start = (self.imageDataPageOption.curr - 1) * self.imageDataPageOption.size;
+                data.length = self.imageDataPageOption.size;
+                self.cmsMtMasterInfoService.search(data).then (function(res) {
+                    self.imageDataList = res.data;
+                });
             },
 
             // 保存单个图片

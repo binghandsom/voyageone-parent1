@@ -25,24 +25,31 @@ public class CmsBtJmPromotionProductService {
     CmsBtJmPromotionProductDaoExt daoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
+
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
+
     public int update(CmsBtJmPromotionProductModel entity) {
         return dao.update(entity);
     }
+
     public int insert(CmsBtJmPromotionProductModel entity) {
         return dao.insert(entity);
     }
+
     public List<MapModel> getListByWhere(Map<String, Object> map) {
         return daoExt.getListByWhere(map);
     }
+
     public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
         return daoExt.getPromotionProductInfoListByWhere(map);
     }
+
     public int delete(int id) {
         return dao.delete(id);
     }
+
     @VOTransactional
     public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(id);
@@ -57,9 +64,17 @@ public class CmsBtJmPromotionProductService {
         daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
     }
     @VOTransactional
-    public  void  deleteByProductIdList(ProductIdListInfo parameter) {
+    public void deleteByProductIdList(ProductIdListInfo parameter) {
         daoExt.deleteByProductIdListInfo(parameter);
         daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
+    }
+    //所有未上心商品上新
+    public int jmNewUpdateAll(int promotionId) {
+        return daoExt.jmNewUpdateAll(promotionId);
+    }
+    //部分商品上新
+    public int jmNewByProductIdListInfo(ProductIdListInfo parameter) {
+        return daoExt.jmNewByProductIdListInfo(parameter);
     }
 }
 

@@ -339,7 +339,27 @@ define([
                         "controller": 'popImageSettingCtl as $ctrl'
                     }
                 }
+            },
+        "search": {
+            "imagedetail": {
+                "templateUrl": "views/pop/search/imagedetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
+                "controller": 'popImageDetailCtl'
+            },
+            "codeDetail": {
+                "templateUrl": "views/pop/search/codeDetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
+                "controller": 'popCodeDetailCtl'
             }
+
+        },
+        "system": {
+            "channelList": {
+                "templateUrl": "views/pop/system/channelList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                "controller": 'popChannelListCtl'
+            }
+        },
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -906,6 +926,28 @@ define([
             });
         }
 
+        /**
+         * 新增feed查询页图片弹出
+         * */
+        $scope.openImagedetail = function (context) {
+            return openModel(popActions.search.imagedetail, context);
+        };
+
+        /**
+         * 新增feed查询页code弹出
+         * */
+        $scope.openCodeDetail = function (context) {
+            return openModel(popActions.search.codeDetail, context);
+        };
+
+
+
+        /**
+         * 新增ChannelList页,设置操作弹出
+         * */
+        $scope.openChannelSetting = function (context) {
+            return openModel(popActions.system.channelList, context);
+        };
         /**
          * 弹出自定义属性列
          * @type {openCustomColumn}

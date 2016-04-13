@@ -55,6 +55,8 @@ public interface CmsUrlConstants {
                 String GET = "get";
                 String DELETEBYPPROMOTIONID="deleteByPromotionId";
                 String DELETEBYPRODUCTIDLIST="deleteByProductIdList";
+                String JmNewUpdateAll="jmNewUpdateAll";
+                String JmNewByProductIdListInfo="jmNewByProductIdListInfo";
             }
         }
     }
@@ -85,6 +87,7 @@ interface CmsBtJmPromotionImportTask{
                 String UPDATE = "update";
                 String GET = "get";
                 String UPDATEJMIMG="updateJMImg";
+                String GetCountByWhere="getCountByWhere";
             }
         }
     }
@@ -279,6 +282,12 @@ interface CmsBtJmPromotionImportTask{
             String GET_PRODUCT_LIST = "getProductList";
 
             String EXPORT_PRODUCTS = "exportProducts";
+        }
+
+        interface FEED {
+            String ROOT = "/cms/search/feed";
+            String INIT = "init";
+            String SEARCH = "search";
         }
     }
 

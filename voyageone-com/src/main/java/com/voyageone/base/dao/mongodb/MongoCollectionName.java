@@ -13,16 +13,8 @@ import java.util.Map;
  * @since 2.0.0
  */
 public class MongoCollectionName {
-    private static final Map<String, String> collectionCache = new ConcurrentReferenceHashMap<>();
-
     public static String getCollectionName(Class<?> entityClass) {
-
         String className = entityClass.getSimpleName();
-
-        if (collectionCache.containsKey(className)) {
-            return collectionCache.get(className);
-        }
-        
         String result = null;
         MongoCollection mongoCollection = entityClass.getAnnotation(MongoCollection.class);
         if (mongoCollection != null && !StringUtils.isEmpty(mongoCollection.value())) {
@@ -35,27 +27,25 @@ public class MongoCollectionName {
                 result = result.substring(0, result.length()-6);
             }
         }
-        collectionCache.put(className, result);
         return result;
-
     }
 
-    private static String getPartitionValue(String channelId) {
+    private static String getPartitionValue(String partStr, String split) {
         String result = "";
-        if (channelId != null) {
-            result = "_c" + channelId;
+        if (partStr != null) {
+            result = "_" + split + partStr;
         }
         return result;
     }
 
-    public static String getCollectionName(Class<?> entityClass, String channelId) {
+    public static String getCollectionName(Class<?> entityClass, String partStr, String split) {
         String collectionName = getCollectionName(entityClass);
-        return getCollectionName(collectionName, channelId);
+        return getCollectionName(collectionName, partStr, split);
     }
 
-    public static String getCollectionName(String collectionName, String channelId) {
+    public static String getCollectionName(String collectionName, String partStr, String split) {
         if (collectionName != null) {
-            return collectionName + getPartitionValue(channelId);
+            return collectionName + getPartitionValue(partStr, split);
         }
         return null;
     }

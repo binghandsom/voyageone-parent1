@@ -14,8 +14,8 @@
     <dependencies>
         <dependency>
             <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-service2-impl</artifactId>
-            <version>${voyageone.service2.impl.version}</version>
+            <artifactId>voyageone-service2-dao</artifactId>
+            <version>${voyageone.service2.dao.version}</version>
         </dependency>
     </dependencies>
     <build>

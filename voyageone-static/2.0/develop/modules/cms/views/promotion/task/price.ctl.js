@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function priceController($scope, promotionService, taskPriceService, notify, $routeParams) {
+    function priceController($scope, promotionService, taskPriceService, notify, $routeParams,confirm,$translate) {
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -26,7 +26,7 @@ define([
 
             search();
         }
-
+        $scope.search=search;
         function search() {
             taskPriceService.getPriceList({
                 "promotionId": $routeParams.promotionId,
@@ -55,14 +55,17 @@ define([
         }
         
         $scope.updateAllStatus = function (synFlg) {
-            taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":synFlg,"errMsg":"","taskType":0}).then(function (res) {
-                _.each($scope.vm.priceList,function(item){
-                    item.synFlg = synFlg;
-                    item.errMsg = "";
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":synFlg,"errMsg":"","taskType":0}).then(function (res) {
+                        _.each($scope.vm.priceList,function(item){
+                            item.synFlg = synFlg;
+                            item.errMsg = "";
+                        })
+                    }, function (err) {
+                        notify.warning("fail")
+                    })
                 })
-            }, function (err) {
-                notify.warning("fail")
-            });
         }
         
         
@@ -70,6 +73,6 @@ define([
         
     };
 
-    priceController.$inject = ['$scope', 'promotionService', 'taskPriceService', 'notify', '$routeParams'];
+    priceController.$inject = ['$scope', 'promotionService', 'taskPriceService', 'notify', '$routeParams', 'confirm','$translate'];
     return priceController;
 });
