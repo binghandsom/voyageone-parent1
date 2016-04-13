@@ -70,7 +70,7 @@ public class StockRevertService extends BaseTaskService {
 
         Map<String, Object> param = new HashMap<>();
         param.put("status", stockInfoService.STATUS_WAITING_REVERT);
-//        param.put("taskId", 33);
+//        param.put("taskId", 10);
 //        param.put("channelId", "066");
 
         $info("开始取得等待隔离数据");
@@ -198,15 +198,7 @@ public class StockRevertService extends BaseTaskService {
                 updateParam.put("modifier", getTaskName());
                 updateParam.put("taskList", listTaskId);
                 updateParam.put("statusWhere", stockInfoService.STATUS_WAITING_REVERT);
-                int cntUpdate = cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
-                cntRevert += cntUpdate;
-                int cntSaveData = 0;
-                for (List<Map<String, Object>> listData : mapSkuData.values()) {
-                    cntSaveData += listData.size();
-                }
-                if (cntSaveData != cntUpdate) {
-                    throw new BusinessException("数据已经变化,请确认！");
-                }
+                cntRevert += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
 
                 Map<Integer, Map<String, Object>> mapDataByCart = new HashMap<>(); // Map<平台, data>
                 for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
