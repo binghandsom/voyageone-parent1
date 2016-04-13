@@ -455,6 +455,16 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
         throw new BusinessException("not suppert");
     }
 
+    // 根据条件更新指定值
+    public WriteResult update(String channelId, Map paraMap, Map rsMap) {
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BasicDBObject params = new BasicDBObject();
+        params.putAll(paraMap);
+        BasicDBObject result = new BasicDBObject();
+        result.putAll(rsMap);
+        return coll.update(params, new BasicDBObject("$set", result), false, true);
+    }
 
 //    public List<CmsBtProductModel> getProductCodesByCart(String channelId, int cartId) {
 //        String queryTemp = " { $match :{\"groups.platforms.cartId\":21}  }, \n" +

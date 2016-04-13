@@ -24,6 +24,7 @@ define([
             this.alert = alert;
 
             this.searchCondition = "";
+            this.tranSts = -1;
             this.sortFieldOptions = [];
             this.lenInfo = {};
             this.getTaskInfo = {
@@ -100,10 +101,16 @@ define([
             // 查询历史任务.
             searchHistoryTasks: function () {
                 var self = this;
-                this.translationService.searchHistoryTasks({searchCondition: self.searchCondition})
+                this.translationService.searchHistoryTasks({searchCondition:self.searchCondition,tranSts:self.tranSts})
                     .then(function (res) {
                         self.taskInfos.productTranslationBeanList = res.data.productTranslationBeanList;
                     }.bind(this))
+            },
+
+            // 撤销翻译任务.
+            cancelTask: function (productItem, index) {
+                var self = this;
+                this.translationService.cancelTask({searchCondition:productItem.productCode});
             },
 
             // 清空查询条件.
