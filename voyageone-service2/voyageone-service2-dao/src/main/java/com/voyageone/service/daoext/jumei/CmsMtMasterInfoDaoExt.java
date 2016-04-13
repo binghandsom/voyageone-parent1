@@ -11,6 +11,6 @@ import java.util.Map;
 public interface CmsMtMasterInfoDaoExt {
     public CmsMtMasterInfoModel getByKey(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType);
     public CmsMtMasterInfoModel getByKeySizeType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType, @Param("sizeType") String sizeType);
-    public  int getCountByWhere(Map<String, Object> map);
+    public  Integer getCountByWhere(Map<String, Object> map);
     public  List getListByWhere(Map<String, Object> map);
 }

@@ -26,7 +26,7 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         Map<String, Object> result = new HashMap<>();
         params.put("active", 1);
         result.put("masterInfoList", service.getListByWhere(params));
-        result.put("masterInfoListTotal", service.getListCountByWhere(params));
+        result.put("masterInfoListTotal", service.getCountByWhere(params));
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.GetCountByWhere)
