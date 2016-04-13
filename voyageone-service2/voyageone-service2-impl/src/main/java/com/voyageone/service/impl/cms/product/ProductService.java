@@ -163,7 +163,7 @@ public class ProductService extends BaseService {
         if(StringUtils.isEmpty(orgChannelId)){
             queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
         }else{
-            queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "\"orgChannelId\":\"" + orgChannelId +"\"}");
+            queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + ",\"orgChannelId\":\"" + orgChannelId +"\"}");
         }
         queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
 
