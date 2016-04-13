@@ -105,7 +105,7 @@ public class JuMeiProductUpdatePlatefromService {
             }
             spu.setSkuInfo(sku);
             spus.add(spu);
-            partner_sku_nos += modelSku.getJmSkuNo(); //jmBtSkuImportModel.getSku() + ",";
+            partner_sku_nos += modelSku.getSkuCode(); //jmBtSkuImportModel.getSku() + ",";
         }
         //dealinfo
         // JmBtDealImportModel jmBtDealImportModel = jmBtProductImport.getJmBtDealImportModel();
