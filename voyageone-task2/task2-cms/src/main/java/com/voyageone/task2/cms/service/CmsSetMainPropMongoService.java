@@ -893,10 +893,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             }
 
-            // 更新状态, 准备重新上传到各个平台
-            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
-                platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-            }
+            // TOM 20160413 这是一个错误, 这段话不应该要的 START
+//            // 更新状态, 准备重新上传到各个平台
+//            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+//                platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+//            }
+            // TOM 20160413 这是一个错误, 这段话不应该要的 END
 
 
             return product;
