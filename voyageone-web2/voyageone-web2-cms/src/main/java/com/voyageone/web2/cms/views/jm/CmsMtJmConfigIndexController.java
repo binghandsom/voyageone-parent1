@@ -52,9 +52,9 @@ public class CmsMtJmConfigIndexController extends CmsController {
         return success(service.update(params));
     }
     @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.GETBYKEY)
-    public Object getByKey(@RequestBody String key) {//@RequestParam("id")
+    public Object getByKey(@RequestBody CmsMtJmConfigModel params) {//@RequestParam("id")
         String channelId = getUser().getSelChannelId();
-        return success(service.getByKey(channelId,key));
+        return success(service.getByKey(channelId,params.getKey()));
     }
 
 

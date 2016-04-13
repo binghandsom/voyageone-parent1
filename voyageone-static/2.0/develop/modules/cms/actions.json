@@ -212,22 +212,22 @@
         "addToPromotion": "addToPromotion"
       },
       "$fieldEditService": {
-        "root": "/cms/pop/field_edit/",
+        "root": "/cms/pop/field_edit",
         "getPopOptions": "getPopOptions",
         "setProductFields": "setProductFields"
       },
       "$promotionHistoryService": {
-        "root": "/cms/pop/history_promotion/",
+        "root": "/cms/pop/history_promotion",
         "getPromotionHistory": "getPromotionHistory"
       },
       "$priceHistoryService": {
-        "root": "/cms/pop/history_price/",
+        "root": "/cms/pop/history_price",
         "getPriceHistory": "getPriceHistory"
       }
     },
     "translation": {
       "translationService":{
-        "root":"/cms/translation/tasks/",
+        "root":"/cms/translation/tasks",
         "getTasks":"getTasks",
         "searchHistoryTasks":"searchHistoryTasks",
         "assignTasks":"assignTasks",
@@ -240,7 +240,7 @@
     "channel": {
       "custom": {
         "attributeService": {
-          "root":"/cms/channel/custom/prop/",
+          "root":"/cms/channel/custom/prop",
           "init": "get",
           "getCatTree": "getCatTree",
           "save": "update",
@@ -250,7 +250,7 @@
       },
       "value": {
         "attributeValueService": {
-          "root":"/cms/channel/custom/value/",
+          "root":"/cms/channel/custom/value",
           "init": "get",
           "add" : "create",
           "save": "update"

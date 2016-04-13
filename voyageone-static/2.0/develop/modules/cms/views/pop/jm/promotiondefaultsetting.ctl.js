@@ -27,8 +27,9 @@ define([
                 var self = this;
                 self.cmsMtJmConfigService.init().then(function (res){
                     self.masterData = res.data;
-                    self.cmsMtJmConfigService.getByKey("JM_IMAGE_SETTING").then(function (res) {
+                    self.cmsMtJmConfigService.getByKey(self.imageConfig).then(function (res) {
                         self.imageConfig = res.data;
+                        self.imageConfig.value = JSON.parse(self.imageConfig.value);
                     });
                 })
             },
@@ -36,6 +37,7 @@ define([
             // 保存
             ok: function () {
                 var self = this;
+                self.imageConfig.value = JSON.stringify(self.imageConfig.value);
                 if (self.imageConfig.creater)
                     self.cmsMtJmConfigService.update(self.imageConfig).then(function () {
                         self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));

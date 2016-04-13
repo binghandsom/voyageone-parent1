@@ -5,10 +5,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +23,11 @@ public class CmsMtMasterInfoIndexController extends CmsController {
     public AjaxResponse getListByWhere(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
-        return success(service.getListByWhere(params));
+        Map<String, Object> result = new HashMap<>();
+        params.put("active", 1);
+        result.put("masterInfoList", service.getListByWhere(params));
+        result.put("masterInfoListTotal", service.getListCountByWhere(params));
+        return success(result);
     }
 
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.INSERT)
@@ -36,6 +37,7 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         params.setModifier(getUser().getUserName());
         params.setCreater(getUser().getUserName());
         params.setCreated(new Date());
+        params.setActive(true);
         return success(service.insert(params));
     }
 
@@ -47,11 +49,11 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         return success(service.update(params));
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.DELETE)
-    public AjaxResponse delete(@RequestBody int id) {
-        CmsMtMasterInfoModel params= service.select(id);
-        params.setModifier(getUser().getUserName());
-        params.setActive(false);
-        return success(service.update(params));
+    public AjaxResponse delete(@RequestBody CmsMtMasterInfoModel params) {
+        CmsMtMasterInfoModel result = service.select(params.getId());
+        result.setModifier(getUser().getUserName());
+        result.setActive(false);
+        return success(service.update(result));
     }
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.GET)
     public Object get(@RequestBody int id) {//@RequestParam("id")

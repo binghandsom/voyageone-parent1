@@ -64,7 +64,7 @@ define([
             saveImage: function (imageData) {
                 var self = this;
                 self.cmsMtMasterInfoService.saveImage(imageData).then(function () {
-                    self.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 })
             },
 
@@ -72,17 +72,17 @@ define([
             reUpload: function (imageData) {
                 var self = this;
                 self.cmsMtMasterInfoService.updateJMImg(imageData).then(function () {
-                    self.notify.success(this.translate.instant('TXT_MSG_UPLOAD_IMAGE_SUCCESS'));
+                    self.notify.success(self.translate.instant('TXT_MSG_UPLOAD_IMAGE_SUCCESS'));
                 })
             },
 
             // 删除的单个图片
-            deleteImage: function (id) {
+            deleteImage: function (imageData) {
                 var self = this;
                 self.confirm(self.translate.instant('TXT_MSG_DELETE_ITEM')).result.then(function () {
-                    self.cmsMtMasterInfoService.deleteImage(id).then(function () {
+                    self.cmsMtMasterInfoService.deleteImage(imageData).then(function () {
                         self.search();
-                        self.notify.success(this.translate.instant('TXT_MSG_DELETE_SUCCESS'));
+                        self.notify.success(self.translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     })
                 })
             },
