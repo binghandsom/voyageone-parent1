@@ -75,7 +75,8 @@ define([
         /**
          * 检索
          */
-        function search() {
+        function search(page) {
+            $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
             if ($scope.vm.searchInfo.fuzzySearch != undefined) {
