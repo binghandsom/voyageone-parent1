@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 @Service
-public class JuMeiUploadImageJobService {
+public class JuMeiUploadImageService {
     /* 获取图片下载流重试次数 */
     private static final int GET_IMG_INPUTSTREAM_RETRY = 5;
     /* 聚美dir斜杠分隔符 */
@@ -30,7 +30,7 @@ public class JuMeiUploadImageJobService {
     @Autowired
     private JumeiImageFileService jumeiImageFileService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(JuMeiUploadImageJobService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiUploadImageService.class);
 
     public void uploadImage(CmsBtJmProductImagesModel imageModel, ShopBean shopBean) throws Exception {
         String jmUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean(imageModel));

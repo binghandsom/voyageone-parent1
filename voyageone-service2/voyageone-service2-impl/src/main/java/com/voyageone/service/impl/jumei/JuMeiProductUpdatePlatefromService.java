@@ -1,25 +1,28 @@
 package com.voyageone.service.impl.jumei;
+import com.sun.xml.internal.ws.util.UtilException;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.logger.Log;
+import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.components.jumei.bean.JmProductBean;
 import com.voyageone.components.jumei.bean.JmProductBean_DealInfo;
 import com.voyageone.components.jumei.bean.JmProductBean_Spus;
 import com.voyageone.components.jumei.bean.JmProductBean_Spus_Sku;
 import com.voyageone.components.jumei.enums.EnumJuMeiMtMasterInfo;
 import com.voyageone.components.jumei.enums.EnumJuMeiProductImageType;
-import com.voyageone.components.jumei.enums.JumeiImageType;
 import com.voyageone.components.jumei.service.JumeiProductService;
+import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.JMProductUpdateInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by dell on 2016/4/12.
@@ -27,27 +30,41 @@ import java.util.Map;
 @Service
 public class JuMeiProductUpdatePlatefromService {
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
-
     private static final String DESCRIPTION_USAGE = "<div>%s %s <br /></div>";
-
     private static final String DESCRIPTION_IMAGES = "%s<br />";
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductUpdatePlatefromService.class);
     @Autowired
     JuMeiProductUpdateService service;
     @Autowired
     JumeiProductService serviceJumeiProduct;
     @Autowired
-    JuMeiUploadImageJobService serviceJuMeiUploadImageJob;
-
-
+    JuMeiUploadImageService serviceJuMeiUploadImageJob;
+    @Autowired
+    CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
-        ShopBean shopBean=  service.getShopBean();
-        //logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
+        ShopBean shopBean = service.getShopBean();
+        LOG.info(promotionId+ " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getListPromotionProduct();
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
-        for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-            adddProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model,shopBean);
+        try {
+            for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+                try {
+                    adddProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                } catch (Exception ex) {
+                    model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
+                    model.setSynchState(3);//同步更新失败
+                    try {
+                        daoCmsBtJmPromotionProduct.update(model);
+                    } catch (Exception cex) {
+                        LOG.error("addProductAndDealByPromotionId", cex);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            LOG.error("addProductAndDealByPromotionId上新失败", ex);
         }
+        LOG.info(promotionId+ " 聚美上新end");
     }
     private void adddProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model,ShopBean shopBean) throws Exception {
         JMProductUpdateInfo updateInfo = service.getJMProductUpdateInfo(model);

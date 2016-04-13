@@ -1,10 +1,7 @@
 package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.service.impl.jumei.JuMeiProductUpdatePlatefromService;
-import com.voyageone.service.impl.jumei.JuMeiProductUpdateService;
-import com.voyageone.service.impl.jumei.JuMeiUploadImageJobService;
 import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
