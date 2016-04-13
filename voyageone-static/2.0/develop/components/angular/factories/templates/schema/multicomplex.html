@@ -1,8 +1,9 @@
-<table class="table text-center">
+<div class="table-responsive">
+<table class="table text-left dropdown_table_mains" style="width:2000px">
     <thead>
     <tr>
         <th ng-repeat="field in $data.fields" ng-class="{'vo_reqfield': schema.isRequired}"
-            class="text-center">{{field.name}}
+            class="text-left">{{field.name}}
         </th>
         <th ng-if="!schema.notShowEdit" class="text-center">{{::'TXT_ACTION'|translate}}</th>
     </tr>
@@ -24,3 +25,4 @@
     </tr>
     </tbody>
 </table>
+</div>
