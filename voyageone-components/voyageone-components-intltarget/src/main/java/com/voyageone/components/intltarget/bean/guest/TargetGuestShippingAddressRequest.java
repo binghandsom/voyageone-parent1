@@ -1,4 +1,4 @@
-package com.voyageone.components.intltarget.bean;
+package com.voyageone.components.intltarget.bean.guest;
 
 import java.util.List;
 

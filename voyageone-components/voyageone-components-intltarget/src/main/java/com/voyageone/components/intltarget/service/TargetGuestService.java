@@ -2,10 +2,10 @@ package com.voyageone.components.intltarget.service;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.intltarget.TargetBase;
-import com.voyageone.components.intltarget.bean.TargetGuestShippingAddress;
-import com.voyageone.components.intltarget.bean.TargetGuestShippingAddressRequest;
-import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Retryable;
+import com.voyageone.components.intltarget.bean.guest.TargetGuestAccount;
+import com.voyageone.components.intltarget.bean.guest.TargetGuestAccountRequest;
+import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddress;
+import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddressRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -15,22 +15,40 @@ import org.springframework.util.StringUtils;
  * @since 2.0.0
  */
 @Service
-@EnableRetry
 public class TargetGuestService extends TargetBase{
 
-    private static final String Url="/guests/v3/addresses";
-
-    private static final String TARGETKEY= "0a7ALbLaqKCPOF24CNexpawOMX8AamY3";//ThirdPartyConfigs.getVal1("018", "api_key");
+    private static final String Url="/guests";
 
     /**
      * 获取shipping 运输地址
      * @return 简单地址信息
      * @throws Exception
      */
-    @Retryable
     public TargetGuestShippingAddress getGuestShippingAddress(TargetGuestShippingAddressRequest request) throws Exception {
-        String result=reqGiltApi(Url+"?key="+TARGETKEY,JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request)));
-        return StringUtils.isEmpty(result)?null: JacksonUtil.json2Bean(result,TargetGuestShippingAddress.class);
+        return getApiResponseWithKey("/v3/addresses",request,TargetGuestShippingAddress.class,true);
+    }
+
+    /**
+     * 创建Guest账户
+     * @param request 请求信息
+     * @return 账户信息
+     * @throws Exception
+     */
+    public TargetGuestAccount createGuestAccount(TargetGuestAccountRequest request) throws Exception {
+        return getApiResponseWithKey("/v3",request,TargetGuestAccount.class,false);
+    }
+
+    /**
+     * 获取api响应包含key
+     * @param url api路径
+     * @param reqdata 请求数据
+     * @param clazz 返回对象类型
+     * @param <E> 返回对象
+     * @return response
+     */
+    private <E> E getApiResponseWithKey(String url,Object reqdata,Class<E> clazz,boolean isNeedToken) throws Exception {
+        String result=reqTargetApi(Url+url,JacksonUtil.jsonToMap(JacksonUtil.bean2Json(reqdata)),true,isNeedToken);
+        return StringUtils.isEmpty(result)?null: JacksonUtil.json2Bean(result,clazz);
     }
 
 }
