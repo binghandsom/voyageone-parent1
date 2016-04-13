@@ -11,6 +11,7 @@
                <div class="col-sm-9">
                    <select class="form-control" ng-model="vm.incrementCartId"
                            ng-options="platformList.cartId as platformList.cartName for platformList in vm.incrementCartIdList">
+                       <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                    </select>
                 </div>
            </div>
@@ -18,6 +19,7 @@
                 <label class="col-sm-2 control-label" translate="TXT_INCREMENT_TYPE"></label>
                 <div class="col-sm-6">
                     <select class="form-control" ng_model="vm.incrementType">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         <option value="1">{{'TXT_INCREMENT_PERCENTAGE' | translate}}</option>
                         <option value="2">{{'TXT_INCREMENT_CNT' | translate}}</option>
                     </select>
