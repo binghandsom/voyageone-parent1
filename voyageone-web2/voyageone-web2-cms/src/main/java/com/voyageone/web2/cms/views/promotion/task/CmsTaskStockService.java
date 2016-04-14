@@ -795,7 +795,7 @@ public class CmsTaskStockService extends BaseAppService {
             //平台名
             String cartName=separatePlatformList.get(i).get("cartName").toString();
             //隔离比例
-            String value=separatePlatformList.get(i).get("value").toString().replace("%", "");
+            String value=separatePlatformList.get(i).get("value").toString();
             //类型（1：隔离，2：共享）
             String type= separatePlatformList.get(i).get("type").toString();
             //增优先顺

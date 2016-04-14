@@ -178,13 +178,13 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         if(incrementType.equals(TYPE_INCREMENT_COUNT)){
             //数量增量
             if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
-                    ||incrementValues.getBytes().length>=11) {
+                    ||incrementValues.getBytes().length>9) {
                 // 增量必须为大于0的整数
                 throw new BusinessException("7000055");
             }
         }
         //任务名称
-        if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>=200) {
+        if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>=1000) {
             // 任务名必须输入且长度小于1000
             throw new BusinessException("7000012");
         }
