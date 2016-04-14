@@ -169,13 +169,13 @@ sku数
  /**
 0:未延迟 1:待更新 2成功 3失败
         */
-     private int DealEndTimeState;
+     private int dealEndTimeState;
     
     
  /**
 待更新延迟时间
         */
-     private Date DealEndTime;
+     private Date dealEndTime;
     
         
          /**
@@ -583,11 +583,11 @@ this.activityEnd=DateHelp.getDefaultDate();
         public int getDealEndTimeState()
         {
          
-        return this.DealEndTimeState;
+        return this.dealEndTimeState;
         }
-        public void setDealEndTimeState(int DealEndTimeState)
+        public void setDealEndTimeState(int dealEndTimeState)
         {
-         this.DealEndTimeState=DealEndTimeState;
+         this.dealEndTimeState=dealEndTimeState;
         }
     
         
@@ -597,16 +597,16 @@ this.activityEnd=DateHelp.getDefaultDate();
         public Date getDealEndTime()
         {
          
-        return this.DealEndTime;
+        return this.dealEndTime;
         }
-        public void setDealEndTime(Date DealEndTime)
+        public void setDealEndTime(Date dealEndTime)
         {
-       if(DealEndTime!=null){
-this.DealEndTime=DealEndTime;
+       if(dealEndTime!=null){
+this.dealEndTime=dealEndTime;
  }
 else
 {
-this.DealEndTime=DateHelp.getDefaultDate();
+this.dealEndTime=DateHelp.getDefaultDate();
 }
 
         }

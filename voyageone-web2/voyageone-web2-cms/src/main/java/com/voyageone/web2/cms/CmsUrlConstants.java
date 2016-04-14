@@ -40,7 +40,6 @@ public interface CmsUrlConstants {
                 String GET = "get";
 
             }
-
             interface DETAIL {
                 String ROOT = "/cms/jmpromotion/detail";
 
@@ -57,6 +56,8 @@ public interface CmsUrlConstants {
                 String DELETEBYPRODUCTIDLIST="deleteByProductIdList";
                 String JmNewUpdateAll="jmNewUpdateAll";
                 String JmNewByProductIdListInfo="jmNewByProductIdListInfo";
+                String updateDealEndTime="updateDealEndTime";
+                String UpdateDealEndTimeAll="updateDealEndTimeAll";
             }
         }
     }

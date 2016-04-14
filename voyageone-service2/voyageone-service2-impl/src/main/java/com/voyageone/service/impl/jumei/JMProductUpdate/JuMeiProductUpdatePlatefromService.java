@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.jumei;
+package com.voyageone.service.impl.jumei.JMProductUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.ExceptionUtil;
@@ -62,7 +62,7 @@ public class JuMeiProductUpdatePlatefromService {
         ShopBean shopBean = service.getShopBean();
         LOG.info(promotionId + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
-        List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getListPromotionProduct();
+        List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
@@ -143,6 +143,7 @@ public class JuMeiProductUpdatePlatefromService {
             service.saveJMUpdateProductInfo(info);
         }
     }
+
 
 
     //添加未上新的sku

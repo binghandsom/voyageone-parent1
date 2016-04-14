@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.jumei;
+package com.voyageone.service.impl.jumei.JMProductUpdate;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;

@@ -2,7 +2,10 @@ package com.voyageone.service.daoext.jumei;
 
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
+import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
+import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import org.apache.ibatis.annotations.Param;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +30,8 @@ public interface CmsBtJmPromotionProductDaoExt {
     public int jmNewUpdateAll(int promotionId);
 
     public int jmNewByProductIdListInfo(ProductIdListInfo parameter);
+
+    public int updateDealEndTimeAll( ParameterUpdateDealEndTimeAll parameter);
+
+    public int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 }

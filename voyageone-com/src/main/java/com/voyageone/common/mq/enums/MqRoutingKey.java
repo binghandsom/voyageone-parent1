@@ -10,7 +10,8 @@ public enum MqRoutingKey {
     CMS_BATCH_PROMOTION("voyageone_cms_batchjob_promotion_queue"),
     CMS_BATCH_JmBtPromotionImportTask("voyageone_cms_batchjob_JmBtPromotionImportTask_queue"),
     CMS_BATCH_JmBtPromotionExportTask("voyageone_cms_batchjob_JmBtPromotionExportTask_queue"),
-    CMS_BATCH_JuMeiProductUpdate("voyageone_cms_batchjob_JuMeiProductUpdate_queue");
+    CMS_BATCH_JuMeiProductUpdate("voyageone_cms_batchjob_JuMeiProductUpdate_queue"),
+    CMS_BATCH_JuMeiProductUpdateDealEndTimeJob("voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue");
 
     private String value;
 

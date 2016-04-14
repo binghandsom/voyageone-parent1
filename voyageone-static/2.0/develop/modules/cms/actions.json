@@ -135,10 +135,12 @@
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
         "delete": "delete",
         "updateDealPrice": "updateDealPrice",
-        "deleteByPromotionId":"deleteByPromotionId",
-        "deleteByProductIdList":"deleteByProductIdList",
-        "jmNewUpdateAll":"jmNewUpdateAll",
-        "jmNewByProductIdListInfo":"jmNewByProductIdListInfo"
+        "deleteByPromotionId": "deleteByPromotionId",
+        "deleteByProductIdList": "deleteByProductIdList",
+        "jmNewUpdateAll": "jmNewUpdateAll",
+        "jmNewByProductIdListInfo": "jmNewByProductIdListInfo",
+        "updateDealEndTime": "updateDealEndTime",
+        "updateDealEndTimeAll": "updateDealEndTimeAll"
       }
     },
     "cmsBtJmPromotionImportTask":{

@@ -3,14 +3,14 @@ import com.voyageone.common.mq.MqSender;
 import com.voyageone.common.mq.enums.MqRoutingKey;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.jumei.CmsBtJmPromotionProductService;
-import com.voyageone.service.impl.jumei.CmsBtJmPromotionService;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
-import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
+import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
+import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping(
@@ -34,6 +31,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     private CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
     @Autowired
     private MqSender sender;
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
@@ -64,7 +62,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
-
     //全部删除
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
     public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
@@ -85,7 +82,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
         serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id",promotionId);
+        map.put("id", promotionId);
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
@@ -95,9 +92,26 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
         serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id",parameter.getPromotionId());
+        map.put("id", parameter.getPromotionId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
+    }
+///cms/jmpromotion/detail/updateDealEndTimeAll
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
+    //延迟Deal结束时间  全量
+    public int updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdateDealEndTimeJob, map);
+        return serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
+    }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.updateDealEndTime)
+    //延迟Deal结束时间 批量
+    public int updateDealEndTime(@RequestBody ParameterUpdateDealEndTime parameter) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdateDealEndTimeJob, map);
+        return serviceCmsBtJmPromotionProduct.updateDealEndTime(parameter);
     }
 }

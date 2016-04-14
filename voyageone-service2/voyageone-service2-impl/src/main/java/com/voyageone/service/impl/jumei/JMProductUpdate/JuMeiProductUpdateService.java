@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.jumei;
+package com.voyageone.service.impl.jumei.JMProductUpdate;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -46,8 +46,10 @@ public class JuMeiProductUpdateService {
     public int getShippingSystemId(String ChannelId) {
         return 2121;
     }
-    public List<CmsBtJmPromotionProductModel> getListPromotionProduct() {
+    public List<CmsBtJmPromotionProductModel> getJuMeiNewListPromotionProduct(int promotionId) {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();
+        parameterPromotionProduct.put("promotionId",promotionId);
+        parameterPromotionProduct.put("synchState",1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
         return listPromotionProduct;
     }

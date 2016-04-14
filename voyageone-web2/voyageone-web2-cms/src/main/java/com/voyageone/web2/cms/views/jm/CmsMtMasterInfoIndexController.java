@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.jm;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.jumei.CmsMtMasterInfoService;
-import com.voyageone.service.impl.jumei.JuMeiUploadImageService;
+import com.voyageone.service.impl.jumei.JMProductUpdate.JuMeiUploadImageService;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;

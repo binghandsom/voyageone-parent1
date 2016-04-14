@@ -5,8 +5,10 @@ import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
+import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
+import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.model.util.MapModel;
-import org.joda.time.Interval;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +77,15 @@ public class CmsBtJmPromotionProductService {
     //部分商品上新
     public int jmNewByProductIdListInfo(ProductIdListInfo parameter) {
         return daoExt.jmNewByProductIdListInfo(parameter);
+    }
+
+    //所有未上心商品上新
+    public int updateDealEndTimeAll( ParameterUpdateDealEndTimeAll parameter) {
+        return daoExt.updateDealEndTimeAll(parameter);
+    }
+    //部分商品上新
+    public int updateDealEndTime(ParameterUpdateDealEndTime parameter) {
+        return daoExt.updateDealEndTime(parameter);
     }
 }
 

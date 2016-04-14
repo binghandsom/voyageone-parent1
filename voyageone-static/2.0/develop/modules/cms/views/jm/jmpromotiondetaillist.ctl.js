@@ -10,11 +10,17 @@ define([
         $scope.vm = {"promotionId": $routeParams.parentId,modelList:[],cmsBtJmPromotionImportTaskList:[],cmsBtJmPromotionExportTaskList:[]};
         $scope.searchInfo={cmsBtJmPromotionId: $routeParams.parentId};
         $scope.parentModel={};
+        $scope.modelUpdateDealEndTime={};
+        $scope.modelAllUpdateDealEndTime={};
         $scope.initialize = function () {
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                     $scope.parentModel = res.data;
                 });
             $scope.search();
+            $scope.modelUpdateDealEndTime.promotionId=$routeParams.parentId;
+            $scope.modelUpdateDealEndTime.getSelectedProductIdList=getSelectedProductIdList;
+            $scope.modelUpdateDealEndTime.isBatch=true;
+            $scope.modelAllUpdateDealEndTime.promotionId=$routeParams.parentId;
         };
         $scope.clear = function () {
             $scope.searchInfo = {};
@@ -30,6 +36,16 @@ define([
             }, function (res) {
             })
         };
+         var getSelectedProductIdList=function()
+         {
+             var productIdList = [];
+             for (var i=0;i< $scope.vm.modelList.length;i++) {
+                 if ($scope.vm.modelList[i].isChecked) {
+                     productIdList.push($scope.vm.modelList[i].cmsBtJmProductId);
+                 }
+             }
+             return productIdList;
+         }
         $scope.jmNewByProductIdListInfo=function() {
             var productIdList = [];
             for (var i=0;i< $scope.vm.modelList.length;i++) {
