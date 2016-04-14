@@ -334,7 +334,7 @@ define(function() {
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
-        "TXT_MSG_ACTIVITIES": "Please select the corresponding activities!",
+        "TXT_MSG_ACTIVITIES": "Please select the corresponding promotion!",
         "TXT_MSG_IMPORT_MODE": "Import Mode",
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
         "TXT_MSG_IMPORT_ADD": "Add Mode",
