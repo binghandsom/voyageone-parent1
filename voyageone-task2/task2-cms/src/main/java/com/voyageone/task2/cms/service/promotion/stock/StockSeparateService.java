@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.groupingBy;
+
 /**
  * 库存隔离batch
  *
@@ -80,48 +82,57 @@ public class StockSeparateService extends BaseTaskService {
         Map<String, Object> param = new HashMap<>();
         param.put("status", stockInfoService.STATUS_WAITING_SEPARATE);
 //        param.put("taskId", 33);
+//        param.put("channelId", "066");
 
         $info("开始取得等待隔离数据");
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
         $info("等待隔离数据取得完毕. %d件", resultData.size());
 
         // 按渠道,sku整理Map<channelId, Map<taskId, Map<sku,resultData>>>
-        Map<String, Map<Integer, Map<String, List<Map<String, Object>>>>> resultDataByChannel = new HashMap<>();
+        Map<String, Map<Integer, Map<String, List<Map<String, Object>>>>> resultDataByChannel = resultData.stream().collect(
+                groupingBy(rowData -> (String) rowData.get("channel_id"),
+                                groupingBy(rowData -> (Integer) rowData.get("task_id"),
+                                        groupingBy(rowData -> (String) rowData.get("sku"))
+                                )
+                )
+        );
 
-        for (Map<String, Object> rowData : resultData) {
-            String channelId = (String) rowData.get("channel_id");
-            String sku = (String) rowData.get("sku");
-            Integer taskId = (Integer) rowData.get("task_id");
-
-            // 隔离数据Map put
-            Map<Integer, Map<String, List<Map<String, Object>>>> mapDataChannel = resultDataByChannel.get(channelId);
-            if (mapDataChannel == null) {
-                mapDataChannel = new HashMap<>();
-                Map<String, List<Map<String, Object>>> mapDataTask = new HashMap<>();
-                List<Map<String, Object>> listData = new ArrayList<>();
-                listData.add(rowData);
-                mapDataTask.put(sku, listData);
-                mapDataChannel.put(taskId, mapDataTask);
-                resultDataByChannel.put(channelId, mapDataChannel);
-            } else {
-                Map<String, List<Map<String, Object>>> mapDataTask = mapDataChannel.get(taskId);
-                if (mapDataTask == null) {
-                    mapDataTask = new HashMap<>();
-                    List<Map<String, Object>> listData = new ArrayList<>();
-                    listData.add(rowData);
-                    mapDataTask.put(sku, listData);
-                    mapDataChannel.put(taskId, mapDataTask);
-                } else {
-                    if (mapDataTask.containsKey(sku)) {
-                        mapDataTask.get(sku).add(rowData);
-                    } else {
-                        List<Map<String, Object>> listData = new ArrayList<>();
-                        listData.add(rowData);
-                        mapDataTask.put(sku, listData);
-                    }
-                }
-            }
-        }
+//        Map<String, Map<Integer, Map<String, List<Map<String, Object>>>>> resultDataByChannel = new HashMap<>();
+//
+//        for (Map<String, Object> rowData : resultData) {
+//            String channelId = (String) rowData.get("channel_id");
+//            String sku = (String) rowData.get("sku");
+//            Integer taskId = (Integer) rowData.get("task_id");
+//
+//            // 隔离数据Map put
+//            Map<Integer, Map<String, List<Map<String, Object>>>> mapDataChannel = resultDataByChannel.get(channelId);
+//            if (mapDataChannel == null) {
+//                mapDataChannel = new HashMap<>();
+//                Map<String, List<Map<String, Object>>> mapDataTask = new HashMap<>();
+//                List<Map<String, Object>> listData = new ArrayList<>();
+//                listData.add(rowData);
+//                mapDataTask.put(sku, listData);
+//                mapDataChannel.put(taskId, mapDataTask);
+//                resultDataByChannel.put(channelId, mapDataChannel);
+//            } else {
+//                Map<String, List<Map<String, Object>>> mapDataTask = mapDataChannel.get(taskId);
+//                if (mapDataTask == null) {
+//                    mapDataTask = new HashMap<>();
+//                    List<Map<String, Object>> listData = new ArrayList<>();
+//                    listData.add(rowData);
+//                    mapDataTask.put(sku, listData);
+//                    mapDataChannel.put(taskId, mapDataTask);
+//                } else {
+//                    if (mapDataTask.containsKey(sku)) {
+//                        mapDataTask.get(sku).add(rowData);
+//                    } else {
+//                        List<Map<String, Object>> listData = new ArrayList<>();
+//                        listData.add(rowData);
+//                        mapDataTask.put(sku, listData);
+//                    }
+//                }
+//            }
+//        }
 
         // 把隔离成功的数据进行更新（因为sku所有平台必须一起隔离）
         // if（该sku下所有平台只要有状态不是隔离成功和等待隔离的）

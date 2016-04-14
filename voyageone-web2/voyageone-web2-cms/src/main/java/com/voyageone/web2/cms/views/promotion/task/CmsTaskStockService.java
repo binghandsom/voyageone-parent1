@@ -1083,7 +1083,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得该渠道下所有隔离库存
         Map<String,Integer> skuStockSeparateAll = new HashMap<>();
         sqlParam.clear();
-        // 状态 = 2：隔离成功
+        // 状态 = 3：隔离成功
         sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
         sqlParam.put("taskIdList", listSeparateTaskId);
         List<Map<String,Object>> listStockSeparate = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
