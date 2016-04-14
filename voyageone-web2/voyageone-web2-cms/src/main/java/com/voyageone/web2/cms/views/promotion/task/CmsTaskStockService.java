@@ -1339,7 +1339,7 @@ public class CmsTaskStockService extends BaseAppService {
                 //属性4（SIZE）
                 aSkuProHash.put("property4",proMapValue.get("property4").toString());
                 //可用库存
-                aSkuProHash.put("qty", "0");
+                aSkuProHash.put("qty", proMapValue.get("qty").toString());
                 //隔离库存
                 //隔离库存
                 aSkuProHash.put("separateQty","-1");
