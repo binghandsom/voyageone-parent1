@@ -104,7 +104,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * 京东平台类目属性信息取得
      *
      * @param shop ShopBean 店铺信息
-     *        cartId int    平台ID
+     * @param cartId int    平台ID
      */
     private void doSetPlatformCategoryAttrJd(ShopBean shop, int cartId) {
 
@@ -138,7 +138,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * 京东类目属性schema信息插入
      *
      * @param shop ShopBean  店铺信息
-     *        platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
+     * @param platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
      */
     private void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
 
@@ -211,7 +211,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * 根据京东类目属性值列表取得单选field选项列表
      *
      * @param categoryAttr     CategoryAttr      京东类目属性
-     *        jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
+     * @param jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
      * @return SingleCheckField    单选field对象
      */
     private SingleCheckField getSingleCheckField(CategoryAttr categoryAttr, List<CategoryAttrValue> jdCategoryAttrValueList) {
@@ -246,7 +246,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * 根据京东类目属性值列表取得多选field选项列表
      *
      * @param categoryAttr     CategoryAttr      京东类目属性
-     *        jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
+     * @param jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
      * @return MultiCheckField    多选field对象
      */
     private MultiCheckField getMultiCheckField(CategoryAttr categoryAttr, List<CategoryAttrValue> jdCategoryAttrValueList) {
@@ -281,7 +281,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * 根据京东类目属性值列表取得多选field选项列表
      *
      * @param categoryAttr     CategoryAttr      京东类目属性
-     *        jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
+     * @param jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
      * @return InputField    可输入field对象
      */
     private InputField getInputField(CategoryAttr categoryAttr, List<CategoryAttrValue> jdCategoryAttrValueList) {

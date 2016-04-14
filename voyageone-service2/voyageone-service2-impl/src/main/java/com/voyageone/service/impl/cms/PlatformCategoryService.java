@@ -41,9 +41,9 @@ public class PlatformCategoryService extends BaseService {
      * 创建各渠道的平台类目层次关系.
      *
      * @param platformCatModelList List<CmsMtPlatformCategoryTreeModel>    平台类目树列表
-     *        cartId         String            平台ID
-     *        channelId      String            渠道ID
-     *        taskName       String            任务名
+     * @param cartId         String            平台ID
+     * @param channelId      String            渠道ID
+     * @param taskName       String            任务名
      * @return List<CmsMtPlatformCategoryTreeModel>    平台类目层次树列表
      */
     public List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, String cartId, String channelId, String taskName) {
@@ -88,8 +88,8 @@ public class PlatformCategoryService extends BaseService {
      * 更新MangoDB类目数据.
      *
      * @param savePlatformCatModels List<CmsMtPlatformCategoryTreeModel> 类目MODEL
-     *        cartId String            平台ID
-     *        channelId String         渠道ID
+     * @param cartId String            平台ID
+     * @param channelId String         渠道ID
      */
     public void setMangoDBPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels, String cartId, String channelId) {
 

@@ -64,8 +64,8 @@ public class JdCategoryService extends JdBase {
      * 取得京东类目属性信息列表
      *
      * @param shop ShopBean            店铺信息
-     *        catId String             类目id
-     *        attributeType int        类目id
+     * @param catId String             类目id
+     * @param attributeType int        属性类型
      *
      * @return List<CategoryAttr>      京东类目属性列表
      */
@@ -106,7 +106,7 @@ public class JdCategoryService extends JdBase {
      * 通过类目属性ID获取属性值列表
      *
      * @param shop ShopBean            店铺信息
-     *        categoryAttrId String    类目属性id
+     * @param categoryAttrId String    类目属性id
      *
      * @return List<CategoryAttrValue> 京东类目属性值列表
      */

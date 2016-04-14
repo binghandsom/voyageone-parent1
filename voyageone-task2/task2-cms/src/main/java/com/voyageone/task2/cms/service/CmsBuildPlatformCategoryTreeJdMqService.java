@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.category.Category;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -128,11 +127,10 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
      * 取得平台类目模型信息
      *
      * @param jdCategoryList List<Category>    京东类目列表
-     *        cartId         String            CartId
-     *        channelId      String            渠道id
-     *        platformId     String            平台id
+     * @param cartId         String            CartId
+     * @param channelId      String            渠道id
+     * @param platformId     String            平台id
      * @return ArrayList<Category>    京东类目列表
-     * @throws BusinessException 业务异常
      */
     public ArrayList<JdCategroyBean> getCategoryList(List<Category> jdCategoryList, String cartId, String channelId, String platformId) {
         ArrayList<JdCategroyBean> categoryList = new ArrayList<>();
@@ -217,9 +215,9 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
 	 * 获得各渠道的平台类目树
      *
      * @param jdCategroyBeanList ArrayList<JdCategroyBean>    京东类目列表
-     *        cartId         String            CartId
-     *        channelId      String            渠道id
-     *        taskName       String            Task名
+     * @param cartId         String            CartId
+     * @param channelId      String            渠道id
+     * @param taskName       String            Task名
      * @return List<CmsMtPlatformCategoryTreeModel>    京东类目树列表
 	 */
     public List<CmsMtPlatformCategoryTreeModel> getCmsMtPlatformCategoryTreeModelList(ArrayList<JdCategroyBean> jdCategroyBeanList, String cartId, String channelId, String taskName) {
