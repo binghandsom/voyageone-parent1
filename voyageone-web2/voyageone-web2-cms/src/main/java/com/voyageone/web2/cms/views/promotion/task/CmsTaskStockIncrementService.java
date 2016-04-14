@@ -153,12 +153,12 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //渠道的判断
         if (null==param.get("incrementCartId")){
             //请选择增量的隔离渠道
-            throw new BusinessException("请选择增量的隔离渠道");
+            throw new BusinessException("7000071");
         }
         //增量类型:增量数量(incrementPercent) 增量百分比(incrementCount)
         if(null==param.get("incrementType")){
             //请选择增量的增量类型
-            throw new BusinessException("请选择增量的增量类型");
+            throw new BusinessException("7000072");
         }
         //增量类的判断
         if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
@@ -177,8 +177,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         }
         if(incrementType.equals(TYPE_INCREMENT_COUNT)){
             //数量增量
-            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
-                    ||incrementValues.getBytes().length>2) {
+            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)) {
                 // 增量必须为大于0的整数
                 throw new BusinessException("7000055");
             }
