@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="$ctrl.initialize()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
@@ -144,8 +144,8 @@
 						</td>
 					</tr>
 					</tbody>
-					<div if-no-rows="$ctrl.imageDataList.length" ></div>
 				</table>
+				<div if-no-rows="$ctrl.imageDataList.length" ></div>
 			</div>
 		</div><!-- /.box-body -->
 		<div class="m-t-xs">

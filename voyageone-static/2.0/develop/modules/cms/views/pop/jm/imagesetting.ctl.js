@@ -2,21 +2,38 @@
  * Created by 123 on 2016/4/8.
  */
 define([
-    'angularAMD',
-    'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
+    'cms'
+], function (cms) {
 
-    angularAMD.controller('popImageSettingCtl', function ($scope, $routeParams) {
+    return cms.controller('popImageSettingCtl', (function () {
 
-        /**
-         * 初始化数据.
-         */
-        $scope.initialize = function () {
-            if ($scope.vm == undefined) {
-                $scope.vm = {};
+        function JmImageSettingController($translate, $CmsMtMasterInfoService, $modalInstance, notify, confirm, alert, context) {
+
+            this.translate = $translate;
+            this.cmsMtMasterInfoService = $CmsMtMasterInfoService;
+            this.modalInstance = $modalInstance;
+            this.notify = notify;
+            this.confirm = confirm;
+            this.alert = alert;
+
+            this.imageData = context.imageData;
+        }
+
+        JmImageSettingController.prototype = {
+
+            // 检索
+            save: function () {
+                var self = this;
+                if (self.imageData.dataType != null && self.imageData.dataType != "" &&
+                    self.imageData.value1 != null && self.imageData.value1 != "") {
+                    self.cmsMtMasterInfoService.addImage(this.imageData).then(function () {
+                        self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        self.modalInstance.close();
+                    })
+                }
             }
-            $scope.vm.attsList = $routeParams.attsList;
         };
 
-    });
+        return JmImageSettingController
+    })());
 });

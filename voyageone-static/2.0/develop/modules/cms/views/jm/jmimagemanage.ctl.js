@@ -32,7 +32,7 @@ define([
 
             this.searchInfo = {synFlgList: []};
             this.imageDataList = [];
-            this.imageDataPageOption = {curr: 1, total: 0, size: 10, fetch: this.goPage.bind(this)}
+            this.imageDataPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)}
         }
 
         JmImageManageController.prototype = {
@@ -54,27 +54,17 @@ define([
                 data.synFlgList = _returnKey(data.synFlgList);
                 data.start = (self.imageDataPageOption.curr - 1) * self.imageDataPageOption.size;
                 data.length = self.imageDataPageOption.size;
-                 this.goPage();
-                self.cmsMtMasterInfoService.getCountByWhere(data).then (function(res) {
-                    self.imageDataPageOption.total = res.data;
-                })
-            },
-            goPage:function(){
-                var self = this;
-                var data = angular.copy(self.searchInfo);
-                data.synFlgList = _returnKey(data.synFlgList);
-                data.start = (self.imageDataPageOption.curr - 1) * self.imageDataPageOption.size;
-                data.length = self.imageDataPageOption.size;
                 self.cmsMtMasterInfoService.search(data).then (function(res) {
-                    self.imageDataList = res.data;
-                });
+                    self.imageDataList = res.data.masterInfoList;
+                    self.imageDataPageOption.total = res.data.masterInfoListTotal;
+                })
             },
 
             // 保存单个图片
             saveImage: function (imageData) {
                 var self = this;
                 self.cmsMtMasterInfoService.saveImage(imageData).then(function () {
-                    self.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 })
             },
 
@@ -82,17 +72,17 @@ define([
             reUpload: function (imageData) {
                 var self = this;
                 self.cmsMtMasterInfoService.updateJMImg(imageData).then(function () {
-                    self.notify.success(this.translate.instant('TXT_MSG_UPLOAD_IMAGE_SUCCESS'));
+                    self.notify.success(self.translate.instant('TXT_MSG_UPLOAD_IMAGE_SUCCESS'));
                 })
             },
 
             // 删除的单个图片
-            deleteImage: function (id) {
+            deleteImage: function (imageData) {
                 var self = this;
                 self.confirm(self.translate.instant('TXT_MSG_DELETE_ITEM')).result.then(function () {
-                    self.cmsMtMasterInfoService.deleteImage(id).then(function () {
+                    self.cmsMtMasterInfoService.deleteImage(imageData).then(function () {
                         self.search();
-                        self.notify.success(this.translate.instant('TXT_MSG_DELETE_SUCCESS'));
+                        self.notify.success(self.translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     })
                 })
             },
@@ -106,7 +96,7 @@ define([
                         sizeType: imageData.sizeType,
                         dataType: imageData.dataType.toString()
                     }
-                }).then(this.search.bind(this));
+                }).then(this.initialize.bind(this));
             }
         };
 
