@@ -417,6 +417,8 @@ public interface CmsUrlConstants {
 
             String SUBMIT_TASK = "submitTask";
 
+            String CANCEL_TASK = "cancelTask";
+
             String GET_FEED_ATTRIBUTES = "getFeedAttributes";
         }
     }

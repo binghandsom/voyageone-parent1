@@ -51,6 +51,7 @@
         a.task_type,
         a.`key`,
         b.promotion_price,
+        b.num_iid,
         a.syn_flg,
         a.err_msg,
         a.created,

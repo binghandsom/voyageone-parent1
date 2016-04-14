@@ -14,8 +14,10 @@ define([
 ], function (cms) {
     return cms.controller('translationDetailController', (function () {
 
-        function TranslationDetailController($routeParams, $translate, translationService, notify, confirm,alert) {
+        function TranslationDetailController($scope, $routeParams, $translate, translationService, notify, confirm,alert) {
 
+            this.searchInfo = {};
+            this.prodPageOption = {curr: 1, total: 0, size: 20, fetch: this.searchHistoryTasks.bind(this)};
             this.routeParams = $routeParams;
             this.$translate = $translate;
             this.translationService = translationService;
@@ -23,7 +25,6 @@ define([
             this.confirm = confirm;
             this.alert = alert;
 
-            this.searchCondition = "";
             this.sortFieldOptions = [];
             this.lenInfo = {};
             this.getTaskInfo = {
@@ -38,7 +39,8 @@ define([
 
             // 获取初始化数据
             initialize: function () {
-                var self =  this;
+                var self = this;
+                this.prodPageOption.curr = 1;
                 this.translationService.getTasks()
                     .then(function (res) {
                         self.taskInfos = res.data.taskInfos;
@@ -54,7 +56,7 @@ define([
                 if (this.taskInfos.productTranslationBeanList.length > 0){
                     this.alert(this.$translate.instant('TXT_MSG_HAVE_UN_TRANSLATED_TASK'));
                 } else {
-                    var self =  this;
+                    var self = this;
                     this.translationService.assignTasks(self.getTaskInfo)
                         .then(function (res) {
                             self.taskInfos = res.data;
@@ -98,12 +100,23 @@ define([
             },
 
             // 查询历史任务.
-            searchHistoryTasks: function () {
+            searchHistoryTasks: function (page) {
                 var self = this;
-                this.translationService.searchHistoryTasks({searchCondition: self.searchCondition})
+                this.prodPageOption.curr = !page ? this.prodPageOption.curr : page;
+                this.searchInfo.pageNum = this.prodPageOption.curr;
+                this.searchInfo.pageSize = this.prodPageOption.size;
+
+                this.translationService.searchHistoryTasks(this.searchInfo)
                     .then(function (res) {
                         self.taskInfos.productTranslationBeanList = res.data.productTranslationBeanList;
+                        self.prodPageOption.total = res.data.prodListTotal;
                     }.bind(this))
+            },
+
+            // 撤销翻译任务.
+            cancelTask: function (productItem, index) {
+                var self = this;
+                this.translationService.cancelTask({prodCode :productItem.productCode});
             },
 
             // 清空查询条件.
