@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
