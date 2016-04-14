@@ -30,6 +30,18 @@ public class CmsTaskStockIncrementController extends CmsController {
     private CmsTaskStockService cmsTaskStockService;
 
     /**
+     *
+     * @param param
+     * @return resultBean
+     */
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_SUB_TASK)
+    public AjaxResponse searchSubTask(@RequestBody Map param) {
+        //调用CmsTaskStockIncrementService
+        Map<String, Object> resultBean=cmsTaskStockIncrementService.getIncrementInfoBySubTaskID(param);
+        // 返回
+        return success(resultBean);
+    }
+    /**
      * @api {post} /cms/promotion/task_stock_increment/getPlatFormList 2.1 取得隔离任务的隔离平台
      * @apiName CmsTaskStockIncrementController.getPlatFormList
      * @apiDescription 取得隔离任务的隔离平台（新建增量库存隔离任务前初始化操作/ 增量库存隔离任务一览表示后）

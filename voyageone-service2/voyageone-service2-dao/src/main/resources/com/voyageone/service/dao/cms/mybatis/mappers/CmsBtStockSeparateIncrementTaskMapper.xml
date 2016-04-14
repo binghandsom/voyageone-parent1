@@ -82,7 +82,7 @@
         now(),
         #{creater})
     </insert>
-    <update id="update_cms_bt_stock_separate_increment_task_by_taskId">
+    <update id="update_cms_bt_stock_separate_increment_task_by_subTaskId">
         update voyageone_cms2.cms_bt_stock_separate_increment_task
         <set>
             <if test="taskId != null" >
@@ -111,8 +111,8 @@
         </set>
         <where>
             1 = 1
-            <if test="taskId != null" >
-                and task_id = #{taskId}
+            <if test="subTaskId != null" >
+                and sub_task_id = #{subTaskId}
             </if>
         </where>
     </update>

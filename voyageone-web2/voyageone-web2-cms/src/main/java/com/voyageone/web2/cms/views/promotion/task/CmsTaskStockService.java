@@ -2505,6 +2505,13 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public void executeStockRevert(Map param){
 
+        // 隔离数据是否移动到历史表
+        boolean historyFlg = isHistoryExist((String) param.get("task_id"));
+        if (historyFlg) {
+            // 不能进行还原
+            throw new BusinessException("7000070");
+        }
+
         // 还原状态 1:所有活动未开始前的状态；2:至少有一个活动已经自动还原的状态
         String revertStatus = "";
 
