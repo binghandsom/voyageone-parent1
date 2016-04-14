@@ -78,6 +78,9 @@ b.`product_short_name`,b.`msrp`,a.`deal_price`,a.`market_price`,b.`color_en`,b.`
 FROM `cms_bt_jm_promotion_product` AS a
 JOIN `cms_bt_jm_product` AS b ON a.`cms_bt_jm_product_id`=b.`id`
         <where>
+            <if test="cmsBtJmPromotionId!=null">
+                and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
+            </if>
             <if test="categoryLv1Name!=null">
               and b.category_lv1_name =#{categoryLv1Name}
             </if>

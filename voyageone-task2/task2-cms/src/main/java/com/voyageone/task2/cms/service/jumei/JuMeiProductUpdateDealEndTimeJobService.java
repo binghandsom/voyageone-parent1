@@ -7,6 +7,7 @@ import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * Created by dell on 2016/4/14.
  */
+@Service
 public class JuMeiProductUpdateDealEndTimeJobService extends BaseMQTaskService {
     @Autowired
     JuMeiDealService service;
