@@ -157,6 +157,8 @@ public interface CmsUrlConstants {
 
                 String ROOT = "/cms/promotion/task_stock_increment";
 
+                String INIT_TASK = "initTask";
+
                 String SEARCH_TASK = "searchTask";
 
                 String SEARCH_SUB_TASK = "searchSubTask";

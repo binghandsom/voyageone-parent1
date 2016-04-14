@@ -160,6 +160,7 @@
       },
       "taskStockIncrementService": {
         "root": "/cms/promotion/task_stock_increment",
+        "initTask": "initTask",
         "searchTask": "searchTask",
         "searchSubTask": "searchSubTask",
         "saveTask": "saveTask",

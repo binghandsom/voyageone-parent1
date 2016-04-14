@@ -74,6 +74,7 @@ define([
             }
         }else{
             $scope.initialize = function(){
+
                 //增量任务:1新规的场
                 $scope.vm.promotionType="1";
                 //取得对应的活动ID

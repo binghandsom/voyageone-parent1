@@ -177,7 +177,8 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         }
         if(incrementType.equals(TYPE_INCREMENT_COUNT)){
             //数量增量
-            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)) {
+            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
+                    ||incrementValues.getBytes().length>9) {
                 // 增量必须为大于0的整数
                 throw new BusinessException("7000055");
             }
@@ -271,7 +272,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //增量类型
         String incrementType=param.get("incrementType").toString();
         //增量值
-        String incrementValue=param.get("incrementValue").toString();
+        String incrementValue=param.get("incrementValue").toString().replace("%","");
         //隔离比例
         int separate_percent;
         //可用库存

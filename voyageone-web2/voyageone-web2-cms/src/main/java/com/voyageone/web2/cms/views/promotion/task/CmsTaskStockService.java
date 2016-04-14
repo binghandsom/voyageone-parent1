@@ -489,7 +489,7 @@ public class CmsTaskStockService extends BaseAppService {
                     //平台名
                     separatePlatformMap.put("cartName",cartId.getName());
                     //隔离比例
-                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString());
+                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%",""));
                     //类型（1：隔离，2：共享）
                     separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
                     //还原时间
@@ -592,7 +592,7 @@ public class CmsTaskStockService extends BaseAppService {
             // 平台名
             separatePlatformMap.put("cartName",allSeparateCartIdMap.get(i).get("cartName").toString());
             // 隔离比例
-            separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString());
+            separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%", ""));
             // 类型（1：隔离，2：共享）
             separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
             // 还原时间
@@ -727,7 +727,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if(onlySku){
                     separatePlatformMap.put("separate_percent","0");
                 }else{
-                    separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString());
+                    separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString().replace("%",""));
                 }
                 //还原时间
                 separatePlatformMap.put("revert_time",separatePlatformList.get(i).get("revertTime").toString());
@@ -852,7 +852,7 @@ public class CmsTaskStockService extends BaseAppService {
                     Date revertDate = format.parse(revertTime);
                     Date realRevertDate = format.parse(realRevertTime);
                     if (revertDate.getTime()<realRevertDate.getTime()) {
-                        throw new BusinessException("7000081", realRevertTime);
+                        throw new BusinessException("7000073", realRevertTime);
                     }
                 } catch (ParseException e){
                     throw new BusinessException("7000013");
@@ -1241,7 +1241,7 @@ public class CmsTaskStockService extends BaseAppService {
                     //更新者
                     proMap.put("modifier",user);
                     //隔离比例
-                    proMap.put("value",separatePlatformList.get(i).get("value").toString());
+                    proMap.put("value",separatePlatformList.get(i).get("value").toString().replace("%", ""));
                     //可用库存(取得可用库存)
                     if(null==skuStockUsableAll.get(allSkuProEntry.getKey())){
                         // SKU(%s)在逻辑库存表里不存在
@@ -1252,7 +1252,7 @@ public class CmsTaskStockService extends BaseAppService {
                     proMap.put("qty", usableStockInt);
                     if(!onlySku){
                         //隔离库存比例
-                        separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString());
+                        separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString().replace("%",""));
                         //隔离库存
                         separate_qty=Math.round((Long.parseLong(usableStockInt)*separate_percent)/100);
                         proMap.put("separate_qty", separate_qty);
@@ -1344,7 +1344,7 @@ public class CmsTaskStockService extends BaseAppService {
                 //隔离库存
                 aSkuProHash.put("separateQty","-1");
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
-                aSkuProHash.put("status","0");
+                aSkuProHash.put("status","");
                 //创建者
                 aSkuProHash.put("creater", proMapValue.get("creater").toString());
                 //更新者
@@ -1378,6 +1378,8 @@ public class CmsTaskStockService extends BaseAppService {
             Map<String,Object> separatePlatformMap  = new HashMap<>();
             if(SEPARATE_TYPE.equals(separatePlatformList.get(i).get("type").toString())){
                 //cartId
+                separatePlatformMap.put("taskId",taskId);
+                //cartId
                 separatePlatformMap.put("cartId",separatePlatformList.get(i).get("cartId").toString());
                 //增优先顺
                 separatePlatformMap.put("addPriority",separatePlatformList.get(i).get("addPriority").toString());
@@ -1388,6 +1390,8 @@ public class CmsTaskStockService extends BaseAppService {
                 //还原时间
                 separatePlatformMap.put("revertTime",separatePlatformList.get(i).get("revertTime").toString());
             }else{
+                //cartId
+                separatePlatformMap.put("taskId",taskId);
                 //commonPlatform
                 separatePlatformMap.put("commonPlatform","-1");
                 //cartId
