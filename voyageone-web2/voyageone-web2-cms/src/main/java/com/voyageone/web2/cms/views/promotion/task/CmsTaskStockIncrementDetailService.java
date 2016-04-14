@@ -439,7 +439,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param cartId 平台id
      * @return 是否在进行中
      */
-    private boolean isPromotionDuring(String taskId, String cartId){
+    public boolean isPromotionDuring(String taskId, String cartId){
 
         // 取得任务下的平台平台信息
         Date now = DateTimeUtil.parse(DateTimeUtil.getNow());

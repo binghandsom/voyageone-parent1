@@ -43,6 +43,8 @@ define([
                 $scope.vm.incrementSubTaskId=task.subTaskId;
                 //增量任务名
                 $scope.vm.incrementCartName=task.cartName;
+                //任务ID
+                $scope.vm.incrementTaskId=data.ctrl.taskId;
                 taskStockIncrementService.searchSubTask($scope.vm).then(
                     function (res) {
                         //增量类型

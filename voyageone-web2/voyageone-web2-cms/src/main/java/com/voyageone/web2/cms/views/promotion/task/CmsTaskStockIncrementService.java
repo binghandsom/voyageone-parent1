@@ -36,6 +36,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
 
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
+
     /** 判断隔离任务:1新规的场合 */
     private  static final String TYPE_INCREMENT_INSERT="1";
     /** 判断隔离任务:2更新的场合 */
@@ -144,15 +145,20 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         String incrementValues = String.valueOf(param.get("incrementValue"));
         //任务名
         String incrementTaskName =String.valueOf(param.get("incrementTaskName"));
+        //incrementCartId
+        String incrementCartId=String.valueOf(param.get("incrementCartId"));
+        //incrementTaskId
+        String incrementTaskId=String.valueOf(param.get("incrementTaskId"));
+
         //渠道的判断
         if (null==param.get("incrementCartId")){
             //请选择增量的隔离渠道
-            throw new BusinessException("请选择增量的隔离渠道");
+            throw new BusinessException("7000071");
         }
         //增量类型:增量数量(incrementPercent) 增量百分比(incrementCount)
         if(null==param.get("incrementType")){
             //请选择增量的增量类型
-            throw new BusinessException("请选择增量的增量类型");
+            throw new BusinessException("7000072");
         }
         //增量类的判断
         if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
@@ -171,8 +177,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         }
         if(incrementType.equals(TYPE_INCREMENT_COUNT)){
             //数量增量
-            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
-                    ||incrementValues.getBytes().length>2) {
+            if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)) {
                 // 增量必须为大于0的整数
                 throw new BusinessException("7000055");
             }
@@ -181,6 +186,14 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>=1000) {
             // 任务名必须输入且长度小于1000
             throw new BusinessException("7000012");
+        }
+        //增量时间check
+
+        // 取得任务id对应的Promotion是否未开始或者已经结束
+        boolean promotionDuringFlg = cmsTaskStockIncrementDetailService.isPromotionDuring(incrementTaskId, incrementCartId);
+        if (!promotionDuringFlg) {
+            // 活动未开始或者已经结束，不能增量
+            throw new BusinessException("7000062");
         }
     }
     /**
