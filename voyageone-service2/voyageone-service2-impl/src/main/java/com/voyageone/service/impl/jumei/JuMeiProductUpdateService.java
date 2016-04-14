@@ -1,15 +1,14 @@
 package com.voyageone.service.impl.jumei;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.model.jumei.*;
-import com.voyageone.service.model.jumei.businessmodel.JMProductUpdateInfo;
+import com.voyageone.service.model.jumei.businessmodel.JMNewProductInfo;
+import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +51,33 @@ public class JuMeiProductUpdateService {
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
         return listPromotionProduct;
     }
-    public JMProductUpdateInfo getJMProductUpdateInfo(CmsBtJmPromotionProductModel promotionProductModel) {
-        JMProductUpdateInfo info = new JMProductUpdateInfo();
+
+    public JMUpdateProductInfo getJMUpdateProductInfo(CmsBtJmPromotionProductModel promotionProductModel) {
+        JMUpdateProductInfo info = new JMUpdateProductInfo();
+        info.setModelCmsBtJmPromotionProduct(promotionProductModel);
+
+        //CmsBtJmProduct
+        CmsBtJmProductModel productModel = daoCmsBtJmProduct.select(promotionProductModel.getCmsBtJmProductId());
+        info.setModelCmsBtJmProduct(productModel);
+
+        //CmsBtJmPromotionSku   list
+        Map<String, Object> parameterPromotionSku = new HashMap<>();
+        parameterPromotionSku.put("cmsBtJmPromotionId", promotionProductModel.getCmsBtJmPromotionId());
+        parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
+        parameterPromotionSku.put("state", "0");
+        List<CmsBtJmPromotionSkuModel> listPromotionSku = daoCmsBtJmPromotionSku.selectList(parameterPromotionSku);
+        info.setListCmsBtJmPromotionSku(listPromotionSku);
+
+        //CmsBtJmSku   list
+        Map<String, Object> parameterSku = new HashMap<>();
+        parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
+        parameterSku.put("state", "0");
+        List<CmsBtJmSkuModel> listSkuModel = daoCmsBtJmSku.selectList(parameterSku);
+        info.setListCmsBtJmSku(listSkuModel);
+        return info;
+    }
+    public JMNewProductInfo getJMNewProductInfo(CmsBtJmPromotionProductModel promotionProductModel) {
+        JMNewProductInfo info = new JMNewProductInfo();
         info.setModelCmsBtJmPromotionProduct(promotionProductModel);
 
         //CmsBtJmProduct
@@ -94,7 +118,7 @@ public class JuMeiProductUpdateService {
         return info;
     }
     @VOTransactional
-    public  void  saveJMNewProductUpdateInfo(JMProductUpdateInfo info) {
+    public  void  saveJMNewProductUpdateInfo(JMNewProductInfo info) {
         daoCmsBtJmProduct.update(info.getModelCmsBtJmProduct());
         daoCmsBtJmPromotionProduct.update(info.getModelCmsBtJmPromotionProduct());
         for (CmsBtJmSkuModel cmsBtJmSku : info.getListCmsBtJmSku()) {
@@ -105,9 +129,16 @@ public class JuMeiProductUpdateService {
         }
     }
     @VOTransactional
-    public  void  saveJMUpdateProductInfo( CmsBtJmPromotionProductModel modelPromotionProduct, CmsBtJmProductModel modelProduct) {
-        daoCmsBtJmProduct.update(modelProduct);
-        daoCmsBtJmPromotionProduct.update(modelPromotionProduct);
+    public  void  saveJMUpdateProductInfo(JMUpdateProductInfo info)
+    {
+        daoCmsBtJmProduct.update(info.getModelCmsBtJmProduct());
+        daoCmsBtJmPromotionProduct.update(info.getModelCmsBtJmPromotionProduct());
+        for (CmsBtJmSkuModel cmsBtJmSku : info.getListCmsBtJmSku()) {
+            daoCmsBtJmSku.update(cmsBtJmSku);
+        }
+        for (CmsBtJmPromotionSkuModel promotionSku : info.getListCmsBtJmPromotionSku()) {
+            daoCmsBtJmPromotionSku.update(promotionSku);
+        }
     }
     public void saveCmsBtJmProductImages(CmsBtJmProductImagesModel model) {
         daoCmsBtJmProductImages.update(model);

@@ -81,7 +81,7 @@ public class HtDealCopyDealResponse extends JMResponse {
             if (map.containsKey("response")) {
                 Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
                 if (mapSesponse.containsKey("jumei_hash_id")) {
-                    this.setJumei_hash_id(mapSesponse.get(jumei_hash_id).toString());
+                    this.setJumei_hash_id(mapSesponse.get("jumei_hash_id").toString());
                 }
             }
             if (this.getError_code() == "0") {
