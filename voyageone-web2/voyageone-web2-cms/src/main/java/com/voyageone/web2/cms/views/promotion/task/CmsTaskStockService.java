@@ -1340,7 +1340,7 @@ public class CmsTaskStockService extends BaseAppService {
                 //隔离库存
                 aSkuProHash.put("separateQty","-1");
                 //状态(0：未进行； 1：等待增量； 2：增量成功； 3：增量失败； 4：还原)
-                aSkuProHash.put("status","0");
+                aSkuProHash.put("status","");
                 //创建者
                 aSkuProHash.put("creater", proMapValue.get("creater").toString());
                 //更新者
