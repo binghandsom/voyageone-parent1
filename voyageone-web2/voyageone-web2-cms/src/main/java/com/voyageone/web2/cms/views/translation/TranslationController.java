@@ -29,11 +29,11 @@ public class TranslationController extends CmsController{
     public AjaxResponse doGetTasks() {
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
 
-        translateTaskBeanInfo.put("taskInfos",feedPropsTranslateService.getUndoneTasks(getUser()));
+        translateTaskBeanInfo.put("taskInfos", feedPropsTranslateService.getUndoneTasks(getUser()));
         translateTaskBeanInfo.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
 
         // 获取翻译时标题和描述的长度设置
-        translateTaskBeanInfo.put("lenSetInfo",feedPropsTranslateService.getTransLenSet(getUser().getSelChannelId()));
+        translateTaskBeanInfo.put("lenSetInfo", feedPropsTranslateService.getTransLenSet(getUser().getSelChannelId()));
 
         return success(translateTaskBeanInfo);
     }
@@ -125,9 +125,17 @@ public class TranslationController extends CmsController{
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+     * @apiSuccess (应用级返回字段) {Integer} totalUndoneCount 所有待翻译的产品总数
+     * @apiSuccess (应用级返回字段) {Integer} totalDoneCount 所有已完成翻译的产品总数
+     * @apiSuccess (应用级返回字段) {Integer} userDoneCount 个人已完成翻译产品总数
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
+     *  "data":{
+     *   "totalUndoneCount": 1188,
+     *   "totalDoneCount": 2318,
+     *   "userDoneCount": 31
+     *  }
      * }
      * @apiExample  业务说明
      *  撤销已翻译的产品（将翻译状态改为未翻译）
@@ -137,7 +145,6 @@ public class TranslationController extends CmsController{
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.CANCEL_TASK)
     public AjaxResponse doCancelTasks(@RequestBody Map requestBean) {
-        feedPropsTranslateService.cancelUserTask(getUser(), (String) requestBean.get("prodCode"));
-        return success(null);
+        return success(feedPropsTranslateService.cancelUserTask(getUser(), (String) requestBean.get("prodCode")));
     }
 }

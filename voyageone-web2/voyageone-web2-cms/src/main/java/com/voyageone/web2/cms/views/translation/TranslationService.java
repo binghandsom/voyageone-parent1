@@ -123,7 +123,7 @@ public class TranslationService extends BaseAppService {
 
         TranslateTaskBean result = new TranslateTaskBean();
         result.setProductTranslationBeanList(buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels));
-        translateTaskBean.setProdListTotal(cmsBtProductModels.size());
+        result.setProdListTotal(cmsBtProductModels.size());
         result.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
         result.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
         result.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
@@ -515,7 +515,7 @@ public class TranslationService extends BaseAppService {
      * @param userInfo
      * @param prodCode
      */
-    public void cancelUserTask(UserSessionBean userInfo, String prodCode) {
+    public TranslateTaskBean cancelUserTask(UserSessionBean userInfo, String prodCode) {
         if (StringUtils.isEmpty(prodCode)) {
             throw new BusinessException("cancelUserTask::没有参数");
         }
@@ -527,5 +527,11 @@ public class TranslationService extends BaseAppService {
         rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
 
         cmsBtProductDao.update(userInfo.getSelChannelId(), paraMap, rsMap);
+
+        TranslateTaskBean result = new TranslateTaskBean();
+        result.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
+        result.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
+        result.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
+        return result;
     }
 }
