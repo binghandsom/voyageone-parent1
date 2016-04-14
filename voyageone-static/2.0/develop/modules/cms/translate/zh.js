@@ -332,6 +332,7 @@ define(function(){
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
+        "BTN_UPLOAD_FILE": "Upload File",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",

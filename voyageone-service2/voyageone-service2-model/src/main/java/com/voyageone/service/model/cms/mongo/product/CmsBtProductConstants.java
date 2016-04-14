@@ -26,6 +26,15 @@ public interface CmsBtProductConstants {
 			this.name = name;
 		}
 
+		public static FieldImageType getFieldImageTypeByName(String name) {
+			for (FieldImageType c : FieldImageType.values()) {
+				if (c.getName().equalsIgnoreCase(name)) {
+					return c;
+				}
+			}
+			return null;
+		}
+
 	}
 
 }

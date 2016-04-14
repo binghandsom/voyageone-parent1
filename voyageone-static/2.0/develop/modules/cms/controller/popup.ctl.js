@@ -241,6 +241,13 @@ define([
                     "controller": "popPromotionHistoryCtl"
                 }
             },
+            "image": {
+                "setting": {
+                    "templateUrl": "views/pop/image/imgSetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
+                    "controller": "popImgSettingCtl"
+                }
+            },
             "promotion": {
                 "detail": {
                     "templateUrl": "views/pop/promotion/detail.tpl.html",
@@ -737,7 +744,7 @@ define([
                         },
                         cartList: function () {
                             return cartList;
-                        }
+                        },
                     }
                 });
 
@@ -745,11 +752,40 @@ define([
                     if (fnInitial) {
                         fnInitial();
                     }
-
                 })
             });
         }
-
+        /**
+         * 打开promotion页面
+         * @type {openPromotion}
+         */
+        $scope.openImageSetting = function (context) {
+            return openModel(popActions.image.setting, context);
+        };
+        //function openImageSetting(viewSize, product, imageType, fnInitial) {
+        //    require([popActions.image.setting.controllerUrl], function () {
+        //        var modalInstance = $uibModal.open({
+        //            templateUrl: popActions.image.setting.templateUrl,
+        //            controller: popActions.image.setting.controller,
+        //            size: viewSize,
+        //            resolve: {
+        //                product: function () {
+        //                    return product;
+        //                },
+        //                imageType: function () {
+        //                    return imageType;
+        //                }
+        //            }
+        //        });
+        //
+        //        modalInstance.result.then(function (object) {
+        //            if (fnInitial) {
+        //                fnInitial(object);
+        //            }
+        //
+        //        })
+        //    });
+        //}
         /**
          * 打开promotion页面
          */
