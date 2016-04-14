@@ -36,4 +36,11 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
     }
 
+    /**
+     * getProductByCode
+     */
+    public CmsBtFeedInfoModel getProductByCode(String channelId, String productCode) {
+        return cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
+    }
+
 }

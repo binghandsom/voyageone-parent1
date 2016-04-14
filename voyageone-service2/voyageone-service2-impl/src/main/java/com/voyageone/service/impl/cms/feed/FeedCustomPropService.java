@@ -6,6 +6,7 @@ import com.voyageone.service.dao.cms.CmsBtFeedCustomPropAndValueDao;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -298,7 +299,7 @@ public class FeedCustomPropService extends BaseService {
 	 * 获取所有的翻译列表
 	 * @param channel_id channel id
 	 * @param feed_cat_path feed category path
-	 * @return Map<String, String>
+	 * @return Map map
 	 */
 	public Map<String, String> getTransList(String channel_id, String feed_cat_path) {
 		if (!blnInit) {
@@ -321,7 +322,7 @@ public class FeedCustomPropService extends BaseService {
 		}
 
 		if (propMap != null) {
-			propMap.forEach((kProp, vProp)->{
+			propMap.forEach((kProp, vProp)->
 				vProp.forEach((k, v)->{
 					String value = "";
 					for (String trans : v) {
@@ -332,9 +333,8 @@ public class FeedCustomPropService extends BaseService {
 					}
 					result.put(k, value);
 
-				});
-
-			});
+				})
+			);
 		}
 
 		return result;
@@ -467,4 +467,10 @@ public class FeedCustomPropService extends BaseService {
 		return cmsBtFeedCustomPropDao.selectAttrs(params);
 	}
 
+	public List<CmsBtFeedCustomPropModel> getFeedCustomPropWithCategory(String channelId, String feedCategory) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("channelId", channelId);
+		params.put("feedCatPath", feedCategory);
+		return cmsBtFeedCustomPropDao.selectWithCategory(params);
+	}
 }

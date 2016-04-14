@@ -247,6 +247,10 @@ public class ProductService extends BaseService {
         return cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
     }
 
+    public boolean checkProductDataIsReady(String channelId, Long productId) {
+        return cmsBtProductDao.checkProductDataIsReady(channelId, productId);
+    }
+
     /**
      * 插入商品
      */

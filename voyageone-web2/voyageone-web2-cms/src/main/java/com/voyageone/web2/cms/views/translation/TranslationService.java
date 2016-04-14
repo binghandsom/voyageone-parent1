@@ -2,12 +2,12 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.CustomWordService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
-import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -29,7 +29,7 @@ import java.util.*;
 public class TranslationService extends BaseAppService {
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    private FeedInfoService feedInfoService;
 
     @Autowired
     private ProductService productService;
@@ -38,7 +38,7 @@ public class TranslationService extends BaseAppService {
     private ProductGroupService productGroupService;
 
     @Autowired
-    protected CmsMtCustomWordDao customWordDao;
+    protected CustomWordService customWordService;
 
     private static String[] RET_FIELDS = {
             "prodId",
@@ -59,10 +59,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取当前用户未完成的任务.
-     *
-     * @param userInfo
-     * @return
-     * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
 
@@ -96,9 +92,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 用户获取任务列表，自动分发任务.
-     *
-     * @param userInfo
-     * @param translateTaskBean
      */
     public TranslateTaskBean assignTask(UserSessionBean userInfo,TranslateTaskBean translateTaskBean) {
 
@@ -132,10 +125,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 暂时保存翻译任务.
-     * @param userInfo
-     * @param taskBean
-     * @param transSts
-     * @return
      */
     public TranslateTaskBean saveTask(UserSessionBean userInfo, ProductTranslationBean taskBean, String transSts) {
 
@@ -243,11 +232,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取当前用户未完成的任务.
-     *
-     * @param userInfo
-     * @param condition
-     * @return
-     * @throws BusinessException
      */
     public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, String condition) throws BusinessException {
 
@@ -280,11 +264,8 @@ public class TranslationService extends BaseAppService {
         return translateTaskBean;
     }
 
-
     /**
      * 组装task beans。
-     * @param cmsBtProductModels
-     * @return
      */
     private List<ProductTranslationBean> buildTranslateTaskBeen(String channelId, List<CmsBtProductModel> cmsBtProductModels) {
         List<ProductTranslationBean> translateTaskBeanList = new ArrayList<>(cmsBtProductModels.size());
@@ -331,8 +312,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取个人完成翻译数.
-     * @param channelId
-     * @param userName
      */
     private int getDoneTaskCount(String channelId, String userName) {
         String doneTaskCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.translator':'%s'}", userName);
@@ -341,7 +320,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取所有完成的数量.
-     * @param channelId
      */
     private int getTotalDoneCount(String channelId) {
         String totalDoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':'1'}";
@@ -350,7 +328,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 设定个人完成翻译数、完成翻译总数、待翻译总数.
-     * @param channelId
      */
     private int getTotalUndoneCount(String channelId) {
         String totalUndoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']}}";
@@ -359,14 +336,10 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取 feed info model.
-     *
-     * @param channelId
-     * @param productCode
-     * @return
      */
     public Map<String, String> getFeedAttributes(String channelId, String productCode) {
 
-        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
+        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productCode);
 
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
@@ -456,8 +429,7 @@ public class TranslationService extends BaseAppService {
     }
 
     /**
-     *
-     * @param requestBean
+     * verifyParameter
      */
     private void verifyParameter(ProductTranslationBean requestBean){
 
@@ -485,12 +457,10 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取翻译时标题和描述的长度设置
-     * @param chnId
-     * @return
      */
     public Map<String, Object> getTransLenSet(String chnId) {
-        Map<String, Object> setInfo = new HashMap<String, Object>();
-        List<Map<String, Object>> rslt = customWordDao.selectTransLenSet(chnId);
+        Map<String, Object> setInfo = new HashMap<>();
+        List<Map<String, Object>> rslt = customWordService.getTransLenSet(chnId);
         for (Map<String, Object> item : rslt) {
             String lenType = (String) item.get("lenType");
             item.remove("lenType");
