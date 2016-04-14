@@ -31,6 +31,13 @@
             <if test="taskId != null">
                 and task_id = #{taskId}
             </if>
+            <if test="taskIdList != null and taskIdList.size() > 0">
+                and (task_id in
+                <foreach collection="taskIdList" item="taskIdListItem" open="(" separator="," close=")">
+                    #{taskIdListItem}
+                </foreach>
+                )
+            </if>
             <if test="cartId != null and cartId != ''">
                 and cart_id = #{cartId}
             </if>

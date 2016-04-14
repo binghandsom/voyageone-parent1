@@ -34,6 +34,13 @@
             <if test="subTaskId != null" >
                 and t1.sub_task_id = #{subTaskId}
             </if>
+            <if test="subTaskIdList != null and subTaskIdList.size() > 0">
+                and (t1.sub_task_id in
+                <foreach collection="subTaskIdList" item="subTaskIdListItem" open="(" separator="," close=")">
+                    #{subTaskIdListItem}
+                </foreach>
+                )
+            </if>
             <if test="sku != null" >
                 and t1.sku = #{sku}
             </if>

@@ -4,10 +4,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.ims.ImsBtLogSynInventoryDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
@@ -39,6 +36,9 @@ public class StockInfoService {
 
     @Autowired
     private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+
+    @Autowired
+    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
 
     @Autowired
     private ImsBtLogSynInventoryDao imsBtLogSynInventoryDao;
@@ -130,13 +130,25 @@ public class StockInfoService {
             }
         }
 
-        // 隔离库存
+        // 取得该渠道下隔离中的task
+        List<Integer> listSeparateTaskId = new ArrayList<>();
+        sqlParam.clear();
+        sqlParam.put("channelIdWhere", channelId);
+        sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
+        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        listPlatform.forEach(data -> {
+            Integer taskId = (Integer) data.get("task_id");
+            if (!listSeparateTaskId.contains(taskId)) {
+                listSeparateTaskId.add(taskId);
+            }
+        });
+
+        // 取得该渠道下所有隔离库存
         Map<String,Integer> skuStockSeparateAll = new HashMap<>();
         sqlParam.clear();
-        sqlParam.put("channelId", channelId);
         // 状态 = 2：隔离成功
         sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
-        sqlParam.put("tableNameSuffix", "");
+        sqlParam.put("taskIdList", listSeparateTaskId);
         List<Map<String,Object>> listStockSeparate = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
         // sku库存隔离信息（所有任务所有平台的数据）
         if (listStockSeparate != null && listStockSeparate.size() > 0) {
@@ -153,13 +165,24 @@ public class StockInfoService {
             }
         }
 
+        // 取得该渠道下隔离中的task的增量隔离任务
+        List<Integer> listIncrementTaskId = new ArrayList<>();
+        sqlParam.clear();
+        sqlParam.put("taskIdList", listSeparateTaskId);
+        List<Map<String, Object>> listIncTask = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        listIncTask.forEach(data -> {
+            Integer subTaskId = (Integer) data.get("sub_task_id");
+            if (!listIncrementTaskId.contains(subTaskId)) {
+                listIncrementTaskId.add(subTaskId);
+            }
+        });
+
         // 取得增量隔离库存
         Map<String,Integer> skuStockIncrementAll = new HashMap<>();
         sqlParam.clear();
-        sqlParam.put("channelId", channelId);
         // 状态 = 3：增量成功
         sqlParam.put("status", STATUS_INCREMENT_SUCCESS);
-        sqlParam.put("tableNameSuffix", "");
+        sqlParam.put("subTaskIdList", listIncrementTaskId);
         List<Map<String,Object>> listStockIncrement = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
         if (listStockIncrement != null && listStockIncrement.size() > 0) {
             for (Map<String, Object> stockIncrementInfo : listStockIncrement) {
