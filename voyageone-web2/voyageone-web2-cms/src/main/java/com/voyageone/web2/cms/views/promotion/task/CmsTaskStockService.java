@@ -1081,23 +1081,25 @@ public class CmsTaskStockService extends BaseAppService {
         });
 
         // 取得该渠道下所有隔离库存
-        Map<String,Integer> skuStockSeparateAll = new HashMap<>();
-        sqlParam.clear();
-        // 状态 = 3：隔离成功
-        sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
-        sqlParam.put("taskIdList", listSeparateTaskId);
-        List<Map<String,Object>> listStockSeparate = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
-        // sku库存隔离信息（所有任务所有平台的数据）
-        if (listStockSeparate != null && listStockSeparate.size() > 0) {
-            for (Map<String, Object> stockInfo : listStockSeparate) {
-                String sku = (String) stockInfo.get("sku");
-                setSku.add(sku);
-                Integer separateQty = (Integer) stockInfo.get("separate_qty");
-                Integer separateQtyAll = skuStockSeparateAll.get(sku);
-                if (separateQtyAll != null) {
-                    skuStockSeparateAll.put(sku, separateQtyAll + separateQty);
-                } else {
-                    skuStockSeparateAll.put(sku, separateQty);
+        Map<String, Integer> skuStockSeparateAll = new HashMap<>();
+        if (listSeparateTaskId.size() > 0) {
+            sqlParam.clear();
+            // 状态 = 3：隔离成功
+            sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
+            sqlParam.put("taskIdList", listSeparateTaskId);
+            List<Map<String, Object>> listStockSeparate = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+            // sku库存隔离信息（所有任务所有平台的数据）
+            if (listStockSeparate != null && listStockSeparate.size() > 0) {
+                for (Map<String, Object> stockInfo : listStockSeparate) {
+                    String sku = (String) stockInfo.get("sku");
+                    setSku.add(sku);
+                    Integer separateQty = (Integer) stockInfo.get("separate_qty");
+                    Integer separateQtyAll = skuStockSeparateAll.get(sku);
+                    if (separateQtyAll != null) {
+                        skuStockSeparateAll.put(sku, separateQtyAll + separateQty);
+                    } else {
+                        skuStockSeparateAll.put(sku, separateQty);
+                    }
                 }
             }
         }
@@ -1115,22 +1117,24 @@ public class CmsTaskStockService extends BaseAppService {
         });
 
         // 取得增量隔离库存
-        Map<String,Integer> skuStockIncrementAll = new HashMap<>();
-        sqlParam.clear();
-        // 状态 = 3：增量成功
-        sqlParam.put("status", STATUS_INCREMENT_SUCCESS);
-        sqlParam.put("subTaskIdList", listIncrementTaskId);
-        List<Map<String,Object>> listStockIncrement = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
-        if (listStockIncrement != null && listStockIncrement.size() > 0) {
-            for (Map<String, Object> stockIncrementInfo : listStockIncrement) {
-                String sku = (String) stockIncrementInfo.get("sku");
-                setSku.add(sku);
-                Integer incrementQty = (Integer) stockIncrementInfo.get("increment_qty");
-                Integer incrementQtyAll = skuStockIncrementAll.get(sku);
-                if (incrementQtyAll != null) {
-                    skuStockIncrementAll.put(sku, incrementQtyAll + incrementQty);
-                } else {
-                    skuStockIncrementAll.put(sku, incrementQty);
+        Map<String, Integer> skuStockIncrementAll = new HashMap<>();
+        if (listIncrementTaskId.size() > 0) {
+            sqlParam.clear();
+            // 状态 = 3：增量成功
+            sqlParam.put("status", STATUS_INCREMENT_SUCCESS);
+            sqlParam.put("subTaskIdList", listIncrementTaskId);
+            List<Map<String, Object>> listStockIncrement = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+            if (listStockIncrement != null && listStockIncrement.size() > 0) {
+                for (Map<String, Object> stockIncrementInfo : listStockIncrement) {
+                    String sku = (String) stockIncrementInfo.get("sku");
+                    setSku.add(sku);
+                    Integer incrementQty = (Integer) stockIncrementInfo.get("increment_qty");
+                    Integer incrementQtyAll = skuStockIncrementAll.get(sku);
+                    if (incrementQtyAll != null) {
+                        skuStockIncrementAll.put(sku, incrementQtyAll + incrementQty);
+                    } else {
+                        skuStockIncrementAll.put(sku, incrementQty);
+                    }
                 }
             }
         }
