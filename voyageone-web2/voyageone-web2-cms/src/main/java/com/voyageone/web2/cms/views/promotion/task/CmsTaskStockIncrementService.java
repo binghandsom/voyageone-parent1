@@ -36,6 +36,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
 
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
+
     /** 判断隔离任务:1新规的场合 */
     private  static final String TYPE_INCREMENT_INSERT="1";
     /** 判断隔离任务:2更新的场合 */
@@ -144,6 +145,11 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         String incrementValues = String.valueOf(param.get("incrementValue"));
         //任务名
         String incrementTaskName =String.valueOf(param.get("incrementTaskName"));
+        //incrementCartId
+        String incrementCartId=String.valueOf(param.get("incrementCartId"));
+        //incrementTaskId
+        String incrementTaskId=String.valueOf(param.get("incrementTaskId"));
+
         //渠道的判断
         if (null==param.get("incrementCartId")){
             //请选择增量的隔离渠道
@@ -181,6 +187,14 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>=1000) {
             // 任务名必须输入且长度小于1000
             throw new BusinessException("7000012");
+        }
+        //增量时间check
+
+        // 取得任务id对应的Promotion是否未开始或者已经结束
+        boolean promotionDuringFlg = cmsTaskStockIncrementDetailService.isPromotionDuring(incrementTaskId, incrementCartId);
+        if (!promotionDuringFlg) {
+            // 活动未开始或者已经结束，不能增量
+            throw new BusinessException("7000062");
         }
     }
     /**

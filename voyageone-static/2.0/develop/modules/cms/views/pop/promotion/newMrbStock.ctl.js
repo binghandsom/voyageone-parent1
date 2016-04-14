@@ -65,7 +65,7 @@ define([
                         );
                     }else{
                         $scope.$close();
-                        alert('请选择对应的活动');
+                        alert('TXT_MSG_ACTIVITIES');
                     }
                 }　;
             }
@@ -81,7 +81,7 @@ define([
         }else{
             $scope.initialize = function(){
                 $scope.$close();
-                alert('请选择对应的活动');
+                alert('TXT_MSG_ACTIVITIES');
             }
         }
     });

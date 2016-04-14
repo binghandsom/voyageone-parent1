@@ -348,7 +348,7 @@ define(function(){
         "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
         "TXT_MSG_IMPORT_STATUS_ERROR": "存在正在处理中的数据，这些没有被更新",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
-
+        "TXT_MSG_ACTIVITIES": "请选择对应的活动!",
 
         "BTN_CREATE_TASK": "新建任务",
         "BTN_CREATE_BEAT_TASK": "新建价格披露任务",
