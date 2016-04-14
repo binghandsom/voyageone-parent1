@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
@@ -15,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * 库存还原batch
@@ -78,40 +79,54 @@ public class StockRevertService extends BaseTaskService {
         $info("等待还原数据取得完毕. %d件", resultData.size());
 
         // 按渠道,sku整理Map<channelId, Map<sku,resultData>>
-        Map<String, Map<String, List<Map<String, Object>>>> resultDataByChannel = new HashMap<>();
+        Map<String, Map<String, List<Map<String, Object>>>> resultDataByChannel = resultData.stream().collect(
+                groupingBy(rowData -> (String) rowData.get("channel_id"), groupingBy(rowData -> (String) rowData.get("sku")))
+        );
         // 按渠道整理Map<channelId, Set<隔离平台>>
-        Map<String, Set<Integer>> setCartIdByChannel = new HashMap<>();
+        Map<String, Set<Integer>> setCartIdByChannel = resultData.stream().collect(
+                groupingBy(rowData -> (String) rowData.get("channel_id"), mapping(rowData ->
+                        (Integer) rowData.get("cart_id"), toSet())
+                )
+        );
         // 按渠道整理Map<channelId, Set<隔离任务>>
-        Map<String, Set<Integer>> setTaskIdByChannel = new HashMap<>();
+        Map<String, Set<Integer>> setTaskIdByChannel = resultData.stream().collect(
+                groupingBy(rowData -> (String) rowData.get("channel_id"), mapping(rowData ->
+                        (Integer) rowData.get("task_id"), toSet())
+                )
+        );
 
-        for (Map<String, Object> rowData : resultData) {
-            String channelId = (String) rowData.get("channel_id");
-            String sku = (String) rowData.get("sku");
-            Integer taskId = (Integer) rowData.get("task_id");
-            Integer cartId = (Integer) rowData.get("cart_id");
-
-            // 隔离数据Map put
-            Map<String, List<Map<String, Object>>> mapDataChannel = resultDataByChannel.get(channelId);
-            if (mapDataChannel == null) {
-                mapDataChannel = new HashMap<>();
-                List<Map<String, Object>> listData = new ArrayList<>();
-                listData.add(rowData);
-                mapDataChannel.put(sku, listData);
-                resultDataByChannel.put(channelId, mapDataChannel);
-                setTaskIdByChannel.put(channelId, new HashSet<Integer>(){{this.add(taskId);}});
-                setCartIdByChannel.put(channelId, new HashSet<Integer>(){{this.add(cartId);}});
-            } else {
-                if (mapDataChannel.containsKey(sku)) {
-                    mapDataChannel.get(sku).add(rowData);
-                } else {
-                    List<Map<String, Object>> listData = new ArrayList<>();
-                    listData.add(rowData);
-                    mapDataChannel.put(sku, listData);
-                }
-                setTaskIdByChannel.get(channelId).add(taskId);
-                setCartIdByChannel.get(channelId).add(cartId);
-            }
-        }
+//        Map<String, Map<String, List<Map<String, Object>>>> resultDataByChannel = new HashMap<>();
+//        Map<String, Set<Integer>> setCartIdByChannel = new HashMap<>();
+//        Map<String, Set<Integer>> setTaskIdByChannel = new HashMap<>();
+//
+//        for (Map<String, Object> rowData : resultData) {
+//            String channelId = (String) rowData.get("channel_id");
+//            String sku = (String) rowData.get("sku");
+//            Integer taskId = (Integer) rowData.get("task_id");
+//            Integer cartId = (Integer) rowData.get("cart_id");
+//
+//            // 隔离数据Map put
+//            Map<String, List<Map<String, Object>>> mapDataChannel = resultDataByChannel.get(channelId);
+//            if (mapDataChannel == null) {
+//                mapDataChannel = new HashMap<>();
+//                List<Map<String, Object>> listData = new ArrayList<>();
+//                listData.add(rowData);
+//                mapDataChannel.put(sku, listData);
+//                resultDataByChannel.put(channelId, mapDataChannel);
+//                setTaskIdByChannel.put(channelId, new HashSet<Integer>(){{this.add(taskId);}});
+//                setCartIdByChannel.put(channelId, new HashSet<Integer>(){{this.add(cartId);}});
+//            } else {
+//                if (mapDataChannel.containsKey(sku)) {
+//                    mapDataChannel.get(sku).add(rowData);
+//                } else {
+//                    List<Map<String, Object>> listData = new ArrayList<>();
+//                    listData.add(rowData);
+//                    mapDataChannel.put(sku, listData);
+//                }
+//                setTaskIdByChannel.get(channelId).add(taskId);
+//                setCartIdByChannel.get(channelId).add(cartId);
+//            }
+//        }
 
         // 按渠道把等待还原数据进行更新
         for (String channelId : resultDataByChannel.keySet()) {
