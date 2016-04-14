@@ -4,36 +4,45 @@
             <div class="panel panel-default">
                 <div class="container-fluid m-l-md m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
+                                    <label class="col-sm-3 control-label">Cart ID</label>
                                     <div class="col-sm-7">
                                         <input class="form-control" ng-model="vm.searchInfo.catName">
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label"></label>
+                                    <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
                                     <div class="col-sm-7">
                                         <input class="form-control" ng-model="vm.searchInfo.catId">
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
+                                    <label class="col-sm-3 control-label">USJOI ID</label>
                                     <div class="col-sm-4">
                                         <select class="form-control">
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
+                                            <option value="All">All</option>
+                                            <option value="Some">Some</option>
                                         </select>
                                     </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox"> 已删除
+                                    </label>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
@@ -52,15 +61,17 @@
         </div>
     </div>
     <div class="box">
-        <div class="box-body">
-            <table class="table table-hover-new text-center">
+        <div class="box-body table-responsive">
+            <table class="table table-hover-new text-center table-bordered">
                 <thead>
                 <tr>
                     <th class="text-center col-sm-1" translate="TXT_SEQ"></th>
-                    <th class="text-center col-sm-1" translate="TXT_CHANNEL_ID"></th>
-                    <th class="text-center col-sm-2" translate="TXT_NAME"></th>
-                    <th class="text-center col-sm-2" translate="TXT_FULL_NAME"></th>
+                    <th class="text-center col-sm-1" translate="TXT_CART_ID"></th>
+                    <th class="text-center col-sm-1" translate="TXT_NAME"></th>
+                    <th class="text-center col-sm-1" translate="TXT_SHORT_NAME"></th>
+                    <th class="text-center col-sm-4" translate="TXT_MSG_SHORT_DESCRIPTION"></th>
                     <th class="text-center col-sm-1" translate="TXT_ALLOW_USJOI"></th>
+                    <th class="text-center col-sm-1" >平台</th>
                     <th class="text-center col-sm-1" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
@@ -68,25 +79,13 @@
                 <tr>
                     <td>1</td>
                     <td>010</td>
-                    <td>SC</td>
-                    <td>ShoeCity</td>
-                    <td>
-                        <label class="col-sm-12">
-                            <div class="col-sm-5 col-sm-offset-3">
-                            <small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;切换请通知IT&quot;])" popover-trigger="mouseenter" popover-placement="top">
-                                <div class="table_main">
-                                    <ul>
-                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span class="ng-binding">Yes</span></div>
-                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span>No</span></div>
-                                    </ul>
-                                </div>
-                            </small>
-                            </div>
-                        </label>
-                    </td>
+                    <td>Tmall</td>
+                    <td>TM</td>
+                    <td>TMall</td>
+                    <td>Yes</td>
+                    <td>天猫</td>
                     <td ng-controller="popupCtrl">
-                        <button class="btn btn-success btn-xs ng-scope" ng-click="openChannelEdit('')"><i class="fa fa-pencil"></i></button>
-                        <button class="btn btn-info btn-xs ng-scope" ng-click="openChannelSetting('')"><i class="fa fa-cog"></i></button>
+                        <button class="btn btn-success btn-xs ng-scope" ng-click="openCartSetting('')"><i class="fa fa-pencil"></i></button>
                         <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
                     </td>
                 </tr>
