@@ -10,7 +10,8 @@ public enum MqRoutingKey {
 
     CMS_BATCH_PROMOTION("voyageone_cms_batchjob_promotion_queue"),
     CMS_BATCH_JmBtPromotionImportTask("voyageone_cms_batchjob_JmBtPromotionImportTask_queue"),
-    CMS_BATCH_PlatformCategoryTreeJdJob("voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue")
+    CMS_BATCH_PlatformCategoryTreeJdJob("voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue"),
+    CMS_BATCH_PlatformCategorySchemaJdJob("voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue")
     ;
 
     private String value;
