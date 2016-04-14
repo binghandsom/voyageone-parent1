@@ -16,10 +16,10 @@
                         AND channel_id = #{channelId}
                     </if>
                                 <if test="key != null">
-                        AND `key` = #{key}
+                        AND key = #{key}
                     </if>
                                 <if test="value != null">
-                        AND `value` = #{value}
+                        AND value = #{value}
                     </if>
                                 <if test="created != null">
                         AND created = #{created}
@@ -48,11 +48,11 @@
                     </if> 
                 
                     <if test="key != null">
-                        AND `key` = #{key}
+                        AND key = #{key}
                     </if> 
                 
                     <if test="value != null">
-                        AND `value` = #{value}
+                        AND value = #{value}
                     </if> 
                 
                     <if test="created != null">

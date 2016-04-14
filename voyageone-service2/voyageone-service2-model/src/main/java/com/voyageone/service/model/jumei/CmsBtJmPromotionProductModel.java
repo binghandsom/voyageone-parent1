@@ -21,6 +21,9 @@ public class CmsBtJmPromotionProductModel implements Serializable
         setPcId(""); 
         setDiscount(new BigDecimal(0));
         setErrorMsg(""); 
+        setActivityStart(DateHelp.getDefaultDate());
+        setActivityEnd(DateHelp.getDefaultDate());
+        setDealEndTime(DateHelp.getDefaultDate());
 
     }
  
@@ -80,7 +83,7 @@ public class CmsBtJmPromotionProductModel implements Serializable
     
     
  /**
-更新聚美平台的状态:0:未更新  1:待上传 2:上传成功 3:上传异常
+更新聚美平台的状态:0:未更新  1:待上传 2:上新更新成功 3:修改更新成功 4:上传异常
         */
      private int synchState;
     
@@ -149,6 +152,30 @@ sku数
 库存数量
         */
      private int quantity;
+    
+    
+ /**
+活动开始时间
+        */
+     private Date activityStart;
+    
+    
+ /**
+活动结束时间
+        */
+     private Date activityEnd;
+    
+    
+ /**
+0:未延迟 1:待更新 2成功 3失败
+        */
+     private int DealEndTimeState;
+    
+    
+ /**
+待更新延迟时间
+        */
+     private Date DealEndTime;
     
         
          /**
@@ -299,7 +326,7 @@ this.jmHashId="";
     
         
          /**
-           更新聚美平台的状态:0:未更新  1:待上传 2:上传成功 3:上传异常
+           更新聚美平台的状态:0:未更新  1:待上传 2:上新更新成功 3:修改更新成功 4:上传异常
         */
         public int getSynchState()
         {
@@ -505,6 +532,83 @@ this.errorMsg="";
         public void setQuantity(int quantity)
         {
          this.quantity=quantity;
+        }
+    
+        
+         /**
+           活动开始时间
+        */
+        public Date getActivityStart()
+        {
+         
+        return this.activityStart;
+        }
+        public void setActivityStart(Date activityStart)
+        {
+       if(activityStart!=null){
+this.activityStart=activityStart;
+ }
+else
+{
+this.activityStart=DateHelp.getDefaultDate();
+}
+
+        }
+    
+        
+         /**
+           活动结束时间
+        */
+        public Date getActivityEnd()
+        {
+         
+        return this.activityEnd;
+        }
+        public void setActivityEnd(Date activityEnd)
+        {
+       if(activityEnd!=null){
+this.activityEnd=activityEnd;
+ }
+else
+{
+this.activityEnd=DateHelp.getDefaultDate();
+}
+
+        }
+    
+        
+         /**
+           0:未延迟 1:待更新 2成功 3失败
+        */
+        public int getDealEndTimeState()
+        {
+         
+        return this.DealEndTimeState;
+        }
+        public void setDealEndTimeState(int DealEndTimeState)
+        {
+         this.DealEndTimeState=DealEndTimeState;
+        }
+    
+        
+         /**
+           待更新延迟时间
+        */
+        public Date getDealEndTime()
+        {
+         
+        return this.DealEndTime;
+        }
+        public void setDealEndTime(Date DealEndTime)
+        {
+       if(DealEndTime!=null){
+this.DealEndTime=DealEndTime;
+ }
+else
+{
+this.DealEndTime=DateHelp.getDefaultDate();
+}
+
         }
     
 }

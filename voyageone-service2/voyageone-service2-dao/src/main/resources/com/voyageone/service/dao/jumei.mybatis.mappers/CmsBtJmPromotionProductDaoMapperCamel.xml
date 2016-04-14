@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`        from cms_bt_jm_promotion_product
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`DealEndTimeState`,`DealEndTime`        from cms_bt_jm_promotion_product
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -72,10 +72,22 @@
                                 <if test="quantity != null">
                         AND quantity = #{quantity}
                     </if>
+                                <if test="activityStart != null">
+                        AND activity_start = #{activityStart}
+                    </if>
+                                <if test="activityEnd != null">
+                        AND activity_end = #{activityEnd}
+                    </if>
+                                <if test="DealEndTimeState != null">
+                        AND DealEndTimeState = #{DealEndTimeState}
+                    </if>
+                                <if test="DealEndTime != null">
+                        AND DealEndTime = #{DealEndTime}
+                    </if>
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity` from cms_bt_jm_promotion_product 
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`DealEndTimeState`,`DealEndTime` from cms_bt_jm_promotion_product 
         <where>
                 
                     <if test="id != null">
@@ -161,10 +173,26 @@
                     <if test="quantity != null">
                         AND quantity = #{quantity}
                     </if> 
+                
+                    <if test="activityStart != null">
+                        AND activity_start = #{activityStart}
+                    </if> 
+                
+                    <if test="activityEnd != null">
+                        AND activity_end = #{activityEnd}
+                    </if> 
+                
+                    <if test="DealEndTimeState != null">
+                        AND DealEndTimeState = #{DealEndTimeState}
+                    </if> 
+                
+                    <if test="DealEndTime != null">
+                        AND DealEndTime = #{DealEndTime}
+                    </if> 
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity` from cms_bt_jm_promotion_product where id=#{id}
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`DealEndTimeState`,`DealEndTime` from cms_bt_jm_promotion_product where id=#{id}
     </select>
 
      <update id="update">
@@ -188,6 +216,10 @@
             ,`error_msg`=#{errorMsg}
             ,`sku_count`=#{skuCount}
             ,`quantity`=#{quantity}
+            ,`activity_start`=#{activityStart}
+            ,`activity_end`=#{activityEnd}
+            ,`DealEndTimeState`=#{DealEndTimeState}
+            ,`DealEndTime`=#{DealEndTime}
          where id=#{id}   
    </update>
 
@@ -219,7 +251,11 @@
               `discount`,
               `error_msg`,
               `sku_count`,
-              `quantity`
+              `quantity`,
+              `activity_start`,
+              `activity_end`,
+              `DealEndTimeState`,
+              `DealEndTime`
         )
         VALUES(
               #{channelId},
@@ -241,7 +277,11 @@
               #{discount},
               #{errorMsg},
               #{skuCount},
-              #{quantity}
+              #{quantity},
+              #{activityStart},
+              #{activityEnd},
+              #{DealEndTimeState},
+              #{DealEndTime}
         )
     </insert>
 </mapper>
