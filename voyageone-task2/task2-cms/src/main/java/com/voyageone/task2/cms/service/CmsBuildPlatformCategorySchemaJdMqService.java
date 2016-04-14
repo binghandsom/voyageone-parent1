@@ -1,20 +1,25 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.list.CategoryAttrReadService.CategoryAttr;
+import com.jd.open.api.sdk.domain.list.CategoryAttrReadService.Feature;
+import com.jd.open.api.sdk.domain.list.CategoryAttrValueReadService.CategoryAttrValue;
 import com.taobao.api.ApiException;
 import com.taobao.top.schema.exception.TopSchemaException;
-import com.taobao.top.schema.field.MultiCheckField;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.masterdate.schema.rule.RequiredRule;
+import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdCategoryService;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -25,12 +30,8 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by desmond on 2016/4/9.
@@ -39,7 +40,7 @@ import java.util.Map;
 @Service
 public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService {
 
-    private final static String JOB_NAME = "CmsPlatformCategorySchemaJdJob";
+    private final static String JOB_NAME = "CmsBuildPlatformCategorySchemaJdJob";
 
     @Autowired
     JdCategoryService jdCategoryService;
@@ -47,14 +48,8 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
-    @Autowired
-    CmsMtPlatformCategoryDao platformCategoryDao;
-
-    @Autowired
-    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
-
-    @Resource(name = "paltformCartList")
-    List<String> paltformCartList;
+//    @Resource(name = "paltformCartList")
+//    List<String> paltformCartList;
 
 //    @Resource(name = "availableChannelList")
 //    List availableChannelList;
@@ -135,7 +130,6 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
         if (allCategoryTreeLeaves.size() > 0) {
             int i = 1;
             int cnt = allCategoryTreeLeaves.size();
-//            ArrayList<JdCategoryAttr> jdCategoryAttrList = new ArrayList<>();
 
             // 删除已有的数据
             int delNum = 0;
@@ -144,40 +138,20 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
 
             // 取得每个叶子类目的属性和属性值插入到MangoDB的schema表中
             for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allCategoryTreeLeaves) {
-//                ArrayList<JdCategoryAttr> tmpJdCategoryAttr = new ArrayList<>();
-
-                // 获取产品属性
-                $info("获取产品和商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
-
+                // 京东类目属性schema信息插入
+                $info("京东类目属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
                 doSetPlatformPropJdSub(shop, platformCategoriesModel);
 
                 i++;
             }
         }
-
-//        //删除已有的数据
-//        WriteResult delResult = cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCartId(cartId);
-//
-//        $info("批量删除Schema, CART_ID 为：" + cartId + " 的数据为: " + delResult.getN() + "条...");
-//
-//        int i = 1;
-//        int cnt = allLeaves.size();
-//        for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allLeaves) {
-//
-//            // 获取产品属性
-//            $info("获取产品和商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
-//            doSetPlatformPropTmSub(platformCategoriesModel);
-//
-//            i++;
-//        }
-
-
     }
 
     /**
-     * 京东类目属性信息取得
+     * 京东类目属性schema信息插入
      *
-     * @param platformCategoriesModel 叶子类目信息
+     * @param shop ShopBean  店铺信息
+     *             platformCategoriesModel 叶子类目信息
      */
     private void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) throws ApiException {
 
@@ -188,220 +162,306 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
         schemaModel.setModifier(this.getTaskName());
         schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
 
-//        //获取店铺信息
+        //获取店铺信息
 //        ShopBean shopProp = Shops.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
 //        if (shopProp == null) {
 //            $error("获取到店铺信息失败, shopProp == null");
-//        } else {
+//        }
+
         // 调用京东API获取类目属性信息
         List<CategoryAttr> jdCategoryAttrList = new ArrayList<>();
-
-
+        // 京东类目属性的属性类型（3:可变属性）
+        int attributeType = 3;
         // 调用京东API获取类目属性信息(只取3:可变属性)
-        jdCategoryAttrList = jdCategoryService.getCategoryAttrInfo(shop, platformCategoriesModel.getCatId(), 3);
+        jdCategoryAttrList = jdCategoryService.getCategoryAttrInfo(shop, platformCategoriesModel.getCatId(), attributeType);
 
+        // 类目属性schema作成用field列表
+        List<Field> fieldsList = new ArrayList<>();
 
-        try {
-            // 调用京东API获取类目属性信息
-//                jdCategoryAttrList = jdCategoryService.getCategoryAttrValueInfo(shopProp, jdCategoryAttrList);
-        } catch (Exception ex) {
-            $error(ex);
-            return;
+        // 根据类目属性列表循环，取得类目属性值，加入schema field列表
+        for (CategoryAttr categoryAttr : jdCategoryAttrList) {
+//            // 类目属性id,value设定
+//            Value attrV = new Value();
+//            // 类目属性id
+//            attrV.setId(String.valueOf(categoryAttr.getCategoryAttrId()));
+//            // 类目属性名称
+//            attrV.setValue(categoryAttr.getAttName());
+
+            // 调用京东API获取类目属性值信息
+            List<CategoryAttrValue> jdCategoryAttrValueList = new ArrayList<>();
+            jdCategoryAttrValueList = jdCategoryService.getCategoryAttrValueInfo(shop, categoryAttr.getCategoryAttrId());
+
+            // 类目属性的输入类型（1:单选 2:多选 3:可输入）
+            int inputType = categoryAttr.getInputType();
+            switch (inputType) {
+                case 1:
+                    // 单选
+                    SingleCheckField singleCheckField = new SingleCheckField();
+                    // 根据类目属性和属性值取得单选field
+                    singleCheckField = getSingleCheckField(categoryAttr, jdCategoryAttrValueList);
+                    // 类目属性列表追加
+                    fieldsList.add(singleCheckField);
+                    break;
+                case 2:
+                    // 多选
+                    MultiCheckField multiCheckField = new MultiCheckField();
+                    // 根据类目属性和属性值取得多选field
+                    multiCheckField = getMultiCheckField(categoryAttr, jdCategoryAttrValueList);
+                    // 类目属性列表追加
+                    fieldsList.add(multiCheckField);
+                    break;
+                case 3:
+                    // 可输入
+                    InputField inputField = new InputField();
+                    // 根据类目属性和属性值取得可输入field
+                    inputField = getInputField(categoryAttr, jdCategoryAttrValueList);
+                    // 类目属性列表追加
+                    fieldsList.add(inputField);
+                    break;
+            }
         }
 
-        // ====================START===============
-        // 构建主数据对象并持久化
-//            List<Field> fieldList = new ArrayList<>();
-//            for (JdCategoryAttrBean jdCategoryAttr : jdCategoryAttrList) {
-
-//                if (jdCategoryAttr.getInputType() == 1 ||
-//                    jdCategoryAttr.getInputType() == 2 ||
-//                    jdCategoryAttr.getInputType() == 3 ) {
-//                    // Field生成
-//                    Field jdField = this.createField(String.valueOf(jdCategoryAttr.getInputType()));
-//                    jdField.setsetName();
-//
-//                }
-
-//            }
-//            List<Field> fieldList = new ArrayList<>();
-
-//        for (xxx: AAList) {
-//            if inputType = 1
-//            Field fld = new InputField();
-//              fld.setName("xxx");
-//        }
-
-//        String xmlContent =  SchemaWriter.writeRuleXmlString(List<Field> fields);
-        // ====================START===============
-
-
-//            // 调用API获取产品属性规则
-//            String productXmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
-//
-//            if (productXmlContent != null){
-//                schemaModel.setPropsProduct(productXmlContent);
-//            } else {
-//                $error("获取产品schema失败, CategoryId: " + platformCategoriesModel.getCatId());
-//            }
-
-//            // 属性规则信息
-//            String itemXmlContent = null;
-//
-//            ItemSchema result;
-//
-//            // 调用API获取产品属性规则
-//            String productIdStr =categoryProductMap.get(platformCategoriesModel.getCatId());
-//
-//            if (productIdStr != null){
-//
-//                Long productId = Long.parseLong(productIdStr);
-//
-//                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),productId);
-//
-//            } else {
-//
-//                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
-//
-//            }
-//            if (result != null){
-//                //保存为XML文件
-//                if (result.getResult() == 0 ){
-//                    itemXmlContent = result.getItemResult();
-//                } else {
-//                    if (productIdStr != null){
-//                        $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " productId: " + productIdStr + " 错误信息: " + result.getItemResult());
-//                    } else {
-//                        $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " 错误信息: " + result.getItemResult());
-//                    }
-//
-//                }
-//            }
-//
-//            schemaModel.setPropsItem(itemXmlContent);
-//
-//            if(!StringUtils.isEmpty(schemaModel.getPropsItem())){
-//                cmsMtPlatformCategorySchemaDao.insert(schemaModel);
-//            }
-//        return new ItemSchema();
-    }
-
-
-    private Field createField(String input_type) {
-        Object field = null;
-
-        switch(input_type) {
-            case "1":
-                field = new SingleCheckField();
-                break;
-            case "2":
-                field = new MultiCheckField();
-                break;
-            case "3":
-                field = new InputField();
-                break;
+        // 根据属性值列表转换成XML文件
+        String xmlContent = null;
+        if (fieldsList.size() > 0) {
+            xmlContent = SchemaWriter.writeRuleXmlString(fieldsList);
+            schemaModel.setPropsItem(xmlContent);
+        } else {
+            $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId());
         }
 
-        return (Field)field;
+        // 把schema信息插进入到MangoDB中
+        if (!StringUtils.isEmpty(schemaModel.getPropsItem())) {
+            platformCategoryService.insertPlatformCategorySchema(schemaModel);
+        }
     }
 
-//    private void setFieldDefaultValue(CmsMtCommonPropActionDefModel defModel, Field field){
-//
-//        FieldTypeEnum type = FieldTypeEnum.getEnum(defModel.getPropType());
-//
-//        if (!StringUtil.isEmpty(defModel.getDefaultValue()) && type != null) {
-//            switch (type) {
-//                case LABEL:
-//                    LabelField labelField = (LabelField) field;
-//                    Label label = new Label();
-//                    label.setValue(defModel.getDefaultValue());
-//                    labelField.add(label);
-//                    break;
-//                case INPUT:
-//                    InputField inputField = (InputField) field;
-//                    inputField.setDefaultValue(defModel.getDefaultValue());
-//                    break;
-//                case SINGLECHECK:
-//                    SingleCheckField singleCheckField = (SingleCheckField) field;
-//                    singleCheckField.setDefaultValue(defModel.getDefaultValue());
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//
-//    }
+    /**
+     * 根据京东类目属性值列表取得单选field选项列表
+     *
+     * @param categoryAttr     CategoryAttr      京东类目属性
+     *        jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
+     * @return SingleCheckField    单选field对象
+     */
+    private SingleCheckField getSingleCheckField(CategoryAttr categoryAttr, List<CategoryAttrValue> jdCategoryAttrValueList) {
+        // 多选
+        SingleCheckField singleCheckField = new SingleCheckField();
+        // 项目列表
+        List<Option> attrValueOptionList = new ArrayList<>();
 
+        // field共通信息设定
+        // 类目属性id
+        singleCheckField.setId(String.valueOf(categoryAttr.getCategoryAttrId()));
+        // 类目属性名
+        singleCheckField.setName(categoryAttr.getAttName());
+        // 类目属性类型
+        singleCheckField.setType(FieldTypeEnum.SINGLECHECK);
+        // 类目属性信息设定
+//      singleCheckField.setValue(attrV);
+
+        // field的rule信息设定
+        List<Rule> rulesList = this.getCategoryAttrRulesList(categoryAttr);
+        if (rulesList != null && rulesList.size() > 0) {
+            singleCheckField.setRules(rulesList);
+        }
+
+        // 类目属性值选项列表取得
+        attrValueOptionList = this.getOptionList(jdCategoryAttrValueList);
+        // 类目属性选项列表设定
+        singleCheckField.setOptions(attrValueOptionList);
+
+        return singleCheckField;
+    }
+
+    /**
+     * 根据京东类目属性值列表取得多选field选项列表
+     *
+     * @param categoryAttr     CategoryAttr      京东类目属性
+     *        jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
+     * @return MultiCheckField    多选field对象
+     */
+    private MultiCheckField getMultiCheckField(CategoryAttr categoryAttr, List<CategoryAttrValue> jdCategoryAttrValueList) {
+        // 多选
+        MultiCheckField multiCheckField = new MultiCheckField();
+        // 项目列表
+        List<Option> attrValueOptionList = new ArrayList<>();
+
+        // field共通信息设定
+        // 类目属性id
+        multiCheckField.setId(String.valueOf(categoryAttr.getCategoryAttrId()));
+        // 类目属性名
+        multiCheckField.setName(categoryAttr.getAttName());
+        // 类目属性类型
+        multiCheckField.setType(FieldTypeEnum.MULTICHECK);
+
+        // field的rule信息设定
+        List<Rule> rulesList = this.getCategoryAttrRulesList(categoryAttr);
+        if (rulesList != null && rulesList.size() > 0) {
+            multiCheckField.setRules(rulesList);
+        }
+
+        // 类目属性值选项列表取得
+        attrValueOptionList = this.getOptionList(jdCategoryAttrValueList);
+        // 类目属性选项列表设定
+        multiCheckField.setOptions(attrValueOptionList);
+
+        return multiCheckField;
+    }
+
+    /**
+     * 根据京东类目属性值列表取得多选field选项列表
+     *
+     * @param categoryAttr     CategoryAttr      京东类目属性
+     *        jdCategoryAttrValueList  List<CategoryAttrValue>  京东类目属性值列表
+     * @return InputField    可输入field对象
+     */
+    private InputField getInputField(CategoryAttr categoryAttr, List<CategoryAttrValue> jdCategoryAttrValueList) {
+        // 可输入
+        InputField inputField = new InputField();
+
+        // field共通信息设定
+        // 类目属性id
+        inputField.setId(String.valueOf(categoryAttr.getCategoryAttrId()));
+        // 类目属性名
+        inputField.setName(categoryAttr.getAttName());
+        // 类目属性类型
+        inputField.setType(FieldTypeEnum.INPUT);
+
+        // field的rule信息设定
+        List<Rule> rulesList = this.getCategoryAttrRulesList(categoryAttr);
+        if (rulesList != null && rulesList.size() > 0) {
+            inputField.setRules(rulesList);
+        }
+
+        // 类目属性选项列表不需要设定
+
+        return inputField;
+    }
+
+    /**
+     * 根据京东类目属性值列表取得field选项列表
+     *
+     * @param jdCategoryAttrValueList List<CategoryAttrValue>  京东类目属性列表
+     * @return List<Option>    field选项列表
+     */
+    private List<Option> getOptionList(List<CategoryAttrValue> jdCategoryAttrValueList) {
+        List<CategoryAttrValue> sortedCategoryAttrValueList = new ArrayList<>();
+        List<Option> optionList = new ArrayList<>();
+
+        if (jdCategoryAttrValueList != null && jdCategoryAttrValueList.size() > 0) {
+            // 对取得的京东类目属性值列表按照value从小到大排序
+            sortedCategoryAttrValueList = this.getSortedList(jdCategoryAttrValueList);
+
+            // 类目属性值项目设定
+            for(CategoryAttrValue catAttrValue:sortedCategoryAttrValueList) {
+                // 属性值项目设定
+                Option attrValueOption =  new Option();
+                // 属性值id
+                attrValueOption.setValue(String.valueOf(catAttrValue.getId()));
+                // 属性值(画面显示值)
+                attrValueOption.setDisplayName(catAttrValue.getValue());
+
+                // 追加到选项列表中
+                optionList.add(attrValueOption);
+            }
+        }
+
+        return optionList;
+    }
+
+    /**
+     * 对京东类目属性值列表按照value从小到大排序
+     *
+     * @param jdCategoryAttrValueList List<CategoryAttrValue>  京东类目属性值列表
+     * @return List<CategoryAttrValue>    按照value从小到大排好序的列表
+     */
+    private List<CategoryAttrValue> getSortedList(List<CategoryAttrValue> jdCategoryAttrValueList) {
+        List<CategoryAttrValue> nullList = new ArrayList<>();
+        List<CategoryAttrValue> dataList = new ArrayList<>();
+
+        if (jdCategoryAttrValueList != null && jdCategoryAttrValueList.size() > 0) {
+            // 如果传入列表中有value值为空的数据
+            for (CategoryAttrValue categoryAttrValue : jdCategoryAttrValueList) {
+                if (categoryAttrValue.getId() == 0 || "".equals(String.valueOf(categoryAttrValue.getId()))) {
+                    nullList.add(categoryAttrValue);
+                } else {
+                    dataList.add(categoryAttrValue);
+                }
+            }
+
+            // 排序
+            for (int i = 0; i < dataList.size() - 1; i++) {
+                for (int j = 1; j < dataList.size() - i; j++) {
+                    Long a = dataList.get(j - 1).getId();
+                    Long b = dataList.get(j).getId();
+
+                    if (a.compareTo(b) > 0) { // 比较两个id的大小
+
+                        CategoryAttrValue temp = (CategoryAttrValue)dataList.get(j - 1);
+                        dataList.set((j - 1), dataList.get(j));
+                        dataList.set(j, temp);
+                    }
+                }
+            }
+
+            dataList.addAll(nullList);
+        }
+
+        return dataList;
+    }
+
+    /**
+     * 根据京东类目属性Feature列表取得Rule列表
+     *
+     * @param categoryAttr CategoryAttr  京东类目属性
+     * @return List<Rule>    Rule列表
+     */
+    private List<Rule> getCategoryAttrRulesList(CategoryAttr categoryAttr) {
+        List<Rule> rulesList = new ArrayList<>();
+
+        // 京东类目属性的Feature列表信息取得
+        Set<Feature> featureSet = categoryAttr.getAttrFeatures();
+        if (featureSet != null && featureSet.size() > 0) {
+            // rule作成
+            Rule rule = new RequiredRule();
+            // 循环feature列表作成rule
+            for (Feature feature:featureSet) {
+                // 必须rule作成
+                if ("isRequired".equals(feature.getAttrFeatureKey())) {
+                    // 必须的时候
+                    if("1".equals(feature.getAttrFeatureValue())) {
+                        rule.setName("valueTypeRule");
+                        rule.setValue("true");
+                        // Rule列表追加
+                        rulesList.add(rule);
+                    }
+                }
+            }
+        }
+
+        return rulesList;
+    }
 
 //    /**
-//     * 第三方平台属性信息取得（天猫系）
-//     * @param platformCategoriesModel 店铺信息
+//     * 根据京东类目属性值列表取得field选项列表
+//     *
+//     * @param featureSet Set<Feature>  京东类目属性Feature列表
+//     * @return String    必须输入判断结果（0:非必须，1：必须，2:不存在isRequired的Feature属性）
 //     */
-//    private ItemSchema doSetPlatformPropTmSub(CmsMtPlatformCategoryTreeModel platformCategoriesModel) throws ApiException {
+//    private String getIsRequired(Set<Feature> featureSet) {
+//        // 默认返回值为2（不存在isRequired的Feature属性）
+//        String retV = "not exist isRequired";
 //
-//        CmsMtPlatformCategorySchemaModel schemaModel = new CmsMtPlatformCategorySchemaModel();
-//        schemaModel.setCartId(platformCategoriesModel.getCartId());
-//        schemaModel.setCatId(platformCategoriesModel.getCatId());
-//        schemaModel.setCreater(this.getTaskName());
-//        schemaModel.setModifier(this.getTaskName());
-//        schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
-//
-//        // 获取店铺信息
-//        ShopBean shopProp = Shops.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
-//        if (shopProp == null) {
-//            $error("获取到店铺信息失败, shopProp == null");
-//        } else {
-//
-//            // 调用API获取产品属性规则
-//            String productXmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
-//
-//            if (productXmlContent != null){
-//                schemaModel.setPropsProduct(productXmlContent);
-//            } else {
-//                $error("获取产品schema失败, CategoryId: " + platformCategoriesModel.getCatId());
-//            }
-//
-//            // 属性规则信息
-//            String itemXmlContent = null;
-//
-//            ItemSchema result;
-//
-//            // 调用API获取产品属性规则
-//            String productIdStr =categoryProductMap.get(platformCategoriesModel.getCatId());
-//
-//            if (productIdStr != null){
-//
-//                Long productId = Long.parseLong(productIdStr);
-//
-////                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),productId);
-//
-//            } else {
-//
-////                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
-//
-//            }
-//            if (result != null){
-//                //保存为XML文件
-//                if (result.getResult() == 0 ){
-//                    itemXmlContent = result.getItemResult();
-//                } else {
-//                    if (productIdStr != null){
-//                        $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " productId: " + productIdStr + " 错误信息: " + result.getItemResult());
-//                    } else {
-//                        $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " 错误信息: " + result.getItemResult());
-//                    }
-//
+//        if (featureSet != null && featureSet.size() > 0) {
+//            // field的rule信息设定
+//            for (Feature feature:featureSet) {
+//                if ("isRequired".equals(feature.getAttrFeatureKey())) {
+//                    retV = feature.getAttrFeatureValue();
 //                }
-//            }
-//
-//            schemaModel.setPropsItem(itemXmlContent);
-//
-//            if(!StringUtils.isEmpty(schemaModel.getPropsItem())){
-//                cmsMtPlatformCategorySchemaDao.insert(schemaModel);
 //            }
 //        }
 //
-//        return new ItemSchema();
+//        return retV;
 //    }
 
 }
