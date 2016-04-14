@@ -1,14 +1,11 @@
 package com.voyageone.components.jd.service;
 
-import com.jd.open.api.sdk.domain.category.AttValue;
 import com.jd.open.api.sdk.domain.category.Category;
 import com.jd.open.api.sdk.domain.list.CategoryAttrReadService.CategoryAttr;
 import com.jd.open.api.sdk.domain.list.CategoryAttrValueReadService.CategoryAttrValue;
-import com.jd.open.api.sdk.request.category.CategoryAttributeValueSearchRequest;
 import com.jd.open.api.sdk.request.category.CategorySearchRequest;
 import com.jd.open.api.sdk.request.list.CategoryReadFindAttrsByCategoryIdRequest;
 import com.jd.open.api.sdk.request.list.CategoryReadFindValuesByAttrIdRequest;
-import com.jd.open.api.sdk.response.category.CategoryAttributeValueSearchResponse;
 import com.jd.open.api.sdk.response.category.CategorySearchResponse;
 import com.jd.open.api.sdk.response.list.CategoryReadFindAttrsByCategoryIdResponse;
 import com.jd.open.api.sdk.response.list.CategoryReadFindValuesByAttrIdResponse;
@@ -16,8 +13,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jd.JdBase;
 import com.voyageone.components.jd.JdConstants;
-import com.voyageone.components.jd.bean.JdCategoryAttrBean;
-import com.voyageone.components.jd.bean.JdCategoryAttrValueBean;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -106,7 +101,8 @@ public class JdCategoryService extends JdBase {
 
             if (response != null) {
                 // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode()) &&
+                        response.getCategoryAttrs() != null) {
                     // 类目信息存在
                     for (CategoryAttr categoryAttr : response.getCategoryAttrs()) {
                         jdCategoryAttrList.add(categoryAttr);
@@ -153,7 +149,8 @@ public class JdCategoryService extends JdBase {
 
             if (response != null) {
                 // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode()) &&
+                        response.getCategoryAttrValues() != null) {
                     // 类目值信息存在
                     for (CategoryAttrValue categoryAttrValue : response.getCategoryAttrValues()) {
                         jdCategoryAttrValueList.add(categoryAttrValue);
@@ -258,104 +255,71 @@ public class JdCategoryService extends JdBase {
 //		return jdCategoryAttrList;
 //	}
 
-	/**
-	 * 取得京东类目属性值信息
-	 *
-	 * @param shop ShopBean
-	 *        jdCategoryAttrList List<JdCategoryAttr>
-	 * @return List<JdCategoryAttr>
-	 * @throws Exception
-	 */
-	public ArrayList<JdCategoryAttrBean> getCategoryAttrValueInfo(ShopBean shop, ArrayList<JdCategoryAttrBean> jdCategoryAttrList) throws Exception {
-
-		for (JdCategoryAttrBean jdCategoryAttr : jdCategoryAttrList) {
-
-			CategoryAttributeValueSearchRequest request = new CategoryAttributeValueSearchRequest();
-
-			// 属性值Id
-			request.setAvs(String.valueOf(jdCategoryAttr.getAid()));
-			// 需要返回的字段列表
-			String fields = "aid,vid,name,status,index_id,features";
-			request.setFields(fields);
-//			StringBuilder fields = new StringBuilder();
-//			fields.append("id");                    // 类目id
-//			fields.append(",fid");                  // 父类目id
-//			fields.append(",name");                 // 类目名称 
-//			fields.append(",index_id");             // 排序（越小越靠前）
-//			fields.append(",status");               // 类目状态（DELETED,UNVALID,VALID
-//			fields.append(",lev");                  // 等级（类目分为1、2、3级）
-//			fields.append(",isParent");             // 该类目是否为父类目（即：该类目是否还有子类目）
-//			request.setFields(fields.toString());
-
-			try {
-				// 调用京东商家类目属性值信息API
-				CategoryAttributeValueSearchResponse response = reqApi(shop, request);
-
-				if (response != null) {
-					// 京东返回正常的场合
-					if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-						// 类目信息存在
-						for (AttValue attrValue : response.getAttValues()) {
-							JdCategoryAttrValueBean jdCategoryAttrValue = new JdCategoryAttrValueBean();
-							// 属性id
-							jdCategoryAttrValue.setAid(attrValue.getAid());
-							// 属性值id
-							jdCategoryAttrValue.setVid(attrValue.getVid());
-							// 属性值名字
-							jdCategoryAttrValue.setName(attrValue.getName());
-							// 状态
-							jdCategoryAttrValue.setStatus(attrValue.getStatus());
-							// Features
-							jdCategoryAttrValue.setFeatures(attrValue.getFeatures());
-							// 排序
-							jdCategoryAttrValue.setIndexId(attrValue.getIndexId());
-
-							jdCategoryAttr.getAttrValueList().add(jdCategoryAttrValue);
-						}
-					}
-				}
-			} catch (Exception ex) {
-				logger.error("调用京东API获取京东类目属性值失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
-
-				throw new Exception(shop.getShop_name() + "取得京东商家类目属性值信息失败 " + ex.getMessage());
-			}
-		}
-
-		return jdCategoryAttrList;
-	}
-
 //	/**
-//	 * 辅助方法：在更新商品时，全量更新需要将不更改的值，从 Default Value 中设置到 Valued
+//	 * 取得京东类目属性值信息
+//	 *
+//	 * @param shop ShopBean
+//	 *        jdCategoryAttrList List<JdCategoryAttr>
+//	 * @return List<JdCategoryAttr>
+//	 * @throws Exception
 //	 */
-//	private Field getField(String input_type) {
-//		// 对特定字段进行处理
+//	public ArrayList<JdCategoryAttrBean> getCategoryAttrValueInfo(ShopBean shop, ArrayList<JdCategoryAttrBean> jdCategoryAttrList) throws Exception {
 //
-//		switch (input_type) {
-//			case INPUT:
-//				InputField inputField = (InputField) field;
-//				inputField.setValue(inputField.getDefaultValue());
-//				break;
-//			case MULTIINPUT:
-//				MultiInputField multiInputField = (MultiInputField) field;
-//				multiInputField.setValues(multiInputField.getDefaultValues());
-//				break;
-//			case MULTICHECK:
-//				MultiCheckField multiCheckField = (MultiCheckField) field;
-//				multiCheckField.setValues(multiCheckField.getDefaultValuesDO());
-//				break;
-//			case SINGLECHECK:
-//				SingleCheckField singleCheckField = (SingleCheckField) field;
-//				singleCheckField.setValue(singleCheckField.getDefaultValue());
-//				break;
-//			case COMPLEX:
-//				ComplexField complexField = (ComplexField) field;
-//				complexField.setComplexValue(complexField.getDefaultComplexValue());
-//				break;
-//			case MULTICOMPLEX:
-//				MultiComplexField multiComplexField = (MultiComplexField) field;
-//				multiComplexField.setComplexValues(multiComplexField.getDefaultComplexValues());
-//				break;
+//		for (JdCategoryAttrBean jdCategoryAttr : jdCategoryAttrList) {
+//
+//			CategoryAttributeValueSearchRequest request = new CategoryAttributeValueSearchRequest();
+//
+//			// 属性值Id
+//			request.setAvs(String.valueOf(jdCategoryAttr.getAid()));
+//			// 需要返回的字段列表
+//			String fields = "aid,vid,name,status,index_id,features";
+//			request.setFields(fields);
+////			StringBuilder fields = new StringBuilder();
+////			fields.append("id");                    // 类目id
+////			fields.append(",fid");                  // 父类目id
+////			fields.append(",name");                 // 类目名称 
+////			fields.append(",index_id");             // 排序（越小越靠前）
+////			fields.append(",status");               // 类目状态（DELETED,UNVALID,VALID
+////			fields.append(",lev");                  // 等级（类目分为1、2、3级）
+////			fields.append(",isParent");             // 该类目是否为父类目（即：该类目是否还有子类目）
+////			request.setFields(fields.toString());
+//
+//			try {
+//				// 调用京东商家类目属性值信息API
+//				CategoryAttributeValueSearchResponse response = reqApi(shop, request);
+//
+//				if (response != null) {
+//					// 京东返回正常的场合
+//					if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+//						// 类目信息存在
+//						for (AttValue attrValue : response.getAttValues()) {
+//							JdCategoryAttrValueBean jdCategoryAttrValue = new JdCategoryAttrValueBean();
+//							// 属性id
+//							jdCategoryAttrValue.setAid(attrValue.getAid());
+//							// 属性值id
+//							jdCategoryAttrValue.setVid(attrValue.getVid());
+//							// 属性值名字
+//							jdCategoryAttrValue.setName(attrValue.getName());
+//							// 状态
+//							jdCategoryAttrValue.setStatus(attrValue.getStatus());
+//							// Features
+//							jdCategoryAttrValue.setFeatures(attrValue.getFeatures());
+//							// 排序
+//							jdCategoryAttrValue.setIndexId(attrValue.getIndexId());
+//
+//							jdCategoryAttr.getAttrValueList().add(jdCategoryAttrValue);
+//						}
+//					}
+//				}
+//			} catch (Exception ex) {
+//				logger.error("调用京东API获取京东类目属性值失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+//
+//				throw new Exception(shop.getShop_name() + "取得京东商家类目属性值信息失败 " + ex.getMessage());
+//			}
 //		}
+//
+//		return jdCategoryAttrList;
 //	}
+
 
 }
