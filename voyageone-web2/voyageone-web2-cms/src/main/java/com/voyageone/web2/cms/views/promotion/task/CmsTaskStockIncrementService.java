@@ -272,7 +272,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //增量类型
         String incrementType=param.get("incrementType").toString();
         //增量值
-        String incrementValue=param.get("incrementValue").toString();
+        String incrementValue=param.get("incrementValue").toString().replace("%","");
         //隔离比例
         int separate_percent;
         //可用库存

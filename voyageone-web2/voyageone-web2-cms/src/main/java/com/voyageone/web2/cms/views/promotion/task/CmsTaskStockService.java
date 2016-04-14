@@ -489,7 +489,7 @@ public class CmsTaskStockService extends BaseAppService {
                     //平台名
                     separatePlatformMap.put("cartName",cartId.getName());
                     //隔离比例
-                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString());
+                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%",""));
                     //类型（1：隔离，2：共享）
                     separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
                     //还原时间
@@ -592,7 +592,7 @@ public class CmsTaskStockService extends BaseAppService {
             // 平台名
             separatePlatformMap.put("cartName",allSeparateCartIdMap.get(i).get("cartName").toString());
             // 隔离比例
-            separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString());
+            separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%", ""));
             // 类型（1：隔离，2：共享）
             separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
             // 还原时间
@@ -727,7 +727,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if(onlySku){
                     separatePlatformMap.put("separate_percent","0");
                 }else{
-                    separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString());
+                    separatePlatformMap.put("separate_percent",separatePlatformList.get(i).get("value").toString().replace("%",""));
                 }
                 //还原时间
                 separatePlatformMap.put("revert_time",separatePlatformList.get(i).get("revertTime").toString());
@@ -795,7 +795,7 @@ public class CmsTaskStockService extends BaseAppService {
             //平台名
             String cartName=separatePlatformList.get(i).get("cartName").toString();
             //隔离比例
-            String value=separatePlatformList.get(i).get("value").toString();
+            String value=separatePlatformList.get(i).get("value").toString().replace("%", "");
             //类型（1：隔离，2：共享）
             String type= separatePlatformList.get(i).get("type").toString();
             //增优先顺
@@ -1237,7 +1237,7 @@ public class CmsTaskStockService extends BaseAppService {
                     //更新者
                     proMap.put("modifier",user);
                     //隔离比例
-                    proMap.put("value",separatePlatformList.get(i).get("value").toString());
+                    proMap.put("value",separatePlatformList.get(i).get("value").toString().replace("%", ""));
                     //可用库存(取得可用库存)
                     if(null==skuStockUsableAll.get(allSkuProEntry.getKey())){
                         // SKU(%s)在逻辑库存表里不存在
@@ -1248,7 +1248,7 @@ public class CmsTaskStockService extends BaseAppService {
                     proMap.put("qty", usableStockInt);
                     if(!onlySku){
                         //隔离库存比例
-                        separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString());
+                        separate_percent=Integer.parseInt(separatePlatformList.get(i).get("value").toString().replace("%",""));
                         //隔离库存
                         separate_qty=Math.round((Long.parseLong(usableStockInt)*separate_percent)/100);
                         proMap.put("separate_qty", separate_qty);
