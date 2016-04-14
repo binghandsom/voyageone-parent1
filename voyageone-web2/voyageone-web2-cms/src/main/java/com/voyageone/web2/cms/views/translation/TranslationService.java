@@ -18,6 +18,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,7 @@ public class TranslationService extends BaseAppService {
             "fields.model",
             "fields.images1",
             "fields.translator",
+            "fields.translateStatus",
             "groups.platforms",
             "modified"};
 
@@ -67,9 +69,6 @@ public class TranslationService extends BaseAppService {
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
-
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
-
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
@@ -77,7 +76,7 @@ public class TranslationService extends BaseAppService {
                 "'groups.platforms':{$elemMatch: {'cartId': 0, 'isMain': 1}}," +
                 "'fields.translateStatus':'0'," +
                 "'fields.translator':'%s'," +
-                "'fields.translateTime':{'$gt':'%s'}}",userInfo.getUserName(), translateTimeStr);
+                "'fields.translateTime':{'$gt':'%s'}}", userInfo.getUserName(), translateTimeStr);
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
@@ -87,12 +86,12 @@ public class TranslationService extends BaseAppService {
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(userInfo.getSelChannelId(), queryObject);
 
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels);
-
+        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
+        translateTaskBean.setProdListTotal(cmsBtProductModels.size());
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(),userInfo.getUserName()));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
-
         return translateTaskBean;
     }
 
@@ -123,12 +122,11 @@ public class TranslationService extends BaseAppService {
         List<CmsBtProductModel> cmsBtProductModels = productService.translateDistribute(userInfo.getSelChannelId(), productTransDistrBean);
 
         TranslateTaskBean result = new TranslateTaskBean();
-
         result.setProductTranslationBeanList(buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels));
+        translateTaskBean.setProdListTotal(cmsBtProductModels.size());
         result.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
         result.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
         result.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
-
         return result;
     }
 
@@ -244,15 +242,16 @@ public class TranslationService extends BaseAppService {
 //    }
 
     /**
-     * 获取当前用户未完成的任务.
+     * 根据条件获取当前用户所有任务.
      *
      * @param userInfo
      * @param reqBean
      * @return
      */
-    public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, TranslateTaskBean reqBean) {
-        String condition = reqBean.getSearchCondition();
-        if (StringUtils.isEmpty(condition) && reqBean.getTranSts() == -1) {
+    public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, Map reqBean) {
+        String condition = (String) reqBean.get("searchCondition");
+        int tranSts = NumberUtils.toInt((String) reqBean.get("tranSts"), -1);
+        if (StringUtils.isEmpty(condition) && tranSts == -1) {
             return this.getUndoneTasks(userInfo);
         }
 
@@ -265,26 +264,29 @@ public class TranslationService extends BaseAppService {
                             "{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]",
                     condition, condition, condition, condition, condition, condition, condition, condition, condition);
         }
-        if (reqBean.getTranSts() == -1) {
+        if (tranSts == -1) {
             tasksQueryStr = tasksQueryStr + "}";
         } else {
-            tasksQueryStr = tasksQueryStr + ",'fields.translateStatus':'" + reqBean.getTranSts() + "'}";
+            tasksQueryStr = tasksQueryStr + ",'fields.translateStatus':'" + tranSts + "'}";
         }
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
         //设定返回值.
         queryObject.setProjection(RET_FIELDS);
+        long prodTotal = productService.getCnt(userInfo.getSelChannelId(), queryObject.getQuery());
+
+        int pageNum = (Integer) reqBean.get("pageNum");
+        int pageSize = (Integer) reqBean.get("pageSize");
+        queryObject.setSkip((pageNum - 1) * pageSize);
+        queryObject.setLimit(pageSize);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(userInfo.getSelChannelId(), queryObject);
-
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels);
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
-        translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
-        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(),userInfo.getUserName()));
-        translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
+        translateTaskBean.setProdListTotal(prodTotal);
         return translateTaskBean;
     }
 
@@ -314,9 +316,10 @@ public class TranslationService extends BaseAppService {
             translationBean.setModifiedTime(productModel.getModified());
             translationBean.setProdId(productModel.getProdId());
             translationBean.setTranslator(productModel.getFields().getTranslator());
+            translationBean.setTranSts(NumberUtils.toInt(productModel.getFields().getTranslateStatus()));
 
             // 设置该商品在MT上面的groupId
-            for(CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
+            for (CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
                 if (platForm.getCartId() == CartType.MASTER.getCartId())
                     translationBean.setGroupId(platForm.getGroupId());
             }
@@ -513,7 +516,6 @@ public class TranslationService extends BaseAppService {
      * @param prodCode
      */
     public void cancelUserTask(UserSessionBean userInfo, String prodCode) {
-        String tasksQueryStr = String.format("{'groups.platforms.cartId':0,'fields.translator':'%s'", userInfo.getUserName());
         if (StringUtils.isEmpty(prodCode)) {
             throw new BusinessException("cancelUserTask::没有参数");
         }
