@@ -3,8 +3,6 @@ package com.voyageone.task2.cms.service;
 import com.jd.open.api.sdk.domain.list.CategoryAttrReadService.CategoryAttr;
 import com.jd.open.api.sdk.domain.list.CategoryAttrReadService.Feature;
 import com.jd.open.api.sdk.domain.list.CategoryAttrValueReadService.CategoryAttrValue;
-import com.taobao.api.ApiException;
-import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -30,7 +28,6 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -47,12 +44,6 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
-
-//    @Resource(name = "paltformCartList")
-//    List<String> paltformCartList;
-
-//    @Resource(name = "availableChannelList")
-//    List availableChannelList;
 
     @Override
     public SubSystem getSubSystem() {
@@ -75,11 +66,6 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * @param taskControlList taskcontrol信息
      */
     protected void setJdCategoryAttrInfo(List<TaskControlBean> taskControlList) throws Exception {
-
-        // GetPlatformCategorySchemaService是从配置文件里面取得cart_id
-//        for (String cartId:paltformCartList){
-//            doSetPlatformCategoryAttrJd(Integer.valueOf(cartId));
-//        }
 
         // 获取京东系所有店铺
         List<ShopBean> shopList = Shops.getShopListByPlatform(PlatFormEnums.PlatForm.JD);
@@ -115,11 +101,12 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
     }
 
     /**
-     * 京东平台属性信息取得
+     * 京东平台类目属性信息取得
      *
-     * @param cartId 店铺信息
+     * @param shop ShopBean 店铺信息
+     *        cartId int    平台ID
      */
-    private void doSetPlatformCategoryAttrJd(ShopBean shop, int cartId) throws ApiException, InvocationTargetException, IllegalAccessException, TopSchemaException {
+    private void doSetPlatformCategoryAttrJd(ShopBean shop, int cartId) {
 
         List<CmsMtPlatformCategoryTreeModel> allCategoryTreeLeaves = new ArrayList<>();
 
@@ -151,9 +138,9 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
      * 京东类目属性schema信息插入
      *
      * @param shop ShopBean  店铺信息
-     *             platformCategoriesModel 叶子类目信息
+     *        platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
      */
-    private void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) throws ApiException {
+    private void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
 
         CmsMtPlatformCategorySchemaModel schemaModel = new CmsMtPlatformCategorySchemaModel();
         schemaModel.setCartId(platformCategoriesModel.getCartId());
@@ -162,15 +149,9 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
         schemaModel.setModifier(this.getTaskName());
         schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
 
-        //获取店铺信息
-//        ShopBean shopProp = Shops.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
-//        if (shopProp == null) {
-//            $error("获取到店铺信息失败, shopProp == null");
-//        }
-
         // 调用京东API获取类目属性信息
         List<CategoryAttr> jdCategoryAttrList = new ArrayList<>();
-        // 京东类目属性的属性类型（3:可变属性）
+        // 京东类目属性的属性类型(1:关键属性 2:不变属性 3:可变属性 4:销售属性)
         int attributeType = 3;
         // 调用京东API获取类目属性信息(只取3:可变属性)
         jdCategoryAttrList = jdCategoryService.getCategoryAttrInfo(shop, platformCategoriesModel.getCatId(), attributeType);
@@ -180,12 +161,6 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
 
         // 根据类目属性列表循环，取得类目属性值，加入schema field列表
         for (CategoryAttr categoryAttr : jdCategoryAttrList) {
-//            // 类目属性id,value设定
-//            Value attrV = new Value();
-//            // 类目属性id
-//            attrV.setId(String.valueOf(categoryAttr.getCategoryAttrId()));
-//            // 类目属性名称
-//            attrV.setValue(categoryAttr.getAttName());
 
             // 调用京东API获取类目属性值信息
             List<CategoryAttrValue> jdCategoryAttrValueList = new ArrayList<>();
@@ -226,14 +201,10 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
         if (fieldsList.size() > 0) {
             xmlContent = SchemaWriter.writeRuleXmlString(fieldsList);
             schemaModel.setPropsItem(xmlContent);
-        } else {
-            $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId());
         }
 
         // 把schema信息插进入到MangoDB中
-        if (!StringUtils.isEmpty(schemaModel.getPropsItem())) {
-            platformCategoryService.insertPlatformCategorySchema(schemaModel);
-        }
+        platformCategoryService.insertPlatformCategorySchema(schemaModel);
     }
 
     /**
@@ -256,8 +227,6 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
         singleCheckField.setName(categoryAttr.getAttName());
         // 类目属性类型
         singleCheckField.setType(FieldTypeEnum.SINGLECHECK);
-        // 类目属性信息设定
-//      singleCheckField.setValue(attrV);
 
         // field的rule信息设定
         List<Rule> rulesList = this.getCategoryAttrRulesList(categoryAttr);
@@ -396,7 +365,6 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
                     Long b = dataList.get(j).getId();
 
                     if (a.compareTo(b) > 0) { // 比较两个id的大小
-
                         CategoryAttrValue temp = (CategoryAttrValue)dataList.get(j - 1);
                         dataList.set((j - 1), dataList.get(j));
                         dataList.set(j, temp);
@@ -430,7 +398,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
                 if ("isRequired".equals(feature.getAttrFeatureKey())) {
                     // 必须的时候
                     if("1".equals(feature.getAttrFeatureValue())) {
-                        rule.setName("valueTypeRule");
+                        rule.setName("requiredRule");
                         rule.setValue("true");
                         // Rule列表追加
                         rulesList.add(rule);
@@ -441,27 +409,5 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQTaskService
 
         return rulesList;
     }
-
-//    /**
-//     * 根据京东类目属性值列表取得field选项列表
-//     *
-//     * @param featureSet Set<Feature>  京东类目属性Feature列表
-//     * @return String    必须输入判断结果（0:非必须，1：必须，2:不存在isRequired的Feature属性）
-//     */
-//    private String getIsRequired(Set<Feature> featureSet) {
-//        // 默认返回值为2（不存在isRequired的Feature属性）
-//        String retV = "not exist isRequired";
-//
-//        if (featureSet != null && featureSet.size() > 0) {
-//            // field的rule信息设定
-//            for (Feature feature:featureSet) {
-//                if ("isRequired".equals(feature.getAttrFeatureKey())) {
-//                    retV = feature.getAttrFeatureValue();
-//                }
-//            }
-//        }
-//
-//        return retV;
-//    }
 
 }

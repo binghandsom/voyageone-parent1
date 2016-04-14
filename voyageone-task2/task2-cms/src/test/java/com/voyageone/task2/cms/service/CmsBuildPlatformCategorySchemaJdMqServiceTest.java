@@ -27,13 +27,4 @@ public class CmsBuildPlatformCategorySchemaJdMqServiceTest {
         message.put("test","111");
         sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob, message);
     }
-
-//    @Autowired
-//    CmsBuildPlatformCategoryTreeJdService cmcBuildPlatformCategoryTreeJdService;
-//
-//    @Test
-//    public void testOnStartup() throws Exception {
-//        cmcBuildPlatformCategoryTreeJdService.startup();
-//    }
-
 }

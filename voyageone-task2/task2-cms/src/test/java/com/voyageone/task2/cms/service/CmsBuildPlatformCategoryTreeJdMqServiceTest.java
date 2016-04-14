@@ -28,12 +28,4 @@ public class CmsBuildPlatformCategoryTreeJdMqServiceTest {
         sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategoryTreeJdJob, message);
     }
 
-//    @Autowired
-//    CmsBuildPlatformCategoryTreeJdService cmcBuildPlatformCategoryTreeJdService;
-//
-//    @Test
-//    public void testOnStartup() throws Exception {
-//        cmcBuildPlatformCategoryTreeJdService.startup();
-//    }
-
 }

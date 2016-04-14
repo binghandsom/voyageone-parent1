@@ -31,18 +31,12 @@ public class JdCategoryService extends JdBase {
 	 *
 	 * @param shop ShopBean      店铺信息
 	 * @return List<Category>    京东类目列表
-	 * @throws BusinessException 业务异常
 	 */
-	public List<Category> getCategoryInfo(ShopBean shop) throws BusinessException {
+	public List<Category> getCategoryInfo(ShopBean shop) {
 		List<Category> categoryList = new ArrayList<>();
 
 		// 京东类目信息取得request（未设置fields，取得全部类目项目）
         CategorySearchRequest request = new CategorySearchRequest();
-
-		// For test only start
-		shop.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-		shop.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-		// For test only end
 
 		try {
 			// 调用京东商家类目信息API(360buy.warecats.get)
@@ -74,9 +68,8 @@ public class JdCategoryService extends JdBase {
      *        attributeType int        类目id
      *
      * @return List<CategoryAttr>      京东类目属性列表
-     * @throws BusinessException 业务异常
      */
-    public List<CategoryAttr> getCategoryAttrInfo(ShopBean shop, String catId, int attributeType) throws BusinessException {
+    public List<CategoryAttr> getCategoryAttrInfo(ShopBean shop, String catId, int attributeType) {
         List<CategoryAttr> jdCategoryAttrList = new ArrayList<>();
 
         CategoryReadFindAttrsByCategoryIdRequest request = new CategoryReadFindAttrsByCategoryIdRequest();
@@ -85,11 +78,6 @@ public class JdCategoryService extends JdBase {
         request.setCid(Long.parseLong(catId));
         // 属性类型（属性类型.1:关键属性 2:不变属性 3:可变属性 4:销售属性）
         request.setAttributeType(attributeType);
-
-        // For test only start
-        shop.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shop.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-        // For test only end
 
         try {
             // 调用京东商家类目属性信息API(jingdong.category.read.findAttrsByCategoryId)
@@ -121,20 +109,14 @@ public class JdCategoryService extends JdBase {
      *        categoryAttrId String    类目属性id
      *
      * @return List<CategoryAttrValue> 京东类目属性值列表
-     * @throws BusinessException 业务异常
      */
-    public List<CategoryAttrValue> getCategoryAttrValueInfo(ShopBean shop, Long categoryAttrId) throws BusinessException {
+    public List<CategoryAttrValue> getCategoryAttrValueInfo(ShopBean shop, Long categoryAttrId) {
         List<CategoryAttrValue> jdCategoryAttrValueList = new ArrayList<>();
 
         CategoryReadFindValuesByAttrIdRequest request = new CategoryReadFindValuesByAttrIdRequest();
 
         // 类目属性id
         request.setCategoryAttrId(categoryAttrId);
-
-        // For test only start
-        shop.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shop.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-        // For test only end
 
         try {
             // 调用京东商家类目属性信息API(jingdong.category.read.findValuesByAttrId)

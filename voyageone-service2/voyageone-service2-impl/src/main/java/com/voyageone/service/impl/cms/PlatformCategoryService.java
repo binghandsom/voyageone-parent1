@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
@@ -12,7 +13,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -106,8 +106,11 @@ public class PlatformCategoryService extends BaseService {
 
     /**
      * 取得类目属性叶子节点数据
+     *
+     * @param cartId int            平台ID
+     * @return List<CmsMtPlatformCategoryTreeModel>    平台类目层次树列表
      */
-    public List<CmsMtPlatformCategoryTreeModel> getCmsMtPlatformCategoryTreeModelLeafList(int cartId) throws InvocationTargetException, IllegalAccessException{
+    public List<CmsMtPlatformCategoryTreeModel> getCmsMtPlatformCategoryTreeModelLeafList(int cartId) {
         List<CmsMtPlatformCategoryTreeModel> allLeaves = new ArrayList<>();
         List<Map> allCategoryLeavesMap = new ArrayList<>();
         Set<String> savedList = new HashSet<>();
@@ -125,16 +128,20 @@ public class PlatformCategoryService extends BaseService {
         // 去掉取得的类目信息叶子记录中catId一样的重复记录
         for (Map leafMap:allCategoryLeavesMap) {
             CmsMtPlatformCategoryTreeModel leafObj = new CmsMtPlatformCategoryTreeModel();
-            BeanUtils.populate(leafObj, leafMap);
+            try {
+                BeanUtils.populate(leafObj, leafMap);
+            } catch (Exception ex) {
+                $error("去掉取得的类目信息叶子记录中的重复记录失败 " + "cart_id:" + cartId);
+                throw new BusinessException("去掉取得的类目信息叶子记录中的重复记录失败 " + ex.getMessage());
+            }
+
             String key = leafObj.getCatId();
 
             // 叶子类目并且不重复
-            if (0 == leafObj.getIsParent()) {
-                if(!savedList.contains(key)) {
-                    savedList.add(key);
-                    leafObj.setCartId(cartId);
-                    allLeaves.add(leafObj);
-                }
+            if(!savedList.contains(key)) {
+                savedList.add(key);
+                leafObj.setCartId(cartId);
+                allLeaves.add(leafObj);
             }
         }
 
@@ -142,7 +149,7 @@ public class PlatformCategoryService extends BaseService {
     }
 
     /**
-     * 删除类目属性数据
+     * 删除类目属性schema数据
      */
     public int deletePlatformCategorySchemaByCartId(int cartId) {
         WriteResult delResult = platformCategorySchemaDao.deletePlatformCategorySchemaByCartId(cartId);
@@ -150,7 +157,7 @@ public class PlatformCategoryService extends BaseService {
     }
 
     /**
-     * 删除类目属性数据
+     * 插入类目属性schema数据
      */
     public int insertPlatformCategorySchema(CmsMtPlatformCategorySchemaModel schemaModel) {
         WriteResult insResult = platformCategorySchemaDao.insert(schemaModel);
