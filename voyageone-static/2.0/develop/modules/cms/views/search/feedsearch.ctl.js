@@ -75,7 +75,8 @@ define([
         /**
          * 检索
          */
-        function search() {
+        function search(page) {
+            $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
             if ($scope.vm.searchInfo.fuzzySearch != undefined) {
@@ -95,8 +96,8 @@ define([
                     } else {
                         feedInfo.skusCnt = skusList.length;
                         _.forEach(skusList, function (skuInfo) {
-                            var skuDesc = 'MSRP(USD): ' + $.trim(skuInfo.price_client_msrp)  + ',  Retail Price(USD): ' + $.trim(skuInfo.price_client_retail) + ',  Cost Price(USD): ' + $.trim(skuInfo.price_net)
-                                + ',  MSRP(RMB): ' + $.trim(skuInfo.price_msrp) + ',  Retail Price(RMB): ' + $.trim(skuInfo.price_current);
+                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.price_client_msrp)  + ', ' + $.trim(skuInfo.price_client_retail) + ', ' + $.trim(skuInfo.price_net)
+                                + ', ' + $.trim(skuInfo.price_msrp) + ', ' + $.trim(skuInfo.price_current);
                             feedInfo._popSkuInfo.push(skuDesc);
                         });
                     }

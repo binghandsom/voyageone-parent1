@@ -191,6 +191,7 @@
         "copyFormMainProduct":"copyFormMainProduct",
         "saveTask":"saveTask",
         "submitTask":"submitTask",
+        "cancelTask":"cancelTask",
         "getFeedAttributes":"getFeedAttributes"
       }
     },

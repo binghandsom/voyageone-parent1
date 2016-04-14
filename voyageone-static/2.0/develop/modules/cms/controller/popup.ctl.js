@@ -294,12 +294,23 @@ define([
 
         },
         "system": {
-            "channelList": {
-                "templateUrl": "views/pop/system/channelList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
-                "controller": 'popChannelListCtl'
+            "channelsetting": {
+                "templateUrl": "views/pop/system/channelsetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
+                "controller": 'popChannelSettingCtl'
+            },
+            "channeledit": {
+                "templateUrl": "views/pop/system/channeledit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
+                "controller": 'popChannelEditCtl'
+            },
+            "cartList": {
+                "templateUrl": "views/pop/system/cartList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
+                "controller": 'popCartListCtl'
             }
         },
+
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -874,13 +885,22 @@ define([
         };
 
 
-
         /**
          * 新增ChannelList页,设置操作弹出
          * */
         $scope.openChannelSetting = function (context) {
-            return openModel(popActions.system.channelList, context);
+            return openModel(popActions.system.channelsetting, context);
         };
+
+
+        /**
+         * 新增CartList页,设置操作弹出
+         * */
+        $scope.openChannelEdit = function (context) {
+            return openModel(popActions.system.channeledit, context);
+        };
+
+
         /**
          * 弹出自定义属性列
          * @type {openCustomColumn}

@@ -190,7 +190,7 @@
     "templateUrl": "views/system/channel/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/channel/index.ctl"
   },
-  "system_cart_setting": {
+  "system_cart_list": {
     "hash": "/system/cart/index",
     "templateUrl": "views/system/cart/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cart/index.ctl"
