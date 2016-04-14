@@ -159,11 +159,14 @@ public interface CmsUrlConstants {
 
                 String SEARCH_TASK = "searchTask";
 
+                String SEARCH_SUB_TASK = "searchSubTask";
+
                 String SAVE_TASK = "saveTask";
 
                 String DEL_TASK = "delTask";
 
                 String GET_PLATFORM_LIST = "getPlatFormList";
+
             }
 
             interface STOCK_INCREMENT_DETAIL {

@@ -71,6 +71,29 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     }
 
     /**
+     * 根据SubTaskID取得增量隔离信息
+     * @param param
+     */
+    public Map<String, Object> getIncrementInfoBySubTaskID(Map param){
+        //判断增量任务:更新的场合
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("subTaskId", (String) param.get("incrementSubTaskId"));
+        List<Map<String, Object>> stockIncrementInfo =cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        Map<String, Object>incrementInfoMap =new HashMap<>();
+        for(int i=0;i<stockIncrementInfo.size();i++){
+            //增量任务名称
+            incrementInfoMap.put("incrementTaskName", stockIncrementInfo.get(i).get("sub_task_name"));
+            //增量类型
+            incrementInfoMap.put("incrementType",stockIncrementInfo.get(i).get("type"));
+            //增量值
+            incrementInfoMap.put("incrementValue",stockIncrementInfo.get(i).get("value"));
+            //Cart_ID
+            incrementInfoMap.put("incrementCartId",stockIncrementInfo.get(i).get("cart_id"));
+
+        }
+        return incrementInfoMap;
+    }
+    /**
      * 新建/修改增量库存隔离任务
      * @param param
      */
@@ -116,11 +139,11 @@ public class CmsTaskStockIncrementService extends BaseAppService {
      */
     private void checkIncrementInfo(Map param) {
         //增量类型
-        String incrementType = (String) param.get("incrementType");
+        String incrementType = String.valueOf(param.get("incrementType"));
         //增量数值
-        String incrementValues = (String) param.get("incrementValue");
+        String incrementValues = String.valueOf(param.get("incrementValue"));
         //任务名
-        String incrementTaskName = (String) param.get("incrementTaskName");
+        String incrementTaskName =String.valueOf(param.get("incrementTaskName"));
         //渠道的判断
         if (null==param.get("incrementCartId")){
             //请选择增量的隔离渠道
@@ -194,14 +217,14 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private void updateIncrementTaskByTaskID(Map param) {
         Map<String, Object> mapSaveData =new HashMap<>();
         //任务名
-        mapSaveData.put("sub_task_name", param.get("incrementTaskName"));
+        mapSaveData.put("subTaskName", param.get("incrementTaskName"));
         //增量任务ID
-        mapSaveData.put("sub_task_id", param.get(""));
+        mapSaveData.put("subTaskId", param.get("incrementSubTaskId"));
         //创建者
         mapSaveData.put("created", param.get("userName"));
         //更新者
         mapSaveData.put("modified", param.get("userName"));
-        Integer seq = cmsBtStockSeparateIncrementTaskDao.insertStockSeparateIncrementTask(mapSaveData);
+        Integer seq = cmsBtStockSeparateIncrementTaskDao.updateStockSeparateIncrementTask(mapSaveData);
     }
     /**
      *
