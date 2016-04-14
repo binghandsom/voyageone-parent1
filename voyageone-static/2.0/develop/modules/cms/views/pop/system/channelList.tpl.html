@@ -12,10 +12,10 @@
                     <div class="form-horizontal">
                         <div class="form-group">
                             <div class="col-sm-12">
-                                <label class="col-sm-3">Juicy Counture</label>
-                                <span class="col-sm-1 badge">001</span>
+                                <label class="col-sm-3">{{vm.full_name}}</label>
+                                <span class="col-sm-1 badge" >{{vm.order_channel_id}}</span>
                                 <label class="col-sm-3 m-l-lg">Allow USJOI</label>
-                                <span class="col-sm-1 badge">Yes</span>
+                                <span class="col-sm-1 badge">{{vm.is_usjoi==0?'No':'Yes'}}</span>
                             </div>
                         </div><!-- .form-group -->
                     </div>
@@ -26,25 +26,15 @@
             <div class="col-sm-12">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <div class="row col-sm-12">
+                        <div class="row col-sm-12" ng-repeat="cart in vm.carts">
                             <div class="col-sm-3">
                                 <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="京东轻奢店" style=""><span class="fa fa-check"></span> 京东轻奢店
-                                </label>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="京东生活店" style=""><span class="fa fa-check"></span> 京东生活店
-                                </label>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="聚美美国馆" style=""><span class="fa fa-check"></span> 聚美美国馆
-                                </label>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="天猫USJOI" style=""><span class="fa fa-check"></span> 天猫USJOI
+                                    <input type="checkbox"  class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched"
+                                           name="c_{{vm.order_channel_id}}"
+                                           value="{{cart.car_id}}"
+                                           ng-model="cart.selected"
+                                    >
+                                    <span class="fa fa-check"></span> {{cart.name}}
                                 </label>
                             </div>
                         </div>

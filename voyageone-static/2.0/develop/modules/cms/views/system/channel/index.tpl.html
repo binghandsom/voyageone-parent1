@@ -9,7 +9,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" ng-model="vm.searchInfo.catName">
+                                        <input class="form-control" ng-model="channelId">
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
@@ -19,7 +19,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" ng-model="vm.searchInfo.catId">
+                                        <input class="form-control" ng-model="channelName">
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
@@ -29,9 +29,10 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
                                     <div class="col-sm-4">
-                                        <select class="form-control">
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
+                                        <select class="form-control" ng-model="allowMinimallOption">
+                                            <option ng-repeat="option in mallOptions" value="{{option.id}}">
+                                                {{option.name}}
+                                            </option>
                                         </select>
                                     </div>
                                 </div><!-- .form-group -->
@@ -40,8 +41,12 @@
                         <div class="col-sm-12 text-center m-b-sm">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                                    <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                        | translate}}
+                                    </button>
+                                    <button class="btn btn-vo" ng-click="refreshTable()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                        | translate}}
+                                    </button>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
@@ -63,42 +68,38 @@
                     <th class="text-center" style="width:20%" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>010</td>
-                    <td>SC</td>
-                    <td>ShoeCity</td>
+                <tbody ng-if="tableSource.length">
+                <tr ng-repeat="el in tableSource">
+                    <td class="text-center mfb-xt3">{{$index}}</td>
+                    <td>{{el.order_channel_id}}</td>
+                    <td>{{el.name}}</td>
+                    <td>{{el.full_name}}</td>
                     <td>
-                        <label class="col-sm-12">
-                            <div class="col-sm-5 col-sm-offset-3">
-                            <small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;创建时间:2015-12-18 11:14:46&quot;,&quot;发布时间:2015-11-12 16:19:00&quot;,&quot;销售时间:2015-11-18 16:19:00&quot;])" popover-trigger="mouseenter" popover-placement="top" class="ng-scope">
+                        <div class="col-sm-5 col-sm-offset-3">
                                 <div class="table_main">
                                     <ul>
-                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span class="ng-binding">Yes</span></div>
-                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span>No</span></div>
+                                        <div class="col-sm-6">
+                                            <input type="radio" name="radio_{{el.order_channel_id}}" value="1" ng-model="el.is_usjoi"
+                               ng-click="save(el)"><span class="ng-binding">Yes</span>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="radio" name="radio_{{el.order_channel_id}}" value="0" ng-model="el.is_usjoi"
+                                disabled><span>No</span>
+                                        </div>
                                     </ul>
                                 </div>
-                            </small>
-                            <div class="col-sm-3">
-                                <div tooltip-animation-class="fade" uib-tooltip-classes="" ng-class="{ in: isOpen() }" popover-html-popup="" title="" content-exp="contentExp()" placement="left" popup-class="" animation="animation" is-open="isOpen" origin-scope="origScope" style="visibility: visible; display: block; top: 550px; left: 827px;" class="ng-isolate-scope left fade popover in">
-                                    <div class="arrow"></div>
-                                    <div class="popover-inner">
-                                        <!-- ngIf: title -->
-                                        <div>创建时间:2015-12-18 11:14:46<br>发布时间:2015-11-12 16:19:00<br>销售时间:2015-11-18 16:19:00<br></div>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
-                        </label>
+                        </div>
                     </td>
                     <td ng-controller="popupCtrl">
-                        <button class="btn btn-success btn-xs ng-scope" ng-click="openChannelSetting('')"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-success btn-xs ng-scope"
+                                ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
+                                class="fa fa-pencil"></i></button>
                     </td>
+                </tr>
                 </tr>
                 </tbody>
             </table>
-            <vpagination config="categoryPageOption" total="{{categoryPageOption.total}}"></vpagination>
+            <vpagination config="page"></vpagination>
         </div><!-- /.box-body -->
     </div>
 </div><!-- end .wrapper-md -->

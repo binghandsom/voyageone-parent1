@@ -212,6 +212,15 @@
           "add" : "create",
           "save": "update"
         }
+      },
+      "usjoi":{
+          "usjoiService":{
+            "root":"/cms/channel/usjoi/",
+            "getList":"getList",
+            "update":"update",
+            "getCarts":"getCarts",
+            "updateCartIds":"updateCartIds"
+          }
       }
     }
   }
