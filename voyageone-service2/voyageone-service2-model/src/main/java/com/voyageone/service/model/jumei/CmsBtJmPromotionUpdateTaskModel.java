@@ -9,6 +9,7 @@ public class CmsBtJmPromotionUpdateTaskModel implements Serializable
 {
    public CmsBtJmPromotionUpdateTaskModel()
     {
+        setTaskParameter(""); 
         setBeginTime(DateHelp.getDefaultDate());
         setEndTime(DateHelp.getDefaultDate());
         setErrorMsg(""); 
@@ -28,6 +29,18 @@ public class CmsBtJmPromotionUpdateTaskModel implements Serializable
 聚美推广活动id
         */
      private int jmBtPromotionId;
+    
+    
+ /**
+任务类型
+        */
+     private int TaskType;
+    
+    
+ /**
+任务参数
+        */
+     private String TaskParameter;
     
     
  /**
@@ -91,6 +104,41 @@ public class CmsBtJmPromotionUpdateTaskModel implements Serializable
         public void setJmBtPromotionId(int jmBtPromotionId)
         {
          this.jmBtPromotionId=jmBtPromotionId;
+        }
+    
+        
+         /**
+           任务类型
+        */
+        public int getTaskType()
+        {
+         
+        return this.TaskType;
+        }
+        public void setTaskType(int TaskType)
+        {
+         this.TaskType=TaskType;
+        }
+    
+        
+         /**
+           任务参数
+        */
+        public String getTaskParameter()
+        {
+         
+        return this.TaskParameter;
+        }
+        public void setTaskParameter(String TaskParameter)
+        {
+        if(TaskParameter!=null){
+this.TaskParameter=TaskParameter;
+ }
+else
+{
+this.TaskParameter="";
+}
+
         }
     
         

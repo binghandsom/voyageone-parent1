@@ -46,7 +46,6 @@ public class JumeiHtDealServiceTest {
         request.setJumei_hash_id("ht1454411913p2225506");
         request.setStart_time(new Date().getTime());
         request.setEnd_time(new Date().getTime()+100000000);
-        request.setUpdate_data(new HtDealCopyDeal_DealInfo());
         HtDealCopyDealResponse response = htDealService.copyDeal(shopBean, request);
     }
 

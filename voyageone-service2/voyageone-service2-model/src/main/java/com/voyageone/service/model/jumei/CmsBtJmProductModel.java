@@ -46,6 +46,7 @@ public class CmsBtJmProductModel implements Serializable
         setCreater(""); 
         setModifier(""); 
         setSpecialNote(""); 
+        setLastJmHashId(""); 
 
     }
  
@@ -309,9 +310,15 @@ SN库存同步用
     
     
  /**
-
+特殊说明
         */
      private String specialNote;
+    
+    
+ /**
+聚美活动的最后一次hash_id
+        */
+     private String lastJmHashId;
     
         
          /**
@@ -1162,7 +1169,7 @@ this.modifier="";
     
         
          /**
-           
+           特殊说明
         */
         public String getSpecialNote()
         {
@@ -1177,6 +1184,27 @@ this.specialNote=specialNote;
 else
 {
 this.specialNote="";
+}
+
+        }
+    
+        
+         /**
+           聚美活动的最后一次hash_id
+        */
+        public String getLastJmHashId()
+        {
+         
+        return this.lastJmHashId;
+        }
+        public void setLastJmHashId(String lastJmHashId)
+        {
+        if(lastJmHashId!=null){
+this.lastJmHashId=lastJmHashId;
+ }
+else
+{
+this.lastJmHashId="";
 }
 
         }

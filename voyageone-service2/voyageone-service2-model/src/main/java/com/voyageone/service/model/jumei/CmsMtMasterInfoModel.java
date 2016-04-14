@@ -42,7 +42,7 @@ public class CmsMtMasterInfoModel implements Serializable
     
     
  /**
-品牌名称  data_type(3 4 5 6)
+品牌名称  data_type(3 4 5 6)  image_key
         */
      private String brandName;
     
@@ -120,7 +120,7 @@ data_type为3，value1是NULL,data_type为其它，value2是jm_url聚美服务�
     
     
  /**
-
+platform_id  channel_id  brand_name  product_type
         */
      private boolean active;
     
@@ -175,7 +175,7 @@ this.channelId="";
     
         
          /**
-           品牌名称  data_type(3 4 5 6)
+           品牌名称  data_type(3 4 5 6)  image_key
         */
         public String getBrandName()
         {
@@ -420,7 +420,7 @@ this.modifier="";
     
         
          /**
-           
+           platform_id  channel_id  brand_name  product_type
         */
         public boolean getActive()
         {

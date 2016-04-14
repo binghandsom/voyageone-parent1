@@ -35,7 +35,7 @@ public class HtDealCopyDealRequest implements JMRequest {
 
     long start_time;//	Number 售卖开始时间    参数范围: 注:
     long end_time;//Number 售卖结束时间    参数范围: 注:
-    HtDealCopyDeal_DealInfo update_data;
+   // HtDealCopyDeal_DealInfo update_data;
 
     public String getJumei_hash_id() {
         return jumei_hash_id;
@@ -45,20 +45,20 @@ public class HtDealCopyDealRequest implements JMRequest {
         this.jumei_hash_id = jumei_hash_id;
     }
 
-    public HtDealCopyDeal_DealInfo getUpdate_data() {
-        return update_data;
-    }
-
-    public void setUpdate_data(HtDealCopyDeal_DealInfo update_data) {
-        this.update_data = update_data;
-    }
+//    public HtDealCopyDeal_DealInfo getUpdate_data() {
+//        return update_data;
+//    }
+//
+//    public void setUpdate_data(HtDealCopyDeal_DealInfo update_data) {
+//        this.update_data = update_data;
+//    }
 
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_hash_id", jumei_hash_id);
         params.put("start_time",Long.toString(start_time));
         params.put("end_time", Long.toString(end_time));
-        params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
+       // params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
     }
 }

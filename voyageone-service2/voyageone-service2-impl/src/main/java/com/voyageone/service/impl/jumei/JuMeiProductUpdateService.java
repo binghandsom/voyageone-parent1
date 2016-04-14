@@ -93,6 +93,22 @@ public class JuMeiProductUpdateService {
 
         return info;
     }
+    @VOTransactional
+    public  void  saveJMNewProductUpdateInfo(JMProductUpdateInfo info) {
+        daoCmsBtJmProduct.update(info.getModelCmsBtJmProduct());
+        daoCmsBtJmPromotionProduct.update(info.getModelCmsBtJmPromotionProduct());
+        for (CmsBtJmSkuModel cmsBtJmSku : info.getListCmsBtJmSku()) {
+            daoCmsBtJmSku.update(cmsBtJmSku);
+        }
+        for (CmsBtJmPromotionSkuModel promotionSku : info.getListCmsBtJmPromotionSku()) {
+            daoCmsBtJmPromotionSku.update(promotionSku);
+        }
+    }
+    @VOTransactional
+    public  void  saveJMUpdateProductInfo( CmsBtJmPromotionProductModel modelPromotionProduct, CmsBtJmProductModel modelProduct) {
+        daoCmsBtJmProduct.update(modelProduct);
+        daoCmsBtJmPromotionProduct.update(modelPromotionProduct);
+    }
     public void saveCmsBtJmProductImages(CmsBtJmProductImagesModel model) {
         daoCmsBtJmProductImages.update(model);
     }

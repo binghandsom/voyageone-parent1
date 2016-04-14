@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`        from cms_bt_jm_product
+        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id`        from cms_bt_jm_product
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -141,10 +141,13 @@
                                 <if test="specialNote != null">
                         AND specialNote = #{specialNote}
                     </if>
+                                <if test="lastJmHashId != null">
+                        AND last_jm_hash_id = #{lastJmHashId}
+                    </if>
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote` from cms_bt_jm_product 
+        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id` from cms_bt_jm_product 
         <where>
                 
                     <if test="id != null">
@@ -322,10 +325,14 @@
                     <if test="specialNote != null">
                         AND specialNote = #{specialNote}
                     </if> 
+                
+                    <if test="lastJmHashId != null">
+                        AND last_jm_hash_id = #{lastJmHashId}
+                    </if> 
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote` from cms_bt_jm_product where id=#{id}
+        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id` from cms_bt_jm_product where id=#{id}
     </select>
 
      <update id="update">
@@ -372,6 +379,7 @@
             ,`modifier`=#{modifier}
             ,`syn_flg`=#{synFlg}
             ,`specialNote`=#{specialNote}
+            ,`last_jm_hash_id`=#{lastJmHashId}
          where id=#{id}   
    </update>
 
@@ -426,7 +434,8 @@
               `modified`,
               `modifier`,
               `syn_flg`,
-              `specialNote`
+              `specialNote`,
+              `last_jm_hash_id`
         )
         VALUES(
               #{channelId},
@@ -471,7 +480,8 @@
               #{modified},
               #{modifier},
               #{synFlg},
-              #{specialNote}
+              #{specialNote},
+              #{lastJmHashId}
         )
     </insert>
 </mapper>

@@ -1,9 +1,10 @@
 package com.voyageone.service.impl.jumei;
-import com.sun.xml.internal.ws.util.UtilException;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.logger.Log;
 import com.voyageone.common.util.ExceptionUtil;
+import com.voyageone.components.jumei.JumeiHtDealService;
+import com.voyageone.components.jumei.Reponse.HtDealCopyDealResponse;
+import com.voyageone.components.jumei.Request.HtDealCopyDealRequest;
 import com.voyageone.components.jumei.bean.JmProductBean;
 import com.voyageone.components.jumei.bean.JmProductBean_DealInfo;
 import com.voyageone.components.jumei.bean.JmProductBean_Spus;
@@ -11,19 +12,17 @@ import com.voyageone.components.jumei.bean.JmProductBean_Spus_Sku;
 import com.voyageone.components.jumei.enums.EnumJuMeiMtMasterInfo;
 import com.voyageone.components.jumei.enums.EnumJuMeiProductImageType;
 import com.voyageone.components.jumei.service.JumeiProductService;
+import com.voyageone.service.dao.jumei.CmsBtJmProductDao;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.JMProductUpdateInfo;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 /**
  * Created by dell on 2016/4/12.
  */
@@ -37,20 +36,31 @@ public class JuMeiProductUpdatePlatefromService {
     JuMeiProductUpdateService service;
     @Autowired
     JumeiProductService serviceJumeiProduct;
+
+    @Autowired
+    JumeiHtDealService serviceJumeiHtDeal;
     @Autowired
     JuMeiUploadImageService serviceJuMeiUploadImageJob;
     @Autowired
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
+    @Autowired
+    CmsBtJmProductDao daoCmsBtJmProductDao;
+
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
         ShopBean shopBean = service.getShopBean();
-        LOG.info(promotionId+ " 聚美上新开始");
+        LOG.info(promotionId + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getListPromotionProduct();
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 try {
-                    adddProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                    if (model.getState() == 0) {//上新
+                        addProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                    } else //更新
+                    {
+                        updateProductAddDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                    }
                 } catch (Exception ex) {
                     model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
                     model.setSynchState(3);//同步更新失败
@@ -64,26 +74,57 @@ public class JuMeiProductUpdatePlatefromService {
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
         }
-        LOG.info(promotionId+ " 聚美上新end");
+        LOG.info(promotionId + " 聚美上新end");
     }
-    private void adddProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model,ShopBean shopBean) throws Exception {
+    private  void updateProductAddDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
+        HtDealCopyDealRequest request = new HtDealCopyDealRequest();
+        CmsBtJmProductModel modelProduct = daoCmsBtJmProductDao.select(modelPromotionProduct.getCmsBtJmProductId());
+        request.setJumei_hash_id(modelProduct.getLastJmHashId());
+        request.setStart_time(getTime(modelCmsBtJmPromotion.getActivityStart()));
+        request.setEnd_time(getTime(modelCmsBtJmPromotion.getActivityEnd()));
+        HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(shopBean, request);
+        if (response.is_Success()) {
+            modelPromotionProduct.setJmHashId(response.getJumei_hash_id());
+            modelProduct.setLastJmHashId(response.getJumei_hash_id());
+            service.saveJMUpdateProductInfo(modelPromotionProduct, modelProduct);
+        }
+    }
+    private void addProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         JMProductUpdateInfo updateInfo = service.getJMProductUpdateInfo(model);
         updateInfo.loadData();
         JmProductBean jmProductBean = selfBeanToJmBean(updateInfo, modelCmsBtJmPromotion, shippingSystemId);
         for (CmsBtJmProductImagesModel imgemodel : updateInfo.getListCmsBtJmProductImages()) {
             if (imgemodel.getSynFlg() == 0) { //上传图片
                 serviceJuMeiUploadImageJob.uploadImage(imgemodel, shopBean);
+                imgemodel.setSynFlg(1);
                 service.saveCmsBtJmProductImages(imgemodel);
             }
         }
         for (CmsMtMasterInfoModel modelCmsMtMasterInfo : updateInfo.getListCmsMtMasterInfo()) {
             if (modelCmsMtMasterInfo.getSynFlg() == 0) { //上传图片
+                modelCmsMtMasterInfo.setSynFlg(1);
                 serviceJuMeiUploadImageJob.uploadImage(modelCmsMtMasterInfo, shopBean);
                 service.saveCmsMtMasterInfo(modelCmsMtMasterInfo);
             }
         }
         setImages(updateInfo, jmProductBean);
         serviceJumeiProduct.productNewUpload(shopBean, jmProductBean);
+        updateInfo.getModelCmsBtJmProduct().setState(1);//已经上新
+        updateInfo.getModelCmsBtJmProduct().setJumeiProductId(jmProductBean.getJumei_product_id());
+        updateInfo.getModelCmsBtJmProduct().setLastJmHashId(jmProductBean.getJumei_product_id());//保存最后一次活动JmHashId
+        updateInfo.getModelCmsBtJmPromotionProduct().setJmHashId(jmProductBean.getJumei_product_id());
+        updateInfo.getModelCmsBtJmPromotionProduct().setState(1);//已经上新
+        updateInfo.getModelCmsBtJmPromotionProduct().setSynchState(2);//更新成功
+        for (JmProductBean_Spus spu : jmProductBean.getSpus()) {
+            String skuCode = spu.getSkuInfo().getPartner_sku_no();
+            CmsBtJmSkuModel cmsBtJmSkuModel = updateInfo.getMapCodeCmsBtJmSkuModel().get(skuCode);
+            cmsBtJmSkuModel.setJmSkuNo(spu.getSkuInfo().getJumei_sku_no());
+            cmsBtJmSkuModel.setJmSpuNo(spu.getJumei_spu_no());
+            cmsBtJmSkuModel.setState(1);
+            CmsBtJmPromotionSkuModel promotionSkuModel = updateInfo.getMapSkuIdCmsBtJmPromotionSkuModel().get(cmsBtJmSkuModel.getId());
+            promotionSkuModel.setState(1);//已经上新
+            promotionSkuModel.setSynchState(2);//上新更新成功
+        }
     }
     private JmProductBean selfBeanToJmBean(JMProductUpdateInfo info, CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId) throws Exception {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
@@ -102,7 +143,7 @@ public class JuMeiProductUpdatePlatefromService {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {//.getSkuImportModelList()) {
             CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
             JmProductBean_Spus spu = new JmProductBean_Spus();
-            spu.setPartner_spu_no(modelSku.getJmSpuNo());//jmBtSkuImportModel.getSku());
+            spu.setPartner_spu_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
             spu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
             spu.setPropery("OTHER");
             spu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
@@ -111,7 +152,7 @@ public class JuMeiProductUpdatePlatefromService {
             // todo 价格单位
             spu.setArea_code("19");
             JmProductBean_Spus_Sku sku = new JmProductBean_Spus_Sku();
-            sku.setPartner_sku_no(modelSku.getJmSkuNo());//jmBtSkuImportModel.getSku());
+            sku.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
             sku.setSale_on_this_deal("1");
             sku.setBusinessman_num(modelSku.getJmSkuNo());//jmBtSkuImportModel.getSku());
             sku.setStocks("1");
@@ -148,9 +189,8 @@ public class JuMeiProductUpdatePlatefromService {
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
     }
-
     private void setImages(JMProductUpdateInfo info, JmProductBean jmProductBean) {
-     //   Map<Integer, List<JmPicBean>> imagesMap = null;//jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName(), jmBtProductImport.getSizeType());
+        //   Map<Integer, List<JmPicBean>> imagesMap = null;//jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName(), jmBtProductImport.getSizeType());
         // （1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
         StringBuffer stringBuffer = new StringBuffer();
         // List<JmPicBean> pics = imagesMap.get(JumeiImageType.NORMAL.getId());
@@ -249,7 +289,6 @@ public class JuMeiProductUpdatePlatefromService {
         }
         jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
     }
-
     public List<CmsBtJmProductImagesModel> getListCmsBtJmProductImages(List<CmsBtJmProductImagesModel> list, int image_type) {
         List<CmsBtJmProductImagesModel> result = new ArrayList<>();
         for (CmsBtJmProductImagesModel model : list) {
@@ -268,11 +307,9 @@ public class JuMeiProductUpdatePlatefromService {
         }
         return result;
     }
-
     public static Long getTime(Date d) throws Exception {
         long l = d.getTime() / 1000 - 8 * 3600;
         return l;
     }
-
 
 }

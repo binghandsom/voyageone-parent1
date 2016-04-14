@@ -35,7 +35,7 @@ public class CmsBtJmProductImagesModel implements Serializable
     
     
  /**
-图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code； 4：品牌故事图的情况下为品牌名称； 5：尺码图的情况下为品牌名称 6：物流介绍的情况下为品牌名称 7：竖图的情况下为Product Code）
+图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code7：竖图的情况下为Product Code 8:商品定制图Product Code）
         */
      private String productCode;
     
@@ -148,7 +148,7 @@ this.channelId="";
     
         
          /**
-           图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code； 4：品牌故事图的情况下为品牌名称； 5：尺码图的情况下为品牌名称 6：物流介绍的情况下为品牌名称 7：竖图的情况下为Product Code）
+           图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code7：竖图的情况下为Product Code 8:商品定制图Product Code）
         */
         public String getProductCode()
         {

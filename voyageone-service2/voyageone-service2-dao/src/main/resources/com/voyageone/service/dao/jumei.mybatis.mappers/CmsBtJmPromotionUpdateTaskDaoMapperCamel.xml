@@ -7,13 +7,19 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`jm_bt_promotion_id`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater`        from cms_bt_jm_promotion_update_task
+        select `id`,`jm_bt_promotion_id`,`TaskType`,`TaskParameter`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater`        from cms_bt_jm_promotion_update_task
         <where>
                 <if test="id != null">
                         AND id = #{id}
                     </if>
                                 <if test="jmBtPromotionId != null">
                         AND jm_bt_promotion_id = #{jmBtPromotionId}
+                    </if>
+                                <if test="TaskType != null">
+                        AND TaskType = #{TaskType}
+                    </if>
+                                <if test="TaskParameter != null">
+                        AND TaskParameter = #{TaskParameter}
                     </if>
                                 <if test="beginTime != null">
                         AND begin_time = #{beginTime}
@@ -36,7 +42,7 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`jm_bt_promotion_id`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater` from cms_bt_jm_promotion_update_task 
+        select `id`,`jm_bt_promotion_id`,`TaskType`,`TaskParameter`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater` from cms_bt_jm_promotion_update_task 
         <where>
                 
                     <if test="id != null">
@@ -45,6 +51,14 @@
                 
                     <if test="jmBtPromotionId != null">
                         AND jm_bt_promotion_id = #{jmBtPromotionId}
+                    </if> 
+                
+                    <if test="TaskType != null">
+                        AND TaskType = #{TaskType}
+                    </if> 
+                
+                    <if test="TaskParameter != null">
+                        AND TaskParameter = #{TaskParameter}
                     </if> 
                 
                     <if test="beginTime != null">
@@ -73,7 +87,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`jm_bt_promotion_id`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater` from cms_bt_jm_promotion_update_task where id=#{id}
+        select `id`,`jm_bt_promotion_id`,`TaskType`,`TaskParameter`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater` from cms_bt_jm_promotion_update_task where id=#{id}
     </select>
 
      <update id="update">
@@ -81,6 +95,8 @@
         set
 
             `jm_bt_promotion_id`=#{jmBtPromotionId}
+            ,`TaskType`=#{TaskType}
+            ,`TaskParameter`=#{TaskParameter}
             ,`begin_time`=#{beginTime}
             ,`end_time`=#{endTime}
             ,`error_msg`=#{errorMsg}
@@ -98,6 +114,8 @@
         INSERT INTO cms_bt_jm_promotion_update_task
         (
               `jm_bt_promotion_id`,
+              `TaskType`,
+              `TaskParameter`,
               `begin_time`,
               `end_time`,
               `error_msg`,
@@ -107,6 +125,8 @@
         )
         VALUES(
               #{jmBtPromotionId},
+              #{TaskType},
+              #{TaskParameter},
               #{beginTime},
               #{endTime},
               #{errorMsg},
