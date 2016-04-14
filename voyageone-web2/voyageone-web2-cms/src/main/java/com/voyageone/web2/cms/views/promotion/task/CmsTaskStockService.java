@@ -852,7 +852,7 @@ public class CmsTaskStockService extends BaseAppService {
                     Date revertDate = format.parse(revertTime);
                     Date realRevertDate = format.parse(realRevertTime);
                     if (revertDate.getTime()<realRevertDate.getTime()) {
-                        throw new BusinessException("7000081", realRevertTime);
+                        throw new BusinessException("7000073", realRevertTime);
                     }
                 } catch (ParseException e){
                     throw new BusinessException("7000013");
