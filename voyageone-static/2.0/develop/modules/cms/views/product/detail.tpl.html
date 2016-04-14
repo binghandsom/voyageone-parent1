@@ -96,7 +96,6 @@
 
     <div style="width:80%" ng-if="ctrl.showInfoFlag">
         <uib-tabset class="tab-container vo_nav-tabs">
-
             <uib-tab>
                 <tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
                 <!-- Products table and controls -->
@@ -250,194 +249,113 @@
                     <!-- product photos -->
                     <div class="vo_prodGallery">
                         <div class="imageContainer">
-                            <div class="imageWrapper"
-                                 style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{!ctrl.currentImage ? ctrl.productDetails.productImages[0].image1 : ctrl.currentImage}}')"></div>
+                            <div class="imageWrapper">
+                                <img  class="imageWrapper" ng-src="{{!ctrl.currentImage ? 'http://image.sneakerhead.com/is/image/sneakerhead/'+ ctrl.productDetails.productImages.image1[0].image1 : ctrl.currentImage}}">
+                            </div>
                         </div>
                      </div>
                 </div>
             </div>
-            <uib-tabset class="tab-container vo_nav-tabs">
-                <uib-tab>
+            <tabset class="tab-container vo_nav-tabs">
+                <tab>
                     <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                         商品
                     </tab-heading>
                     <div class="tab-content">
-                        <div class="tab-pane ng-scope active" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">
+                        <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                            <div class="vo_prodGallery">
+                                <div class="thumbnailWrapper" >
+                                    <div  ng-repeat="image in ctrl.productDetails.productImages.image1 | limitTo: 10"
+                                         class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
+                                         ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image1"
+                                         ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">
+
+                                    </div>
+                                    <div  ng-repeat="image in ctrl.tempImage.image1 | limitTo: 10"
+                                          class="thumbnail">
+                                        <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{data:image/jpg;base64,+ image}}">
+                                    </div>
+                                    <button ng-controller="popupCtrl" ng-click="ctrl.openImageSetting(ctrl.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                 </div>
-                                <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                         </div>
                     </div>
-                </uib-tab>
-                <uib-tab>
-                    <tab-heading ng-click="vm.tabIndex = 1"><i class="text-default"></i>
+                </tab>
+                <tab>
+                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                         包装
                     </tab-heading>
                     <div class="tab-content">
-                        <div class="tab-pane ng-scope active" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">
+                        <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                            <div class="vo_prodGallery">
+                                <div class="thumbnailWrapper">
+                                    <div  ng-repeat="image in ctrl.productDetails.productImages.image2 | limitTo: 10"
+                                          class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image2}"
+                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image2"
+                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image2 + ')'}">
+
+                                    </div>
+                                    <div  ng-repeat="image in ctrl.tempImage.image2 | limitTo: 10"
+                                          class="thumbnail">
+                                        <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{data:image/jpg;base64,+ image}}">
+                                    </div>
+                                    <button ng-controller="popupCtrl"  ng-click="ctrl.openImageSetting(ctrl.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                 </div>
-                                <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                         </div>
                     </div>
-                </uib-tab>
-                <uib-tab>
-                    <tab-heading ng-click="vm.tabIndex = 2"><i class="text-default"></i>
+                </tab>
+                <tab>
+                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                         带角度
                     </tab-heading>
                     <div class="tab-content">
-                        <div class="tab-pane ng-scope active" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">
+                        <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                            <div class="vo_prodGallery">
+                                <div class="thumbnailWrapper">
+                                    <div  ng-repeat="image in ctrl.productDetails.productImages.image3 | limitTo: 10"
+                                          class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image3}"
+                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image3"
+                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image3 + ')'}">
+                                    </div>
+                                    <div  ng-repeat="image in ctrl.tempImage.image3 | limitTo: 10"
+                                          class="thumbnail">
+                                        <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{data:image/jpg;base64,+ image}}">
+                                    </div>
+                                    <button ng-controller="popupCtrl"  ng-click="ctrl.openImageSetting(ctrl.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                 </div>
-                                <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                         </div>
                     </div>
-                </uib-tab>
-                <uib-tab>
-                    <tab-heading ng-click="vm.tabIndex = 3"><i class="text-default"></i>
+                </tab>
+                <tab>
+                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                         自定义
                     </tab-heading>
                     <div class="tab-content">
-                        <div class="tab-pane ng-scope active" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">
+                        <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                            <div class="vo_prodGallery">
+                                <div class="thumbnailWrapper">
+                                    <div  ng-repeat="image in ctrl.productDetails.productImages.image4 | limitTo: 10"
+                                          class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image4}"
+                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image4"
+                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image4 + ')'}">
+                                    </div>
+                                    <div  ng-repeat="image in ctrl.tempImage.image4 | limitTo: 10"
+                                          class="thumbnail">
+                                        <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                    </div>
+                                    <button ng-controller="popupCtrl" ng-click="ctrl.openImageSetting(ctrl.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                 </div>
-                                <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                        <div class="tab-pane ng-scope" ng-class="{active: tab.active}" uib-tab-content-transclude="tab">
-                            <div class="thumbnailWrapper" ng-class="{active: active, disabled: disabled}">
-                                <div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10"
-                                     class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                     ng-click="ctrl.currentImage = image.image1"
-                                     ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
-                            </div>
-                            <button ng-click="" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                         </div>
                     </div>
-                </uib-tab>
-            </uib-tabset>
+                </tab>
+            </tabset>
 
 
 
-        </div>
+
                     <!-- .vo_prodGallery -->
 
                     <div class="wrapper-sm">
@@ -523,7 +441,6 @@
         </div>
     </div>
 </div><!-- end .wrapper-md -->
-
 
 
 
