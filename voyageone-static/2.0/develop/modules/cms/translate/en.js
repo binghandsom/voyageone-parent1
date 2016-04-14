@@ -29,7 +29,7 @@ define(function() {
         "TXT_ERROR_MANAGER_MARKETING": "Error List(Marketing)",
         "TXT_ERROR_MANAGER_MAINTENANCE": "Error List(Maintenance)",
         "TXT_CHANNEL_LIST": "Channel List",
-        "TXT_CART_SETTING": "Cart Setting",
+        "TXT_CART_LIST": "Cart List",
         "TXT_CATEGORY": "Category",
         "TXT_PRODUCT_STATUS": "Product Status",
         "TXT_PLATFORM_STATUS": "Platform Status",
@@ -236,8 +236,12 @@ define(function() {
         "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
         "TXT_TRANSSTS_ATTRIBUTE": "Translation status",
         "TXT_CHANNEL_ID": "Channel ID",
+        "TXT_CART_ID": "Cart ID",
         "TXT_ALLOW_USJOI": "Allow USJOI",
         "TXT_FULL_NAME": "Full name",
+        "TXT_SHORT_NAME": "short name",
+        "TXT_COMPANY": "Company",
+        "TXT_IMAGE_URL": "Image URL",
 
 
         "TXT_MSG_SEARCH": "Search...",

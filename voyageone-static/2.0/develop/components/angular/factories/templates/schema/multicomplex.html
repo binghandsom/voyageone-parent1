@@ -1,5 +1,5 @@
 <div class="table-responsive">
-<table class="table text-left dropdown_table_mains" style="width:2000px">
+<table class="table text-left">
     <thead>
     <tr>
         <th ng-repeat="field in $data.fields" ng-class="{'vo_reqfield': schema.isRequired}"
@@ -11,7 +11,7 @@
     <tbody>
     <tr ng-repeat="value in $data.complexValues">
         <td class="text-left" ng-repeat="field in value.fieldMap">
-            <div class="tableLayer">
+            <div class="">
                 <p ng-if="::field.type!='COMPLEX'">&nbsp;</p>
                 <p>
                     <schema-item data="field" hastip="true" complex="true"></schema-item>

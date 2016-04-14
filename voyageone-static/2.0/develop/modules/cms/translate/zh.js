@@ -29,7 +29,7 @@ define(function(){
         "TXT_ERROR_MANAGER_MARKETING": "异常一览（运营）",
         "TXT_ERROR_MANAGER_MAINTENANCE": "异常一览（维护）",
         "TXT_CHANNEL_LIST": "渠道一览（维护）",
-        "TXT_CART_SETTING": "Cart设置",
+        "TXT_CART_LIST": "Cart一览（维护）",
         "TXT_CATEGORY": "类目",
         "TXT_PRODUCT_STATUS": "产品状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
@@ -236,8 +236,12 @@ define(function(){
         "TXT_CUST_ATTRIBUTE": "自定义属性",
         "TXT_TRANSSTS_ATTRIBUTE": "翻译状态",
         "TXT_CHANNEL_ID": "渠道ID",
+        "TXT_CART_ID": "Cart ID",
         "TXT_ALLOW_USJOI": "Allow USJOI",
         "TXT_FULL_NAME": "渠道全称",
+        "TXT_SHORT_NAME": "短名称",
+        "TXT_COMPANY": "公司",
+        "TXT_IMAGE_URL": "图片地址",
 
 
         "TXT_MSG_SEARCH": "检索...",

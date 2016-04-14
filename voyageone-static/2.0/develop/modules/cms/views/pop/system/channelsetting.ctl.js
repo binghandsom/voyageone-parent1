@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popChannelListCtl', function ($scope, $routeParams) {
+    angularAMD.controller('popChannelSettingCtl', function ($scope, $routeParams) {
 
         /**
          * 初始化数据.
