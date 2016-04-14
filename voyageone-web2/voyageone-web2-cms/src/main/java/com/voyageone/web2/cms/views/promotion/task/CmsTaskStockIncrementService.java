@@ -213,7 +213,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //类型
         mapSaveData.put("type", param.get("incrementType"));
         //隔离比例/隔离值
-        mapSaveData.put("value", param.get("incrementValue"));
+        mapSaveData.put("value", param.get("incrementValue").toString().replace("%",""));
         //创建者
         mapSaveData.put("creater", param.get("userName"));
         //更新者
@@ -269,6 +269,8 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         sqlParam.put("taskId", param.get("incrementTaskId"));
         //平台id
         sqlParam.put("cartId", param.get("incrementCartId"));
+        //状态
+        sqlParam.put("status", CmsTaskStockService.STATUS_SEPARATE_SUCCESS);
         //增量类型
         String incrementType=param.get("incrementType").toString();
         //增量值
