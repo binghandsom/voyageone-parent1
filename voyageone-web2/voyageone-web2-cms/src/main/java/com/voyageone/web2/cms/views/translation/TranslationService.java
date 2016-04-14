@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -30,7 +31,8 @@ public class TranslationService extends BaseAppService {
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private ProductService productService;
 
@@ -245,23 +247,29 @@ public class TranslationService extends BaseAppService {
      * 获取当前用户未完成的任务.
      *
      * @param userInfo
-     * @param condition
+     * @param reqBean
      * @return
-     * @throws BusinessException
      */
-    public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, String condition) throws BusinessException {
-
-        if (StringUtils.isEmpty(condition)){
+    public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, TranslateTaskBean reqBean) {
+        String condition = reqBean.getSearchCondition();
+        if (StringUtils.isEmpty(condition) && reqBean.getTranSts() == -1) {
             return this.getUndoneTasks(userInfo);
         }
 
-        String tasksQueryStr = String.format("{'groups.platforms.cartId': 0}," +
-                "'fields.translator':'%s',$or:[{'fields.code':{$regex:'%s'}}," +
-                "{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}}," +
-                "{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}}," +
-                "{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}}," +
-                "{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]}",
-                userInfo.getUserName(),condition,condition,condition,condition,condition,condition,condition,condition,condition);
+        String tasksQueryStr = String.format("{'groups.platforms.cartId':0,'fields.translator':'%s'", userInfo.getUserName());
+        if (!StringUtils.isEmpty(condition)) {
+            tasksQueryStr = tasksQueryStr + String.format(",$or:[{'fields.code':{$regex:'%s'}}," +
+                            "{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}}," +
+                            "{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}}," +
+                            "{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}}," +
+                            "{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]",
+                    condition, condition, condition, condition, condition, condition, condition, condition, condition);
+        }
+        if (reqBean.getTranSts() == -1) {
+            tasksQueryStr = tasksQueryStr + "}";
+        } else {
+            tasksQueryStr = tasksQueryStr + ",'fields.translateStatus':'" + reqBean.getTranSts() + "'}";
+        }
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
@@ -279,7 +287,6 @@ public class TranslationService extends BaseAppService {
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
         return translateTaskBean;
     }
-
 
     /**
      * 组装task beans。
@@ -497,5 +504,26 @@ public class TranslationService extends BaseAppService {
             setInfo.put(lenType, item);
         }
         return setInfo;
+    }
+
+    /**
+     * 获取当前用户未完成的任务.
+     *
+     * @param userInfo
+     * @param prodCode
+     */
+    public void cancelUserTask(UserSessionBean userInfo, String prodCode) {
+        String tasksQueryStr = String.format("{'groups.platforms.cartId':0,'fields.translator':'%s'", userInfo.getUserName());
+        if (StringUtils.isEmpty(prodCode)) {
+            throw new BusinessException("cancelUserTask::没有参数");
+        }
+        Map paraMap = new HashMap<>(1);
+        paraMap.put("fields.code", prodCode);
+        Map rsMap = new HashMap<>(3);
+        rsMap.put("fields.translateStatus", "0");
+        rsMap.put("modifier", userInfo.getUserName());
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+
+        cmsBtProductDao.update(userInfo.getSelChannelId(), paraMap, rsMap);
     }
 }

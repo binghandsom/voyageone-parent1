@@ -52,6 +52,19 @@ public class TranslateTaskBean {
      */
     private String sortRule;
 
+    public int getTranSts() {
+        return tranSts;
+    }
+
+    public void setTranSts(int tranSts) {
+        this.tranSts = tranSts;
+    }
+
+    /**
+     * 翻译状态
+     */
+    private int tranSts = -1;
+
     /**
      * 待翻译商品信息列表.
      */
