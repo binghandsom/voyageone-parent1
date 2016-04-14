@@ -12,7 +12,8 @@ import java.util.Map;
  */
 @Repository
 public class CmsBtStockSeparatePlatformInfoDao extends BaseDao {
-    public List<Map<String, Object>> selectStockSeparatePlatform(Map<String, Object> param) {
+
+    public List<Map<String, Object>> selectStockSeparatePlatform(Map param) {
         return selectList("select_stock_separate_platform", param);
     }
 }
