@@ -163,7 +163,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //增量类的判断
         if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
             //百分比增量
-            if(incrementType.equals("%")){
+            if(incrementValues.equals("%")){
                 // 增量比例必须输入且为大于0小于100整数
                 throw new BusinessException("7000056");
             }else{
@@ -173,6 +173,13 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                     // 增量比例必须输入且为大于0小于100整数
                     throw new BusinessException("7000056");
                 }
+            }
+        }
+        //隔离平台的隔离比例
+        if(incrementValues.endsWith("%")){
+            String separate= incrementValues.substring(0, incrementValues.lastIndexOf("%"));
+            if(separate.contains("%")){
+                throw new BusinessException("7000014");
             }
         }
         if(incrementType.equals(TYPE_INCREMENT_COUNT)){

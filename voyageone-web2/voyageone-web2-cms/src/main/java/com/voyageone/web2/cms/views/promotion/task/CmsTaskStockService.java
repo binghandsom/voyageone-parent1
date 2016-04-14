@@ -781,7 +781,7 @@ public class CmsTaskStockService extends BaseAppService {
         //活动的还原时间
         String realRevertTime=(String) param.get("revertTime");
         //任务名称
-        if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
+        if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>1000) {
             // 任务名称必须输入且长度小于1000
             throw new BusinessException("7000012");
         }
@@ -828,6 +828,13 @@ public class CmsTaskStockService extends BaseAppService {
                                 ||separateValue[0].getBytes().length>2||separateValue.length>1) {
                             throw new BusinessException("7000014");
                         }
+                    }
+                }
+                //隔离平台的隔离比例
+                if(value.endsWith("%")){
+                    String separate= value.substring(0, value.lastIndexOf("%"));
+                    if(separate.contains("%")){
+                        throw new BusinessException("7000014");
                     }
                 }
                 //增优先顺
