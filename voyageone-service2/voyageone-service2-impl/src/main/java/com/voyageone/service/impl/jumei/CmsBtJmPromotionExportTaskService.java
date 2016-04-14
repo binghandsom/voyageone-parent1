@@ -54,16 +54,19 @@ public class CmsBtJmPromotionExportTaskService {
         model.setBeginTime(new Date());
         int TemplateType = model.getTemplateType();
         try {
+            dao.update(model);
             if (TemplateType == 0) {//导入模板
                 List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.getListCmsBtJmImportProductByPromotionId(model.getCmsBtJmPromotionId());
                 List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.getListCmsBtJmImportSkuByPromotionId(model.getCmsBtJmPromotionId());
                 List<Map<String, Object>> listSpecialImage = getListSpecialImage(model.getCmsBtJmPromotionId(), listProduct);
                 export(filePath, listProduct, listSku, listSpecialImage, false);
+                model.setSuccessRows(listProduct.size());
                 model.setFileName(fileName);
             } else if (TemplateType == 1) {//价格修正模板
                 List<Map<String, Object>> list = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionId(model.getCmsBtJmPromotionId());
                 ExportExcelInfo<Map<String, Object>> info = getSkuPriceInfo(list);
                 ExportFileExcelUtil.exportExcel(filePath, info);
+                model.setSuccessRows(list.size());
                 model.setFileName(fileName);
             } else if (TemplateType == 2) {//专场模板
                 List<Map<String, Object>> list = daoExtCmsBtJmPromotionProduct.getExportInfoListByPromotionId(model.getCmsBtJmPromotionId());
@@ -73,6 +76,7 @@ public class CmsBtJmPromotionExportTaskService {
                 ExportExcelInfo<Map<String, Object>> infoPC = getJMPCPromotionProcuctExportInfo(pcList, "PC端模块");
                 ExportExcelInfo<Map<String, Object>> infoApp = getJMPCPromotionProcuctExportInfo(appList, "App端模块");
                 ExportFileExcelUtil.exportExcel(filePath, infoPC, infoApp);
+                model.setSuccessRows(list.size());
                 model.setFileName(fileName);
             }
         } catch (Exception ex) {

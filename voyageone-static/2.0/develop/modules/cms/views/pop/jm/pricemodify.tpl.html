@@ -6,40 +6,47 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
-            <div class="form-group">
-                <label class="col-sm-8 col-sm-offset-1"> Jumei Activity Price :</label>
+
+            <div class="row form-group">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <div class="col-lg-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">价格</span>
+                              <span class="input-group-addon">
+                                <input type="radio" value="1" name="priceValueType" aria-label="...">
+                              </span>
+                            <input type="text" value="2" class="form-control" ng-model="model.price" aria-label="...">
+                        </div>
+                    </div>
+                 </div>
             </div>
             <div class="row form-group">
-                <form role="form" class="form-horizontal">
-                    <div class="col-lg-10 col-sm-offset-1">
-                        <div class="input-group">
-                              <span class="input-group-addon">
-                                <input type="radio" aria-label="...">
-                              </span>
-                            <input type="text" class="form-control" aria-label="...">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="row">
                 <div class="col-lg-10 col-lg-offset-1">
-                    <div class="col-lg-6">
+
+                    <div class="col-lg-10">
                         <div class="input-group">
-                              <span class="input-group-addon">
-                                <input type="radio" aria-label="...">
-                              </span>
-                            <input type="text" class="form-control" aria-label="...">
                             <span class="input-group-addon">折扣</span>
+                           <span class="input-group-addon">
+
+                                <input type="radio" name="priceValueType" ng-model="model.priceValueType" aria-label="...">
+                              </span>
+                            <input type="text" class="form-control" ng-model="model.discount" aria-label="...">
+
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-10 col-lg-offset-1">
+
+                    <div class="col-lg-10">
                         <div class="input-group">
-                            <span class="input-group-addon">&nbsp;of&nbsp;</span>
-                            <select class="form-control">
+                            <span class="input-group-addon">类型</span>
+                            <select class="form-control" ng-model="model.priceType">
                                 <option value="0">市场价</option>
                                 <option value="1">团购价</option>
                             </select>
-                            <span class="input-group-addon bg-danger">(INT)</span>
                         </div>
                     </div>
                 </div>

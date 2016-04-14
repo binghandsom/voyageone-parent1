@@ -7,6 +7,7 @@ define([
 ], function (angularAMD) {
 
     angularAMD.controller('popPriceModifyCtl', function ($scope, $routeParams) {
+        $scope.model={priceValueType:1,priceType:"1",discount:0,price:0};
 
         /**
          * 初始化数据.

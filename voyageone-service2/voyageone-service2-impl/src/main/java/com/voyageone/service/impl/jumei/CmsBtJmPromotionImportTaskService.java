@@ -91,6 +91,7 @@ public class CmsBtJmPromotionImportTaskService {
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = dao.select(JmBtPromotionImportTaskId);
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         try {
+            dao.update(modelCmsBtJmPromotionImportTask);
             importExcel(modelCmsBtJmPromotionImportTask);
         } catch (Exception ex) {
             ex.printStackTrace();
