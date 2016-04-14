@@ -67,7 +67,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.getTaskInfo.distributeCount" ng-maxvalue="20" ng-pattern="/^(\d+)$/">
+                                        <input type="text" class="form-control" ng-model="ctrl.getTaskInfo.distributeCount" ng-pattern="/^(\d+)$/">
                                     </div>
                                 </div>
                             </form>
@@ -76,23 +76,37 @@
                         <div class="col-sm-4">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-1 control-label"></label>
-                                    <div class="form-inline col-sm-10">
-                                        <input type="text" ng-model="ctrl.searchCondition"  class="form-control col-sm-10">
-                                        <span class="input-group-btn"><button class="btn btn-vo"  ng-click="ctrl.searchHistoryTasks()" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
+                                    <label class="control-label form-inline" translate="TXT_FUZZY_SEARCH"></label>
+                                    <div class="form-inline">
+                                        <input type="text" ng-model="ctrl.searchInfo.searchCondition"  class="form-control col-sm-10">
                                     </div>
+                                    <div style="color:#ee903d;">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;查询包括:产品Code,产品名称（英文）,长标题,中标题,短标题,长描述（中文）,短描述（中文）,长描述（英文）,短描述（英文）
+                                    </div>
+                                    <span class="input-group-btn" ><button class="btn btn-vo" style="width:90px" ng-click="ctrl.searchHistoryTasks(1)" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
                                 </div>
                             </form>
+                            <div>
+                                <div class="col-sm-7">
+                                    <label class="col-sm-4 control-label">翻译状态</label>
+                                    <div class="col-sm-3 text-right">
+                                        <select class="form-control" style="width:100px" ng-model="ctrl.searchInfo.tranSts">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="0">未翻译</option>
+                                            <option value="1">已翻译</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- .form -->
                         </div>
-                        <div class="col-sm-12 text-center m-t-xs m-b-sm">
+                        <div class="">
                             <div class="form-inline">
                                 <button class="btn btn-default" ng-click="ctrl.clearConditions()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
                                 <button class="btn btn-success" ng-click="ctrl.assignTasks()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK' | translate}}</button>
                             </div>
                             <!-- .form-inline -->
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -112,7 +126,10 @@
                     <th class="text-center" translate="Action"></th>
                 </tr>
                 </thead>
-                <tbody ng-repeat = "translationModel in ctrl.taskInfos.productTranslationBeanList">
+                <tbody ng-if="ctrl.taskInfos.productTranslationBeanList.length == 0" >
+                    <tr style="padding-left:0px"><td colspan="7"><div if-no-rows="ctrl.taskInfos.productTranslationBeanList.length"></div></td></tr>
+                </tbody>
+                <tbody ng-if="ctrl.taskInfos.productTranslationBeanList.length > 0" ng-repeat = "translationModel in ctrl.taskInfos.productTranslationBeanList">
                 <tr>
                     <td class="text-center mfb-xt">{{$index + 1}}</td>
                     <td class="text-left mfb-xxt yellowLink" ng-controller="popupCtrl">
@@ -140,6 +157,7 @@
                         <!--<br/>-->
                         <button class="btn btn-vo btn-xs" ng-click="ctrl.saveTask(translationModel,$index)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
                         <button class="btn btn-success btn-xs" ng-click="ctrl.submitTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'BTN_COMPLETE' | translate}}</button>
+                        <button ng-if="translationModel.tranSts == 1" class="btn btn-success btn-xs" style="background-color:skyblue" ng-click="ctrl.cancelTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;撤销</button>
                     </td>
                 </tr>
                 <tr>
@@ -173,6 +191,8 @@
                 </tbody>
             </table>
         </div>
-
+        <div class="col-sm-12 m-t-lg m-b-lg">
+            <vpagination config="ctrl.prodPageOption"></vpagination>
+        </div>
     </div><!-- tabs ng-controller -->
 </div><!-- .col-lg-12 -->

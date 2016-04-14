@@ -14,8 +14,10 @@ define([
 ], function (cms) {
     return cms.controller('translationDetailController', (function () {
 
-        function TranslationDetailController($routeParams, $translate, translationService, notify, confirm,alert) {
+        function TranslationDetailController($scope, $routeParams, $translate, translationService, notify, confirm,alert) {
 
+            this.searchInfo = {};
+            this.prodPageOption = {curr: 1, total: 0, size: 20, fetch: this.searchHistoryTasks.bind(this)};
             this.routeParams = $routeParams;
             this.$translate = $translate;
             this.translationService = translationService;
@@ -23,8 +25,6 @@ define([
             this.confirm = confirm;
             this.alert = alert;
 
-            this.searchCondition = "";
-            this.tranSts = -1;
             this.sortFieldOptions = [];
             this.lenInfo = {};
             this.getTaskInfo = {
@@ -39,10 +39,12 @@ define([
 
             // 获取初始化数据
             initialize: function () {
-                var self =  this;
+                var self = this;
+                this.prodPageOption.curr = 1;
                 this.translationService.getTasks()
                     .then(function (res) {
                         self.taskInfos = res.data.taskInfos;
+                        self.prodPageOption.total = res.data.taskInfos.prodListTotal;
                         self.sortFieldOptions = res.data.sortFieldOptions;
                         self.lenInfo = res.data.lenSetInfo;
                     }.bind(this), function (res) {
@@ -52,15 +54,24 @@ define([
 
             // 分发翻译任务.
             assignTasks: function () {
-                if (this.taskInfos.productTranslationBeanList.length > 0){
-                    this.alert(this.$translate.instant('TXT_MSG_HAVE_UN_TRANSLATED_TASK'));
-                } else {
-                    var self =  this;
-                    this.translationService.assignTasks(self.getTaskInfo)
-                        .then(function (res) {
-                            self.taskInfos = res.data;
-                        }.bind(this))
-                }
+                var self = this;
+                this.translationService.getTasks()
+                    .then(function (res) {
+                        if (res.data.taskInfos.prodListTotal > 0) {
+                            this.alert(this.$translate.instant('TXT_MSG_HAVE_UN_TRANSLATED_TASK'));
+                        } else if (self.getTaskInfo.distributeCount > 20) {
+                            this.alert("最多不能超过20个任务!")
+                        } else if (self.getTaskInfo.distributeCount > this.totalUndoneCount) {
+                            this.alert("获取任务数量不能超过剩余任务数量！")
+                        } else {
+                            this.translationService.assignTasks(self.getTaskInfo)
+                                .then(function (res) {
+                                    self.taskInfos = res.data;
+                                    self.prodPageOption.total = res.data.prodListTotal;
+                                    this.searchInfo = {};
+                                }.bind(this))
+                        }
+                    }.bind(this))
             },
 
             // 暂存当前任务
@@ -86,6 +97,7 @@ define([
                         self.taskInfos.totalUndoneCount = res.data.totalUndoneCount;
                         self.taskInfos.userDoneCount = res.data.userDoneCount;
                         self.notify.success (self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        self.prodPageOption.total = self.prodPageOption.total - 1;
                     }.bind(this))
             },
 
@@ -99,18 +111,30 @@ define([
             },
 
             // 查询历史任务.
-            searchHistoryTasks: function () {
+            searchHistoryTasks: function (page) {
                 var self = this;
-                this.translationService.searchHistoryTasks({searchCondition:self.searchCondition,tranSts:self.tranSts})
+                this.prodPageOption.curr = !page ? this.prodPageOption.curr : page;
+                this.searchInfo.pageNum = this.prodPageOption.curr;
+                this.searchInfo.pageSize = this.prodPageOption.size;
+
+                this.translationService.searchHistoryTasks(this.searchInfo)
                     .then(function (res) {
                         self.taskInfos.productTranslationBeanList = res.data.productTranslationBeanList;
+                        self.prodPageOption.total = res.data.prodListTotal;
                     }.bind(this))
             },
 
             // 撤销翻译任务.
             cancelTask: function (productItem, index) {
                 var self = this;
-                this.translationService.cancelTask({searchCondition:productItem.productCode});
+                this.translationService.cancelTask({prodCode :productItem.productCode})
+                    .then(function (res) {
+                        self.taskInfos.totalDoneCount = res.data.totalDoneCount;
+                        self.taskInfos.totalUndoneCount = res.data.totalUndoneCount;
+                        self.taskInfos.userDoneCount = res.data.userDoneCount;
+                        self.notify.success (self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        productItem.tranSts = 0;
+                    }.bind(this))
             },
 
             // 清空查询条件.
@@ -121,6 +145,7 @@ define([
                     sortCondition: "",
                     sortRule: ""
                 };
+                this.searchInfo = {};
             }
         };
 

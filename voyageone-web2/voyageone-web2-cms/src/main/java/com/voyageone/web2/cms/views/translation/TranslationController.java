@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -28,14 +27,13 @@ public class TranslationController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_TASKS)
     public AjaxResponse doGetTasks() {
-
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
 
-        translateTaskBeanInfo.put("taskInfos",feedPropsTranslateService.getUndoneTasks(getUser()));
+        translateTaskBeanInfo.put("taskInfos", feedPropsTranslateService.getUndoneTasks(getUser()));
         translateTaskBeanInfo.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
 
         // 获取翻译时标题和描述的长度设置
-        translateTaskBeanInfo.put("lenSetInfo",feedPropsTranslateService.getTransLenSet(getUser().getSelChannelId()));
+        translateTaskBeanInfo.put("lenSetInfo", feedPropsTranslateService.getTransLenSet(getUser().getSelChannelId()));
 
         return success(translateTaskBeanInfo);
     }
@@ -43,9 +41,7 @@ public class TranslationController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.ASSIGN_TASKS)
     public AjaxResponse doAssignTask(@RequestBody TranslateTaskBean request){
-
         return success(feedPropsTranslateService.assignTask(getUser(),request));
-
     }
 
     // 保存翻译内容
@@ -73,7 +69,6 @@ public class TranslationController extends CmsController{
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_FEED_ATTRIBUTES)
     public AjaxResponse doGetFeedAttributes(@RequestBody ProductTranslationBean requestBean) {
         return success(feedPropsTranslateService.getFeedAttributes(getUser().getSelChannelId(),requestBean.getProductCode()));
-
     }
 
     /**
@@ -84,7 +79,9 @@ public class TranslationController extends CmsController{
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} searchCondition 模糊查询
-     * @apiParam (应用级参数) {Integer} tranSts 翻译状态
+     * @apiParam (应用级参数) {String} tranSts 翻译状态
+     * @apiParam (应用级参数) {Integer} pageNum 当前查询页数，0为第一页
+     * @apiParam (应用级参数) {Integer} pageSize 每页显示数据条数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -112,7 +109,7 @@ public class TranslationController extends CmsController{
      * @apiSampleRequest off
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH_HISTORY_TASKS)
-    public AjaxResponse doSearchTasks(@RequestBody TranslateTaskBean requestBean) {
+    public AjaxResponse doSearchTasks(@RequestBody Map requestBean) {
         return success(feedPropsTranslateService.searchUserTasks(getUser(), requestBean));
     }
 
@@ -123,14 +120,22 @@ public class TranslationController extends CmsController{
      * @apiGroup translation
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
-     * @apiParam (应用级参数) {Integer} searchCondition 产品CODE
+     * @apiParam (应用级参数) {String} prodCode 产品CODE
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+     * @apiSuccess (应用级返回字段) {Integer} totalUndoneCount 所有待翻译的产品总数
+     * @apiSuccess (应用级返回字段) {Integer} totalDoneCount 所有已完成翻译的产品总数
+     * @apiSuccess (应用级返回字段) {Integer} userDoneCount 个人已完成翻译产品总数
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
+     *  "data":{
+     *   "totalUndoneCount": 1188,
+     *   "totalDoneCount": 2318,
+     *   "userDoneCount": 31
+     *  }
      * }
      * @apiExample  业务说明
      *  撤销已翻译的产品（将翻译状态改为未翻译）
@@ -139,8 +144,7 @@ public class TranslationController extends CmsController{
      * @apiSampleRequest off
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.CANCEL_TASK)
-    public AjaxResponse doCancelTasks(@RequestBody TranslateTaskBean requestBean) {
-        feedPropsTranslateService.cancelUserTask(getUser(), requestBean.getSearchCondition());
-        return success(null);
+    public AjaxResponse doCancelTasks(@RequestBody Map requestBean) {
+        return success(feedPropsTranslateService.cancelUserTask(getUser(), (String) requestBean.get("prodCode")));
     }
 }
