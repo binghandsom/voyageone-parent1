@@ -1374,6 +1374,8 @@ public class CmsTaskStockService extends BaseAppService {
             Map<String,Object> separatePlatformMap  = new HashMap<>();
             if(SEPARATE_TYPE.equals(separatePlatformList.get(i).get("type").toString())){
                 //cartId
+                separatePlatformMap.put("taskId",taskId);
+                //cartId
                 separatePlatformMap.put("cartId",separatePlatformList.get(i).get("cartId").toString());
                 //增优先顺
                 separatePlatformMap.put("addPriority",separatePlatformList.get(i).get("addPriority").toString());
@@ -1384,6 +1386,8 @@ public class CmsTaskStockService extends BaseAppService {
                 //还原时间
                 separatePlatformMap.put("revertTime",separatePlatformList.get(i).get("revertTime").toString());
             }else{
+                //cartId
+                separatePlatformMap.put("taskId",taskId);
                 //commonPlatform
                 separatePlatformMap.put("commonPlatform","-1");
                 //cartId
