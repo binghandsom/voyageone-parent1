@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,12 @@ public class CommonPropService extends BaseService {
         return cmsMtCommonPropDao.selectUserCustColumns(userId);
     }
 
+    @VOTransactional
     public int addUserCustColumn(int userId, String userName, String param1, String param2) {
         return cmsMtCommonPropDao.insertUserCustColumns(userId, userName, param1, param2);
     }
 
+    @VOTransactional
     public int saveUserCustColumn(int userId, String userName, String param1, String param2) {
         return cmsMtCommonPropDao.updateUserCustColumns(userId, userName, param1, param2);
     }

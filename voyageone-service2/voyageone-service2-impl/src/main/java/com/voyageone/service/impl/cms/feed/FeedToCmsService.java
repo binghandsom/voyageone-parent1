@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
@@ -37,8 +38,6 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class FeedToCmsService extends BaseService {
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
@@ -89,12 +88,13 @@ public class FeedToCmsService extends BaseService {
         String category[] = categoryPath.split("-");
         return !StringUtil.isEmpty(category[category.length-1]);
     }
+
     /**
      * 更新code信息如果不code不存在会新建
      *
      * @param products 产品列表
-     * @return response
      */
+    @VOTransactional
     public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
         this.modifier = modifier;
         List<String> existCategory = new ArrayList<>();
@@ -159,7 +159,6 @@ public class FeedToCmsService extends BaseService {
                     imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), image, i, this.modifier));
                     i++;
                 }
-//                imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), s, this.modifier)));
                 cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
 
                 Map<String, List<String>> attributeMtData;
@@ -172,7 +171,7 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                $error(e.getMessage(), e);
                 failProduct.add(product);
             }
         }

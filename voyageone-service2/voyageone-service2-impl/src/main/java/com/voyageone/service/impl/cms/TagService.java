@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +23,12 @@ public class TagService extends BaseService {
     // mysql
     private CmsBtTagDao cmsBtTagDao;
 
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-//    @Autowired
-//    private DataSourceTransactionManager transactionManager;
-//    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
-
     /**
      * Tag追加
      * @param request TagAddRequest
      * @return TagAddResponse
      */
+    @VOTransactional
     public int addTag(CmsTagInfoBean request) {
         // 返回值Tag设定
         CmsBtTagModel tag = null;
@@ -92,7 +86,7 @@ public class TagService extends BaseService {
      * @param request TagAddRequest
      * @return 新追加TagID
      */
-    public int insertTag(CmsTagInfoBean request) {
+    private int insertTag(CmsTagInfoBean request) {
         int tagId = 0;
 
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
@@ -169,88 +163,6 @@ public class TagService extends BaseService {
         return ret;
     }
 
-//    /**
-//     * Tag移除
-//     * @param request TagRemoveRequest
-//     * @return TagRemoveResponse
-//     */
-//    public TagRemoveResponse removeTag(TagRemoveRequest request) {
-//        boolean ret = true;
-//        // 返回结果
-//        TagRemoveResponse result = new TagRemoveResponse();
-//
-//        // 输入参数检查
-//        ret = checkRemoveTagParam(request, result);
-//
-//        if (ret) {
-//            // tag 删除
-//            ret = deleteTag(request);
-//        }
-//
-//        // 返回值设定
-//        result.setRemoveResult(ret);
-//        return result;
-//    }
-//
-//    /**
-//     * Tag删除
-//     * @param request TagAddRequest
-//     * @return 新追加TagID
-//     */
-//    private boolean deleteTag(TagRemoveRequest request) {
-//        boolean ret = false;
-//
-//        // 当前Tag取得
-//        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByTagId(request.getTagId());
-//
-//        TransactionStatus status=transactionManager.getTransaction(def);
-//
-//        // 当前Tag删除
-//        CmsBtTagModel cmsBtTagModelPara = new CmsBtTagModel();
-//        cmsBtTagModelPara.setTagId(request.getTagId());
-//        int recordCount = cmsBtTagDao.deleteCmsBtTagByTagId(cmsBtTagModelPara);
-//        if (recordCount > 0) {
-//            ret = true;
-//        }
-//
-//        // 父Tag删除的场合
-//        if (cmsBtTagModel.getParentTagId() == 0) {
-//            cmsBtTagModelPara = new CmsBtTagModel();
-//            cmsBtTagModelPara.setParentTagId(request.getTagId());
-//            cmsBtTagDao.deleteCmsBtTagByParentTagId(cmsBtTagModelPara);
-//        }
-//
-//        if (ret) {
-//            transactionManager.commit(status);
-//        } else {
-//            transactionManager.rollback(status);
-//        }
-//
-//        return ret;
-//    }
-//
-//    /**
-//     * Tag删除，输入参数检查
-//     * @param request 请求参数
-//     * @param result 返回结果
-//     * @return 检查结果
-//     */
-//    private boolean checkRemoveTagParam(TagRemoveRequest request, TagRemoveResponse result) {
-//        boolean ret = true;
-//
-//        // Tag 使用检查
-//        long productCountByTagId = cmsBtProductDao.selectProductCountByTagId(request.getChannelId(), request.getTagId());
-//        if (productCountByTagId > 0) {
-//            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70010;
-//            result.setCode(codeEnum.getErrorCode());
-//            result.setMessage(codeEnum.getErrorMsg());
-//
-//            ret = false;
-//        }
-//
-//        return ret;
-//    }
-
     /**
      * ParentTagId检索Tags
      */
@@ -264,20 +176,4 @@ public class TagService extends BaseService {
     public List<CmsBtTagModel> getListByChannelId(String channelId) {
         return cmsBtTagDao.selectListByChannelId(channelId);
     }
-
-//    /**
-//     * 根据ChannelId检索Tags
-//     * @param request TagsGetByChannelIdRequest
-//     * @return TagsGetByChannelIdResponse
-//     */
-//    public TagsGetByChannelIdResponse selectListByChannelId(TagsGetByChannelIdRequest request) {
-//        // 返回结果
-//        TagsGetByChannelIdResponse result = new TagsGetByChannelIdResponse();
-//
-//        List<CmsBtTagModel> tagModelList = cmsBtTagDao.selectListByChannelId(request.getChannelId());
-//
-//        // 返回值设定
-//        result.setTags(tagModelList);
-//        return result;
-//    }
 }

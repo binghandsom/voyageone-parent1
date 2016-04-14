@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
@@ -55,34 +56,41 @@ public class BeatInfoService extends BaseService {
         return beatInfoDao.selectListByNumiidInOtherTask(promotion_id, taskId, numIid);
     }
 
+    @VOTransactional
     public int addTasks(List<CmsBtBeatInfoModel> models) {
         return beatInfoDao.insertList(models);
     }
 
+    @VOTransactional
     public int updateCode(CmsBtBeatInfoModel model) {
         return beatInfoDao.updateCode(model);
     }
 
+    @VOTransactional
     public int updateDiffPromotionMessage(int taskId, String message) {
         return beatInfoDao.updateDiffPromotionMessage(taskId, message);
     }
 
+    @VOTransactional
     public int removeTask(int taskId) {
         return beatInfoDao.deleteByTask(taskId);
     }
 
+    @VOTransactional
     public void importBeatInfo(int taskId, List<CmsBtBeatInfoModel> models) {
-        removeTask(taskId);
+        beatInfoDao.deleteByTask(taskId);
 
-        addTasks(models);
+        beatInfoDao.insertList(models);
 
-        updateDiffPromotionMessage(taskId, "与 Promotion 信息不符");
+        beatInfoDao.updateDiffPromotionMessage(taskId, "与 Promotion 信息不符");
     }
 
+    @VOTransactional
     public int updateBeatInfoFlag(CmsBtBeatInfoModel beatInfoModel) {
         return beatInfoDao.updateFlag(beatInfoModel);
     }
 
+    @VOTransactional
     public int updateBeatInfoFlag(int taskId, BeatFlag flag, String userName) {
         return beatInfoDao.updateFlags(taskId, flag, userName);
     }

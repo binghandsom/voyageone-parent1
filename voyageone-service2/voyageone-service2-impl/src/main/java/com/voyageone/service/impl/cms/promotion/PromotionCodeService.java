@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
@@ -36,6 +37,7 @@ public class PromotionCodeService extends BaseService {
         return cmsBtPromotionCodeDao.selectPromotionCodeSkuList(params);
     }
 
+    @VOTransactional
     public int deletePromotionCode(CmsBtPromotionCodeModel model){
         return cmsBtPromotionCodeDao.deletePromotionCode(model);
     }

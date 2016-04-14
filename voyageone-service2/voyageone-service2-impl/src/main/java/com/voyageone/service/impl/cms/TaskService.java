@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
@@ -33,6 +34,7 @@ public class TaskService extends BaseService {
         return cmsBtTaskDao.selectTaskWithPromotionByChannel(searchInfo);
     }
 
+    @VOTransactional
     public int addTask(CmsBtTasksModel cmsBtTaskModel) {
         return cmsBtTaskDao.insert(cmsBtTaskModel);
     }
