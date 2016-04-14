@@ -149,4 +149,12 @@ public class PlatformCategoryService extends BaseService {
         return delResult.getN();
     }
 
+    /**
+     * 删除类目属性数据
+     */
+    public int insertPlatformCategorySchema(CmsMtPlatformCategorySchemaModel schemaModel) {
+        WriteResult insResult = platformCategorySchemaDao.insert(schemaModel);
+        return insResult.getN();
+    }
+
 }
