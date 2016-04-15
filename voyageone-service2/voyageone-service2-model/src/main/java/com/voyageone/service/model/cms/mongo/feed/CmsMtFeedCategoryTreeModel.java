@@ -1,6 +1,7 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.List;
 import java.util.Map;
@@ -14,25 +15,60 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsMtFeedCategoryTreeModel extends BaseMongoModel {
+public class CmsMtFeedCategoryTreeModel extends ChannelPartitionModel {
 
-    private String channelId;
+    private String catId;
+    private String catName;
+    private String catPath;
+    private String parentCatId;
+    private Integer isParent;
+    private List<CmsMtFeedCategoryTreeModel> children;
 
-    private List<Map<String, Object>> categoryTree;
-
-    public String getChannelId() {
-        return channelId;
+    public String getCatId() {
+        return catId;
     }
 
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
+    public void setCatId(String catId) {
+        this.catId = catId;
     }
 
-    public List<Map<String, Object>> getCategoryTree() {
-        return categoryTree;
+    public String getCatName() {
+        return catName;
     }
 
-    public void setCategoryTree(List<Map<String, Object>> categoryTree) {
-        this.categoryTree = categoryTree;
+    public void setCatName(String catName) {
+        this.catName = catName;
+    }
+
+    public String getCatPath() {
+        return catPath;
+    }
+
+    public void setCatPath(String catPath) {
+        this.catPath = catPath;
+    }
+
+    public String getParentCatId() {
+        return parentCatId;
+    }
+
+    public void setParentCatId(String parentCatId) {
+        this.parentCatId = parentCatId;
+    }
+
+    public Integer getIsParent() {
+        return isParent;
+    }
+
+    public void setIsParent(Integer isParent) {
+        this.isParent = isParent;
+    }
+
+    public List<CmsMtFeedCategoryTreeModel> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<CmsMtFeedCategoryTreeModel> children) {
+        this.children = children;
     }
 }

@@ -110,4 +110,9 @@ public class FeedToCmsServiceTest {
 //        products.add(p2);
 //        feedToCmsService.updateProduct("010", products);
     }
+
+    @Test
+    public void testAddCategory() throws Exception {
+        feedToCmsService.addCategory("111","b-b-e");
+    }
 }
