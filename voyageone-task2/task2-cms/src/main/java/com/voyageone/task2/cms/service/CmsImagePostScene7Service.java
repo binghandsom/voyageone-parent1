@@ -55,7 +55,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         for (TaskControlBean taskControl : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
                 String channelId = taskControl.getCfg_val1();
-
+                $info("渠道"+channelId);
                 CmsBtFeedProductImageModel feedImage = new CmsBtFeedProductImageModel();
                 feedImage.setSentFlag(0);
                 feedImage.setChannelId(channelId);
@@ -64,8 +64,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtFeedProductImageModel> imageUrlList = cmsBtFeedProductImageDao.selectImagebyUrl(feedImage);
+                    $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
-                        $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                         List<List<CmsBtFeedProductImageModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
                         for (List<CmsBtFeedProductImageModel> subImageUrlList :imageSplitList ){
                             es.execute(() -> ImageGetAndSendTask(channelId, subImageUrlList));
@@ -119,7 +119,11 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         }
 
         if (urlErrorList.size() > 0) {
-//                imagePostScene7Service.deleteUrlErrorImage(orderChannelId, urlErrorList);
+            urlErrorList.forEach(cmsBtFeedProductImageModel -> {
+                cmsBtFeedProductImageModel.setSentFlag(3);
+                cmsBtFeedProductImageModel.setModifier(getTaskName());
+                cmsBtFeedProductImageDao.updateImage(cmsBtFeedProductImageModel);
+            });
         }
 
         return "thread-" + threadNo + "上传scene7图片成功个数：" + subSuccessImageUrlList.size() +
@@ -187,11 +191,15 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
                             try {
                                 inputStream = HttpUtils.getInputStream(imageUrl);
-                            } catch (FileNotFoundException ex) {
+                            } catch (Exception ex) {
                                 // 图片url错误
                                 $error(ex.getMessage(), ex);
+                                imageUrlList.get(i).setSentFlag(3);
+                                imageUrlList.get(i).setModifier(getTaskName());
+
+                                cmsBtFeedProductImageDao.updateImage(imageUrlList.get(i));
                                 // 记录url错误图片以便删除这张图片相关记录
-                                urlErrorList.add(imageUrlList.get(i));
+//                                urlErrorList.add(imageUrlList.get(i));
 
                                 continue;
                             }
