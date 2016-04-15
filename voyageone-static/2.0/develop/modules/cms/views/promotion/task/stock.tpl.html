@@ -115,28 +115,28 @@
 					</div>
 
 					<div class="col-sm-12 dropdown_table_mains" if-no-rows="$ctrl.stockList.length">
-						<table id="stock_separate_tbl1" class="table table-hover-new vo_table" style="width:100%;margin-bottom:0px" ng-controller="selectRowsCtrl" ng-style="{'width':$ctrl.style}">
+						<table id="stock_separate_tbl1" class="table vo_table" ng-controller="selectRowsCtrl" ng-style="{'width':$ctrl.style}">
 							<thead>
 							<tr>
-								<th class="text-center w3"><label class="checkbox-inline c-checkbox">
+								<th class="text-center w5 newtablebg"><label class="checkbox-inline c-checkbox">
 									<input type="checkbox" ng-click="selectAll($ctrl.stockSelList)" ng-checked="isAllSelected($ctrl.stockSelList)" ng-disabled="!$ctrl.stockList.length">
-									<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}</label></th>
-								<th class="text-center w5">Model</th>
-								<th class="text-center w5">Code</th>
-								<th class="text-center w10">Sku</th>
-								<th ng-repeat="property in $ctrl.propertyList" class="text-center w10" ng-show="property.show">{{property.name}}</th>
-								<th class="text-center w3">{{'TXT_USABLE_STOCK' | translate}}</th>
-								<th ng-repeat-start="platform in $ctrl.platformList" class="text-center mfb-xt w5">{{platform.cartName}}</th>
-								<th ng-repeat-end class="text-center w5">{{'TXT_STATUS' | translate}}</th>
-								<th class="text-center w3">{{'TXT_OTHER' | translate}}</th>
-								<th class="text-center w10">{{'TXT_ACTION' | translate}}</th>
-								<th class="text-center w3">{{'BTN_EDIT' | translate}}</th>
+									<span class="fa fa-check" style="margin-top:5px"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}</label></th>
+								<th class="text-center w5 newtablebg">Model</th>
+								<th class="text-center w5 newtablebg">Code</th>
+								<th class="text-center w10 newtablebg">Sku</th>
+								<th ng-repeat="property in $ctrl.propertyList" class="text-center w10 newtablebg" ng-show="property.show">{{property.name}}</th>
+								<th class="text-center w10m w10 newtablebg">{{'TXT_USABLE_STOCK' | translate}}</th>
+								<th ng-repeat-start="platform in $ctrl.platformList" class="text-center mfb-xt w5 newtablebg">{{platform.cartName}}</th>
+								<th ng-repeat-end class="text-center w10m w10 newtablebg">{{'TXT_STATUS' | translate}}</th>
+								<th class="text-center w5m w5 newtablebg">{{'TXT_OTHER' | translate}}</th>
+								<th class="text-center w15m w15 newtablebg">{{'TXT_ACTION' | translate}}</th>
+								<th class="text-center w5m w5 newtablebg">{{'BTN_EDIT' | translate}}</th>
 							</tr>
 							</thead>
 							<tbody>
-							<tr ng-repeat="stock in $ctrl.stockList">
-								<td class="text-center w3">
-									<label class="checkbox-inline c-checkbox">
+							<tr ng-repeat="stock in $ctrl.stockList" style="line-height:25px;border-bottom:1px solid #ddd">
+								<td class="text-center w5">
+									<label class="checkbox-inline c-checkbox m-t-md">
 										<input type="checkbox" ng-model="$ctrl.stockSelList.selFlag[stock.sku]" ng-click="selectOne(stock.sku, $ctrl.stockSelList)" >
 										<span class="fa fa-check"></span>
 									</label></td>
@@ -144,8 +144,8 @@
 								<td class="text-center w5">{{stock.code}}</td>
 								<td class="text-center w10">{{stock.sku}}</td>
 								<td class="text-center w10" ng-repeat="property in $ctrl.propertyList" class="text-center w10" ng-show="property.show">{{stock[property.property]}}</th>
-								<td class="text-center w3">{{stock.qty}}</td>
-								<td ng-repeat-start="platform in stock.platformStock" class="text-center w5">
+								<td class="text-center w10m w10">{{stock.qty}}</td>
+								<td ng-repeat-start="platform in stock.platformStock" class="text-center w10m w10">
 									<input ng-if="platform.status != null" class="form-control" ng-model="platform.separationQty">
 									<span ng-if="platform.status == null">
 								      {{'TXT_DYNAMIC' | translate}}
@@ -154,12 +154,12 @@
 								<td ng-repeat-end class="text-center w5">
 									{{platform.status != null ? platform.status : '/'}}
 								</td>
-								<td class="text-center w3">{{'TXT_DYNAMIC' | translate}}</td>
-								<td class="text-center w10">
+								<td class="text-center w5m w5">{{'TXT_DYNAMIC' | translate}}</td>
+								<td class="text-center w15m w15">
 									<button class="btn btn-default-purple btn-xs" ng-click="$ctrl.executeStockSeparation(stock.sku)"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'TXT_STARTUP' | translate}}</button>
 									<button class="btn btn-default-green btn-xs" ng-click="$ctrl.executeStockRevert(stock.sku)"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'TXT_REVERT' | translate}}</button>
 								</td>
-								<td class="text-center w3">
+								<td class="text-center w5m w5">
 									<button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="$ctrl.saveRecord($index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
 									<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="$ctrl.delRecord(stock.sku)"><i class="fa  fa-trash-o"></i></button>
 								</td>
