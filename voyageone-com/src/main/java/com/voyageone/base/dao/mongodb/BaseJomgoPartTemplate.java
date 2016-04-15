@@ -77,7 +77,7 @@ public class BaseJomgoPartTemplate {
         if (model instanceof CartPartitionModel) {
             return getCollectionName(collectionName, String.valueOf(((CartPartitionModel) model).getCartId()), BaseMongoCartDao.SPLIT_PART);
         } else if (model instanceof ChannelPartitionModel) {
-            return getCollectionName(collectionName, ((ChannelPartitionModel)model).getChannelId(), BaseMongoCartDao.SPLIT_PART);
+            return getCollectionName(collectionName, ((ChannelPartitionModel)model).getChannelId(), BaseMongoChannelDao.SPLIT_PART);
         }
         return collectionName;
     }
