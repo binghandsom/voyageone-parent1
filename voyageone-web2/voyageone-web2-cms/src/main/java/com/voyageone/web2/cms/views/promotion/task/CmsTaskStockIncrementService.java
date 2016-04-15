@@ -170,7 +170,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                 }else{
                     //隔离平台的隔离比例
                     String separate= incrementValues.substring(0, incrementValues.lastIndexOf("%"));
-                    if(separate.contains("%")||separate.getBytes().length>2){
+                    if(separate.contains("%")||separate.getBytes().length>2||!StringUtils.isDigit(separate)){
                         throw new BusinessException("7000056");
                     }
                 }
