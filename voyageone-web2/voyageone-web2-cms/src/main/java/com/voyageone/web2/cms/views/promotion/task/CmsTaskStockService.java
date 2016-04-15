@@ -489,7 +489,9 @@ public class CmsTaskStockService extends BaseAppService {
                     //平台名
                     separatePlatformMap.put("cartName",cartId.getName());
                     //隔离比例
-                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%",""));
+                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%", ""));
+                    //0：未执行自动还原; 1：已经执行自动还原;
+                    separatePlatformMap.put("revertFlg",allSeparateCartIdMap.get(i).get("revert_flg").toString());
                     //类型（1：隔离，2：共享）
                     separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
                     //还原时间
@@ -557,6 +559,8 @@ public class CmsTaskStockService extends BaseAppService {
             isNotSeparatePlatformMap.put("type", "2");
             //还原时间
             isNotSeparatePlatformMap.put("revertTime",revertTime);
+            //0：未执行自动还原; 1：已经执行自动还原;
+            isNotSeparatePlatformMap.put("revertFlg","1");
             //增优先
             isNotSeparatePlatformMap.put("addPriority",addPriority);
             //减优先
@@ -585,7 +589,7 @@ public class CmsTaskStockService extends BaseAppService {
         String revertTime="";
         //循环取得数据反应到初始画面
         for(int i=0;i<allSeparateCartIdMap.size();i++){
-            Map<String,String> separatePlatformMap  = new HashMap<>();
+            Map<String,Object> separatePlatformMap  = new HashMap<>();
             String separateType = allSeparateCartIdMap.get(i).get("type").toString();
             // 平台id
             separatePlatformMap.put("cartId", allSeparateCartIdMap.get(i).get("cartId").toString());
@@ -612,12 +616,17 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("addPriority", allSeparateCartIdMap.get(i).get("addPriority").toString());
                 //减优先顺
                 separatePlatformMap.put("subtractPriority", allSeparateCartIdMap.get(i).get("subtractPriority").toString());
+                if("1".equals(allSeparateCartIdMap.get(i).get("revertFlg").toString())){
+                    separatePlatformMap.put("revertFlg",true);
+                } else {
+                    separatePlatformMap.put("revertFlg",false);
+                }
             }
             separatePlatformList.add(separatePlatformMap);
         }
         data.put("platformList", separatePlatformList);
         //活动ID
-        if(promotionType.equals("1")){
+        if(promotionType.equals(TYPE_PROMOTION_INSERT)){
             data.put("taskName", "");
         }else{
             data.put("taskName", name);
@@ -781,7 +790,7 @@ public class CmsTaskStockService extends BaseAppService {
         //活动的还原时间
         String realRevertTime=(String) param.get("revertTime");
         //任务名称
-        if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>=1000) {
+        if (StringUtils.isEmpty(taskName)||taskName.getBytes().length>1000) {
             // 任务名称必须输入且长度小于1000
             throw new BusinessException("7000012");
         }
@@ -814,18 +823,26 @@ public class CmsTaskStockService extends BaseAppService {
                         revertTime=separatePlatformList.get(i).get("revertTime").toString();
                     }
                 }else{
-                    // 还原时间必须输入且类型必须是时间类型
+                    //还原时间必须输入且类型必须是时间类型
                     throw new BusinessException("7000013");
                 }
                 //隔离平台的隔离比例
                 if(!onlySku){
-                    if(value.equals("%")){
-                        // 隔离平台的隔离比例必须填且为大于0小于100整数
-                        throw new BusinessException("7000014");
+                    if(value.contains("%")){
+                        if(value.startsWith("%")){
+                            //隔离平台的隔离比例必须填且为大于0小于100整数
+                            throw new BusinessException("7000014");
+                        }else{
+                            //隔离平台的隔离比例
+                            String separate= value.substring(0, value.lastIndexOf("%"));
+                            if(separate.contains("%")||value.getBytes().length>2||!StringUtils.isDigit(separate)){
+                                throw new BusinessException("7000014");
+                            }
+                        }
                     }else{
-                        String[] separateValue = value.split("%");
-                        if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])
-                                ||separateValue[0].getBytes().length>2||separateValue.length>1) {
+                        if (StringUtils.isEmpty(value)|| !StringUtils.isDigit(value)
+                                ||value.getBytes().length>2) {
+                            //隔离平台的隔离比例必须填且为大于0小于100整数
                             throw new BusinessException("7000014");
                         }
                     }
@@ -1339,7 +1356,7 @@ public class CmsTaskStockService extends BaseAppService {
                 //属性4（SIZE）
                 aSkuProHash.put("property4",proMapValue.get("property4").toString());
                 //可用库存
-                aSkuProHash.put("qty", "0");
+                aSkuProHash.put("qty", proMapValue.get("qty").toString());
                 //隔离库存
                 //隔离库存
                 aSkuProHash.put("separateQty","-1");

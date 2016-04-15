@@ -42,9 +42,9 @@
                         <td class="mfb-xxs">
                             <div class="input-group" ng-if="::promotion.type == 1">
                                 <input type="text" ng-model="promotion.revertTime" class="form-control" uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
-                                           is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close"/>
+                                           is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close" ng-disabled="promotion.revertFlg"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"ng-disabled="promotion.revertFlg"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                             </div>
                         </td>

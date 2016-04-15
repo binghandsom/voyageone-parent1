@@ -163,14 +163,21 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //增量类的判断
         if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
             //百分比增量
-            if(incrementType.equals("%")){
-                // 增量比例必须输入且为大于0小于100整数
-                throw new BusinessException("7000056");
+            if(incrementValues.contains("%")){
+                if(incrementValues.startsWith("%")){
+                    //隔离平台的隔离比例必须填且为大于0小于100整数
+                    throw new BusinessException("7000056");
+                }else{
+                    //隔离平台的隔离比例
+                    String separate= incrementValues.substring(0, incrementValues.lastIndexOf("%"));
+                    if(separate.contains("%")||separate.getBytes().length>2||!StringUtils.isDigit(separate)){
+                        throw new BusinessException("7000056");
+                    }
+                }
             }else{
-                String[] incrementValue = incrementValues.split("%");
-                if (StringUtils.isEmpty(incrementValue[0])|| !StringUtils.isDigit(incrementValue[0])
-                        ||incrementValue[0].getBytes().length>2||incrementValue.length>2) {
-                    // 增量比例必须输入且为大于0小于100整数
+                if (StringUtils.isEmpty(incrementValues)|| !StringUtils.isDigit(incrementValues)
+                        ||incrementValues.getBytes().length>2) {
+                    //隔离平台的隔离比例必须填且为大于0小于100整数
                     throw new BusinessException("7000056");
                 }
             }
@@ -184,7 +191,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
             }
         }
         //任务名称
-        if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>=1000) {
+        if (StringUtils.isEmpty(incrementTaskName)||incrementTaskName.getBytes().length>1000) {
             // 任务名必须输入且长度小于1000
             throw new BusinessException("7000012");
         }
@@ -213,7 +220,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //类型
         mapSaveData.put("type", param.get("incrementType"));
         //隔离比例/隔离值
-        mapSaveData.put("value", param.get("incrementValue"));
+        mapSaveData.put("value", param.get("incrementValue").toString().replace("%", ""));
         //创建者
         mapSaveData.put("creater", param.get("userName"));
         //更新者
@@ -269,6 +276,8 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         sqlParam.put("taskId", param.get("incrementTaskId"));
         //平台id
         sqlParam.put("cartId", param.get("incrementCartId"));
+        //状态
+        sqlParam.put("status", CmsTaskStockService.STATUS_SEPARATE_SUCCESS);
         //增量类型
         String incrementType=param.get("incrementType").toString();
         //增量值

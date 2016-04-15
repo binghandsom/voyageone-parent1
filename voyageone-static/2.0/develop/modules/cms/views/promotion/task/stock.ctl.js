@@ -163,8 +163,8 @@ define([
                         main.style = "100%";
                     } else {
                         //var stockSeparateTbl = document.getElementById('stock_separate_tbl');
-                        //stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
-                        main.style = "1800px";
+                        //stockSeparateTbl.setAttribute("style", "width:2200px;margin-bottom:0px");
+                        main.style = "2200px";
                     }
                 })
             },
@@ -269,8 +269,8 @@ define([
                     this.style = "100%";
                 } else {
                     //var stockSeparateTbl = document.getElementById('stock_separate_tbl');
-                    //stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
-                    this.style = "1800px";
+                    //stockSeparateTbl.setAttribute("style", "width:2200px;margin-bottom:0px");
+                    this.style = "2200px";
                 }
             },
 

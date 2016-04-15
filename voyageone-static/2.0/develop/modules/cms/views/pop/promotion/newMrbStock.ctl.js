@@ -22,7 +22,9 @@ define([
             //取得的TaskID
             taskName:null,
             //还原时间
-            revertTime:null
+            revertTime:null,
+            //updateFlag
+            updateFlag:null
         };
         if(data){
             //判断隔离任务:1新规的场 2合更新的场合
@@ -32,7 +34,7 @@ define([
                 taskStockService.initNewTask($scope.vm).then(
                     function (res) {
                         $scope.vm.promotionList = res.data.platformList;
-                        $scope.vm.onlySku = true
+                        $scope.vm.onlySku = true;
                         $scope.vm.revertTime=res.data.revertTime;
                     }
                 );
