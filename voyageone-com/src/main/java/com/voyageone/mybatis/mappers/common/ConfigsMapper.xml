@@ -2,10 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.common.sql">
 
-    <select id="us_joi_getAll" resultType="com.voyageone.common.configs.beans.UsJoiBean">
-        SELECT * FROM Synship.com_mt_us_joi_config where active=1 ORDER BY id
-    </select>
-
     <select id="tm_code_getAll" resultType="com.voyageone.common.configs.beans.CodeBean">
         SELECT * FROM tm_code ORDER BY id
     </select>
@@ -152,7 +148,7 @@
         order by tm_carrier_channel.order_channel_id
                   , tm_carrier_channel.carrier
     </select>
-    
+
     <resultMap type="com.voyageone.common.configs.beans.ImsCategoryBean" id="ImsCategoryMap">
 		<id property="categoryId" column="category_id"/>
 		<result property="parentCid" column="parent_cid"/>
@@ -161,7 +157,7 @@
 		<result property="categoryPath" column="category_path"/>
 		<result property="sortOrder" column="sort_order"/>
 	</resultMap>
-    
+
     <select id="ims_categories_getAll" resultMap="ImsCategoryMap">
         SELECT category_id,
         	   parent_cid,
@@ -171,4 +167,29 @@
         	   sort_order
           FROM voyageone_ims.ims_mt_categories
     </select>
+
+    <select id="tm_cart_getByIds" resultType="com.voyageone.common.configs.beans.CartBean" >
+        select * from Synship.ct_cart
+        <if test="list!=null and list.size()>0">
+        <where>
+            cart_id in <foreach collection="list" item="id" separator="," open="(" close=")">#{id}</foreach>
+        </where>
+        </if>
+    </select>
+
+     <update id="tm_order_channel_update" parameterType="com.voyageone.common.configs.beans.OrderChannelBean" >
+        update Synship.tm_order_channel
+         <set>
+             <if test="is_usjoi!=null">
+                 is_usjoi=#{is_usjoi},
+             </if>
+             <if test="modifier!=null and modifier!=''">
+                 modifier=#{modifier},
+             </if>
+              <if test="cart_ids!=null and cart_ids!=''">
+                 cart_ids=#{cart_ids},
+             </if>
+         </set>
+        where order_channel_id=#{order_channel_id}
+    </update>
 </mapper>

@@ -14,7 +14,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Service
-public class BeatInfoService {
+public class CmsBeatInfoService {
 
     @Autowired
     private CmsBtBeatInfoDao beatInfoDao;

@@ -1,11 +1,12 @@
 package com.voyageone.service.impl.cms.feed;
 
-import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropAndValueDao;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,6 @@ public class FeedCustomPropService extends BaseService {
 	@Autowired
 	private CmsBtFeedCustomPropAndValueDao cmsBtFeedCustomPropAndValueDao;
 
-
-	@Autowired
-	private SimpleTransaction simpleTransaction;
 
 	// 自定义属性
 	private List<CmsBtFeedCustomPropAndValueModel> customPropList;
@@ -298,7 +296,7 @@ public class FeedCustomPropService extends BaseService {
 	 * 获取所有的翻译列表
 	 * @param channel_id channel id
 	 * @param feed_cat_path feed category path
-	 * @return Map<String, String>
+	 * @return Map map
 	 */
 	public Map<String, String> getTransList(String channel_id, String feed_cat_path) {
 		if (!blnInit) {
@@ -321,7 +319,7 @@ public class FeedCustomPropService extends BaseService {
 		}
 
 		if (propMap != null) {
-			propMap.forEach((kProp, vProp)->{
+			propMap.forEach((kProp, vProp)->
 				vProp.forEach((k, v)->{
 					String value = "";
 					for (String trans : v) {
@@ -332,9 +330,8 @@ public class FeedCustomPropService extends BaseService {
 					}
 					result.put(k, value);
 
-				});
-
-			});
+				})
+			);
 		}
 
 		return result;
@@ -408,6 +405,7 @@ public class FeedCustomPropService extends BaseService {
 	}
 
 	// 添加属性值
+	@VOTransactional
 	public int addPropValue(int propId, String chnId, String origValue, String transValue, String userName) {
 		Map<String, Object> sqlPara = new HashMap<>();
 		sqlPara.put("propId", propId);
@@ -419,6 +417,7 @@ public class FeedCustomPropService extends BaseService {
 	}
 
 	// 修改属性值
+	@VOTransactional
 	public int savePropValue(int valueId, String transValue, String userName) {
 		Map<String, Object> sqlPara = new HashMap<>();
 		sqlPara.put("valueId", valueId);
@@ -428,36 +427,43 @@ public class FeedCustomPropService extends BaseService {
 	}
 
 	// 保存属性
+	@VOTransactional
 	public void saveAttr( List<Map<String, Object>> addList,  List<Map<String, Object>> updList, String catPath, String channelId, String userName) {
-		simpleTransaction.openTransaction();
-		try {
-			if (addList.size() > 0) {
-				Map<String, Object> params = new HashMap<>(4);
-				params.put("channelId", channelId);
-				params.put("cat_path", catPath);
-				params.put("userName", userName);
-				params.put("list", addList);
-				int tslt = cmsBtFeedCustomPropDao.insertAttr(params);
-				if (tslt != addList.size()) {
-					$error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
-				} else {
-					$debug("添加属性成功 实际更新件数=" + tslt);
+		if (addList.size() > 0) {
+			Map<String, Object> params = new HashMap<>(4);
+			params.put("channelId", channelId);
+			params.put("cat_path", catPath);
+			params.put("userName", userName);
+			params.put("list", addList);
+			int tslt = cmsBtFeedCustomPropDao.insertAttr(params);
+			if (tslt != addList.size()) {
+				$error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
+			} else {
+				$debug("添加属性成功 实际更新件数=" + tslt);
+			}
+		}
+		if (updList.size() > 0) {
+			for (Map<String, Object> item : updList) {
+				item.put("userName", userName);
+				int tslt = cmsBtFeedCustomPropDao.updateAttr(item);
+				if (tslt != 1) {
+					$error("修改属性结果失败，params=" + item.toString());
 				}
 			}
-			if (updList.size() > 0) {
-				for (Map<String, Object> item : updList) {
-					item.put("userName", userName);
-					int tslt = cmsBtFeedCustomPropDao.updateAttr(item);
-					if (tslt != 1) {
-						$error("修改属性结果失败，params=" + item.toString());
-					}
-				}
-			}
-			simpleTransaction.commit();
-		} catch(Exception exp) {
-			$error("保存属性时失败", exp);
-			simpleTransaction.rollback();
 		}
 	}
 
+	public List<Map<String, Object>> getFeedCustomPropAttrs(String channelId, String catPath) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("channelId", channelId);
+		params.put("feedCatPath", catPath);
+		return cmsBtFeedCustomPropDao.selectAttrs(params);
+	}
+
+	public List<CmsBtFeedCustomPropModel> getFeedCustomPropWithCategory(String channelId, String feedCategory) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("channelId", channelId);
+		params.put("feedCatPath", feedCategory);
+		return cmsBtFeedCustomPropDao.selectWithCategory(params);
+	}
 }

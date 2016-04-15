@@ -85,7 +85,8 @@ public class CmsAddToPromotionService extends BaseAppService {
 
                 PromotionDetailAddBean request=new PromotionDetailAddBean();
                 request.setModifier(modifier);
-                request.setChannelId(channelId);
+                request.setChannelId(promotion.getChannelId());
+                request.setOrgChannelId(channelId);
                 request.setCartId(cartId);
                 request.setProductId(Long.valueOf(String.valueOf(item.get("id"))));
                 request.setProductCode(String.valueOf(item.get("code")));
@@ -94,7 +95,7 @@ public class CmsAddToPromotionService extends BaseAppService {
                 request.setTagId(tagInfo.getTagId());
                 request.setTagPath(tagInfo.getTagPath());
 
-                promotionDetailService.insertPromotionDetail(request);
+                promotionDetailService.addPromotionDetail(request);
 
             });
         }

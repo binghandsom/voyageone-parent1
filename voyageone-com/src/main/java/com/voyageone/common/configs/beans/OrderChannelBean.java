@@ -1,5 +1,7 @@
 package com.voyageone.common.configs.beans;
 
+import java.util.Date;
+
 /**
  * Created by Jonas on 4/13/2015.
  */
@@ -23,6 +25,16 @@ public class OrderChannelBean {
     private String screct_key;
 
     private String session_key;
+
+    private Integer is_usjoi;
+
+    private String cart_ids;
+
+
+    private Date created;
+    private String creater;
+    private Date modified;
+    private String modifier;
 
     public String getSession_key() {
         return session_key;
@@ -102,5 +114,53 @@ public class OrderChannelBean {
 
     public void setScrect_key(String screct_key) {
         this.screct_key = screct_key;
+    }
+
+    public Integer getIs_usjoi() {
+        return is_usjoi;
+    }
+
+    public void setIs_usjoi(Integer is_usjoi) {
+        this.is_usjoi = is_usjoi;
+    }
+
+    public String getCart_ids() {
+        return cart_ids;
+    }
+
+    public void setCart_ids(String cart_ids) {
+        this.cart_ids = cart_ids;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
     }
 }

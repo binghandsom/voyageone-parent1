@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liang 2016/2/24.
@@ -23,4 +24,7 @@ public class CustomWordService extends BaseService {
         return customWordDao.selectWithParam();
     }
 
+    public List<Map<String, Object>> getTransLenSet(String chnId) {
+        return customWordDao.selectTransLenSet(chnId);
+    }
 }

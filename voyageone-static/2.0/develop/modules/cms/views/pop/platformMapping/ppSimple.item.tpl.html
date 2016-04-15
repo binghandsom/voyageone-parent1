@@ -77,6 +77,7 @@
                 </div>
                 <div class="col-sm-10">
                     <schema-item data="ctrl.property"></schema-item>
+                    <input ng-if="ctrl.property.type == 'SINGLECHECK'" ng-model="ctrl.property.value.value" type="text">
                 </div>
             </div>
         </form>

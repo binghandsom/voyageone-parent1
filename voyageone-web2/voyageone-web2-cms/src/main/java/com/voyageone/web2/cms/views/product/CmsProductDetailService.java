@@ -2,8 +2,8 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -20,16 +20,15 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -52,19 +51,13 @@ import java.util.*;
 public class CmsProductDetailService extends BaseAppService {
 
     @Autowired
-    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
+    private CommonSchemaService commonSchemaService;
 
     @Autowired
-    private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
+    private FeedInfoService feedInfoService;
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
-    @Autowired
-    private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
+    private FeedCustomPropService feedCustomPropService;
 
     @Autowired
     private ProductService productService;
@@ -82,18 +75,13 @@ public class CmsProductDetailService extends BaseAppService {
     /**
      * 获取类目以及类目属性信息.
      * 1.检查数据已经准备完成，batchField.switchCategory = 1时返回并告知运营正在准备数据，否则正常显示.
-     *
-     * @param channelId
-     * @param prodId
-     * @return
-     * @throws BusinessException
      */
-    public CmsProductInfoBean getProductInfo(String channelId, Long prodId, String language) throws BusinessException {
+    public Map<String, Object> getProductInfo(String channelId, Long prodId, int cartId, String language) throws BusinessException {
 
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
 
         //check the product data is ready.
-        productInfo.setProductDataIsReady(cmsBtProductDao.checkProductDataIsReady(channelId, prodId));
+        productInfo.setProductDataIsReady(productService.checkProductDataIsReady(channelId, prodId));
 
         //自定义属性.
         CustomAttributesBean customAttributes = new CustomAttributesBean();
@@ -118,7 +106,11 @@ public class CmsProductDetailService extends BaseAppService {
 //        }
 
         //获取商品图片信息.
-        List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
+        Map<String, List<CmsBtProductModel_Field_Image>> productImages = new HashMap<>();
+        productImages.put("image1",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE));
+        productImages.put("image2",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
+        productImages.put("image3",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
+        productImages.put("image4",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
 
         // 获取feed方数据.
         Map<String, String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
@@ -127,7 +119,7 @@ public class CmsProductDetailService extends BaseAppService {
         CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel.getCatId());
 
         // 获取共通schema.
-        CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
+        CmsMtCommonSchemaModel comSchemaModel = commonSchemaService.getComSchemaModel();
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
@@ -170,7 +162,7 @@ public class CmsProductDetailService extends BaseAppService {
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
         customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
         customAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
-        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow((String) feedInfoModel.get("category"), productValueModel.getFeed(), channelId));
+        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow(feedInfoModel.get("category"), productValueModel.getFeed(), channelId));
 
         productInfo.setMasterFields(masterSchemaFields);
         productInfo.setChannelId(channelId);
@@ -185,21 +177,50 @@ public class CmsProductDetailService extends BaseAppService {
         productInfo.setModified(productValueModel.getModified());
         productInfo.setProductCode(productValueModel.getFields().getCode());
 
-        return productInfo;
+        Map<String, Object> infoMap = new HashMap<>();
+        infoMap.put("productInfo", productInfo);
+
+        ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(productValueModel.getOrgChannelId());
+        if (channel == null) {
+            infoMap.put("orgChaName", "");
+        } else {
+            infoMap.put("orgChaName", channel.getFullName());
+        }
+
+        // 判断是否是minimall用户
+        boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        infoMap.put("isminimall", isMiniMall ? 1 : 0);
+
+        boolean isMain = false;
+        CmsBtProductModel_Group gpList = productValueModel.getGroups();
+        if (gpList != null) {
+            List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
+            if (pltList != null && pltList.size() > 0) {
+                for (CmsBtProductModel_Group_Platform pltObj : pltList) {
+                    if (pltObj.getCartId() == cartId && pltObj.getIsMain()) {
+                        isMain = true;
+                        break;
+                    }
+                }
+            }
+        }
+        infoMap.put("isMain", isMain ? 1 : 0);
+
+        return infoMap;
     }
 
     /**
      * 取得Sku的库存
-     *
-     * @param channelId
-     * @param prodId
-     * @return
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
-        CmsBtProductModel prodObj = cmsBtProductDao.selectProductById(channelId, prodId);
+        CmsBtProductModel prodObj = productService.getProductById(channelId, prodId);
+        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+            // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
+            channelId = prodObj.getOrgChannelId();
+        }
         Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
 
-        List<Map<String, Object>> inventoryList = new ArrayList<Map<String, Object>>(0);
+        List<Map<String, Object>> inventoryList = new ArrayList<>(0);
         if (skuList == null || skuList.isEmpty()) {
             $info("当前商品没有Sku信息 prodId=" + prodId);
             return inventoryList;
@@ -217,10 +238,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 更新product values.
-     *
-     * @param channelId
-     * @param user
-     * @param requestMap
      */
     public String updateProductMasterInfo(String channelId, String user, Map requestMap) {
 
@@ -256,13 +273,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 更新product values.
-     *
-     * @param channelId
-     * @param user
-     * @param categoryId
-     * @param productId
-     * @param categoryFullPath
-     * @param skuFieldMap
      */
     public String updateProductSkuInfo(String channelId, String user, String categoryId, Long productId, String modified, String categoryFullPath, Map skuFieldMap) {
 
@@ -289,11 +299,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 保存全部产品信息.
-     *
-     * @param channelId
-     * @param userName
-     * @param requestMap
-     * @return
      */
     public String updateProductAllInfo(String channelId, String userName, Map requestMap) {
 
@@ -361,10 +366,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 获取被切换类目的schema.
-     *
-     * @param categoryId
-     * @return
-     * @throws BusinessException
      */
     public CmsCategoryInfoBean getCategoryInfo(String categoryId) throws BusinessException {
 
@@ -379,9 +380,6 @@ public class CmsProductDetailService extends BaseAppService {
     /**
      * 确认切换类目.
      * 1.检查相关产品是否已经上架，如果在架就返回并提醒运营删除对应平台上的产品，否则继续
-     *
-     * @param requestMap
-     * @return
      */
     public Map<String, Object> changeProductCategory(Map requestMap, UserSessionBean userSession, String language) {
 
@@ -400,14 +398,14 @@ public class CmsProductDetailService extends BaseAppService {
 
         String categoryPath = String.valueOf(catPathObj);
 
-        Set<Long> productIds = new HashSet<Long>(CommonUtil.changeListType((List<Integer>) prodIdObj));
+        Set<Long> productIds = new HashSet<>(CommonUtil.changeListType((List<Integer>) prodIdObj));
 
         // 取得products对应的所有的groupIds
         String[] projections = {"feed.orgAtts.modelCode", "groups"};
         List<CmsBtProductModel> products = productService.getList(userSession.getSelChannelId(), productIds, projections);
 
         // 获取groupId的数据
-        List<String> models = new ArrayList<String>();
+        List<String> models = new ArrayList<>();
         Map<String, List<String>> numIids = new HashMap<>();
         for (CmsBtProductModel product : products) {
 
@@ -419,7 +417,7 @@ public class CmsProductDetailService extends BaseAppService {
             for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
                 // 获取已经上新的产品数据
                 Integer cartId = Integer.valueOf(platform.getCartId().toString());
-                String numIid = platform.getNumIId().toString();
+                String numIid = platform.getNumIId();
                 if (!StringUtils.isEmpty(numIid)) {
                     String cartName = CartType.getCartNameById(cartId, language);
                     if (numIids.get(cartName) != null) {
@@ -454,14 +452,9 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 获取 feed info model.
-     *
-     * @param channelId
-     * @param prodId
-     * @param productValueModel
-     * @return
      */
     private Map<String, String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
-        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productValueModel.getFields().getCode());
+        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productValueModel.getFields().getCode());
         Map<String, String> feedAttributes = new HashMap<>();
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
@@ -549,10 +542,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 构建sku schemaValue.
-     *
-     * @param productValueModel
-     * @param categorySchemaModel
-     * @return
      */
     private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel, Map<String, Integer> inventoryList) {
         List<Map<String, Object>> skuValueModel = new ArrayList<>();
@@ -574,9 +563,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 构建sku schema.
-     *
-     * @param categorySchemaModel
-     * @return
      */
     private List<Field> buildSkuSchema(CmsMtCategorySchemaModel categorySchemaModel) {
 
@@ -589,30 +575,13 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 获取 master schema.
-     *
-     * @param categoryId
-     * @return
      */
     private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
-
-        CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
-
-        if (schemaModel == null) {
-            // product 对应的schema信息不存在时的异常处理.
-            String errMsg = "category id: " + categoryId + "对应的类目信息不存在！";
-            $error(errMsg);
-            throw new BusinessException(errMsg);
-        }
-
-        return schemaModel;
+        return categorySchemaService.getCmsMtCategorySchema(categoryId);
     }
 
     /**
      * 获取product model.
-     *
-     * @param channelId
-     * @param prodId
-     * @return
      */
     private CmsBtProductModel getProductModel(String channelId, Long prodId) {
 
@@ -632,32 +601,7 @@ public class CmsProductDetailService extends BaseAppService {
     }
 
     /**
-     * 获取common schema.
-     *
-     * @return
-     */
-    private CmsMtCommonSchemaModel getComSchemaModel() {
-
-        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
-
-        if (comSchemaModel == null) {
-
-            //common schema 不存在时异常处理.
-            String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
-
-            $error(errMsg);
-
-            throw new BusinessException(errMsg);
-        }
-
-        return comSchemaModel;
-    }
-
-    /**
      * 构建CmsBtProductModel_Sku list.
-     *
-     * @param skuFieldMap
-     * @return
      */
     private List<CmsBtProductModel_Sku> buildCmsBtProductModel_skus(Map skuFieldMap) {
         Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
@@ -681,9 +625,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 构建masterFields.
-     *
-     * @param masterFieldsList
-     * @return
      */
     private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
 
@@ -706,10 +647,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 构建 CmsBtProductModel_Field
-     *
-     * @param requestMap
-     * @param masterFields
-     * @return
      */
     private CmsBtProductModel_Field buildCmsBtProductModel_field(Map requestMap, List<Field> masterFields) {
         CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
@@ -728,9 +665,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 构建 CmsBtProductModel_feed.
-     *
-     * @param customAttributesValue
-     * @return
      */
     private CmsBtProductModel_Feed buildCmsBtProductModel_feed(Map<String, Object> customAttributesValue) {
         CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
@@ -755,9 +689,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * set complex value.
-     *
-     * @param fields
-     * @param complexValue
      */
     private void setComplexValue(List<Field> fields, ComplexValue complexValue) {
 
@@ -810,8 +741,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * complex field值为空时设定默认值.
-     *
-     * @param fields
      */
     private void setDefaultComplexValues(List<Field> fields) {
 
@@ -855,9 +784,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 设定Field 的valueFieldMap.
-     *
-     * @param fields
-     * @param complexValueMap
      */
     private void setDefaultValueFieldMap(List<Field> fields, Map<String, Field> complexValueMap) {
 
@@ -914,9 +840,6 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 填充field选项值.
-     *
-     * @param fields
-     * @param channelId
      */
     private void fillFieldOptions(List<Field> fields, String channelId, String language) {
 
@@ -950,7 +873,7 @@ public class CmsProductDetailService extends BaseAppService {
                             optionsField.setOptions(options);
                         } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                             // 获取type channel bean
-                            List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
+                            List<TypeChannelBean> typeChannelBeanList;
                             if (FIELD_SKU_CARTS.equals(field.getId())) {
                                 typeChannelBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
                             } else {
@@ -959,11 +882,13 @@ public class CmsProductDetailService extends BaseAppService {
 
                             // 替换成field需要的样式
                             List<Option> options = new ArrayList<>();
-                            for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
-                                Option opt = new Option();
-                                opt.setDisplayName(typeChannelBean.getName());
-                                opt.setValue(typeChannelBean.getValue());
-                                options.add(opt);
+                            if (typeChannelBeanList != null) {
+                                for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                                    Option opt = new Option();
+                                    opt.setDisplayName(typeChannelBean.getName());
+                                    opt.setValue(typeChannelBean.getValue());
+                                    options.add(opt);
+                                }
                             }
                             OptionsField optionsField = (OptionsField) field;
                             optionsField.setOptions(options);
@@ -981,19 +906,10 @@ public class CmsProductDetailService extends BaseAppService {
 
     /**
      * 取得自定义属性的属性名称的中文翻译
-     *
-     * @param feedCategory
-     * @param feed
-     * @param channelId
-     * @return
      */
     private Map<String, String[]> getCustomAttributesCnAttsShow(String feedCategory, CmsBtProductModel_Feed feed, String channelId) {
-
         // 获取
-        Map<String, Object> params = new HashMap<>();
-        params.put("channelId", channelId);
-        params.put("feedCatPath", feedCategory);
-        List<CmsBtFeedCustomPropModel> feedPropTranslateList = cmsBtFeedCustomPropDao.selectWithCategory(params);
+        List<CmsBtFeedCustomPropModel> feedPropTranslateList = feedCustomPropService.getFeedCustomPropWithCategory(channelId, feedCategory);
 
         // 获取
         Map<String, String[]> result = new HashMap<>();

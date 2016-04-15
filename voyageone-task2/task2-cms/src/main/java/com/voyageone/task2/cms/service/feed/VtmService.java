@@ -4,7 +4,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
-import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -266,7 +265,7 @@ public class VtmService extends BaseTaskService {
                 if (isErrData(superfeedvtmbean)) {
                     continue;
                 }
-                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
+                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !listImportUPC.contains(superfeedvtmbean.getSKU()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
                 {
                     continue;
                 }

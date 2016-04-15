@@ -241,6 +241,13 @@ define([
                     "controller": "popPromotionHistoryCtl"
                 }
             },
+            "image": {
+                "setting": {
+                    "templateUrl": "views/pop/image/imgSetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
+                    "controller": "popImgSettingCtl"
+                }
+            },
             "promotion": {
                 "detail": {
                     "templateUrl": "views/pop/promotion/detail.tpl.html",
@@ -279,7 +286,38 @@ define([
                     "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                     "controller": 'popAddStockIncrementCtl'
                 }
+            },
+        "search": {
+            "imagedetail": {
+                "templateUrl": "views/pop/search/imagedetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
+                "controller": 'popImageDetailCtl'
+            },
+            "codeDetail": {
+                "templateUrl": "views/pop/search/codeDetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
+                "controller": 'popCodeDetailCtl'
             }
+
+        },
+        "system": {
+            "channelsetting": {
+                "templateUrl": "views/pop/system/channelsetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
+                "controller": 'popChannelSettingCtl'
+            },
+            "channeledit": {
+                "templateUrl": "views/pop/system/channeledit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
+                "controller": 'popChannelEditCtl'
+            },
+            "cartList": {
+                "templateUrl": "views/pop/system/cartList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
+                "controller": 'popCartListCtl'
+            }
+        },
+
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -717,7 +755,7 @@ define([
                         },
                         cartList: function () {
                             return cartList;
-                        }
+                        },
                     }
                 });
 
@@ -725,11 +763,40 @@ define([
                     if (fnInitial) {
                         fnInitial();
                     }
-
                 })
             });
         }
-
+        /**
+         * 打开promotion页面
+         * @type {openPromotion}
+         */
+        $scope.openImageSetting = function (context) {
+            return openModel(popActions.image.setting, context);
+        };
+        //function openImageSetting(viewSize, product, imageType, fnInitial) {
+        //    require([popActions.image.setting.controllerUrl], function () {
+        //        var modalInstance = $uibModal.open({
+        //            templateUrl: popActions.image.setting.templateUrl,
+        //            controller: popActions.image.setting.controller,
+        //            size: viewSize,
+        //            resolve: {
+        //                product: function () {
+        //                    return product;
+        //                },
+        //                imageType: function () {
+        //                    return imageType;
+        //                }
+        //            }
+        //        });
+        //
+        //        modalInstance.result.then(function (object) {
+        //            if (fnInitial) {
+        //                fnInitial(object);
+        //            }
+        //
+        //        })
+        //    });
+        //}
         /**
          * 打开promotion页面
          */
@@ -838,6 +905,37 @@ define([
                 });
             });
         }
+
+        /**
+         * 新增feed查询页图片弹出
+         * */
+        $scope.openImagedetail = function (context) {
+            return openModel(popActions.search.imagedetail, context);
+        };
+
+        /**
+         * 新增feed查询页code弹出
+         * */
+        $scope.openCodeDetail = function (context) {
+            return openModel(popActions.search.codeDetail, context);
+        };
+
+
+        /**
+         * 新增ChannelList页,设置操作弹出
+         * */
+        $scope.openChannelSetting = function (context) {
+            return openModel(popActions.system.channelsetting, context);
+        };
+
+
+        /**
+         * 新增CartList页,设置操作弹出
+         * */
+        $scope.openChannelEdit = function (context) {
+            return openModel(popActions.system.channeledit, context);
+        };
+
 
         /**
          * 弹出自定义属性列

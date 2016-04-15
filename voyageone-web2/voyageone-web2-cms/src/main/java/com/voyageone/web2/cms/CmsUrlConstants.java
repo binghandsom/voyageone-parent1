@@ -204,6 +204,12 @@ public interface CmsUrlConstants {
 
             String EXPORT_PRODUCTS = "exportProducts";
         }
+
+        interface FEED {
+            String ROOT = "/cms/search/feed";
+            String INIT = "init";
+            String SEARCH = "search";
+        }
     }
 
     // 匹配关系设置
@@ -356,6 +362,13 @@ public interface CmsUrlConstants {
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
         }
+
+        interface IMAGE_SETTING {
+
+            String ROOT = "/cms/pop/image_setting/";
+
+            String UPLOAD_IMAGE = "uploadImage";
+        }
     }
 
     // 产品编辑
@@ -410,6 +423,8 @@ public interface CmsUrlConstants {
             String SAVE_TASK = "saveTask";
 
             String SUBMIT_TASK = "submitTask";
+
+            String CANCEL_TASK = "cancelTask";
 
             String GET_FEED_ATTRIBUTES = "getFeedAttributes";
         }

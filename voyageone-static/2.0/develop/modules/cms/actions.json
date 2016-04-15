@@ -30,6 +30,11 @@
         "exportProducts":"exportProducts",
         "getCustColumnsInfo":"getCustColumnsInfo",
         "saveCustColumnsInfo":"saveCustColumnsInfo"
+      },
+      "$feedSearchService": {
+        "root": "/cms/search/feed/",
+        "init": "init",
+        "search": "search"
       }
     },
     "group": {
@@ -186,6 +191,7 @@
         "copyFormMainProduct":"copyFormMainProduct",
         "saveTask":"saveTask",
         "submitTask":"submitTask",
+        "cancelTask":"cancelTask",
         "getFeedAttributes":"getFeedAttributes"
       }
     },
@@ -207,6 +213,15 @@
           "add" : "create",
           "save": "update"
         }
+      },
+      "usjoi":{
+          "usjoiService":{
+            "root":"/cms/channel/usjoi/",
+            "getList":"getList",
+            "update":"update",
+            "getCarts":"getCarts",
+            "updateCartIds":"updateCartIds"
+          }
       }
     }
   }

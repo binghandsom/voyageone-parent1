@@ -3,9 +3,8 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +20,7 @@ import java.util.Map;
 public class CmsTaskStockService extends BaseAppService {
 
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
-
-    @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
+    private StockSeparateService stockSeparateService;
 
     /**
      * 取得属性列表
@@ -38,11 +34,11 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 获取取得属性列表
      */
     public List<Map<String,Object>> getPropertyList(Map param){
-        List<Map<String,Object>> propertyList = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> propertyList = new ArrayList<>();
 
         List<TypeChannelBean> dynamicPropertyList = TypeChannels.getTypeList("dynamicProperty", (String) param.get("channelId"));
         for (TypeChannelBean dynamicProperty : dynamicPropertyList) {
-            Map<String,Object> propertyItem = new HashMap<String,Object>();
+            Map<String,Object> propertyItem = new HashMap<>();
             propertyItem.put("value", dynamicProperty.getValue());
             propertyItem.put("name", dynamicProperty.getName());
             propertyItem.put("logic", dynamicProperty.getAdd_name1());
@@ -62,7 +58,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 获取取得属性列表
      */
     public List<Map<String,Object>> getPlatformList(Map param){
-        return cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+        return stockSeparateService.getPlatformStockSeparateList(param);
     }
 
     /**
@@ -75,16 +71,16 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public List<Map<String,Object>> getCommonStockList(Map param, List<Map<String, Object>> platformList, List<String>skuList){
         // 库存隔离明细列表
-        List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> stockList = new ArrayList<>();
 
-        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("taskId", param.get("taskId"));
         sqlParam.put("skuList", skuList);
         // 获取当页表示的库存隔离数据
-        List<Map<String,Object>> stockAllList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+        List<Map<String,Object>> stockAllList = stockSeparateService.getStockSeparateItem(sqlParam);
         // sku临时变量
         String skuTemp = "";
-        Map<String, Object> lineInfo = null;
+        Map<String, Object> lineInfo;
         List<Map<String, Object>> linePlatformInfoList = new ArrayList<>();
         // 平台列表的索引
         int  platformIndex = 0;
@@ -118,8 +114,8 @@ public class CmsTaskStockService extends BaseAppService {
             }
             // 加入隔离平台为"动态"的信息
             // 例：{"cartId":"20", "qty":"-1", "status":""},{"cartId":"23", "qty":"-1", "status":""}
-            while (!((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId").equals(cartId)) {
-                Map<String, Object> linePlatformInfo = new HashMap<String, Object>();
+            while (!((Map<String, Object>) platformList.get(platformIndex)).get("cartId").equals(cartId)) {
+                Map<String, Object> linePlatformInfo = new HashMap<>();
                 linePlatformInfo.put("cartId", (String)((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId"));
                 linePlatformInfo.put("qty", "-1");
                 linePlatformInfo.put("status", "");
@@ -128,8 +124,8 @@ public class CmsTaskStockService extends BaseAppService {
             }
             // 加入平台库存隔离信息
             // 例：{"cartId":"27", "qty":"40", "status":"等待隔离"}
-            if (((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId").equals(cartId)) {
-                Map<String, Object> linePlatformInfo = new HashMap<String, Object>();
+            if (((Map<String, Object>) platformList.get(platformIndex)).get("cartId").equals(cartId)) {
+                Map<String, Object> linePlatformInfo = new HashMap<>();
                 linePlatformInfo.put("cartId", cartId);
                 linePlatformInfo.put("qty", separateQty);
                 linePlatformInfo.put("status", statusName);
@@ -162,9 +158,9 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 一页表示的Sku
      */
     public List<String> getCommonStockPageSkuList(Map param) {
-        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        Map<String,Object> sqlParam = new HashMap<>();
         sqlParam.put("sql", getCommonStockPageSkuSql(param));
-        return cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
+        return stockSeparateService.getStockSeparateItemPageSku(sqlParam);
     }
 
     /**
@@ -175,7 +171,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 获取取得属性列表
      */
     public boolean isHistoryExist(Map param){
-        return (cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(param) != 0);
+        return (stockSeparateService.getStockSeparateItemHistoryCnt(param) != 0);
     }
 
     /**
@@ -184,9 +180,9 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      * @return 一页表示的Sku的Sql
      */
-    private String getCommonStockPageSkuSql(Map param){
+    private String getCommonStockPageSkuSql(Map<String,Object> param){
         String sql = "";
-        sql = "select sku from ( select distinct sku as sku from " + (String) param.get("tableName");
+        sql = "select sku from ( select distinct sku as sku from " + (String)param.get("tableName");
         sql += getWhereSql(param) + " )t1 ";
         String start = "";
         String length = "";
@@ -242,8 +238,9 @@ public class CmsTaskStockService extends BaseAppService {
             whereSql += " and status = '" + (String) param.get("status") + "'";
         }
 
-        if (param.get("propertyList") == null) {
-            for (Map<String,Object> property : (List<Map<String,Object>>)param.get("propertyList")) {
+        List<Map<String,Object>> propertyList = (List<Map<String,Object>>)param.get("propertyList");
+        if (propertyList != null) {
+            for (Map<String,Object> property : propertyList) {
                 // 动态属性名
                 String propertyName = (String) property.get("value");
                 // 动态属性值

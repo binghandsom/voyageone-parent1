@@ -3,8 +3,12 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -87,58 +91,67 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                 continue;
             }
             //批量更新code级库存 TODO
-            bulkUpdateCodeQty(orderChannelID, codeInventoryList, getTaskName());
+            bulkUpdateCodeQty(orderChannelID, "", codeInventoryList, getTaskName());
 
-            //获取本渠道的cart
-
-//            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
-            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(orderChannelID, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
-            $info("orderChannelID:" + orderChannelID + "    cart数:" + cartList.size());
-
-
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (int j = 0; j < cartList.size(); j++) {
-
-                int cartId = Integer.parseInt(cartList.get(j).getValue());
-                $info("cartId:" + cartId + "   start" );
-
-                //获取本Cart下所有group TODO
-                Map<String, List<String>> groupList = getGroupByCartList(orderChannelID, cartId);
-
-                groupList.forEach((s, codes) -> {
-                    int Inventory = getGroupInventory(codeInventoryList, codes);
-                    for (String code : codes) {
-                        HashMap<String, Object> updateMap = new HashMap<>();
-                        updateMap.put("groups.platforms.$.qty", Inventory);
-                        HashMap<String, Object> queryMap = new HashMap<>();
-                        queryMap.put("fields.code", code);
-                        queryMap.put("groups.platforms.cartId", cartId);
-                        BulkUpdateModel model = new BulkUpdateModel();
-                        model.setUpdateMap(updateMap);
-                        model.setQueryMap(queryMap);
-                        bulkList.add(model);
-                        //批量插入group级记录到mysql 10000条插入一次 TODO
-                        if (bulkList.size() >= BULK_COUNT) {
-                            cmsBtProductDao.bulkUpdateWithMap(orderChannelID, bulkList, getTaskName(), "$set");
-                            bulkList.clear();
-                        }
-                    }
-                });
-            }
-
-            if (bulkList.size() > 0) {
-                cmsBtProductDao.bulkUpdateWithMap(orderChannelID, bulkList, getTaskName(), "$set");
-                bulkList.clear();
+            updateGroupQty(orderChannelID,"", codeInventoryList);
+            //usjoi的对应
+            // 如果这个channel是usjoi的子channel的场合 997的库存也更新
+            if(Channels.isUsJoi(orderChannelID)){
+                bulkUpdateCodeQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList, getTaskName());
+                updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
             }
 
         }
     }
 
+    private void updateGroupQty(String channelId, String orgChannelId, List<InventoryForCmsBean> codeInventoryList){
+        //获取本渠道的cart
+//            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
+        $info("orderChannelID:" + channelId + "    cart数:" + cartList.size());
+
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (int j = 0; j < cartList.size(); j++) {
+
+            int cartId = Integer.parseInt(cartList.get(j).getValue());
+            $info("cartId:" + cartId + "   start" );
+
+            //获取本Cart下所有group TODO
+            Map<String, List<String>> groupList = getGroupByCartList(channelId, cartId, orgChannelId);
+
+            groupList.forEach((s, codes) -> {
+                int Inventory = getGroupInventory(codeInventoryList, codes);
+                for (String code : codes) {
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    updateMap.put("groups.platforms.$.qty", Inventory);
+                    HashMap<String, Object> queryMap = new HashMap<>();
+                    queryMap.put("fields.code", code);
+                    queryMap.put("groups.platforms.cartId", cartId);
+                    BulkUpdateModel model = new BulkUpdateModel();
+                    model.setUpdateMap(updateMap);
+                    model.setQueryMap(queryMap);
+                    bulkList.add(model);
+                    //批量插入group级记录到mysql 10000条插入一次 TODO
+                    if (bulkList.size() >= BULK_COUNT) {
+                        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+                        bulkList.clear();
+                    }
+                }
+            });
+        }
+
+        if (bulkList.size() > 0) {
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+            bulkList.clear();
+        }
+
+    }
 
     /**
      * 增加商品的Tag
      */
-    public Map<String, Object> bulkUpdateCodeQty(String channelId, List<InventoryForCmsBean> codeInventoryList, String modifier) {
+    public Map<String, Object> bulkUpdateCodeQty(String channelId, String orgChannelId, List<InventoryForCmsBean> codeInventoryList, String modifier) {
         Map<String, Object> ret = new HashMap<>();
 
         //以500条更新一次数据库
@@ -151,6 +164,9 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                 updateMap.put("fields.quantity", codeInventory.getQty());
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("fields.code", codeInventory.getCode());
+                if(!StringUtil.isEmpty(orgChannelId)){
+                    queryMap.put("orgChannelId", orgChannelId);
+                }
                 BulkUpdateModel model = new BulkUpdateModel();
                 model.setUpdateMap(updateMap);
                 model.setQueryMap(queryMap);
@@ -171,8 +187,8 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
      * @param cartId
      * @return
      */
-    private Map<String, List<String>> getGroupByCartList(String channelId, int cartId) {
-        return productService.getProductGroupIdCodesMapByCart(channelId, cartId);
+    private Map<String, List<String>> getGroupByCartList(String channelId, int cartId, String orgChannelId) {
+        return productService.getProductGroupIdCodesMapByCart(channelId, cartId, orgChannelId);
     }
 
     /**

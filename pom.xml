@@ -329,8 +329,9 @@
             <dependency>
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
-                <version>1445566890094</version>
+                <version>1457083595467</version>
             </dependency>
+
             <dependency>
                 <groupId>com.voyageone</groupId>
                 <artifactId>top-schema</artifactId>
