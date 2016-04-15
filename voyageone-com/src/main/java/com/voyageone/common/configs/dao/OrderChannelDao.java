@@ -18,4 +18,13 @@ public class OrderChannelDao extends BaseDao {
     public List<OrderChannelBean> getAll() {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "tm_order_channel_getAll");
     }
+
+    /**
+     * 根据 orderChannelId更新记录
+     * @param bean
+     * @return
+     */
+    public int updateById(OrderChannelBean bean) {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_COMMON + "tm_order_channel_update", bean);
+    }
 }

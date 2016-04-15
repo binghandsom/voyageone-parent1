@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtPromotionTaskDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
@@ -20,10 +21,6 @@ public class PromotionTaskService extends BaseService {
     @Autowired
     private CmsBtPromotionTaskDao cmsPromotionTaskDao;
 
-    public int insertPromotionTask(CmsBtPromotionTaskModel model){
-        return cmsPromotionTaskDao.insertPromotionTask(model);
-    }
-
     public int getPromotionTaskPriceListCnt(Map<String,Object> params){
         return cmsPromotionTaskDao.getPromotionTaskPriceListCnt(params);
     }
@@ -32,6 +29,12 @@ public class PromotionTaskService extends BaseService {
         return cmsPromotionTaskDao.getPromotionTaskPriceList(params);
     }
 
+    @VOTransactional
+    public int addPromotionTask(CmsBtPromotionTaskModel model){
+        return cmsPromotionTaskDao.insertPromotionTask(model);
+    }
+
+    @VOTransactional
     public int updatePromotionTask(CmsBtPromotionTaskModel model){
         return cmsPromotionTaskDao.updatePromotionTask(model);
     }

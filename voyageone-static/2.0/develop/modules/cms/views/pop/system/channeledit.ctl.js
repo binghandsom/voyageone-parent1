@@ -1,12 +1,12 @@
 /**
- * Created by 123 on 2016/4/11.
+ * Created by 123 on 2016/4/13.
  */
 define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popChannelListCtl', function ($scope, $routeParams) {
+    angularAMD.controller('popChannelEditCtl', function ($scope, $routeParams) {
 
         /**
          * 初始化数据.

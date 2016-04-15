@@ -34,7 +34,7 @@ public class CmsProductInfoBean {
     private String productCode;
 
     //商品图片信息.
-    private List<CmsBtProductModel_Field_Image> productImages;
+    private Map<String,List<CmsBtProductModel_Field_Image>> productImages;
 
     // feed方数据.
     private Map<String,String> feedInfoModel;
@@ -103,11 +103,11 @@ public class CmsProductInfoBean {
         this.customAttributes = customAttributes;
     }
 
-    public List<CmsBtProductModel_Field_Image> getProductImages() {
+    public Map<String, List<CmsBtProductModel_Field_Image>> getProductImages() {
         return productImages;
     }
 
-    public void setProductImages(List<CmsBtProductModel_Field_Image> productImages) {
+    public void setProductImages(Map<String, List<CmsBtProductModel_Field_Image>> productImages) {
         this.productImages = productImages;
     }
 

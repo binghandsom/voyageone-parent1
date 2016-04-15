@@ -76,6 +76,8 @@ define([
             this.currentImage = "";
             this.errorMsg = "";
             this.showInfoFlag = true;
+
+            this.tempImage = {"image1":[],"image2":[],"image3":[],"image4":[]};
         }
 
         ProductDetailController.prototype = {
@@ -188,6 +190,26 @@ define([
                 //        return m.defaultMapping === 1;
                 //    });
                 //}.bind(this));
+            },
+
+            openImageSetting: function(productDetails, imageType,openImageSetting) {
+                openImageSetting({
+                    product:  productDetails,
+                    imageType: imageType
+                }).then(this.imageCallBack.bind(this));
+            },
+
+            imageCallBack: function(context){
+                var self = this;
+                self.tempImage[context.imageType].push(context.base64);
+
+                self.productDetails = context.productInfo;
+                self._orgChaName = context.orgChaName;
+                self._isminimall = context.isminimall;
+                self._isMain = context.isMain;
+
+                self.productDetailsCopy = angular.copy(self.productDetails);
+                self.showInfoFlag = self.productDetails.productDataIsReady
             }
         };
 

@@ -362,6 +362,13 @@ public interface CmsUrlConstants {
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
         }
+
+        interface IMAGE_SETTING {
+
+            String ROOT = "/cms/pop/image_setting/";
+
+            String UPLOAD_IMAGE = "uploadImage";
+        }
     }
 
     // 产品编辑
@@ -416,6 +423,8 @@ public interface CmsUrlConstants {
             String SAVE_TASK = "saveTask";
 
             String SUBMIT_TASK = "submitTask";
+
+            String CANCEL_TASK = "cancelTask";
 
             String GET_FEED_ATTRIBUTES = "getFeedAttributes";
         }

@@ -90,7 +90,6 @@ public class JdRefundService extends JdBase {
 			} catch (Exception e) {
 				logger.info("error:doSearchRefundOrders:channel:error2:page:" + intPageNow + ":errorCount:" + intApiErrorCount);
 				// 异常了，再做一遍试试看
-				intApiErrorCount++;
 				break;
 			}
 		}
