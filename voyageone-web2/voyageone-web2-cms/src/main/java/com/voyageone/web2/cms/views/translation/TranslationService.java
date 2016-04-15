@@ -73,9 +73,6 @@ public class TranslationService extends BaseAppService {
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
-
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
-
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
