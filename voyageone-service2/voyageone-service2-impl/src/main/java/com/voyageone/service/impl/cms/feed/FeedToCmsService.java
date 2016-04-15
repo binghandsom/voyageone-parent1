@@ -4,7 +4,10 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -49,6 +53,9 @@ public class FeedToCmsService extends BaseService {
     private CmsBtFeedProductImageDao cmsBtFeedProductImageDao;
 
     private String modifier;
+
+    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
     /**
      * 获取feed类目
@@ -124,9 +131,9 @@ public class FeedToCmsService extends BaseService {
                     List<String> images = new ArrayList<>();
                     for (String  image :product.getImage()){
                         if("015".equalsIgnoreCase(channelId)){
-                            images.add(product.getCode() + "-" + i);
+                            images.add(special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
                         }else{
-                            images.add(channelId + "-" + product.getCode() + "-" + i);
+                            images.add(channelId + "-" + special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
                         }
                         i++;
                     }
@@ -156,7 +163,9 @@ public class FeedToCmsService extends BaseService {
 
                 int i = 1;
                 for (String  image :imageUrls){
-                    imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), image, i, this.modifier));
+                    CmsBtFeedProductImageModel cmsBtFeedProductImageModel =  new CmsBtFeedProductImageModel(channelId,product.getCode(), image, i, this.modifier);
+                    cmsBtFeedProductImageModel.setImageName(special_symbol.matcher(cmsBtFeedProductImageModel.getImageName()).replaceAll(Constants.EmptyString));
+                    imageModels.add(cmsBtFeedProductImageModel);
                     i++;
                 }
                 cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
