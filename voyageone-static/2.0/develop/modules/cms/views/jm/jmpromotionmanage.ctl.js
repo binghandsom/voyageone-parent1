@@ -18,6 +18,15 @@ define([
         $scope.search = function () {
             console.log("searchInfo");
            console.log($scope.searchInfo);
+
+            for(var key in $scope.searchInfo)
+            {
+                if(!$scope.searchInfo[key])
+                {
+                    delete $scope.searchInfo[key];
+                }
+            }
+            console.log($scope.searchInfo);
             jmPromotionService.getListByWhere($scope.searchInfo).then(function (res) {
                 console.log(res);
                 $scope.vm.modelList = res.data;

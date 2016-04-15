@@ -41,15 +41,15 @@ public class CmsBtJmPromotionService {
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
-        if (map.containsKey("state1") && map.get("state1") == "false")//待进行
+        if (map.containsKey("state1") && map.get("state1").equals("false"))//待进行
         {
             map.remove("state1");  //小于开始时间
         }
-        if (map.containsKey("state2") && map.get("state1") == "false")//进行中
+        if (map.containsKey("state2") && map.get("state1").equals("false"))//进行中
         {
             map.remove("state2"); // 当前时间大于开始时间 小于结束时间
         }
-        if (map.containsKey("state3") && map.get("state1") == "false")//完成
+        if (map.containsKey("state3") && map.get("state1").equals("false"))//完成
         {
             map.remove("state3"); //当前时间大于结束时间
         }

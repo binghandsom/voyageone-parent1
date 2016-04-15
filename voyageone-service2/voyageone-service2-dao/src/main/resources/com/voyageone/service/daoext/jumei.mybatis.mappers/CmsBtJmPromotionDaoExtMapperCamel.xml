@@ -17,8 +17,8 @@
               <if test="name != null">
                   and name like CONCAT(#{name},'%')
               </if>
-              <if test="CmsBtJmMasterBrandId!=null">
-                  and cms_bt_jm_master_brand_Id = #{CmsBtJmMasterBrandId}
+              <if test="cmsBtJmMasterBrandId!=null">
+                  and cms_bt_jm_master_brand_Id = #{cmsBtJmMasterBrandId}
               </if>
               <if test="beginCreated!=null">
                   Created>=#{beginCreated}
