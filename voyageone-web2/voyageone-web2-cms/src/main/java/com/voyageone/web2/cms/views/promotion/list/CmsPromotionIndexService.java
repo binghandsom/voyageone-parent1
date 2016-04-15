@@ -48,9 +48,9 @@ public class CmsPromotionIndexService extends BaseAppService {
     /**
      * 获取该channel的category类型.
      *
-     * @param channelId
-     * @param language
-     * @return
+     * @param channelId chanelid
+     * @param language 语言
+     * @return mast数据
      */
     public Map<String, Object> init(String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
@@ -104,15 +104,15 @@ public class CmsPromotionIndexService extends BaseAppService {
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             int rowIndex = 1;
-            for (int i = 0; i < promotionCodes.size(); i++) {
-                promotionCodes.get(i).setCartId(cmsBtPromotionModel.getCartId());
+            for (CmsBtPromotionCodeModel promotionCode : promotionCodes) {
+                promotionCode.setCartId(cmsBtPromotionModel.getCartId());
 //                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
-                boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), rowIndex);
+                boolean isContinueOutput = writeRecordToFile(book, promotionCode, rowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
                     break;
                 }
-                rowIndex += promotionCodes.get(i).getSkus() != null ? promotionCodes.get(i).getSkus().size() : 0;
+                rowIndex += promotionCode.getSkus() != null ? promotionCode.getSkus().size() : 0;
             }
 
             $info("文档写入完成");
@@ -146,7 +146,6 @@ public class CmsPromotionIndexService extends BaseAppService {
      * @return boolean 是否终止输出
      */
     private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodeModel item, int startRowIndex) {
-        boolean isContinueOutput = true;
         Sheet sheet = book.getSheetAt(0);
 
         Row styleRow = FileUtils.row(sheet, 1);
@@ -218,6 +217,6 @@ public class CmsPromotionIndexService extends BaseAppService {
             }
         }
 
-        return isContinueOutput;
+        return true;
     }
 }
