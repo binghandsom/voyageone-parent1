@@ -64,15 +64,9 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         result.setActive(false);
         return success(service.update(result));
     }
-    public AjaxResponse delete(@RequestBody int id) {
-        CmsMtMasterInfoModel params = service.select(id);
-        params.setModifier(getUser().getUserName());
-        params.setActive(false);
-        return success(service.update(params));
-    }
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.GET)
-    public Object get(@RequestBody int id) {//@RequestParam("id")
-        return success(service.select(id));
+    public Object get(@RequestBody CmsMtMasterInfoModel params) {//@RequestParam("id")
+        return success(service.select(params.getId()));
     }
 
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.UPDATEJMIMG)
