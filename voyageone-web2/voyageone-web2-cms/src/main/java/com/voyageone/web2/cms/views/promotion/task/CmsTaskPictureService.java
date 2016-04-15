@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.BeatInfoService;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
@@ -9,8 +11,6 @@ import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
-import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -43,10 +43,10 @@ import static com.voyageone.common.util.ExcelUtils.getString;
 public class CmsTaskPictureService extends BaseAppService {
 
     @Autowired
-    private CmsBtTasksDao taskDao;
+    private TaskService taskService;
 
     @Autowired
-    private CmsBtBeatInfoDao beatInfoDao;
+    private BeatInfoService beatInfoService;
 
     @Autowired
     private PromotionService promotionService;
@@ -75,7 +75,7 @@ public class CmsTaskPictureService extends BaseAppService {
             throw new BusinessException("7000002");
 
         // 尝试检查任务的名称, 是否已经存在
-        List<CmsBtTasksModel> taskModels = taskDao.selectByName(
+        List<CmsBtTasksModel> taskModels = taskService.getTasks(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 user.getSelChannelId(),
@@ -97,12 +97,12 @@ public class CmsTaskPictureService extends BaseAppService {
         taskBean.setCreater(user.getUserName());
         taskBean.setModifier(user.getUserName());
 
-        int count = taskDao.insert(taskBean.toModel());
+        int count = taskService.addTask(taskBean.toModel());
 
         if (count < 1)
             return null;
 
-        taskModels = taskDao.selectByName(
+        taskModels = taskService.getTasks(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 user.getSelChannelId(),
@@ -122,7 +122,7 @@ public class CmsTaskPictureService extends BaseAppService {
      */
     public List<CmsBtBeatInfoModel> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
 
-        return beatInfoDao.selectListByTask(task_id, flag, offset, size);
+        return beatInfoService.getBeatInfoListByTaskId(task_id, flag, offset, size);
     }
 
     /**
@@ -134,7 +134,7 @@ public class CmsTaskPictureService extends BaseAppService {
      */
     public int getAllBeatCount(int task_id, BeatFlag flag) {
 
-        return beatInfoDao.selectListByTaskCount(task_id, flag);
+        return beatInfoService.getBeatInfoCountByTaskId(task_id, flag);
     }
 
     /**
@@ -143,7 +143,7 @@ public class CmsTaskPictureService extends BaseAppService {
      * @return 统计信息, List[Map{flag&count}]
      */
     public List<Map> getBeatSummary(int task_id) {
-        List<Map> result = beatInfoDao.selectSummary(task_id);
+        List<Map> result = beatInfoService.getBeatSummary(task_id);
         // 数据查询出来的是整数, 转换为枚举
         for (Map map : result)
             map.put("flag", BeatFlag.valueOf((Integer) map.get("flag")));
@@ -154,13 +154,10 @@ public class CmsTaskPictureService extends BaseAppService {
     public List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
 
         // 如果存在以下标识数据, 就不能重新导入
-        int count = beatInfoDao.selectCountInFlags(task_id,
-                BeatFlag.BEATING, BeatFlag.RE_FAIL, BeatFlag.REVERT, BeatFlag.SUCCESS);
+        int count = beatInfoService.getCountInFlags(task_id, BeatFlag.BEATING, BeatFlag.RE_FAIL, BeatFlag.REVERT, BeatFlag.SUCCESS);
 
         if (count > 0)
             throw new BusinessException("7000004");
-
-        beatInfoDao.deleteByTask(task_id);
 
         Workbook wb;
 
@@ -196,16 +193,20 @@ public class CmsTaskPictureService extends BaseAppService {
             models.add(model);
         }
 
-        beatInfoDao.insertList(models);
+//        beatInfoService.removeTask(task_id);
+//
+//        beatInfoService.addTasks(models);
+//
+//        beatInfoService.updateDiffPromotionMessage(task_id, "与 Promotion 信息不符");
 
-        beatInfoDao.updateDiffPromotionMessage(task_id, "与 Promotion 信息不符");
+        beatInfoService.importBeatInfo(task_id, models);
 
         return getAllBeat(task_id, null, 0, size);
     }
 
     public byte[] downloadBeatInfo(int task_id) {
 
-        List<CmsBtBeatInfoModel> beatInfoModels = beatInfoDao.selectListByTask(task_id);
+        List<CmsBtBeatInfoModel> beatInfoModels = beatInfoService.getBeatInfByTaskId(task_id);
 
         // 注意: HSSFWorkbook 为 2003 的 xls 格式
         try (Workbook book = new HSSFWorkbook()) {
@@ -254,14 +255,14 @@ public class CmsTaskPictureService extends BaseAppService {
         if (flag == null)
             throw new BusinessException("7000002");
 
-        CmsBtBeatInfoModel beatInfoModel = beatInfoDao.selectOneById(beat_id);
+        CmsBtBeatInfoModel beatInfoModel = beatInfoService.getBeatInfById(beat_id);
 
         if (beatInfoModel == null)
             return 0;
 
         beatInfoModel.setBeatFlag(flag);
         beatInfoModel.setModifier(user.getUserName());
-        return beatInfoDao.updateFlag(beatInfoModel);
+        return beatInfoService.updateBeatInfoFlag(beatInfoModel);
     }
 
     public int setFlags(int task_id, BeatFlag flag, UserSessionBean user) {
@@ -269,7 +270,7 @@ public class CmsTaskPictureService extends BaseAppService {
         if (flag == null)
             throw new BusinessException("7000002");
 
-        return beatInfoDao.updateFlags(task_id, flag, user.getUserName());
+        return beatInfoService.updateBeatInfoFlag(task_id, flag, user.getUserName());
     }
 
     public int control(Integer beat_id, Integer task_id, BeatFlag flag, UserSessionBean user) {
@@ -283,7 +284,7 @@ public class CmsTaskPictureService extends BaseAppService {
 
     public List<Map<String, Object>> getNewNumiid(Integer task_id) {
         if (task_id == null) return null;
-        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", taskModel.getPromotion_id());
@@ -298,22 +299,22 @@ public class CmsTaskPictureService extends BaseAppService {
     }
 
     public List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
-        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
-        return beatInfoDao.selectListByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
+        return beatInfoService.getBeatInfByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
-        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
-        CmsBtBeatInfoModel model = beatInfoDao.selectOneByNumiid(task_id, num_iid);
+        CmsBtBeatInfoModel model = beatInfoService.getBeatInfByNumiid(task_id, num_iid);
         if (model != null) {
             if (model.getProduct_code().equals(code))
                 return 0;
             model.setProduct_code(code);
             model.setModifier(user.getUserName());
-            return beatInfoDao.updateCode(model);
+            return beatInfoService.updateCode(model);
         }
         model = new CmsBtBeatInfoModel();
         model.setNum_iid(Long.valueOf(num_iid));
@@ -327,7 +328,7 @@ public class CmsTaskPictureService extends BaseAppService {
         model.setModified(now);
         List<CmsBtBeatInfoModel> list = new ArrayList<>();
         list.add(model);
-        return beatInfoDao.insertList(list);
+        return beatInfoService.addTasks(list);
     }
 
     private CmsBtPromotionModel getPromotion(int promotion_id) {

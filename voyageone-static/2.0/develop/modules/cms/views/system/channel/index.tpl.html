@@ -4,7 +4,7 @@
             <div class="panel panel-default">
                 <div class="container-fluid m-l-md m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
@@ -14,7 +14,7 @@
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
@@ -24,7 +24,7 @@
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
@@ -35,6 +35,15 @@
                                             </option>
                                         </select>
                                     </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox"> 已删除
+                                    </label>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
@@ -76,18 +85,18 @@
                     <td>{{el.full_name}}</td>
                     <td>
                         <div class="col-sm-5 col-sm-offset-3">
-                                <div class="table_main">
-                                    <ul>
-                                        <div class="col-sm-6">
-                                            <input type="radio" name="radio_{{el.order_channel_id}}" value="1" ng-model="el.is_usjoi"
-                               ng-click="save(el)"><span class="ng-binding">Yes</span>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <input type="radio" name="radio_{{el.order_channel_id}}" value="0" ng-model="el.is_usjoi"
-                                disabled><span>No</span>
-                                        </div>
-                                    </ul>
-                                </div>
+                            <div class="table_main">
+                                <ul>
+                                    <div class="col-sm-6">
+                                        <input type="radio" name="radio_{{el.order_channel_id}}" value="1" ng-model="el.is_usjoi"
+                                               ng-click="save(el)"><span class="ng-binding">Yes</span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="radio" name="radio_{{el.order_channel_id}}" value="0" ng-model="el.is_usjoi"
+                                               disabled><span>No</span>
+                                    </div>
+                                </ul>
+                            </div>
                         </div>
                     </td>
                     <td ng-controller="popupCtrl">

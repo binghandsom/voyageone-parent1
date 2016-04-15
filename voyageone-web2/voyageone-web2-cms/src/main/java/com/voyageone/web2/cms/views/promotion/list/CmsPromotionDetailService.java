@@ -1,13 +1,12 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.*;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -15,7 +14,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,16 +39,10 @@ import java.util.Map;
 public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
-    private CmsBtTasksDao cmsBtTaskDao;
-
-    @Autowired
-    private ProductTagService productTagService;
+    private TaskService taskService;
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-
-    @Autowired
-    private SimpleTransaction simpleTransaction;
 
     @Autowired
     private CmsAddToPromotionService cmsPromotionSelectService;
@@ -66,9 +58,6 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
     private PromotionSkuService promotionSkuService;
-
-    @Autowired
-    private PromotionTaskService promotionTaskService;
 
     @Autowired
     private ProductService productService;
@@ -105,7 +94,6 @@ public class CmsPromotionDetailService extends BaseAppService {
         Integer cartId = promotion.getCartId();
         productPrices.forEach(item -> {
             boolean errflg = false;
-            simpleTransaction.openTransaction();
             try {
                 CmsBtTagModel tagId = searchTag(tags, item.getTag());
                 if (tagId == null) {
@@ -122,15 +110,13 @@ public class CmsPromotionDetailService extends BaseAppService {
                 request.setTagId(tagId.getTagId());
                 request.setTagPath(tagId.getTagPath());
 
-                promotionDetailService.insertPromotionDetail(request);
+                promotionDetailService.addPromotionDetail(request);
 
             } catch (Exception e) {
-                simpleTransaction.rollback();
                 response.get("fail").add(item.getCode());
                 errflg = true;
             }
             if (!errflg) {
-                simpleTransaction.commit();
                 response.get("succeed").add(item.getCode());
             }
         });
@@ -159,7 +145,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                     cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
                 }
             });
-            simpleTransaction.openTransaction();
+
             boolean errflg = false;
             try {
                 productModel.setPromotionId(promotionId);
@@ -167,12 +153,10 @@ public class CmsPromotionDetailService extends BaseAppService {
                 promotionDetailService.insertPromotionGroup(productModel);
             } catch (Exception e) {
                 $error(e);
-                simpleTransaction.rollback();
                 productModel.getCodes().forEach(cmsBtPromotionCodeModel -> response.get("fail").add(cmsBtPromotionCodeModel.getProductCode()));
                 errflg = true;
             }
             if (!errflg) {
-                simpleTransaction.commit();
                 productModel.getCodes().forEach(cmsBtPromotionCodeModel -> response.get("succeed").add(cmsBtPromotionCodeModel.getProductCode()));
             }
 
@@ -316,8 +300,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private List<CmsBtPromotionGroupModel> resolvePromotionXls2(InputStream xls) throws Exception {
         List<CmsBtPromotionGroupModel> models = new ArrayList<>();
         Map<String, CmsBtPromotionGroupModel> hsModel = new HashMap<>();
-        Workbook wb = null;
-        wb = new XSSFWorkbook(xls);
+        Workbook wb = new XSSFWorkbook(xls);
         Sheet sheet1 = wb.getSheetAt(0);
         int rowNum = 0;
         for (Row row : sheet1) {
@@ -514,37 +497,34 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param operator    操作者
      */
     public void teJiaBaoInit(Integer promotionId, String channelId, String operator) {
+        List<CmsBtTasksModel> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
 
-        simpleTransaction.openTransaction();
-        try {
-            List<CmsBtTasksModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
-            if (tasks.size() == 0) {
-                CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-                CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
-                cmsBtTaskModel.setModifier(operator);
-                cmsBtTaskModel.setCreater(operator);
-                cmsBtTaskModel.setPromotion_id(promotionId);
-                cmsBtTaskModel.setTask_type(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
-                cmsBtTaskModel.setTask_name(cmsBtPromotionModel.getPromotionName());
-                cmsBtTaskModel.setActivity_start(cmsBtPromotionModel.getActivityStart());
-                cmsBtTaskModel.setActivity_end(cmsBtPromotionModel.getActivityEnd());
-                cmsBtTaskModel.setChannelId(channelId);
-                cmsBtTaskDao.insert(cmsBtTaskModel);
-            }
-
-            Map<String, Object> param = new HashMap<>();
-            param.put("promotionId", promotionId);
-            List<CmsBtPromotionCodeModel> codeList = promotionCodeService.getPromotionCodeList(param);
-
-            codeList.forEach(code -> {
-                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
-                promotionTaskService.insertPromotionTask(cmsBtPromotionTask);
-            });
-        } catch (Exception e) {
-            simpleTransaction.rollback();
-            throw e;
+        List<CmsBtTasksModel> addTaskList = new ArrayList<>();
+        if (tasks.size() == 0) {
+            CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
+            CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
+            cmsBtTaskModel.setModifier(operator);
+            cmsBtTaskModel.setCreater(operator);
+            cmsBtTaskModel.setPromotion_id(promotionId);
+            cmsBtTaskModel.setTask_type(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            cmsBtTaskModel.setTask_name(cmsBtPromotionModel.getPromotionName());
+            cmsBtTaskModel.setActivity_start(cmsBtPromotionModel.getActivityStart());
+            cmsBtTaskModel.setActivity_end(cmsBtPromotionModel.getActivityEnd());
+            cmsBtTaskModel.setChannelId(channelId);
+            addTaskList.add(cmsBtTaskModel);
         }
-        simpleTransaction.commit();
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        List<CmsBtPromotionCodeModel> codeList = promotionCodeService.getPromotionCodeList(param);
+
+        List<CmsBtPromotionTaskModel> addPromotionTaskList = new ArrayList<>();
+        codeList.forEach(code -> {
+            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+            addPromotionTaskList.add(cmsBtPromotionTask);
+        });
+
+        promotionDetailService.addTeJiaBaoInit(addTaskList, addPromotionTaskList);
     }
 
     /**
@@ -569,45 +549,6 @@ public class CmsPromotionDetailService extends BaseAppService {
     }
 
     public void delPromotionCode(List<CmsBtPromotionCodeModel> promotionModes, String channelId, String operator) {
-
-        simpleTransaction.openTransaction();
-        try {
-            for (CmsBtPromotionCodeModel item : promotionModes) {
-                promotionCodeService.deletePromotionCode(item);
-
-                CmsBtPromotionTaskModel promotionTask = new CmsBtPromotionTaskModel();
-                promotionTask.setPromotionId(item.getPromotionId());
-                promotionTask.setKey(item.getProductCode());
-                promotionTask.setTaskType(0);
-                promotionTask.setSynFlg(1);
-                promotionTaskService.updatePromotionTask(promotionTask);
-
-                HashMap<String, Object> param = new HashMap<>();
-                param.put("promotionId", item.getPromotionId());
-                param.put("modelId", item.getModelId());
-                // 获取与删除的code在同一个group的code数  如果为0 就要删除group表的数据
-                int count = promotionCodeService.getPromotionCodeListCnt(param);
-                if (count == 1) {
-                    CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
-                    model.setModelId(item.getModelId());
-                    model.setPromotionId(item.getPromotionId());
-
-                    promotionModelService.deleteCmsPromotionModel(model);
-                }
-
-                promotionSkuService.remove(item.getPromotionId(), item.getProductId());
-
-                List<Long> poIds = new ArrayList<>();
-                poIds.add(item.getProductId());
-
-                if (!StringUtil.isEmpty(item.getTagPath())) {
-                    productTagService.delete(channelId, item.getTagPath(), poIds, operator);
-                }
-            }
-        } catch (Exception e) {
-            simpleTransaction.rollback();
-            throw e;
-        }
-        simpleTransaction.commit();
+        promotionDetailService.delPromotionCode(promotionModes, channelId, operator);
     }
 }

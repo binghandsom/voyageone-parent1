@@ -2,6 +2,9 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.CustomWordService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
@@ -32,7 +35,7 @@ import java.util.*;
 public class TranslationService extends BaseAppService {
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    private FeedInfoService feedInfoService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
@@ -42,7 +45,7 @@ public class TranslationService extends BaseAppService {
     private ProductGroupService productGroupService;
 
     @Autowired
-    protected CmsMtCustomWordDao customWordDao;
+    protected CustomWordService customWordService;
 
     private static String[] RET_FIELDS = {
             "prodId", "images1", "images2", "images3", "images4",
@@ -70,6 +73,9 @@ public class TranslationService extends BaseAppService {
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
+
+        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
+
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
@@ -406,7 +412,7 @@ public class TranslationService extends BaseAppService {
      */
     public Map<String, String> getFeedAttributes(String channelId, String productCode) {
 
-        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
+        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productCode);
 
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
@@ -496,8 +502,7 @@ public class TranslationService extends BaseAppService {
     }
 
     /**
-     *
-     * @param requestBean
+     * verifyParameter
      */
     private void verifyParameter(ProductTranslationBean requestBean){
 
@@ -529,8 +534,8 @@ public class TranslationService extends BaseAppService {
      * @return
      */
     public Map<String, Object> getTransLenSet(String chnId) {
-        Map<String, Object> setInfo = new HashMap<String, Object>();
-        List<Map<String, Object>> rslt = customWordDao.selectTransLenSet(chnId);
+        Map<String, Object> setInfo = new HashMap<>();
+        List<Map<String, Object>> rslt = customWordService.getTransLenSet(chnId);
         for (Map<String, Object> item : rslt) {
             String lenType = (String) item.get("lenType");
             item.remove("lenType");

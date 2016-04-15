@@ -199,6 +199,7 @@ public class GiltAnalysisService extends BaseTaskService {
             try {
                 onStartupInThread();
             } catch (Exception e) {
+                e.printStackTrace();
                 $error(e);
             }
         });

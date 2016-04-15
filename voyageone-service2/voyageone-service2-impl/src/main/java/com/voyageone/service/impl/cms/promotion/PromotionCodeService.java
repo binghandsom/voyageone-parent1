@@ -1,11 +1,13 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,18 +20,26 @@ import java.util.Map;
 public class PromotionCodeService extends BaseService {
 
     @Autowired
-    private CmsBtPromotionCodeDao cmspromotionCodeDao;
+    private CmsBtPromotionCodeDao cmsBtPromotionCodeDao;
 
     public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> param){
-        return cmspromotionCodeDao.selectPromotionCodeList(param);
+        return cmsBtPromotionCodeDao.selectPromotionCodeList(param);
     }
 
     public int getPromotionCodeListCnt(Map<String, Object> params){
-        return cmspromotionCodeDao.selectPromotionCodeListCnt(params);
+        return cmsBtPromotionCodeDao.selectPromotionCodeListCnt(params);
     }
 
+    public List<CmsBtPromotionCodeModel> getPromotionCodeListByIdOrgChannelId(int promotionId, String orgChannelId){
+        Map<String, Object> params = new HashMap<>();
+        params.put("promotionId", promotionId);
+        params.put("orgChannelId",orgChannelId);
+        return cmsBtPromotionCodeDao.selectPromotionCodeSkuList(params);
+    }
+
+    @VOTransactional
     public int deletePromotionCode(CmsBtPromotionCodeModel model){
-        return cmspromotionCodeDao.deletePromotionCode(model);
+        return cmsBtPromotionCodeDao.deletePromotionCode(model);
     }
 
 }

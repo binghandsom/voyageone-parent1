@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Channels;
@@ -81,24 +82,29 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
-            $info("channel_id=" + orderChannelID);
+            try{
+                $info("channel_id=" + orderChannelID);
 
-            //获取本渠道所有code级别库存
-            List<InventoryForCmsBean> codeInventoryList = inventoryDao.selectInventoryCode(orderChannelID, this.getTaskName());
-            $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
+                //获取本渠道所有code级别库存
+                List<InventoryForCmsBean> codeInventoryList = inventoryDao.selectInventoryCode(orderChannelID, this.getTaskName());
+                $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
 
-            if(codeInventoryList.size() == 0){
-                continue;
-            }
-            //批量更新code级库存 TODO
-            bulkUpdateCodeQty(orderChannelID, "", codeInventoryList, getTaskName());
+                if(codeInventoryList.size() == 0){
+                    continue;
+                }
+                //批量更新code级库存 TODO
+                bulkUpdateCodeQty(orderChannelID, "", codeInventoryList, getTaskName());
 
-            updateGroupQty(orderChannelID,"", codeInventoryList);
-            //usjoi的对应
-            // 如果这个channel是usjoi的子channel的场合 997的库存也更新
-            if(Channels.isUsJoi(orderChannelID)){
-                bulkUpdateCodeQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList, getTaskName());
-                updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
+                updateGroupQty(orderChannelID,"", codeInventoryList);
+                //usjoi的对应
+                // 如果这个channel是usjoi的子channel的场合 997的库存也更新
+                if(Channels.isUsJoi(orderChannelID)){
+                    bulkUpdateCodeQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList, getTaskName());
+                    updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                throw e;
             }
 
         }

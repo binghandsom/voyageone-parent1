@@ -95,7 +95,7 @@ public class CmsAddToPromotionService extends BaseAppService {
                 request.setTagId(tagInfo.getTagId());
                 request.setTagPath(tagInfo.getTagPath());
 
-                promotionDetailService.insertPromotionDetail(request);
+                promotionDetailService.addPromotionDetail(request);
 
             });
         }

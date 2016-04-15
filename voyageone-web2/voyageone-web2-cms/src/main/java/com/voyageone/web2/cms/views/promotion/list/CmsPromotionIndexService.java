@@ -8,8 +8,7 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -36,15 +35,12 @@ import java.util.Map;
 @Service
 public class CmsPromotionIndexService extends BaseAppService {
 
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     @Autowired
-    CmsBtPromotionCodeDao cmsPromotionCodeDao;
+    private PromotionService promotionService;
 
-    @Autowired
-    CmsBtPromotionDao cmsPromotionDao;
-
-    @Autowired
-    PromotionService promotionService;
     /**
      * 获取该channel的category类型.
      *
@@ -90,12 +86,8 @@ public class CmsPromotionIndexService extends BaseAppService {
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
-        Map<String, Object> param = new HashMap<>();
-        param.put("promotionId", promotionId);
-        param.put("orgChannelId",channelId);
-
-        CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.selectById(param);
-        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.selectPromotionCodeSkuList(param);
+        CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionIdOrgChannelId(promotionId, channelId);
+        List<CmsBtPromotionCodeModel> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(promotionId, channelId);
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
         $info("准备打开文档 [ %s ]", templatePath);

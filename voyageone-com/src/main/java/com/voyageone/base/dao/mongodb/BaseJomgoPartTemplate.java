@@ -5,6 +5,7 @@ import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.base.dao.mongodb.support.VOJacksonMapper;
 import com.voyageone.base.exception.VoMongoException;
@@ -44,7 +45,7 @@ public class BaseJomgoPartTemplate {
 
     public CommandResult executeCommand(String jsonCommand) {
         //JSON.serialize()
-        return jongo.runCommand(jsonCommand).map(new RawResultHandler<CommandResult>());
+        return jongo.runCommand(jsonCommand).map(new RawResultHandler<>());
     }
 
     public void createCollection(final String collectionName) {
@@ -59,12 +60,12 @@ public class BaseJomgoPartTemplate {
         return MongoCollectionName.getCollectionName(entityClass);
     }
 
-    public String getCollectionName(Class<?> entityClass, String channelId) {
-        return MongoCollectionName.getCollectionName(entityClass, channelId);
+    public String getCollectionName(Class<?> entityClass, String partStr, String split) {
+        return MongoCollectionName.getCollectionName(entityClass, partStr, split);
     }
 
-    public String getCollectionName(String collectionName, String channelId) {
-        return MongoCollectionName.getCollectionName(collectionName, channelId);
+    public String getCollectionName(String collectionName, String partStr, String split) {
+        return MongoCollectionName.getCollectionName(collectionName, partStr, split);
     }
 
     public String getCollectionName(BaseMongoModel model) {
@@ -73,12 +74,13 @@ public class BaseJomgoPartTemplate {
     }
 
     public String getCollectionName(String collectionName, BaseMongoModel model) {
-        if (model instanceof ChannelPartitionModel) {
-            return getCollectionName(collectionName, ((ChannelPartitionModel)model).getChannelId());
+        if (model instanceof CartPartitionModel) {
+            return getCollectionName(collectionName, String.valueOf(((CartPartitionModel) model).getCartId()), BaseMongoCartDao.SPLIT_PART);
+        } else if (model instanceof ChannelPartitionModel) {
+            return getCollectionName(collectionName, ((ChannelPartitionModel)model).getChannelId(), BaseMongoCartDao.SPLIT_PART);
         }
         return collectionName;
     }
-
 
     public MongoCollection getCollection(String collectionName) {
         return jongo.getCollection(collectionName);

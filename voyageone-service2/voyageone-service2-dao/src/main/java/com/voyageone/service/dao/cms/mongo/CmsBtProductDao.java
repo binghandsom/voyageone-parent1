@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.*;
-import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
+import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
+public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
     /**
      * 获取商品 根据ID获
@@ -34,7 +34,7 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
      */
     public JSONObject selectProductByIdWithJson(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        String collectionName = getCollectionName(channelId);
         String projection = "{catIdPath:1, channelId:1}";
         List<JSONObject>  result = mongoTemplate.find(query, projection, collectionName);
         return result.get(0);
@@ -156,7 +156,7 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
         }
         String query = String.format("{\"groups.platforms.groupId\":%s}", platformMode.getGroupId());
         String update = String.format("{$set: %s }", platformMode.toUpdateString("groups.platforms.$."));
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        String collectionName = getCollectionName(channelId);
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
@@ -169,7 +169,7 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
         }
         String query = String.format("{\"skus.sku\":\"%s\"}", skuModel.getSkuCode());
         String update = String.format("{$set: %s }", skuModel.toUpdateString("skus.$."));
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        String collectionName = getCollectionName(channelId);
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 

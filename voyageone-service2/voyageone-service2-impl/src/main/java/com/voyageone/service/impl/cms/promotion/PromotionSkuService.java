@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtPromotionSkuDao;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class PromotionSkuService extends BaseService {
         return cmsPromotionSkuDao.selectPromotionSkuListCnt(params);
     }
 
+    @VOTransactional
     public int remove(int promotionId, long productId){
         return cmsPromotionSkuDao.deletePromotionSkuByProductId(promotionId, productId);
     }

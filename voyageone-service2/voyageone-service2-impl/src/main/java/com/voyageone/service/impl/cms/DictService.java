@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.dao.cms.CmsMtDictDao;
@@ -68,6 +69,7 @@ public class DictService extends BaseService {
     /**
      * 添加一个字典项
      */
+    @VOTransactional
     public int addDict(CmsMtDictModel cmsMtDictModel) {
         // 检测新字典项数据
         checkDict(cmsMtDictModel, true);
@@ -77,6 +79,7 @@ public class DictService extends BaseService {
     /**
      * 删除一个字典项
      */
+    @VOTransactional
     public int removeDict(CmsMtDictModel cmsMtDictModel) {
         cmsMtDictDao.insertDictLog(cmsMtDictModel);
         return cmsMtDictDao.deleteDict(cmsMtDictModel);
@@ -85,6 +88,7 @@ public class DictService extends BaseService {
     /**
      * 更新一个字典项
      */
+    @VOTransactional
     public int saveDict(CmsMtDictModel cmsMtDictModel) {
         checkDict(cmsMtDictModel, false);
 
