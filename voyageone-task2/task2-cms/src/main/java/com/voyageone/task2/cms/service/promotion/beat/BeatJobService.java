@@ -61,7 +61,7 @@ public class BeatJobService extends BaseTaskService {
     }
 
     @Autowired
-    private BeatInfoService beatInfoService;
+    private CmsBeatInfoService beatInfoService;
 
     @Autowired
     private TbItemService tbItemService;

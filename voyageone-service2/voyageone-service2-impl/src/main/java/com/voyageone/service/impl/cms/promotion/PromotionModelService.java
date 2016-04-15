@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtPromotionModelDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
@@ -28,6 +29,7 @@ public class PromotionModelService extends BaseService {
         return cmsPromotionModelDao.selectPromotionModelDetailListCnt(param);
     }
 
+    @VOTransactional
     public int deleteCmsPromotionModel(CmsBtPromotionGroupModel model){
         return cmsPromotionModelDao.deleteCmsPromotionModel(model);
     }

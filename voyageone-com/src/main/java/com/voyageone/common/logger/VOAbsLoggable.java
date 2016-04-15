@@ -1,5 +1,6 @@
 package com.voyageone.common.logger;
 
+import com.voyageone.common.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +98,7 @@ public abstract class VOAbsLoggable {
      */
     public void $error(Throwable t) {
         if (!getLogWithThread()) {
-            logger.error(t.getMessage(), t);
+            logger.error(CommonUtil.getMessages(t));
             return;
         }
         logger.error(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), t.getMessage()), t);
