@@ -163,27 +163,22 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         //增量类的判断
         if(incrementType.equals(TYPE_INCREMENT_PERCENT)){
             //百分比增量
-            if(incrementValues.equals("%")){
-                // 增量比例必须输入且为大于0小于100整数
-                throw new BusinessException("7000056");
-            }else{
-                if(incrementValues.contains("%")){
-                    if(incrementValues.startsWith("%")){
-                        //隔离平台的隔离比例必须填且为大于0小于100整数
-                        throw new BusinessException("7000056");
-                    }else{
-                        //隔离平台的隔离比例
-                        String separate= incrementValues.substring(0, incrementValues.lastIndexOf("%"));
-                        if(separate.contains("%")||separate.getBytes().length>2){
-                            throw new BusinessException("7000056");
-                        }
-                    }
+            if(incrementValues.contains("%")){
+                if(incrementValues.startsWith("%")){
+                    //隔离平台的隔离比例必须填且为大于0小于100整数
+                    throw new BusinessException("7000056");
                 }else{
-                    if (StringUtils.isEmpty(incrementValues)|| !StringUtils.isDigit(incrementValues)
-                            ||incrementValues.getBytes().length>2) {
-                        //隔离平台的隔离比例必须填且为大于0小于100整数
+                    //隔离平台的隔离比例
+                    String separate= incrementValues.substring(0, incrementValues.lastIndexOf("%"));
+                    if(separate.contains("%")||separate.getBytes().length>2){
                         throw new BusinessException("7000056");
                     }
+                }
+            }else{
+                if (StringUtils.isEmpty(incrementValues)|| !StringUtils.isDigit(incrementValues)
+                        ||incrementValues.getBytes().length>2) {
+                    //隔离平台的隔离比例必须填且为大于0小于100整数
+                    throw new BusinessException("7000056");
                 }
             }
         }
