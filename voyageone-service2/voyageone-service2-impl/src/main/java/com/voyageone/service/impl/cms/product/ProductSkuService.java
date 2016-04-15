@@ -122,8 +122,8 @@ public class ProductSkuService extends BaseService {
      * @param productId product Id
      * @param productCode product Code
      * @param models CmsBtProductModel_Sku
-     * @param bulkUpdateList List<BulkUpdateModel>
-     * @param bulkInsertList List<BulkUpdateModel>
+     * @param bulkUpdateList List
+     * @param bulkInsertList List
      */
     private void saveSkusAddBlukUpdateModel(String channelId,
                                             Long productId, String productCode,

@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: com.voyageone.task2.VoyageOneTaskService
+Main-Class: com.voyageone.task2.VOCms2Startup
 

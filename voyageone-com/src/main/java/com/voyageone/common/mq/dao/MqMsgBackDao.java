@@ -1,7 +1,7 @@
 package com.voyageone.common.mq.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class MqMsgBackDao extends BaseDao {
     public void insertBatchMessage(String routingKey,Map<String,Object> messageMap){
         Map<String,Object> param=new HashMap<String,Object>();
         param.put("routingKey",routingKey);
-        param.put("messageMap", JsonUtil.getJsonString(messageMap));
+        param.put("messageMap", JacksonUtil.bean2Json(messageMap));
         updateTemplate.insert("mq_message_back_insert",param);
     }
 

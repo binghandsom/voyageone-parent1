@@ -1,9 +1,13 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.PostResponse;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -13,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.security.KeyStore;
 
@@ -123,6 +128,38 @@ public class HttpUtils {
         }
 
         return null;
+    }
+
+
+    public static String post(String url, String jsonBody, String accept, String token) throws Exception {
+        HttpPost post = new HttpPost(new URI(url));
+
+        // setHeader Accept
+        post.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
+        // setHeader Authorization
+        if(!StringUtils.isEmpty(token)) post.setHeader("Authorization","Bearer " + token);
+
+        //setBody
+        post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
+
+        //测试启用代理
+        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
+
+        //post request
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpResponse response = httpclient.execute(post);
+
+        //从服务器获得输入流
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = buffer.readLine()) != null) {
+            sb.append(line);
+        }
+
+        //关闭流
+        buffer.close();
+        return sb.toString();
     }
 
     public static String put(String url, String jsonParam,String authorization)
@@ -700,5 +737,6 @@ public class HttpUtils {
 
         return url.openStream();
     }
+
 
 }

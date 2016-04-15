@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.CmsBtChannelCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
@@ -115,6 +116,7 @@ public class ChannelCategoryService extends BaseService {
     /**
      * 保存Mapping定义
      */
+    @VOTransactional
     public void save(CmsBtChannelCategoryModel model) {
         cmsBtChannelCategoryDao.insert(model);
     }
@@ -122,6 +124,7 @@ public class ChannelCategoryService extends BaseService {
     /**
      * 保存Mapping List定义
      */
+    @VOTransactional
     public void saveWithList(List<CmsBtChannelCategoryModel> models) {
         cmsBtChannelCategoryDao.insertWithList(models);
     }
