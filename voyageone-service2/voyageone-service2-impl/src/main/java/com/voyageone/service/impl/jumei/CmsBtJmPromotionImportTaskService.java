@@ -296,6 +296,8 @@ public class CmsBtJmPromotionImportTaskService {
         modelCmsBtJmPromotionProduct = daoExtCmsBtJmPromotionProduct.getByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (modelCmsBtJmPromotionProduct == null) {
             modelCmsBtJmPromotionProduct = new CmsBtJmPromotionProductModel();
+            modelCmsBtJmPromotionProduct.setActivityStart(modelCmsBtJmPromotion.getActivityStart());
+            modelCmsBtJmPromotionProduct.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
         }
 
         if (modelCmsBtJmPromotionProduct.getSynchState() == 2)//已经上传
@@ -357,6 +359,7 @@ public class CmsBtJmPromotionImportTaskService {
             model4.setChannelId(modelCmsBtJmPromotion.getChannelId());
             model4.setBrandName(importProductModel.getBrandName());
             model4.setProductType(importProductModel.getProductType());
+            model4.setImageIndex(1);
             saveImportInfo.add(model4);//品牌故事图data_type=4
         }
         //尺码图data_type=5
@@ -364,6 +367,7 @@ public class CmsBtJmPromotionImportTaskService {
         if (model5 == null) {
             model5 = new CmsMtMasterInfoModel();
             model5.setDataType(5);
+            model5.setImageIndex(1);
             model5.setPlatformId(PlatformId);
             model5.setChannelId(modelCmsBtJmPromotion.getChannelId());
             model5.setBrandName(importProductModel.getBrandName());
@@ -377,6 +381,7 @@ public class CmsBtJmPromotionImportTaskService {
             model6 = new CmsMtMasterInfoModel();
             model6.setDataType(6);
             model6.setPlatformId(PlatformId);
+            model6.setImageIndex(1);
             model6.setChannelId(modelCmsBtJmPromotion.getChannelId());
             model6.setBrandName(importProductModel.getBrandName());
             model6.setProductType(importProductModel.getProductType());
@@ -446,6 +451,19 @@ public class CmsBtJmPromotionImportTaskService {
         CmsBtJmProductImagesModel propertyImageModel = daoExtCmsBtJmProductImages.getByKey(modelCmsBtJmPromotion.getChannelId(), productCode, imageType, imageIndex);
         if (propertyImageModel == null) {
             propertyImageModel = new CmsBtJmProductImagesModel();
+        }
+        //图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
+        if(imageType==1)
+        {
+            propertyImageModel.setImageTypeName("main_image");
+        }
+        else if(imageType==2)
+        {
+            propertyImageModel.setImageTypeName("deal_image");
+        }
+        else if(imageType==3)
+        {
+            propertyImageModel.setImageTypeName("property_image");
         }
         propertyImageModel.setChannelId(modelCmsBtJmPromotion.getChannelId());
         propertyImageModel.setProductCode(productCode);

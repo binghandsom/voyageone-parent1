@@ -13,4 +13,5 @@ public interface CmsMtMasterInfoDaoExt {
     public CmsMtMasterInfoModel getByKeySizeType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType, @Param("sizeType") String sizeType);
     public  Integer getCountByWhere(Map<String, Object> map);
     public  List getListByWhere(Map<String, Object> map);
+    public List<CmsMtMasterInfoModel> getListJMNewImageInfo(Map<String, Object> map);
 }

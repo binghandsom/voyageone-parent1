@@ -63,6 +63,7 @@ public class JuMeiUploadImageService {
         JmImageFileBean jmImageFileBean = new JmImageFileBean();
 //            File imageFile=new File(jmPicBean.getOriginUrl());
         int retryCount = GET_IMG_INPUTSTREAM_RETRY;
+       System.out.println("id:"+imageModel.getId()+"  value1"+imageModel.getValue1());
         InputStream inputStream = getImgInputStream(imageModel.getValue1(), retryCount);
         Assert.notNull(inputStream, "inputStream为null，图片流获取失败！" + imageModel.getValue1());
         jmImageFileBean.setInputStream(inputStream);
@@ -102,7 +103,11 @@ public class JuMeiUploadImageService {
      */
     private static String buildDirName(CmsMtMasterInfoModel imageModel) {
         Assert.notNull(imageModel);
-        checkFiled(imageModel.getChannelId());
+       // checkFiled(imageModel.getChannelId());
+        if(org.springframework.util.StringUtils.isEmpty(imageModel.getChannelId()))
+        {
+            throw  new IllegalArgumentException("CmsMtMasterInfoModel.ChannelId"+"不能为空,id="+imageModel.getId());
+        }
         if (imageModel.getDataType() <= 3) {
             return SLASH + imageModel.getChannelId() + SLASH + "product" + SLASH + imageModel.getDataType() + SLASH + special_symbol.matcher(imageModel.getBrandName()).replaceAll("");
         } else if (imageModel.getDataType() <= 5) {
@@ -128,7 +133,7 @@ public class JuMeiUploadImageService {
                 getImgInputStream(url, retry);
             }
         }
-        throw new Exception(url+"取得失败");
+        throw new Exception("获取网络图片流失败,url:"+url);
     }
     /***
      * 按照规则构造远程路径
@@ -138,7 +143,11 @@ public class JuMeiUploadImageService {
      */
     private static String buildDirName(CmsBtJmProductImagesModel imageModel) {
         Assert.notNull(imageModel);
-        checkFiled(imageModel.getChannelId(), imageModel.getImageTypeName());
+       // checkFiled(imageModel.getChannelId(), imageModel.getImageTypeName());
+        if(org.springframework.util.StringUtils.isEmpty(imageModel.getChannelId()))
+        {
+            throw  new IllegalArgumentException("CmsBtJmProductImagesModel.ChannelId"+"不能为空,id="+imageModel.getId());
+        }
         if (imageModel.getImageType() <= 3) {
             return SLASH + imageModel.getChannelId() + SLASH + "product" + SLASH + imageModel.getImageType() + SLASH + special_symbol.matcher(imageModel.getImageTypeName()).replaceAll("");
         } else if (imageModel.getImageType() <= 5) {
@@ -168,11 +177,11 @@ public class JuMeiUploadImageService {
      *
      * @param fileds fileds
      */
-    private static void checkFiled(String... fileds) {
-        for (String filed : fileds) {
-            if (StringUtils.isEmpty(filed)) {
-                throw new IllegalArgumentException("参数校验不通过filed:" + filed);
-            }
-        }
-    }
+//    private static void checkFiled(String... fileds) {
+//        for (String filed : fileds) {
+//            if (StringUtils.isEmpty(filed)) {
+//                throw new IllegalArgumentException("参数校验不通过filed:" + filed);
+//            }
+//        }
+//    }
 }

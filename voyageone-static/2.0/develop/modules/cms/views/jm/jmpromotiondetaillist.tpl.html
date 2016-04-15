@@ -147,9 +147,9 @@
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label">Fuzzy Search<br/>（Code/SKU）</label>
+									<label class="col-sm-3 control-label">product code</label>
 									<div class="col-sm-8">
-										<textarea class="form-control" rows="8"></textarea>
+										<input type="text" class="form-control" ng-model="searchInfo.productCode" />
 									</div>
 								</div>
 							</div>
@@ -223,7 +223,7 @@
 						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  /><span class="fa fa-check"></span></label>
 						</th>
 						<th>状态</th>
-						<!--<th class="text-center">产品</th>-->
+						<<th class="text-center" >错误消息</th>
 						<th class="mfb-xxx text-left">聚美类目</th>
 						<th class="text-center">PC模块ID</th>
 						<th class="text-center">APP模块ID</th>
@@ -248,7 +248,9 @@
 						<td ng-if="model.synchState==0">未上传</td>
 						<td ng-if="model.synchState==1">待上传</td>
 						<td ng-if="model.synchState==2">上传成功</td>
-						<td ng-if="model.synchState==3">上传失败</td>
+						<td ng-if="model.synchState==3">更新成功</td>
+						<td ng-if="model.synchState==4">上传失败</td>
+						<td title="{{model.errorMsg}" style="width: 30px;overflow: hidden;white-space: nowrap">{{model.errorMsg}}</td>
 						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
 						<td class="text-center">{{model.pcId}}</td>
 						<td class="text-center">{{model.appId}}</td>

@@ -122,4 +122,16 @@
             </if>
         </where>
     </select>
+   <select id="getListJMNewImageInfo" resultMap="ResultMap">
+         select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
+        and  `product_type`=#{productType}
+       and `data_type`  in  <foreach item="item" index="i" collection="dataTypeList"
+                                                                           open="(" separator="," close=")">
+       #{item}
+   </foreach>
+   </select>
+    <!--parameterCmsMtMasterInfo.put("platformId", 27);-->
+    <!--parameterCmsMtMasterInfo.put("channelId", promotionProductModel.getChannelId());-->
+    <!--parameterCmsMtMasterInfo.put("brandName", productModel.getBrandName());-->
+    <!--parameterCmsMtMasterInfo.put("productType", productModel.getProductType());-->
 </mapper>

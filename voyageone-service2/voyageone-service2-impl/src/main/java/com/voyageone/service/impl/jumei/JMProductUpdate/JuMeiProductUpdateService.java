@@ -3,12 +3,14 @@ package com.voyageone.service.impl.jumei.JMProductUpdate;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.dao.jumei.*;
+import com.voyageone.service.daoext.jumei.CmsMtMasterInfoDaoExt;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.JMNewProductInfo;
 import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,9 @@ public class JuMeiProductUpdateService {
     CmsBtJmProductImagesDao daoCmsBtJmProductImages;
     @Autowired
     CmsMtMasterInfoDao daoCmsMtMasterInfo;
+
+    @Autowired
+    CmsMtMasterInfoDaoExt daoExtCmsMtMasterInfo;
     public ShopBean getShopBean() {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
@@ -114,7 +119,12 @@ public class JuMeiProductUpdateService {
         parameterCmsMtMasterInfo.put("channelId", promotionProductModel.getChannelId());
         parameterCmsMtMasterInfo.put("brandName", productModel.getBrandName());
         parameterCmsMtMasterInfo.put("productType", productModel.getProductType());
-        List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel = daoCmsMtMasterInfo.selectList(parameterCmsMtMasterInfo);
+        List<Integer> dataTypeList=new ArrayList<>();
+        dataTypeList.add(4);
+        dataTypeList.add(5);
+        dataTypeList.add(6);
+        parameterCmsMtMasterInfo.put("dataTypeList",dataTypeList);
+        List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel = daoExtCmsMtMasterInfo.getListJMNewImageInfo(parameterCmsMtMasterInfo);//daoCmsMtMasterInfo.selectList(parameterCmsMtMasterInfo);
         info.setListCmsMtMasterInfo(listCmsMtMasterInfoModel);
 
         return info;
