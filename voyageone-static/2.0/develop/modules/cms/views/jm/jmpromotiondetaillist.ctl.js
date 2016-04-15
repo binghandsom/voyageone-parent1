@@ -27,7 +27,7 @@ define([
         };
         $scope.search = function () {
            // console.log("searchInfo");
-           // console.log($scope.searchInfo);
+            console.log($scope.searchInfo);
             loadSearchInfo();
             jmPromotionDetailService.getPromotionProductInfoListByWhere($scope.searchInfo).then(function (res) {
                 //console.log(res);
@@ -193,6 +193,10 @@ define([
             if( $scope.searchInfo.synchState3)
             {
                 $scope.searchInfo.synchStateList.push(3)
+            }
+            if( $scope.searchInfo.synchState4)
+            {
+                $scope.searchInfo.synchStateList.push(4)
             }
         }
     }

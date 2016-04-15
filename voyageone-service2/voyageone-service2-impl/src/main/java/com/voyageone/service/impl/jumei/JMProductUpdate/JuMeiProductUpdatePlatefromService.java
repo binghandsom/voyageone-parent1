@@ -60,8 +60,9 @@ public class JuMeiProductUpdatePlatefromService {
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     @Autowired
     CmsBtJmProductDao daoCmsBtJmProductDao;
-@Autowired
+    @Autowired
     JMShopBeanService serviceJMShopBean;
+
     //活动上新
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
         ShopBean shopBean = serviceJMShopBean.getShopBean();
@@ -126,11 +127,11 @@ public class JuMeiProductUpdatePlatefromService {
             }
         }
         setImages(updateInfo, jmProductBean);
-        serviceJumeiProduct.productNewUpload(shopBean, jmProductBean);
+        serviceJumeiProduct.productNewUpload(shopBean, jmProductBean);//上新
         updateInfo.getModelCmsBtJmProduct().setState(1);//已经上新
         updateInfo.getModelCmsBtJmProduct().setJumeiProductId(jmProductBean.getJumei_product_id());
-        updateInfo.getModelCmsBtJmProduct().setLastJmHashId(jmProductBean.getJumei_product_id());//保存最后一次活动JmHashId
-        updateInfo.getModelCmsBtJmPromotionProduct().setJmHashId(jmProductBean.getJumei_product_id());
+        updateInfo.getModelCmsBtJmProduct().setLastJmHashId(jmProductBean.getDealInfo().getJumei_hash_id());//保存最后一次活动JmHashId
+        updateInfo.getModelCmsBtJmPromotionProduct().setJmHashId(jmProductBean.getDealInfo().getJumei_hash_id());
         updateInfo.getModelCmsBtJmPromotionProduct().setState(1);//已经上新
         updateInfo.getModelCmsBtJmPromotionProduct().setSynchState(2);//更新成功
         for (JmProductBean_Spus spu : jmProductBean.getSpus()) {
@@ -189,7 +190,7 @@ public class JuMeiProductUpdatePlatefromService {
     }
 
     //更新 copyDeal
-    private  void updateProductAddDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
+    private void updateProductAddDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
         JMUpdateProductInfo info = service.getJMUpdateProductInfo(modelPromotionProduct);
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
@@ -206,9 +207,8 @@ public class JuMeiProductUpdatePlatefromService {
     }
 
 
-
     //添加未上新的sku
-    private  void  jmAddListSku( JMUpdateProductInfo info,ShopBean shopBean) throws Exception {
+    private void jmAddListSku(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {
             try {
                 jmAddSku(info, shopBean, modelPromotionSku);
@@ -218,6 +218,7 @@ public class JuMeiProductUpdatePlatefromService {
             }
         }
     }
+
     private void jmAddSku(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
         CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
@@ -281,7 +282,7 @@ public class JuMeiProductUpdatePlatefromService {
             spu.setPropery("OTHER");
             spu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
             spu.setAttribute(modelProduct.getAttribute());//jmBtProductImport.getAttribute());
-             spu.setAbroad_price(modelProduct.getMsrp().doubleValue());//jmBtSkuImportModel.getAbroadPrice());
+            spu.setAbroad_price(modelProduct.getMsrp().doubleValue());//jmBtSkuImportModel.getAbroadPrice());
             // todo 价格单位
             spu.setArea_code("19");
             JmProductBean_Spus_Sku sku = new JmProductBean_Spus_Sku();
@@ -296,7 +297,7 @@ public class JuMeiProductUpdatePlatefromService {
             }
             spu.setSkuInfo(sku);
             spus.add(spu);
-            partner_sku_nos += modelSku.getSkuCode()+","; //jmBtSkuImportModel.getSku() + ",";
+            partner_sku_nos += modelSku.getSkuCode() + ","; //jmBtSkuImportModel.getSku() + ",";
         }
         //dealinfo
         // JmBtDealImportModel jmBtDealImportModel = jmBtProductImport.getJmBtDealImportModel();
@@ -316,13 +317,14 @@ public class JuMeiProductUpdatePlatefromService {
 
         // 特殊说明
         jmProductBean_DealInfo.setSpecial_explain(modelProduct.getSpecialNote());//jmBtProductImport.getSpecialNote());
-if(partner_sku_nos.length()>0) {
-    jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
-}
+        if (partner_sku_nos.length() > 0) {
+            jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
+        }
 
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
     }
+
     private void setImages(JMNewProductInfo info, JmProductBean jmProductBean) {
         //   Map<Integer, List<JmPicBean>> imagesMap = null;//jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName(), jmBtProductImport.getSizeType());
         // （1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
@@ -423,6 +425,7 @@ if(partner_sku_nos.length()>0) {
         }
         jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
     }
+
     public List<CmsBtJmProductImagesModel> getListCmsBtJmProductImages(List<CmsBtJmProductImagesModel> list, int image_type) {
         List<CmsBtJmProductImagesModel> result = new ArrayList<>();
         for (CmsBtJmProductImagesModel model : list) {
@@ -432,6 +435,7 @@ if(partner_sku_nos.length()>0) {
         }
         return result;
     }
+
     public List<CmsMtMasterInfoModel> getListCmsMtMasterInfoModel(List<CmsMtMasterInfoModel> list, int dataType) {
         List<CmsMtMasterInfoModel> result = new ArrayList<>();
         for (CmsMtMasterInfoModel model : list) {
@@ -441,6 +445,7 @@ if(partner_sku_nos.length()>0) {
         }
         return result;
     }
+
     public static Long getTime(Date d) throws Exception {
         long l = d.getTime() / 1000 - 8 * 3600;
         return l;

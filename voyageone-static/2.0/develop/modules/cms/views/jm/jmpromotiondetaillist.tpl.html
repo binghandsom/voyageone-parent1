@@ -81,15 +81,18 @@
 										<input type="checkbox" name="synchState2" value="2" ng-model="searchInfo.synchState2"/>
 										<span class="fa fa-check" ></span>&nbsp;上传成功&nbsp;</label>
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" name="synchState3" value="3" ng-model="searchInfo.synchState3" >
+										<input type="checkbox" name="synchState3" value="3" ng-model="searchInfo.synchState3"/>
+										<span class="fa fa-check" ></span>&nbsp;更新成功&nbsp;</label>
+										<label class="checkbox-inline c-checkbox">
+											<input type="checkbox" name="synchState4" value="4" ng-model="searchInfo.synchState4" >
 											<span class="fa fa-check"></span>&nbsp;上传异常&nbsp;</label>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">折扣</label>
 									<div class="col-sm-8 form-inline">
-										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="seacheInfo.beginDiscount" placeholder="from"></div>&nbsp;~&nbsp;
-										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="seacheInfo.endDiscount" placeholder="to"></div>
+										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginDiscount" placeholder="from"></div>&nbsp;~&nbsp;
+										<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endDiscount" placeholder="to"></div>
 									</div>
 								</div>
 								<div class="form-group">
@@ -106,8 +109,8 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label"></label>
 									<div class="col-sm-8 form-inline">
-										<div class="input-group col-sm-4"> <input type="text" class="form-control"  ng-model="seacheInfo.beginPrice"  placeholder="from" /> </div>&nbsp;~&nbsp;
-										<div class="input-group col-sm-4" ><input type="text" class="form-control"  ng-model="seacheInfo.endPrice"     placeholder="to"  /> </div>
+										<div class="input-group col-sm-4"> <input type="text" class="form-control"  ng-model="searchInfo.beginPrice"  placeholder="from" /> </div>&nbsp;~&nbsp;
+										<div class="input-group col-sm-4" ><input type="text" class="form-control"  ng-model="searchInfo.endPrice"     placeholder="to"  /> </div>
 									</div>
 								</div>
 							</div>
@@ -253,7 +256,7 @@
 						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
 						<td class="text-center">{{model.pcId}}</td>
 						<td class="text-center">{{model.appId}}</td>
-						<td class="text-center">{{model.juMeiProductId}}</td>
+						<td class="text-center">{{model.jumeiProductId}}</td>
 						<td class="text-center">
 							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail('lg')">{{model.productCode}}</button>
 						</td>
@@ -265,7 +268,7 @@
 								<ul>
 									<li>MSRP: {{model.msrp}}</li>
 									<li>Deal Price：{{model.dealPrice}}</li>
-									<li>arket Price: {{model.marketPrice}}</li>
+									<li>market Price: {{model.marketPrice}}</li>
 								</ul>
 							</div>
 						</td>
