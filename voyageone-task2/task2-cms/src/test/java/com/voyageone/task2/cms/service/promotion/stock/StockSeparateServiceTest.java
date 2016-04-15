@@ -25,5 +25,7 @@ public class StockSeparateServiceTest {
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         stockSeparateService.onStartup(taskControlList);
+
+        List<String> ss = new ArrayList<>();
     }
 }
