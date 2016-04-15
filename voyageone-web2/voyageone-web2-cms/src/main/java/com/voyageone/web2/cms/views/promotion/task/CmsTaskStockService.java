@@ -814,27 +814,28 @@ public class CmsTaskStockService extends BaseAppService {
                         revertTime=separatePlatformList.get(i).get("revertTime").toString();
                     }
                 }else{
-                    // 还原时间必须输入且类型必须是时间类型
+                    //还原时间必须输入且类型必须是时间类型
                     throw new BusinessException("7000013");
                 }
                 //隔离平台的隔离比例
                 if(!onlySku){
-                    if(value.equals("%")){
-                        // 隔离平台的隔离比例必须填且为大于0小于100整数
-                        throw new BusinessException("7000014");
+                    if(value.contains("%")){
+                        if(value.startsWith("%")){
+                            //隔离平台的隔离比例必须填且为大于0小于100整数
+                            throw new BusinessException("7000014");
+                        }else{
+                            //隔离平台的隔离比例
+                            String separate= value.substring(0, value.lastIndexOf("%"));
+                            if(separate.contains("%")||value.getBytes().length>2){
+                                throw new BusinessException("7000014");
+                            }
+                        }
                     }else{
-                        String[] separateValue = value.split("%");
-                        if (StringUtils.isEmpty(separateValue[0])|| !StringUtils.isDigit(separateValue[0])
-                                ||separateValue[0].getBytes().length>2||separateValue.length>1) {
+                        if (StringUtils.isEmpty(value)|| !StringUtils.isDigit(value)
+                                ||value.getBytes().length>2) {
+                            //隔离平台的隔离比例必须填且为大于0小于100整数
                             throw new BusinessException("7000014");
                         }
-                    }
-                }
-                //隔离平台的隔离比例
-                if(value.endsWith("%")){
-                    String separate= value.substring(0, value.lastIndexOf("%"));
-                    if(separate.contains("%")){
-                        throw new BusinessException("7000014");
                     }
                 }
                 //增优先顺
