@@ -191,6 +191,7 @@
         "copyFormMainProduct":"copyFormMainProduct",
         "saveTask":"saveTask",
         "submitTask":"submitTask",
+        "cancelTask":"cancelTask",
         "getFeedAttributes":"getFeedAttributes"
       }
     },
@@ -212,6 +213,15 @@
           "add" : "create",
           "save": "update"
         }
+      },
+      "usjoi":{
+          "usjoiService":{
+            "root":"/cms/channel/usjoi/",
+            "getList":"getList",
+            "update":"update",
+            "getCarts":"getCarts",
+            "updateCartIds":"updateCartIds"
+          }
       }
     }
   }

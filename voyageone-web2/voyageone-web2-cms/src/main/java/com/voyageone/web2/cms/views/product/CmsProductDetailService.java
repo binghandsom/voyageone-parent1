@@ -106,7 +106,11 @@ public class CmsProductDetailService extends BaseAppService {
 //        }
 
         //获取商品图片信息.
-        List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
+        Map<String, List<CmsBtProductModel_Field_Image>> productImages = new HashMap<>();
+        productImages.put("image1",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE));
+        productImages.put("image2",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
+        productImages.put("image3",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
+        productImages.put("image4",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
 
         // 获取feed方数据.
         Map<String, String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);

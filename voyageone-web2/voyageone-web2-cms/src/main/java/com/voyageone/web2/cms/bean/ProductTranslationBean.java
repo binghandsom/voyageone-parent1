@@ -78,6 +78,19 @@ public class ProductTranslationBean {
         this.productImage = productImage;
     }
 
+    public int getTranSts() {
+        return tranSts;
+    }
+
+    public void setTranSts(int tranSts) {
+        this.tranSts = tranSts;
+    }
+
+    /**
+     * 翻译状态
+     */
+    private int tranSts = -1;
+
     /**
      * 产品分组.
      */

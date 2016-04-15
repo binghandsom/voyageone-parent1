@@ -1,38 +1,72 @@
-/**
- * Created by 123 on 2016/4/11.
- */
 define([
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function () {
-    function indexController($scope,systemCategoryService) {
-        $scope.vm = {categoryList: [], searchInfo : {catName: "", catId: ""}};
-        $scope.categoryPageOption = {curr: 1, total: 198, size: 30, fetch: search};
+], function (_) {
 
-        $scope.initialize  = function () {
-            search();
-        };
 
-        $scope.search = search;
+    function indexCtrl($scope, $routeParams, $translate, usjoiService, notify, confirm, alert) {
+        $scope.mallOptions = [{id: '-1', name: 'All'}, {id: '1', name: 'Yes'}, {id: '0', name: 'No'}];
+        $scope.allowMinimallOption = '-1';// 默认-1
+        $scope.service = usjoiService;
+        $scope.notify = notify;
+        $scope.confirm = confirm;
+        $scope.$translate = $translate;
+        $scope.alert = alert;
+
+
+
+         // init
+        $scope.initialize= function () { var self = this; }
 
         $scope.clear = function () {
-            $scope.vm.searchInfo = {catName: "", catId: ""};
+            var self = this;
+            self.channelId = null;
+            self.channelName = null;
+            self.allowMinimallOption = '-1';
+            setTimeout(function () {
+                self.refreshTable();
+            }, 300);
         };
+        $scope.save = function (model) {
+            var self = this;
+            self.confirm(self.$translate.instant('BEATING')).result
+                .then(function () {
+                    self.service.update(model);
+                },function(){//cancel
+                    model.is_usjoi=0;
+                });
+        };
+        $scope.refreshTable = function () { //检索列表
+            var self = this;
+            var param = {
+                channelId: self.channelId,
+                channelName: self.channelName,
+                allowMinimallOption: self.allowMinimallOption
+            };
+            self.service.getList(_.extend(param,self.page)).then(function (result) {
+                self.tableSource = result.data.data;  //bind
+                self.page.total = result.data.total;
+            });
+        };
+        $scope.updateChannelCartIds = function (data) {
+            if (data) {
+                this.tableSource.forEach(function (el) {
+                    if (el.order_channel_id === data.order_channel_id) {
+                        el.cart_ids = data.cart_ids;
+                    }
+                });
+            }
 
-        function search() {
-            systemCategoryService.getCategoryList({
-                "catName":$scope.vm.searchInfo.catName,
-                "catId": $scope.vm.searchInfo.catId,
-                "skip": ($scope.categoryPageOption.curr - 1) * $scope.categoryPageOption.size,
-                "limit": $scope.categoryPageOption.size
-            }).then(function (res) {
-                $scope.categoryPageOption.total = res.data.total;
-                $scope.vm.categoryList = res.data.resultData;
-            }, function (err) {
+        };
+        $scope.openChannelSetting = function (el,popUp) {
+            var self = this;
+            popUp(el).then(function (data) {
+                self.updateChannelCartIds(data);
+            });
+        };
+        $scope.page = {curr: 1, total: 0, size: 20, fetch: function(){$scope.refreshTable();}};
 
-            })
-        }
-    }
-
-    indexController.$inject = ['$scope', 'systemCategoryService'];
-    return indexController;
+    };
+    indexCtrl.$inject=['$scope', '$routeParams', '$translate', 'usjoiService', 'notify', 'confirm', 'alert'];
+    return indexCtrl;
 });
