@@ -19,6 +19,7 @@ define([
         var updateDealEndTime=function() {
             $scope.model.productIdList = context.getSelectedProductIdList();
             if (! $scope.model.productIdList ||  $scope.model.productIdList.length == 0) {
+                $scope.$close();
                 return;
             }
             jmPromotionDetailService.updateDealEndTime($scope.model).then(function () {
