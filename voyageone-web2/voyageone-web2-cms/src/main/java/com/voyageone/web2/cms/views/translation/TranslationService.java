@@ -48,7 +48,7 @@ public class TranslationService extends BaseAppService {
     protected CustomWordService customWordService;
 
     private static String[] RET_FIELDS = {
-            "prodId", "images1", "images2", "images3", "images4",
+            "prodId",
             "fields.code",
             "fields.productNameEn",
             "fields.longDesEn",
@@ -59,7 +59,7 @@ public class TranslationService extends BaseAppService {
             "fields.longDesCn",
             "fields.shortDesCn",
             "fields.model",
-            "fields.images1",
+            "fields.images1", "fields.images2", "fields.images3", "fields.images4",
             "fields.translator",
             "fields.translateStatus",
             "groups.platforms",
