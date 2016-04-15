@@ -64,8 +64,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtFeedProductImageModel> imageUrlList = cmsBtFeedProductImageDao.selectImagebyUrl(feedImage);
-                    $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
+                        $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                         List<List<CmsBtFeedProductImageModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
                         for (List<CmsBtFeedProductImageModel> subImageUrlList :imageSplitList ){
                             es.execute(() -> ImageGetAndSendTask(channelId, subImageUrlList));
@@ -74,7 +74,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
                     } else {
-                        $info(channelId + "渠道本次没有要推送scene7的图片");
+                        $debug(channelId + "渠道本次没有要推送scene7的图片");
                     }
 
                 } catch (Exception ex) {
