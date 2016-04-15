@@ -8,7 +8,7 @@
         <form role="form" class="form-horizontal">
             <div class="form-group form-inline">
                 <label class="control-label m-l-md">{{'TXT_TASK_NAME' | translate}}</label>
-                <input type="text" class="form-control" ng-model="vm.taskName">
+                <input type="text" class="form-control" ng-model="vm.taskName"ng-disabled="vm.updateFlag ">
                 <label class="checkbox-inline c-checkbox"  ng-if="::vm.promotionType == 1">
                     <input type="checkbox" ng-model="vm.onlySku">
                     <span class="fa fa-check"></span>&nbsp;{{'TXT_IMPORT_ONLY_SKU_AND_INVENTORY' | translate}}
@@ -42,19 +42,19 @@
                         <td class="mfb-xxs">
                             <div class="input-group" ng-if="::promotion.type == 1">
                                 <input type="text" ng-model="promotion.revertTime" class="form-control" uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
-                                           is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close"/>
+                                           is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close" ng-disabled="promotion.revertFlg"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"ng-disabled="promotion.revertFlg"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                             </div>
                         </td>
                         <td class="mfb-xxt">
                             <input type="text" class="form-control ims_input_w" id="input-id-10"
-                                   ng_model="promotion.addPriority"/>
+                                   ng_model="promotion.addPriority"ng-disabled="vm.onlySku"/>
                         </td>
                         <td class="mfb-xxt">
                             <input type="text" class="form-control ims_input_w" id="input-id-11"
-                                   ng_model="promotion.subtractPriority"/>
+                                   ng_model="promotion.subtractPriority"ng-disabled="vm.onlySku"/>
                         </td>
                     </tr>
                     </tbody>
