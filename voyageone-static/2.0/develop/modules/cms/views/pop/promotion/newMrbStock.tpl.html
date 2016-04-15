@@ -8,7 +8,7 @@
         <form role="form" class="form-horizontal">
             <div class="form-group form-inline">
                 <label class="control-label m-l-md">{{'TXT_TASK_NAME' | translate}}</label>
-                <input type="text" class="form-control" ng-model="vm.taskName"ng-disabled="vm.updateFlag ">
+                <input type="text" class="form-control" ng-model="vm.taskName">
                 <label class="checkbox-inline c-checkbox"  ng-if="::vm.promotionType == 1">
                     <input type="checkbox" ng-model="vm.onlySku">
                     <span class="fa fa-check"></span>&nbsp;{{'TXT_IMPORT_ONLY_SKU_AND_INVENTORY' | translate}}
@@ -50,11 +50,11 @@
                         </td>
                         <td class="mfb-xxt">
                             <input type="text" class="form-control ims_input_w" id="input-id-10"
-                                   ng_model="promotion.addPriority"ng-disabled="vm.onlySku"/>
+                                   ng_model="promotion.addPriority"/>
                         </td>
                         <td class="mfb-xxt">
                             <input type="text" class="form-control ims_input_w" id="input-id-11"
-                                   ng_model="promotion.subtractPriority"ng-disabled="vm.onlySku"/>
+                                   ng_model="promotion.subtractPriority"/>
                         </td>
                     </tr>
                     </tbody>

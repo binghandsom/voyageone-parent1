@@ -35,7 +35,6 @@ define([
                     function (res) {
                         $scope.vm.promotionList = res.data.platformList;
                         $scope.vm.onlySku = true;
-                        $scope.vm.updateFlag = true;
                         $scope.vm.revertTime=res.data.revertTime;
                     }
                 );
