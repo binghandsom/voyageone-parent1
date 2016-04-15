@@ -489,7 +489,9 @@ public class CmsTaskStockService extends BaseAppService {
                     //平台名
                     separatePlatformMap.put("cartName",cartId.getName());
                     //隔离比例
-                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%",""));
+                    separatePlatformMap.put("value",allSeparateCartIdMap.get(i).get("value").toString().replace("%", ""));
+                    //0：未执行自动还原; 1：已经执行自动还原;
+                    separatePlatformMap.put("revertFlg",allSeparateCartIdMap.get(i).get("revert_flg").toString());
                     //类型（1：隔离，2：共享）
                     separatePlatformMap.put("type",allSeparateCartIdMap.get(i).get("type").toString());
                     //还原时间
@@ -557,6 +559,8 @@ public class CmsTaskStockService extends BaseAppService {
             isNotSeparatePlatformMap.put("type", "2");
             //还原时间
             isNotSeparatePlatformMap.put("revertTime",revertTime);
+            //0：未执行自动还原; 1：已经执行自动还原;
+            isNotSeparatePlatformMap.put("revertFlg","1");
             //增优先
             isNotSeparatePlatformMap.put("addPriority",addPriority);
             //减优先
@@ -585,7 +589,7 @@ public class CmsTaskStockService extends BaseAppService {
         String revertTime="";
         //循环取得数据反应到初始画面
         for(int i=0;i<allSeparateCartIdMap.size();i++){
-            Map<String,String> separatePlatformMap  = new HashMap<>();
+            Map<String,Object> separatePlatformMap  = new HashMap<>();
             String separateType = allSeparateCartIdMap.get(i).get("type").toString();
             // 平台id
             separatePlatformMap.put("cartId", allSeparateCartIdMap.get(i).get("cartId").toString());
@@ -612,12 +616,17 @@ public class CmsTaskStockService extends BaseAppService {
                 separatePlatformMap.put("addPriority", allSeparateCartIdMap.get(i).get("addPriority").toString());
                 //减优先顺
                 separatePlatformMap.put("subtractPriority", allSeparateCartIdMap.get(i).get("subtractPriority").toString());
+                if("1".equals(allSeparateCartIdMap.get(i).get("revertFlg").toString())){
+                    separatePlatformMap.put("revertFlg",true);
+                } else {
+                    separatePlatformMap.put("revertFlg",false);
+                }
             }
             separatePlatformList.add(separatePlatformMap);
         }
         data.put("platformList", separatePlatformList);
         //活动ID
-        if(promotionType.equals("1")){
+        if(promotionType.equals(TYPE_PROMOTION_INSERT)){
             data.put("taskName", "");
         }else{
             data.put("taskName", name);

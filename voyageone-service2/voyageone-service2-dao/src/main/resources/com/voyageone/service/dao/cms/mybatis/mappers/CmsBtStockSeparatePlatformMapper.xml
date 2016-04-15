@@ -146,6 +146,7 @@
                 type type,
                 separate_percent value,
                 revert_time revertTime,
+                revert_flg revert_flg,
                 add_priority addPriority,
                 subtract_priority subtractPriority
         from voyageone_cms2.cms_bt_stock_separate_platform_info
