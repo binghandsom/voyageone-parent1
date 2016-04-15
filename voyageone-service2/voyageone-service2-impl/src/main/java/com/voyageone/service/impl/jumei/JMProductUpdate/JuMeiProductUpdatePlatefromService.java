@@ -316,8 +316,9 @@ public class JuMeiProductUpdatePlatefromService {
 
         // 特殊说明
         jmProductBean_DealInfo.setSpecial_explain(modelProduct.getSpecialNote());//jmBtProductImport.getSpecialNote());
-
-        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length()-1));
+if(partner_sku_nos.length()>0) {
+    jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
+}
 
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
