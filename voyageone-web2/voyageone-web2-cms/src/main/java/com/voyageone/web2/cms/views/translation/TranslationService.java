@@ -2,15 +2,12 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.impl.cms.CustomWordService;
-import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
-import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.CustomWordService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.enums.CartType;
@@ -92,7 +89,7 @@ public class TranslationService extends BaseAppService {
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(userInfo.getSelChannelId(), queryObject);
 
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels);
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
+
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
         translateTaskBean.setProdListTotal(cmsBtProductModels.size());
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
