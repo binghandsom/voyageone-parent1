@@ -8,5 +8,5 @@ import java.util.Map;
 
 @Repository
 public interface CmsMtJmConfigDaoExt {
-    public CmsMtJmConfigModel getByKey(String channelId,String key);
-    }
+    public CmsMtJmConfigModel getByKey(String channelId, String key);
+}

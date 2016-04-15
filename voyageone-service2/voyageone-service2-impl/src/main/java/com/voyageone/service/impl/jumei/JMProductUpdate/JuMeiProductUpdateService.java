@@ -42,7 +42,7 @@ public class JuMeiProductUpdateService {
         return daoCmsBtJmPromotion.select(id);
     }
     public int getShippingSystemId(String ChannelId) {
-        return 3934;
+        return 2813;
     }
     public List<CmsBtJmPromotionProductModel> getJuMeiNewListPromotionProduct(int promotionId) {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();

@@ -1,7 +1,9 @@
 package com.voyageone.service.impl.jumei;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsMtJmConfigDaoExt;
 import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.model.jumei.businessmodel.JMDefaultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,13 @@ public class CmsMtJmConfigService {
         map.put("channelId",channelId);
         map.put("key",key);
        return dao.selectOne(map);
+    }
+
+    public JMDefaultSet getJMDefaultSet(String channelId) throws Exception {
+        CmsMtJmConfigModel model = getByKey(channelId, "JM_IMAGE_SETTING");
+        JMDefaultSet jmDefaultSet = JacksonUtil.ToObjectFromJson(model.getValue(), JMDefaultSet.class);
+
+        return  jmDefaultSet;
     }
 }
 
