@@ -29,7 +29,8 @@ public class JuMeiUploadImageService {
     private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&*_''/‘’^\\()]");
     @Autowired
     private JumeiImageFileService jumeiImageFileService;
-
+@Autowired
+JMShopBeanService serviceJMShopBean;
     @Autowired
     JuMeiProductUpdateService serviceJuMeiProductUpdate;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiUploadImageService.class);
@@ -43,7 +44,7 @@ public class JuMeiUploadImageService {
         imageModel.setValue2(jmUrl);
     }
     public void uploadImage(CmsMtMasterInfoModel imageModel) throws Exception {
-        ShopBean shopBean=serviceJuMeiProductUpdate.getShopBean();
+        ShopBean shopBean = serviceJMShopBean.getShopBean();
         String jmUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean(imageModel));
         imageModel.setValue2(jmUrl);
     }

@@ -97,6 +97,18 @@ define([
                         dataType: imageData.dataType.toString()
                     }
                 }).then(this.initialize.bind(this));
+            },
+            loadJmMasterBrand:function() {
+                var self = this;
+                self.cmsMtMasterInfoService.loadJmMasterBrand().then(function (result) {
+                    console.log(result);
+                    if (result.data.result) {
+                        self.alert("同步成功");
+                    }
+                    else {
+                        self.alert(result.data.msg);
+                    }
+                })
             }
         };
 

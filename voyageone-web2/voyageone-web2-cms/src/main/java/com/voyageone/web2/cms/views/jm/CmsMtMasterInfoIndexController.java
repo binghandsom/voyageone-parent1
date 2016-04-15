@@ -1,12 +1,15 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.impl.jumei.CmsBtJmMasterBrandService;
 import com.voyageone.service.impl.jumei.CmsMtMasterInfoService;
 import com.voyageone.service.impl.jumei.JMProductUpdate.JuMeiUploadImageService;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,9 @@ public class CmsMtMasterInfoIndexController extends CmsController {
     private CmsMtMasterInfoService service;
     @Autowired
     private JuMeiUploadImageService serviceJuMeiUploadImage;
+    @Autowired
+    CmsBtJmMasterBrandService serviceCmsBtJmMasterBrand;
+    private static final Logger LOG = LoggerFactory.getLogger(CmsMtMasterInfoIndexController.class);
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.GET_LIST_BY_WHERE)
     public AjaxResponse getListByWhere(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();
@@ -84,6 +90,19 @@ public class CmsMtMasterInfoIndexController extends CmsController {
             params.setSynFlg(3);
             service.update(params);
             result.setMsg("上传图片失败!");
+            result.setResult(false);
+        }
+        return success(result);
+    }
+    @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.LoadJmMasterBrand)
+    public AjaxResponse  loadJmMasterBrand() {
+        CallResult result = new CallResult();
+        try {
+            String userName = getUser().getUserName();
+            serviceCmsBtJmMasterBrand.loadJmMasterBrand(userName);
+        } catch (Exception ex) {
+            LOG.error("loadJmMasterBrand", ex);
+            result.setMsg("聚美同步失败");
             result.setResult(false);
         }
         return success(result);

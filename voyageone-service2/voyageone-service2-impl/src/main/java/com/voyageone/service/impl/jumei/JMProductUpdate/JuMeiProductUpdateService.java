@@ -37,19 +37,12 @@ public class JuMeiProductUpdateService {
 
     @Autowired
     CmsMtMasterInfoDaoExt daoExtCmsMtMasterInfo;
-    public ShopBean getShopBean() {
-        ShopBean shopBean = new ShopBean();
-        shopBean.setAppKey("72");
-        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
-        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
-        shopBean.setApp_url("http://182.138.102.82:8868/");
-        return shopBean;
-    }
+
     public CmsBtJmPromotionModel getCmsBtJmPromotion(int id) {
         return daoCmsBtJmPromotion.select(id);
     }
     public int getShippingSystemId(String ChannelId) {
-        return 2121;
+        return 3934;
     }
     public List<CmsBtJmPromotionProductModel> getJuMeiNewListPromotionProduct(int promotionId) {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();

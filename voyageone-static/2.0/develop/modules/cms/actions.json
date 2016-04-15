@@ -141,6 +141,7 @@
         "jmNewByProductIdListInfo": "jmNewByProductIdListInfo",
         "updateDealEndTime": "updateDealEndTime",
         "updateDealEndTimeAll": "updateDealEndTimeAll"
+
       }
     },
     "cmsBtJmPromotionImportTask":{
@@ -164,7 +165,8 @@
         "saveImage": "update",
         "deleteImage": "delete",
         "updateJMImg": "updateJMImg",
-        "getCountByWhere":"getCountByWhere"
+        "getCountByWhere":"getCountByWhere",
+        "loadJmMasterBrand":"loadJmMasterBrand"
       },
       "$CmsMtJmConfigService": {
         "root": "/cms/cmsmtjmconfig/index",

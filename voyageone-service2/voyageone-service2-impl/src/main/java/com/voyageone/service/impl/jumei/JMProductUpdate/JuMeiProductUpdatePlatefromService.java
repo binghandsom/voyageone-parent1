@@ -60,10 +60,11 @@ public class JuMeiProductUpdatePlatefromService {
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     @Autowired
     CmsBtJmProductDao daoCmsBtJmProductDao;
-
+@Autowired
+    JMShopBeanService serviceJMShopBean;
     //活动上新
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
-        ShopBean shopBean = service.getShopBean();
+        ShopBean shopBean = serviceJMShopBean.getShopBean();
         LOG.info(promotionId + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);

@@ -89,6 +89,7 @@ interface CmsBtJmPromotionImportTask{
                 String GET = "get";
                 String UPDATEJMIMG="updateJMImg";
                 String GetCountByWhere="getCountByWhere";
+                String LoadJmMasterBrand="loadJmMasterBrand";
             }
         }
     }

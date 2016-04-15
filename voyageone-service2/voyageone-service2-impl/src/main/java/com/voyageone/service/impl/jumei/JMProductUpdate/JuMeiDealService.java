@@ -21,9 +21,11 @@ public class JuMeiDealService {
     JuMeiProductUpdateService serviceJuMeiProductUpdate;
     @Autowired
     JumeiHtDealService serviceJumeiHtDeal;
+    @Autowired
+    JMShopBeanService serviceJMShopBean;
     public   void updateDealEndTime(int promotionId) throws Exception {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();
-        ShopBean shopBean = serviceJuMeiProductUpdate.getShopBean();
+        ShopBean shopBean = serviceJMShopBean.getShopBean();
         parameterPromotionProduct.put("promotionId", promotionId);
         parameterPromotionProduct.put("dealEndTimeState", 1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
