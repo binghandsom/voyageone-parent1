@@ -66,6 +66,19 @@ public class ProductTranslationBean {
      */
     private String productImage;
 
+    public List<List<String>> getProdImageList() {
+        return prodImageList;
+    }
+
+    public void setProdImageList(List<List<String>> prodImageList) {
+        this.prodImageList = prodImageList;
+    }
+
+    /**
+     * 产品图片.
+     */
+    private List<List<String>> prodImageList;
+
     private String translator;
 
     private List<Object> otherProducts;

@@ -13,6 +13,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
@@ -44,7 +45,7 @@ public class TranslationService extends BaseAppService {
     protected CmsMtCustomWordDao customWordDao;
 
     private static String[] RET_FIELDS = {
-            "prodId",
+            "prodId", "images1", "images2", "images3", "images4",
             "fields.code",
             "fields.productNameEn",
             "fields.longDesEn",
@@ -312,7 +313,36 @@ public class TranslationService extends BaseAppService {
             translationBean.setShortDesCn(productModel.getFields().getShortDesCn());
             translationBean.setModel(productModel.getFields().getModel());
             translationBean.setProductCode(productModel.getFields().getCode());
+
+            // 设置商品图片
             translationBean.setProductImage(productModel.getFields().getImages1().get(0).getName());
+            List<List<String>> imageList = new ArrayList<>(4);
+            List<CmsBtProductModel_Field_Image> images1 = productModel.getFields().getImages1();
+            List<CmsBtProductModel_Field_Image> images2 = productModel.getFields().getImages2();
+            List<CmsBtProductModel_Field_Image> images3 = productModel.getFields().getImages3();
+            List<CmsBtProductModel_Field_Image> images4 = productModel.getFields().getImages4();
+            List<String> images1Arr = new ArrayList<>(images1.size());
+            List<String> images2Arr = new ArrayList<>(images2.size());
+            List<String> images3Arr = new ArrayList<>(images3.size());
+            List<String> images4Arr = new ArrayList<>(images4.size());
+            for (CmsBtProductModel_Field_Image imageItem : images1) {
+                images1Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images2) {
+                images2Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images3) {
+                images3Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images4) {
+                images4Arr.add(imageItem.getName());
+            }
+            imageList.add(images1Arr);
+            imageList.add(images2Arr);
+            imageList.add(images3Arr);
+            imageList.add(images4Arr);
+            translationBean.setProdImageList(imageList);
+
             translationBean.setModifiedTime(productModel.getModified());
             translationBean.setProdId(productModel.getProdId());
             translationBean.setTranslator(productModel.getFields().getTranslator());

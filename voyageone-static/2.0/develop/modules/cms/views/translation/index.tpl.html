@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-controller="translationDetailController as ctrl" ng-init="ctrl.initialize()">
+<div class="wrapper-md" ng-init="initialize()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -12,19 +12,19 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_UN_TRANSLATION"></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.taskInfos.totalUndoneCount" disabled>
+                                        <input type="text" class="form-control" ng-model="vm.taskInfos.totalUndoneCount" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_TRANSLATED"></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.taskInfos.totalDoneCount" disabled>
+                                        <input type="text" class="form-control" ng-model="vm.taskInfos.totalDoneCount" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_PERSONAL_FINISHED_TRANSLATION"></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.taskInfos.userDoneCount" disabled>
+                                        <input type="text" class="form-control" ng-model="vm.taskInfos.userDoneCount" disabled>
                                     </div>
                                 </div>
                             </form>
@@ -36,10 +36,10 @@
                                     <label class="col-sm-4 control-label" translate="TXT_DISTRIBUTION_RULE"></label>
                                     <div class="col-sm-7" style="padding-left:0px">
                                         <!--<label class="checkbox-inline c-radio">-->
-                                        <!--<input type="radio" ng-model="ctrl.distributeRule" onclick="this.checked=false;" value="0"><span class="fa fa-check"></span>  全部商品-->
+                                        <!--<input type="radio" ng-model="vm.distributeRule" onclick="this.checked=false;" value="0"><span class="fa fa-check"></span>  全部商品-->
                                         <!--</label>-->
                                         <label class="checkbox-inline c-radio">
-                                            <input type="radio" ng-model="ctrl.getTaskInfo.distributeRule" value="1"><span class="fa fa-check"></span>&nbsp;{{'TXT_MAIN_PRODUCT' | translate}}
+                                            <input type="radio" ng-model="vm.getTaskInfo.distributeRule" value="1"><span class="fa fa-check"></span>&nbsp;{{'TXT_MAIN_PRODUCT' | translate}}
                                         </label>
                                     </div>
                                 </div>
@@ -47,19 +47,19 @@
                                     <label class="col-sm-4 control-label"></label>
                                     <div class="col-sm-7">
                                         <div class="col-sm-5">
-                                            <select class="form-control" ng-model="ctrl.getTaskInfo.sortCondition"
-                                                    ng-options="option.value as option.name for option in ctrl.sortFieldOptions">
+                                            <select class="form-control" ng-model="vm.getTaskInfo.sortCondition"
+                                                    ng-options="option.value as option.name for option in vm.sortFieldOptions">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-3 text-right">
                                             <label class="checkbox-inline c-radio">
-                                                <input name="sortOne" type="radio" value="1" ng-model="ctrl.getTaskInfo.sortRule"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                                <input name="sortOne" type="radio" value="1" ng-model="vm.getTaskInfo.sortRule"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
                                             </label>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="checkbox-inline c-radio">
-                                                <input name="sortOne" type="radio" value="-1" ng-model="ctrl.getTaskInfo.sortRule"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                                <input name="sortOne" type="radio" value="-1" ng-model="vm.getTaskInfo.sortRule"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                             </label>
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.getTaskInfo.distributeCount" ng-pattern="/^(\d+)$/">
+                                        <input type="text" class="form-control" ng-model="vm.getTaskInfo.distributeCount" ng-pattern="/^(\d+)$/">
                                     </div>
                                 </div>
                             </form>
@@ -78,19 +78,19 @@
                                 <div class="form-group">
                                     <label class="control-label form-inline" translate="TXT_FUZZY_SEARCH"></label>
                                     <div class="form-inline">
-                                        <input type="text" ng-model="ctrl.searchInfo.searchCondition"  class="form-control col-sm-10">
+                                        <input type="text" ng-model="vm.searchInfo.searchCondition"  class="form-control col-sm-10">
                                     </div>
                                     <div style="color:#ee903d;">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;查询包括:产品Code,产品名称（英文）,长标题,中标题,短标题,长描述（中文）,短描述（中文）,长描述（英文）,短描述（英文）
                                     </div>
-                                    <span class="input-group-btn" ><button class="btn btn-vo" style="width:90px" ng-click="ctrl.searchHistoryTasks(1)" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
+                                    <span class="input-group-btn" ><button class="btn btn-vo" style="width:90px" ng-click="searchHistoryTasks(1)" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
                                 </div>
                             </form>
                             <div>
                                 <div class="col-sm-7">
                                     <label class="col-sm-4 control-label">翻译状态</label>
                                     <div class="col-sm-3 text-right">
-                                        <select class="form-control" style="width:100px" ng-model="ctrl.searchInfo.tranSts">
+                                        <select class="form-control" style="width:100px" ng-model="vm.searchInfo.tranSts">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             <option value="0">未翻译</option>
                                             <option value="1">已翻译</option>
@@ -102,8 +102,8 @@
                         </div>
                         <div class="">
                             <div class="form-inline">
-                                <button class="btn btn-default" ng-click="ctrl.clearConditions()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
-                                <button class="btn btn-success" ng-click="ctrl.assignTasks()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK' | translate}}</button>
+                                <button class="btn btn-default" ng-click="clearConditions()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+                                <button class="btn btn-success" ng-click="assignTasks()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK' | translate}}</button>
                             </div>
                             <!-- .form-inline -->
                         </div>
@@ -126,38 +126,38 @@
                     <th class="text-center" translate="Action"></th>
                 </tr>
                 </thead>
-                <tbody ng-if="ctrl.taskInfos.productTranslationBeanList.length == 0" >
-                    <tr style="padding-left:0px"><td colspan="7"><div if-no-rows="ctrl.taskInfos.productTranslationBeanList.length"></div></td></tr>
+                <tbody ng-if="vm.taskInfos.productTranslationBeanList.length == 0" >
+                    <tr style="padding-left:0px"><td colspan="7"><div if-no-rows="vm.taskInfos.productTranslationBeanList.length"></div></td></tr>
                 </tbody>
-                <tbody ng-if="ctrl.taskInfos.productTranslationBeanList.length > 0" ng-repeat = "translationModel in ctrl.taskInfos.productTranslationBeanList">
+                <tbody ng-if="vm.taskInfos.productTranslationBeanList.length > 0" ng-repeat = "translationModel in vm.taskInfos.productTranslationBeanList">
                 <tr>
                     <td class="text-center mfb-xt">{{$index + 1}}</td>
                     <td class="text-left mfb-xxt yellowLink" ng-controller="popupCtrl">
                         <p><a ng-click="openTranslate('md',translationModel)">{{translationModel.productCode}}</a></p>
-                        <p><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-lg pull-left"/></p>
+                        <p><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-lg pull-left" ng-click="openImagedetail({'mainPic':translationModel.productImage,'picList':translationModel.prodImageList})"/></p>
                         <p class="col-sm-12 text-left text-vo m-t-xs">{{'TXT_TRANSLATOR_WIT_COLON'| translate}}{{translationModel.translator}}</p>
                     </td>
                     <td class="text-left mfb-xxs">{{translationModel.productName}}</td>
                     <td class="text-left mfb-xxs">
-                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longTitle"  maxlength="{{ctrl.lenInfo.long_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
+                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longTitle"  maxlength="{{vm.lenInfo.long_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
                         <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">
                             {{translationModel.longTitle == null || translationModel.longTitle.length == 0?'required':
-                            (('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.long_title.maxLen - translationModel.longTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
+                            (('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (vm.lenInfo.long_title.maxLen - translationModel.longTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
                     </td>
                     <td class="text-left mfb-xxx">
-                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.middleTitle" maxlength="{{ctrl.lenInfo.middle_title.maxLen}}" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
-                        <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.middle_title.maxLen - translationModel.middleTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
+                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.middleTitle" maxlength="{{vm.lenInfo.middle_title.maxLen}}" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
+                        <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (vm.lenInfo.middle_title.maxLen - translationModel.middleTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
                     </td>
                     <td class="text-left mfb-xxx">
-                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortTitle" maxlength="{{ctrl.lenInfo.short_title.maxLen}}"  placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
-                        <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_title.maxLen - translationModel.shortTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
+                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortTitle" maxlength="{{vm.lenInfo.short_title.maxLen}}"  placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
+                        <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (vm.lenInfo.short_title.maxLen - translationModel.shortTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
                     </td>
                     <td class="text-center">
-                        <!--<button title="从已有数据拷贝" class="btn btn-danger btn-xs m-b-xs" ng-click="ctrl.copyFormMainProduct(translationModel,$index)"><i class="fa fa-cloud-download"></i> 从已有数据拷贝</button>-->
+                        <!--<button title="从已有数据拷贝" class="btn btn-danger btn-xs m-b-xs" ng-click="vm.copyFormMainProduct(translationModel,$index)"><i class="fa fa-cloud-download"></i> 从已有数据拷贝</button>-->
                         <!--<br/>-->
-                        <button class="btn btn-vo btn-xs" ng-click="ctrl.saveTask(translationModel,$index)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
-                        <button class="btn btn-success btn-xs" ng-click="ctrl.submitTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'BTN_COMPLETE' | translate}}</button>
-                        <button ng-if="translationModel.tranSts == 1" class="btn btn-success btn-xs" style="background-color:skyblue" ng-click="ctrl.cancelTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;撤销</button>
+                        <button class="btn btn-vo btn-xs" ng-click="saveTask(translationModel,$index)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
+                        <button class="btn btn-success btn-xs" ng-click="submitTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'BTN_COMPLETE' | translate}}</button>
+                        <button ng-if="translationModel.tranSts == 1" class="btn btn-success btn-xs" style="background-color:skyblue" ng-click="cancelTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;撤销</button>
                     </td>
                 </tr>
                 <tr>
@@ -182,8 +182,8 @@
                     <td class="text-left mfb-x" style="border-top:0px"></td>
                     <td class="text-left" colspan="2" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
                     <td class="text-left" colspan="2" style="border-top:0px">
-                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn"  maxlength="{{ctrl.lenInfo.short_desc.maxLen}}"  placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
-                        <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" >{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_desc.maxLen - translationModel.shortDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
+                        <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn"  maxlength="{{vm.lenInfo.short_desc.maxLen}}"  placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
+                        <div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" >{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (vm.lenInfo.short_desc.maxLen - translationModel.shortDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
                     </td>
                     <td class="text-center" style="border-top:0px">
                     </td>
@@ -192,7 +192,7 @@
             </table>
         </div>
         <div class="col-sm-12 m-t-lg m-b-lg">
-            <vpagination config="ctrl.prodPageOption"></vpagination>
+            <vpagination config="vm.prodPageOption"></vpagination>
         </div>
     </div><!-- tabs ng-controller -->
 </div><!-- .col-lg-12 -->
