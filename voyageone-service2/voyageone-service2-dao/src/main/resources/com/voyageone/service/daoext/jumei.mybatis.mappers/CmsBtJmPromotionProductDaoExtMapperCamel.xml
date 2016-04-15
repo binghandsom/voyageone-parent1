@@ -162,7 +162,7 @@ WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
     </foreach>
     </delete>
     <update id="jmNewUpdateAll">
-        update cms_bt_jm_promotion_product set synch_state=1,error_msg=''  where cms_bt_jm_promotion_id=#{promotionId} and synch_state in (0,4）
+           UPDATE  `cms_bt_jm_promotion_product` set synch_state=1,error_msg=''  WHERE `cms_bt_jm_promotion_id`=#{promotionId}  and synch_state in (0,4)
     </update>
     <update id="jmNewByProductIdListInfo">
         UPDATE  `cms_bt_jm_promotion_product` set synch_state=1,error_msg=''  WHERE `cms_bt_jm_promotion_id`=#{promotionId}  and synch_state in (0,4)

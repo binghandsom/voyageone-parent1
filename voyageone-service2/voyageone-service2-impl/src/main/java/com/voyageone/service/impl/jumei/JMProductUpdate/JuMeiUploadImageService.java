@@ -72,7 +72,7 @@ JMShopBeanService serviceJMShopBean;
         if (imageModel.getDataType() == JumeiImageType.BRANDSTORY.getId() || imageModel.getDataType() == JumeiImageType.SIZE.getId()) {
             jmImageFileBean.setImgName(MD5.getMD5(imageModel.getBrandName()+imageModel.getSizeType()) + "_" + imageModel.getDataType() + "_" + imageModel.getImageIndex() /*+IMGTYPE*/);
         } else {
-            jmImageFileBean.setImgName(special_symbol.matcher(imageModel.getBrandName()).replaceAll("") + imageModel.getDataType() + "_" + imageModel.getImageIndex()/*+IMGTYPE*/);
+            jmImageFileBean.setImgName(MD5.getMD5(special_symbol.matcher(imageModel.getBrandName()).replaceAll("")) + imageModel.getDataType() + "_" + imageModel.getImageIndex()/*+IMGTYPE*/);
         }
         jmImageFileBean.setNeedReplace(NEED_REPLACE);
         jmImageFileBean.setExtName("jpg");

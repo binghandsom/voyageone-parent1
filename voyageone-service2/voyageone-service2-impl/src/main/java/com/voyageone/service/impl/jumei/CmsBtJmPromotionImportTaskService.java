@@ -234,10 +234,15 @@ public class CmsBtJmPromotionImportTaskService {
             //2.  cms_bt_jm_promotion_sku  cms_bt_jm_sku
             List<CmsBtJmImportSku> productCmsBtJmImportSkuList = getListCmsBtJmImportSkuByProductCode(listSkuModel, importProductModel.getProductCode());
             loadSaveSkuInfoByImportModel(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
-            if(productCmsBtJmImportSkuList.size()>0) {
-                saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
-                saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
-                saveInfo.getPromotionProductModel().setDiscount(BigDecimalUtil.divide( saveInfo.getPromotionProductModel().getDealPrice(), saveInfo.getPromotionProductModel().getMarketPrice(),2));
+            try {
+                if (productCmsBtJmImportSkuList.size() > 0) {
+                    saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
+                    saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
+                    saveInfo.getPromotionProductModel().setDiscount(BigDecimalUtil.divide(saveInfo.getPromotionProductModel().getDealPrice(), saveInfo.getPromotionProductModel().getMarketPrice(), 2));
+                }
+            }catch (Exception ex)
+            {
+                String aa="";
             }
             //3.cms_mt_master_info
             loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveImportInfo);
@@ -321,8 +326,8 @@ public class CmsBtJmPromotionImportTaskService {
             //modelCmsBtJmPromotionProduct.setMarketPrice();
             modelCmsBtJmPromotionProduct.setCreated(new Date());
             modelCmsBtJmPromotionProduct.setCreater(modelCmsBtJmPromotionImportTask.getCreater());
-            saveInfo.setPromotionProductModel(modelCmsBtJmPromotionProduct);//活动商品
         }
+        saveInfo.setPromotionProductModel(modelCmsBtJmPromotionProduct);//活动商品
     }
     public void loadCmsMtMasterInfoModel(CmsBtJmImportProduct importProductModel, CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmImportSaveInfo saveImportInfo) {
 /*
