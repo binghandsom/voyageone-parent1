@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$close()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"><i class="glyphicon glyphicon-cog"></i><span class="label m-r-sm m-l" >&nbsp;Cart setting&nbsp;</span></h5>
+        <h5 class="modal-title"><i class="glyphicon glyphicon-cog"></i><span class="label m-r-sm m-l" >&nbsp;Cart Edit&nbsp;</span></h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal m-l-md m-b-md ng-pristine ng-valid">
@@ -12,9 +12,12 @@
                     <div class="form-horizontal">
                         <div class="form-group">
                             <div class="col-sm-10">
-                                <label class="col-sm-3 control-label">Juicy Counture</label>
+                                <label class="col-sm-3 control-label" translate="TXT_CART_ID"></label>
                                 <div class="col-sm-7">
-                                    <input type="text" placeholder="请输入数字" />
+                                    <input class="form-control" type="text" placeholder="请输入数字" />
+                                </div>
+                                <div class="col-sm-2">
+                                    &nbsp;{{'TXT_REQUIRED' | translate}}
                                 </div>
                             </div>
                         </div>
@@ -22,7 +25,10 @@
                             <div class="col-sm-10">
                                 <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
                                 <div class="col-sm-7">
-                                    <input type="text" placeholder="Tmall" />
+                                    <input class="form-control" type="text" placeholder="Tmall" />
+                                </div>
+                                <div class="col-sm-2">
+                                    &nbsp;{{'TXT_REQUIRED' | translate}}
                                 </div>
                             </div>
                         </div>
@@ -30,7 +36,10 @@
                             <div class="col-sm-10">
                                 <label class="col-sm-3 control-label" translate="TXT_SHORT_NAME"></label>
                                 <div class="col-sm-7">
-                                    <input type="text" placeholder="TM" />
+                                    <input class="form-control" type="text" placeholder="TM" />
+                                </div>
+                                <div class="col-sm-2">
+                                    &nbsp;{{'TXT_REQUIRED' | translate}}
                                 </div>
                             </div>
                         </div>
@@ -38,7 +47,7 @@
                             <div class="col-sm-10">
                                 <label class="col-sm-3 control-label" translate="TXT_MSG_SHORT_DESCRIPTION"></label>
                                 <div class="col-sm-7">
-                                    <input type="text" placeholder="Tmall" />
+                                    <input class="form-control" type="text" placeholder="Tmall" />
                                 </div>
                             </div>
                         </div>
@@ -51,44 +60,22 @@
                                         <option value="TM">TM</option>
                                     </select>
                                 </div>
+                                <div class="col-sm-2">
+                                    &nbsp;{{'TXT_REQUIRED' | translate}}
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10">
-                                <label class="col-sm-3 control-label">Juicy Counture</label>
+                                <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
                                 <div class="col-sm-7">
-                                    <input class="form-control" type="text" placeholder="请输入数字" />
+                                    <ul>
+                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span class="ng-binding">Yes</span></div>
+                                        <div class="col-sm-6"><input type="radio" name="optionsRadios" value="option1"><span>No</span></div>
+                                    </ul>
                                 </div>
-                            </div>
-                        </div><!-- .form-group -->
-                    </div>
-                </div>
-            </div>
-            <hr />
-            <div class="form-group">
-                <div class="col-sm-12">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <div class="row col-sm-12">
-                                <div class="col-sm-3">
-                                    <label class="checkbox-inline c-checkbox">
-                                        <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="京东轻奢店" style=""><span class="fa fa-check"></span> 京东轻奢店
-                                    </label>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="checkbox-inline c-checkbox">
-                                        <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="京东生活店" style=""><span class="fa fa-check"></span> 京东生活店
-                                    </label>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="checkbox-inline c-checkbox">
-                                        <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="聚美美国馆" style=""><span class="fa fa-check"></span> 聚美美国馆
-                                    </label>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="checkbox-inline c-checkbox">
-                                        <input type="checkbox" ng-value="productStatus.value" class="ng-valid ng-not-empty ng-dirty ng-valid-parse ng-touched" value="天猫USJOI" style=""><span class="fa fa-check"></span> 天猫USJOI
-                                    </label>
+                                <div class="col-sm-2">
+                                    &nbsp;{{'TXT_REQUIRED' | translate}}
                                 </div>
                             </div>
                         </div><!-- .form-group -->
