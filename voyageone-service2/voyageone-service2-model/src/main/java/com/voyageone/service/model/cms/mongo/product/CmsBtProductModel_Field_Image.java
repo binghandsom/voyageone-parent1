@@ -34,7 +34,11 @@ public class CmsBtProductModel_Field_Image extends BaseMongoMap<String, Object> 
         // 20160121 tom 结构调整 START
         // 原本这边定下的名字是name, 但是发现刘耀的主数据的schema里的名字有些是image1, 有些是image2……
 //        return getAttribute("name");
-        return this.get(this.keySet().iterator().next()).toString();
+        if (this.keySet().iterator().hasNext()) {
+            return this.get(this.keySet().iterator().next()).toString();
+        } else {
+            return  "";
+        }
         // 20160121 tom 结构调整 END
     }
 
