@@ -1,18 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.mongodb.WriteResult;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformRemoveFieldsModel;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -25,6 +12,18 @@ import com.voyageone.common.masterdate.schema.label.Label;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
+import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformRemoveFieldsModel;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +96,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         //删除原有数据
 //        cmsMtCategorySchemaDao.deleteAll();
 
-        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys();
+        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(CartEnums.Cart.TG.getId()));
 
         List<CmsMtCommonPropActionDefModel> allDefModels = cmsMtCommonPropDao.selectActionModelList();
 
@@ -139,10 +138,13 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         for (JSONObject schemaId:schemaIds) {
             String id = schemaId.get("_id").toString();
-            CmsMtPlatformCategorySchemaModel schemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(id);
+            CmsMtPlatformCategorySchemaModel schemaModel =
+                    cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(
+                            id,
+                            Integer.parseInt(CartEnums.Cart.TG.getId()));
             if (schemaModel != null){
                 if(isExist(schemaModel.getCatFullPath())) continue;
-                if (CartEnums.Cart.TG == CartEnums.Cart.getValueByID(schemaModel.getCartId().toString())) {
+                if (CartEnums.Cart.TG == CartEnums.Cart.getValueByID(String.valueOf(schemaModel.getCartId()))) {
 
                     String itemSchema = schemaModel.getPropsItem();
                     String productSchema = schemaModel.getPropsProduct();

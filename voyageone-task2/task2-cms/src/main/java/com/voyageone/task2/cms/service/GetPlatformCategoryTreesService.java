@@ -202,7 +202,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         List<CmsMtPlatformCategoryTreeModel> platformCategoryMongoBeanList = new ArrayList<>();
         for (PlatformCategoriesModel category: platformCategoriesModelList){
             CmsMtPlatformCategoryTreeModel mongoModel = new CmsMtPlatformCategoryTreeModel();
-            mongoModel.setCartId(null);
+//            mongoModel.setCartId(null);
             mongoModel.setCatId(category.getPlatformCid());
             mongoModel.setCatName(category.getCidName());
             mongoModel.setParentCatId(category.getParentCid());
