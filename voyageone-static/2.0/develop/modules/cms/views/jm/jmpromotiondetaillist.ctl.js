@@ -27,7 +27,7 @@ define([
         };
         $scope.search = function () {
            // console.log("searchInfo");
-            console.log($scope.searchInfo);
+           // console.log($scope.searchInfo);
             loadSearchInfo();
             jmPromotionDetailService.getPromotionProductInfoListByWhere($scope.searchInfo).then(function (res) {
                 //console.log(res);
@@ -54,8 +54,8 @@ define([
                 }
             }
             var parameter={promotionId:$scope.vm.promotionId,productIdList:productIdList};
-            console.log(parameter);
-            console.log(angular.toJson(parameter));
+            //console.log(parameter);
+            //console.log(angular.toJson(parameter));
             confirm($translate.instant('TXT_Do_You_Want_To_Selected')).result.then(function () {
                 jmPromotionDetailService.jmNewByProductIdListInfo(parameter).then(function () {
                     for (var i=$scope.vm.modelList.length-1;i>=0;i--) {
@@ -90,8 +90,8 @@ define([
                 }
             }
             var parameter={promotionId:$scope.vm.promotionId,productIdList:productIdList};
-           console.log(parameter);
-            console.log(angular.toJson(parameter));
+           //console.log(parameter);
+           // console.log(angular.toJson(parameter));
             confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
                 jmPromotionDetailService.deleteByProductIdList(parameter).then(function () {
                     for (var i=$scope.vm.modelList.length-1;i>=0;i--) {

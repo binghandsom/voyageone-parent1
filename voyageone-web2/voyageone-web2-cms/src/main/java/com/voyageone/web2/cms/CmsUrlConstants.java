@@ -58,6 +58,12 @@ public interface CmsUrlConstants {
                 String JmNewByProductIdListInfo="jmNewByProductIdListInfo";
                 String updateDealEndTime="updateDealEndTime";
                 String UpdateDealEndTimeAll="updateDealEndTimeAll";
+                String GET_PRODUCT_DETAIL = "getProductDetail";
+                String UPDATE_PRODUCT_DETAIL = "updateProductDetail";
+                String UPDATE_PROMOTION_PRODUCT_DETAIL = "updatePromotionProductDetail";
+                String UPDATE_SKU_DETAIL = "updateSkuDetail";
+                String DELETE_PROMOTION_SKU = "deletePromotionSku";
+                String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
             }
         }
     }

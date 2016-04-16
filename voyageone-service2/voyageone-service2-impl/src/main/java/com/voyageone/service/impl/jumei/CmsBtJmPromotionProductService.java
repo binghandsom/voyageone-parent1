@@ -1,14 +1,13 @@
 package com.voyageone.service.impl.jumei;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.service.dao.jumei.*;
+import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
-import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.model.util.MapModel;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +85,11 @@ public class CmsBtJmPromotionProductService {
     //部分商品上新
     public int updateDealEndTime(ParameterUpdateDealEndTime parameter) {
         return daoExt.updateDealEndTime(parameter);
+    }
+
+    // 根据条件检索出promoiton的product数据
+    public CmsBtJmPromotionProductModel selectOne(Map<String, Object> param) {
+        return dao.selectOne(param);
     }
 }
 

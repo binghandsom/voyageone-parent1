@@ -140,7 +140,13 @@
         "jmNewUpdateAll": "jmNewUpdateAll",
         "jmNewByProductIdListInfo": "jmNewByProductIdListInfo",
         "updateDealEndTime": "updateDealEndTime",
-        "updateDealEndTimeAll": "updateDealEndTimeAll"
+        "updateDealEndTimeAll": "updateDealEndTimeAll",
+        "getProductDetail": "getProductDetail",
+        "updateProductDetail": "updateProductDetail",
+        "updatePromotionProductDetail": "updatePromotionProductDetail",
+        "updateSkuDetail": "updateSkuDetail",
+        "deletePromotionSku": "deletePromotionSku",
+        "getProductMasterData": "getProductMasterData"
 
       }
     },

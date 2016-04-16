@@ -7,7 +7,7 @@
     <!-- localhost dev env -->
 
     <!-- Common相关配置 -->
-    <import resource="classpath*:common-config.xml" />
+    <!--<import resource="classpath*:common-config.xml" />-->
     <!-- DAO相关配置 -->
     <import resource="classpath*:datasource-cms2-config.xml" />
     <import resource="classpath*:datasource-jumei-config.xml" />

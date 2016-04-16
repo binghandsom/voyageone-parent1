@@ -18,7 +18,7 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_PROMOTION_NAME"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" placeholder="双十一活动" ng-model="parentModel.name" disabled>
+										<input type="text" class="form-control" ng-model="parentModel.name" disabled>
 									</div>
 								</div>
 							</div>
@@ -220,7 +220,7 @@
 				<tab>
 					<tab-heading>Product 详情</tab-heading>
 			    <div class="table-responsive">
-				<table class="table table-hover-new vo_table dropdown_table_main" style="width:2800px;margin-bottom:0px;table-layout: fixed;" ng-controller="popupCtrl">
+				<table class="table table-hover-new vo_table dropdown_table_main" style="width:2800px;margin-bottom:0px;table-layout: fixed;">
 					<thead>
 					<tr>
 						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  /><span class="fa fa-check"></span></label></th>
@@ -243,7 +243,7 @@
 						<th>Action</th>
 					</tr>
 					</thead>
-					<tbody ng-if="vm.modelList.length">
+					<tbody ng-if="vm.modelList.length" ng-controller="popupCtrl">
 					<tr ng-repeat="model in vm.modelList">
 						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="model.isChecked"><span class="fa fa-check"></span></label></td>
 						<!--<td class="text-center"><img alt="100001" class="img-circle"></td>-->
@@ -258,7 +258,7 @@
 						<td class="text-center">{{model.appId}}</td>
 						<td class="text-center">{{model.jumeiProductId}}</td>
 						<td class="text-center">
-							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail('lg')">{{model.productCode}}</button>
+							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail({'productCode': model.productCode, 'cmsBtJmPromotionId': parentModel.id})">{{model.productCode}}</button>
 						</td>
 						<td>{{model.jmHashId}}</td>
 						<td>{{model.productLongName}}</td>
@@ -294,7 +294,7 @@
 						<td>{{model.state=="1"?"待再售":"在售"}}</td>
 						<td>
 							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
-							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail('md')"><i class="fa fa-pencil"></i></button>
+							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmProductDetail({productCode: model.productCode, cmsBtJmPromotionId: parentModel.id})"><i class="fa fa-pencil"></i></button>
 							<button title="保存" ng-disabled="!model.isSave" class="btn btn-vo btn-xs"       ng-click="updateDealPrice(model);" ><i class="glyphicon glyphicon-floppy-disk"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs"   ng-click="del(model)"              ><i class="fa fa-trash-o"></i>                     </button>
 						</td>
@@ -366,7 +366,7 @@
 						</table>
 					</div>
 				</tab>
-		</tabset>
+			</tabset>
 		</div>
 	</div>
 </div><!-- end .wrapper-md -->

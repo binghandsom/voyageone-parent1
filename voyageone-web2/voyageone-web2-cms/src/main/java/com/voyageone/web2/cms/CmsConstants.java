@@ -77,4 +77,10 @@ public interface CmsConstants extends BaseConstants{
 
         String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
     }
+
+    interface jmMasterPlatCode {
+        String BRND = "0";
+        String PRICE_UNIT = "1";
+        String STOCK = "2";
+    }
 }

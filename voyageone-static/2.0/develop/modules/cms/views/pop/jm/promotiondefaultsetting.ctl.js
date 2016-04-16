@@ -37,6 +37,7 @@ define([
             // 保存
             ok: function () {
                 var self = this;
+                self.imageConfig.key = "JM_IMAGE_SETTING";
                 self.imageConfig.value = JSON.stringify(self.imageConfig.value);
                 if (self.imageConfig.creater)
                     self.cmsMtJmConfigService.update(self.imageConfig).then(function () {

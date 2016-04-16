@@ -219,12 +219,7 @@ public class TypeConfigEnums {
 		/**
 		 * 获取任务的优先顺序:cms2
 		 */
-		translateTask(66),
-
-		/**
-		 * 聚美发货仓库ID
-		 */
-		jmShippingStock(70);
+		translateTask(66);
 
     	private int id;
 

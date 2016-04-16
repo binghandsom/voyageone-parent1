@@ -1,10 +1,11 @@
 package com.voyageone.service.impl.jumei;
-import com.voyageone.service.dao.jumei.*;
-import com.voyageone.service.model.jumei.*;
+
+import com.voyageone.service.dao.jumei.CmsBtJmProductDao;
+import com.voyageone.service.model.jumei.CmsBtJmProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/3/18.
@@ -27,5 +28,12 @@ public class CmsBtJmProductService {
     {
                    return dao.insert(entity);
     }
+
+    // 根据条件检索出product数据
+    public CmsBtJmProductModel selectOne(Map<String, Object> param) {
+            return dao.selectOne(param);
     }
+}
+
+
 
