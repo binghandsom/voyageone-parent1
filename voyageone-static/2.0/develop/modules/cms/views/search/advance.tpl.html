@@ -57,10 +57,10 @@
 										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
-								<select class="form-control" ng-model="option.inputOpts"
-										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
-									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-								</select>
+								<!--<select class="form-control" ng-model="option.inputOpts"-->
+										<!--ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">-->
+									<!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+								<!--</select>-->
 								<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>
 								<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
 								<button ng-if="$last" id="addCustDiv" class="btn btn-success" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
