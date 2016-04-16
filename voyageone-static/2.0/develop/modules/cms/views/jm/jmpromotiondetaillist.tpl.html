@@ -243,8 +243,8 @@
 						<th>Action</th>
 					</tr>
 					</thead>
-					<tbody ng-if="vm.modelList.length" ng-controller="popupCtrl">
-					<tr ng-repeat="model in vm.modelList">
+					<tbody ng-if="vm.modelList.length">
+					<tr ng-repeat="model in vm.modelList" ng-controller="popupCtrl">
 						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="model.isChecked"><span class="fa fa-check"></span></label></td>
 						<!--<td class="text-center"><img alt="100001" class="img-circle"></td>-->
 						<td ng-if="model.synchState==0">未上传</td>
@@ -258,7 +258,7 @@
 						<td class="text-center">{{model.appId}}</td>
 						<td class="text-center">{{model.jumeiProductId}}</td>
 						<td class="text-center">
-							<button class="btn btn-default btn-xs" ng-click="openJmProductDetail({'productCode': model.productCode, 'cmsBtJmPromotionId': parentModel.id})">{{model.productCode}}</button>
+							<button class="btn btn-default btn-xs" ng-click="$parent.openJmProductDetail({'productCode': model.productCode, 'cmsBtJmPromotionId': parentModel.id}, openJmProductDetail)">{{model.productCode}}</button>
 						</td>
 						<td>{{model.jmHashId}}</td>
 						<td>{{model.productLongName}}</td>
@@ -294,7 +294,7 @@
 						<td>{{model.state=="1"?"待再售":"在售"}}</td>
 						<td>
 							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
-							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmProductDetail({productCode: model.productCode, cmsBtJmPromotionId: parentModel.id})"><i class="fa fa-pencil"></i></button>
+							<button title="编辑" class="btn btn-success btn-xs" ng-click="$parent.openJmProductDetail({productCode: model.productCode, cmsBtJmPromotionId: parentModel.id}, openJmProductDetail)"><i class="fa fa-pencil"></i></button>
 							<button title="保存" ng-disabled="!model.isSave" class="btn btn-vo btn-xs"       ng-click="updateDealPrice(model);" ><i class="glyphicon glyphicon-floppy-disk"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs"   ng-click="del(model)"              ><i class="fa fa-trash-o"></i>                     </button>
 						</td>

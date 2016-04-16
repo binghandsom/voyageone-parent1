@@ -161,6 +161,11 @@ define([
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel",angular.toJson({id:id}));
         }
+        $scope.openJmProductDetail = function (object, openJmProductDetail) {
+            openJmProductDetail(object).then(function () {
+                $scope.search();
+            });
+        }
         function ExportExcel(action,source)//导出excel方法
         {
             var Form = document.createElement("FORM");
