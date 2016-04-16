@@ -162,8 +162,7 @@
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/translation/index.ctl",
-    "controller": "translationDetailController"
+    "controllerUrl": "modules/cms/views/translation/index.ctl"
   },
   "system_category_index": {
     "hash": "/system/category",
