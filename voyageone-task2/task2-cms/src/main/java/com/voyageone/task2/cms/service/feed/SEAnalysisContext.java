@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.feed;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.ShoeCityFeedBean;
@@ -57,7 +58,7 @@ class SEAnalysisContext {
 
     private CmsBtFeedInfoModel getProduct(ShoeCityFeedBean feedBean) {
 
-        String code = feedBean.getCode();
+        String code = StringUtils.replaceBlankToDash(feedBean.getCode());
 
         if (codeMap.containsKey(code))
             return codeMap.get(code);
