@@ -421,4 +421,12 @@
             and product_code = #{productCode,jdbcType=VARCHAR}
         </if>
     </delete>
+    <select id="select_cms_bt_promotion_code_pro_promotionIds" parameterType="List" resultType="HashMap">
+        select distinct product_code,product_model,property_1,property_2,property_3,property_4
+          from voyageone_cms2.cms_bt_promotion_code
+        where promotion_id in
+        <foreach collection="list" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+    </select>
 </mapper>

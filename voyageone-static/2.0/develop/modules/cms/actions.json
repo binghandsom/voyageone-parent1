@@ -203,6 +203,43 @@
         "root": "/cms/task/price",
         "getPriceList": "getPriceList",
         "updateTaskStatus": "updateTaskStatus"
+      },
+      "taskStockService": {
+        "root": "/cms/promotion/task_stock",
+        "initNewTask": "initNewTask",
+        "saveTask": "saveTask",
+        "delTask": "delTask",
+        "searchStock": "searchStock",
+        "getCommonStockList": "getCommonStockList",
+        "getRealStockList": "getRealStockList",
+        "initNewRecord": "initNewRecord",
+        "getUsableStock": "getUsableStock",
+        "saveNewRecord": "saveNewRecord",
+        "importStockInfo": "importStockInfo",
+        "exportStockInfo": "exportStockInfo",
+        "executeStockSeparation": "executeStockSeparation",
+        "executeStockRevert": "executeStockRevert",
+        "saveRecord": "saveRecord",
+        "delRecord": "delRecord",
+        "getSkuSeparationDetail": "getSkuSeparationDetail",
+        "exportErrorInfo": "exportErrorInfo"
+      },
+      "taskStockIncrementService": {
+        "root": "/cms/promotion/task_stock_increment",
+        "searchTask": "searchTask",
+        "searchSubTask": "searchSubTask",
+        "saveTask": "saveTask",
+        "delTask": "delTask",
+        "getPlatFormList": "getPlatFormList"
+      },
+      "taskStockIncrementDetailService": {
+        "root": "/cms/promotion/task_stock_increment_detail",
+        "searchItem": "searchItem",
+        "saveItem": "saveItem",
+        "delItem": "delItem",
+        "importStockInfo": "importStockInfo",
+        "exportStockInfo": "exportStockInfo",
+        "executeStockIncrementSeparation": "executeStockIncrementSeparation"
       }
     },
     "system": {

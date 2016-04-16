@@ -217,13 +217,11 @@ interface CmsBtJmPromotionImportTask{
 
                 String GET_REAL_STOCK_LIST = "getRealStockList";
 
-                String INIT_NEW_RECORD = "initNewRecord";
+//                String INIT_NEW_RECORD = "initNewRecord";
 
                 String GET_USABLE_STOCK = "getUsableStock";
 
                 String SAVE_NEW_RECORD = "saveNewRecord";
-
-                String IMPORT_SKU_INFO = "importSkuInfo";
 
                 String IMPORT_STOCK_INFO = "importStockInfo";
 
@@ -231,7 +229,7 @@ interface CmsBtJmPromotionImportTask{
 
                 String EXECUTE_STOCK_SEPARATION = "executeStockSeparation";
 
-                String EXECUTE_STOCK_RESTORE = "executeStockRestore";
+                String EXECUTE_STOCK_REVERT = "executeStockRevert";
 
                 String SAVE_RECORD = "saveRecord";
 
@@ -242,22 +240,25 @@ interface CmsBtJmPromotionImportTask{
                 String EXPORT_ERROR_INFO = "exportErrorInfo";
             }
 
-            interface INCREMENT_STOCK_LIST {
+            interface STOCK_INCREMENT {
 
-                String ROOT = "/cms/promotion/task_increment_stock_list";
+                String ROOT = "/cms/promotion/task_stock_increment";
 
                 String SEARCH_TASK = "searchTask";
+
+                String SEARCH_SUB_TASK = "searchSubTask";
 
                 String SAVE_TASK = "saveTask";
 
                 String DEL_TASK = "delTask";
 
                 String GET_PLATFORM_LIST = "getPlatFormList";
+
             }
 
-            interface INCREMENT_STOCK_DETAIL {
+            interface STOCK_INCREMENT_DETAIL {
 
-                String ROOT = "/cms/promotion/task_increment_stock_detail";
+                String ROOT = "/cms/promotion/task_stock_increment_detail";
 
                 String SEARCH_ITEM = "searchItem";
 
@@ -269,7 +270,7 @@ interface CmsBtJmPromotionImportTask{
 
                 String EXPORT_STOCK_INFO = "exportStockInfo";
 
-                String EXECUTE_INCREMENT_STOCK_SEPARATION = "executeIncrementStockSeparation";
+                String EXECUTE_STOCK_INCREMENT_SEPARATION = "executeStockIncrementSeparation";
             }
         }
     }

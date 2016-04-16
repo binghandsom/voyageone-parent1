@@ -35,21 +35,21 @@
   },
   "promotion_task_stock_detail": {
     "url": "/promotion/task_stock/",
-    "hash": "/promotion/task/stock/:task_id",
+    "hash": "/promotion/task_stock/:task_id",
     "templateUrl": "views/promotion/task/stock.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stock.ctl",
     "controller": "taskStockController as $ctrl"
   },
   "promotion_task_stock_increment": {
     "url": "/promotion/task_stock_increment/",
-    "hash": "/promotion/task/stock_increment/:task_id",
+    "hash": "/promotion/task_stock_increment/:task_id",
     "templateUrl": "views/promotion/task/stockIncrement.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrement.ctl",
     "controller": "taskStockIncrementController as $ctrl"
   },
   "promotion_task_stock_increment_detail": {
     "url": "/promotion/task_stock_increment_detail/",
-    "hash": "/promotion/task/stock_increment_detail/:task_id",
+    "hash": "/promotion/task_stock_increment_detail/:sub_task_id",
     "templateUrl": "views/promotion/task/stockIncrementDetail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrementDetail.ctl",
     "controller": "taskStockIncrementDetailController as $ctrl"

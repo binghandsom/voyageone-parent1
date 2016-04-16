@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 根据条件查询 -->
-    <select id="select_wms_bt_inventory_center_logic_byChannelWithCodeOrSku" resultType="com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel" parameterType="Map" >
+    <select id="wms_bt_inventory_center_logic_selectLogicInventory" resultType="com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel" parameterType="Map" >
         SELECT
             seq,
             order_channel_id as orderChannelId,
@@ -27,5 +27,12 @@
         </if>
     </select>
 
+    <select id="wms_bt_inventory_center_logic_selectLogicInventoryCnt" resultType="Object" parameterType="HashMap">
+        select
+        qty_china
+        from wms_bt_inventory_center_logic
+        where order_channel_id = #{channelId}
+        and sku = #{sku}
+    </select>
 
 </mapper>
