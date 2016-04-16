@@ -27,11 +27,11 @@ public interface CmsConstants extends BaseConstants{
      * Property 文件Key
      */
     interface Props {
-
         //  Code 文件模板文件
         String SEARCH_ADVANCE_EXPORT_TEMPLATE = "cms.search.advance.export.file";
-
         String PROMOTION_EXPORT_TEMPLATE = "cms.promotion.export.file";
+        String CMS_JM_EXPORT_PATH="cms.jm.export.path";
+        String CMS_JM_IMPORT_PATH ="cms.jm.import.path";
     }
     interface CellNum {
         int cartIdCellNum = 0;
@@ -76,5 +76,11 @@ public interface CmsConstants extends BaseConstants{
         String OPTION_DATA_SOURCE = "optConfig";
 
         String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    }
+
+    interface jmMasterPlatCode {
+        String BRND = "0";
+        String PRICE_UNIT = "1";
+        String STOCK = "2";
     }
 }

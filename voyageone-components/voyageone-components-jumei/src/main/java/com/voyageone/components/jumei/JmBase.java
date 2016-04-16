@@ -107,14 +107,14 @@ public class JmBase extends ComponentBase {
         if (result != null && result.contains("\"error\"")) {
             Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
             if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
-                throw new BusinessException("调用聚美API错误：" + result);
+                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
             }
         } else {
             JMErrorResult res;
             try {
                 res = JsonUtil.jsonToBean(result, JMErrorResult.class);
                 if (res.getCode() != null) {
-                    throw new BusinessException("调用聚美API错误：" + result);
+                    throw new BusinessException("调用聚美API错误：" +  result+post_url+parm_url);
                 }
             } catch (JsonSyntaxException ignored) {
             }

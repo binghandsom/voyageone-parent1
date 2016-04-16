@@ -1,0 +1,98 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$close()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"> Activity & Tags & Discount</h5>
+    </div>
+    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg ng-pristine ng-valid">
+        <div class="form-group">
+            <div class="col-sm-10">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" translate="TXT_CHANNEL_WITH_COLON"></label>
+                        <div class="col-sm-7">
+                            <input class="form-control" ng-model="vm.searchInfo.catName" readonly value="TmallG">
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" translate="TXT_ACTIVITY_NAME"></label>
+                        <div class="col-sm-7">
+                            <input class="form-control" ng-model="vm.searchInfo.catName" readonly value="全店折扣">
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" translate="TXT_PC_MODULE_ID"></label>
+                        <div class="col-sm-7">
+                            <input class="form-control" ng-model="vm.searchInfo.catName" readonly value="热区商品">
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" translate="TXT_APP_MODULE_ID"></label>
+                        <div class="col-sm-7">
+                            <input class="form-control" ng-model="vm.searchInfo.catName" readonly title="首推商品">
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" translate="TXT_PROMOTION_DISCOUNT">首推商品</label>
+                        <div class="col-sm-2 text-left">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox ng-pristine ng-untouched ng-valid ng-empty" id="switchIsTranslated" ng-model="ctrl.productDetails.productStatus.translateStatus">
+                                <label class="onoffswitch-label" for="switchIsTranslated">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                            <!-- onoff switch -->
+                        </div>
+                    </div><!-- .form-group -->
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-7 col-sm-offset-2">
+                <div class="col-lg-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleInputAmount" placeholder="Amount">
+                        <div class="input-group-addon">%&nbsp;OFF&nbsp;of&nbsp;</div>
+                        <div>
+                            <select class="form-control">
+                            <option>一</option>
+                            <option>二</option>
+                            <option>三</option>
+                        </select></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="modal-footer">
+        <button class="btn btn-default ng-binding" ng-click="cancel()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->

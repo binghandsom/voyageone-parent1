@@ -23,7 +23,94 @@ public interface CmsUrlConstants {
         }
 
     }
+    interface JMPROMOTION {
+        interface LIST {
+            interface INDEX {
 
+                String ROOT = "/cms/jmpromotion/index";
+
+                String INIT = "init";
+
+                String GET_LIST_BY_WHERE = "getListByWhere";
+
+                String INSERT = "insert";
+
+                String UPDATE = "update";
+                String DELETE="delete";
+                String GET = "get";
+
+            }
+            interface DETAIL {
+                String ROOT = "/cms/jmpromotion/detail";
+
+                String INIT = "init";
+
+                String GET_LIST_BY_WHERE = "getListByWhere";
+                String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE="getPromotionProductInfoListByWhere";
+                String INSERT = "insert";
+                String DELETE="delete";
+                String UPDATE = "update";
+                String UPDATEDEAlPRICE="updateDealPrice";
+                String GET = "get";
+                String DELETEBYPPROMOTIONID="deleteByPromotionId";
+                String DELETEBYPRODUCTIDLIST="deleteByProductIdList";
+                String JmNewUpdateAll="jmNewUpdateAll";
+                String JmNewByProductIdListInfo="jmNewByProductIdListInfo";
+                String updateDealEndTime="updateDealEndTime";
+                String UpdateDealEndTimeAll="updateDealEndTimeAll";
+                String GET_PRODUCT_DETAIL = "getProductDetail";
+                String UPDATE_PRODUCT_DETAIL = "updateProductDetail";
+                String UPDATE_PROMOTION_PRODUCT_DETAIL = "updatePromotionProductDetail";
+                String UPDATE_SKU_DETAIL = "updateSkuDetail";
+                String DELETE_PROMOTION_SKU = "deletePromotionSku";
+                String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
+            }
+        }
+    }
+interface CmsBtJmPromotionImportTask{
+        interface LIST {
+            interface  INDEX {
+                String ROOT="/cms/CmsBtJmPromotionImportTask/index";
+                String GET_BY_PROMOTIONID="getByPromotionId";
+            }
+        }
+    }
+    interface CmsBtJmPromotionExportTask{
+        interface LIST {
+            interface  INDEX {
+                String ROOT="/cms/CmsBtJmPromotionExportTask/index";
+                String GET_BY_PROMOTIONID="getByPromotionId";
+                String ADDEXPORT="addExport";
+            }
+        }
+    }
+    interface CMSMTMASTERINFO {
+        interface LIST {
+            interface INDEX {
+                String ROOT = "/cms/cmsmtmasterinfo/index";
+                String INIT = "init";
+                String GET_LIST_BY_WHERE = "getListByWhere";
+                String INSERT = "insert";
+                String UPDATE = "update";
+                String GET = "get";
+                String UPDATEJMIMG="updateJMImg";
+                String GetCountByWhere="getCountByWhere";
+                String LoadJmMasterBrand="loadJmMasterBrand";
+            }
+        }
+    }
+    interface CMSMTJMCONFIG {
+        interface LIST {
+            interface INDEX {
+                String ROOT = "/cms/cmsmtjmconfig/index";
+                String INIT = "init";
+                String INSERT = "insert";
+                String UPDATE = "update";
+                String GETBYKEY="getByKey";
+
+            }
+        }
+    }
     // 活动管理
     interface PROMOTION {
         interface LIST {

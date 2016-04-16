@@ -32,4 +32,5 @@
     <!-- spring template声明-->
     <rabbit:template id="amqpTemplate" connection-factory="rabbitConnFactory" />
 
+
 </beans>
