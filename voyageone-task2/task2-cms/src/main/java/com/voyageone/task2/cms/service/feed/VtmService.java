@@ -294,7 +294,7 @@ public class VtmService extends BaseTaskService {
                 message = "★★★★★从SKU=" + sku + " 开始未成功导入★★★★★";
             }
             $info(message);
-            $error(ex.getMessage());
+            $error(ex);
             logIssue("cms 数据导入处理", "维他命产品文件读入失败. " + message + ex.getMessage());
         } finally {
             if (br != null) br.close();
@@ -329,13 +329,13 @@ public class VtmService extends BaseTaskService {
             $info("upc清单不存在");
         }catch (Exception ex) {
             listImportUPC.clear();
-            $error(ex.getMessage());
+            $error(ex);
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    $error(e.getMessage());
+                    $error(e);
                 }
             }
         }

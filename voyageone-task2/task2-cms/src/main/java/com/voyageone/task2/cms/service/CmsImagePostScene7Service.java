@@ -160,7 +160,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
             if(StringUtils.isEmpty(uploadPath)){
                 String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表",orderChannelId);
-                $error(orderChannelId);
+                $error(err);
                 throw new BusinessException(err);
             }
             ftpBean.setUpload_path(uploadPath);
