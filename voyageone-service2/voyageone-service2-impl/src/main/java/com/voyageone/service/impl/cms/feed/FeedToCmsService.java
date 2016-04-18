@@ -12,10 +12,12 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedCategoryAttributeDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedCategoryAttributeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
@@ -52,7 +54,7 @@ public class FeedToCmsService extends BaseService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Autowired
-    private CmsBtFeedProductImageDao cmsBtFeedProductImageDao;
+    private CmsBtFeedCategoryAttributeDao cmsBtFeedCategoryAttributeDao;
 
     private String modifier;
 
@@ -67,11 +69,6 @@ public class FeedToCmsService extends BaseService {
      */
     public CmsMtFeedCategoryTreeModel getFeedCategoryByCategory(String channelId, String topCategory) {
         CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId, topCategory);
-//        if (category == null) {
-//            category = new CmsMtFeedCategoryTreeModel();
-//            category.setChildren(new ArrayList<CmsMtFeedCategoryTreeModel>());
-//            category.setCreater(modifier);
-//        }
         return category;
     }
 
@@ -122,25 +119,27 @@ public class FeedToCmsService extends BaseService {
                     addCategory(channelId, category);
                     existCategory.add(category);
                 }
-                List<String> imageUrls;
-                imageUrls = product.getImage();
 
-                // 把Image中的Path删除只保留文件名
-                if ("010".equalsIgnoreCase(channelId) || "012".equalsIgnoreCase(channelId)) {
-                    product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf("."))).collect(toList()));
-                } else {
-                    int i = 1;
-                    List<String> images = new ArrayList<>();
-                    for (String  image :product.getImage()){
-                        if("015".equalsIgnoreCase(channelId)){
-                            images.add(special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
-                        }else{
-                            images.add(channelId + "-" + special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
-                        }
-                        i++;
-                    }
-                    product.setImage(images);
-                }
+                // 以下图片处理在生成主数据是再处理 feed导入不做处理
+//                List<String> imageUrls;
+//                imageUrls = product.getImage();
+//
+//                // 把Image中的Path删除只保留文件名
+//                if ("010".equalsIgnoreCase(channelId) || "012".equalsIgnoreCase(channelId)) {
+//                    product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf("."))).collect(toList()));
+//                } else {
+//                    int i = 1;
+//                    List<String> images = new ArrayList<>();
+//                    for (String  image :product.getImage()){
+//                        if("015".equalsIgnoreCase(channelId)){
+//                            images.add(special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
+//                        }else{
+//                            images.add(channelId + "-" + special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
+//                        }
+//                        i++;
+//                    }
+//                    product.setImage(images);
+//                }
                 CmsBtFeedInfoModel befproduct = cmsBtFeedInfoDao.selectProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
@@ -161,15 +160,16 @@ public class FeedToCmsService extends BaseService {
                 product.setUpdFlg(0);
                 cmsBtFeedInfoDao.update(product);
 
-                List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
-
-                int i = 1;
-                for (String  image :imageUrls){
-                    CmsBtFeedProductImageModel cmsBtFeedProductImageModel =  new CmsBtFeedProductImageModel(channelId,product.getCode(), image, i, this.modifier);
-                    imageModels.add(cmsBtFeedProductImageModel);
-                    i++;
-                }
-                cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
+                //// 以下图片处理在生成主数据是再处理 feed导入不做处理
+//                List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
+//
+//                int i = 1;
+//                for (String  image :imageUrls){
+//                    CmsBtFeedProductImageModel cmsBtFeedProductImageModel =  new CmsBtFeedProductImageModel(channelId,product.getCode(), image, i, this.modifier);
+//                    imageModels.add(cmsBtFeedProductImageModel);
+//                    i++;
+//                }
+//                cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
 
                 Map<String, List<String>> attributeMtData;
                 if (attributeMtDatas.get(category) == null) {
@@ -273,7 +273,7 @@ public class FeedToCmsService extends BaseService {
      * @param channelId 渠道
      * @param category  类目
      */
-    public void addCategory(String channelId, String category) {
+    private void addCategory(String channelId, String category) {
         List<String> categorys = Arrays.asList(category.split("-"));
         // 取得一级类目树
         CmsMtFeedCategoryTreeModel categoryTree = getFeedCategoryByCategory(channelId, categorys.get(0));
@@ -331,30 +331,29 @@ public class FeedToCmsService extends BaseService {
      */
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
-//        CmsMtFeedCategoryTreeModel categoryTree = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
-//        Map<String, Object> node = findCategory(categoryTree.getCategoryTree(), category);
-//
-//        if (node == null)
-//            throw new BusinessException(null, String.format("can`t find any category by \"%s\"", category));
-//
-//        if (node.get("attribute") == null) {
-//            node.put("attribute", attribute);
-//            cmsMtFeedCategoryTreeDao.update(categoryTree);
-//            return;
-//        }
-//
-//        Map<String, List<String>> oldAtt = (Map<String, List<String>>) node.get("attribute");
-//
-//        for (String key : attribute.keySet()) {
-//            if (oldAtt.containsKey(key)) {
-//                oldAtt.put(key, Stream.concat(attribute.get(key).stream(), oldAtt.get(key).stream())
-//                        .map(String::trim)
-//                        .distinct()
-//                        .collect(toList()));
-//            } else {
-//                oldAtt.put(key, attribute.get(key));
-//            }
-//        }
-//        cmsMtFeedCategoryTreeDao.update(categoryTree);
+        String catId =  MD5.getMD5(category);
+        CmsBtFeedCategoryAttributeModel cmsBtFeedCategoryAttribute = cmsBtFeedCategoryAttributeDao.getCategoryAttributeByCatId(channelId, catId);
+        if(cmsBtFeedCategoryAttribute == null){
+            cmsBtFeedCategoryAttribute = new CmsBtFeedCategoryAttributeModel();
+            cmsBtFeedCategoryAttribute.setChannelId(channelId);
+            cmsBtFeedCategoryAttribute.setCatId(catId);
+            cmsBtFeedCategoryAttribute.setCatPath(category);
+            cmsBtFeedCategoryAttribute.setAttribute(new HashMap<>());
+        }
+
+
+        Map<String, List<String>> oldAtt = cmsBtFeedCategoryAttribute.getAttribute();
+
+        for (String key : attribute.keySet()) {
+            if (oldAtt.containsKey(key)) {
+                oldAtt.put(key, Stream.concat(attribute.get(key).stream(), oldAtt.get(key).stream())
+                        .map(String::trim)
+                        .distinct()
+                        .collect(toList()));
+            } else {
+                oldAtt.put(key, attribute.get(key));
+            }
+        }
+        cmsBtFeedCategoryAttributeDao.update(cmsBtFeedCategoryAttribute);
     }
 }

@@ -114,5 +114,7 @@ public class FeedToCmsServiceTest {
     @Test
     public void testAddCategory() throws Exception {
         feedToCmsService.addCategory("111","b-b-e");
+        feedToCmsService.addCategory("111","f-g-h");
+        feedToCmsService.addCategory("111","f-g-i");
     }
 }
