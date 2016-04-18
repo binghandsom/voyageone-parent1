@@ -166,7 +166,6 @@ public class FeedToCmsService extends BaseService {
                 int i = 1;
                 for (String  image :imageUrls){
                     CmsBtFeedProductImageModel cmsBtFeedProductImageModel =  new CmsBtFeedProductImageModel(channelId,product.getCode(), image, i, this.modifier);
-                    cmsBtFeedProductImageModel.setImageName(special_symbol.matcher(cmsBtFeedProductImageModel.getImageName()).replaceAll(Constants.EmptyString));
                     imageModels.add(cmsBtFeedProductImageModel);
                     i++;
                 }
