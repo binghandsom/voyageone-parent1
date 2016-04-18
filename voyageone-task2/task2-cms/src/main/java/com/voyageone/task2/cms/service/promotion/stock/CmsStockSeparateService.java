@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.groupingBy;
  * @version 0.0.1, 16/3/29
  */
 @Service
-public class StockSeparateService extends BaseTaskService {
+public class CmsStockSeparateService extends BaseTaskService {
 
     @Autowired
     private StockInfoService stockInfoService;

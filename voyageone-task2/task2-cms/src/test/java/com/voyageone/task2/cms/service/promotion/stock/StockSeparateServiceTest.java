@@ -19,7 +19,7 @@ import java.util.List;
 public class StockSeparateServiceTest {
 
     @Autowired
-    private StockSeparateService stockSeparateService;
+    private CmsStockSeparateService stockSeparateService;
 
     @Test
     public void testOnStartup() throws Exception {
