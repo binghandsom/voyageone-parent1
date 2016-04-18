@@ -153,6 +153,19 @@
           "updateCategorySchema":"updateCategorySchema"
         }
       },
+      "systemCartService":{
+        "root":"/cms/system/cart",
+        "search":"list",
+        "delete":"delete",
+        "saveOrUpdate":"saveOrUpdate",
+        "save":"save"
+      },
+      "platform":{
+        "platformService":{
+          "root": "/cms/system/platform",
+          "list":"list"
+        }
+      },
       "error": {
         "$errorListService": {
           "root":"/cms/system/error",

@@ -936,6 +936,9 @@ define([
             return openModel(popActions.system.channeledit, context);
         };
 
+        $scope.openCartEdit = function (context) {
+            return openModel(popActions.system.cartList, context);
+        };
 
         /**
          * 弹出自定义属性列

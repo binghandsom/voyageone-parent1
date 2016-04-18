@@ -24,7 +24,7 @@ import java.util.Map;
  * @date: 2016/4/11 18:04
  */
 @RestController
-@RequestMapping(value = "/cms/channel/usjoi",method = {RequestMethod.GET, RequestMethod.POST})
+@RequestMapping(value = "/cms/channel/usjoi",method = { RequestMethod.POST})
 public class CmsChannelController extends CmsController {
 
     @Resource

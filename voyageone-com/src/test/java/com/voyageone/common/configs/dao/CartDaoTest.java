@@ -35,4 +35,32 @@ public class CartDaoTest extends BaseTest{
         List<CartBean> result = cartDao.getByIds(Lists.newArrayList("20","21","22","23"));
         Assert.assertTrue(result.size()==4);
     }
+
+    @Test
+    public void testGetAll() throws Exception {
+
+    }
+
+    @Test
+    public void testSaveOrUpdate() throws Exception {
+
+        CartBean cartBean = new CartBean();
+        cartBean.setCart_id("109");
+        cartBean.setName("zhaotianwu222");
+        cartBean.setShort_name("ztw");
+        cartBean.setDescription("test");
+        cartBean.setPlatform_id("1");
+        cartBean.setCart_type("1");
+        cartDao.saveOrUpdate(cartBean);
+        CartBean bean = cartDao.getById("108");
+        Assert.assertNotNull(bean);
+        Assert.assertNotNull(bean.getModified());
+
+
+    }
+
+    @Test
+    public void testDeleteLogic() throws Exception {
+
+    }
 }

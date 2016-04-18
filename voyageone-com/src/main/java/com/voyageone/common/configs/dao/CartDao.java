@@ -1,5 +1,6 @@
 package com.voyageone.common.configs.dao;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
@@ -30,7 +31,21 @@ public class CartDao extends BaseDao {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "tm_cart_getByIds", ids);
     }
 
+
     public List<CartBean> getAll() {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "tm_cart_getByIds", null);
+    }
+
+    public int saveOrUpdate(CartBean bean) {
+        return insert(Constants.DAO_NAME_SPACE_COMMON + "tm_cart_insertOrUpdate", bean);
+    }
+
+    public int deleteLogic(String cart_id, String modifier) { //参数均不能为空!
+        return update(Constants.DAO_NAME_SPACE_COMMON + "tm_cart_delete",
+                ImmutableMap.of("cart_id", cart_id, "modifier", modifier) );
+    }
+
+    public void insert(CartBean bean) {
+        insert(Constants.DAO_NAME_SPACE_COMMON + "tm_cart_insert", bean);
     }
 }

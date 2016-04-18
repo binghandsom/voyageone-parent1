@@ -171,11 +171,31 @@
     <select id="tm_cart_getByIds" resultType="com.voyageone.common.configs.beans.CartBean" >
         select * from Synship.ct_cart
         <if test="list!=null and list.size()>0">
-        <where>
-            cart_id in <foreach collection="list" item="id" separator="," open="(" close=")">#{id}</foreach>
-        </where>
+             where cart_id in <foreach collection="list" item="id" separator="," open="(" close=")">#{id}</foreach>
         </if>
     </select>
+
+    <insert id="tm_cart_insertOrUpdate" parameterType="com.voyageone.common.configs.beans.CartBean">
+        INSERT INTO ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, status)
+        VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier}, 1)
+        on duplicate key update name=#{name},short_name=#{short_name},description=#{description},platform_id=#{platform_id},cart_type=#{cart_type},
+         modified=now(),modifier=#{modifier}
+    </insert>
+
+     <insert id="tm_cart_insert" parameterType="com.voyageone.common.configs.beans.CartBean">
+        INSERT INTO ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, status)
+        VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier}, 1)
+    </insert>
+
+    <update id="tm_cart_delete" parameterType="map" >
+      update Synship.ct_cart set status=0 and modifier=#{modifier} and modified=now() where cart_id=#{cart_id}
+    </update>
+
+
+    <select id="tm_platform_getAll" resultType="com.voyageone.common.configs.beans.PlatformBean" >
+        select * from Synship.tm_platform
+    </select>
+
 
      <update id="tm_order_channel_update" parameterType="com.voyageone.common.configs.beans.OrderChannelBean" >
         update Synship.tm_order_channel
