@@ -23,6 +23,10 @@ public class CmsBtSxWorkloadDao extends ServiceBaseDao {
         return selectList("cms_select_sx_workload", parameters("record_count", recordCount,"cartId",cartId));
     }
 
+    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannelIdCartId(int recordCount,String channelId, int cartId) {
+        return selectList("cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId, "cartId", cartId));
+    }
+
     public void updateSxWorkloadModel(CmsBtSxWorkloadModel model) {
         update("cms_update_sx_workload", parameters("seq", model.getSeq(), "publish_status", model.getPublishStatus()));
     }
