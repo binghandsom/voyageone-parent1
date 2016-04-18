@@ -13,8 +13,7 @@ public enum MqRoutingKey {
     CMS_BATCH_JuMeiProductUpdate("voyageone_cms_batchjob_JuMeiProductUpdate_queue"),
     CMS_BATCH_JuMeiProductUpdateDealEndTimeJob("voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue"),
     CMS_BATCH_PlatformCategoryTreeJdJob("voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue"),
-    CMS_BATCH_PlatformCategorySchemaJdJob("voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue")
-    ;
+    CMS_BATCH_PlatformCategorySchemaJdJob("voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue");
 
     private String value;
 
