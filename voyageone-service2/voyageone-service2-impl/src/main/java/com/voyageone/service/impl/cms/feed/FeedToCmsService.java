@@ -1,32 +1,19 @@
 package com.voyageone.service.impl.cms.feed;
 
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
-import com.jayway.jsonpath.TypeRef;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedCategoryAttributeDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedCategoryAttributeModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +35,10 @@ import static java.util.stream.Collectors.toList;
 public class FeedToCmsService extends BaseService {
 
     @Autowired
-    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
+    private FeedCategoryTreeService feedCategoryTreeService;
+
+    @Autowired
+    private FeedInfoLogService feedInfoLogService;
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
@@ -56,21 +46,9 @@ public class FeedToCmsService extends BaseService {
     @Autowired
     private CmsBtFeedCategoryAttributeDao cmsBtFeedCategoryAttributeDao;
 
-    private String modifier;
-
     public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
     private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
-    /**
-     * 获取feed类目
-     *
-     * @param channelId 渠道ID
-     * @return CmsMtFeedCategoryTreeModel
-     */
-    public CmsMtFeedCategoryTreeModel getFeedCategoryByCategory(String channelId, String topCategory) {
-        CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId, topCategory);
-        return category;
-    }
 
     /**
      * 获取该channel下所有的叶子类目
@@ -102,7 +80,6 @@ public class FeedToCmsService extends BaseService {
      */
     @VOTransactional
     public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
-        this.modifier = modifier;
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
         List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
@@ -110,13 +87,20 @@ public class FeedToCmsService extends BaseService {
         for (CmsBtFeedInfoModel product : products) {
             try {
 
+                product.setModified(DateTimeUtil.getNow());
+                product.setModifier(modifier);
+                product.setUpdFlg(0);
+
                 String category = product.getCategory();
                 if (!chkCategoryPathValid(category)) {
                     throw new BusinessException("category 不合法：" + category);
                 }
+
+                // 写log表
+                feedInfoLogService.insertCmsBtFeedInfoLog(product);
                 // 判断是否追加一个新的类目
                 if (!existCategory.contains(category)) {
-                    addCategory(channelId, category);
+                    feedCategoryTreeService.addCategory(channelId, category, modifier);
                     existCategory.add(category);
                 }
 
@@ -153,11 +137,6 @@ public class FeedToCmsService extends BaseService {
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                 }
-
-
-                product.setModified(DateTimeUtil.getNow());
-                product.setModifier(this.modifier);
-                product.setUpdFlg(0);
                 cmsBtFeedInfoDao.update(product);
 
                 //// 以下图片处理在生成主数据是再处理 feed导入不做处理
@@ -181,6 +160,7 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
+                e.printStackTrace();
                 $error(e.getMessage(), e);
                 failProduct.add(product);
             }
@@ -210,94 +190,6 @@ public class FeedToCmsService extends BaseService {
             }
         }
         return attribute2;
-    }
-
-    /**
-     * 设定feed类目
-     */
-    private void setFeedCategory(CmsMtFeedCategoryTreeModel tree) {
-        cmsMtFeedCategoryTreeDao.update(tree);
-    }
-
-    /**
-     * 根据category从tree中找到节点
-     */
-    private CmsMtFeedCategoryTreeModel findCategory(CmsMtFeedCategoryTreeModel tree, String catPath) {
-
-        for (CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel : tree.getChildren()) {
-            if (cmsMtFeedCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
-                return cmsMtFeedCategoryTreeModel;
-            }
-            if (cmsMtFeedCategoryTreeModel.getChildren().size() > 0) {
-                CmsMtFeedCategoryTreeModel category = findCategory(cmsMtFeedCategoryTreeModel, catPath);
-                if (category != null) return category;
-            }
-
-        }
-        return null;
-    }
-
-    /**
-     * 追加一个类目
-     */
-    private boolean addCategory(CmsMtFeedCategoryTreeModel tree, String category) {
-        boolean chgFlg = false;
-        String[] c = category.split("-");
-        String temp = c[0] + "-";
-        CmsMtFeedCategoryTreeModel befNode = tree;
-        for (int i = 1; i < c.length; i++) {
-            temp += c[i];
-            CmsMtFeedCategoryTreeModel node = findCategory(tree, temp);
-            if (node == null) {
-                node = new CmsMtFeedCategoryTreeModel();
-                node.setCatPath(temp);
-                node.setCatName(c[i]);
-                node.setCatId(MD5.getMD5(temp));
-                node.setParentCatId(befNode == null ? "0" : befNode.getCatId());
-                node.setIsParent(i < c.length - 1 ? 1 : 0);
-                node.setChildren(new ArrayList<>());
-                befNode.getChildren().add(node);
-                befNode = node;
-                chgFlg = true;
-            } else {
-                befNode = node;
-            }
-            temp += "-";
-        }
-        return chgFlg;
-    }
-
-    /**
-     * 对一个channelid下的类目追加一个Category
-     *
-     * @param channelId 渠道
-     * @param category  类目
-     */
-    private void addCategory(String channelId, String category) {
-        List<String> categorys = Arrays.asList(category.split("-"));
-        // 取得一级类目树
-        CmsMtFeedCategoryTreeModel categoryTree = getFeedCategoryByCategory(channelId, categorys.get(0));
-
-        if (categoryTree == null) {
-            categoryTree = new CmsMtFeedCategoryTreeModel();
-            categoryTree.setChannelId(channelId);
-            categoryTree.setCatPath(categorys.get(0));
-            categoryTree.setCatName(categorys.get(0));
-            categoryTree.setCatId(MD5.getMD5(categorys.get(0)));
-            categoryTree.setParentCatId("0");
-            categoryTree.setIsParent(categorys.size() > 0 ? 1 : 0);
-            categoryTree.setChildren(new ArrayList<>());
-        }
-
-//        if (addCategory(categoryTree, category) != null) {
-//            return;
-//        }
-        if(addCategory(categoryTree, category)){
-            categoryTree.setModified(DateTimeUtil.getNow());
-            categoryTree.setModifier(modifier);
-            setFeedCategory(categoryTree);
-        }
-
     }
 
     /**
@@ -332,9 +224,9 @@ public class FeedToCmsService extends BaseService {
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
         String catId =  MD5.getMD5(category);
-        CmsBtFeedCategoryAttributeModel cmsBtFeedCategoryAttribute = cmsBtFeedCategoryAttributeDao.getCategoryAttributeByCatId(channelId, catId);
+        CmsMtFeedAttributesModel cmsBtFeedCategoryAttribute = cmsBtFeedCategoryAttributeDao.getCategoryAttributeByCatId(channelId, catId);
         if(cmsBtFeedCategoryAttribute == null){
-            cmsBtFeedCategoryAttribute = new CmsBtFeedCategoryAttributeModel();
+            cmsBtFeedCategoryAttribute = new CmsMtFeedAttributesModel();
             cmsBtFeedCategoryAttribute.setChannelId(channelId);
             cmsBtFeedCategoryAttribute.setCatId(catId);
             cmsBtFeedCategoryAttribute.setCatPath(category);

@@ -9,7 +9,7 @@ import java.util.Map;
  * @author james.li on 2016/4/18.
  * @version 2.0.0
  */
-public class CmsBtFeedCategoryAttributeModel extends ChannelPartitionModel {
+public class CmsMtFeedAttributesModel extends ChannelPartitionModel {
     private String catId;
     private String catPath;
     private Map<String, List<String>> attribute;

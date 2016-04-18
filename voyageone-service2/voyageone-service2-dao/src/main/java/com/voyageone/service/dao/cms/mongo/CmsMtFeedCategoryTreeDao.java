@@ -8,6 +8,8 @@ import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * (mongo) cms_mt_feed_category_tree 表
  *
@@ -25,9 +27,15 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoChannelDao<CmsMtFeedCateg
      * @param channelId 渠道
      * @return Feed 类目的弱类型模型
      */
-    public CmsMtFeedCategoryTreeModel selectFeedCategory(String channelId, String category) {
+    public CmsMtFeedCategoryTreeModel getFeedCategoryByCategory(String channelId, String category) {
         String query = "{\"catName\":\"" + category + "\"}";
         return selectOneWithQuery(query, channelId);
+    }
+
+
+    public List<CmsMtFeedCategoryTreeModel> getFeedAllCategory(String channelId) {
+        String query = "{}";
+        return select(query, channelId);
     }
 
     /**
