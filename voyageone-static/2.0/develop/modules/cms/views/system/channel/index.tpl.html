@@ -42,7 +42,7 @@
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label>
-                                        <input type="checkbox"> 已删除
+                                        <input type="checkbox" ng-model="active" ng-true-value="0" ng-false-value="1"> 已删除
                                     </label>
                                 </div><!-- .form-group -->
                             </div>
@@ -56,6 +56,9 @@
                                     <button class="btn btn-vo" ng-click="refreshTable()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
                                         | translate}}
                                     </button>
+                                    <span ng-controller="popupCtrl">
+                                    <button class="btn btn-success"  ng-click="$parent.openChannelEdit(-1,null,openChannelEdit)"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                    </span>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
@@ -101,8 +104,16 @@
                     </td>
                     <td ng-controller="popupCtrl">
                         <button class="btn btn-success btn-xs ng-scope"
-                                ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
+                                ng-click="$parent.openChannelEdit($index,el,openChannelEdit)"><i
                                 class="fa fa-pencil"></i></button>
+
+                        <button class="btn btn-info btn-xs ng-scope"
+                                ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
+                                class="fa fa-cog"></i></button>
+
+                        <button class="btn btn-danger btn-xs ng-scope"
+                                ng-click="$parent.delete($index,el)"><i
+                                class="fa fa-trash"></i></button>
                     </td>
                 </tr>
                 </tr>
