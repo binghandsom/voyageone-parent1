@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
+    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel" useGeneratedKeys="true" keyProperty="task_id">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
             task_name, task_type, promotion_id, channel_id, activity_start, activity_end,
             <if test="config != null">
@@ -116,6 +116,18 @@
                 and  #{activity_end,jdbcType=VARCHAR} >=  t.activity_end
             </if>
         </where>
+    </select>
+
+    <delete id="cms_bt_tasks_delete" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
+        delete
+        from voyageone_cms2.cms_bt_tasks
+        where
+        task_id = #{task_id}
+    </delete>
+    <select id="select_cms_bt_tasks_task_id" parameterType="String" resultType="String">
+      select task_id
+        from voyageone_cms2.cms_bt_tasks
+       where task_name=#{task_name}
     </select>
 
 </mapper>

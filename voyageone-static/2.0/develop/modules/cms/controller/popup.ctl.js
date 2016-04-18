@@ -274,12 +274,13 @@ define([
                 "newMrbStockSku": {
                     "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
-                    "controller": 'popNewMrbStockSkuCtl'
+                    "controller": 'popNewMrbStockSkuCtl as $ctrl',
+                    "size": "md"
                 },
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
-                    "controller": 'popSkuMrbStockDetailCtl'
+                    "controller": 'popSkuMrbStockDetailCtl as $ctrl'
                 },
                 "addMrbStockIncrement": {
                     "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
@@ -810,10 +811,10 @@ define([
 
         /**
          * 打开新建库存隔离任务
-         * @type {openMrbstock}
+         * @type {openMrbStock}
          */
-        $scope.openMrbstock = openMrbstock;
-        function openMrbstock(viewSize, data) {
+        $scope.openMrbStock = openMrbStock;
+        function openMrbStock(viewSize, data) {
             require([popActions.promotion.newMrbStock.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
@@ -872,13 +873,19 @@ define([
          * 显示该sku的库存隔离明细
          */
         $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
-        function openSkuMrbStockDetail(viewSize, data) {
+        function openSkuMrbStockDetail(viewSize, taskId, cartId, data) {
             require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
                     controller: popActions.promotion.skuMrbStockDetail.controller,
                     size: viewSize,
                     resolve: {
+                        taskId: function () {
+                            return taskId;
+                        },
+                        cartId: function () {
+                            return cartId;
+                        },
                         data: function () {
                             return data;
                         }
