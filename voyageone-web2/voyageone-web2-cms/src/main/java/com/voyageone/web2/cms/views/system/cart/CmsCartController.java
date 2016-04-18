@@ -31,7 +31,7 @@ public class CmsCartController extends CmsController {
     @RequestMapping("list")
     public AjaxResponse doList(@RequestBody CartBean con) {
 
-        List<CartBean> data = cartService.getListBy(con);
+        List<CartBean> data = cartService.getAll(con);
         return success(data);
 
     }

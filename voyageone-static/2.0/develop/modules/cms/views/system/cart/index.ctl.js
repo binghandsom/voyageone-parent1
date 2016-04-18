@@ -10,7 +10,7 @@ define([
 
     function indexController($scope,cartService,platformService) {
 
-        var initVals = {cart_id: "", name: "", status: "1", cart_type: ''}; //表单初始化值注意顺序
+        var initVals = {cart_id: "", name: "", active: "1", cart_type: ''}; //表单初始化值注意顺序
 
 
         var CART_TYPE_DICT=[['','ALL'],['1','1'],['2','2'],['3','3']];

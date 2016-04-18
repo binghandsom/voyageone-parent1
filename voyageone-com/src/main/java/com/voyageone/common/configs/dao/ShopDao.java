@@ -1,5 +1,6 @@
 package com.voyageone.common.configs.dao;
 
+import com.google.common.collect.ImmutableMap;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.beans.CartBean;
@@ -7,6 +8,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Jack on 4/17/2015.
@@ -22,9 +24,35 @@ public class ShopDao extends BaseDao {
     }
 
     /**
-     * 获取所有Cart数据
+     * 获取未删除的cart
      */
-    public List<CartBean> getAllCart() {
+    public List<CartBean> getActiveCarts() {
+        List<CartBean> carts = getAllCarts();
+        List<CartBean> result = carts.stream().filter(bean -> {
+            return "1".equals(bean.getActive());
+        }).collect(Collectors.toList());
+        return result;
+    }
+
+    /**
+     * 获取所有cart
+     * @return
+     */
+    public List<CartBean> getAllCarts() {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_getAll");
+    }
+
+
+    public int insertOrUpdate(CartBean bean) {
+        return insert(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_insertOrUpdate", bean);
+    }
+
+    public int deleteLogic(String cart_id, String modifier) { //参数均不能为空!
+        return update(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_delete",
+                ImmutableMap.of("cart_id", cart_id, "modifier", modifier) );
+    }
+
+    public void insert(CartBean bean) {
+        insert(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_insert", bean);
     }
 }

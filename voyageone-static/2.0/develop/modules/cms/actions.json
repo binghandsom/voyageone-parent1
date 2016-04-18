@@ -233,6 +233,8 @@
             "getList":"getList",
             "update":"update",
             "getCarts":"getCarts",
+            "save":"save",
+            "getCompanys":"getCompanys",
             "updateCartIds":"updateCartIds"
           }
       }

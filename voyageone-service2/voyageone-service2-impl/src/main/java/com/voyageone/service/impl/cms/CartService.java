@@ -2,8 +2,10 @@ package com.voyageone.service.impl.cms;
 
 import com.mysql.jdbc.StringUtils;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.beans.CartBean;
-import com.voyageone.common.configs.dao.CartDao;
+import com.voyageone.common.configs.dao.ShopDao;
+import com.voyageone.common.redis.CacheHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,10 +24,10 @@ import java.util.stream.Collectors;
 public class CartService {
 
     @Resource
-    CartDao cartDao;
+    ShopDao cartDao;
 
-    public List<CartBean> getListBy(CartBean con) {
-        List<CartBean> carts = cartDao.getAll();
+    public List<CartBean> getAll(CartBean con) {
+        List<CartBean> carts = cartDao.getAllCarts();
         Predicate<CartBean> filter=(bean)->{
 
             boolean flg = true;
@@ -40,8 +42,8 @@ public class CartService {
             if (org.apache.commons.lang3.StringUtils.isNotBlank(con.getCart_type())) {
                 flg = flg && con.getCart_type().equalsIgnoreCase(bean.getCart_type());
             }
-            if (con.getStatus()!=null) {
-                flg = flg && con.getStatus()==bean.getStatus();
+            if (con.getActive()!=null) {
+                flg = flg && con.getActive().equalsIgnoreCase(bean.getActive());
             }
             return flg;
 
@@ -52,11 +54,11 @@ public class CartService {
 
 
     public int saveOrUpdate(CartBean bean) {
-        return cartDao.saveOrUpdate(bean);
+        return cartDao.insertOrUpdate(bean);
     }
 
     /**
-     * 逻辑删除,将status设为0
+     * 逻辑删除,将active设为0
      * @return
      */
     public int deleteLogic(CartBean bean) {
@@ -64,13 +66,15 @@ public class CartService {
 
             return 0;
         }
-        return cartDao.deleteLogic(bean.getCart_id(),bean.getModifier());
+        int result = cartDao.deleteLogic(bean.getCart_id(), bean.getModifier());
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString());
+        return result;
     }
 
     public CartBean getById(String cart_id) {
         CartBean con = new CartBean();
         con.setCart_id(cart_id);
-        List<CartBean> results = getListBy(con);
+        List<CartBean> results = getAll(con);
         if (results.size() > 0) {
             return results.get(0);
         }
@@ -80,6 +84,7 @@ public class CartService {
     public void save(CartBean bean) {
         try {
             cartDao.insert(bean);
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString());
         } catch (Exception e) {
             if(e.getMessage()!=null && e.getMessage().contains("Duplicate entry")){
                 throw new BusinessException("CART_ID重复!");
