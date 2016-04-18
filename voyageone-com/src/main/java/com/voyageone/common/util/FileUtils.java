@@ -396,6 +396,18 @@ public final class FileUtils {
             }
         }
     }
+    public static  void  mkdirPath(String path) {
+        String[] paths = path.split("/");
+        StringBuffer fullPath = new StringBuffer();
+        for (int i = 0; i < paths.length; i++) {
+            fullPath.append(paths[i]).append("\\");
+            File file = new File(fullPath.toString());
+            if (!file.exists()) {
+                file.mkdir();
+                System.out.println("创建目录为：" + fullPath.toString());
+            }
+        }
+    }
     public  static   List<String> uploadFile(HttpServletRequest request, String path) throws IOException {
         List<String> listFileName=new ArrayList<>();
         //创建一个通用的多部分解析器

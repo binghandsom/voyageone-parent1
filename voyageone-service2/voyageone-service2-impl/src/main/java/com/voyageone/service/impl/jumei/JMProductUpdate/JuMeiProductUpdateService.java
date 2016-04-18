@@ -4,7 +4,9 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsMtMasterInfoDaoExt;
+import com.voyageone.service.impl.jumei.CmsMtJmConfigService;
 import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.model.jumei.businessmodel.JMDefaultSet;
 import com.voyageone.service.model.jumei.businessmodel.JMNewProductInfo;
 import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +40,16 @@ public class JuMeiProductUpdateService {
     @Autowired
     CmsMtMasterInfoDaoExt daoExtCmsMtMasterInfo;
 
+    @Autowired
+    CmsMtJmConfigService serviceCmsMtJmConfigService;
+
     public CmsBtJmPromotionModel getCmsBtJmPromotion(int id) {
         return daoCmsBtJmPromotion.select(id);
     }
-    public int getShippingSystemId(String ChannelId) {
-        return 2813;
+    public int getShippingSystemId(String ChannelId) throws Exception {
+        JMDefaultSet   defaultSet = serviceCmsMtJmConfigService.getJMDefaultSet(ChannelId);
+        return  defaultSet.getJmShippingStock();
+        //  return 2813;
     }
     public List<CmsBtJmPromotionProductModel> getJuMeiNewListPromotionProduct(int promotionId) {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();
@@ -64,14 +71,14 @@ public class JuMeiProductUpdateService {
         Map<String, Object> parameterPromotionSku = new HashMap<>();
         parameterPromotionSku.put("cmsBtJmPromotionId", promotionProductModel.getCmsBtJmPromotionId());
         parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
-        parameterPromotionSku.put("state", "0");
+       // parameterPromotionSku.put("state", "0");
         List<CmsBtJmPromotionSkuModel> listPromotionSku = daoCmsBtJmPromotionSku.selectList(parameterPromotionSku);
         info.setListCmsBtJmPromotionSku(listPromotionSku);
 
         //CmsBtJmSku   list
         Map<String, Object> parameterSku = new HashMap<>();
         parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
-        parameterSku.put("state", "0");
+       // parameterSku.put("state", "0");
         List<CmsBtJmSkuModel> listSkuModel = daoCmsBtJmSku.selectList(parameterSku);
         info.setListCmsBtJmSku(listSkuModel);
         return info;

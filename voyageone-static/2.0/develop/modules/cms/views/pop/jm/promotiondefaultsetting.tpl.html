@@ -10,7 +10,7 @@
                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SHIP_STOCK"></label>
                <div class="col-sm-5">
                    <select class="form-control m-r-xs" ng-model="$ctrl.imageConfig.value.jmShippingStock"
-                           ng-options="data.value as data.name for data in $ctrl.masterData.jmShippingStockList" ng-required="true">
+                           ng-options="data.key as data.name1 for data in $ctrl.masterData.jmShippingStockList" ng-required="true">
                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                    </select>
                 </div>
@@ -60,7 +60,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_SPECIAL_NOTE"></label>
                 <div class="col-sm-7">
-                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.SpecialNote"></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="$ctrl.imageConfig.value.specialNote"></textarea>
                 </div>
             </div>
         </form>

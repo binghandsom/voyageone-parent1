@@ -47,6 +47,8 @@ public class CmsBtJmProductModel implements Serializable
         setModifier(""); 
         setSpecialNote(""); 
         setLastJmHashId(""); 
+        setLastJmDealBegin(DateHelp.getDefaultDate());
+        setLastJmDealEnd(DateHelp.getDefaultDate());
 
     }
  
@@ -319,6 +321,24 @@ SN库存同步用
 聚美活动的最后一次hash_id
         */
      private String lastJmHashId;
+    
+    
+ /**
+货币符号Id
+        */
+     private int areaCode;
+    
+    
+ /**
+deal开始时间
+        */
+     private Date lastJmDealBegin;
+    
+    
+ /**
+deal结束时间
+        */
+     private Date lastJmDealEnd;
     
         
          /**
@@ -1205,6 +1225,62 @@ this.lastJmHashId=lastJmHashId;
 else
 {
 this.lastJmHashId="";
+}
+
+        }
+    
+        
+         /**
+           货币符号Id
+        */
+        public int getAreaCode()
+        {
+         
+        return this.areaCode;
+        }
+        public void setAreaCode(int areaCode)
+        {
+         this.areaCode=areaCode;
+        }
+    
+        
+         /**
+           deal开始时间
+        */
+        public Date getLastJmDealBegin()
+        {
+         
+        return this.lastJmDealBegin;
+        }
+        public void setLastJmDealBegin(Date lastJmDealBegin)
+        {
+       if(lastJmDealBegin!=null){
+this.lastJmDealBegin=lastJmDealBegin;
+ }
+else
+{
+this.lastJmDealBegin=DateHelp.getDefaultDate();
+}
+
+        }
+    
+        
+         /**
+           deal结束时间
+        */
+        public Date getLastJmDealEnd()
+        {
+         
+        return this.lastJmDealEnd;
+        }
+        public void setLastJmDealEnd(Date lastJmDealEnd)
+        {
+       if(lastJmDealEnd!=null){
+this.lastJmDealEnd=lastJmDealEnd;
+ }
+else
+{
+this.lastJmDealEnd=DateHelp.getDefaultDate();
 }
 
         }
