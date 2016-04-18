@@ -16,7 +16,7 @@
         <rabbit:listener queue-names="voyageone_cms_batchjob_JmBtPromotionImportTask_queue" ref="juMeiBtPromotionImportJob"/>
         <rabbit:listener queue-names="voyageone_cms_batchjob_JmBtPromotionExportTask_queue" ref="juMeiBtPromotionExportJob"/>
         <rabbit:listener queue-names="voyageone_cms_batchjob_JuMeiProductUpdate_queue"      ref="juMeiProductUpdateJob" />
-        <rabbit:listener queue-names="voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue" ref="juMeiProductUpdateDealEndTimeJobService"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue" ref="juMeiProductUpdateDealEndTimeJob"/>
 
     </rabbit:listener-container>
 
