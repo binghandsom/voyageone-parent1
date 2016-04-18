@@ -18,10 +18,7 @@ import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.TmallUploadRunState;
 import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
 import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
 
@@ -45,8 +42,6 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
 
     private int availableSizeIndex = 0;
 
-    private static Log logger = LogFactory.getLog(TmallGjSkuFieldBuilderImpl_1.class);
-
     private class BuildSkuResult {
         //Build sku prop result
         Map<String, CmsBtProductModel_Sku> sizeCmsSkuPropMap;
@@ -64,6 +59,9 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> platformProps, int cartId) {
         for (Field platformProp : platformProps) {
+            if ("hscode".equals(platformProp.getId())) {
+                continue;
+            }
             List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(platformProp.getId(), cartId);
 
             PlatformSkuInfoModel tmallSkuInfo = null;
@@ -170,6 +168,17 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
 
                 buildSkuSize(skuFieldValue, cmsSkuProp, buildSkuResult, skuSubMappingMap.get(sku_sizeField.getId()));
 
+                {
+                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
+                    for (Field fff : fList) {
+                        if (fff.getId().equals("in_prop_161712509")) {
+                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
+                            break;
+                        }
+                    }
+                }
+
+
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
                     String propId = mappingBean.getPlatformPropId();
                     if (propId.equals(sku_sizeField.getId())) {
@@ -184,10 +193,13 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
                             continue;
                         }
                         Field subField = fieldMap.get(propId);
-                        if (subField.getType() == FieldTypeEnum.INPUT) {
-                            skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
-                        } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
-                            skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                        // 这里的程序有问题的, 没考虑到mapping里的platform属性减少了的情况. 临时加入一个判断避免一下
+                        if (subField != null) {
+                            if (subField.getType() == FieldTypeEnum.INPUT) {
+                                skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+                            } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+                                skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                            }
                         }
                     }
                 }

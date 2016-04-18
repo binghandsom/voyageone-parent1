@@ -21,11 +21,9 @@ import com.voyageone.task2.cms.dao.ProductPublishDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.model.CmsBusinessLogModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.DateTimeUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,10 +47,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Autowired
     private PromotionDetailService promotionDetailService;
 
-    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
+    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
-    private static Log logger = LogFactory.getLog(UploadProductService.class);
 
     public UploadProductService() {}
 
@@ -62,14 +59,14 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
         workLoadBeans = workLoadBeanListMap.keySet();
 
         if (workLoadBeanListMap.isEmpty()) {
-            logger.info("No Workloads Found!");
+            $info("No Workloads Found!");
         }
         else {
-            logger.debug("Find " + workLoadBeanListMap.size() + " Workloads!");
+            $debug("Find " + workLoadBeanListMap.size() + " Workloads!");
         }
 
         workloadDispatcher.dispatchAndRun(workLoadBeans, this);
-        logger.info("=================Main Thread is termined===========================");
+        $info("=================Main Thread is termined===========================");
         return null;
     }
 
@@ -112,6 +109,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     }
                 }
             }
+
+            // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 START
+            if (mainSxProduct != null) {
+                if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
+                    if (!"23".equals(mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId().toString())) {
+                        continue;
+                    }
+                }
+            }
+            // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 END
 
             workload.setMainProduct(mainSxProduct);
 
@@ -176,17 +183,17 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
         switch (workLoadBean.getWorkload_status().getValue())
         {
             case PlatformWorkloadStatus.JOB_DONE: {
-                logger.info("==== JOB Done Begin ===!!!");
-                logger.info(workLoadBean);
-                logger.info("==== JOB Done End ====!!!");
+                $info("==== JOB Done Begin ===!!!");
+                $info(workLoadBean.toString());
+                $info("==== JOB Done End ====!!!");
                 if (sxProductBeans == null) {
-                    logger.info("current workload:" + workLoadBean);
+                    $info("current workload:" + workLoadBean);
                     for (WorkLoadBean workLoadBean1 : workLoadBeans) {
-                        logger.info("inter workload:" + workLoadBean1);
+                        $info("inter workload:" + workLoadBean1);
                     }
 
                     for (Map.Entry<WorkLoadBean, List<SxProductBean>> entry : workLoadBeanListMap.entrySet()) {
-                        logger.info("key:" + entry.getKey() + "   value:" + entry.getValue());
+                        $info("key:" + entry.getKey() + "   value:" + entry.getValue());
                     }
                     break;
                 }
@@ -316,9 +323,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 break;
             }
             case PlatformWorkloadStatus.JOB_ABORT: {
-                logger.error("==== JOB Abort Begin ====!!!");
-                logger.error(workLoadBean);
-                logger.error("==== JOB Abort End ====!!!");
+                $error("==== JOB Abort Begin ====!!!");
+                $error(workLoadBean.toString());
+                $error("==== JOB Abort End ====!!!");
 
                 List<String> codeList = new ArrayList<>();
                 for (SxProductBean sxProductBean : sxProductBeans) {
@@ -370,7 +377,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 break;
             }
             default:
-                logger.error("Unknown Status");
+                $error("Unknown Status");
         }
 
 
@@ -390,9 +397,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         //设置webservice的url
         for (TaskControlBean taskControlBean : taskControlList) {
-            logger.info(taskControlBean.getCfg_name());
-            logger.info(taskControlBean.getCfg_val1());
-            logger.info(taskControlBean.getCfg_val2());
+            $info(taskControlBean.getCfg_name());
+            $info(taskControlBean.getCfg_val1());
+            $info(taskControlBean.getCfg_val2());
         }
         //开始上新任务
         do_upload();

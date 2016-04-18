@@ -26,10 +26,7 @@ import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
 
@@ -84,8 +81,6 @@ public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
     Field sku_sizeField;
     private int availableSizeIndex = 0;
 
-    private static Log logger = LogFactory.getLog(TmallGjSkuFieldBuilderImpl_0.class);
-
     private class BuildSkuResult {
         //Build sku prop result
         Map<String, SxProductBean> colorCmsPropductMap;
@@ -117,6 +112,9 @@ public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> fields, int cartId) {
         for (Field field : fields) {
+            if ("hscode".equals(field.getId())) {
+                continue;
+            }
             if (isIgnore(field.getId())) {
                 logger.info("Ignore sku prop: " + field.getId());
                 continue;

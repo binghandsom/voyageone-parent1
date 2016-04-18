@@ -72,14 +72,21 @@ public abstract class BaseMQTaskService extends BaseTaskService{
         } catch (BusinessException be) {
             logIssue(be, be.getInfo());
             status = Status.ERROR;
-            $info("出现业务异常，任务退出");
-        } catch (Exception e) {
-            logIssue(e);
+            $error("出现业务异常，任务退出", be);
+            throw be;
+        } catch (RuntimeException rex) {
+            logIssue(rex);
             status = Status.ERROR;
-            logger.error("出现异常，任务退出", e);
+            $error("出现业务异常，任务退出", rex);
+            throw rex;
+        } catch (Exception ex) {
+            logIssue(ex);
+            status = Status.ERROR;
+            $error("出现异常，任务退出", ex);
+            throw new RuntimeException(ex);
+        } finally {
+            // 任务监控历史记录添加:结束
+            taskDao.insertTaskHistory(taskID, status.getIs());
         }
-
-        // 任务监控历史记录添加:结束
-        taskDao.insertTaskHistory(taskID, status.getIs());
     }
 }

@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.bean;
 
 import com.csvreader.CsvReader;
 import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,6 +38,8 @@ public class ShoeCityFeedBean {
 
     private String md5;
 
+    private int saved;
+
     public ShoeCityFeedBean() {
         // MyBatis Used
     }
@@ -57,6 +60,8 @@ public class ShoeCityFeedBean {
         this.color = reader.get(9);
         this.size_type = reader.get(10);
         this.product_type = reader.get(11);
+
+        this.saved = 1;
 
         String contents = this.upc +
                 this.code +
@@ -170,10 +175,18 @@ public class ShoeCityFeedBean {
     }
 
     public String getSku() {
-        return getCode().replace(" ", "-") + "-" + getSize();
+        return StringUtils.replaceBlankToDash(getCode()) + "-" + getSize();
     }
 
     public String getClientSku() {
-        return getCode() + "-" + getSize();
+        return getCode().trim() + "-" + getSize();
+    }
+
+    public int getSaved() {
+        return saved;
+    }
+
+    public void setSaved(int saved) {
+        this.saved = saved;
     }
 }

@@ -76,6 +76,8 @@ define([
             this.currentImage = "";
             this.errorMsg = "";
             this.showInfoFlag = true;
+
+            this.tempImage = {"image1":[],"image2":[],"image3":[],"image4":[]};
         }
 
         ProductDetailController.prototype = {
@@ -88,6 +90,10 @@ define([
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
                         self.inventoryList = res.data.inventoryList;
+                        self._orgChaName = res.data.orgChaName;
+                        self._isminimall = res.data.isminimall;
+                        self._isMain = res.data.isMain;
+
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
 
@@ -104,7 +110,7 @@ define([
                 // 尝试检查商品的 field 验证
                 var invalidNames = validSchema(self.productDetails);
 
-                if (invalidNames.length) {
+                if (invalidNames.length && self.productDetails.productStatus.statusInfo.isApproved) {
                     return self.alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
                 }
 
@@ -184,6 +190,26 @@ define([
                 //        return m.defaultMapping === 1;
                 //    });
                 //}.bind(this));
+            },
+
+            openImageSetting: function(productDetails, imageType,openImageSetting) {
+                openImageSetting({
+                    product:  productDetails,
+                    imageType: imageType
+                }).then(this.imageCallBack.bind(this));
+            },
+
+            imageCallBack: function(context){
+                var self = this;
+                self.tempImage[context.imageType].push(context.base64);
+
+                self.productDetails = context.productInfo;
+                self._orgChaName = context.orgChaName;
+                self._isminimall = context.isminimall;
+                self._isMain = context.isMain;
+
+                self.productDetailsCopy = angular.copy(self.productDetails);
+                self.showInfoFlag = self.productDetails.productDataIsReady
             }
         };
 

@@ -66,6 +66,8 @@ public class CmsSearchAdvanceController extends CmsController {
         // 查询该商品是否有价格变动
         List[] infoArr = searchIndexService.getGroupExtraInfo(productList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
+        resultBean.put("prodMainFlgList", infoArr[1]);
+        resultBean.put("prodOrgChaNameList", infoArr[2]);
 
         // 获取group列表
         List<CmsBtProductModel> groupList = searchIndexService.getGroupList(productList, params, userInfo, cmsSession);
@@ -149,6 +151,8 @@ public class CmsSearchAdvanceController extends CmsController {
         // 查询该商品是否有价格变动
         List[] infoArr = searchIndexService.getGroupExtraInfo(productList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
+        resultBean.put("prodMainFlgList", infoArr[1]);
+        resultBean.put("prodOrgChaNameList", infoArr[2]);
 
         // 返回用户信息
         return success(resultBean);
@@ -165,7 +169,7 @@ public class CmsSearchAdvanceController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/search/advance/getCustColumnsInfo 取得自定义显示列设置
+     * @api {post} /cms/search/advance/getCustColumnsInfo 1.6 取得自定义显示列设置
      * @apiName getCustColumnsInfo
      * @apiDescription 取得自定义显示列设置
      * @apiGroup search
@@ -186,7 +190,7 @@ public class CmsSearchAdvanceController extends CmsController {
      *   "customProps": [ {"feed_prop_original":"a_b_c", "feed_prop_translation":"yourname" }...],
      *   "commonProps": [ {"propId":"a_b_c", "propName":"yourname" }...],
      *   "custAttrList": [ "a_b_c", "a_b_d", "a_b_e"...],
-     *   "commList": [ "q_b_c", "q_b_d", "q_b_e"...],
+     *   "commList": [ "q_b_c", "q_b_d", "q_b_e"...]
      *  }
      * }
      * @apiExample  业务说明
@@ -214,7 +218,7 @@ public class CmsSearchAdvanceController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/search/advance/saveCustColumnsInfo 保存用户自定义显示列设置
+     * @api {post} /cms/search/advance/saveCustColumnsInfo 1.7 保存用户自定义显示列设置
      * @apiName saveCustColumnsInfo
      * @apiDescription 保存用户自定义显示列设置
      * @apiGroup search

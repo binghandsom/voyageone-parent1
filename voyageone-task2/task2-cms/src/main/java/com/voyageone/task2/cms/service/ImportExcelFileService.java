@@ -225,7 +225,7 @@ public class ImportExcelFileService extends BaseTaskService {
             $info("上传的文档 [ %s ] 处理结束", fileName);
         } catch (Exception e) {
 
-            logger.error("importExcelFileForSpecialActivity file error = " + fileName, e);
+            $error("importExcelFileForSpecialActivity file error = " + fileName, e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -346,7 +346,7 @@ public class ImportExcelFileService extends BaseTaskService {
             $info("上传的文档 [ %s ] 处理结束", fileName);
         } catch (Exception e) {
 
-            logger.error("importExcelFile file error = " + fileName, e);
+            $error("importExcelFile file error = " + fileName, e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -370,10 +370,10 @@ public class ImportExcelFileService extends BaseTaskService {
             String srcFile = filePathBean.getUpload_localpath() + "/" + fileName;
             // 目标文件
             String destFile = filePathBean.getUpload_local_bak_path() + "/" + fileName;
-            logger.info("moveFile = " + srcFile + " " + destFile);
+            $info("moveFile = " + srcFile + " " + destFile);
             FileUtils.moveFile(srcFile, destFile);
         } catch (Exception e) {
-            logger.error("moveFile file error = " + fileName, e);
+            $error("moveFile file error = " + fileName, e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -719,7 +719,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 mobileImageIndex = mobileImageIndex + 1;
             }
         } catch (Exception e) {
-            logger.error("importExcelFile getProductImageModel error", e);
+            $error("importExcelFile getProductImageModel error", e);
             ret = null;
         }
         return ret;
@@ -777,7 +777,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 productModel.setSynFlg("1");
             }
         } catch (Exception e) {
-            logger.error("importExcelFile getProductModel error", e);
+            $error("importExcelFile getProductModel error", e);
             productModel = null;
         }
 
@@ -808,7 +808,7 @@ public class ImportExcelFileService extends BaseTaskService {
             skuModel.setCreater(getTaskName());
             skuModel.setModifier(getTaskName());
         } catch (Exception e) {
-            logger.error("importExcelFile getSkuModel error", e);
+            $error("importExcelFile getSkuModel error", e);
             skuModel = null;
         }
 
@@ -835,7 +835,7 @@ public class ImportExcelFileService extends BaseTaskService {
             imagesModel.setCreater(getTaskName());
             imagesModel.setModifier(getTaskName());
         } catch (Exception e) {
-            logger.error("importExcelFile getImageModel error", e);
+            $error("importExcelFile getImageModel error", e);
             imagesModel = null;
         }
 
@@ -879,7 +879,7 @@ public class ImportExcelFileService extends BaseTaskService {
             dealModel.setSpecialActivityId3(ExcelUtils.getString(row, DealSheetFormat.special_activity_id3_index));
             dealModel.setShelfId3(ExcelUtils.getString(row, DealSheetFormat.shelf_id3_index));
         }catch (Exception e) {
-            logger.error("importExcelFile getDealModel error", e);
+            $error("importExcelFile getDealModel error", e);
             dealModel = null;
         }
 
@@ -1048,7 +1048,7 @@ public class ImportExcelFileService extends BaseTaskService {
             ret = productImportDao.insertProductImportInfo(productImportModel);
         } catch (Exception e) {
             ret = false;
-            logger.error("insertProductTable error productCode = " + productImportModel.getProductCode(), e);
+            $error("insertProductTable error productCode = " + productImportModel.getProductCode(), e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -1069,7 +1069,7 @@ public class ImportExcelFileService extends BaseTaskService {
             ret = skuImportDao.insertSkuImportInfo(skuImportModel);
         } catch (Exception e) {
             ret = false;
-            logger.error("insertSkuTable error sku = " + skuImportModel.getSku(), e);
+            $error("insertSkuTable error sku = " + skuImportModel.getSku(), e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -1090,7 +1090,7 @@ public class ImportExcelFileService extends BaseTaskService {
             ret = dealImportDao.insertDealImportInfo(dealImportModel);
         } catch (Exception e) {
             ret = false;
-            logger.error("insertDealTable error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
+            $error("insertDealTable error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -1111,7 +1111,7 @@ public class ImportExcelFileService extends BaseTaskService {
             int recCount = dealImportDao.updateDealImportInfoForSpecialActivity(dealImportModel);
             if (recCount == 0) {
                 ret = false;
-                logger.error("updateDealTableForSpecialActivity error record not found. dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode());
+                $error("updateDealTableForSpecialActivity error record not found. dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode());
                 issueLog.log("updateDealTableForSpecialActivity",
                         "Channel Id, Deal Id, Product Code = " + dealImportModel.getChannelId() + "," + dealImportModel.getDealId() + "," + dealImportModel.getProductCode(),
                         ErrorType.BatchJob,
@@ -1119,7 +1119,7 @@ public class ImportExcelFileService extends BaseTaskService {
             }
         } catch (Exception e) {
             ret = false;
-            logger.error("updateDealTableForSpecialActivity error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
+            $error("updateDealTableForSpecialActivity error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -1140,7 +1140,7 @@ public class ImportExcelFileService extends BaseTaskService {
             ret = imagesDao.insertImagesInfo(imagesModel);
         } catch (Exception e) {
             ret = false;
-            logger.error("insertImagesTable error OriginUrl = " + imagesModel.getOriginUrl(), e);
+            $error("insertImagesTable error OriginUrl = " + imagesModel.getOriginUrl(), e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -1186,7 +1186,7 @@ public class ImportExcelFileService extends BaseTaskService {
 
             // 结束行判定
             if (StringUtils.isEmpty(ExcelUtils.getString(row, PruductSheetFormat.channel_id_index))) {
-                logger.info("readProductSheet end rownum = " + row.getRowNum());
+                $info("readProductSheet end rownum = " + row.getRowNum());
                 break;
             }
 
@@ -1200,8 +1200,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-//                logger.info("readProductSheet error rownum = " + row.getRowNum());
-                logger.info("readProductSheet error filename = " + fileName + " rownum = " + row.getRowNum());
+//                $info("readProductSheet error rownum = " + row.getRowNum());
+                $info("readProductSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, productSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -1256,7 +1256,7 @@ public class ImportExcelFileService extends BaseTaskService {
 
             // 结束行判定
             if (StringUtils.isEmpty(ExcelUtils.getString(row, SkuSheetFormat.channel_id_index))) {
-                logger.info("readSkuSheet end rownum = " + row.getRowNum());
+                $info("readSkuSheet end rownum = " + row.getRowNum());
                 break;
             }
 
@@ -1267,8 +1267,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-//                logger.info("readSkuSheet error rownum = " + row.getRowNum());
-                logger.info("readSkuSheet error filename = " + fileName + " rownum = " + row.getRowNum());
+//                $info("readSkuSheet error rownum = " + row.getRowNum());
+                $info("readSkuSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, skuSheetName, row.getRowNum());
                 errList.add(errorContent);
             } else {
@@ -1313,7 +1313,7 @@ public class ImportExcelFileService extends BaseTaskService {
 
             // 结束行判定
             if (StringUtils.isEmpty(ExcelUtils.getString(row, ImageSheetFormat.seq_index))) {
-                logger.info("readImageSheet end rownum = " + row.getRowNum());
+                $info("readImageSheet end rownum = " + row.getRowNum());
                 break;
             }
 
@@ -1323,8 +1323,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-//                logger.info("readImageSheet error rownum = " + row.getRowNum());
-                logger.info("readImageSheet error filename = " + fileName + " rownum = " + row.getRowNum());
+//                $info("readImageSheet error rownum = " + row.getRowNum());
+                $info("readImageSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, imageSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -1368,7 +1368,7 @@ public class ImportExcelFileService extends BaseTaskService {
 
             // 结束行判定
             if (StringUtils.isEmpty(ExcelUtils.getString(row, DealSheetFormat.channel_id_index))) {
-                logger.info("readDealSheet end rownum = " + row.getRowNum());
+                $info("readDealSheet end rownum = " + row.getRowNum());
                 break;
             }
 
@@ -1378,8 +1378,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-//                logger.info("readDealSheet error rownum = " + row.getRowNum());
-                logger.info("readDealSheet error filename = " + fileName + " rownum = " + row.getRowNum());
+//                $info("readDealSheet error rownum = " + row.getRowNum());
+                $info("readDealSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, dealSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -1438,7 +1438,7 @@ public class ImportExcelFileService extends BaseTaskService {
             } catch (Exception e) {
                 isSuccess = false;
 
-                logger.error("createUploadFileForDailySales", e);
+                $error("createUploadFileForDailySales", e);
 
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS);
             }

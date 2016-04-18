@@ -1,25 +1,23 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
-import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.BaseMongoCartDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class CmsMtPlatformCategoryDao extends BaseMongoDao<CmsMtPlatformCategoryTreeModel> {
+public class CmsMtPlatformCategoryDao extends BaseMongoCartDao<CmsMtPlatformCategoryTreeModel> {
 
     public WriteResult deletePlatformCategories(Integer cartId,String channelId){
         String queryStr = "{'cartId':"+cartId+",'channelId':'"+channelId+"'}";
-        return deleteWithQuery(queryStr);
+        return deleteWithQuery(queryStr, cartId);
     }
 
     public List<CmsMtPlatformCategoryTreeModel> selectPlatformCategoriesByCartId(Integer cartId){
         String queryStr = "{cartId:"+cartId+"}";
-        return select(queryStr);
+        return select(queryStr, cartId);
     }
 
     public CmsMtPlatformCategoryTreeModel selectByChannel_CartId_CatId(String channelId, int cartId, String categoryId) {
@@ -29,7 +27,7 @@ public class CmsMtPlatformCategoryDao extends BaseMongoDao<CmsMtPlatformCategory
                 ",catId:'%s'" +
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId, categoryId);
-        return selectOneWithQuery(queryStr);
+        return selectOneWithQuery(queryStr, cartId);
     }
 
     public List<CmsMtPlatformCategoryTreeModel> selectByChannel_CartId(String channelId, int cartId) {
@@ -38,7 +36,7 @@ public class CmsMtPlatformCategoryDao extends BaseMongoDao<CmsMtPlatformCategory
                 ",cartId:%s" +
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId);
-        return select(queryStr);
+        return select(queryStr, cartId);
     }
 
 }

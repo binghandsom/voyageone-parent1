@@ -7,11 +7,9 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -23,26 +21,24 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 public class Shops {
-    private static final Log logger = LogFactory.getLog(Shops.class);
+    private static final Class selfClass = Shops.class;
+
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_ShopConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();
 
-    private static HashOperations<String, String, ShopBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            Map<String, ShopBean> shopBeanMap = new HashMap<>();
-            ConfigDaoFactory.getShopDao().getAll().forEach(bean -> {
-                        shopBeanMap.put(
-                                buildKey(bean.getCart_id(), bean.getOrder_channel_id()),
-                                bean
-                        );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, shopBeanMap);
-            logger.info("Shop 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        Map<String, ShopBean> shopBeanMap = new HashMap<>();
+        ConfigDaoFactory.getShopDao().getAll().forEach(bean -> {
+                    shopBeanMap.put(
+                            buildKey(bean.getCart_id(), bean.getOrder_channel_id()),
+                            bean
+                    );
+                }
+        );
+        CacheHelper.reFreshSSB(KEY, shopBeanMap);
+        logger.info("Shop 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -51,7 +47,7 @@ public class Shops {
      * @return key
      */
     private static String buildKey(String cart_id, String order_channel_id) {
-        return cart_id + CacheHelper.SKIP + order_channel_id;
+        return cart_id + CacheKeyEnums.SKIP + order_channel_id;
     }
 
     /**
@@ -73,7 +69,7 @@ public class Shops {
      * @return ShopBean
      */
     public static ShopBean getShop(String order_channel_id, String cart_id) {
-        return hashOperations.get(KEY, buildKey(cart_id, order_channel_id));
+        return CacheHelper.getBean(KEY, buildKey(cart_id, order_channel_id), selfClass);
     }
 
     /**
@@ -82,7 +78,7 @@ public class Shops {
      * @return List<ShopBean>
      */
     public static List<ShopBean> getChannelShopList(String order_channel_id) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         List<String> keyList = new ArrayList<>();
         if (CollectionUtils.isEmpty(keySet)) return null;
 
@@ -90,7 +86,7 @@ public class Shops {
             if (k.endsWith(buildKey("", order_channel_id))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 
 
@@ -100,7 +96,7 @@ public class Shops {
      * @return List<ShopBean>
      */
     public static List<ShopBean> getCartShopList(String cart_id) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         List<String> keyList = new ArrayList<>();
         if (CollectionUtils.isEmpty(keySet)) return null;
 
@@ -108,7 +104,7 @@ public class Shops {
             if (k.startsWith(buildKey(cart_id, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 
     public static List<ShopBean> getShopListByPlatform(PlatFormEnums.PlatForm platform) {
@@ -125,7 +121,7 @@ public class Shops {
      * @return List<ShopBean>
      */
     public static List<ShopBean> getShopList() {
-        return hashOperations.values(KEY);
+        return CacheHelper.getAllBeans(KEY, selfClass);
     }
 
     /**

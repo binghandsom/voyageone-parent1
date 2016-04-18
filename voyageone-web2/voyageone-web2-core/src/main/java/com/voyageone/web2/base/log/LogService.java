@@ -1,5 +1,6 @@
 package com.voyageone.web2.base.log;
 
+import com.voyageone.common.logger.VOAbsLoggable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @version 2.0.0
  */
 @Service
-public class LogService {
+public class LogService extends VOAbsLoggable {
     @Autowired
     private LogDao logDao;
 
@@ -19,7 +20,7 @@ public class LogService {
         try {
             logDao.insert(exceptionBean);
         } catch (Exception e) {
-            e.printStackTrace();
+            $error(e);
         }
     }
 }

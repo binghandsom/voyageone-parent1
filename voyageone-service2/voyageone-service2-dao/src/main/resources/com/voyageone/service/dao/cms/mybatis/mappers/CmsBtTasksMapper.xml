@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
+    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel" useGeneratedKeys="true" keyProperty="task_id">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
-            task_name, task_type, promotion_id, activity_start, activity_end,
+            task_name, task_type, promotion_id, channel_id, activity_start, activity_end,
             <if test="config != null">
               config,
             </if>
             created, creater, modified, modifier
         ) VALUES (
-            #{task_name}, #{task_type}, #{promotion_id}, #{activity_start}, #{activity_end}, <if test="config != null">#{config},</if> now(), #{creater}, now(), #{modifier}
+            #{task_name}, #{task_type}, #{promotion_id},#{channelId}, #{activity_start}, #{activity_end}, <if test="config != null">#{config},</if> now(), #{creater}, now(), #{modifier}
         )
     </insert>
 
@@ -68,7 +68,7 @@
             t.creater,
             t.modified,
             t.modifier,
-            channel_id,
+            t.channel_id,
             cart_id,
             promotion_status,
             promotion_name,
@@ -88,17 +88,17 @@
             p.modified p_modified,
             p.modifier p_modifier
         FROM voyageone_cms2.cms_bt_tasks t
-            JOIN voyageone_cms2.cms_bt_promotion p
+            LEFT JOIN voyageone_cms2.cms_bt_promotion p
                 ON t.promotion_id = p.promotion_id
         <where>
             <if test="task_id != null">
                 task_id = #{task_id}
             </if>
-            <if test="channel_id != null">
-                and p.channel_id = #{channel_id}
+            <if test="channelId != null">
+                and t.channel_id = #{channelId}
             </if>
             <if test="promotion_id != null">
-              t.promotion_id = #{promotion_id}
+              and t.promotion_id = #{promotion_id}
             </if>
             <if test="task_name != null and task_name != ''">
                 AND task_name = #{task_name}
@@ -116,6 +116,18 @@
                 and  #{activity_end,jdbcType=VARCHAR} >=  t.activity_end
             </if>
         </where>
+    </select>
+
+    <delete id="cms_bt_tasks_delete" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
+        delete
+        from voyageone_cms2.cms_bt_tasks
+        where
+        task_id = #{task_id}
+    </delete>
+    <select id="select_cms_bt_tasks_task_id" parameterType="String" resultType="String">
+      select task_id
+        from voyageone_cms2.cms_bt_tasks
+       where task_name=#{task_name}
     </select>
 
 </mapper>

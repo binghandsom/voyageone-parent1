@@ -1,7 +1,9 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.ShoeCityFeedBean;
@@ -13,19 +15,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author jonasvlag. 16/3/30.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class SEAnalysisContext {
+class SEAnalysisContext {
 
-    private final static String USE_DUTY = "useDuty";
-
-    private final static String PRICE_WITH_DUTY = "priceWithDuty";
-
-    private final static String PRICE_WITHOUT_DUTY = "priceWithoutDuty";
+    private final static Pattern NUM_REGEX = Pattern.compile("^\\d+$");
 
     private List<CmsBtFeedInfoModel> codeList = new ArrayList<>();
 
@@ -33,20 +32,20 @@ public class SEAnalysisContext {
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
-    private <T> T calc(String exp, ShoeCityFeedBean feedBean, Class<T> resultType) {
-        return parser.parseExpression(exp).getValue(feedBean, resultType);
-    }
-
     void put(ShoeCityFeedBean feedBean) {
 
         CmsBtFeedInfoModel_Sku sku = new CmsBtFeedInfoModel_Sku();
 
         sku.setSku(feedBean.getSku());
-        sku.setSize(String.valueOf(Integer.valueOf(feedBean.getSize()) / 10));
+        if (NUM_REGEX.matcher(feedBean.getSize()).matches())
+            sku.setSize(String.valueOf(Integer.valueOf(feedBean.getSize()) / 10));
+        else
+            sku.setSize(feedBean.getSize());
         sku.setBarcode(feedBean.getUpc());
         sku.setClientSku(feedBean.getClientSku());
         sku.setPrice_net(feedBean.getCost().doubleValue());
-        sku.setPrice_current(getPriceCurrent(feedBean).doubleValue());
+        BigDecimal price = new BigDecimal(getPriceCurrent(feedBean));
+        sku.setPrice_current(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
 
         CmsBtFeedInfoModel code = getProduct(feedBean);
 
@@ -59,7 +58,7 @@ public class SEAnalysisContext {
 
     private CmsBtFeedInfoModel getProduct(ShoeCityFeedBean feedBean) {
 
-        String code = feedBean.getCode();
+        String code = StringUtils.replaceBlankToDash(feedBean.getCode());
 
         if (codeMap.containsKey(code))
             return codeMap.get(code);
@@ -73,7 +72,10 @@ public class SEAnalysisContext {
         product.setColor(feedBean.getColor());
         product.setOrigin("None");
         product.setSizeType(feedBean.getSize_type());
-        product.setImage(null); // TODO ??
+        List<String> imageUrls = new ArrayList<>();
+        for (int i = 1; i <= 5; i++)
+            imageUrls.add(String.format("http://image.sneakerhead.com/is/image/sneakerhead/%s-%s", feedBean.getImg_id(), i));
+        product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
         product.setShort_description("");
@@ -89,7 +91,7 @@ public class SEAnalysisContext {
         return product;
     }
 
-    private BigDecimal getPriceCurrent(ShoeCityFeedBean feedBean) {
+    private Double getPriceCurrent(ShoeCityFeedBean feedBean) {
         if (isUseDuty(feedBean)) {
             return getPriceWithDuty(feedBean);
         }
@@ -97,47 +99,48 @@ public class SEAnalysisContext {
     }
 
     private boolean isUseDuty(ShoeCityFeedBean feedBean) {
-        String exp = getExp(USE_DUTY);
-        Map<String, Object> params = getParam(feedBean);
+        String exp = getExp(FeedEnums.Name.useDuty);
+        ExpParams params = getParam(feedBean);
         return getValue(exp, params, Boolean.class);
     }
 
-    private BigDecimal getPriceWithDuty(ShoeCityFeedBean feedBean) {
-        String exp = getExp(PRICE_WITH_DUTY);
-        Map<String, Object> params = getParam(feedBean);
-        return getValue(exp, params, BigDecimal.class);
+    private Double getPriceWithDuty(ShoeCityFeedBean feedBean) {
+        String exp = getExp(FeedEnums.Name.priceWithDuty);
+        ExpParams params = getParam(feedBean);
+        return getValue(exp, params, Double.class);
     }
 
-    private BigDecimal getPriceWithoutDuty(ShoeCityFeedBean feedBean) {
-        String exp = getExp(PRICE_WITHOUT_DUTY);
-        Map<String, Object> params = getParam(feedBean);
-        return getValue(exp, params, BigDecimal.class);
+    private Double getPriceWithoutDuty(ShoeCityFeedBean feedBean) {
+        String exp = getExp(FeedEnums.Name.priceWithoutDuty);
+        ExpParams params = getParam(feedBean);
+        return getValue(exp, params, Double.class);
     }
 
-    private Map<String, Object> getParam(ShoeCityFeedBean feedBean) {
-        Map<String, Object> paramMap = new HashMap<>(2);
-        paramMap.put("const", new ExpConstants());
-        paramMap.put("feed", feedBean);
-        return paramMap;
+    private ExpParams getParam(ShoeCityFeedBean feedBean) {
+        return new ExpParams(feedBean);
     }
 
-    private <T> T getValue(String exp, Map<String, Object> context, Class<T> resultClass) {
+    private <T> T getValue(String exp, ExpParams context, Class<T> resultClass) {
         return parser.parseExpression(exp).getValue(context, resultClass);
     }
 
-    private String getExp(String name) {
-        return Feeds.getVal1(ChannelConfigEnums.Channel.SHOE_CITY, name);
+    private String getExp(FeedEnums.Name name) {
+        return Feeds.getVal1(ChannelConfigEnums.Channel.SHOE_CITY.getId(), name);
     }
 
     /**
      * 表达式常量
      */
-    private class ExpConstants {
-        public final BigDecimal ITEM_WEIGHT = new BigDecimal(4);
-        public final BigDecimal ALIPAY_COMMISSION = new BigDecimal(0);
-        public final BigDecimal TMALL_COMMISSION = new BigDecimal(0.05);
-        public final BigDecimal RETURN_MANAGEMENT = new BigDecimal(0.05);
-        public final BigDecimal ITEM_DUTY = new BigDecimal(0.1);
-        public final BigDecimal EXCHANGE_RATE = new BigDecimal(6.5);
+    private class ExpParams {
+        public final double ITEM_WEIGHT = 4D;
+        public final double ALIPAY_COMMISSION = 0D;
+        public final double TMALL_COMMISSION = 0.05D;
+        public final double RETURN_MANAGEMENT = 0.05D;
+        public final double ITEM_DUTY = 0.1D;
+        public final double EXCHANGE_RATE = 6.5D;
+        public double cost;
+        ExpParams(ShoeCityFeedBean feedBean) {
+            this.cost = feedBean.getCost().doubleValue();
+        }
     }
 }

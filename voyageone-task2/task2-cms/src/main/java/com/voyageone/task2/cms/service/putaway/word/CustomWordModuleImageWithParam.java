@@ -7,8 +7,6 @@ import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
@@ -23,9 +21,8 @@ import java.util.Set;
  */
 @Repository
 public class CustomWordModuleImageWithParam extends CustomWordModule {
-    public final static String moduleName = "ImageWithParam";
 
-    private Log logger = LogFactory.getLog(CustomWordModule.class);
+    public final static String moduleName = "ImageWithParam";
 
     public CustomWordModuleImageWithParam() {
         super(moduleName);
@@ -56,7 +53,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
                 imageParam = URLEncoder.encode(imageParam, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.fillInStackTrace();
-                logger.error(e.fillInStackTrace());
+                logger.error(e.getMessage(), e);
             }
             imageParams.add(imageParam);
         }

@@ -7674,3 +7674,33 @@ input:checked + ol > li {
   border-left:4px solid #999;
   border-bottom:4px solid #bbb
 }
+.w3{max-width:50px}
+.w5{max-width:80px}
+.w10{max-width:100px}
+.w15{max-width:150px}
+.w20{max-width:200px}
+.w30{max-width:300px}
+
+.w3m{min-width:50px}
+.w5m{min-width:80px}
+.w10m{min-width:100px}
+.w15m{min-width:150px}
+.w20m{min-width:200px}
+.w30m{min-width:300px}
+
+/*new table*/
+.table .newtablebg{
+  background:#e67e22;
+  color:#fff;
+  line-height:28px
+}
+.modal-xlg {
+  width: 650px;
+}
+
+input[datepicker-popup][readonly] {
+  background-color: white;
+}
+
+ul[uib-datepicker-popup-wrap] table { border: 0; }
+ul[uib-datepicker-popup-wrap] button { border: 0; }

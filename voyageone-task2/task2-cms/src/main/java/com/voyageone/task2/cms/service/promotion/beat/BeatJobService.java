@@ -6,13 +6,13 @@ import com.taobao.api.response.PictureGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
-import com.voyageone.cms.enums.BeatFlag;
-import com.voyageone.cms.enums.ImageCategoryType;
+import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbItemSchema;
-import com.voyageone.common.components.tmall.TbItemService;
-import com.voyageone.common.components.tmall.TbPictureService;
-import com.voyageone.common.components.tmall.exceptions.GetUpdateSchemaFailException;
+import com.voyageone.components.tmall.service.TbItemSchema;
+import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
@@ -61,7 +61,7 @@ public class BeatJobService extends BaseTaskService {
     }
 
     @Autowired
-    private BeatInfoService beatInfoService;
+    private CmsBeatInfoService beatInfoService;
 
     @Autowired
     private TbItemService tbItemService;

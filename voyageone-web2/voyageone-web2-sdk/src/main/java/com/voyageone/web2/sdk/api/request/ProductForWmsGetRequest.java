@@ -17,7 +17,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  *
  * @author edward.lin
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductForWmsGetRequest extends VoApiRequest<ProductForWmsGetResponse> {
 

@@ -1,16 +1,23 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.PostResponse;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.security.KeyStore;
 
@@ -22,6 +29,8 @@ import java.security.KeyStore;
  * @since 1.0.0
  */
 public class HttpUtils {
+
+    private final static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
     static {
         HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> true);
@@ -37,7 +46,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -56,7 +65,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -92,7 +101,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -112,7 +121,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -121,13 +130,45 @@ public class HttpUtils {
         return null;
     }
 
+
+    public static String post(String url, String jsonBody, String accept, String token) throws Exception {
+        HttpPost post = new HttpPost(new URI(url));
+
+        // setHeader Accept
+        post.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
+        // setHeader Authorization
+        if(!StringUtils.isEmpty(token)) post.setHeader("Authorization","Bearer " + token);
+
+        //setBody
+        post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
+
+        //测试启用代理
+        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
+
+        //post request
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpResponse response = httpclient.execute(post);
+
+        //从服务器获得输入流
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = buffer.readLine()) != null) {
+            sb.append(line);
+        }
+
+        //关闭流
+        buffer.close();
+        return sb.toString();
+    }
+
     public static String put(String url, String jsonParam,String authorization)
     {
 
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuilder sb = null;
+        StringBuilder sb;
         String line;
 
         try {
@@ -140,7 +181,7 @@ public class HttpUtils {
             request.setHeader("Authorization", "Basic " + authorization);
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
-            int code = response.getStatusLine().getStatusCode();
+            //int code = response.getStatusLine().getStatusCode();
             // System.out.println("postCode= " + code);
 
             //从服务器获得输入流
@@ -158,7 +199,7 @@ public class HttpUtils {
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
             System.out.println("请求异常数据异常");
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         } finally {
             try {
@@ -182,7 +223,7 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuilder sb = null;
+        StringBuilder sb;
         String line;
 
         try {
@@ -212,7 +253,7 @@ public class HttpUtils {
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
             System.out.println("请求异常数据异常");
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         } finally {
             try {
@@ -245,7 +286,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -514,7 +555,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -544,7 +585,7 @@ public class HttpUtils {
                 return readConnection(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -587,7 +628,7 @@ public class HttpUtils {
 
     public static SSLSocketFactory getSsf(String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd)  {
 
-        SSLSocketFactory ssf = null;
+        SSLSocketFactory ssf;
 
         try {
             // 实例化 SSL 上下文  arg1:protocol arg2:provider
@@ -617,7 +658,7 @@ public class HttpUtils {
             //-----注入SSL Context
             ssf = sslContext.getSocketFactory();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
         return ssf;
@@ -639,10 +680,10 @@ public class HttpUtils {
             connection.disconnect();
 
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             if (connection != null) {
                 connection.disconnect();
             }
-            e.printStackTrace();
             throw e;
         }
 
@@ -696,5 +737,6 @@ public class HttpUtils {
 
         return url.openStream();
     }
+
 
 }

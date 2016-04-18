@@ -33,19 +33,19 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.TbProductService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -57,7 +57,9 @@ import java.util.regex.Pattern;
  */
 @Repository
 public class TmallProductService {
-    private static Log logger = LogFactory.getLog(TmallProductService.class);
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     TbProductService tbProductService;
     @Autowired
@@ -158,7 +160,7 @@ public class TmallProductService {
      * 4. 判断是否时达尔文体系，并设置到TmallUploadRunState
      * 5. 选择主商品（选择第一个code作为主商品）
      * 6. 进入搜索产品状态
-     * @param tcb
+     * @param tcb UploadProductTcb
      * @throws TaskSignal
      */
     private void addProductForStatusInit(UploadProductTcb tcb) throws TaskSignal {
@@ -241,7 +243,7 @@ public class TmallProductService {
      * 2. 根据天猫API的产品匹配的Schema中的字段填充值
      * 3. 调用天猫API获取该产品是否存在匹配的product
      * 4. 如果不存在product则进入上传产品状态，如果存在，则进入检查产品状态
-     * @param tcb
+     * @param tcb UploadProductTcb
      * @throws TaskSignal
      */
     private void addProductForStatusSearchProduct(UploadProductTcb tcb) throws TaskSignal {
@@ -289,7 +291,7 @@ public class TmallProductService {
         try {
             fieldMap = schemaToIdPropMap(searchSchema);
         } catch (TopSchemaException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
         constructCustomPlatformProps(tcb, fieldMap, expressionParser, null);
@@ -322,8 +324,7 @@ public class TmallProductService {
      * 3. 如果是达尔文体系，并且workload中没有获取到款号，那么先从darwin list表中读取到该model下所有code
      *    的款号，根据不同的款号拆分成多个子任务，抛出切分任务的信号给任务分发者，有WorkloadDispacher重新
      *    分发子任务。
-     * @param tcb
-     * @return
+     * @param tcb UploadProductTcb
      * @throws TaskSignal
      */
     private String generateStyleCode(UploadProductTcb tcb) throws TaskSignal {
@@ -388,7 +389,7 @@ public class TmallProductService {
      *  4. 循环结束，如果有未审核的产品，那么抛出Abort_Job信号，任务结束，结束原因为：需要
      *     等待产品审核
      *  5. 循环结束，如果没有未审核的产品，那么进入上传产品状态
-     * @param tcb
+     * @param tcb UploadProductTcb
      * @throws TaskSignal
      */
     private void addProductForStatusCheckProductStatus(UploadProductTcb tcb) throws TaskSignal {
@@ -456,7 +457,7 @@ public class TmallProductService {
      * 2. 对所有产品字段进行mapping填值，如果遇到图片，那么抛出上传图片的信号
      * 3. 如果没有遇到图片，那么调用Tmall API上传产品，如果上传成功，进入上传商品状态，
      *    否则抛出Abort_Job信号, 错误原因为Tmall Api返回的错误
-     * @param tcb
+     * @param tcb UploadProductTcb
      * @throws TaskSignal
      */
     private void addProductForStatusUploadProduct(UploadProductTcb tcb) throws TaskSignal {
@@ -485,7 +486,7 @@ public class TmallProductService {
             try {
                 fieldMap = schemaToIdPropMap(productSchema);
             } catch (TopSchemaException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
             }
             constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet);
@@ -538,7 +539,7 @@ public class TmallProductService {
     }
     /**
      * 天猫平台上传商品时，当产品图片上传成功后继续上传产品
-     * @param tcb
+     * @param tcb UploadProductTcb
      * @throws TaskSignal
      */
     private void addProductForStatusProductImageUploaded(UploadProductTcb tcb) throws TaskSignal {
@@ -615,7 +616,7 @@ public class TmallProductService {
         try {
             fieldMap = schemaToIdPropMap(itemSchema);
         } catch (TopSchemaException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
         constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet);
@@ -758,7 +759,7 @@ public class TmallProductService {
         TmallItemSchemaAddResponse addItemResponse = tbProductService.addItem(categoryCode, productCode, xmlData, shopBean);
         String numId;
         if (addItemResponse == null) {
-            failCause.append(String.format("Tmall return null response when add item"));
+            failCause.append("Tmall return null response when add item");
             logger.error(failCause + ", request:" + xmlData);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
         } else if (addItemResponse.getErrorCode() != null) {
@@ -1044,7 +1045,7 @@ public class TmallProductService {
         try {
             fieldMap = schemaToIdPropMap(itemSchema);
         } catch (TopSchemaException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
         tmallUploadRunState.getContextBuildFields().setFieldMap(fieldMap);
@@ -1166,7 +1167,7 @@ public class TmallProductService {
         logger.debug("xmlData:" + xmlData);
         TmallItemSchemaUpdateResponse updateItemResponse = tbProductService.updateItem(productId, numId, categoryCode, xmlData, shopBean);
         if (updateItemResponse == null) {
-            failCause.append(String.format("Tmall return null response when update item"));
+            failCause.append("Tmall return null response when update item");
             logger.error(failCause + ", request:" + xmlData);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
         } else if (updateItemResponse.getErrorCode() != null) {
@@ -1195,8 +1196,6 @@ public class TmallProductService {
      * 价格的计算方法为：
      *  计算最高价格，库存为0的sku不参与计算
      *  如果所有sku库存都为0， 第一个的价格作为商品价格
-     * @param sxProducts
-     * @return
      */
     private double calcItemPrice(List<SxProductBean> sxProducts, Map<String, Integer> skuInventoryMap,
                                  String channelId, int cartId) {
@@ -1375,7 +1374,7 @@ public class TmallProductService {
                         tmallUploadRunState.setStyle_code(styleCode);
                     }
                     // 测试代码不要提交 tom start
-                    styleCode = "test." + styleCode;
+//                    styleCode = "test." + styleCode;
                     // 测试代码不要提交 tom end
                     field.setValue(styleCode);
                     logger.debug("tmall style code[" + field.getId() + "]: " + field.getValue());
@@ -1463,7 +1462,11 @@ public class TmallProductService {
                         logger.info("已经有sku属性，忽略商品外部编码");
                         continue;
                     }
-                    InputField  field = (InputField) processFields;
+                    // bug修正 tom START
+//                    InputField  field = (InputField) processFields;
+
+                    InputField  field = (InputField) (processFields.get(0));
+                    // bug修正 tom END
                     List<SxProductBean> processProducts = workLoadBean.getProcessProducts();
                     if (processProducts.size() != 1) {
                         String errorCause = "包含商品外部编码的类目必须只有一个code";
@@ -1531,10 +1534,8 @@ public class TmallProductService {
                                     }
                                     contextBuildFields.addCustomField(field);
                                 }
-                            } catch (TopSchemaException e) {
-                                e.printStackTrace();
-                            } catch (ApiException e) {
-                                e.printStackTrace();
+                            } catch (TopSchemaException | ApiException e) {
+                                logger.error(e.getMessage(), e);
                             }
                         }
                     }
@@ -1613,9 +1614,7 @@ public class TmallProductService {
 
             switch (field.getType()) {
                 case INPUT: {
-                    if (expressionValue != null) {
-                        ((InputField) field).setValue(expressionValue);
-                    }
+                    ((InputField) field).setValue(expressionValue);
                     for (String imageUrl : imageSetEachProp) {
                         List<TmallUploadRunState.UrlStashEntity> destUrlStashEntities = srcUrlStashEntityMap.get(imageUrl);
                         if (destUrlStashEntities == null) {
@@ -1627,22 +1626,24 @@ public class TmallProductService {
                     break;
                 }
                 case SINGLECHECK: {
-                    if (expressionValue != null) {
-                        ((SingleCheckField) field).setValue(expressionValue);
-                    }
+                    ((SingleCheckField) field).setValue(expressionValue);
                     break;
                 }
                 case MULTIINPUT:
                     break;
                 case MULTICHECK: {
                     String[] valueArrays = ExpressionParser.decodeString(expressionValue);
-                    if (valueArrays != null) {
-                        for (String value : valueArrays) {
-                            ((MultiCheckField) field).addValue(value);
-                        }
+                    for (String value : valueArrays) {
+                        ((MultiCheckField) field).addValue(value);
                     }
                     break;
                 }
+                case COMPLEX:
+                    break;
+                case MULTICOMPLEX:
+                    break;
+                case LABEL:
+                    break;
                 default:
                     logger.error("复杂类型的属性:" + field.getType() + "不能使用MAPPING_SINGLE来作为匹配类型");
                     return null;

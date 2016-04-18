@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.spring.CMappingJacksonObjectMapper;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -77,12 +78,16 @@ public final class JacksonUtil {
      * 根据json字符串返回对应Map类型
      *
      * @param jsonString String
-     * @return Map<String, Object>
+     * @return Map result
      */
-    public static Map<String, Object> jsonToMap(String jsonString) throws IOException {
+    public static Map<String, Object> jsonToMap(String jsonString) {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
-        });
+        try {
+            return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -113,6 +118,10 @@ public final class JacksonUtil {
         JavaType javaType = mapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, Map.class);
         return mapper.readValue(jsonString, javaType);
     }
-
+    public static <T> T ToObjectFromJson(String json, Class<T> c) throws Exception {
+        CMappingJacksonObjectMapper objectMapper = new CMappingJacksonObjectMapper();
+        T result = objectMapper.readValue(json,c);
+        return result;
+    }
 
 }

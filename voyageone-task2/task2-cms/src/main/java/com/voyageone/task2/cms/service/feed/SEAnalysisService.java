@@ -12,6 +12,7 @@ import com.voyageone.task2.cms.dao.feed.ShoeCityDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ import java.util.regex.Pattern;
 public class SEAnalysisService extends BaseTaskService {
 
     private final static Pattern ALL_ZERO = Pattern.compile("^0+$");
+
+    private final static String FILE_PATH = "/opt/app-shared/voyageone_web/contents/other/third_party/016/Feed/";
 
     @Autowired
     private ShoeCityDao shoeCityDao;
@@ -51,14 +54,22 @@ public class SEAnalysisService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // /opt/app-shared/voyageone_web/contents/other/third_party/016/Feed/shoecity-product-feed.csv
+        // 打开目录
+        File feedFileDir = new File(FILE_PATH);
+        // 过滤文件
+        File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(".csv"));
+
+        if (feedFiles.length < 1) {
+            $info("木有找到文件");
+            return;
+        }
 
         List<ShoeCityFeedBean> beanList = new ArrayList<>();
-        CsvReader reader = new CsvReader(""); // TODO ???
+        CsvReader reader = new CsvReader(feedFiles[0].getPath());
         while (reader.readRecord()) {
             try {
                 ShoeCityFeedBean bean = new ShoeCityFeedBean(reader);
-                if (ALL_ZERO.matcher(bean.getUpc()).matches())
+                if (!ALL_ZERO.matcher(bean.getUpc()).matches())
                     beanList.add(bean);
             } catch (Exception e) {
                 logIssue(e, reader.getValues());
@@ -66,6 +77,10 @@ public class SEAnalysisService extends BaseTaskService {
         }
 
         $info("读取数据: " + beanList.size());
+
+        shoeCityDao.clearTemp();
+
+        $info("清空数据");
 
         int count = shoeCityDao.insertList(beanList);
 

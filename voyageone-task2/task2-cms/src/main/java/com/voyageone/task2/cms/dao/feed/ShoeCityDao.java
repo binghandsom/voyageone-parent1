@@ -27,4 +27,8 @@ public class ShoeCityDao extends BaseDao {
     public int updateSucceed(List<CmsBtFeedInfoModel> succeed) {
         return update("cms_zz_worktable_se_superfeed_full_updateSucceed", parameters("succeed", succeed));
     }
+
+    public int clearTemp() {
+        return delete("cms_zz_worktable_se_superfeed_clearTemp");
+    }
 }

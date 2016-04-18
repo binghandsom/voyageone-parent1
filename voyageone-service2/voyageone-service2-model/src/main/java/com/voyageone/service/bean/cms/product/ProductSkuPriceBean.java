@@ -5,7 +5,7 @@ package com.voyageone.service.bean.cms.product;
  *
  * @author chuanyu.liang 2015/12/10
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductSkuPriceBean {
 
@@ -24,6 +24,13 @@ public class ProductSkuPriceBean {
     private Double clientMsrpPrice;
     //供应商销售价
     private Double clientRetailPrice;
+
+    // 价格变动符号
+    // 由两部分组成: 1. 价格变动标志 2. 差价
+    // 价格变动标志: U(涨价) D(降价) X(击穿)
+    // 例: U100 就是涨价100元
+    // 有可能为空, 空的场合, 说明是初始状态, 没有任何价格变动过
+    private String priceChgFlg;
 
     public String getSkuCode() {
         return skuCode;
@@ -79,5 +86,13 @@ public class ProductSkuPriceBean {
 
     public void setClientRetailPrice(Double clientRetailPrice) {
         this.clientRetailPrice = clientRetailPrice;
+    }
+
+    public String getPriceChgFlg() {
+        return priceChgFlg;
+    }
+
+    public void setPriceChgFlg(String priceChgFlg) {
+        this.priceChgFlg = priceChgFlg;
     }
 }

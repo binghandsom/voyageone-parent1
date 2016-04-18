@@ -7,7 +7,7 @@
 
 	<import resource="applicationContext-core.xml"/>
 	
-	<import resource="applicationContext-cms.xml"/>
+	<!--<import resource="applicationContext-cms.xml"/>-->
 
 	<import resource="applicationContext-mq.xml"/>
 

@@ -1,8 +1,11 @@
 package com.voyageone.task2.base;
 
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * RabbitMq触发任务基类
@@ -19,12 +22,17 @@ public abstract class BaseMQTaskJob extends BaseTaskJob implements MessageListen
     public void onMessage(Message message) {
         try {
             BaseTaskService service = getTaskService();
-            if(service instanceof BaseMQTaskService)
-                ((BaseMQTaskService) service).startup(JsonUtil.jsonToMap(new String(message.getBody(),"UTF-8")));
-            else
-                logger.error("请配置BaseMQTaskService");
-        } catch (Exception e) {
-            logger.error("onMessage error:", e);
+            if(service instanceof BaseMQTaskService) {
+                String messageStr = new String(message.getBody(), "UTF-8");
+                Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
+                ((BaseMQTaskService) service).startup(messageMap);
+            } else {
+                $error("请配置BaseMQTaskService");
+            }
+        } catch (RuntimeException rex) {
+            throw rex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

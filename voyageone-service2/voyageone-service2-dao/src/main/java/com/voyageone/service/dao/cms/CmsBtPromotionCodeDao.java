@@ -38,10 +38,13 @@ public class CmsBtPromotionCodeDao extends ServiceBaseDao {
         return delete("delete_cms_bt_promotion_code", params);
     }
 
-    public int deletePromotionCodeByModelId(Integer promotionId, Long modelId) {
+    public int deletePromotionCodeByModelId(Integer promotionId, String productModel) {
         CmsBtPromotionCodeModel params = new CmsBtPromotionCodeModel();
         params.setPromotionId(promotionId);
-        params.setModelId(modelId);
+        params.setProductModel(productModel);
         return delete("delete_cms_bt_promotion_code", params);
+    }
+    public List<Map<String, Object>> selectCmsBtPromotionAllCodeByPromotionIdS(List promotionIdList){
+        return selectList("select_cms_bt_promotion_code_pro_promotionIds", promotionIdList);
     }
 }

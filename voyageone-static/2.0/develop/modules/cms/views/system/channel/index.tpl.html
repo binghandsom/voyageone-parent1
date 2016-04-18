@@ -1,0 +1,122 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="container-fluid m-l-md m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="channelId">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="channelName">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" ng-model="allowMinimallOption">
+                                            <option ng-repeat="option in mallOptions" value="{{option.id}}">
+                                                {{option.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox"> 已删除
+                                    </label>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-sm">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                        | translate}}
+                                    </button>
+                                    <button class="btn btn-vo" ng-click="refreshTable()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                        | translate}}
+                                    </button>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <table class="table table-hover-new text-center table-bordered">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width:7%" translate="TXT_SEQ"></th>
+                    <th class="text-center" style="width:8%" translate="TXT_CHANNEL_ID"></th>
+                    <th class="text-center" style="width:10%" translate="TXT_NAME"></th>
+                    <th class="text-center" style="width:30%" translate="TXT_FULL_NAME"></th>
+                    <th class="text-center" style="width:25%" translate="TXT_ALLOW_USJOI"></th>
+                    <th class="text-center" style="width:20%" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody ng-if="tableSource.length">
+                <tr ng-repeat="el in tableSource">
+                    <td class="text-center mfb-xt3">{{$index}}</td>
+                    <td>{{el.order_channel_id}}</td>
+                    <td>{{el.name}}</td>
+                    <td>{{el.full_name}}</td>
+                    <td>
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <div class="table_main">
+                                <ul>
+                                    <div class="col-sm-6">
+                                        <input type="radio" name="radio_{{el.order_channel_id}}" value="1" ng-model="el.is_usjoi"
+                                               ng-click="save(el)"><span class="ng-binding">Yes</span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="radio" name="radio_{{el.order_channel_id}}" value="0" ng-model="el.is_usjoi"
+                                               disabled><span>No</span>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                    <td ng-controller="popupCtrl">
+                        <button class="btn btn-success btn-xs ng-scope"
+                                ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
+                                class="fa fa-pencil"></i></button>
+                    </td>
+                </tr>
+                </tr>
+                </tbody>
+            </table>
+            <vpagination config="page"></vpagination>
+        </div><!-- /.box-body -->
+    </div>
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

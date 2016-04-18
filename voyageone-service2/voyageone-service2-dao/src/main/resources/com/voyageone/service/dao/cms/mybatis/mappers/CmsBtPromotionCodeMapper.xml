@@ -21,8 +21,14 @@
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
+        t1.*, count(1) AS skuCount
+        FROM
+        (
+        SELECT
             a.seq,
             a.promotion_id,
+            a.org_channel_id,
+            d.full_name,
             a.product_id,
             a.model_id,
             a.product_model,
@@ -49,16 +55,18 @@
             a.image_url_1 as image,
             b.tag_path,
             b.tag_name,
-            b.tag_path_name ,
-            count(1) as skuCount
+            b.tag_path_name
         FROM
           voyageone_cms2.cms_bt_promotion_code a
           LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku c on a.promotion_id = c.promotion_id and a.product_code = c.product_code
+        LEFT JOIN tm_order_channel d on a.org_channel_id = d.order_channel_id
 
         <where>
             <if test="promotionId != null">
                 a.promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null and channelId != '' and channelId != '997'">
+                and a.org_channel_id =  #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="modelId != null">
                 and a.model_id = #{modelId,jdbcType=INTEGER}
@@ -74,10 +82,13 @@
                 )
             </if>
         </where>
-        GROUP BY a.promotion_id,a.product_code
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
+        ) t1
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku t2 ON t1.promotion_id = t2.promotion_id
+        AND t1.product_code = t2.product_code
+        GROUP BY t1.promotion_id,t1.product_code
     </select>
     <select id="select_cms_bt_promotion_code_cnt" resultType="int" parameterType="HashMap" >
         SELECT
@@ -87,6 +98,9 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null and channelId != '' and channelId != '997'">
+                and org_channel_id =  #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="modelId != null and modelId != ''">
                 and model_id = #{modelId,jdbcType=INTEGER}
@@ -110,6 +124,7 @@
         SELECT
         a.seq,
         a.promotion_id,
+        a.org_channel_id,
         a.product_id,
         a.model_id,
         a.product_model,
@@ -147,6 +162,9 @@
             <if test="promotionId != null">
                 a.promotion_id =  #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '997'">
+                and a.org_channel_id=  #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
 
     </select>
@@ -155,6 +173,9 @@
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 promotion_id,
+            </if>
+            <if test="orgChannelId != null" >
+                org_channel_id,
             </if>
             <if test="productId != null" >
                 product_id,
@@ -228,6 +249,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
             </if>
             <if test="productId != null" >
                 #{productId,jdbcType=INTEGER},
@@ -304,6 +328,9 @@
         <set >
             <if test="promotionId != null" >
                 promotion_id = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                org_channel_id = #{orgChannelId,jdbcType=VARCHAR},
             </if>
             <if test="productId != null" >
                 product_id = #{productId,jdbcType=INTEGER},
@@ -387,11 +414,19 @@
         <if test="productId != null">
             and product_id = #{productId,jdbcType=INTEGER}
         </if>
-        <if test="modelId != null">
-            and model_id = #{modelId,jdbcType=INTEGER}
+        <if test="productModel != null">
+            and product_model = #{productModel,jdbcType=VARCHAR}
         </if>
         <if test="productCode != null and productCode != ''">
             and product_code = #{productCode,jdbcType=VARCHAR}
         </if>
     </delete>
+    <select id="select_cms_bt_promotion_code_pro_promotionIds" parameterType="List" resultType="HashMap">
+        select distinct product_code,product_model,property_1,property_2,property_3,property_4
+          from voyageone_cms2.cms_bt_promotion_code
+        where promotion_id in
+        <foreach collection="list" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+    </select>
 </mapper>

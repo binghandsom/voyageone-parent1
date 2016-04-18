@@ -26,6 +26,7 @@ public class ConfigDaoFactory {
     private static TypeDao typeDao;
     private static TypeChannelDao channelValueDao;
 
+
     @Autowired
     private void setCarrierDao(CarrierDao carrierDao) {
         ConfigDaoFactory.carrierDao = carrierDao;

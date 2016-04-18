@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/aop
+     http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="voAopLoggable" class="com.voyageone.common.logger.VOAopLoggable"/>
+
+    <!-- aop task2 Service.onStartup() 日志输出配置 -->
+    <aop:config>
+        <!-- 日志在Service层 -->
+        <aop:pointcut id="taskServices" expression="execution(public * com.voyageone.task2.cms.service.*Service.onStartup(..))" />
+
+        <!-- 日志切入配置 -->
+        <aop:aspect ref="voAopLoggable" id="logas" order="1">
+            <aop:before pointcut-ref="taskServices" method="doBefore"/>
+            <aop:after pointcut-ref="taskServices" method="doAfter"/>
+            <aop:after-throwing pointcut-ref="taskServices" method="doAfterThrowing" throwing="e"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>

@@ -4,6 +4,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.XMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
@@ -11,6 +13,8 @@ import java.io.*;
  * Created by sn3 on 2015-06-02.
  */
 public class XmlUtil {
+
+    private final static Logger logger = LoggerFactory.getLogger(XmlUtil.class);
 
     //保存XML为文件
     public static Boolean writeXml2File(String content,String fileName,String Path){
@@ -22,7 +26,7 @@ public class XmlUtil {
             write.write(doc);
             write.close();
         } catch (DocumentException | IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         return true;
@@ -54,7 +58,7 @@ public class XmlUtil {
             inputStream.read(bytes);
             return bytes;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return null;
     }

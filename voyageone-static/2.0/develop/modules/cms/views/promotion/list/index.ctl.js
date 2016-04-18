@@ -1,14 +1,17 @@
 
 define([
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function () {
+], function (_) {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes) {
+    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes,cookieService) {
 
-        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": []};
+        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [],"promotionIdList": []};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
         $scope.datePicker = [];
+        $scope.currentChannelId = cookieService.channel();
+
 
         $scope.initialize = function () {
             promotionService.init().then(function (res) {
@@ -29,7 +32,7 @@ define([
 
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function (res) {
-                $scope.vm.promotionList = res.data;
+                $scope.vm.promotionList = _.where(res.data, {isAllPromotion: false});
                 $scope.groupPageOption.total = $scope.vm.promotionList.size;
             }, function (res) {
             })
@@ -56,6 +59,6 @@ define([
         };
     }
 
-    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
+    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes','cookieService'];
     return indexController;
 });

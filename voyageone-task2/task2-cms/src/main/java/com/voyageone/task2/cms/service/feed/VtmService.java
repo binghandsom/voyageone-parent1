@@ -4,7 +4,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
-import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -68,20 +67,18 @@ public class VtmService extends BaseTaskService {
         // 插入数据库
         $info("维他命产品信息插入开始");
         int count = vtmSuperFeedImport();
-        $info("维他命产品信息插入完成");
+        $info("维他命产品信息插入完成 共"+count+"条数据");
         if( count > 0) {
             // 清表
-            $info("维他命产品信息清表开始");
-            superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
-            $info("维他命产品信息清表结束");
+
             // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
             // 1的sql文：
             // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
             // 2的sql文：
             // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
-            logger.info("transform开始");
+            $info("transform开始");
             transformer.new Context(LUCKY_VITAMIN, this).transform();
-            logger.info("transform结束");
+            $info("transform结束");
 
             insertService.new Context(LUCKY_VITAMIN).postNewProduct();
             // 更新完成，UpdateFlag结果：
@@ -112,7 +109,7 @@ public class VtmService extends BaseTaskService {
 //            } catch (Exception ex) {
 //                String message = "维他命产品文件插入失败, SKU= " + superfeed.getSKU();
 //                $info(message);
-//                logger.error(ex.getMessage());
+//                $error(ex.getMessage());
 //                logIssue("cms 数据导入处理", message + "  " + ex.getMessage());
 //            }
 //        }
@@ -141,7 +138,9 @@ public class VtmService extends BaseTaskService {
 //            logIssue("cms 数据导入处理", "UPC设定的Excel文件不正确. ");
             return 0;
         }
-
+        $info("维他命产品信息清表开始");
+        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
+        $info("维他命产品信息清表结束");
 //        CsvReader reader;
         BufferedReader br = null;
         try {
@@ -266,7 +265,7 @@ public class VtmService extends BaseTaskService {
                 if (isErrData(superfeedvtmbean)) {
                     continue;
                 }
-                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
+                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !listImportUPC.contains(superfeedvtmbean.getSKU()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
                 {
                     continue;
                 }
@@ -295,7 +294,7 @@ public class VtmService extends BaseTaskService {
                 message = "★★★★★从SKU=" + sku + " 开始未成功导入★★★★★";
             }
             $info(message);
-            logger.error(ex.getMessage());
+            $error(ex.getMessage());
             logIssue("cms 数据导入处理", "维他命产品文件读入失败. " + message + ex.getMessage());
         } finally {
             if (br != null) br.close();
@@ -330,13 +329,13 @@ public class VtmService extends BaseTaskService {
             $info("upc清单不存在");
         }catch (Exception ex) {
             listImportUPC.clear();
-            logger.error(ex.getMessage());
+            $error(ex.getMessage());
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage());
+                    $error(e.getMessage());
                 }
             }
         }
@@ -382,7 +381,7 @@ public class VtmService extends BaseTaskService {
         File file_backup = new File(filename_backup);
 
         if (!file.renameTo(file_backup)) {
-//            logger.error("产品文件备份失败");
+//            $error("产品文件备份失败");
             $info("UPC文件备份失败");
         }
 

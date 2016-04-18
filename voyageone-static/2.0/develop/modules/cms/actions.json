@@ -30,6 +30,11 @@
         "exportProducts":"exportProducts",
         "getCustColumnsInfo":"getCustColumnsInfo",
         "saveCustColumnsInfo":"saveCustColumnsInfo"
+      },
+      "$feedSearchService": {
+        "root": "/cms/search/feed/",
+        "init": "init",
+        "search": "search"
       }
     },
     "group": {
@@ -79,7 +84,8 @@
         "getPlatformMapping": "getPlatformMapping",
         "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping",
-        "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory"
+        "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
+        "getCarts": "getCarts"
       },
       "$dictionaryService": {
         "root": "/cms/mapping/dictionary",
@@ -115,6 +121,67 @@
         "delPromotionCode":"delPromotionCode"
       }
     },
+    "jmpromotion": {
+      "jmPromotionService": {
+        "root": "/cms/jmpromotion/index",
+        "init": "init",
+        "get": "get",
+        "getListByWhere": "getListByWhere",
+        "insert": "insert",
+        "update": "update"
+      },
+      "jmPromotionDetailService": {
+        "root": "/cms/jmpromotion/detail",
+        "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
+        "delete": "delete",
+        "updateDealPrice": "updateDealPrice",
+        "deleteByPromotionId": "deleteByPromotionId",
+        "deleteByProductIdList": "deleteByProductIdList",
+        "jmNewUpdateAll": "jmNewUpdateAll",
+        "jmNewByProductIdListInfo": "jmNewByProductIdListInfo",
+        "updateDealEndTime": "updateDealEndTime",
+        "updateDealEndTimeAll": "updateDealEndTimeAll",
+        "getProductDetail": "getProductDetail",
+        "updateProductDetail": "updateProductDetail",
+        "updatePromotionProductDetail": "updatePromotionProductDetail",
+        "updateSkuDetail": "updateSkuDetail",
+        "deletePromotionSku": "deletePromotionSku",
+        "getProductMasterData": "getProductMasterData"
+
+      }
+    },
+    "cmsBtJmPromotionImportTask":{
+      "cmsBtJmPromotionImportTaskService":{
+        "root":"/cms/CmsBtJmPromotionImportTask/index",
+        "getByPromotionId":"getByPromotionId"
+      }
+    },
+    "cmsBtJmPromotionExportTask":{
+      "cmsBtJmPromotionExportTaskService": {
+        "root": "/cms/CmsBtJmPromotionExportTask/index",
+        "getByPromotionId": "getByPromotionId",
+        "addExport": "addExport"
+      }
+    },
+    "imageManager": {
+      "$CmsMtMasterInfoService": {
+        "root": "/cms/cmsmtmasterinfo/index",
+        "search": "getListByWhere",
+        "addImage": "insert",
+        "saveImage": "update",
+        "deleteImage": "delete",
+        "updateJMImg": "updateJMImg",
+        "getCountByWhere":"getCountByWhere",
+        "loadJmMasterBrand":"loadJmMasterBrand"
+      },
+      "$CmsMtJmConfigService": {
+        "root": "/cms/cmsmtjmconfig/index",
+        "init": "init",
+        "insert": "insert",
+        "update": "update",
+        "getByKey": "getByKey"
+      }
+    },
     "task": {
       "taskService": {
         "root": "/cms/promotion/task",
@@ -136,6 +203,43 @@
         "root": "/cms/task/price",
         "getPriceList": "getPriceList",
         "updateTaskStatus": "updateTaskStatus"
+      },
+      "taskStockService": {
+        "root": "/cms/promotion/task_stock",
+        "initNewTask": "initNewTask",
+        "saveTask": "saveTask",
+        "delTask": "delTask",
+        "searchStock": "searchStock",
+        "getCommonStockList": "getCommonStockList",
+        "getRealStockList": "getRealStockList",
+        "initNewRecord": "initNewRecord",
+        "getUsableStock": "getUsableStock",
+        "saveNewRecord": "saveNewRecord",
+        "importStockInfo": "importStockInfo",
+        "exportStockInfo": "exportStockInfo",
+        "executeStockSeparation": "executeStockSeparation",
+        "executeStockRevert": "executeStockRevert",
+        "saveRecord": "saveRecord",
+        "delRecord": "delRecord",
+        "getSkuSeparationDetail": "getSkuSeparationDetail",
+        "exportErrorInfo": "exportErrorInfo"
+      },
+      "taskStockIncrementService": {
+        "root": "/cms/promotion/task_stock_increment",
+        "searchTask": "searchTask",
+        "searchSubTask": "searchSubTask",
+        "saveTask": "saveTask",
+        "delTask": "delTask",
+        "getPlatFormList": "getPlatFormList"
+      },
+      "taskStockIncrementDetailService": {
+        "root": "/cms/promotion/task_stock_increment_detail",
+        "searchItem": "searchItem",
+        "saveItem": "saveItem",
+        "delItem": "delItem",
+        "importStockInfo": "importStockInfo",
+        "exportStockInfo": "exportStockInfo",
+        "executeStockIncrementSeparation": "executeStockIncrementSeparation"
       }
     },
     "system": {
@@ -163,35 +267,36 @@
         "addToPromotion": "addToPromotion"
       },
       "$fieldEditService": {
-        "root": "/cms/pop/field_edit/",
+        "root": "/cms/pop/field_edit",
         "getPopOptions": "getPopOptions",
         "setProductFields": "setProductFields"
       },
       "$promotionHistoryService": {
-        "root": "/cms/pop/history_promotion/",
+        "root": "/cms/pop/history_promotion",
         "getPromotionHistory": "getPromotionHistory"
       },
       "$priceHistoryService": {
-        "root": "/cms/pop/history_price/",
+        "root": "/cms/pop/history_price",
         "getPriceHistory": "getPriceHistory"
       }
     },
     "translation": {
       "translationService":{
-        "root":"/cms/translation/tasks/",
+        "root":"/cms/translation/tasks",
         "getTasks":"getTasks",
         "searchHistoryTasks":"searchHistoryTasks",
         "assignTasks":"assignTasks",
         "copyFormMainProduct":"copyFormMainProduct",
         "saveTask":"saveTask",
         "submitTask":"submitTask",
+        "cancelTask":"cancelTask",
         "getFeedAttributes":"getFeedAttributes"
       }
     },
     "channel": {
       "custom": {
         "attributeService": {
-          "root":"/cms/channel/custom/prop/",
+          "root":"/cms/channel/custom/prop",
           "init": "get",
           "getCatTree": "getCatTree",
           "save": "update",
@@ -201,11 +306,20 @@
       },
       "value": {
         "attributeValueService": {
-          "root":"/cms/channel/custom/value/",
+          "root":"/cms/channel/custom/value",
           "init": "get",
           "add" : "create",
           "save": "update"
         }
+      },
+      "usjoi":{
+          "usjoiService":{
+            "root":"/cms/channel/usjoi/",
+            "getList":"getList",
+            "update":"update",
+            "getCarts":"getCarts",
+            "updateCartIds":"updateCartIds"
+          }
       }
     }
   }

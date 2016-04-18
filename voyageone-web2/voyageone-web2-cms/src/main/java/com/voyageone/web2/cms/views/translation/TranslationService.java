@@ -2,22 +2,24 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
-import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.CustomWordService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +29,12 @@ import java.util.*;
  * Created by lewis on 15-12-16.
  */
 @Service
-public class TranslationService {
-
-    Log logger = LogFactory.getLog(TranslationService.class);
+public class TranslationService extends BaseAppService {
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
+    private FeedInfoService feedInfoService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private ProductService productService;
 
@@ -41,7 +42,7 @@ public class TranslationService {
     private ProductGroupService productGroupService;
 
     @Autowired
-    protected CmsMtCustomWordDao customWordDao;
+    protected CustomWordService customWordService;
 
     private static String[] RET_FIELDS = {
             "prodId",
@@ -55,8 +56,10 @@ public class TranslationService {
             "fields.longDesCn",
             "fields.shortDesCn",
             "fields.model",
-            "fields.images1",
+            "fields.images1", "fields.images2", "fields.images3", "fields.images4",
             "fields.translator",
+            "fields.translateStatus",
+            "fields.clientProductUrl",
             "groups.platforms",
             "modified"};
 
@@ -78,7 +81,7 @@ public class TranslationService {
                 "'groups.platforms':{$elemMatch: {'cartId': 0, 'isMain': 1}}," +
                 "'fields.translateStatus':'0'," +
                 "'fields.translator':'%s'," +
-                "'fields.translateTime':{'$gt':'%s'}}",userInfo.getUserName(), translateTimeStr);
+                "'fields.translateTime':{'$gt':'%s'}}", userInfo.getUserName(), translateTimeStr);
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
@@ -90,10 +93,10 @@ public class TranslationService {
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels);
 
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
+        translateTaskBean.setProdListTotal(cmsBtProductModels.size());
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(),userInfo.getUserName()));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
-
         return translateTaskBean;
     }
 
@@ -124,12 +127,11 @@ public class TranslationService {
         List<CmsBtProductModel> cmsBtProductModels = productService.translateDistribute(userInfo.getSelChannelId(), productTransDistrBean);
 
         TranslateTaskBean result = new TranslateTaskBean();
-
         result.setProductTranslationBeanList(buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels));
+        result.setProdListTotal(cmsBtProductModels.size());
         result.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
         result.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
         result.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
-
         return result;
     }
 
@@ -148,7 +150,7 @@ public class TranslationService {
         }
 
         // 先查询该商品对应的group信息
-//        logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
+//        $debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
 //
 //
 //        DBObject excObj = new BasicDBObject();
@@ -177,7 +179,7 @@ public class TranslationService {
 //
 //        DBObject params = new BasicDBObject();
 //        if (groupId == 0) {
-//            logger.warn("TranslationService.saveTask() 无group信息 商品ProdId=" + taskBean.getProdId());
+//            $warn("TranslationService.saveTask() 无group信息 商品ProdId=" + taskBean.getProdId());
 //            // 只更新该商品信息
 //            params.put("prodId", taskBean.getProdId());
 //        } else {
@@ -245,44 +247,53 @@ public class TranslationService {
 //    }
 
     /**
-     * 获取当前用户未完成的任务.
+     * 根据条件获取当前用户所有任务.
      *
      * @param userInfo
-     * @param condition
+     * @param reqBean
      * @return
-     * @throws BusinessException
      */
-    public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, String condition) throws BusinessException {
-
-        if (StringUtils.isEmpty(condition)){
+    public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, Map reqBean) {
+        String condition = (String) reqBean.get("searchCondition");
+        int tranSts = NumberUtils.toInt((String) reqBean.get("tranSts"), -1);
+        if (StringUtils.isEmpty(condition) && tranSts == -1) {
             return this.getUndoneTasks(userInfo);
         }
 
-        String tasksQueryStr = String.format("{'groups.platforms.cartId': 0}," +
-                "'fields.translator':'%s',$or:[{'fields.code':{$regex:'%s'}}," +
-                "{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}}," +
-                "{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}}," +
-                "{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}}," +
-                "{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]}",
-                userInfo.getUserName(),condition,condition,condition,condition,condition,condition,condition,condition,condition);
+        String tasksQueryStr = String.format("{'groups.platforms.cartId':0,'fields.translator':'%s'", userInfo.getUserName());
+        if (!StringUtils.isEmpty(condition)) {
+            tasksQueryStr = tasksQueryStr + String.format(",$or:[{'fields.code':{$regex:'%s'}}," +
+                            "{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}}," +
+                            "{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}}," +
+                            "{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}}," +
+                            "{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]",
+                    condition, condition, condition, condition, condition, condition, condition, condition, condition);
+        }
+        if (tranSts == -1) {
+            tasksQueryStr = tasksQueryStr + "}";
+        } else {
+            tasksQueryStr = tasksQueryStr + ",'fields.translateStatus':'" + tranSts + "'}";
+        }
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
         //设定返回值.
         queryObject.setProjection(RET_FIELDS);
+        long prodTotal = productService.getCnt(userInfo.getSelChannelId(), queryObject.getQuery());
+
+        int pageNum = (Integer) reqBean.get("pageNum");
+        int pageSize = (Integer) reqBean.get("pageSize");
+        queryObject.setSkip((pageNum - 1) * pageSize);
+        queryObject.setLimit(pageSize);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(userInfo.getSelChannelId(), queryObject);
-
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels);
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
-        translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
-        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(),userInfo.getUserName()));
-        translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
+        translateTaskBean.setProdListTotal(prodTotal);
         return translateTaskBean;
     }
-
 
     /**
      * 组装task beans。
@@ -306,13 +317,44 @@ public class TranslationService {
             translationBean.setShortDesCn(productModel.getFields().getShortDesCn());
             translationBean.setModel(productModel.getFields().getModel());
             translationBean.setProductCode(productModel.getFields().getCode());
+            translationBean.setClientProductUrl((String) productModel.getFields().get("clientProductUrl"));
+
+            // 设置商品图片
             translationBean.setProductImage(productModel.getFields().getImages1().get(0).getName());
+            List<List<String>> imageList = new ArrayList<>(4);
+            List<CmsBtProductModel_Field_Image> images1 = productModel.getFields().getImages1();
+            List<CmsBtProductModel_Field_Image> images2 = productModel.getFields().getImages2();
+            List<CmsBtProductModel_Field_Image> images3 = productModel.getFields().getImages3();
+            List<CmsBtProductModel_Field_Image> images4 = productModel.getFields().getImages4();
+            List<String> images1Arr = new ArrayList<>(images1.size());
+            List<String> images2Arr = new ArrayList<>(images2.size());
+            List<String> images3Arr = new ArrayList<>(images3.size());
+            List<String> images4Arr = new ArrayList<>(images4.size());
+            for (CmsBtProductModel_Field_Image imageItem : images1) {
+                images1Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images2) {
+                images2Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images3) {
+                images3Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images4) {
+                images4Arr.add(imageItem.getName());
+            }
+            imageList.add(images1Arr);
+            imageList.add(images2Arr);
+            imageList.add(images3Arr);
+            imageList.add(images4Arr);
+            translationBean.setProdImageList(imageList);
+
             translationBean.setModifiedTime(productModel.getModified());
             translationBean.setProdId(productModel.getProdId());
             translationBean.setTranslator(productModel.getFields().getTranslator());
+            translationBean.setTranSts(NumberUtils.toInt(productModel.getFields().getTranslateStatus()));
 
             // 设置该商品在MT上面的groupId
-            for(CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
+            for (CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
                 if (platForm.getCartId() == CartType.MASTER.getCartId())
                     translationBean.setGroupId(platForm.getGroupId());
             }
@@ -369,13 +411,13 @@ public class TranslationService {
      */
     public Map<String, String> getFeedAttributes(String channelId, String productCode) {
 
-        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
+        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productCode);
 
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product code: " + productCode + " 对应的品牌方信息不存在！";
 
-            logger.warn(errMsg);
+            $warn(errMsg);
 
         }
 
@@ -459,8 +501,7 @@ public class TranslationService {
     }
 
     /**
-     *
-     * @param requestBean
+     * verifyParameter
      */
     private void verifyParameter(ProductTranslationBean requestBean){
 
@@ -492,13 +533,39 @@ public class TranslationService {
      * @return
      */
     public Map<String, Object> getTransLenSet(String chnId) {
-        Map<String, Object> setInfo = new HashMap<String, Object>();
-        List<Map<String, Object>> rslt = customWordDao.selectTransLenSet(chnId);
+        Map<String, Object> setInfo = new HashMap<>();
+        List<Map<String, Object>> rslt = customWordService.getTransLenSet(chnId);
         for (Map<String, Object> item : rslt) {
             String lenType = (String) item.get("lenType");
             item.remove("lenType");
             setInfo.put(lenType, item);
         }
         return setInfo;
+    }
+
+    /**
+     * 获取当前用户未完成的任务.
+     *
+     * @param userInfo
+     * @param prodCode
+     */
+    public TranslateTaskBean cancelUserTask(UserSessionBean userInfo, String prodCode) {
+        if (StringUtils.isEmpty(prodCode)) {
+            throw new BusinessException("cancelUserTask::没有参数");
+        }
+        Map paraMap = new HashMap<>(1);
+        paraMap.put("fields.code", prodCode);
+        Map rsMap = new HashMap<>(3);
+        rsMap.put("fields.translateStatus", "0");
+        rsMap.put("modifier", userInfo.getUserName());
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+
+        cmsBtProductDao.update(userInfo.getSelChannelId(), paraMap, rsMap);
+
+        TranslateTaskBean result = new TranslateTaskBean();
+        result.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
+        result.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
+        result.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
+        return result;
     }
 }

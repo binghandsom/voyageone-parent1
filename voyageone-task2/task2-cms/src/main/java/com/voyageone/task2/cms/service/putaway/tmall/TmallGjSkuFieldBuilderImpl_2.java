@@ -24,10 +24,7 @@ import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
 import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
 import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
 
@@ -58,8 +55,6 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
     private int availableColorIndex = 0;
 
     private int availableSizeIndex = 0;
-
-    private static Log logger = LogFactory.getLog(TmallGjSkuFieldBuilderImpl_0.class);
 
     private class BuildSkuResult {
         //Build sku prop result
@@ -92,6 +87,9 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> platformProps, int cartId) {
         for (Field field : platformProps) {
+            if ("hscode".equals(field.getId())) {
+                continue;
+            }
             List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
 
             PlatformSkuInfoModel tmallSkuInfo = null;

@@ -1,7 +1,5 @@
 package com.voyageone.common.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
@@ -15,8 +13,6 @@ import java.util.regex.Pattern;
 public final class StringUtils {
 
     private static final Pattern special_symbol = Pattern.compile("[.]");
-
-    private static Log logger = LogFactory.getLog(StringUtils.class);
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -486,11 +482,11 @@ public final class StringUtils {
         ret.append(val.substring(start));
         return ret.toString();
     }
-//    public static void main(String[] args) {
-//        String content = "<img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <p>The envelope <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg>clutch is reimagined in smooth cork with splashes of vivid colors for an artistic finish.</p><ul><li>Magnetic snap closure.</li><li>Material: Cork.</li><li>Lining: Rayon.</li><li>Imported.</li></ul><br /><p>这款信封式手拿包的灵感来源于鲜艳的色彩飞溅在光滑的软木上，体现了现代艺术与自然的结合.</p><ul><li>磁扣闭合.</li><li>材质: 软木.</li><li>内衬: 人造丝.</li><li>进口原厂制作.</li></ul>  <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <br>";
-//
-//        String ret = trimImgElement(content);
-//        System.out.println(content);
-//        System.out.println(ret);
-//    }
+
+    public static String replaceBlankToDash(String val) {
+        if ((val == null) || ("".equals(val)))
+            return "";
+        return val.trim().replaceAll(" ", "-");
+    }
+
 }

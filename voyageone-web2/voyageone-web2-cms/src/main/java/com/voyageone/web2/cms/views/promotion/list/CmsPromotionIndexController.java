@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * Created by james.li on 2015/12/11.
+ * @author james 2015/12/15
+ * @version 2.0.0
  */
 @RestController
 @RequestMapping(
@@ -32,7 +33,7 @@ public class CmsPromotionIndexController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
-    public AjaxResponse queryList(@RequestBody Map params) {
+    public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
         return success(cmsPromotionService.queryByCondition(params));
@@ -61,7 +62,7 @@ public class CmsPromotionIndexController extends CmsController {
     public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
             throws Exception {
 
-        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId);
+        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId, getUser().getSelChannelId());
         return genResponseEntityFromBytes(String.format("%s(%s).xlsx",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".xlsx"), data);
 
     }

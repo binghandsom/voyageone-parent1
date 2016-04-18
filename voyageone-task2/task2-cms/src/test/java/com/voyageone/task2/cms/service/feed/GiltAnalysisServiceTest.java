@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.common.components.gilt.GiltSkuService;
-import com.voyageone.task2.cms.service.feed.GiltAnalysisService;
+import com.voyageone.components.gilt.service.GiltSkuService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

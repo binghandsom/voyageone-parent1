@@ -45,11 +45,8 @@ public final class MongoUtils {
                     result.append("\"" + obj.toString() + "\"");
                 }
             }
-            // 如果obj为Integer类型
-            else if (obj instanceof Integer
-                    || obj instanceof BigDecimal
-                    || obj instanceof Long) {
-
+            // 如果obj为数值类型
+            else if (obj instanceof Number) {
                 // 如果带自定义的比较符,并且比较符不为$eq($eq不是mongo的比较符,只是为了区分=的判断)
                 if (compareType.length > 0 && !"$eq".equals(compareType[0])){
                     result.append("{" + compareType[0] + ": " + obj + "}");

@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
+import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public class CmsBtFeedInfoDao extends BaseMongoPartDao<CmsBtFeedInfoModel> {
+public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
 
     public CmsBtFeedInfoModel selectProductByCode(String channelId, String code) {
         String query = "{\"code\":\"" + code + "\"}";
@@ -33,20 +33,18 @@ public class CmsBtFeedInfoDao extends BaseMongoPartDao<CmsBtFeedInfoModel> {
     }
 
     /**
-     *
-     * @param channelId
-     * @param modelCode
+     * updateFeedInfoUpdFlg
      */
     public int updateFeedInfoUpdFlg(String channelId,String[] modelCode){
 
-        StringBuffer sbQuery = new StringBuffer();
+        StringBuilder sbQuery = new StringBuilder();
         sbQuery.append("{");
         sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
         sbQuery.append(",");
         sbQuery.append(MongoUtils.splicingValue("model", modelCode));
         sbQuery.append("}");
 
-        String collectionName = mongoTemplate.getCollectionName(this.getEntityClass(), channelId);
+        String collectionName = getCollectionName(channelId);
 
         WriteResult updateRes = mongoTemplate.updateMulti(sbQuery.toString(),"{ $set: {updFlg: 0}}", collectionName);
 

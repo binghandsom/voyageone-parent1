@@ -51,27 +51,27 @@ define([
                     "controller": 'popAuthorityNewCtl'
                 }
             },
-        "addattributevalue": {
-            "new": {
-                "templateUrl": "views/pop/addattributevalue/add.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/addattributevalue/add.ctl",
-                "controller": 'popAddAttributeValueCtl'
-            }
-        },
-        "addattributevaluenew": {
-            "new": {
-                "templateUrl": "views/pop/addattributevalue/new.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/addattributevalue/new.ctl",
-                "controller": 'popAddAttributeValueNewCtl'
-            }
-        },
-        "addattributevaluenews": {
-            "new": {
-                "templateUrl": "views/pop/addattributevalue/news.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/addattributevalue/news.ctl",
-                "controller": 'popAddAttributeValueNewsCtl'
-            }
-        },
+            "addattributevalue": {
+                "new": {
+                    "templateUrl": "views/pop/addattributevalue/add.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/addattributevalue/add.ctl",
+                    "controller": 'popAddAttributeValueCtl'
+                }
+            },
+            "addattributevaluenew": {
+                "new": {
+                    "templateUrl": "views/pop/addattributevalue/new.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/addattributevalue/new.ctl",
+                    "controller": 'popAddAttributeValueNewCtl'
+                }
+            },
+            "addattributevaluenews": {
+                "new": {
+                    "templateUrl": "views/pop/addattributevalue/news.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/addattributevalue/news.ctl",
+                    "controller": 'popAddAttributeValueNewsCtl'
+                }
+            },
             "bulkUpdate": {
                 "addToPromotion": {
                     "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
@@ -267,35 +267,134 @@ define([
                 "newMrbStockSku": {
                     "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
-                    "controller": 'popNewMrbStockSkuCtl'
+                    "controller": 'popNewMrbStockSkuCtl as $ctrl',
+                    "size": "md"
                 },
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
-                    "controller": 'popSkuMrbStockDetailCtl'
+                    "controller": 'popSkuMrbStockDetailCtl as $ctrl'
                 },
                 "addMrbStockIncrement": {
                     "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                     "controller": 'popAddStockIncrementCtl'
                 }
+            },
+            "search": {
+                "joinJM": {
+                    "templateUrl": "views/pop/search/joinJM.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
+                    "controller": 'popJoinJMCtl'
+                },
+            },
+            "jumei": {
+                "jmPromotionDefaultSetting": {
+                    "batch": {
+                        "templateUrl": "views/pop/jm/promotionDefaultSetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotionDefaultSetting.ctl",
+                        "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    }
+                },
+                "jmProductDetail": {
+                    "detail": {
+                        "templateUrl": "views/pop/jm/productDetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/productDetail.ctl",
+                        "controller": 'popJmProductDetailController as $ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    }
+                },
+                "jmPromotionDetail": {
+                    "detail": {
+                        "templateUrl": "views/pop/jm/promotionDetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotionDetail.ctl",
+                        "controller": 'popPromotionDetailCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    },
+                    "import": {
+                        "templateUrl": "views/pop/jm/import.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/import.ctl",
+                        "controller": 'popPromotionDetailImportCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    },
+                    "dealExtension": {
+                        "templateUrl": "views/pop/jm/dealExtension.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/dealExtension.ctl",
+                        "controller": 'popDealExtensionCtl'
+                    },
+                    "priceModify": {
+                        "templateUrl": "views/pop/jm/priceModify.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/priceModify.ctl",
+                        "controller": 'popPriceModifyCtl'
+                    }
+                },
+                "jmImageManage": {
+                    "imageSetting": {
+                        "templateUrl": "views/pop/jm/imageSetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/imageSetting.ctl",
+                        "controller": 'popImageSettingCtl as $ctrl'
+                    }
+                }
+            },
+            "search": {
+                "imagedetail": {
+                    "templateUrl": "views/pop/search/imagedetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
+                    "controller": 'popImageDetailCtl'
+                },
+                "codeDetail": {
+                    "templateUrl": "views/pop/search/codeDetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
+                    "controller": 'popCodeDetailCtl'
+                }
+
+        },
+        "system": {
+            "channelsetting": {
+                "templateUrl": "views/pop/system/channelsetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
+                "controller": 'popChannelSettingCtl'
+            },
+            "channeledit": {
+                "templateUrl": "views/pop/system/channeledit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
+                "controller": 'popChannelEditCtl'
+            },
+            "cartList": {
+                "templateUrl": "views/pop/system/cartList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
+                "controller": 'popCartListCtl'
+            },
+            "channelList": {
+                "templateUrl": "views/pop/system/channelList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                "controller": 'popChannelListCtl'
             }
+        },
+
         })
         .controller('popupCtrl', popupCtrl);
 
-    function popupCtrl($scope, $modal, popActions, $q, $translate, alert) {
+    function popupCtrl($scope, $uibModal, popActions, $q, $translate, alert) {
 
         function openModel(config, context) {
 
-            if (context) config.resolve = {
-                context: function () {
-                    return context;
-                }
-            };
+            if (context)
+                config.resolve = {
+                    context: function () {
+                        return context;
+                    }
+                };
 
             var defer = $q.defer();
             require([config.controllerUrl], function () {
-                defer.resolve($modal.open(config).result);
+
+                defer.resolve($uibModal.open(config).result);
             });
             return defer.promise;
         }
@@ -307,7 +406,7 @@ define([
         $scope.openAuthority = openAuthority;
         function openAuthority(viewSize, data) {
             require([popActions.authority.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.authority.new.templateUrl,
                     controller: popActions.authority.new.controller,
                     size: viewSize,
@@ -327,7 +426,7 @@ define([
         $scope.openAddattributevaluenew = openAddattributevaluenew;
         function openAddattributevaluenew(viewSize, data) {
             require([popActions.addattributevaluenew.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.addattributevaluenew.new.templateUrl,
                     controller: popActions.addattributevaluenew.new.controller,
                     size: viewSize,
@@ -339,10 +438,11 @@ define([
                 });
             });
         }
+
         $scope.openAddattributevaluenews = openAddattributevaluenews;
         function openAddattributevaluenews(viewSize, data) {
             require([popActions.addattributevaluenews.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.addattributevaluenews.new.templateUrl,
                     controller: popActions.addattributevaluenews.new.controller,
                     size: viewSize,
@@ -354,10 +454,11 @@ define([
                 });
             });
         }
+
         $scope.openAddattributevalue = openAddattributevalue;
         function openAddattributevalue(viewSize, data) {
             require([popActions.addattributevalue.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.addattributevalue.new.templateUrl,
                     controller: popActions.addattributevalue.new.controller,
                     size: viewSize,
@@ -378,7 +479,7 @@ define([
         function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
             require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
                 if (selList && selList.length) {
-                    var modalInstance = $modal.open({
+                    var modalInstance = $uibModal.open({
                         templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
                         controller: popActions.bulkUpdate.addToPromotion.controller,
                         size: viewSize,
@@ -415,7 +516,7 @@ define([
         function openBulkUpdate(viewSize, selList, fnInitial) {
             require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
                 if (selList && selList.length) {
-                    var modalInstance = $modal.open({
+                    var modalInstance = $uibModal.open({
                         templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
                         controller: popActions.bulkUpdate.fieldEdit.controller,
                         size: viewSize,
@@ -469,6 +570,13 @@ define([
         };
 
         /**
+         * 新增advance查询页,参加聚美活动弹出
+         * */
+        $scope.openJMActivity = function (context) {
+            return openModel(popActions.search.joinJM, context);
+        };
+
+        /**
          * 打开添加自定义属性-值，编辑页面
          * @param context
          * @returns {*}
@@ -484,7 +592,7 @@ define([
         $scope.openConfiguration = openConfiguration;
         function openConfiguration(viewSize, data) {
             require([popActions.configuration.new.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.configuration.new.templateUrl,
                     controller: popActions.configuration.new.controller,
                     size: viewSize,
@@ -504,7 +612,7 @@ define([
         $scope.openDictValue = openDictValue;
         function openDictValue(viewSize, fnInitial, $index, data) {
             require([popActions.dictionary.value.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.dictionary.value.templateUrl,
                     controller: popActions.dictionary.value.controller,
                     size: viewSize,
@@ -529,7 +637,7 @@ define([
         $scope.openDictCustom = openDictCustom;
         function openDictCustom(viewSize, fnInitial, $index, data) {
             require([popActions.dictionary.custom.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.dictionary.custom.templateUrl,
                     controller: popActions.dictionary.custom.controller,
                     size: viewSize,
@@ -589,7 +697,7 @@ define([
             return openModel(config, context);
         };
 
-        $scope.ppPlatformMapping.simpleItem = function(context) {
+        $scope.ppPlatformMapping.simpleItem = function (context) {
             return openModel(popActions.platformMapping.simple.item, context);
         };
 
@@ -599,7 +707,7 @@ define([
          */
         $scope.openCustomBaseProperty = openCustomBaseProperty;
         function openCustomBaseProperty(viewSize) {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: popActions.field.customColumn.templateUrl,
                 controllerUrl: popActions.field.customColumn.controllerUrl,
                 size: viewSize,
@@ -618,7 +726,7 @@ define([
         $scope.openTranslate = openTranslate;
         function openTranslate(viewSize, data) {
             require([popActions.field.feedDetail.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.field.feedDetail.templateUrl,
                     controller: popActions.field.feedDetail.controller,
                     size: viewSize,
@@ -638,7 +746,7 @@ define([
         $scope.openImport = openImport;
         function openImport(viewSize, data, fnInitial) {
             require([popActions.file.import.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.file.import.templateUrl,
                     controller: popActions.file.import.controller,
                     size: viewSize,
@@ -665,7 +773,7 @@ define([
         $scope.openHistoryPromotion = openHistoryPromotion;
         function openHistoryPromotion(viewSize, data) {
             require([popActions.history.promotion.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.history.promotion.templateUrl,
                     controller: popActions.history.promotion.controller,
                     size: viewSize,
@@ -685,7 +793,7 @@ define([
         $scope.openHistoryPrice = openHistoryPrice;
         function openHistoryPrice(viewSize, data, type) {
             require([popActions.history.price.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.history.price.templateUrl,
                     controller: popActions.history.price.controller,
                     size: viewSize,
@@ -700,6 +808,7 @@ define([
                 });
             });
         }
+
         /**
          * 打开promotion页面
          * @type {openPromotion}
@@ -707,7 +816,7 @@ define([
         $scope.openPromotion = openPromotion;
         function openPromotion(viewSize, cartList, data, fnInitial) {
             require([popActions.promotion.detail.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.promotion.detail.templateUrl,
                     controller: popActions.promotion.detail.controller,
                     size: viewSize,
@@ -729,11 +838,41 @@ define([
                 })
             });
         }
-
+        /**
+         * 打开promotion页面
+         * @type {openPromotion}
+         */
+        $scope.openImageSetting = function (context) {
+            return openModel(popActions.image.setting, context);
+        };
+        //function openImageSetting(viewSize, product, imageType, fnInitial) {
+        //    require([popActions.image.setting.controllerUrl], function () {
+        //        var modalInstance = $uibModal.open({
+        //            templateUrl: popActions.image.setting.templateUrl,
+        //            controller: popActions.image.setting.controller,
+        //            size: viewSize,
+        //            resolve: {
+        //                product: function () {
+        //                    return product;
+        //                },
+        //                imageType: function () {
+        //                    return imageType;
+        //                }
+        //            }
+        //        });
+        //
+        //        modalInstance.result.then(function (object) {
+        //            if (fnInitial) {
+        //                fnInitial(object);
+        //            }
+        //
+        //        })
+        //    });
+        //}
         /**
          * 打开promotion页面
          */
-        $scope.openTask = function (context) {
+        $scope.openNewBeatTask = function (context) {
             return openModel(popActions.promotion.newBeat, context);
         };
 
@@ -743,12 +882,12 @@ define([
 
         /**
          * 打开新建库存隔离任务
-         * @type {openMrbstock}
+         * @type {openMrbStock}
          */
-        $scope.openMrbstock = openMrbstock;
-        function openMrbstock(viewSize, data) {
+        $scope.openMrbStock = openMrbStock;
+        function openMrbStock(viewSize, data) {
             require([popActions.promotion.newMrbStock.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
                     controller: popActions.promotion.newMrbStock.controller,
                     size: viewSize,
@@ -768,7 +907,7 @@ define([
         $scope.openImportStock = openImportStock;
         function openImportStock(viewSize, data) {
             require([popActions.file.stock.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.file.stock.templateUrl,
                     controller: popActions.file.stock.controller,
                     size: viewSize,
@@ -788,7 +927,7 @@ define([
         $scope.openNewMrbStockSku = openNewMrbStockSku;
         function openNewMrbStockSku(viewSize, data) {
             require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.newMrbStockSku.templateUrl,
                     controller: popActions.promotion.newMrbStockSku.controller,
                     size: viewSize,
@@ -805,13 +944,19 @@ define([
          * 显示该sku的库存隔离明细
          */
         $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
-        function openSkuMrbStockDetail(viewSize, data) {
+        function openSkuMrbStockDetail(viewSize, taskId, cartId, data) {
             require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
                     controller: popActions.promotion.skuMrbStockDetail.controller,
                     size: viewSize,
                     resolve: {
+                        taskId: function () {
+                            return taskId;
+                        },
+                        cartId: function () {
+                            return cartId;
+                        },
                         data: function () {
                             return data;
                         }
@@ -840,13 +985,45 @@ define([
         }
 
         /**
+         * 新增feed查询页图片弹出
+         * */
+        $scope.openImagedetail = function (context) {
+            return openModel(popActions.search.imagedetail, context);
+        };
+
+        /**
+         * 新增feed查询页code弹出
+         * */
+        $scope.openCodeDetail = function (context) {
+            return openModel(popActions.search.codeDetail, context);
+        };
+
+
+
+        /**
+         * 新增ChannelList页,设置操作弹出
+         * */
+        $scope.openChannelSetting = function (context) {
+            return openModel(popActions.system.channelsetting, context);
+        };
+
+
+        /**
+         * 新增CartList页,设置操作弹出
+         * */
+        $scope.openChannelEdit = function (context) {
+            return openModel(popActions.system.channeledit, context);
+        };
+
+
+        /**
          * 弹出自定义属性列
          * @type {openCustomColumn}
          */
         $scope.openCustomColumn = openCustomColumn;
         function openCustomColumn(viewSize, fnInitial) {
             require([popActions.custom.column.controllerUrl], function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: popActions.custom.column.templateUrl,
                     controller: popActions.custom.column.controller,
                     size: viewSize
@@ -860,5 +1037,68 @@ define([
                 })
             });
         }
+
+        $scope.openJmPromotionDefaultSetting = function (context) {
+            return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
+        };
+
+
+        //聚美一览中，deal延期
+        $scope.openDealExtension = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.dealExtension, context);
+        };
+        //聚美一览中，price
+        $scope.openPriceModify = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
+        };
+        //聚美图片管理中，追加按钮
+        $scope.openImageSetting = function (context) {
+            return openModel(popActions.jumei.jmImageManage.imageSetting, context);
+        };
+
+        $scope.openJmProductDetail = function (context) {
+            return openModel(popActions.jumei.jmProductDetail.detail, context);
+        };
+
+
+        $scope.openJmPromotionDetail = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.detail, context);
+        };
+
+        $scope.openJmPromotionProductImport = openJmPromotionProductImport;
+        function openJmPromotionProductImport(context, fnInitial) {
+            require([popActions.jumei.jmPromotionDetail.import.controllerUrl], function () {
+                var modalInstance = $uibModal.open({
+                    templateUrl: popActions.jumei.jmPromotionDetail.import.templateUrl,
+                    controller: popActions.jumei.jmPromotionDetail.import.controller,
+                    resolve: {
+                        context: function () {
+                            return context;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+            });
+        }
+
+        //$scope.openJmPromotionProductImport = function (context,fnInitial) {
+        //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);
+        //    promise.then(function success(data) {
+        //        data.then(function () {
+        //            if (fnInitial) {
+        //                fnInitial();
+        //            }
+        //        })
+        //    }, function error(msg) {
+        //        console.error(msg);
+        //    });
+        //
+        //};
     }
 });

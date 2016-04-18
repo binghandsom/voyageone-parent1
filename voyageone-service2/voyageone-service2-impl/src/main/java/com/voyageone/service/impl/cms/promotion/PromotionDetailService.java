@@ -1,18 +1,19 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
-import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
-import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,29 +33,25 @@ public class PromotionDetailService extends BaseService {
 
     @Autowired
     private CmsBtPromotionModelDao cmsPromotionModelDao;
-
     @Autowired
     private CmsBtPromotionCodeDao cmsPromotionCodeDao;
-
     @Autowired
     private CmsBtPromotionSkuDao cmsPromotionSkuDao;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductTagService productTagService;
-
-    @Autowired
-    private CmsBtPromotionDao cmsBtPromotionDao;
-
     @Autowired
     private CmsBtPromotionTaskDao cmsPromotionTaskDao;
+
+    @Autowired
+    private TaskService taskService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ProductTagService productTagService;
 
     /**
      * 添加
      */
-    public void insertPromotionDetail(PromotionDetailAddBean bean) {
+    @VOTransactional
+    public void addPromotionDetail(PromotionDetailAddBean bean) {
         String channelId = bean.getChannelId();
         Integer cartId = bean.getCartId();
         Integer promotionId = bean.getPromotionId();
@@ -71,6 +68,10 @@ public class PromotionDetailService extends BaseService {
             productInfo = productService.getProductByCode(channelId, productCode);
         else
             productInfo = productService.getProductById(channelId, productId);
+
+        if(productInfo == null) {
+            throw new BusinessException("productCode:"+productCode+"不存在");
+        }
 
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupModel cmsBtPromotionGroupModel = new CmsBtPromotionGroupModel(productInfo, cartId, promotionId, modifier);
@@ -105,6 +106,7 @@ public class PromotionDetailService extends BaseService {
     }
 
 
+    @VOTransactional
     public void insertPromotionGroup(CmsBtPromotionGroupModel cmsBtPromotionGroupModel) {
 
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupModel);
@@ -135,6 +137,7 @@ public class PromotionDetailService extends BaseService {
     /**
      * 修改
      */
+    @VOTransactional
     public void update(CmsBtPromotionCodeModel promotionCodeModel, String modifier) {
         if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
             CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(),
@@ -149,6 +152,7 @@ public class PromotionDetailService extends BaseService {
     /**
      * 删除
      */
+    @VOTransactional
     public void remove(String channelId, List<CmsBtPromotionGroupModel> promotionModes, String modifier) {
         for (CmsBtPromotionGroupModel item : promotionModes) {
             cmsPromotionModelDao.deleteCmsPromotionModel(item);
@@ -178,8 +182,8 @@ public class PromotionDetailService extends BaseService {
             if(codes.size() > 0){
                 productTagService.delete(channelId, productIdTagsMap, modifier);
             }
-            cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getModelId());
-            cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getModelId());
+            cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getProductModel());
+            cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getProductModel());
 
 
         }
@@ -187,9 +191,6 @@ public class PromotionDetailService extends BaseService {
 
     /**
      * 判断是否
-     *
-     * @param cmsBtPromotionCodeModel
-     * @return
      */
     private Boolean isUpdateAllPromotionTask(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
 
@@ -202,8 +203,17 @@ public class PromotionDetailService extends BaseService {
         return !(tasks != null && tasks.size() > 0);
     }
 
-    public void teJiaBaoPromotionInsert(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
+    /**
+     * 特价宝商品初期化
+     */
+    @VOTransactional
+    public void addTeJiaBaoInit(List<CmsBtTasksModel> addTaskList, List<CmsBtPromotionTaskModel> addPromotionTaskList) {
+        addTaskList.forEach(taskService::addTask);
+        addPromotionTaskList.forEach(cmsPromotionTaskDao::insertPromotionTask);
+    }
 
+    @VOTransactional
+    public void teJiaBaoPromotionInsert(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
         if(cmsBtPromotionCodeModel.getPromotionId() == 0){
             CmsChannelConfigBean cmsChannelConfigBean =CmsChannelConfigs.getConfigBean(cmsBtPromotionCodeModel.getChannelId(), "TEJIABAO_ID", cmsBtPromotionCodeModel.getCartId().toString());
             if(cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())){
@@ -233,9 +243,10 @@ public class PromotionDetailService extends BaseService {
         request.setTagId(cmsBtPromotionCodeModel.getTagId());
         request.setTagPath(cmsBtPromotionCodeModel.getTagPath());
 
-        insertPromotionDetail(request);
+        addPromotionDetail(request);
     }
 
+    @VOTransactional
     public void teJiaBaoPromotionUpdate(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
 
         if(cmsBtPromotionCodeModel.getPromotionId() == 0){
@@ -258,6 +269,40 @@ public class PromotionDetailService extends BaseService {
             }
         }else{
             teJiaBaoPromotionInsert(cmsBtPromotionCodeModel);
+        }
+    }
+
+    @VOTransactional
+    public void delPromotionCode(List<CmsBtPromotionCodeModel> promotionModes, String channelId, String operator) {
+        for (CmsBtPromotionCodeModel item : promotionModes) {
+            cmsPromotionCodeDao.deletePromotionCode(item);
+
+            CmsBtPromotionTaskModel promotionTask = new CmsBtPromotionTaskModel();
+            promotionTask.setPromotionId(item.getPromotionId());
+            promotionTask.setKey(item.getProductCode());
+            promotionTask.setTaskType(0);
+            promotionTask.setSynFlg(1);
+            cmsPromotionTaskDao.updatePromotionTask(promotionTask);
+
+            HashMap<String, Object> param = new HashMap<>();
+            param.put("promotionId", item.getPromotionId());
+            param.put("modelId", item.getModelId());
+            // 获取与删除的code在同一个group的code数  如果为0 就要删除group表的数据
+            int count = cmsPromotionCodeDao.selectPromotionCodeListCnt(param);
+            if (count == 1) {
+                CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
+                model.setModelId(item.getModelId());
+                model.setPromotionId(item.getPromotionId());
+                cmsPromotionModelDao.deleteCmsPromotionModel(model);
+            }
+
+            cmsPromotionSkuDao.deletePromotionSkuByProductId(item.getPromotionId(), item.getProductId());
+
+            List<Long> poIds = new ArrayList<>();
+            poIds.add(item.getProductId());
+            if (!StringUtil.isEmpty(item.getTagPath())) {
+                productTagService.delete(channelId, item.getTagPath(), poIds, operator);
+            }
         }
     }
 }

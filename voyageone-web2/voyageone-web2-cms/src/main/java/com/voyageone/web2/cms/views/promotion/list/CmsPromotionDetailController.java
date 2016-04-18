@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by james.li on 2015/12/11.
+ * @author james 2015/12/15
+ * @version 2.0.0
  */
 @RestController
 @RequestMapping(
@@ -30,7 +31,7 @@ public class CmsPromotionDetailController extends CmsController {
     private CmsPromotionDetailService cmsPromotionDetailService;
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
-    public AjaxResponse getPromotionGroup(@RequestBody Map params) {
+    public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
@@ -45,10 +46,11 @@ public class CmsPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_CODE)
-    public AjaxResponse getPromotionCode(@RequestBody Map params) {
+    public AjaxResponse getPromotionCode(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
+
 
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
         List<CmsBtPromotionCodeModel> resultBean = cmsPromotionDetailService.getPromotionCode(params);
@@ -59,7 +61,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(result);
     }
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_SKU)
-    public AjaxResponse getPromotionSku(@RequestBody Map params) {
+    public AjaxResponse getPromotionSku(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
@@ -89,7 +91,7 @@ public class CmsPromotionDetailController extends CmsController {
     @RequestMapping(PROMOTION.LIST.DETAIL.TE_JIA_BAO_INIT)
     public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
 
-        cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());
+        cmsPromotionDetailService.teJiaBaoInit(promotionId, getUser().getSelChannelId(), getUser().getUserName());
         // 返回用户信息
         return success(null);
     }

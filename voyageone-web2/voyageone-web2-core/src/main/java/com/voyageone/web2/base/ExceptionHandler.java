@@ -3,6 +3,7 @@ package com.voyageone.web2.base;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.Constants.LANGUAGE;
+import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -13,8 +14,6 @@ import com.voyageone.web2.base.message.MessageModel;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,9 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jonas
  * @version 2.0.0
  */
-public class ExceptionHandler implements HandlerExceptionResolver {
-
-    private Log logger = LogFactory.getLog(getClass());
+public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionResolver {
 
     @Autowired
     private LogService logService;
@@ -56,14 +53,16 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             String url = request.getRequestURI();
             String simpleMessage = exception.getMessage();
             if (StringUtils.isEmpty(simpleMessage)) simpleMessage = exception.toString();
-            logger.debug(String.format("%s => %s", url, simpleMessage), exception);
+            $error(String.format("%s => %s", url, simpleMessage), exception);
 
             Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 
             String lang = val == null ||
-                    !val.equals(LANGUAGE.EN) ||
-                    !val.equals(LANGUAGE.CN) ||
-                    !val.equals(LANGUAGE.JP)
+                    (
+                            !val.equals(LANGUAGE.EN) &&
+                            !val.equals(LANGUAGE.CN) &&
+                            !val.equals(LANGUAGE.JP)
+                    )
                     ? LANGUAGE.EN
                     : val.toString();
 
@@ -82,8 +81,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                 return catchDefault(exception, response);
             }
         } catch (Exception e) {
-
-            logger.error(e.getMessage(), e);
+            $error(e);
             return catchDefault(e, response);
         }
     }

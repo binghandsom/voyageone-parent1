@@ -9,22 +9,50 @@
      http://www.springframework.org/schema/context
      http://www.springframework.org/schema/context/spring-context.xsd">
 
+
+
+
+    <!-- 自动扫描包 -->
+    <context:component-scan base-package="com.voyageone.web2">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+    </context:component-scan>
+    <!-- 默认的注解映射的支持 -->
+    <!--<mvc:annotation-driven/>-->
+    <context:annotation-config/>
+    <mvc:annotation-driven conversion-service="conversionService">
+        <mvc:message-converters register-defaults="true">
+            <ref bean="stringHttpMessageConverter"></ref>
+            <ref bean="jsonHttpMessageConverter"></ref>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     <!-- 静态资源 -->
     <mvc:default-servlet-handler/>
+    <bean id="cMappingJacksonObjectMapper" class="com.voyageone.common.spring.CMappingJacksonObjectMapper">
+    </bean>
+
+    <bean id="jsonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="objectMapper" ref="cMappingJacksonObjectMapper"></property>
+
+    </bean>
+    <bean id="stringHttpMessageConverter"
+          class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain;charset=UTF-8</value>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+
+    </bean>
 
     <!-- 打开对文件上传的支持 -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
-
-    <!-- 默认的注解映射的支持 -->
-    <mvc:annotation-driven/>
-
-    <!-- 自动扫描包 -->
-    <context:component-scan base-package="com.voyageone.web2">
-        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
-
     <!-- 配置mvc的拦截器 可以配置多个  -->
     <mvc:interceptors>
         <!-- 共通检查及处理拦截器 -->

@@ -66,8 +66,6 @@ public class JomgoQuery extends BaseCondition {
         return this;
     }
 
-
-
     public String getQuery() {
         return query;
     }

@@ -4,15 +4,22 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
+import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -33,7 +41,7 @@ import static java.util.stream.Collectors.toList;
  * @since 2.0.0
  */
 @Service
-public class FeedToCmsService {
+public class FeedToCmsService extends BaseService {
 
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
@@ -45,6 +53,9 @@ public class FeedToCmsService {
     private CmsBtFeedProductImageDao cmsBtFeedProductImageDao;
 
     private String modifier;
+
+    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
     /**
      * 获取feed类目
@@ -84,12 +95,13 @@ public class FeedToCmsService {
         String category[] = categoryPath.split("-");
         return !StringUtil.isEmpty(category[category.length-1]);
     }
+
     /**
      * 更新code信息如果不code不存在会新建
      *
      * @param products 产品列表
-     * @return response
      */
+    @VOTransactional
     public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
         this.modifier = modifier;
         List<String> existCategory = new ArrayList<>();
@@ -119,9 +131,9 @@ public class FeedToCmsService {
                     List<String> images = new ArrayList<>();
                     for (String  image :product.getImage()){
                         if("015".equalsIgnoreCase(channelId)){
-                            images.add(product.getCode() + "-" + i);
+                            images.add(special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
                         }else{
-                            images.add(channelId + "-" + product.getCode() + "-" + i);
+                            images.add(channelId + "-" + special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
                         }
                         i++;
                     }
@@ -151,10 +163,11 @@ public class FeedToCmsService {
 
                 int i = 1;
                 for (String  image :imageUrls){
-                    imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), image, i, this.modifier));
+                    CmsBtFeedProductImageModel cmsBtFeedProductImageModel =  new CmsBtFeedProductImageModel(channelId,product.getCode(), image, i, this.modifier);
+                    cmsBtFeedProductImageModel.setImageName(special_symbol.matcher(cmsBtFeedProductImageModel.getImageName()).replaceAll(Constants.EmptyString));
+                    imageModels.add(cmsBtFeedProductImageModel);
                     i++;
                 }
-//                imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), s, this.modifier)));
                 cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
 
                 Map<String, List<String>> attributeMtData;
@@ -167,7 +180,7 @@ public class FeedToCmsService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
-                e.printStackTrace();
+                $error(e.getMessage(), e);
                 failProduct.add(product);
             }
         }
