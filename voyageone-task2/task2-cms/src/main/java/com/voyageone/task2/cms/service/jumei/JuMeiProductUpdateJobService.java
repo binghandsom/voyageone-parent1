@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.service.impl.jumei.JMProductUpdate.JuMeiProductUpdatePlatefromService;
+import com.voyageone.service.impl.jumei.JMProductUpdate.JuMeiProductAddPlatefromService;
 import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Service
 public class JuMeiProductUpdateJobService extends BaseMQTaskService {
     @Autowired
-    JuMeiProductUpdatePlatefromService service;
+    JuMeiProductAddPlatefromService service;
     private static final Logger LOG = LoggerFactory.getLogger(JmBtPromotionImportJobService.class);
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {

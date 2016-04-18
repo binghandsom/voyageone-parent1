@@ -47,7 +47,7 @@ public class HtProductUpdateRequest implements JMRequest {
 
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
-        params.put("jumei_product_id",Long.toString(this.getJumei_product_id()));
+        params.put("jumei_product_id", Long.toString(this.getJumei_product_id()));
         params.put("jumei_product_name", this.getJumei_product_name());
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
