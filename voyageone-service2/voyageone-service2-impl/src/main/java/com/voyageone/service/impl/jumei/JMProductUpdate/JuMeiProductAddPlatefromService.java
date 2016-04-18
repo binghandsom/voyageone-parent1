@@ -62,7 +62,8 @@ public class JuMeiProductAddPlatefromService {
     CmsBtJmProductDao daoCmsBtJmProductDao;
     @Autowired
     JMShopBeanService serviceJMShopBean;
-
+    @Autowired
+    JuMeiProductUpdatePlatefromService serviceJuMeiProductUpdatePlatefrom;
     //活动上新
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
         ShopBean shopBean = serviceJMShopBean.getShopBean();
@@ -82,7 +83,7 @@ public class JuMeiProductAddPlatefromService {
                         }
                     } else //更新 copyDeal
                     {
-                        updateProductAddDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);////更新 copyDeal
+                        serviceJuMeiProductUpdatePlatefrom.updateProductAddDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);////更新 copyDeal
                     }
                 } catch (Exception ex) {
                     model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));

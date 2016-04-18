@@ -20,10 +20,7 @@ public class HtSkuUpdateRequest implements JMRequest {
     //update_data	Json修改数据.参数范围: 只传需要修改的字段
     int customs_product_number;// 可选	Number 海关备案商品编码 //参数范围: 注:(发货仓库为保税区仓库时，此处必填) 获取仓库接口返回bonded_area_id字段 大于０表示保税区仓库
 
-    int businessman_num;  //可选	Number  商家商品编码 参数范围: 注:确保唯一
-    public void setUrl(String url) {
-        Url = url;
-    }
+    String businessman_num;  //可选	Number  商家商品编码 参数范围: 注:确保唯一
 
     public String getJumei_sku_id() {
         return jumei_sku_id;
@@ -41,11 +38,11 @@ public class HtSkuUpdateRequest implements JMRequest {
         this.customs_product_number = customs_product_number;
     }
 
-    public int getBusinessman_num() {
+    public String getBusinessman_num() {
         return businessman_num;
     }
 
-    public void setBusinessman_num(int businessman_num) {
+    public void setBusinessman_num(String businessman_num) {
         this.businessman_num = businessman_num;
     }
     public Map<String, Object> getParameter() throws IOException {

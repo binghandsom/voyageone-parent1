@@ -71,14 +71,14 @@ public class JuMeiProductUpdateService {
         Map<String, Object> parameterPromotionSku = new HashMap<>();
         parameterPromotionSku.put("cmsBtJmPromotionId", promotionProductModel.getCmsBtJmPromotionId());
         parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
-        parameterPromotionSku.put("state", "0");
+       // parameterPromotionSku.put("state", "0");
         List<CmsBtJmPromotionSkuModel> listPromotionSku = daoCmsBtJmPromotionSku.selectList(parameterPromotionSku);
         info.setListCmsBtJmPromotionSku(listPromotionSku);
 
         //CmsBtJmSku   list
         Map<String, Object> parameterSku = new HashMap<>();
         parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
-        parameterSku.put("state", "0");
+       // parameterSku.put("state", "0");
         List<CmsBtJmSkuModel> listSkuModel = daoCmsBtJmSku.selectList(parameterSku);
         info.setListCmsBtJmSku(listSkuModel);
         return info;

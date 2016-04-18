@@ -30,19 +30,23 @@ public class JuMeiDealService {
         parameterPromotionProduct.put("dealEndTimeState", 1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
         for (CmsBtJmPromotionProductModel model : listPromotionProduct) {
-            updateDealEndTime(shopBean, model);
+            updateDealEndTime((ShopBean) shopBean, (CmsBtJmPromotionProductModel) model);
         }
     }
-    private void updateDealEndTime(ShopBean shopBean, CmsBtJmPromotionProductModel model) {
+    private void updateDealEndTimeSave(ShopBean shopBean, CmsBtJmPromotionProductModel model) {
+        updateDealEndTime(shopBean, model);
+        daoCmsBtJmPromotionProduct.update(model);
+    }
+
+    public void updateDealEndTime(ShopBean shopBean, CmsBtJmPromotionProductModel model) {
         try {
-
-
             HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
             request.setEnd_time(getTime(model.getDealEndTime()));
             request.setJumei_hash_id(model.getJmHashId());
             HtDealUpdateDealEndTimeResponse response = serviceJumeiHtDeal.updateDealEndTime(shopBean, request);
             if (response.is_Success()) {
                 model.setDealEndTimeState(2);
+                model.setActivityEnd(model.getDealEndTime());
             } else {
                 model.setDealEndTimeState(3);
                 model.setErrorMsg("延迟Deal结束时间失败" + response.getBody());
@@ -51,7 +55,6 @@ public class JuMeiDealService {
             model.setDealEndTimeState(3);
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
         }
-        daoCmsBtJmPromotionProduct.update(model);
     }
 
     public static Long getTime(Date d) throws Exception {
