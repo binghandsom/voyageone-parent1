@@ -1,6 +1,9 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+import com.voyageone.common.Constants;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by james.li on 2015/11/30.
@@ -12,6 +15,8 @@ public class CmsBtFeedProductImageModel extends BaseModel {
     private String imageName;
     private int imageTypeId = 1;
     private Integer sentFlag = 0;
+    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
     public CmsBtFeedProductImageModel(String channelId,String code, String imageUrl,int index, String modifier){
         this.channelId = channelId;
@@ -20,9 +25,9 @@ public class CmsBtFeedProductImageModel extends BaseModel {
             this.imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         }else{
             if("015".equalsIgnoreCase(channelId)){
-                this.imageName = code + "-" + index;
+                this.imageName = special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index;
             }else{
-                this.imageName = channelId + "-" + code + "-" + index;
+                this.imageName = channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index;
             }
 //            this.imageName = channelId + "-" + code + "-" + imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         }
