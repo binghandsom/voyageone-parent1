@@ -32,7 +32,8 @@ public class StockSeparateService extends BaseService {
     }
 
     public List<String>  getStockSeparateItemPageSku(Map<String, Object> sqlParam){
-        return cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
+//        return cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
+        return null;
     }
 
     public int getStockSeparateItemHistoryCnt(Map<String, Object> param){
