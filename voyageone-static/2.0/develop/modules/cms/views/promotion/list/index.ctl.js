@@ -6,7 +6,7 @@ define([
 
     function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes,cookieService) {
 
-        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": []};
+        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [],"promotionIdList": []};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
         $scope.datePicker = [];

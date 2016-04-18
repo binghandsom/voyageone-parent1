@@ -1,12 +1,10 @@
 package com.voyageone.service.model.cms.mongo;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
-
-    private Integer cartId;
+public class CmsMtPlatformCategorySchemaModel extends CartPartitionModel {
 
     private String catId;
 
@@ -15,14 +13,6 @@ public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
     private String propsProduct;
 
     private String propsItem;
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
-    }
 
     public String getCatId() {
         return catId;

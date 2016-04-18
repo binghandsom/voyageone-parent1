@@ -1,27 +1,27 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal" ng-init="$ctrl.init()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;库存隔离详情</h5>
+        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
             <div class="form-group">
                 <label class="col-sm-2 control-label">Mode</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" placeholder="35263487" disabled>
+                    <input type="text" class="form-control" ng-model="$ctrl.model" disabled>
                 </div>
             </div>
            <div class="form-group">
                <label class="col-sm-2 control-label">Code</label>
                <div class="col-sm-9">
-                   <input type="text" class="form-control" placeholder="35263487" disabled>
+                   <input type="text" class="form-control" ng-model="$ctrl.code" disabled>
                 </div>
            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Sku</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" placeholder="35263487-9" disabled>
+                    <input type="text" class="form-control" ng-model="$ctrl.sku" disabled>
                 </div>
             </div>
         </form>
@@ -32,29 +32,17 @@
                     <thead>
                     <tr>
                         <th class="text-center">No.</th>
-                        <th class="text-left">隔离种类</th>
-                        <th class="text-left">任务名</th>
-                        <th class="text-center">隔离/增量数</th>
+                        <th class="text-left">{{'TXT_SEPARATE_TYPE' | translate}}</th>
+                        <th class="text-left">{{'TXT_TASK_NAME' | translate}}</th>
+                        <th class="text-center">{{'TXT_SEPARATE_INCREMENT_QUANTITY' | translate}}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td class="text-center">1</td>
-                        <td class="text-left">一般库存隔离</td>
-                        <td class="text-left">天猫双11</td>
-                        <td class="text-center">10</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">2</td>
-                        <td class="text-left">增量库存隔离</td>
-                        <td class="text-left">天猫双11-增量</td>
-                        <td class="text-center">1</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">3</td>
-                        <td class="text-left">增量库存隔离</td>
-                        <td class="text-left">天猫双11-增量</td>
-                        <td class="text-center">18</td>
+                    <tr ng-repeat="stockHistory in $ctrl.stockHistoryList">
+                        <td class="text-center">{{$index + 1}}</td>
+                        <td class="text-left">{{stockHistory.type}}</td>
+                        <td class="text-left">{{stockHistory.taskName}}</td>
+                        <td class="text-center">{{stockHistory.qty}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -62,6 +50,6 @@
         </div> <!-- .panel -->
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> {{'BTN_CLOSE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->

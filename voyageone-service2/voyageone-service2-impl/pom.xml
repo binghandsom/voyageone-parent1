@@ -32,11 +32,16 @@
             <artifactId>voyageone-service2-dao</artifactId>
             <version>${voyageone.service2.dao.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-gilt</artifactId>
             <version>${voyageone.components.gilt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-jd</artifactId>
+            <version>${voyageone.components.jd.version}</version>
         </dependency>
 
         <dependency>

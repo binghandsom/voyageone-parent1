@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="cms_bt_stock_sales_quantity_selectStockSalesQuantity" resultType="HashMap" parameterType="HashMap">
+        select
+        sku,
+        cart_id,
+        qty
+        from   voyageone_cms2.cms_bt_stock_sales_quantity
+        where channel_id = #{channelId}
+            <if test="cartId !=null">
+                and cart_id = #{cartId}
+            </if>
+            <if test="sku !=null">
+                and sku = #{sku}
+            </if>
+            <if test="skuList != null and skuList.size() > 0">
+                and (sku in
+                <foreach collection="skuList" item="sku" open="(" separator="," close=")">
+                    #{sku}
+                </foreach>
+                )
+            </if>
+            <if test="endFlg !=null">
+                and end_flg = #{endFlg}
+            </if>
+            <if test="sysTime !=null">
+                <![CDATA[ and start_time <= #{sysTime} ]]>
+            </if>
+    </select>
+
+    <select id="cms_bt_stock_sales_quantity_selectStockSalesQuantityQty" resultType="int" parameterType="HashMap">
+        select
+        sum(qty) as qty_sum
+        from   voyageone_cms2.cms_bt_stock_sales_quantity
+        where channel_id = #{channelId}
+        <if test="cartId !=null">
+            and cart_id = #{cartId}
+        </if>
+        <if test="sku !=null">
+            and sku = #{sku}
+        </if>
+        <if test="endFlg !=null">
+            and end_flg = #{endFlg}
+        </if>
+        <if test="sysTime !=null">
+            <![CDATA[ and start_time <= #{sysTime} ]]>
+        </if>
+    </select>
+
+    <update id="cms_bt_stock_sales_quantity_updateStockSalesQuantity" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_stock_sales_quantity
+        <set >
+            <if test="qty != null" >
+                qty = #{qty},
+            </if>
+            <if test="endFlg != null" >
+                end_flg = #{endFlg},
+            </if>
+            modified = now(),
+            modifier = #{modifier}
+        </set>
+        <where>
+            1 = 1
+            <if test="channelId != null" >
+                and channel_id = #{channelId}
+            </if>
+            <if test="cartId != null" >
+                and cart_id = #{cartId}
+            </if>
+            <if test="sku != null" >
+                and sku = #{sku}
+            </if>
+            <if test="skuList != null and skuList.size() > 0">
+                and (sku in
+                <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                    #{skuItem}
+                </foreach>
+                )
+            </if>
+        </where>
+    </update>
+</mapper>

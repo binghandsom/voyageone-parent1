@@ -239,7 +239,7 @@ define([
             _.forEach(skus, function (sku) {
                 var cartInfo = "";
                 _.forEach(sku.skuCarts, function (skuCart) {
-                    cartInfo += Carts.valueOf(skuCart).name + ",";
+                    cartInfo += Carts.valueOf(parseInt(skuCart)).name + ",";
                 });
                 result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
             });
