@@ -1,5 +1,8 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +23,20 @@ public class ImagePathCacheTest {
     ImagePathCache imagePathCache;
 
     @Test
-
-    public void test()
-    {
+    public void test() {
         //ImagePathCache.set(3443,"testvalue");
-        String result=imagePathCache.get(323L);
+        String result = imagePathCache.get(323L);
         //Assert.notNull();
+    }
+
+    @Autowired
+    private CmsBtImageTemplateDao cmsBtImageTemplateDao;
+
+    @Test
+    public void testGetTemplate() {
+        CmsBtImageTemplateModel model = cmsBtImageTemplateDao.selectByTemplateId(50);
+        model = cmsBtImageTemplateDao.selectByTemplateId(50);
+        model = cmsBtImageTemplateDao.selectByTemplateId(50);
+        System.out.println(model);
     }
 }

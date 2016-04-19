@@ -36,18 +36,17 @@
     </bean>
 
     <!-- define caching behavior -->
-    <cache:advice id="cachingCmsMtImageCreateTemplateDao" cache-manager="cacheManager" key-generator="voDaoCacheKeyGenerator">
-        <cache:caching cache="addresses">
-            <cache:cacheable method="select"/>
+    <cache:advice id="cachingCmsBtImageTemplateDao" cache-manager="cacheManager" key-generator="voDaoCacheKeyGenerator">
+        <cache:caching cache="DATA_KEY_cachingCmsBtImageTemplateDao">
+            <cache:cacheable method="selectByTemplateId"/>
             <cache:cache-evict method="update"/>
-            <cache:cache-evict method="delete"/>
         </cache:caching>
     </cache:advice>
 
 
-    <!--<aop:config>-->
-        <!--<aop:advisor advice-ref="cachingCmsMtImageCreateTemplateDao"-->
-                     <!--pointcut="execution(* com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao.*(..))"/>-->
-    <!--</aop:config>-->
+    <aop:config>
+        <aop:advisor advice-ref="cachingCmsBtImageTemplateDao"
+                     pointcut="execution(* com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao.*(..))"/>
+    </aop:config>
 
 </beans>
