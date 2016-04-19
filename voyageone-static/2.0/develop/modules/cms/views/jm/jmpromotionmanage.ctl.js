@@ -3,7 +3,11 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
     function indexController($scope, jmPromotionService, confirm, $translate, cActions, notify, $location, cRoutes) {
-        $scope.vm = {"modelList": [],"jmMasterBrandList":[]};
+        $scope.vm = {"modelList": [],
+                    "jmMasterBrandList":[],
+                    status: {
+                        open: true
+                    }};
         $scope.searchInfo = {};
         $scope.datePicker = [];
         $scope.initialize = function () {

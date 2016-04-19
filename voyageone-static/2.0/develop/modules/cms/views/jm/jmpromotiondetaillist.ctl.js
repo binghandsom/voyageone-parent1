@@ -121,7 +121,7 @@ define([
                 })
             })
         };
-        $scope.updateJM(promotionProductId)
+        $scope.updateJM = function(promotionProductId)
         {
             jmPromotionDetailService.updateJM(promotionProductId).then(function (res) {
                 if (res.data.result) {

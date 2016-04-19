@@ -225,7 +225,7 @@
 					<tr>
 						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  /><span class="fa fa-check"></span></label></th>
 						<th>状态</th>
-						<th class="text-center" >错误消息</th>
+						<th class="text-left" >错误消息</th>
 						<th class="text-left">聚美类目</th>
 						<th class="text-center">PC模块ID</th>
 						<th class="text-center">APP模块ID</th>
@@ -252,7 +252,7 @@
 						<td ng-if="model.synchState==2">上传成功</td>
 						<td ng-if="model.synchState==3">更新成功</td>
 						<td ng-if="model.synchState==4">上传失败</td>
-						<td title="model.errorMsg" >{{model.errorMsg}}</td>
+						<td title="model.errorMsg" class="text-left"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3" >{{model.errorMsg}}</textarea></td>
 						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
 						<td class="text-center">{{model.pcId}}</td>
 						<td class="text-center">{{model.appId}}</td>
@@ -310,25 +310,25 @@
 				<table class="table table-hover-new vo_table" style="table-layout: fixed;">
 					<thead>
 					<tr>
-						<th class="text-center">导出文件名</th>
+						<th class="text-left">导出文件名</th>
 						<th class="text-center">成功件数</th>
 						<th class="text-center">失败件数</th>
-						<th class="text-center">导入开始时间</th>
-						<th class="text-center">导入结束时间</th>
-						<th class="text-center">异常信息Code</th>
-						<th class="text-center">失败文件</th>
+						<th class="text-left">导入开始时间</th>
+						<th class="text-left">导入结束时间</th>
+						<th class="text-left">异常信息Code</th>
+						<th class="text-left">失败文件</th>
 						<th class="text-center">操作</th>
 					</tr>
 					</thead>
 					<tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
 					<tr  ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
-						<td class="text-center">{{model.fileName}}</td>
+						<td class="text-left">{{model.fileName}}</td>
 						<td class="text-center">{{model.successRows}}</td>
 						<td class="text-center">{{model.failuresRows}}</td>
-						<td class="text-center">{{model.beginTime}}</td>
-						<td class="text-center">{{model.endTime}}</td>
-						<td class="text-center">{{model.errorMsg}}</td>
-						<td class="text-center"><a   ng-click="downloadImportErrorExcel(model.id);" >{{model.failuresFileName}}</a></td>
+						<td class="text-left">{{model.beginTime}}</td>
+						<td class="text-left">{{model.endTime}}</td>
+						<td class="text-left"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3" >{{model.errorMsg}}</textarea></td>
+						<td class="text-left"><a   ng-click="downloadImportErrorExcel(model.id);" >{{model.failuresFileName}}</a></td>
 						<td class="text-center"><button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
 					</tr>
 					</tbody>
@@ -338,28 +338,28 @@
 				<tab ng-click="searchExport()" >
 					<tab-heading>导出任务一览</tab-heading>
 					<div class="table-responsive">
-						<table class="table table-hover-new vo_table">
+						<table class="table table-hover-new vo_table" style="table-layout: fixed;">
 							<thead>
 							<tr>
-								<th class="text-center">导出模板类型</th>
-								<th class="text-center">导出文件名</th>
+								<th class="text-left">导出模板类型</th>
+								<th class="text-left">导出文件名</th>
 								<th class="text-center">成功件数</th>
-								<th class="text-center">导出开始时间</th>
-								<th class="text-center">导出结束时间</th>
+								<th class="text-left">导出开始时间</th>
+								<th class="text-left">导出结束时间</th>
 								<th class="text-center">异常信息Code</th>
 								<th class="text-center">操作</th>
 							</tr>
 							</thead>
 							<tbody ng-if="vm.cmsBtJmPromotionExportTaskList.length">
 							<tr  ng-repeat="model in vm.cmsBtJmPromotionExportTaskList">
-								<td class="text-center"  ng-if="model.templateType==0">上新模板</td>
-								<td class="text-center"  ng-if="model.templateType==1">价格修改</td>
-								<td class="text-center"  ng-if="model.templateType==2">专场模板</td>
-								<td class="text-center">{{model.fileName}}</td>
+								<td class="text-left"  ng-if="model.templateType==0">上新模板</td>
+								<td class="text-left"  ng-if="model.templateType==1">价格修改</td>
+								<td class="text-left"  ng-if="model.templateType==2">专场模板</td>
+								<td class="text-left">{{model.fileName}}</td>
 								<td class="text-center">{{model.successRows}}</td>
-								<td class="text-center">{{model.beginTime}}</td>
-								<td class="text-center">{{model.endTime}}</td>
-								<td class="text-center">{{model.errorMsg}}</td>
+								<td class="text-left">{{model.beginTime}}</td>
+								<td class="text-left">{{model.endTime}}</td>
+								<td class="text-center"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3" >{{model.errorMsg}}</textarea></td>
 								<td class="text-center"><button title="下载" ng-disabled="!model.isExport" ng-click="downloadExportExcel(model.id);" class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button></td>
 							</tr>
 							</tbody>
