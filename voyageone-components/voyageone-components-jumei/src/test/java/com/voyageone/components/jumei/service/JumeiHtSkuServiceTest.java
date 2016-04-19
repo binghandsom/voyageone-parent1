@@ -2,8 +2,8 @@ package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.JumeiHtSkuService;
-import com.voyageone.components.jumei.Reponse.HtSkuAddResponse;
-import com.voyageone.components.jumei.Request.HtSkuAddRequest;
+import com.voyageone.components.jumei.reponse.HtSkuAddResponse;
+import com.voyageone.components.jumei.request.HtSkuAddRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

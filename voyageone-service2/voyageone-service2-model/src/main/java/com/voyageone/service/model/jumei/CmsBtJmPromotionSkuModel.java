@@ -124,6 +124,12 @@ sku id
         */
      private String channelId;
     
+    
+ /**
+更新状态
+        */
+     private int updateState;
+    
         
          /**
            
@@ -409,6 +415,20 @@ else
 this.channelId="";
 }
 
+        }
+    
+        
+         /**
+           更新状态
+        */
+        public int getUpdateState()
+        {
+         
+        return this.updateState;
+        }
+        public void setUpdateState(int updateState)
+        {
+         this.updateState=updateState;
         }
     
 }

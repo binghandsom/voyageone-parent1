@@ -159,6 +159,11 @@
     "templateUrl": "views/channel/configuration/configuration.tpl.html",
     "controllerUrl": "modules/cms/views/channel/configuration/configuration.ctl"
   },
+  "channel_taglist": {
+    "hash": "/channel/taglist",
+    "templateUrl": "views/channel/taglist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
+  },
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",

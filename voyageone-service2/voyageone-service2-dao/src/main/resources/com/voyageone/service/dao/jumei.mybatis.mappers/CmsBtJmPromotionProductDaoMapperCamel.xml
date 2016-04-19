@@ -7,7 +7,7 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`deal_end_time_state`,`deal_end_time`        from cms_bt_jm_promotion_product
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`deal_end_time_state`,`deal_end_time`,`update_state`        from cms_bt_jm_promotion_product
         <where>
                 <if test="id != null">
                         AND id = #{id}
@@ -84,10 +84,13 @@
                                 <if test="dealEndTime != null">
                         AND deal_end_time = #{dealEndTime}
                     </if>
+                                <if test="updateState != null">
+                        AND update_state = #{updateState}
+                    </if>
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`deal_end_time_state`,`deal_end_time` from cms_bt_jm_promotion_product 
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`deal_end_time_state`,`deal_end_time`,`update_state` from cms_bt_jm_promotion_product 
         <where>
                 
                     <if test="id != null">
@@ -189,13 +192,17 @@
                     <if test="dealEndTime != null">
                         AND deal_end_time = #{dealEndTime}
                     </if> 
+                
+                    <if test="updateState != null">
+                        AND update_state = #{updateState}
+                    </if> 
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`deal_end_time_state`,`deal_end_time` from cms_bt_jm_promotion_product where id=#{id}
+        select `id`,`channel_id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`product_code`,`jm_hash_id`,`limit`,`market_price`,`deal_price`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`app_id`,`pc_id`,`discount`,`error_msg`,`sku_count`,`quantity`,`activity_start`,`activity_end`,`deal_end_time_state`,`deal_end_time`,`update_state` from cms_bt_jm_promotion_product where id=#{id}
     </select>
 
-     <update id="update">
+     <update id="update">f
         update cms_bt_jm_promotion_product
         set
 
@@ -220,6 +227,7 @@
             ,`activity_end`=#{activityEnd}
             ,`deal_end_time_state`=#{dealEndTimeState}
             ,`deal_end_time`=#{dealEndTime}
+            ,`update_state`=#{updateState}
          where id=#{id}   
    </update>
 
@@ -255,7 +263,8 @@
               `activity_start`,
               `activity_end`,
               `deal_end_time_state`,
-              `deal_end_time`
+              `deal_end_time`,
+              `update_state`
         )
         VALUES(
               #{channelId},
@@ -281,7 +290,8 @@
               #{activityStart},
               #{activityEnd},
               #{dealEndTimeState},
-              #{dealEndTime}
+              #{dealEndTime},
+              #{updateState}
         )
     </insert>
 </mapper>

@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Reponse;
+package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
 
@@ -8,18 +8,11 @@ import java.util.Map;
 /**
  * Created by dell on 2016/3/29.
  */
-public class HtSkuAddResponse extends JMResponse {
-//    {
-//        "error_code": 0,
-//            "reason": "success",
-//            "response": {"sku_no":"jumei_sku_no"}
-//    }
+public class HtSpuUpdateResponse extends JMResponse {
     String error_code;
     String reason;
-    String jumei_sku_no;
     boolean is_Success;
     String errorMsg;
-
     public String getErrorMsg() {
         return errorMsg;
     }
@@ -52,13 +45,6 @@ public class HtSkuAddResponse extends JMResponse {
         this.reason = reason;
     }
 
-    public String getJumei_sku_no() {
-        return jumei_sku_no;
-    }
-
-    public void setJumei_sku_no(String jumei_sku_no) {
-        this.jumei_sku_no = jumei_sku_no;
-    }
 
     @Override
     public String getBody() {
@@ -71,20 +57,20 @@ public class HtSkuAddResponse extends JMResponse {
     public void setBody(String body) throws IOException {
         this.body = body;
         try {
+            //{"is_Success" : 1}
+//            {
+//                "error": {
+//                "code": "500"
+//            }
+//            }
             Map<String, Object> map = JacksonUtil.jsonToMap(body);
-            if (map.containsKey("error_code")) {
-                this.setError_code(map.get("error_code").toString());
+            if (map.containsKey("error")) {
+                this.setError_code(map.get("code").toString());
             }
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());
             }
-            if (map.containsKey("response")) {
-                Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
-                if (mapSesponse.containsKey("jumei_sku_no")) {
-                    this.setJumei_sku_no(mapSesponse.get("jumei_sku_no").toString());
-                }
-            }
-            if (this.getError_code() == "0") {
+            if (map.containsKey("is_Success") && map.get("is_Success").equals("1")) {
                 this.setIs_Success(true);
             } else {
                 this.setErrorMsg(this.getBody());

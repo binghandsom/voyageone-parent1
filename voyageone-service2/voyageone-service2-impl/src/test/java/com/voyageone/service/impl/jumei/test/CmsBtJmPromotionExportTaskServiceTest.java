@@ -18,6 +18,6 @@ public class CmsBtJmPromotionExportTaskServiceTest {
     CmsBtJmPromotionExportTaskService service;
     @Test
     public  void  test() throws IOException, ExcelException {
-        service.export(1);
+        service.export(1,"/usr/JMExport");
     }
 }

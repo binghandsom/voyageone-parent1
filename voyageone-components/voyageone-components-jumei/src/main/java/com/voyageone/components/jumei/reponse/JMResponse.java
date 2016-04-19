@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Reponse;
+package com.voyageone.components.jumei.reponse;
 
 import java.io.IOException;
 import java.io.Serializable;

@@ -119,7 +119,12 @@ define([
                     "templateUrl": "views/pop/custom/column.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
                     "controller": 'popCustomColumnCtl'
-                }
+                },
+                "addtaglist": {
+                    "templateUrl": "views/pop/custom/addtaglist.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/addtaglist.ctl",
+                    "controller": 'popAddTagListCtl'
+                },
 
             },
             "configuration": {
@@ -1015,6 +1020,9 @@ define([
             return openModel(popActions.system.channeledit, context);
         };
 
+        $scope.openCartEdit = function (context) {
+            return openModel(popActions.system.cartList, context);
+        };
 
         /**
          * 弹出自定义属性列
@@ -1038,6 +1046,10 @@ define([
             });
         }
 
+        //TagList一览中，新增标签
+        $scope.openNewTag = function (context) {
+            return openModel(popActions.custom.addtaglist,context);
+        };
         $scope.openJmPromotionDefaultSetting = function (context) {
             return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
         };

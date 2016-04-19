@@ -65,6 +65,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         String userName = getUser().getUserName();
         String path = Properties.readValue(CmsConstants.Props.CMS_JM_IMPORT_PATH);
+        FileUtils.mkdirPath(path);
         List<String> listFileName = FileUtils.uploadFile(request, path);//上传文件
         List<CmsBtJmPromotionImportTaskModel> listModel = new ArrayList<>();
         CmsBtJmPromotionImportTaskModel model = null;

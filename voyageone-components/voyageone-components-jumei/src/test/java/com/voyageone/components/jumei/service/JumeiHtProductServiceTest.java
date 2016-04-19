@@ -4,8 +4,7 @@ package com.voyageone.components.jumei.service;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.bean.HtProductUpdate_ProductInfo;
 import com.voyageone.components.jumei.JumeiHtProductService;
-import com.voyageone.components.jumei.Reponse.HtProductUpdateResponse;
-import com.voyageone.components.jumei.Request.HtProductUpdateRequest;
+import com.voyageone.components.jumei.request.HtProductUpdateRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,11 @@ public class JumeiHtProductServiceTest {
        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
        shopBean.setApp_url("http://182.138.102.82:8868/");
        HtProductUpdateRequest request = new HtProductUpdateRequest();
-       request.setJumei_product_id(222550619);
+       request.setJumei_product_id("222550619");
        request.setJumei_product_name("aa");
        HtProductUpdate_ProductInfo productInfo=new HtProductUpdate_ProductInfo();
        request.setUpdate_data(productInfo);
 
-       HtProductUpdateResponse response = service.copyDeal(shopBean, request);
+      // HtProductUpdateResponse response = service.copyDeal(shopBean, request);
    }
 }

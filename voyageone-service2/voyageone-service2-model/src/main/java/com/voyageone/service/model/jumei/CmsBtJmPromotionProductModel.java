@@ -177,6 +177,12 @@ sku数
         */
      private Date dealEndTime;
     
+    
+ /**
+商品   0:未更新   1：待更新  2：已经更新
+        */
+     private int updateState;
+    
         
          /**
            
@@ -609,6 +615,20 @@ else
 this.dealEndTime=DateHelp.getDefaultDate();
 }
 
+        }
+    
+        
+         /**
+           商品   0:未更新   1：待更新  2：已经更新
+        */
+        public int getUpdateState()
+        {
+         
+        return this.updateState;
+        }
+        public void setUpdateState(int updateState)
+        {
+         this.updateState=updateState;
         }
     
 }

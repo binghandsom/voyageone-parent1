@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Reponse;
+package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
 
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by dell on 2016/3/29.
  */
-public class HtDealUpdateResponse extends JMResponse {
+public class HtProductUpdateResponse extends JMResponse {
 
     @Override
     public void setBody(String body) throws IOException {
