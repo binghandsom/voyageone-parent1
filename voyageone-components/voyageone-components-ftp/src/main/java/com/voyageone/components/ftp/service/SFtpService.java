@@ -2,9 +2,10 @@ package com.voyageone.components.ftp.service;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.components.ComponentBase;
+import com.voyageone.components.ftp.bean.BaseFtpBean;
 import com.voyageone.components.ftp.bean.FtpDirectoryBean;
-import com.voyageone.components.ftp.bean.FtpSubFileBean;
 import com.voyageone.components.ftp.bean.FtpFilesBean;
+import com.voyageone.components.ftp.bean.FtpSubFileBean;
 import com.voyageone.components.ftp.tools.SFtpUtil;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
@@ -23,6 +24,44 @@ import java.util.List;
 @EnableRetry
 public class SFtpService extends ComponentBase {
 
+    /**
+     * 使用sftp协议 连接FTP服务器
+     */
+    public ChannelSftp linkFtp(BaseFtpBean ftpBean) {
+        //check
+        ftpBean.checkParam();
+        SFtpUtil ftpUtil = new SFtpUtil();
+        return ftpUtil.linkFtp(ftpBean);
+    }
+
+    /**
+     * 使用sftp协议 断开FTP服务器
+     */
+    public void disconnectFtp(ChannelSftp ftpClient) {
+        SFtpUtil ftpUtil = new SFtpUtil();
+        ftpUtil.disconnectFtp(ftpClient);
+    }
+
+
+    /**
+     * 使用sftp协议 保存文件到远程服务器
+     */
+    public void uploadFile(FtpSubFileBean fileBean, BaseFtpBean ftpBean, ChannelSftp ftpClient) {
+        //check
+        fileBean.checkUploadParam();
+
+        SFtpUtil ftpUtil = new SFtpUtil();
+        try {
+            ftpUtil.uploadFile(fileBean, ftpClient);
+        } catch (Exception e) {
+            if (fileBean.getLocalFileStream() != null) {
+                try {
+                    fileBean.getLocalFileStream().close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
     /**
      * 使用sftp协议 列出目录下的文件
      */

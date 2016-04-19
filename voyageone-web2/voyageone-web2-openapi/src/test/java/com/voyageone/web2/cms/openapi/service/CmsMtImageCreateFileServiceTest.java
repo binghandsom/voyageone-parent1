@@ -104,34 +104,34 @@ public class CmsMtImageCreateFileServiceTest {
 //    @Autowired
 //    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
 
-    @Test
-    public void textImportImageTemplate() throws Exception {
-        //   CmsMtImageCreateTemplateModel template = new CmsMtImageCreateTemplateModel();
-        String filePath = "/usr/imageTemplate/template1.xls";
-        File excelFile = new File(filePath);
-        InputStream fileInputStream = null;
-        fileInputStream = new FileInputStream(excelFile);
-        HSSFWorkbook book = null;
-        book = new HSSFWorkbook(fileInputStream);
-        HSSFSheet productSheet = book.getSheet("Sheet1");
-        List<CmsMtImageCreateTemplateModel> listModel = new ArrayList<>();//导入的集合
-        List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
-        List<ExcelColumn> listColumn = new ArrayList<>();    //配置列信息
-        listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id"));
-        listColumn.add(new ExcelColumn("content", 2, "cms_mt_image_create_file", "模板Id"));
-        listColumn.add(new ExcelColumn("name", 3, "cms_mt_image_create_file", "文件名"));
-        ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CmsMtImageCreateTemplateModel.class, 0);
-        //ftp://ftp.xpairs.com/007/test1.png
-        for (CmsMtImageCreateTemplateModel model : listModel) {
-            String Content = model.getContent();
-            model.setModified(new Date());
-            model.setCreated(new Date());
-            model.setCreater("system");
-            model.setModifier("system");
-           // daoCmsMtImageCreateTemplate.insert(model);
-        }
-        String str = "source=name[icon],url[%s]&source=name[s],url[%s]&scale=height[1100],width[700]&blank=color[white],height[1200],name[bcc],width[1200]&select=name[bcc]&composite=compose[Over],image[s],x[200],y[100]&composite=compose[Over],image[icon],x[100],y[32]&annotate=fill[red],font[VeraSans-Bold],pointsize[18],text[%s],x[923],y[832]&sink";
-    }
+//    @Test
+//    public void textImportImageTemplate() throws Exception {
+//        //   CmsMtImageCreateTemplateModel template = new CmsMtImageCreateTemplateModel();
+//        String filePath = "/usr/imageTemplate/template1.xls";
+//        File excelFile = new File(filePath);
+//        InputStream fileInputStream = null;
+//        fileInputStream = new FileInputStream(excelFile);
+//        HSSFWorkbook book = null;
+//        book = new HSSFWorkbook(fileInputStream);
+//        HSSFSheet productSheet = book.getSheet("Sheet1");
+//        List<CmsMtImageCreateTemplateModel> listModel = new ArrayList<>();//导入的集合
+//        List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
+//        List<ExcelColumn> listColumn = new ArrayList<>();    //配置列信息
+//        listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id"));
+//        listColumn.add(new ExcelColumn("content", 2, "cms_mt_image_create_file", "模板Id"));
+//        listColumn.add(new ExcelColumn("name", 3, "cms_mt_image_create_file", "文件名"));
+//        ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CmsMtImageCreateTemplateModel.class, 0);
+//        //ftp://ftp.xpairs.com/007/test1.png
+//        for (CmsMtImageCreateTemplateModel model : listModel) {
+//            String Content = model.getContent();
+//            model.setModified(new Date());
+//            model.setCreated(new Date());
+//            model.setCreater("system");
+//            model.setModifier("system");
+//           // daoCmsMtImageCreateTemplate.insert(model);
+//        }
+//        String str = "source=name[icon],url[%s]&source=name[s],url[%s]&scale=height[1100],width[700]&blank=color[white],height[1200],name[bcc],width[1200]&select=name[bcc]&composite=compose[Over],image[s],x[200],y[100]&composite=compose[Over],image[icon],x[100],y[32]&annotate=fill[red],font[VeraSans-Bold],pointsize[18],text[%s],x[923],y[832]&sink";
+//    }
 
     @Test
     public void testAllTemplate() throws Exception {

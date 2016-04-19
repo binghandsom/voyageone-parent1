@@ -17,4 +17,14 @@ public enum FtpBeanEnum {
      * nexcess ftp
      */
     NEXCESS_FTP,
+
+    /**
+     * scene7 ftp
+     */
+    SCENE7_FTP,
+
+    /**
+     * feed channel ftp
+     */
+    FEED_CHANNEL_FTP,
 }

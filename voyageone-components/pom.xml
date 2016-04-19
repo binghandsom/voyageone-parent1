@@ -27,7 +27,6 @@
         <module>voyageone-components-liquifire</module>
         <module>voyageone-components-uscdn</module>
         <module>voyageone-components-imagecreate</module>
-        <module>voyageone-components-sftp_ftp</module>
         <module>voyageone-components-ftp</module>
     </modules>
     <properties>

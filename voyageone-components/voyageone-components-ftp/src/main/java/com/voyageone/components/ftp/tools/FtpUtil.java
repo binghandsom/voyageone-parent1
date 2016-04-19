@@ -150,10 +150,7 @@ public class FtpUtil {
             File file = new File(BaseFtpUtils.getLocalFilePathName(fileBean));
             OutputStream fileOutputStream = new FileOutputStream(file);
             String remoteFileName = BaseFtpUtils.getRemoteFilePathName(fileBean);
-            String[] remoteFileNameArr = ftpClient.listNames(remoteFileName);
-            if (remoteFileNameArr != null && remoteFileNameArr.length>0) {
-                ftpClient.retrieveFile(remoteFileName, fileOutputStream);
-            }
+            ftpClient.retrieveFile(remoteFileName, fileOutputStream);
         } catch (RuntimeException e) {
             logger.error(fileBean.getRemoteFilename() + " Ftp 下载文件失败", e);
             throw e;

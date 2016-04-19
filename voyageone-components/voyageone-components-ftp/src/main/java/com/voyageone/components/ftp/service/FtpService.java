@@ -1,8 +1,7 @@
 package com.voyageone.components.ftp.service;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.components.ComponentBase;
+import com.voyageone.components.ftp.bean.BaseFtpBean;
 import com.voyageone.components.ftp.bean.FtpDirectoryBean;
 import com.voyageone.components.ftp.bean.FtpFilesBean;
 import com.voyageone.components.ftp.bean.FtpSubFileBean;
@@ -24,6 +23,57 @@ import java.util.List;
 @Service
 @EnableRetry
 public class FtpService extends ComponentBase {
+
+    /**
+     * 使用ftp协议 连接FTP服务器
+     */
+    public FTPClient linkFtp(BaseFtpBean ftpBean) {
+        //check
+        ftpBean.checkParam();
+        FtpUtil ftpUtil = new FtpUtil();
+        return ftpUtil.linkFtp(ftpBean);
+    }
+
+    /**
+     * 使用ftp协议 断开FTP服务器
+     */
+    public void disconnectFtp(FTPClient ftpClient) {
+        FtpUtil ftpUtil = new FtpUtil();
+        ftpUtil.disconnectFtp(ftpClient);
+    }
+
+
+    /**
+     * 使用ftp协议保存文件到远程服务器
+     */
+    public void uploadFile(FtpSubFileBean fileBean, BaseFtpBean ftpBean, FTPClient ftpClient) {
+        //check
+        fileBean.checkUploadParam();
+
+        FtpUtil ftpUtil = new FtpUtil();
+
+        try {
+            ftpUtil.uploadFile(fileBean, ftpBean.getCoding(), ftpClient);
+        } finally {
+            if (fileBean.getLocalFileStream() != null) {
+                try {
+                    fileBean.getLocalFileStream().close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
+    /**
+     * 使用ftp协议保存文件到远程服务器
+     */
+    public void downloadFile(FtpSubFileBean fileBean, BaseFtpBean ftpBean, FTPClient ftpClient) {
+        //check
+        fileBean.checkDownloadParam();
+
+        FtpUtil ftpUtil = new FtpUtil();
+        ftpUtil.downloadFile(fileBean, ftpClient);
+    }
 
     /**
      * 使用ftp协议 列出目录下的文件

@@ -19,8 +19,8 @@
         </dependency>
         <dependency>
             <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-sftp_ftp</artifactId>
-            <version>${voyageone.components.sftp_ftp.version}</version>
+            <artifactId>voyageone-components-ftp</artifactId>
+            <version>${voyageone.components.ftp.version}</version>
         </dependency>
 
         <dependency>
