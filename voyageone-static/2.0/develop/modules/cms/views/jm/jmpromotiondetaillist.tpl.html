@@ -255,10 +255,10 @@
 						<td ng-if="model.updateState==2">上传成功</td>
 						<td ng-if="model.updateState==3">上传失败</td>
 						<!--<td title="{{model.errorMsg}}" >{{model.errorMsg.substr(0,30)}}</td>-->
-						<td ng-if="model.updateState==0">未上新</td>
-						<td ng-if="model.updateState==1">待上新</td>
-						<td ng-if="model.updateState==2">已上新</td>
-						<td ng-if="model.updateState==3">已更新</td>
+						<td ng-if="model.synchState==0">未上新</td>
+						<td ng-if="model.synchState==1">待上新</td>
+						<td ng-if="model.synchState==2">已上新</td>
+						<td ng-if="model.synchState==3">已更新</td>
 						<td>
 						<small ng-controller="showPopoverCtrl" popover-html="showInfo([{{model.errorMsg}}])" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
 							<div class="table_main">

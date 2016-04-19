@@ -7,6 +7,7 @@ import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiSynchState;
+import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiUpdateState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class JuMeiProductPlatefromService {
                  result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(shippingSystemId, model, shopBean);//上新
                 if (!result.isResult()) {
                     model.setErrorMsg(result.getMsg());
-                    model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
+                    model.setSynchState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
                     daoCmsBtJmPromotionProduct.update(model);
                 }
             } else if (model.getSynchState() == 0 || model.getSynchState() == 1) //更新 copyDeal
@@ -66,7 +67,7 @@ public class JuMeiProductPlatefromService {
             }
         } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
-            model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
+            model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
             LOG.error("addProductAndDealByPromotionId", ex);
             try {
                 if (model.getErrorMsg().length() > 600) {
