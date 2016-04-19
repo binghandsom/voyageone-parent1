@@ -18,7 +18,7 @@ public class JuMeiDealService {
     @Autowired
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     @Autowired
-    JuMeiProductUpdateService serviceJuMeiProductUpdate;
+    JuMeiProductPlatefromDataService serviceJuMeiProductUpdate;
     @Autowired
     JumeiHtDealService serviceJumeiHtDeal;
     @Autowired

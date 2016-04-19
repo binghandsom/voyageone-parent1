@@ -229,4 +229,9 @@ public class CmsJmPromotionDetailController extends CmsController {
         result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.PRICE_UNIT));
         return success(result);
     }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
+    public AjaxResponse updateJM(@RequestBody int promotionProductId) {
+        CallResult result = new CallResult();
+        return success(result);
+    }
 }

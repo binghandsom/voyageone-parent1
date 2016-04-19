@@ -9,26 +9,18 @@ import com.voyageone.components.jumei.JumeiHtSpuService;
 import com.voyageone.components.jumei.Reponse.*;
 import com.voyageone.components.jumei.Request.*;
 import com.voyageone.components.jumei.bean.*;
-import com.voyageone.components.jumei.enums.EnumJuMeiMtMasterInfo;
-import com.voyageone.components.jumei.enums.EnumJuMeiProductImageType;
 import com.voyageone.components.jumei.service.JumeiProductService;
-import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.dao.jumei.CmsBtJmProductDao;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiSynchState;
-import com.voyageone.service.model.jumei.businessmodel.JMNewProductInfo;
 import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by dell on 2016/4/12.
@@ -40,7 +32,7 @@ public class JuMeiProductUpdatePlatefromService {
     private static final String DESCRIPTION_IMAGES = "%s<br />";
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductUpdatePlatefromService.class);
     @Autowired
-    JuMeiProductUpdateService service;
+    JuMeiProductPlatefromDataService service;
     @Autowired
     JumeiProductService serviceJumeiProduct;
 
@@ -62,7 +54,8 @@ public class JuMeiProductUpdatePlatefromService {
     JumeiHtProductService serviceJumeiHtProduct;
     @Autowired
     JuMeiDealService serviceJuMeiDeal;
-    public void updateProductAddDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
+
+    public void updateProductAddDeal(int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
         JMUpdateProductInfo info = service.getJMUpdateProductInfo(modelPromotionProduct);
         CmsBtJmProductModel modelCmsBtJmProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
@@ -90,18 +83,25 @@ public class JuMeiProductUpdatePlatefromService {
         }
         /* 2)修改deal  sku  spu   商品属性  四个修改接口
             3) 新增spu  sku  两个接口*/
+        updateJMProductInfo(shippingSystemId, shopBean, info);
+        service.saveJMUpdateProductInfo(info);
+    }
+
+    public void updateJMProductInfo(int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
+        JMUpdateProductInfo info = service.getJMUpdateProductInfo(modelPromotionProduct);
+        updateJMProductInfo(shippingSystemId, shopBean, info);
+    }
+    private void updateJMProductInfo(int shippingSystemId, ShopBean shopBean, JMUpdateProductInfo info) throws Exception {
         jmHtDealupdate(info, shopBean, shippingSystemId);//deal
         jmHtProductUpdate(info, shopBean);//product
         jmHtSpuSkuUpdateList(info, shopBean);//spu sku
         jmAddListSku(info, shopBean);//添加未上新的sku
-        service.saveJMUpdateProductInfo(info);
     }
-
     private void jmHtDealCopy(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
 
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
-        CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct=info.getModelCmsBtJmPromotionProduct();
+        CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
         request.setJumei_hash_id(modelProduct.getLastJmHashId());
         request.setStart_time(getTime(info.getModelCmsBtJmPromotionProduct().getActivityStart()));
         request.setEnd_time(getTime(info.getModelCmsBtJmPromotionProduct().getActivityEnd()));
@@ -111,16 +111,13 @@ public class JuMeiProductUpdatePlatefromService {
             modelProduct.setLastJmHashId(response.getJumei_hash_id());
             modelProduct.setLastJmDealBegin(modelCmsBtJmPromotionProduct.getActivityStart());
             modelProduct.setLastJmDealEnd(modelCmsBtJmPromotionProduct.getActivityEnd());
-        }
-        else
-        {
+        } else {
             throw new BusinessException("productId:" + modelProduct.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
         }
     }
-
     //商品属性更新
-    public  HtProductUpdateResponse jmHtProductUpdate(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
-        CmsBtJmProductModel modelProduct=info.getModelCmsBtJmProduct();
+    public HtProductUpdateResponse jmHtProductUpdate(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
+        CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
 
         HtProductUpdateRequest request = new HtProductUpdateRequest();
         request.setJumei_product_id(info.getModelCmsBtJmProduct().getJumeiProductId());
@@ -132,10 +129,10 @@ public class JuMeiProductUpdatePlatefromService {
         productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
         productInfo.setForeign_language_name(modelProduct.getForeignLanguageName());//jmBtProductImport.getForeignLanguageName());
         request.setUpdate_data(productInfo);
-         return  serviceJumeiHtProduct.update(shopBean,request);
+        return serviceJumeiHtProduct.update(shopBean, request);
     }
-     //修改deal
-    public  void   jmHtDealupdate(JMUpdateProductInfo info, ShopBean shopBean,int shippingSystemId) throws Exception {
+    //修改deal
+    public void jmHtDealupdate(JMUpdateProductInfo info, ShopBean shopBean, int shippingSystemId) throws Exception {
         HtDealUpdateRequest request = new HtDealUpdateRequest();
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
@@ -181,6 +178,7 @@ public class JuMeiProductUpdatePlatefromService {
             }
         }
     }
+
     private void jmHtSpuSkuUpdate(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
         CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
@@ -197,7 +195,7 @@ public class JuMeiProductUpdatePlatefromService {
         if (responseSpu.is_Success()) {
 
         } else {
-            throw new BusinessException("skuId:"+modelPromotionSku.getCmsBtJmSkuId()+" updateSpuErrorMsg:"+ responseSpu.getErrorMsg());
+            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " updateSpuErrorMsg:" + responseSpu.getErrorMsg());
         }
         //sku
         HtSkuUpdateRequest requestSku = new HtSkuUpdateRequest();
@@ -207,14 +205,14 @@ public class JuMeiProductUpdatePlatefromService {
         HtSkuUpdateResponse responseSku = serviceJumeiHtSku.update(shopBean, requestSku);
         if (responseSku.is_Success()) {
         } else {
-            throw new BusinessException("skuId:"+modelPromotionSku.getCmsBtJmSkuId()+" updateSkuErrorMsg:"+ responseSku.getErrorMsg());
+            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " updateSkuErrorMsg:" + responseSku.getErrorMsg());
         }
     }
     //添加未上新的sku
     private void jmAddListSku(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {
             try {
-                if(modelPromotionSku.getState()==0) {
+                if (modelPromotionSku.getState() == 0) {
                     jmAddSku(info, shopBean, modelPromotionSku);
                 }
             } catch (Exception ex) {
@@ -223,7 +221,6 @@ public class JuMeiProductUpdatePlatefromService {
             }
         }
     }
-
     private void jmAddSku(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
         CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
@@ -264,11 +261,8 @@ public class JuMeiProductUpdatePlatefromService {
             modelPromotionSku.setSynchState(EnumJuMeiSynchState.Error.getId());
         }
     }
-
-
     public static Long getTime(Date d) throws Exception {
         long l = d.getTime() / 1000 - 8 * 3600;
         return l;
     }
-
 }

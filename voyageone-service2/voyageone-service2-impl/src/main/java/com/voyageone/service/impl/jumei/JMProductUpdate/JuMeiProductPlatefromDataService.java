@@ -21,7 +21,7 @@ import java.util.Map;
  * Created by dell on 2016/4/12.
  */
 @Service
-public class JuMeiProductUpdateService {
+public class JuMeiProductPlatefromDataService {
     @Autowired
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     @Autowired
@@ -54,7 +54,7 @@ public class JuMeiProductUpdateService {
     public List<CmsBtJmPromotionProductModel> getJuMeiNewListPromotionProduct(int promotionId) {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();
         parameterPromotionProduct.put("promotionId",promotionId);
-        parameterPromotionProduct.put("synchState",1);
+        parameterPromotionProduct.put("update_state",1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
         return listPromotionProduct;
     }

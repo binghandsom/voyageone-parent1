@@ -2,7 +2,6 @@ package com.voyageone.service.impl.jumei.JMProductUpdate;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
 
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.enums.JumeiImageType;
@@ -32,7 +31,7 @@ public class JuMeiUploadImageService {
 @Autowired
 JMShopBeanService serviceJMShopBean;
     @Autowired
-    JuMeiProductUpdateService serviceJuMeiProductUpdate;
+    JuMeiProductPlatefromDataService serviceJuMeiProductUpdate;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiUploadImageService.class);
 
     public void uploadImage(CmsBtJmProductImagesModel imageModel, ShopBean shopBean) throws Exception {

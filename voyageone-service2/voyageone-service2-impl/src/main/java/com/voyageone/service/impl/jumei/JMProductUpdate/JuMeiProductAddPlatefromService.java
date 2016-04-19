@@ -5,12 +5,6 @@ import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtSkuService;
 import com.voyageone.components.jumei.JumeiHtSpuService;
-import com.voyageone.components.jumei.Reponse.HtDealCopyDealResponse;
-import com.voyageone.components.jumei.Reponse.HtSkuAddResponse;
-import com.voyageone.components.jumei.Reponse.HtSpuAddResponse;
-import com.voyageone.components.jumei.Request.HtDealCopyDealRequest;
-import com.voyageone.components.jumei.Request.HtSkuAddRequest;
-import com.voyageone.components.jumei.Request.HtSpuAddRequest;
 import com.voyageone.components.jumei.bean.JmProductBean;
 import com.voyageone.components.jumei.bean.JmProductBean_DealInfo;
 import com.voyageone.components.jumei.bean.JmProductBean_Spus;
@@ -24,7 +18,6 @@ import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiSynchState;
 import com.voyageone.service.model.jumei.businessmodel.JMNewProductInfo;
-import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +37,7 @@ public class JuMeiProductAddPlatefromService {
     private static final String DESCRIPTION_IMAGES = "%s<br />";
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatefromService.class);
     @Autowired
-    JuMeiProductUpdateService service;
+    JuMeiProductPlatefromDataService service;
     @Autowired
     JumeiProductService serviceJumeiProduct;
 
@@ -75,7 +68,7 @@ public class JuMeiProductAddPlatefromService {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 try {
                     if (model.getState() == 0) {//上新
-                        CallResult result = addProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                        CallResult result = addProductAndDeal(shippingSystemId, model, shopBean);//上新
                         if (!result.isResult()) {
                             model.setErrorMsg(result.getMsg());
                             model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
@@ -83,7 +76,7 @@ public class JuMeiProductAddPlatefromService {
                         }
                     } else //更新 copyDeal
                     {
-                        serviceJuMeiProductUpdatePlatefrom.updateProductAddDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);////更新 copyDeal
+                        serviceJuMeiProductUpdatePlatefrom.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
                     }
                 } catch (Exception ex) {
                     model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
@@ -108,14 +101,14 @@ public class JuMeiProductAddPlatefromService {
     }
 
     //上新
-    private CallResult addProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    public CallResult addProductAndDeal(int shippingSystemId, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         JMNewProductInfo updateInfo = service.getJMNewProductInfo(model);
         updateInfo.loadData();
         CallResult result = checkJMNewProductInfo(updateInfo);//验证
         if (!result.isResult()) {
             return result;
         }
-        JmProductBean jmProductBean = selfBeanToJmBean(updateInfo, modelCmsBtJmPromotion, shippingSystemId);
+        JmProductBean jmProductBean = selfBeanToJmBean(updateInfo, shippingSystemId);
         for (CmsBtJmProductImagesModel imgemodel : updateInfo.getListCmsBtJmProductImages()) {
             if (imgemodel.getSynFlg() == 0) { //上传图片
                 serviceJuMeiUploadImageJob.uploadImage(imgemodel, shopBean);
@@ -192,7 +185,7 @@ public class JuMeiProductAddPlatefromService {
         }
         return result;
     }
-    private JmProductBean selfBeanToJmBean(JMNewProductInfo info, CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId) throws Exception {
+    private JmProductBean selfBeanToJmBean(JMNewProductInfo info,int shippingSystemId) throws Exception {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
         String partner_sku_nos = "";

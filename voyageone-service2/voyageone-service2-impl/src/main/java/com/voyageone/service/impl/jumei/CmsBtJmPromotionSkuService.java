@@ -20,11 +20,9 @@ public class CmsBtJmPromotionSkuService {
     public CmsBtJmPromotionSkuModel select(long id) {
         return dao.select(id);
     }
-
     public int update(CmsBtJmPromotionSkuModel entity) {
         return dao.update(entity);
     }
-
     public int updateWithDiscount(CmsBtJmPromotionSkuModel entity, String channelId, String modifer) {
         // 计算discount
         entity.setChannelId(channelId);
@@ -37,7 +35,6 @@ public class CmsBtJmPromotionSkuService {
             this.insert(entity);
         return entity.getId();
     }
-
     public int insert(CmsBtJmPromotionSkuModel entity) {
         return dao.insert(entity);
     }
@@ -45,7 +42,6 @@ public class CmsBtJmPromotionSkuService {
     public int delete(long id) {
         return dao.delete(id);
     }
-
     public int create(CmsBtJmPromotionSkuModel entity) {
         return dao.insert(entity);
     }
@@ -57,5 +53,6 @@ public class CmsBtJmPromotionSkuService {
     public CmsBtJmPromotionSkuModel selectOne(Map<String, Object> param) {
         return dao.selectOne(param);
     }
+
 }
 

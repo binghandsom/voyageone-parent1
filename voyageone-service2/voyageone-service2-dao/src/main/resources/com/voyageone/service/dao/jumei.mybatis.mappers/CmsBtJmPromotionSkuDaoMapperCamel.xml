@@ -146,7 +146,7 @@
         select `id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`cms_bt_jm_sku_id`,`sku_code`,`jm_size`,`market_price`,`discount`,`deal_price`,`error_msg`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`channel_id`,`update_state` from cms_bt_jm_promotion_sku where id=#{id}
     </select>
 
-     <update id="update">f
+     <update id="update">
         update cms_bt_jm_promotion_sku
         set
 

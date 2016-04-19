@@ -64,6 +64,7 @@ public interface CmsUrlConstants {
                 String UPDATE_SKU_DETAIL = "updateSkuDetail";
                 String DELETE_PROMOTION_SKU = "deletePromotionSku";
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
+                String UpdateJM="";
             }
         }
     }

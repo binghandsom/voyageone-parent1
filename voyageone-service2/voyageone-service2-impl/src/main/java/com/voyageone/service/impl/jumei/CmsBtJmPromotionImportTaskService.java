@@ -161,6 +161,7 @@ public class CmsBtJmPromotionImportTaskService {
                 daoCmsBtJmProduct.update(saveInfo.getProductModel());
             }
             saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
+            saveInfo.getPromotionProductModel().setUpdateState(1);
             if (saveInfo.getPromotionProductModel().getId() == 0) {
                 daoCmsBtJmPromotionProduct.insert(saveInfo.getPromotionProductModel());
             } else {

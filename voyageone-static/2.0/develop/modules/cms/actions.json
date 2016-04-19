@@ -146,8 +146,8 @@
         "updatePromotionProductDetail": "updatePromotionProductDetail",
         "updateSkuDetail": "updateSkuDetail",
         "deletePromotionSku": "deletePromotionSku",
-        "getProductMasterData": "getProductMasterData"
-
+        "getProductMasterData": "getProductMasterData",
+         "updateJM":"updateJM"
       }
     },
     "cmsBtJmPromotionImportTask":{

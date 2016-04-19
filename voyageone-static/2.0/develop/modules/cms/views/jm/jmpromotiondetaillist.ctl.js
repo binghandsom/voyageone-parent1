@@ -121,6 +121,19 @@ define([
                 })
             })
         };
+        $scope.updateJM(promotionProductId)
+        {
+            jmPromotionDetailService.updateJM(promotionProductId).then(function (res) {
+                if (res.data.result) {
+                    alert("更新成功");
+                }
+                else {
+                    alert("更新失败");
+                }
+            }, function (res) {
+                alert("更新失败");
+            })
+        };
         $scope.updateDealPrice = function (data) {
             jmPromotionDetailService.updateDealPrice({id:data.id,dealPrice:data.dealPrice}).then(function () {
                 data.isSave=false;
