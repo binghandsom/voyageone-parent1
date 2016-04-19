@@ -305,7 +305,7 @@
                                         <span class="fa fa-check"></span>
                                     </label>
                                     <span class="label label-danger m-t-xs m-l-sm m-r-sm">&nbsp;M&nbsp;</span>
-                                    <span class="label label-success m-t-xs m-r-sm">&nbsp;Shoecity&nbsp;</span>
+                                    <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{code.channelName}}&nbsp;</span>
 									<span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
 									</span>&nbsp;
@@ -316,7 +316,6 @@
 											<a href="#/product/detail/{{code.productId}}" title="{{code.productName}}"
                                                target="_blank">{{code.productName | limitTo: 30}}{{code.productName.length > 30 ? '...' : ''}}</a>
 										</span>
-                                    <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{code.channelName}}&nbsp;</span>
                                     <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{code.catPath}}</span>
                                 </td>
                             </tr>
