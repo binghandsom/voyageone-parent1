@@ -20,8 +20,8 @@ define([
             $scope.searchInfo = {};
         };
         $scope.search = function () {
-            console.log("searchInfo");
-           console.log($scope.searchInfo);
+            //console.log("searchInfo");
+           //console.log($scope.searchInfo);
 
             for(var key in $scope.searchInfo)
             {
@@ -30,9 +30,9 @@ define([
                     delete $scope.searchInfo[key];
                 }
             }
-            console.log($scope.searchInfo);
+            //console.log($scope.searchInfo);
             jmPromotionService.getListByWhere($scope.searchInfo).then(function (res) {
-                console.log(res);
+                //console.log(res);
                 $scope.vm.modelList = res.data;
                // $scope.groupPageOption.total = $scope.vm.modelList.size;
             }, function (res) {

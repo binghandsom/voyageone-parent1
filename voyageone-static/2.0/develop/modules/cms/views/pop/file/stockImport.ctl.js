@@ -80,7 +80,7 @@ define([
             }
 
             uploader.onProgressItem = function(fileItem, progress) {
-                console.info('onProgressItem', fileItem, progress);
+                //console.info('onProgressItem', fileItem, progress);
             };
 
             //uploader.onSuccessItem = function(fileItem, response, status, headers) {
