@@ -93,9 +93,9 @@ public class JuMeiProductUpdatePlatefromService {
         updateJMProductInfo(shippingSystemId, shopBean, info);
     }
     private void updateJMProductInfo(int shippingSystemId, ShopBean shopBean, JMUpdateProductInfo info) throws Exception {
-        jmHtSpuSkuUpdateList(info, shopBean);//spu sku
-        jmHtProductUpdate(info, shopBean);//product
-        jmAddListSku(info, shopBean);//添加未上新的sku
+       // jmHtSpuSkuUpdateList(info, shopBean);//spu sku  未提供
+       // jmHtProductUpdate(info, shopBean);//product     未提供
+        //jmAddListSku(info, shopBean);//添加未上新的sku  未提供
         jmHtDealupdate(info, shopBean, shippingSystemId);//deal
     }
     private void jmHtDealCopy(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
@@ -153,7 +153,9 @@ public class JuMeiProductUpdatePlatefromService {
         dealInfo.setSearch_meta_text_custom(modelProduct.getSearchMetaTextCustom());//jmBtDealImportModel.getSearchMetaTextCustom());
         String partner_sku_nos = "";
         for (CmsBtJmSkuModel modelSku : info.getListCmsBtJmSku()) {
-            partner_sku_nos += modelSku.getSkuCode() + ",";
+            if(modelSku.getState()==1) {
+                partner_sku_nos += modelSku.getSkuCode() + ",";
+            }
         }
         // 特殊说明
         if (partner_sku_nos.length() > 0) {

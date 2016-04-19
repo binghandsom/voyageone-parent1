@@ -69,8 +69,8 @@ public class JuMeiProductPlatefromService {
             model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
             LOG.error("addProductAndDealByPromotionId", ex);
             try {
-                if (model.getErrorMsg().length() > 200) {
-                    model.setErrorMsg(model.getErrorMsg().substring(0, 200));
+                if (model.getErrorMsg().length() > 600) {
+                    model.setErrorMsg(model.getErrorMsg().substring(0, 600));
                 }
                 daoCmsBtJmPromotionProduct.update(model);
             } catch (Exception cex) {
