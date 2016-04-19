@@ -132,6 +132,7 @@ public class JuMeiProductAddPlatefromService {
         updateInfo.getModelCmsBtJmPromotionProduct().setJmHashId(jmProductBean.getDealInfo().getJumei_hash_id());
         updateInfo.getModelCmsBtJmPromotionProduct().setState(1);//已经上新
         updateInfo.getModelCmsBtJmPromotionProduct().setSynchState(2);//更新成功
+        updateInfo.getModelCmsBtJmPromotionProduct().setUpdateState(2);
         for (JmProductBean_Spus spu : jmProductBean.getSpus()) {
             String skuCode = spu.getSkuInfo().getPartner_sku_no();
             CmsBtJmSkuModel cmsBtJmSkuModel = updateInfo.getMapCodeCmsBtJmSkuModel().get(skuCode);
