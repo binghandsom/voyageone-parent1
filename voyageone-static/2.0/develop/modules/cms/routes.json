@@ -85,7 +85,7 @@
     "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
-    "controller": "productDetailController as ctrl"
+    "controller": "productDetailController as $ctrl"
   },
   "mapping_feed_list": {
     "hash": "/mapping/feed",
@@ -94,7 +94,7 @@
     "controller": "feedMappingController as $ctrl"
   },
   "mapping_feed_prop": {
-    "hash": "/mapping/feed/:params*",
+    "hash": "/mapping/feed/:feedCategoryPath*\/:commonFlg",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
     "controller": "feedPropMappingController as $ctrl"
@@ -183,6 +183,22 @@
     "hash": "/system/cache/index",
     "templateUrl": "views/system/cache/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+  },
+  "jm_promotion_detail_list": {
+    "hash": "/jm/promotion_detail_list/:parentId",
+    "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmpromotiondetaillist.ctl"
+  },
+  "jm_promotion_manage": {
+    "hash": "/jm/promotion_manage",
+    "templateUrl": "views/jm/jmpromotionmanage.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmpromotionmanage.ctl"
+  },
+  "jm_image_manage": {
+    "hash": "/jm/image_manage",
+    "templateUrl": "views/jm/jmimagemanage.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl",
+    "controller": "jmImageManageController as $ctrl"
   },
   "system_channel_list": {
     "hash": "/system/channel/index",
