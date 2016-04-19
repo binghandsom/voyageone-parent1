@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -57,5 +58,13 @@ public class CmsBtJmMasterBrandService {
                 dao.insert(model);
             }
         }
+    }
+
+    /**
+     * 返回聚美所有的brand数据.
+     * @return
+     */
+    public List<CmsBtJmMasterBrandModel> selectAll() {
+        return dao.selectList(new HashMap<>());
     }
 }

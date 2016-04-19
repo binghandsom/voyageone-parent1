@@ -50,6 +50,8 @@ public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     private CmsBtJmCategoryService cmsBtJmCategoryService;
     @Autowired
+    private CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
+    @Autowired
     private MqSender sender;
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
@@ -229,7 +231,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("categoryList", cmsBtJmCategoryService.selectAll());
-        result.put("brandList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.BRND));
+        result.put("brandList", cmsBtJmMasterBrandService.selectAll());
         result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.PRICE_UNIT));
         return success(result);
     }

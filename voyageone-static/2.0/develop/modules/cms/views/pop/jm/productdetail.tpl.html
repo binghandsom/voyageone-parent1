@@ -28,7 +28,7 @@
                         <div class="form-group col-sm-12">
                             <label class="col-sm-3 control-label vo_reqfield">产品品牌</label>
                             <div class="col-sm-6">
-                                <select class="form-control" ng-model="$ctrl.productInfo.brandId" ng-options="brand.key as brand.name1 for brand in $ctrl.masterData.brandList">
+                                <select class="form-control" ng-model="$ctrl.productInfo.brandId" ng-options="brand.id as brand.name for brand in $ctrl.masterData.brandList">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
                             </div>
@@ -188,9 +188,9 @@
                             <div class="col-sm-9 form-inline m-t-sm">
                                 <div class="input-group col-sm-6"><input type="text" class="form-control text-right" ng-model="$ctrl.productInfo.msrp"></div>&nbsp;
                                 <div class="input-group col-sm-5">
-                                    <!--<select search-contains="true" chosen="" class="form-control" ng-options="priceUnit.key as priceUnit.name1 for priceUnit in $ctrl.masterData.priceUnitList">-->
-                                        <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-                                    <!--</select>-->
+                                    <select class="form-control" ng-model="$ctrl.productInfo.areaCode" ng-options="priceUnit.key as priceUnit.name1 for priceUnit in $ctrl.masterData.priceUnitList">
+                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
