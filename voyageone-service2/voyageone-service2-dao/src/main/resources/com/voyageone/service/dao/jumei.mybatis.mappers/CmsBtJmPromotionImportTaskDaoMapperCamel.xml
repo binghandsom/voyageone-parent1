@@ -10,43 +10,43 @@
         select `id`,`cms_bt_jm_promotion_id`,`is_import`,`file_name`,`error_msg`,`success_rows`,`failures_rows`,`failures_file_Name`,`error_code`,`begin_time`,`end_time`,`creater`,`created`        from cms_bt_jm_promotion_import_task
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="cmsBtJmPromotionId != null">
-                        AND cms_bt_jm_promotion_id = #{cmsBtJmPromotionId}
+                        AND `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId}
                     </if>
                                 <if test="isImport != null">
-                        AND is_import = #{isImport}
+                        AND `is_import` = #{isImport}
                     </if>
                                 <if test="fileName != null">
-                        AND file_name = #{fileName}
+                        AND `file_name` = #{fileName}
                     </if>
                                 <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if>
                                 <if test="successRows != null">
-                        AND success_rows = #{successRows}
+                        AND `success_rows` = #{successRows}
                     </if>
                                 <if test="failuresRows != null">
-                        AND failures_rows = #{failuresRows}
+                        AND `failures_rows` = #{failuresRows}
                     </if>
                                 <if test="failuresFileName != null">
-                        AND failures_file_Name = #{failuresFileName}
+                        AND `failures_file_Name` = #{failuresFileName}
                     </if>
                                 <if test="errorCode != null">
-                        AND error_code = #{errorCode}
+                        AND `error_code` = #{errorCode}
                     </if>
                                 <if test="beginTime != null">
-                        AND begin_time = #{beginTime}
+                        AND `begin_time` = #{beginTime}
                     </if>
                                 <if test="endTime != null">
-                        AND end_time = #{endTime}
+                        AND `end_time` = #{endTime}
                     </if>
                                 <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if>
                                 <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if>
                         </where>
     </select>
@@ -55,55 +55,55 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="cmsBtJmPromotionId != null">
-                        AND cms_bt_jm_promotion_id = #{cmsBtJmPromotionId}
+                        AND `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId}
                     </if> 
                 
                     <if test="isImport != null">
-                        AND is_import = #{isImport}
+                        AND `is_import` = #{isImport}
                     </if> 
                 
                     <if test="fileName != null">
-                        AND file_name = #{fileName}
+                        AND `file_name` = #{fileName}
                     </if> 
                 
                     <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if> 
                 
                     <if test="successRows != null">
-                        AND success_rows = #{successRows}
+                        AND `success_rows` = #{successRows}
                     </if> 
                 
                     <if test="failuresRows != null">
-                        AND failures_rows = #{failuresRows}
+                        AND `failures_rows` = #{failuresRows}
                     </if> 
                 
                     <if test="failuresFileName != null">
-                        AND failures_file_Name = #{failuresFileName}
+                        AND `failures_file_Name` = #{failuresFileName}
                     </if> 
                 
                     <if test="errorCode != null">
-                        AND error_code = #{errorCode}
+                        AND `error_code` = #{errorCode}
                     </if> 
                 
                     <if test="beginTime != null">
-                        AND begin_time = #{beginTime}
+                        AND `begin_time` = #{beginTime}
                     </if> 
                 
                     <if test="endTime != null">
-                        AND end_time = #{endTime}
+                        AND `end_time` = #{endTime}
                     </if> 
                 
                     <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if> 
                 
                     <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if> 
         </where> limit 1
     </select>

@@ -133,6 +133,7 @@
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
+        "getPromotionProductInfoCountByWhere":"getPromotionProductInfoCountByWhere",
         "delete": "delete",
         "updateDealPrice": "updateDealPrice",
         "deleteByPromotionId": "deleteByPromotionId",

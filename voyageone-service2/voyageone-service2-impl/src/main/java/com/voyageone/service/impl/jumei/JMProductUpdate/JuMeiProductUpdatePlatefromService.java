@@ -14,6 +14,7 @@ import com.voyageone.service.dao.jumei.CmsBtJmProductDao;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiSynchState;
+import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiUpdateState;
 import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,16 +90,16 @@ public class JuMeiProductUpdatePlatefromService {
 
     public void updateJMProductInfo(int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
         JMUpdateProductInfo info = service.getJMUpdateProductInfo(modelPromotionProduct);
+        info.loadData();
         updateJMProductInfo(shippingSystemId, shopBean, info);
     }
     private void updateJMProductInfo(int shippingSystemId, ShopBean shopBean, JMUpdateProductInfo info) throws Exception {
+       // jmHtSpuSkuUpdateList(info, shopBean);//spu sku  未提供
+       // jmHtProductUpdate(info, shopBean);//product     未提供
+        //jmAddListSku(info, shopBean);//添加未上新的sku  未提供
         jmHtDealupdate(info, shopBean, shippingSystemId);//deal
-        jmHtProductUpdate(info, shopBean);//product
-        jmHtSpuSkuUpdateList(info, shopBean);//spu sku
-        jmAddListSku(info, shopBean);//添加未上新的sku
     }
     private void jmHtDealCopy(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
-
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
@@ -116,7 +117,7 @@ public class JuMeiProductUpdatePlatefromService {
         }
     }
     //商品属性更新
-    public HtProductUpdateResponse jmHtProductUpdate(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
+    public void jmHtProductUpdate(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
 
         HtProductUpdateRequest request = new HtProductUpdateRequest();
@@ -129,7 +130,12 @@ public class JuMeiProductUpdatePlatefromService {
         productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
         productInfo.setForeign_language_name(modelProduct.getForeignLanguageName());//jmBtProductImport.getForeignLanguageName());
         request.setUpdate_data(productInfo);
-        return serviceJumeiHtProduct.update(shopBean, request);
+        HtProductUpdateResponse response = serviceJumeiHtProduct.update(shopBean, request);
+        if (response.getIs_Success()) {
+
+        } else {
+            throw new BusinessException("productId:" + modelProduct.getId() + " jmHtProductUpdateErrorMsg:" + response.getErrorMsg());
+        }
     }
     //修改deal
     public void jmHtDealupdate(JMUpdateProductInfo info, ShopBean shopBean, int shippingSystemId) throws Exception {
@@ -148,7 +154,9 @@ public class JuMeiProductUpdatePlatefromService {
         dealInfo.setSearch_meta_text_custom(modelProduct.getSearchMetaTextCustom());//jmBtDealImportModel.getSearchMetaTextCustom());
         String partner_sku_nos = "";
         for (CmsBtJmSkuModel modelSku : info.getListCmsBtJmSku()) {
-            partner_sku_nos += modelSku.getSkuCode() + ",";
+            if(modelSku.getState()==1) {
+                partner_sku_nos += modelSku.getSkuCode() + ",";
+            }
         }
         // 特殊说明
         if (partner_sku_nos.length() > 0) {
@@ -167,15 +175,9 @@ public class JuMeiProductUpdatePlatefromService {
     private void jmHtSpuSkuUpdateList(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {
             CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
-            try {
                 if (modelPromotionProduct.getState() == 1) {
                     jmHtSpuSkuUpdate(info, shopBean, modelPromotionSku);
                 }
-            } catch (Exception ex) {
-                modelPromotionProduct.setUpdateState(EnumJuMeiSynchState.Error.getId());
-                modelPromotionSku.setUpdateState(2);
-                modelPromotionSku.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
-            }
         }
     }
 
@@ -211,14 +213,9 @@ public class JuMeiProductUpdatePlatefromService {
     //添加未上新的sku
     private void jmAddListSku(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {
-            try {
                 if (modelPromotionSku.getState() == 0) {
                     jmAddSku(info, shopBean, modelPromotionSku);
                 }
-            } catch (Exception ex) {
-                modelPromotionSku.setSynchState(EnumJuMeiSynchState.Error.getId());
-                modelPromotionSku.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
-            }
         }
     }
     private void jmAddSku(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
@@ -237,8 +234,7 @@ public class JuMeiProductUpdatePlatefromService {
         if (responseSpu.is_Success()) {
             modelSku.setJmSpuNo(responseSpu.getJumei_spu_no());
         } else {
-            modelPromotionSku.setErrorMsg(responseSpu.getErrorMsg());
-            modelPromotionSku.setSynchState(EnumJuMeiSynchState.Error.getId());
+            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
         }
         //sku
         HtSkuAddRequest requestSku = new HtSkuAddRequest();
@@ -257,8 +253,7 @@ public class JuMeiProductUpdatePlatefromService {
             modelPromotionSku.setState(1);
             modelPromotionSku.setSynchState(EnumJuMeiSynchState.NewSuccess.getId());
         } else {
-            modelPromotionSku.setErrorMsg(responseSku.getErrorMsg());
-            modelPromotionSku.setSynchState(EnumJuMeiSynchState.Error.getId());
+            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
         }
     }
     public static Long getTime(Date d) throws Exception {

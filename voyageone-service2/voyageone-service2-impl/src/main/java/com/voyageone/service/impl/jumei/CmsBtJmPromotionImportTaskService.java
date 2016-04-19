@@ -162,6 +162,7 @@ public class CmsBtJmPromotionImportTaskService {
             }
             saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
             saveInfo.getPromotionProductModel().setUpdateState(1);
+            saveInfo.getPromotionProductModel().setSkuCount(saveInfo.getListPromotionSkuModel().size());
             if (saveInfo.getPromotionProductModel().getId() == 0) {
                 daoCmsBtJmPromotionProduct.insert(saveInfo.getPromotionProductModel());
             } else {

@@ -27,9 +27,9 @@ public class CmsBtJmMasterBrandService {
     @Autowired
     CmsBtJmMasterBrandDaoExt daoExtCmsBtJmMasterBrand;
 
-    public void loadJmMasterBrand(String userName) throws Exception {
+    public void loadJmMasterBrand(String userName,String channelId) throws Exception {
         List<CmsBtJmMasterBrandModel> listCmsBtJmMasterBrand = new ArrayList<>();
-        List<JmBrandBean> list = serviceJumeiBrand.getBrands(serviceJMShopBean.getShopBean());
+        List<JmBrandBean> list = serviceJumeiBrand.getBrands(serviceJMShopBean.getShopBean(channelId));
         CmsBtJmMasterBrandModel model = null;
         for (JmBrandBean bean : list) {
             model = daoExtCmsBtJmMasterBrand.getByJmMasterBrandId(bean.getId());

@@ -56,7 +56,11 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
     }
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetPromotionProductInfoCountByWhere)
+    public AjaxResponse getPromotionProductInfoCountByWhere(@RequestBody Map<String, Object> map)
+    {
+        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoCountByWhere(map));
+    }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATE)
     public AjaxResponse update(@RequestBody CmsBtJmPromotionProductModel params) {
         String channelId = getUser().getSelChannelId();
@@ -230,8 +234,8 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
-    public AjaxResponse updateJM(@RequestBody int promotionProductId) {
-        CallResult result = new CallResult();
+    public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
+        CallResult result = serviceCmsBtJmPromotionProduct.updateJM(promotionProductId);
         return success(result);
     }
 }

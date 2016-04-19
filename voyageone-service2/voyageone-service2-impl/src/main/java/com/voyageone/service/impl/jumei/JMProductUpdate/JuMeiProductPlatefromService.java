@@ -7,6 +7,7 @@ import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiSynchState;
+import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiUpdateState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,10 @@ public class JuMeiProductPlatefromService {
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatefromService.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
-        LOG.info(promotionId + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
+        ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
+        LOG.info(promotionId + " 聚美上新开始");
+
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         try {
@@ -47,13 +49,14 @@ public class JuMeiProductPlatefromService {
         }
         LOG.info(promotionId + " 聚美上新end");
     }
-    public void updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
+    public CallResult updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
+        CallResult result=new CallResult();
         try {
             if (model.getState() == 0) {//上新
-                CallResult result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(shippingSystemId, model, shopBean);//上新
+                 result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(shippingSystemId, model, shopBean);//上新
                 if (!result.isResult()) {
                     model.setErrorMsg(result.getMsg());
-                    model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
+                    model.setState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
                     daoCmsBtJmPromotionProduct.update(model);
                 }
             } else if (model.getSynchState() == 0 || model.getSynchState() == 1) //更新 copyDeal
@@ -64,17 +67,20 @@ public class JuMeiProductPlatefromService {
             }
         } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
-            model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
+            model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
             LOG.error("addProductAndDealByPromotionId", ex);
             try {
-                if (model.getErrorMsg().length() > 200) {
-                    model.setErrorMsg(model.getErrorMsg().substring(0, 200));
+                if (model.getErrorMsg().length() > 600) {
+                    model.setErrorMsg(model.getErrorMsg().substring(0, 600));
                 }
                 daoCmsBtJmPromotionProduct.update(model);
             } catch (Exception cex) {
                 LOG.error("addProductAndDealByPromotionId", cex);
                 ex.printStackTrace();
             }
+            result.setResult(false);
+            result.setMsg(ExceptionUtil.getErrorMsg(ex));
         }
+        return result;
     }
 }

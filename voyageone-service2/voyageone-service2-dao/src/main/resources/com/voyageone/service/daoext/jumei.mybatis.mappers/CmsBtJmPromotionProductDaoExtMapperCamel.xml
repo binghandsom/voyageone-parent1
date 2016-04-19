@@ -73,7 +73,7 @@
         </where>
     </select>
     <select id="getPromotionProductInfoListByWhere" resultType="MapModel">
-        SELECT a.error_msg,a.deal_end_time_state,a.`id`,b.`category_lv1_name`,a.`pc_id`,a.`app_id`,b.`jumei_product_id`,b.`product_code`,a.`jm_hash_id`,b.`product_long_name`,
+        SELECT a.update_state, a.error_msg,a.deal_end_time_state,a.`id`,b.`category_lv1_name`,a.`pc_id`,a.`app_id`,b.`jumei_product_id`,b.`product_code`,a.`jm_hash_id`,b.`product_long_name`,
 b.`product_short_name`,b.`msrp`,a.`deal_price`,a.`market_price`,b.`color_en`,b.`attribute`,a.`discount`,a.`sku_count`,a.`state`,a.`synch_state`,a.cms_bt_jm_product_id
 FROM `cms_bt_jm_promotion_product` AS a
 JOIN `cms_bt_jm_product` AS b ON a.`cms_bt_jm_product_id`=b.`id`
@@ -132,6 +132,76 @@ JOIN `cms_bt_jm_product` AS b ON a.`cms_bt_jm_product_id`=b.`id`
             </if>
             <if test="brandName!=null">
               and  b.brand_name=#{brandName}
+            </if>
+            <if test="colorEn!=null">
+                and    b.color_en=#{colorEn}
+            </if>
+        </where>
+        order by id desc
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+    </select>
+
+    <select id="getPromotionProductInfoCountByWhere" resultType="int">
+        SELECT count(*)
+        FROM `cms_bt_jm_promotion_product` AS a
+        JOIN `cms_bt_jm_product` AS b ON a.`cms_bt_jm_product_id`=b.`id`
+        <where>
+            <if test="cmsBtJmPromotionId!=null">
+                and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
+            </if>
+            <if test="productCode!=null">
+                and    b.product_code  like CONCAT(#{productCode},'%')
+            </if>
+            <if test="categoryLv1Name!=null">
+                and b.category_lv1_name =#{categoryLv1Name}
+            </if>
+            <if test="synchStateList.size()!=0">
+                and  a.synch_state in
+                <foreach item="item" index="i" collection="synchStateList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="beginDiscount!=null">
+                and a.discount>=#{beginDiscount}
+            </if>
+            <if test="endDiscount!=null">
+                and  a.discount&lt;=#{endDiscount};
+            </if>
+            <if test="priceType=='msrp'">
+                <if test="beginPrice!=null">
+                    and   b.msrp>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    and   b.msrp&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="priceType=='marketPrice'">
+                <if test="beginPrice!=null">
+                    and    a.market_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    and   a.market_price&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="priceType=='dealPrice'">
+                <if test="beginPrice!=null">
+                    and  a.deal_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    and  a.deal_price&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="productNameCn!=null">
+                and   b.product_name_cn  like CONCAT(#{productNameCn},'%')
+            </if>
+            <if test="state!=null">
+                and  a.state=#{state}
+            </if>
+            <if test="brandName!=null">
+                and  b.brand_name=#{brandName}
             </if>
             <if test="colorEn!=null">
                 and    b.color_en=#{colorEn}

@@ -56,6 +56,10 @@ public class CmsBtJmPromotionProductService {
     public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
         return daoExt.getPromotionProductInfoListByWhere(map);
     }
+    public int getPromotionProductInfoCountByWhere(Map<String, Object> map)
+    {
+       return  daoExt.getPromotionProductInfoCountByWhere(map);
+    }
 
     public int delete(int id) {
         return dao.delete(id);
@@ -104,13 +108,12 @@ public class CmsBtJmPromotionProductService {
         return dao.selectOne(param);
     }
     public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
-        CallResult result = new CallResult();
         CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
         int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
-        if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
-            serviceJuMeiProductPlatefrom.updateJm(model, shopBean, ShippingSystemId);
-        }
+        ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
+       // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
+    CallResult     result=   serviceJuMeiProductPlatefrom.updateJm(model, shopBean, ShippingSystemId);
+       // }
         return result;
     }
 }

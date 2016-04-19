@@ -10,28 +10,28 @@
         select `id`,`channel_id`,`key`,`value`,`created`,`creater`,`modified`,`modifier`        from cms_mt_jm_config
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="channelId != null">
-                        AND channel_id = #{channelId}
+                        AND `channel_id` = #{channelId}
                     </if>
                                 <if test="key != null">
-                        AND key = #{key}
+                        AND `key` = #{key}
                     </if>
                                 <if test="value != null">
-                        AND value = #{value}
+                        AND `value` = #{value}
                     </if>
                                 <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND modified = #{modified}
+                        AND `modified` = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND modifier = #{modifier}
+                        AND `modifier` = #{modifier}
                     </if>
                         </where>
     </select>
@@ -40,35 +40,35 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="channelId != null">
-                        AND channel_id = #{channelId}
+                        AND `channel_id` = #{channelId}
                     </if> 
                 
                     <if test="key != null">
-                        AND key = #{key}
+                        AND `key` = #{key}
                     </if> 
                 
                     <if test="value != null">
-                        AND value = #{value}
+                        AND `value` = #{value}
                     </if> 
                 
                     <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND modified = #{modified}
+                        AND `modified` = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND modifier = #{modifier}
+                        AND `modifier` = #{modifier}
                     </if> 
         </where> limit 1
     </select>

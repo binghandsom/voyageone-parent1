@@ -219,12 +219,15 @@
 			<tabset class="tab-container vo_nav-tabs">
 				<tab>
 					<tab-heading>Product 详情</tab-heading>
+					<div class="box">
+					<div class="box-body">
 			    <div class="table-responsive">
 				<table class="table table-hover-new vo_table dropdown_table_main" style="width:2800px;margin-bottom:0px;table-layout: fixed;">
 					<thead>
 					<tr>
 						<th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  /><span class="fa fa-check"></span></label></th>
-						<th>状态</th>
+						<th class="text-left">上传状态</th>
+						<th class="text-left">上新状态</th>
 						<th class="text-left" >错误消息</th>
 						<th class="text-left">聚美类目</th>
 						<th class="text-center">PC模块ID</th>
@@ -247,12 +250,24 @@
 					<tr ng-repeat="model in vm.modelList" ng-controller="popupCtrl">
 						<td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="model.isChecked"><span class="fa fa-check"></span></label></td>
 						<!--<td class="text-center"><img alt="100001" class="img-circle"></td>-->
-						<td ng-if="model.synchState==0">未上传</td>
-						<td ng-if="model.synchState==1">待上传</td>
-						<td ng-if="model.synchState==2">上传成功</td>
-						<td ng-if="model.synchState==3">更新成功</td>
-						<td ng-if="model.synchState==4">上传失败</td>
-						<td title="model.errorMsg" class="text-left"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3" >{{model.errorMsg}}</textarea></td>
+						<td ng-if="model.updateState==0">未上传</td>
+						<td ng-if="model.updateState==1">待上传</td>
+						<td ng-if="model.updateState==2">上传成功</td>
+						<td ng-if="model.updateState==3">上传失败</td>
+						<!--<td title="{{model.errorMsg}}" >{{model.errorMsg.substr(0,30)}}</td>-->
+						<td ng-if="model.synchState==0">未上新</td>
+						<td ng-if="model.synchState==1">待上新</td>
+						<td ng-if="model.synchState==2">已上新</td>
+						<td ng-if="model.synchState==3">已更新</td>
+						<td>
+						<small ng-controller="showPopoverCtrl" popover-html="showInfo([{{model.errorMsg}}])" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
+							<div class="table_main">
+								<ul>
+									<li>{{model.errorMsg.substr(0,30)}}</li>
+								</ul>
+							</div>
+						</small>
+						</td>
 						<td class="mfb-xxx text-left">{{model.categoryLv1Name}}</td>
 						<td class="text-center">{{model.pcId}}</td>
 						<td class="text-center">{{model.appId}}</td>
@@ -283,13 +298,14 @@
 						</td>
 						<td>{{model.discount}}</td>
 						<td>
-							<small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;1、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;,&quot;2、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;,&quot;3、CMS size《--》聚美尺码：SKU《--》聚美SKU&quot;])" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
-								<div class="table_main">
-									<ul>
-									   <li>{{model.skuCount}}</li>
-								    </ul>
-								</div>
-							</small>
+							{{model.skuCount}}
+							<!--<small ng-controller="showPopoverCtrl" popover-html="showInfo([&quot;1、CMS size《&#45;&#45;》聚美尺码：SKU《&#45;&#45;》聚美SKU&quot;,&quot;2、CMS size《&#45;&#45;》聚美尺码：SKU《&#45;&#45;》聚美SKU&quot;,&quot;3、CMS size《&#45;&#45;》聚美尺码：SKU《&#45;&#45;》聚美SKU&quot;])" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">-->
+								<!--<div class="table_main">-->
+									<!--<ul>-->
+									   <!--<li>{{model.skuCount}}</li>-->
+								    <!--</ul>-->
+								<!--</div>-->
+							<!--</small>-->
 						</td>
 						<td>{{model.state=="1"?"待再售":"在售"}}</td>
 						<td>
@@ -301,7 +317,14 @@
 					</tr>
 					</tbody>
 				</table>
+					<div if-no-rows="vm.modelList.length" ></div>
+					<div if-no-rows="vm.modelList.length" ></div>
 			</div>
+						</div>
+						<div class="m-t-xs">
+							<vpagination config="dataPageOption"></vpagination>
+						</div>
+						</div>
 		</tab>
 
 		<tab  ng-click="searchImport()">

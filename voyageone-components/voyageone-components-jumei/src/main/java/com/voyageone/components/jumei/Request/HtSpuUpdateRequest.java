@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by dell on 2016/3/29.
  */
 public class HtSpuUpdateRequest implements JMRequest {
-    public String Url = "/v1/htSpu/add";
+    public String Url = "/v1/htSpu/update";
     public String getUrl() {
         return Url;
     }

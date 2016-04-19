@@ -10,22 +10,22 @@
         select `id`,`source_id`,`api_type`,`error_msg`,`error_code`,`remark`        from cms_bt_jm_api_log
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="sourceId != null">
-                        AND source_id = #{sourceId}
+                        AND `source_id` = #{sourceId}
                     </if>
                                 <if test="apiType != null">
-                        AND api_type = #{apiType}
+                        AND `api_type` = #{apiType}
                     </if>
                                 <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if>
                                 <if test="errorCode != null">
-                        AND error_code = #{errorCode}
+                        AND `error_code` = #{errorCode}
                     </if>
                                 <if test="remark != null">
-                        AND remark = #{remark}
+                        AND `remark` = #{remark}
                     </if>
                         </where>
     </select>
@@ -34,27 +34,27 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="sourceId != null">
-                        AND source_id = #{sourceId}
+                        AND `source_id` = #{sourceId}
                     </if> 
                 
                     <if test="apiType != null">
-                        AND api_type = #{apiType}
+                        AND `api_type` = #{apiType}
                     </if> 
                 
                     <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if> 
                 
                     <if test="errorCode != null">
-                        AND error_code = #{errorCode}
+                        AND `error_code` = #{errorCode}
                     </if> 
                 
                     <if test="remark != null">
-                        AND remark = #{remark}
+                        AND `remark` = #{remark}
                     </if> 
         </where> limit 1
     </select>

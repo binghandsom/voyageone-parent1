@@ -25,10 +25,12 @@ public class JuMeiDealService {
     JMShopBeanService serviceJMShopBean;
     public   void updateDealEndTime(int promotionId) throws Exception {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
+
         parameterPromotionProduct.put("promotionId", promotionId);
         parameterPromotionProduct.put("dealEndTimeState", 1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
+        if(listPromotionProduct.size()==0) return;;
+        ShopBean shopBean = serviceJMShopBean.getShopBean(listPromotionProduct.get(0).getChannelId());
         for (CmsBtJmPromotionProductModel model : listPromotionProduct) {
             updateDealEndTime((ShopBean) shopBean, (CmsBtJmPromotionProductModel) model);
         }
