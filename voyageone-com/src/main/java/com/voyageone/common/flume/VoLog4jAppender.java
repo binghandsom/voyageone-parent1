@@ -357,9 +357,8 @@ public class VoLog4jAppender extends AppenderSkeleton {
                 layout.activateOptions();
             }
         } catch (FlumeException e) {
-            String errormsg = "RPC client creation failed! " +
-                    e.getMessage();
             // liang change
+            //String errormsg = "RPC client creation failed! " + e.getMessage();
             //LogLog.error(errormsg);
             if (unsafeMode) {
                 return;
