@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.bean;
 
 import com.csvreader.CsvReader;
 import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -174,11 +175,11 @@ public class ShoeCityFeedBean {
     }
 
     public String getSku() {
-        return getCode().replace(" ", "-") + "-" + getSize();
+        return StringUtils.replaceBlankToDash(getCode()) + "-" + getSize();
     }
 
     public String getClientSku() {
-        return getCode() + "-" + getSize();
+        return getCode().trim() + "-" + getSize();
     }
 
     public int getSaved() {

@@ -3,21 +3,19 @@
  */
 define([
     'angularAMD',
+    'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popImageDetailCtl', function ($scope, $routeParams) {
-
+    angularAMD.controller('popImageDetailCtl', function ($scope, context) {
+        $scope.vm = {
+            picInfo : context
+        };
         /**
          * 初始化数据.
          */
         $scope.initialize = function () {
-            if ($scope.vm == undefined) {
-                $scope.vm = {};
-            }
-            $scope.vm.imageMain = $routeParams.imageMain;
-            $scope.vm.imageList = $routeParams.imageList;
-        };
 
+        };
     });
 });

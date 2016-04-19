@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.jumei.CmsMtJmMasterPlatDao">
+    <resultMap id="ResultMap" type="CmsMtJmMasterPlatModel">
+        
+    </resultMap>
+	
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier`        from cms_mt_jm_master_plat
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="code != null">
+                        AND code = #{code}
+                    </if>
+                                <if test="key != null">
+                        AND key = #{key}
+                    </if>
+                                <if test="name1 != null">
+                        AND name1 = #{name1}
+                    </if>
+                                <if test="name2 != null">
+                        AND name2 = #{name2}
+                    </if>
+                                <if test="name3 != null">
+                        AND name3 = #{name3}
+                    </if>
+                                <if test="name4 != null">
+                        AND name4 = #{name4}
+                    </if>
+                                <if test="created != null">
+                        AND created = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND creater = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND modified = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier` from cms_mt_jm_master_plat 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="code != null">
+                        AND code = #{code}
+                    </if> 
+                
+                    <if test="key != null">
+                        AND key = #{key}
+                    </if> 
+                
+                    <if test="name1 != null">
+                        AND name1 = #{name1}
+                    </if> 
+                
+                    <if test="name2 != null">
+                        AND name2 = #{name2}
+                    </if> 
+                
+                    <if test="name3 != null">
+                        AND name3 = #{name3}
+                    </if> 
+                
+                    <if test="name4 != null">
+                        AND name4 = #{name4}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND created = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND creater = #{creater}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND modified = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if> 
+        </where> limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier` from cms_mt_jm_master_plat where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_mt_jm_master_plat
+        set
+
+            `code`=#{code}
+            ,`key`=#{key}
+            ,`name1`=#{name1}
+            ,`name2`=#{name2}
+            ,`name3`=#{name3}
+            ,`name4`=#{name4}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_jm_master_plat
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_mt_jm_master_plat
+        (
+              `code`,
+              `key`,
+              `name1`,
+              `name2`,
+              `name3`,
+              `name4`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{code},
+              #{key},
+              #{name1},
+              #{name2},
+              #{name3},
+              #{name4},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

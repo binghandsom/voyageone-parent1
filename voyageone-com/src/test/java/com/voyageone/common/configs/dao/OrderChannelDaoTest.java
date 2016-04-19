@@ -31,4 +31,30 @@ public class OrderChannelDaoTest extends BaseTest{
         bean.setCart_ids("1,2,3,4,5,6");
         dao.updateById(bean);
     }
+
+    @Test
+    public void testInsert() throws Exception {
+        OrderChannelBean bean = new OrderChannelBean();
+        bean.setCart_ids("1,2");
+//        order_channel_id, company_id, name, full_name, img_url, send_name, send_address, send_tel,
+//         send_zip, screct_key, session_key, is_usjoi, cart_ids, created, creater, modified, modifier, status
+
+        bean.setOrder_channel_id("500");
+        bean.setCompany_id("1");
+        bean.setName("ztw");
+        bean.setFull_name("ztw");
+        bean.setImg_url("ztw");
+        bean.setSend_name("ztw");
+        bean.setSend_address("ztw");
+        bean.setSend_tel("ztw");
+        bean.setSend_zip("ztw");
+        bean.setScrect_key("ztw");
+        bean.setSession_key("ztw");
+        bean.setIs_usjoi(1);
+//        bean.setCart_ids("1");
+        bean.setCreater("ztw");
+        dao.insertChannel(bean);
+
+
+    }
 }

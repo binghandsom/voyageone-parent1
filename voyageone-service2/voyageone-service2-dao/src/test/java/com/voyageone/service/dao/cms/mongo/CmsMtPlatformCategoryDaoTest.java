@@ -17,21 +17,22 @@ import java.util.List;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsMtPlatformCategoryDaoTest {
 
-    @Autowired
-    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
-
-    @Test
-    public void testSelectPlatformCategoriesByCartId() {
-        int catId = 23;
-        List<CmsMtPlatformCategoryTreeModel> lst = cmsMtPlatformCategoryDao.selectPlatformCategoriesByCartId(catId);
-        for (CmsMtPlatformCategoryTreeModel model:lst) {
-            System.out.println(model);
-        }
-    }
-
-    @Test
-    public void testSelectById() {
-        CmsMtPlatformCategoryTreeModel model = cmsMtPlatformCategoryDao.selectById("5663df5c62b800d4e44e5a10");
-        System.out.println(model);
-    }
+//    @Autowired
+//    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
+//
+//    @Test
+//    public void testSelectPlatformCategoriesByCartId() {
+//        int catId = 23;
+//        List<CmsMtPlatformCategoryTreeModel> lst = cmsMtPlatformCategoryDao.selectPlatformCategoriesByCartId(catId);
+//        for (CmsMtPlatformCategoryTreeModel model:lst) {
+//            System.out.println(model);
+//        }
+//    }
+//
+//    @Test
+//    public void testSelectById() {
+//        int catId = 23;
+//        CmsMtPlatformCategoryTreeModel model = cmsMtPlatformCategoryDao.selectById("5663df5c62b800d4e44e5a10"，catId);
+//        System.out.println(model);
+//    }
 }

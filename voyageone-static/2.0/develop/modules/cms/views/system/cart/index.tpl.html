@@ -9,7 +9,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Cart ID</label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" ng-model="vm.searchInfo.catName">
+                                        <input class="form-control" ng-model="vm.search.cart_id">
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
@@ -19,7 +19,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" ng-model="vm.searchInfo.catId">
+                                        <input class="form-control" ng-model="vm.search.name">
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
@@ -29,9 +29,8 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">USJOI ID</label>
                                     <div class="col-sm-4">
-                                        <select class="form-control">
-                                            <option value="All">All</option>
-                                            <option value="Some">Some</option>
+                                        <select class="form-control" ng-model="vm.search.cart_type">
+                                            <option ng-repeat="entry in vm.CART_TYPE_DICT" value="{{entry[0]}}" >{{entry[1]}}</option>
                                         </select>
                                     </div>
                                 </div><!-- .form-group -->
@@ -41,17 +40,17 @@
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label>
-                                        <input type="checkbox"> 已删除
+                                        <input type="checkbox" ng-model="vm.search.active" ng-true-value="0" ng-false-value="1"> 已删除
                                     </label>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-12 text-center m-b-sm">
+                        <div class="col-sm-12 text-center m-b-sm" ng-controller="popupCtrl">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                                    <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-                                    <button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                    <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                                    <button class="btn btn-vo" ng-click="$parent.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                    <button class="btn btn-success"  ng-click="$parent.add(this)"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
@@ -75,23 +74,24 @@
                     <th class="text-center col-sm-1" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody ng-repeat="el in vm.data track by el.cart_id">
                 <tr>
-                    <td>1</td>
-                    <td>010</td>
-                    <td>Tmall</td>
-                    <td>TM</td>
-                    <td>TMall</td>
-                    <td>Yes</td>
-                    <td>天猫</td>
+                    <td>{{$index}}</td>
+                    <td>{{el.cart_id}}</td>
+                    <td>{{el.name}}</td>
+                    <td>{{el.short_name}}</td>
+                    <td>{{el.description}}</td>
+                    <td>{{el.cart_type==3?'YES':'NO'}}</td>
+                    <td>{{vm.PLATFORM_DICT[el.platform_id]}}</td>
                     <td ng-controller="popupCtrl">
-                        <button class="btn btn-success btn-xs ng-scope" ng-click="openCartSetting('')"><i class="fa fa-pencil"></i></button>
-                        <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-success btn-xs ng-scope" ng-click="$parent.edit(el,this)"><i class="fa fa-pencil"></i></button>
+                        <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="$parent.delete($index,el.cart_id)"
+                           ng-show="el.active==1"><i class="fa fa-trash-o"></i></button>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            <vpagination config="categoryPageOption" total="{{categoryPageOption.total}}"></vpagination>
+            <!--<vpagination config="categoryPageOption" total="{{categoryPageOption.total}}"></vpagination>-->
         </div><!-- /.box-body -->
     </div>
 </div><!-- end .wrapper-md -->

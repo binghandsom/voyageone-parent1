@@ -21,22 +21,22 @@ public class ChannelServiceTest extends BaseTest {
 
     @Test
     public void testGetChannelList() throws Exception {
-        List result = service.getChannelListBy(null, null, null);
+        List result = service.getChannelListBy(null, null, null,null);
         Assert.assertTrue(result.size()>0);
 
-        List<OrderChannelBean> result1 = service.getChannelListBy("001", null, null);
+        List<OrderChannelBean> result1 = service.getChannelListBy("001", null, null,null);
         Assert.assertTrue(result1.get(0).getOrder_channel_id().equalsIgnoreCase("001"));
-        List<OrderChannelBean> result2 = service.getChannelListBy("001", "SN", null);
+        List<OrderChannelBean> result2 = service.getChannelListBy("001", "SN", null,null);
         Assert.assertTrue(result2.get(0).getOrder_channel_id().equals("001") && result2.get(0).getName().equalsIgnoreCase("SN"));
 
 
-        List<OrderChannelBean> result3 = service.getChannelListBy("001", "SN", -1);
+        List<OrderChannelBean> result3 = service.getChannelListBy("001", "SN", -1,null);
 
         Assert.assertTrue(result3.size()>0);
 
-        List<OrderChannelBean> result4 = service.getChannelListBy("001", "SN", 0);
+        List<OrderChannelBean> result4 = service.getChannelListBy("001", "SN", 0,null);
         Assert.assertTrue(result4.size()>0);
-        List<OrderChannelBean> result5 = service.getChannelListBy("001", "SN", 1);
+        List<OrderChannelBean> result5 = service.getChannelListBy("001", "SN", 1,null);
         Assert.assertTrue(result5.size()==0);
 
 

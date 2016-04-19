@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms.mongo;
 
+import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Repository;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtFeedCategoryTreeDao extends BaseMongoDao<CmsMtFeedCategoryTreeModel> {
+public class CmsMtFeedCategoryTreeDao extends BaseMongoChannelDao<CmsMtFeedCategoryTreeModel> {
 
     /**
      * 查询 Feed 类目
@@ -24,9 +25,9 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao<CmsMtFeedCategoryTree
      * @param channelId 渠道
      * @return Feed 类目的弱类型模型
      */
-    public CmsMtFeedCategoryTreeModel selectFeedCategory(String channelId) {
-        String query = "{\"channelId\":\"" + channelId + "\"}";
-        return mongoTemplate.findOne(query, CmsMtFeedCategoryTreeModel.class, collectionName);
+    public CmsMtFeedCategoryTreeModel selectFeedCategory(String channelId, String category) {
+        String query = "{\"catName\":\"" + category + "\"}";
+        return selectOneWithQuery(query, channelId);
     }
 
     /**
@@ -81,7 +82,7 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao<CmsMtFeedCategoryTree
         for (int i = 0; i < count; i++)
             builder.append(".child");
 
-        String query = String.format("{\"channelId\":\"%s\", \"categoryTree%s\":{$elemMatch:{\"path\": \"%s\", \"isChild\": 1}}}",
+        String query = String.format("{\"categoryTree%s\":{$elemMatch:{\"path\": \"%s\", \"isChild\": 1}}}",
                 channelId, builder, topCategoryPath);
 
         JomgoQuery jomgoQuery = new JomgoQuery();
@@ -90,6 +91,6 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao<CmsMtFeedCategoryTree
 
         jomgoQuery.setProjection("_id");
 
-        return selectOneWithQuery(jomgoQuery);
+        return selectOneWithQuery(jomgoQuery,channelId);
     }
 }

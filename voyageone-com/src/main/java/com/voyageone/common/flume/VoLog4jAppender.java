@@ -18,6 +18,27 @@
  */
 package com.voyageone.common.flume;
 
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.BinaryEncoder;
+import org.apache.avro.io.DatumWriter;
+import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.reflect.ReflectData;
+import org.apache.avro.reflect.ReflectDatumWriter;
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.flume.Event;
+import org.apache.flume.EventDeliveryException;
+import org.apache.flume.FlumeException;
+import org.apache.flume.api.RpcClient;
+import org.apache.flume.api.RpcClientConfigurationConstants;
+import org.apache.flume.api.RpcClientFactory;
+import org.apache.flume.clients.log4jappender.Log4jAvroHeaders;
+import org.apache.flume.event.EventBuilder;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.spi.LoggingEvent;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -27,27 +48,6 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.BinaryEncoder;
-import org.apache.avro.io.DatumWriter;
-import org.apache.avro.io.EncoderFactory;
-import org.apache.avro.reflect.ReflectData;
-import org.apache.avro.reflect.ReflectDatumWriter;
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.flume.Event;
-import org.apache.flume.EventDeliveryException;
-import org.apache.flume.FlumeException;
-import org.apache.flume.api.RpcClient;
-import org.apache.flume.api.RpcClientConfigurationConstants;
-import org.apache.flume.api.RpcClientFactory;
-import org.apache.flume.clients.log4jappender.Log4jAvroHeaders;
-import org.apache.flume.event.EventBuilder;
-
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.helpers.LogLog;
-import org.apache.log4j.spi.LoggingEvent;
 
 /**
  *
@@ -89,7 +89,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
     // liang add threadPool
     private static ExecutorService threadPool = Executors.newFixedThreadPool(1);
     // liang add projectFile
-    private String projectFile="";
+    private String projectFile = "";
     public String getProjectFile() {
         return projectFile;
     }
@@ -165,7 +165,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
         }
 
         //Client created first time append is called.
-        Map<String, String> hdrs = new HashMap<String, String>();
+        Map<String, String> hdrs = new HashMap<>();
         hdrs.put(Log4jAvroHeaders.LOGGER_NAME.toString(), event.getLoggerName());
         hdrs.put(Log4jAvroHeaders.TIMESTAMP.toString(),
                 String.valueOf(event.timeStamp));
@@ -189,9 +189,13 @@ public class VoLog4jAppender extends AppenderSkeleton {
         } else {
             hdrs.put(Log4jAvroHeaders.MESSAGE_ENCODING.toString(), "UTF8");
             String msg = layout != null ? layout.format(event) : message.toString();
+            // liang change
+            if (event.getThrowableInformation() != null && event.getThrowableInformation().getThrowable() != null) {
+                msg = getErrorInfoFromException(event.getThrowableInformation().getThrowable(), msg);
+            }
             flumeEvent = EventBuilder.withBody(msg, Charset.forName("UTF8"), hdrs);
             // liang add projectFile
-            flumeEvent.getHeaders().put("projectFile",projectFile);
+            flumeEvent.getHeaders().put("projectFile", projectFile);
         }
 
         try {
@@ -206,6 +210,10 @@ public class VoLog4jAppender extends AppenderSkeleton {
             throw new FlumeException(msg + " Exception follows.", e);
         }
 
+    }
+
+    private String getErrorInfoFromException(Throwable aThrowable, String message) {
+        return message + "\n" + ExceptionUtils.getStackTrace(aThrowable) + "\n";
     }
 
     private Schema schema;
@@ -228,7 +236,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
         if (schema == null || !datumSchema.equals(schema)) {
             schema = datumSchema;
             out = new ByteArrayOutputStream();
-            writer = new ReflectDatumWriter<Object>(schema);
+            writer = new ReflectDatumWriter<>(schema);
             encoder = EncoderFactory.get().binaryEncoder(out, null);
         }
         out.reset();
