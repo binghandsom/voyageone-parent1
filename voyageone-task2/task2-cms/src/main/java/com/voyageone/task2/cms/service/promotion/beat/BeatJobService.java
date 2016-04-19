@@ -201,12 +201,6 @@ public class BeatJobService extends BaseTaskService {
             this.promotion = beatInfoModel.getPromotion();
             this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
 
-            // TODO 测试代码
-            this.shopBean.setAppKey("21008948");
-            this.shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-            this.shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-            this.shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-
             this.tbItemSchema = tbItemService.getUpdateSchema(shopBean, beatInfoModel.getNum_iid());
             this.taskBean = new TaskBean(beatInfoModel.getTask());
             this.configBean = taskBean.getConfig();
