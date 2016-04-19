@@ -88,6 +88,7 @@ public class ProductService extends BaseService {
         String query = "{\"prodId\":" + prodId + "}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+
     public void update(CmsBtProductModel model) {
         cmsBtProductDao.update(model);
     }
@@ -749,26 +750,26 @@ public class ProductService extends BaseService {
             String hsCodeCrop = product.getFields().getHsCodeCrop();
             if (!StringUtils.isEmpty(hsCodeCrop)) {
 //                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
-                if (!StringUtils.isEmpty(hsCodeCrop)) {
-
-                    String[] hsCode = hsCodeCrop.split(",");
-                    resultInfo.setHsCodeId(hsCodeCrop);
-                    resultInfo.setHsCode(hsCode[1]);
-                    resultInfo.setHsDescription(hsCode[2]);
-                    resultInfo.setUnit(hsCode[3]);
-                }
+//                if (!StringUtils.isEmpty(hsCodeCrop)) {
+                // TODO 暂时不需要填写hsCode
+//                String[] hsCode = hsCodeCrop.split(",");
+//                resultInfo.setHsCodeId(hsCodeCrop);
+//                resultInfo.setHsCode(hsCode[0]);
+//                resultInfo.setHsDescription(hsCode[1]);
+//                resultInfo.setUnit(hsCode[2]);
+//                }
             }
             // 获取HsCodePrivate
             String hsCodePrivate = product.getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
 //                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-                if (!StringUtils.isEmpty(hsCodePrivate)) {
-                    String[] hsCodePu = hsCodePrivate.split(",");
-                    resultInfo.setHsCodePuId(hsCodePrivate);
-                    resultInfo.setHsCodePu(hsCodePu[0]);
-                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
-                    resultInfo.setUnitPu(hsCodePu[2]);
-                }
+//                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                String[] hsCodePu = hsCodePrivate.split(",");
+                resultInfo.setHsCodePuId(hsCodePrivate);
+                resultInfo.setHsCodePu(hsCodePu[0]);
+                resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                resultInfo.setUnitPu(hsCodePu[2]);
+//                }
             }
         }
         return resultInfo;
@@ -950,8 +951,9 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
-    public void updateTags(String channelId,Long prodId, List<String> Tags,String modifier) {
-        Map<String,Object> paraMap = new HashMap<>(1);
+
+    public void updateTags(String channelId, Long prodId, List<String> Tags, String modifier) {
+        Map<String, Object> paraMap = new HashMap<>(1);
         paraMap.put("channelId", channelId);
         paraMap.put("prodId", prodId);
 
@@ -964,6 +966,7 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
+
     /**
      * 获取Sku的库存信息
      */
@@ -1068,11 +1071,12 @@ public class ProductService extends BaseService {
 
     /**
      * 返回已经存在的及新生成的carts数据
-     * @param skus 产品SKU列表
+     *
+     * @param skus  产品SKU列表
      * @param carts 寄存Cart列表
      * @return
      */
-    public List<CmsBtProductModel_Carts> getCarts (List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
+    public List<CmsBtProductModel_Carts> getCarts(List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
 
         List<CmsBtProductModel_Carts> newCarts = skus
                 .stream()
@@ -1093,7 +1097,7 @@ public class ProductService extends BaseService {
      */
     private Predicate<Integer> byCartId(List<CmsBtProductModel_Carts> carts) {
         return i -> {
-            for(CmsBtProductModel_Carts cart : carts) {
+            for (CmsBtProductModel_Carts cart : carts) {
                 if (Objects.equals(i, cart.getCartId()))
                     return false;
             }
