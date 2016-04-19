@@ -6,29 +6,21 @@ import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtProductService;
 import com.voyageone.components.jumei.JumeiHtSkuService;
 import com.voyageone.components.jumei.JumeiHtSpuService;
-import com.voyageone.components.jumei.Reponse.*;
-import com.voyageone.components.jumei.Request.*;
+import com.voyageone.components.jumei.reponse.*;
+import com.voyageone.components.jumei.request.*;
 import com.voyageone.components.jumei.bean.*;
-import com.voyageone.components.jumei.enums.EnumJuMeiMtMasterInfo;
-import com.voyageone.components.jumei.enums.EnumJuMeiProductImageType;
 import com.voyageone.components.jumei.service.JumeiProductService;
-import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.dao.jumei.CmsBtJmProductDao;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.model.jumei.*;
 import com.voyageone.service.model.jumei.businessmodel.EnumJuMeiSynchState;
-import com.voyageone.service.model.jumei.businessmodel.JMNewProductInfo;
 import com.voyageone.service.model.jumei.businessmodel.JMUpdateProductInfo;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by dell on 2016/4/12.
