@@ -30,11 +30,15 @@ public class OrderChannelBean {
 
     private String cart_ids;
 
+    private String img_url;
+
 
     private Date created;
     private String creater;
     private Date modified;
     private String modifier;
+    private String status; //数据库映射字段 add by holysky
+
 
     public String getSession_key() {
         return session_key;
@@ -162,5 +166,21 @@ public class OrderChannelBean {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getImg_url() {
+        return img_url;
+    }
+
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
     }
 }

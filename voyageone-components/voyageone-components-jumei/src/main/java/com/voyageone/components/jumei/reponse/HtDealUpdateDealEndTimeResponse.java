@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Reponse;
+package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
 

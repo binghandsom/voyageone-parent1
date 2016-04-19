@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD, _) {
 
-    angularAMD.controller('popChannelListCtl', ['$scope', '$routeParams', 'context', 'usjoiService','$modalInstance',
+    angularAMD.controller('popChannelSettingCtl', ['$scope', '$routeParams', 'context', 'usjoiService','$modalInstance',
         function ($scope, $routeParams, context, usjoiService,$modalInstance) {
 
             /**

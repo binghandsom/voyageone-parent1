@@ -1,10 +1,10 @@
 package com.voyageone.components.jumei;
 
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.components.jumei.Reponse.HtSkuAddResponse;
-import com.voyageone.components.jumei.Reponse.HtSkuUpdateResponse;
-import com.voyageone.components.jumei.Request.HtSkuAddRequest;
-import com.voyageone.components.jumei.Request.HtSkuUpdateRequest;
+import com.voyageone.components.jumei.reponse.HtSkuAddResponse;
+import com.voyageone.components.jumei.reponse.HtSkuUpdateResponse;
+import com.voyageone.components.jumei.request.HtSkuAddRequest;
+import com.voyageone.components.jumei.request.HtSkuUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Request;
+package com.voyageone.components.jumei.request;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;

@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Request;
+package com.voyageone.components.jumei.request;
 
 import java.io.IOException;
 import java.util.HashMap;

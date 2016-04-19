@@ -12,7 +12,7 @@
     }
     $Ajax.prototype.post = function(url, data) {
         var defer = this.$q.defer();
-        this.$http.post(url, data).then(function(response) {
+        this.$http.post(url, data||{}).then(function(response) {
             var res = response.data;
             if (!res) {
                 alert("相应结果不存在?????");
@@ -36,7 +36,7 @@
     }
     AjaxService.prototype.post = function(url, data) {
         var defer = this.$q.defer();
-        this.$ajax.post(url, data).then(function(res) {
+        this.$ajax.post(url, data||{}).then(function(res) {
             // 成功
             defer.resolve(res);
             return res;

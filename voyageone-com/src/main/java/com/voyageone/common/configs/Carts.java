@@ -32,7 +32,7 @@ public class Carts {
     public static void reload() {
         ShopDao shopDao = ConfigDaoFactory.getShopDao();
         Map<String, CartBean> cartBeanMap = new HashMap<>();
-        shopDao.getAllCart().forEach(bean ->cartBeanMap.put(buildKey(bean.getCart_id()), bean));
+        shopDao.getActiveCarts().forEach(bean ->cartBeanMap.put(buildKey(bean.getCart_id()), bean));
         CacheHelper.reFreshSSB(KEY, cartBeanMap);
         logger.info("Cart 读取数量: " + CacheHelper.getSize(KEY));
     }

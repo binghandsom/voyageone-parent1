@@ -1,4 +1,4 @@
-package com.voyageone.components.jumei.Reponse;
+package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
 
@@ -8,15 +8,15 @@ import java.util.Map;
 /**
  * Created by dell on 2016/3/29.
  */
-public class HtSkuAddResponse extends JMResponse {
-//    {
+public class HtDealCopyDealResponse extends JMResponse {
+    //    {
 //        "error_code": 0,
 //            "reason": "success",
-//            "response": {"sku_no":"jumei_sku_no"}
+//            "response": {"jumei_hash_id" : "ht12345677"}
 //    }
     String error_code;
     String reason;
-    String jumei_sku_no;
+    String jumei_hash_id;
     boolean is_Success;
     String errorMsg;
 
@@ -52,12 +52,12 @@ public class HtSkuAddResponse extends JMResponse {
         this.reason = reason;
     }
 
-    public String getJumei_sku_no() {
-        return jumei_sku_no;
+    public String getJumei_hash_id() {
+        return jumei_hash_id;
     }
 
-    public void setJumei_sku_no(String jumei_sku_no) {
-        this.jumei_sku_no = jumei_sku_no;
+    public void setJumei_hash_id(String jumei_hash_id) {
+        this.jumei_hash_id = jumei_hash_id;
     }
 
     @Override
@@ -80,8 +80,8 @@ public class HtSkuAddResponse extends JMResponse {
             }
             if (map.containsKey("response")) {
                 Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
-                if (mapSesponse.containsKey("jumei_sku_no")) {
-                    this.setJumei_sku_no(mapSesponse.get("jumei_sku_no").toString());
+                if (mapSesponse.containsKey("jumei_hash_id")) {
+                    this.setJumei_hash_id(mapSesponse.get("jumei_hash_id").toString());
                 }
             }
             if (this.getError_code() == "0") {
