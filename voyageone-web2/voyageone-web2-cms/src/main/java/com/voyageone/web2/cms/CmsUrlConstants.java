@@ -47,6 +47,7 @@ public interface CmsUrlConstants {
 
                 String GET_LIST_BY_WHERE = "getListByWhere";
                 String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE="getPromotionProductInfoListByWhere";
+                String GetPromotionProductInfoCountByWhere="getPromotionProductInfoCountByWhere";
                 String INSERT = "insert";
                 String DELETE="delete";
                 String UPDATE = "update";
@@ -64,7 +65,7 @@ public interface CmsUrlConstants {
                 String UPDATE_SKU_DETAIL = "updateSkuDetail";
                 String DELETE_PROMOTION_SKU = "deletePromotionSku";
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
-                String UpdateJM="";
+                String UpdateJM="updateJM";
             }
         }
     }

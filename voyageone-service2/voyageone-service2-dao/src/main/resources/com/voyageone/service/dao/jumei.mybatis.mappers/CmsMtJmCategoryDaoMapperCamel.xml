@@ -10,34 +10,34 @@
         select `id`,`name`,`level`,`parent_category_id`,`seo_keywords`,`seo_description`,`created`,`creater`,`modified`,`modifier`        from cms_mt_jm_category
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="name != null">
-                        AND name = #{name}
+                        AND `name` = #{name}
                     </if>
                                 <if test="level != null">
-                        AND level = #{level}
+                        AND `level` = #{level}
                     </if>
                                 <if test="parentCategoryId != null">
-                        AND parent_category_id = #{parentCategoryId}
+                        AND `parent_category_id` = #{parentCategoryId}
                     </if>
                                 <if test="seoKeywords != null">
-                        AND seo_keywords = #{seoKeywords}
+                        AND `seo_keywords` = #{seoKeywords}
                     </if>
                                 <if test="seoDescription != null">
-                        AND seo_description = #{seoDescription}
+                        AND `seo_description` = #{seoDescription}
                     </if>
                                 <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND modified = #{modified}
+                        AND `modified` = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND modifier = #{modifier}
+                        AND `modifier` = #{modifier}
                     </if>
                         </where>
     </select>
@@ -46,43 +46,43 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="name != null">
-                        AND name = #{name}
+                        AND `name` = #{name}
                     </if> 
                 
                     <if test="level != null">
-                        AND level = #{level}
+                        AND `level` = #{level}
                     </if> 
                 
                     <if test="parentCategoryId != null">
-                        AND parent_category_id = #{parentCategoryId}
+                        AND `parent_category_id` = #{parentCategoryId}
                     </if> 
                 
                     <if test="seoKeywords != null">
-                        AND seo_keywords = #{seoKeywords}
+                        AND `seo_keywords` = #{seoKeywords}
                     </if> 
                 
                     <if test="seoDescription != null">
-                        AND seo_description = #{seoDescription}
+                        AND `seo_description` = #{seoDescription}
                     </if> 
                 
                     <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND modified = #{modified}
+                        AND `modified` = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND modifier = #{modifier}
+                        AND `modifier` = #{modifier}
                     </if> 
         </where> limit 1
     </select>

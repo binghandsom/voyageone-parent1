@@ -59,9 +59,10 @@ public class JuMeiProductAddPlatefromService {
     JuMeiProductUpdatePlatefromService serviceJuMeiProductUpdatePlatefrom;
     //活动上新
     public void addProductAndDealByPromotionId(int promotionId) throws Exception {
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
-        LOG.info(promotionId + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
+        ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
+        LOG.info(promotionId + " 聚美上新开始");
+
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         try {

@@ -10,37 +10,37 @@
         select `id`,`code`,`key`,`name1`,`name2`,`name3`,`name4`,`created`,`creater`,`modified`,`modifier`        from cms_mt_jm_master_plat
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="code != null">
-                        AND code = #{code}
+                        AND `code` = #{code}
                     </if>
                                 <if test="key != null">
-                        AND key = #{key}
+                        AND `key` = #{key}
                     </if>
                                 <if test="name1 != null">
-                        AND name1 = #{name1}
+                        AND `name1` = #{name1}
                     </if>
                                 <if test="name2 != null">
-                        AND name2 = #{name2}
+                        AND `name2` = #{name2}
                     </if>
                                 <if test="name3 != null">
-                        AND name3 = #{name3}
+                        AND `name3` = #{name3}
                     </if>
                                 <if test="name4 != null">
-                        AND name4 = #{name4}
+                        AND `name4` = #{name4}
                     </if>
                                 <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if>
                                 <if test="modified != null">
-                        AND modified = #{modified}
+                        AND `modified` = #{modified}
                     </if>
                                 <if test="modifier != null">
-                        AND modifier = #{modifier}
+                        AND `modifier` = #{modifier}
                     </if>
                         </where>
     </select>
@@ -49,47 +49,47 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="code != null">
-                        AND code = #{code}
+                        AND `code` = #{code}
                     </if> 
                 
                     <if test="key != null">
-                        AND key = #{key}
+                        AND `key` = #{key}
                     </if> 
                 
                     <if test="name1 != null">
-                        AND name1 = #{name1}
+                        AND `name1` = #{name1}
                     </if> 
                 
                     <if test="name2 != null">
-                        AND name2 = #{name2}
+                        AND `name2` = #{name2}
                     </if> 
                 
                     <if test="name3 != null">
-                        AND name3 = #{name3}
+                        AND `name3` = #{name3}
                     </if> 
                 
                     <if test="name4 != null">
-                        AND name4 = #{name4}
+                        AND `name4` = #{name4}
                     </if> 
                 
                     <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if> 
                 
                     <if test="modified != null">
-                        AND modified = #{modified}
+                        AND `modified` = #{modified}
                     </if> 
                 
                     <if test="modifier != null">
-                        AND modifier = #{modifier}
+                        AND `modifier` = #{modifier}
                     </if> 
         </where> limit 1
     </select>

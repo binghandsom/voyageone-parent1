@@ -10,34 +10,34 @@
         select `id`,`jm_bt_promotion_id`,`TaskType`,`TaskParameter`,`begin_time`,`end_time`,`error_msg`,`state`,`created`,`creater`        from cms_bt_jm_promotion_update_task
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="jmBtPromotionId != null">
-                        AND jm_bt_promotion_id = #{jmBtPromotionId}
+                        AND `jm_bt_promotion_id` = #{jmBtPromotionId}
                     </if>
                                 <if test="TaskType != null">
-                        AND TaskType = #{TaskType}
+                        AND `TaskType` = #{TaskType}
                     </if>
                                 <if test="TaskParameter != null">
-                        AND TaskParameter = #{TaskParameter}
+                        AND `TaskParameter` = #{TaskParameter}
                     </if>
                                 <if test="beginTime != null">
-                        AND begin_time = #{beginTime}
+                        AND `begin_time` = #{beginTime}
                     </if>
                                 <if test="endTime != null">
-                        AND end_time = #{endTime}
+                        AND `end_time` = #{endTime}
                     </if>
                                 <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if>
                                 <if test="state != null">
-                        AND state = #{state}
+                        AND `state` = #{state}
                     </if>
                                 <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if>
                                 <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if>
                         </where>
     </select>
@@ -46,43 +46,43 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="jmBtPromotionId != null">
-                        AND jm_bt_promotion_id = #{jmBtPromotionId}
+                        AND `jm_bt_promotion_id` = #{jmBtPromotionId}
                     </if> 
                 
                     <if test="TaskType != null">
-                        AND TaskType = #{TaskType}
+                        AND `TaskType` = #{TaskType}
                     </if> 
                 
                     <if test="TaskParameter != null">
-                        AND TaskParameter = #{TaskParameter}
+                        AND `TaskParameter` = #{TaskParameter}
                     </if> 
                 
                     <if test="beginTime != null">
-                        AND begin_time = #{beginTime}
+                        AND `begin_time` = #{beginTime}
                     </if> 
                 
                     <if test="endTime != null">
-                        AND end_time = #{endTime}
+                        AND `end_time` = #{endTime}
                     </if> 
                 
                     <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if> 
                 
                     <if test="state != null">
-                        AND state = #{state}
+                        AND `state` = #{state}
                     </if> 
                 
                     <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if> 
                 
                     <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if> 
         </where> limit 1
     </select>

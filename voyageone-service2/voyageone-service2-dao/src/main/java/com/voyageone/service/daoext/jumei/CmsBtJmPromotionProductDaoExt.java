@@ -19,6 +19,8 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     public List getPromotionProductInfoListByWhere(Map<String, Object> map);
 
+    public int getPromotionProductInfoCountByWhere(Map<String, Object> ma);
+
     public List getExportInfoListByPromotionId(int promotionId);
 
     public List getListCmsBtJmImportProductByPromotionId(int promotionId);

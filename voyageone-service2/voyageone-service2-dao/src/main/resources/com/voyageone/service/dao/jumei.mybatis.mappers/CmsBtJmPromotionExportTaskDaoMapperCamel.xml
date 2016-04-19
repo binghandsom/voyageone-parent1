@@ -10,43 +10,43 @@
         select `id`,`cms_bt_jm_promotion_id`,`file_name`,`file_path`,`error_msg`,`success_rows`,`error_code`,`begin_time`,`end_time`,`creater`,`created`,`is_export`,`template_type`        from cms_bt_jm_promotion_export_task
         <where>
                 <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if>
                                 <if test="cmsBtJmPromotionId != null">
-                        AND cms_bt_jm_promotion_id = #{cmsBtJmPromotionId}
+                        AND `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId}
                     </if>
                                 <if test="fileName != null">
-                        AND file_name = #{fileName}
+                        AND `file_name` = #{fileName}
                     </if>
                                 <if test="filePath != null">
-                        AND file_path = #{filePath}
+                        AND `file_path` = #{filePath}
                     </if>
                                 <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if>
                                 <if test="successRows != null">
-                        AND success_rows = #{successRows}
+                        AND `success_rows` = #{successRows}
                     </if>
                                 <if test="errorCode != null">
-                        AND error_code = #{errorCode}
+                        AND `error_code` = #{errorCode}
                     </if>
                                 <if test="beginTime != null">
-                        AND begin_time = #{beginTime}
+                        AND `begin_time` = #{beginTime}
                     </if>
                                 <if test="endTime != null">
-                        AND end_time = #{endTime}
+                        AND `end_time` = #{endTime}
                     </if>
                                 <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if>
                                 <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if>
                                 <if test="isExport != null">
-                        AND is_export = #{isExport}
+                        AND `is_export` = #{isExport}
                     </if>
                                 <if test="templateType != null">
-                        AND template_type = #{templateType}
+                        AND `template_type` = #{templateType}
                     </if>
                         </where>
     </select>
@@ -55,55 +55,55 @@
         <where>
                 
                     <if test="id != null">
-                        AND id = #{id}
+                        AND `id` = #{id}
                     </if> 
                 
                     <if test="cmsBtJmPromotionId != null">
-                        AND cms_bt_jm_promotion_id = #{cmsBtJmPromotionId}
+                        AND `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId}
                     </if> 
                 
                     <if test="fileName != null">
-                        AND file_name = #{fileName}
+                        AND `file_name` = #{fileName}
                     </if> 
                 
                     <if test="filePath != null">
-                        AND file_path = #{filePath}
+                        AND `file_path` = #{filePath}
                     </if> 
                 
                     <if test="errorMsg != null">
-                        AND error_msg = #{errorMsg}
+                        AND `error_msg` = #{errorMsg}
                     </if> 
                 
                     <if test="successRows != null">
-                        AND success_rows = #{successRows}
+                        AND `success_rows` = #{successRows}
                     </if> 
                 
                     <if test="errorCode != null">
-                        AND error_code = #{errorCode}
+                        AND `error_code` = #{errorCode}
                     </if> 
                 
                     <if test="beginTime != null">
-                        AND begin_time = #{beginTime}
+                        AND `begin_time` = #{beginTime}
                     </if> 
                 
                     <if test="endTime != null">
-                        AND end_time = #{endTime}
+                        AND `end_time` = #{endTime}
                     </if> 
                 
                     <if test="creater != null">
-                        AND creater = #{creater}
+                        AND `creater` = #{creater}
                     </if> 
                 
                     <if test="created != null">
-                        AND created = #{created}
+                        AND `created` = #{created}
                     </if> 
                 
                     <if test="isExport != null">
-                        AND is_export = #{isExport}
+                        AND `is_export` = #{isExport}
                     </if> 
                 
                     <if test="templateType != null">
-                        AND template_type = #{templateType}
+                        AND `template_type` = #{templateType}
                     </if> 
         </where> limit 1
     </select>

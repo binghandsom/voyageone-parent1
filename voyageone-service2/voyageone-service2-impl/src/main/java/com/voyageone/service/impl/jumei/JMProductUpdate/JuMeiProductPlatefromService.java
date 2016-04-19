@@ -32,9 +32,10 @@ public class JuMeiProductPlatefromService {
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatefromService.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
-        LOG.info(promotionId + " 聚美上新开始");
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
+        ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
+        LOG.info(promotionId + " 聚美上新开始");
+
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         try {
@@ -47,10 +48,11 @@ public class JuMeiProductPlatefromService {
         }
         LOG.info(promotionId + " 聚美上新end");
     }
-    public void updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
+    public CallResult updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
+        CallResult result=new CallResult();
         try {
             if (model.getState() == 0) {//上新
-                CallResult result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(shippingSystemId, model, shopBean);//上新
+                 result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(shippingSystemId, model, shopBean);//上新
                 if (!result.isResult()) {
                     model.setErrorMsg(result.getMsg());
                     model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
@@ -75,6 +77,9 @@ public class JuMeiProductPlatefromService {
                 LOG.error("addProductAndDealByPromotionId", cex);
                 ex.printStackTrace();
             }
+            result.setResult(false);
+            result.setMsg(ExceptionUtil.getErrorMsg(ex));
         }
+        return result;
     }
 }

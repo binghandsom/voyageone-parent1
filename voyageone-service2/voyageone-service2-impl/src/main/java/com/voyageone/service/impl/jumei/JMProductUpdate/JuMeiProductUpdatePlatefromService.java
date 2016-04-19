@@ -89,16 +89,16 @@ public class JuMeiProductUpdatePlatefromService {
 
     public void updateJMProductInfo(int shippingSystemId, CmsBtJmPromotionProductModel modelPromotionProduct, ShopBean shopBean) throws Exception {
         JMUpdateProductInfo info = service.getJMUpdateProductInfo(modelPromotionProduct);
+        info.loadData();
         updateJMProductInfo(shippingSystemId, shopBean, info);
     }
     private void updateJMProductInfo(int shippingSystemId, ShopBean shopBean, JMUpdateProductInfo info) throws Exception {
-        jmHtDealupdate(info, shopBean, shippingSystemId);//deal
-        jmHtProductUpdate(info, shopBean);//product
         jmHtSpuSkuUpdateList(info, shopBean);//spu sku
+        jmHtProductUpdate(info, shopBean);//product
         jmAddListSku(info, shopBean);//添加未上新的sku
+        jmHtDealupdate(info, shopBean, shippingSystemId);//deal
     }
     private void jmHtDealCopy(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
-
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
@@ -116,7 +116,7 @@ public class JuMeiProductUpdatePlatefromService {
         }
     }
     //商品属性更新
-    public HtProductUpdateResponse jmHtProductUpdate(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
+    public void jmHtProductUpdate(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
 
         HtProductUpdateRequest request = new HtProductUpdateRequest();
@@ -129,7 +129,12 @@ public class JuMeiProductUpdatePlatefromService {
         productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
         productInfo.setForeign_language_name(modelProduct.getForeignLanguageName());//jmBtProductImport.getForeignLanguageName());
         request.setUpdate_data(productInfo);
-        return serviceJumeiHtProduct.update(shopBean, request);
+        HtProductUpdateResponse response = serviceJumeiHtProduct.update(shopBean, request);
+        if (response.getIs_Success()) {
+
+        } else {
+            throw new BusinessException("productId:" + modelProduct.getId() + " jmHtProductUpdateErrorMsg:" + response.getErrorMsg());
+        }
     }
     //修改deal
     public void jmHtDealupdate(JMUpdateProductInfo info, ShopBean shopBean, int shippingSystemId) throws Exception {
