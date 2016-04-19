@@ -27,13 +27,13 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoChannelDao<CmsMtFeedCateg
      * @param channelId 渠道
      * @return Feed 类目的弱类型模型
      */
-    public CmsMtFeedCategoryTreeModel getFeedCategoryByCategory(String channelId, String category) {
+    public CmsMtFeedCategoryTreeModel selectFeedCategoryByCategory(String channelId, String category) {
         String query = "{\"catName\":\"" + category + "\"}";
         return selectOneWithQuery(query, channelId);
     }
 
 
-    public List<CmsMtFeedCategoryTreeModel> getFeedAllCategory(String channelId) {
+    public List<CmsMtFeedCategoryTreeModel> selectFeedAllCategory(String channelId) {
         String query = "{}";
         return select(query, channelId);
     }

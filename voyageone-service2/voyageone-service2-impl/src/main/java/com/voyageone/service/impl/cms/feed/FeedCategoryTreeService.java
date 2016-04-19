@@ -51,17 +51,17 @@ public class FeedCategoryTreeService extends BaseService {
      * @return channel下所有的类目树
      */
     public List<CmsMtFeedCategoryTreeModel> getFeedAllCategory(String channelId){
-        return cmsMtFeedCategoryTreeDao.getFeedAllCategory(channelId);
+        return cmsMtFeedCategoryTreeDao.selectFeedAllCategory(channelId);
     }
 
     /**
      * 对一个channelid下的类目追加一个Category
      *
      * @param channelId 渠道
-     * @param category  类目
+     * @param categoryPath  类目
      */
-    public void addCategory(String channelId, String category, String modifier) {
-        List<String> categorys = Arrays.asList(category.split("-"));
+    public void addCategory(String channelId, String categoryPath, String modifier) {
+        List<String> categorys = Arrays.asList(categoryPath.split("-"));
         // 取得一级类目树
         CmsMtFeedCategoryTreeModel categoryTree = getFeedCategoryByCategory(channelId, categorys.get(0));
 
@@ -79,7 +79,7 @@ public class FeedCategoryTreeService extends BaseService {
 //        if (addCategory(categoryTree, category) != null) {
 //            return;
 //        }
-        if(addSubCategory(categoryTree, category)){
+        if(addSubCategory(categoryTree, categoryPath)){
             categoryTree.setModified(DateTimeUtil.getNow());
             categoryTree.setModifier(modifier);
             cmsMtFeedCategoryTreeDao.update(categoryTree);
@@ -122,7 +122,7 @@ public class FeedCategoryTreeService extends BaseService {
      * @return CmsMtFeedCategoryTreeModel
      */
     public CmsMtFeedCategoryTreeModel getFeedCategoryByCategory(String channelId, String topCategory) {
-        CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.getFeedCategoryByCategory(channelId, topCategory);
+        CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategoryByCategory(channelId, topCategory);
         return category;
     }
 

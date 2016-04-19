@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class CmsBtFeedCategoryAttributeDao extends BaseMongoChannelDao<CmsMtFeedAttributesModel> {
-    public CmsMtFeedAttributesModel getCategoryAttributeByCatId(String channelId, String catId){
+    public CmsMtFeedAttributesModel selectCategoryAttributeByCatId(String channelId, String catId){
         String query = "{\"catId\":\"" + catId + "\"}";
         return selectOneWithQuery(query, channelId);
     }

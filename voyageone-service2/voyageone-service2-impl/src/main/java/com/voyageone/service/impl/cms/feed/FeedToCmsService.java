@@ -1,11 +1,12 @@
 package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedCategoryAttributeDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
@@ -18,13 +19,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
 /**
- * feed数据导入CMS中
+ * feed数据导入CMS中 给各个店铺feed解析程序调用插入mongoDB的接口
  *
  * @author james.li, 2015/11/26.
  * @author Jonas, 2015-12-12.
@@ -41,13 +41,13 @@ public class FeedToCmsService extends BaseService {
     private FeedInfoLogService feedInfoLogService;
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    private FeedInfoService feedInfoService;
 
     @Autowired
-    private CmsBtFeedCategoryAttributeDao cmsBtFeedCategoryAttributeDao;
+    private CmsBtFeedCategoryAttributeService cmsBtFeedCategoryAttributeService;
 
-    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
-    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
+//    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+//    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
 
     /**
@@ -124,7 +124,7 @@ public class FeedToCmsService extends BaseService {
 //                    }
 //                    product.setImage(images);
 //                }
-                CmsBtFeedInfoModel befproduct = cmsBtFeedInfoDao.selectProductByCode(channelId, product.getCode());
+                CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
                     //把之前的sku（新的product中没有的sku）保存到新的product的sku中
@@ -137,7 +137,7 @@ public class FeedToCmsService extends BaseService {
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                 }
-                cmsBtFeedInfoDao.update(product);
+                feedInfoService.updateFeedInfo(product);
 
                 //// 以下图片处理在生成主数据是再处理 feed导入不做处理
 //                List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
@@ -161,6 +161,7 @@ public class FeedToCmsService extends BaseService {
                 succeedProduct.add(product);
             } catch (Exception e) {
                 e.printStackTrace();
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);
                 failProduct.add(product);
             }
@@ -224,7 +225,7 @@ public class FeedToCmsService extends BaseService {
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
         String catId =  MD5.getMD5(category);
-        CmsMtFeedAttributesModel cmsBtFeedCategoryAttribute = cmsBtFeedCategoryAttributeDao.getCategoryAttributeByCatId(channelId, catId);
+        CmsMtFeedAttributesModel cmsBtFeedCategoryAttribute = cmsBtFeedCategoryAttributeService.getCategoryAttributeByCatId(channelId, catId);
         if(cmsBtFeedCategoryAttribute == null){
             cmsBtFeedCategoryAttribute = new CmsMtFeedAttributesModel();
             cmsBtFeedCategoryAttribute.setChannelId(channelId);
@@ -246,6 +247,6 @@ public class FeedToCmsService extends BaseService {
                 oldAtt.put(key, attribute.get(key));
             }
         }
-        cmsBtFeedCategoryAttributeDao.update(cmsBtFeedCategoryAttribute);
+        cmsBtFeedCategoryAttributeService.updateAttributes(cmsBtFeedCategoryAttribute);
     }
 }
