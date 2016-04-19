@@ -17,9 +17,10 @@
                            <hr style="margin-top:4px;margin-bottom:4px">
                          </div>
                         <div class="form-group col-sm-12">
+                            <!-- todo 目前不想做切换类目 然后更新product表的其他几个类目字段,以后将聚美的类目放到mongodb -->
                             <label class="col-sm-3 control-label vo_reqfield">聚美类目</label>
                             <div class="col-sm-6">
-                                <select class="form-control" ng-model="$ctrl.productInfo.categoryLv4Id" ng-options="category.id as category.name for category in $ctrl.masterData.categoryList | filter:level:'4'">
+                                <select class="form-control" disabled ng-model="$ctrl.productInfo.categoryLv4Id" ng-options="category.id as category.name for category in $ctrl.masterData.categoryList | filter:level:'4'">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
                             </div>
@@ -60,15 +61,15 @@
                         <div class="form-group col-sm-12">
                             <label class="col-sm-3 control-label vo_reqfield">售卖时间</label>
                             <div class="col-sm-6 form-inline">
-                                <div class="input-group col-sm-5"><input type="text" class="form-control" placeholder="from" ng-model="$ctrl.productPromotionInfo.activityStart"></div>&nbsp;~&nbsp;
-                                <div class="input-group col-sm-5"><input type="text" class="form-control" placeholder="to" ng-model="$ctrl.productPromotionInfo.activityEnd"></div>
+                                <div class="input-group col-sm-5"><input ng-readonly="$ctrl.productPromotionInfo.updateState == '2'" type="text" class="form-control" placeholder="from" ng-model="$ctrl.productPromotionInfo.activityStart"></div>&nbsp;~&nbsp;
+                                <div class="input-group col-sm-5"><input ng-readonly="$ctrl.productPromotionInfo.updateState == '2'" type="text" class="form-control" placeholder="to" ng-model="$ctrl.productPromotionInfo.activityEnd"></div>
                             </div>
                             <label class="col-sm-3 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
                         </div>
                         <div class="form-group col-sm-12">
                             <label class="col-sm-3 control-label">每人限购</label>
                             <div class="col-sm-6">
-                                <input class="form-control" ng-model="$ctrl.productPromotionInfo.limit"/>
+                                <input class="form-control" ng-readonly="$ctrl.productPromotionInfo.updateState == '2'" ng-model="$ctrl.productPromotionInfo.limit"/>
                             </div>
                         </div>
                         <div class="form-group col-sm-12">
@@ -242,8 +243,8 @@
                                         <td class="text-center">
                                             <!--<button title="上移" class="btn btn-success btn-xs" ng-click="$ctrl.skuMoveUp()"><i class="glyphicon glyphicon-arrow-up"></i></button>-->
                                             <!--<button title="下移" class="btn btn-success btn-xs" ng-click="$ctrl.skuMoveDown()"><i class="glyphicon glyphicon-arrow-down"></i></button>-->
-                                            <button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="$ctrl.saveSku(sku, $index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-                                            <button title="删除" ng-if="sku.cmsBtJmPromotionSkuModel.id > 0" class="btn btn-danger btn-xs" ng-click="$ctrl.deleteSku(sku.cmsBtJmPromotionSkuModel, $index)"><i class="fa fa-trash-o"></i></button>
+                                            <button ng-disabled="$ctrl.productPromotionInfo.updateState == '2'" title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="$ctrl.saveSku(sku, $index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                            <button ng-disabled="$ctrl.productPromotionInfo.updateState == '2'" title="{{'BTN_DELETE' | translate}}" ng-if="sku.cmsBtJmPromotionSkuModel.id > 0" class="btn btn-danger btn-xs" ng-click="$ctrl.deleteSku(sku.cmsBtJmPromotionSkuModel, $index)"><i class="fa fa-trash-o"></i></button>
                                         </td>
                                     </tr>
                                     </tbody>
