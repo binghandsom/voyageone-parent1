@@ -53,6 +53,14 @@ public class TargetGuestService extends TargetBase{
         return tender;
     }
 
+    /**
+     * 修改shipping 运输地址
+     * @return 简单地址信息
+     * @throws Exception
+     */
+    public TargetGuestShippingAddress updateGuestShippingAddress(TargetGuestShippingAddressRequest request) throws Exception {
+        return getApiResponseWithKey(Url+"/v3/addresses/addressid=2893047788",request,TargetGuestShippingAddress.class,true);
+    }
 
 
 }
