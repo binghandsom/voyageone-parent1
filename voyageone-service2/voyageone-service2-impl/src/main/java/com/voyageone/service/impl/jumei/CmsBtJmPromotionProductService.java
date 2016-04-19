@@ -108,12 +108,11 @@ public class CmsBtJmPromotionProductService {
         return dao.selectOne(param);
     }
     public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
-        CallResult result = new CallResult();
         CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
         int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
         ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
        // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
-            serviceJuMeiProductPlatefrom.updateJm(model, shopBean, ShippingSystemId);
+    CallResult     result=   serviceJuMeiProductPlatefrom.updateJm(model, shopBean, ShippingSystemId);
        // }
         return result;
     }

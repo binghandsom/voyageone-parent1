@@ -58,48 +58,48 @@ public class JuMeiProductAddPlatefromService {
     @Autowired
     JuMeiProductUpdatePlatefromService serviceJuMeiProductUpdatePlatefrom;
     //活动上新
-    public void addProductAndDealByPromotionId(int promotionId) throws Exception {
-        CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
-        ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
-        LOG.info(promotionId + " 聚美上新开始");
-
-        List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);
-        int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
-        try {
-            for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-                try {
-                    if (model.getState() == 0) {//上新
-                        CallResult result = addProductAndDeal(shippingSystemId, model, shopBean);//上新
-                        if (!result.isResult()) {
-                            model.setErrorMsg(result.getMsg());
-                            model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
-                            daoCmsBtJmPromotionProduct.update(model);
-                        }
-                    } else //更新 copyDeal
-                    {
-                        serviceJuMeiProductUpdatePlatefrom.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
-                    }
-                } catch (Exception ex) {
-                    model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
-                    model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
-                    LOG.error("addProductAndDealByPromotionId", ex);
-                    try {
-                        if(model.getErrorMsg().length()>200) {
-                            model.setErrorMsg(model.getErrorMsg().substring(0, 200));
-                        }
-                        daoCmsBtJmPromotionProduct.update(model);
-                    } catch (Exception cex) {
-                        LOG.error("addProductAndDealByPromotionId", cex);
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            LOG.error("addProductAndDealByPromotionId上新失败", ex);
-            ex.printStackTrace();
-        }
-        LOG.info(promotionId + " 聚美上新end");
-    }
+//    public void addProductAndDealByPromotionId(int promotionId) throws Exception {
+//        CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
+//        ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
+//        LOG.info(promotionId + " 聚美上新开始");
+//
+//        List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = service.getJuMeiNewListPromotionProduct(promotionId);
+//        int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
+//        try {
+//            for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+//                try {
+//                    if (model.getState() == 0) {//上新
+//                        CallResult result = addProductAndDeal(shippingSystemId, model, shopBean);//上新
+//                        if (!result.isResult()) {
+//                            model.setErrorMsg(result.getMsg());
+//                            model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
+//                            daoCmsBtJmPromotionProduct.update(model);
+//                        }
+//                    } else //更新 copyDeal
+//                    {
+//                        serviceJuMeiProductUpdatePlatefrom.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
+//                    }
+//                } catch (Exception ex) {
+//                    model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
+//                    model.setSynchState(EnumJuMeiSynchState.Error.getId());//同步更新失败
+//                    LOG.error("addProductAndDealByPromotionId", ex);
+//                    try {
+//                        if(model.getErrorMsg().length()>200) {
+//                            model.setErrorMsg(model.getErrorMsg().substring(0, 200));
+//                        }
+//                        daoCmsBtJmPromotionProduct.update(model);
+//                    } catch (Exception cex) {
+//                        LOG.error("addProductAndDealByPromotionId", cex);
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
+//        } catch (Exception ex) {
+//            LOG.error("addProductAndDealByPromotionId上新失败", ex);
+//            ex.printStackTrace();
+//        }
+//        LOG.info(promotionId + " 聚美上新end");
+//    }
 
     //上新
     public CallResult addProductAndDeal(int shippingSystemId, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
