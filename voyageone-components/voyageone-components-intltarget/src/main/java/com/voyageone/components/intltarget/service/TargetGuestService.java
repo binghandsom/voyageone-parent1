@@ -23,7 +23,7 @@ public class TargetGuestService extends TargetBase{
      * @return 简单地址信息
      * @throws Exception
      */
-    public TargetGuestShippingAddress getGuestShippingAddress(TargetGuestShippingAddressRequest request) throws Exception {
+    public TargetGuestShippingAddress createGuestShippingAddress(TargetGuestShippingAddressRequest request) throws Exception {
         return getApiResponseWithKey(Url+"/v3/addresses",request,TargetGuestShippingAddress.class,true);
     }
 

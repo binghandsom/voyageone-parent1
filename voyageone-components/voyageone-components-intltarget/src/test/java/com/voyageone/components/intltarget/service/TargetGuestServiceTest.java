@@ -40,7 +40,7 @@ public class TargetGuestServiceTest {
         request.setPhone("8112142326");
         request.setSaveAsDefault("N");
         request.setSkipAddressValidation("N");
-        TargetGuestShippingAddress add = targetGuestService.getGuestShippingAddress(request);
+        TargetGuestShippingAddress add = targetGuestService.createGuestShippingAddress(request);
         System.out.println(JacksonUtil.bean2Json(add));
     }
 
