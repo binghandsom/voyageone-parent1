@@ -241,9 +241,9 @@ public final class CommonUtil {
     /**
      * 保留两位小数
      */
-    public static double getRoundUp2Digits(double doubleValue) {
+    public static double getRoundUpDigits(double doubleValue, int scale) {
         BigDecimal bd1 = BigDecimal.valueOf(doubleValue);
-        return bd1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return bd1.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
