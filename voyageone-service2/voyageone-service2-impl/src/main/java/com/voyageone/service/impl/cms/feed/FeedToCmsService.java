@@ -7,18 +7,16 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -44,7 +42,10 @@ public class FeedToCmsService extends BaseService {
     private FeedInfoService feedInfoService;
 
     @Autowired
-    private CmsBtFeedCategoryAttributeService cmsBtFeedCategoryAttributeService;
+    private CmsMtChannelValuesService cmsMtChannelValuesService;
+
+    @Autowired
+    private FeedCategoryAttributeService feedCategoryAttributeService;
 
 //    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
 //    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
@@ -83,6 +84,13 @@ public class FeedToCmsService extends BaseService {
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
         List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
+
+        //0:brand 1:sizeType 2:productType
+        Set<String> brandList = new HashSet<>();
+        Set<String> sizeTypeList = new HashSet<>();
+        Set<String> productTypeList = new HashSet<>();
+
+
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
         for (CmsBtFeedInfoModel product : products) {
             try {
@@ -136,8 +144,17 @@ public class FeedToCmsService extends BaseService {
                     product.setCreated(befproduct.getCreated());
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
+                    if (befproduct.getUpdFlg() == 2) {
+                        product.setUpdFlg(2);
+                    } else {
+                        product.setUpdFlg(0);
+                    }
                 }
                 feedInfoService.updateFeedInfo(product);
+
+                brandList.add(product.getBrand());
+                sizeTypeList.add(product.getSizeType());
+                productTypeList.add(product.getProductType());
 
                 //// 以下图片处理在生成主数据是再处理 feed导入不做处理
 //                List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
@@ -171,6 +188,11 @@ public class FeedToCmsService extends BaseService {
         for (String key : attributeMtDatas.keySet()) {
             updateFeedCategoryAttribute(channelId, attributeMtDatas.get(key), key);
         }
+
+        //0:brand 1:sizeType 2:productType
+        insertCmsMtChannelValues(channelId,brandList, 0, modifier);
+        insertCmsMtChannelValues(channelId,sizeTypeList, 1, modifier);
+        insertCmsMtChannelValues(channelId,productTypeList, 2, modifier);
 
         Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);
@@ -224,9 +246,9 @@ public class FeedToCmsService extends BaseService {
      */
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
-        String catId =  MD5.getMD5(category);
-        CmsMtFeedAttributesModel cmsBtFeedCategoryAttribute = cmsBtFeedCategoryAttributeService.getCategoryAttributeByCatId(channelId, catId);
-        if(cmsBtFeedCategoryAttribute == null){
+        String catId = MD5.getMD5(category);
+        CmsMtFeedAttributesModel cmsBtFeedCategoryAttribute = feedCategoryAttributeService.getCategoryAttributeByCatId(channelId, catId);
+        if (cmsBtFeedCategoryAttribute == null) {
             cmsBtFeedCategoryAttribute = new CmsMtFeedAttributesModel();
             cmsBtFeedCategoryAttribute.setChannelId(channelId);
             cmsBtFeedCategoryAttribute.setCatId(catId);
@@ -247,6 +269,21 @@ public class FeedToCmsService extends BaseService {
                 oldAtt.put(key, attribute.get(key));
             }
         }
-        cmsBtFeedCategoryAttributeService.updateAttributes(cmsBtFeedCategoryAttribute);
+        feedCategoryAttributeService.updateAttributes(cmsBtFeedCategoryAttribute);
+    }
+
+    private void insertCmsMtChannelValues(String channelId, Set<String> values, int type,String modifier) {
+        CmsMtChannelValuesModel cmsMtChannelValuesModel = new CmsMtChannelValuesModel();
+        cmsMtChannelValuesModel.setChannelId(channelId);
+        cmsMtChannelValuesModel.setType(type);
+        cmsMtChannelValuesModel.setModifier(modifier);
+        cmsMtChannelValuesModel.setCreater(modifier);
+        cmsMtChannelValuesModel.setCreated(DateTimeUtil.getNow());
+        values.forEach(s -> {
+            cmsMtChannelValuesModel.setKey(s);
+            cmsMtChannelValuesModel.setValue(s);
+            cmsMtChannelValuesService.insertCmsMtChannelValues(cmsMtChannelValuesModel);
+        });
+
     }
 }

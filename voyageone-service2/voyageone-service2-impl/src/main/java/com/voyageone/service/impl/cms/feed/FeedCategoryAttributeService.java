@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @version 2.0.0
  */
 @Service
-public class CmsBtFeedCategoryAttributeService extends BaseService {
+public class FeedCategoryAttributeService extends BaseService {
 
     @Autowired
     private CmsBtFeedCategoryAttributeDao cmsBtFeedCategoryAttributeDao;
