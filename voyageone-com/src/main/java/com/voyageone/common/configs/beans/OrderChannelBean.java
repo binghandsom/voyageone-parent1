@@ -1,5 +1,7 @@
 package com.voyageone.common.configs.beans;
 
+import java.util.Date;
+
 /**
  * Created by Jonas on 4/13/2015.
  */
@@ -27,6 +29,16 @@ public class OrderChannelBean {
     private Integer is_usjoi;
 
     private String cart_ids;
+
+    private String img_url;
+
+
+    private Date created;
+    private String creater;
+    private Date modified;
+    private String modifier;
+    private String status; //数据库映射字段 add by holysky
+
 
     public String getSession_key() {
         return session_key;
@@ -122,5 +134,53 @@ public class OrderChannelBean {
 
     public void setCart_ids(String cart_ids) {
         this.cart_ids = cart_ids;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getImg_url() {
+        return img_url;
+    }
+
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
     }
 }

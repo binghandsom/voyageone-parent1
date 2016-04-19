@@ -35,21 +35,21 @@
   },
   "promotion_task_stock_detail": {
     "url": "/promotion/task_stock/",
-    "hash": "/promotion/task/stock/:task_id",
+    "hash": "/promotion/task_stock/:task_id",
     "templateUrl": "views/promotion/task/stock.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stock.ctl",
     "controller": "taskStockController as $ctrl"
   },
   "promotion_task_stock_increment": {
     "url": "/promotion/task_stock_increment/",
-    "hash": "/promotion/task/stock_increment/:task_id",
+    "hash": "/promotion/task_stock_increment/:task_id",
     "templateUrl": "views/promotion/task/stockIncrement.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrement.ctl",
     "controller": "taskStockIncrementController as $ctrl"
   },
   "promotion_task_stock_increment_detail": {
     "url": "/promotion/task_stock_increment_detail/",
-    "hash": "/promotion/task/stock_increment_detail/:task_id",
+    "hash": "/promotion/task_stock_increment_detail/:sub_task_id",
     "templateUrl": "views/promotion/task/stockIncrementDetail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrementDetail.ctl",
     "controller": "taskStockIncrementDetailController as $ctrl"
@@ -85,7 +85,7 @@
     "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
-    "controller": "productDetailController as ctrl"
+    "controller": "productDetailController as $ctrl"
   },
   "mapping_feed_list": {
     "hash": "/mapping/feed",
@@ -94,7 +94,7 @@
     "controller": "feedMappingController as $ctrl"
   },
   "mapping_feed_prop": {
-    "hash": "/mapping/feed/:params*",
+    "hash": "/mapping/feed/:feedCategoryPath*\/:commonFlg",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
     "controller": "feedPropMappingController as $ctrl"
@@ -159,11 +159,15 @@
     "templateUrl": "views/channel/configuration/configuration.tpl.html",
     "controllerUrl": "modules/cms/views/channel/configuration/configuration.ctl"
   },
+  "channel_taglist": {
+    "hash": "/channel/taglist",
+    "templateUrl": "views/channel/taglist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
+  },
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/translation/index.ctl",
-    "controller": "translationDetailController"
+    "controllerUrl": "modules/cms/views/translation/index.ctl"
   },
   "system_category_index": {
     "hash": "/system/category",
@@ -185,12 +189,28 @@
     "templateUrl": "views/system/cache/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
   },
+  "jm_promotion_detail_list": {
+    "hash": "/jm/promotion_detail_list/:parentId",
+    "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmpromotiondetaillist.ctl"
+  },
+  "jm_promotion_manage": {
+    "hash": "/jm/promotion_manage",
+    "templateUrl": "views/jm/jmpromotionmanage.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmpromotionmanage.ctl"
+  },
+  "jm_image_manage": {
+    "hash": "/jm/image_manage",
+    "templateUrl": "views/jm/jmimagemanage.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl",
+    "controller": "jmImageManageController as $ctrl"
+  },
   "system_channel_list": {
     "hash": "/system/channel/index",
     "templateUrl": "views/system/channel/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/channel/index.ctl"
   },
-  "system_cart_setting": {
+  "system_cart_list": {
     "hash": "/system/cart/index",
     "templateUrl": "views/system/cart/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cart/index.ctl"

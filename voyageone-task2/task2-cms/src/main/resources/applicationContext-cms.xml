@@ -46,7 +46,7 @@
         <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 库存数据导入 cms2 -->
-        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 0/3 * * * ?"/>
+        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 0/10 * * * ?"/>
 
         <!-- Jewelry feed 导入 cms2 -->
         <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0 0/1 * * ?"/>
@@ -63,6 +63,17 @@
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
 
+        <!-- 库存隔离batch -->
+        <task:scheduled ref="CmsStockSeparateJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 库存还原batch -->
+        <task:scheduled ref="CmsStockRevertJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 增量库存隔离batch -->
+        <task:scheduled ref="CmsStockIncrementJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 设定活动结束的隔离数据状态为等待还原batch -->
+        <task:scheduled ref="CmsStockWaitingRevertJob" method="run" cron="0 0/5 * * * ?"/>
 
     </task:scheduled-tasks>
 

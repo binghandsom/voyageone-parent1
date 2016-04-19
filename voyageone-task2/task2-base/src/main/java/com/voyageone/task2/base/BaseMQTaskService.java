@@ -89,4 +89,12 @@ public abstract class BaseMQTaskService extends BaseTaskService{
             taskDao.insertTaskHistory(taskID, status.getIs());
         }
     }
+    public TaskControlBean get(List<TaskControlBean> taskControlList,String cfg_name) {
+        for (TaskControlBean taskControlBean : taskControlList) {
+            if (taskControlBean.getCfg_name().equals(cfg_name)) {
+                return taskControlBean;
+            }
+        }
+        return null;
+    }
 }

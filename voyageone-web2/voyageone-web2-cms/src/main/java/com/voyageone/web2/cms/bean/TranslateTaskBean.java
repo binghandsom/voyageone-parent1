@@ -57,6 +57,18 @@ public class TranslateTaskBean {
      */
     List<ProductTranslationBean> productTranslationBeanList;
 
+    public long getProdListTotal() {
+        return prodListTotal;
+    }
+
+    public void setProdListTotal(long prodListTotal) {
+        this.prodListTotal = prodListTotal;
+    }
+
+    /**
+     * 待翻译商品信息列表总数.
+     */
+    private long prodListTotal;
 
     public int getUserDoneCount() {
         return userDoneCount;

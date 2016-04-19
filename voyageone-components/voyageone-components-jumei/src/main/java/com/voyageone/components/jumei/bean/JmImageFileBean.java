@@ -91,9 +91,9 @@ public class JmImageFileBean extends JmBaseBean {
         if (file != null && !file.exists()) {
             throw new Exception("file not exist!");
         }
-        if (inputStream != null && inputStream.available() == 0) {
-            throw new Exception("inputStream content not exist!");
-        }
+//        if (inputStream != null && inputStream.available() == 0) {
+//            throw new Exception("inputStream content not exist!");
+//        }
 
         if (inputStream != null && extName == null) {
             throw new Exception("extName not found!");

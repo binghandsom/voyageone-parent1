@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
@@ -18,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by james.li on 2015/12/11.
+ * @author james 2015/12/15
+ * @version 2.0.0
  */
 @RestController
 @RequestMapping(
@@ -31,7 +31,7 @@ public class CmsPromotionDetailController extends CmsController {
     private CmsPromotionDetailService cmsPromotionDetailService;
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
-    public AjaxResponse getPromotionGroup(@RequestBody Map params) {
+    public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
@@ -46,7 +46,7 @@ public class CmsPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_CODE)
-    public AjaxResponse getPromotionCode(@RequestBody Map params) {
+    public AjaxResponse getPromotionCode(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
@@ -61,7 +61,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(result);
     }
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_SKU)
-    public AjaxResponse getPromotionSku(@RequestBody Map params) {
+    public AjaxResponse getPromotionSku(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);

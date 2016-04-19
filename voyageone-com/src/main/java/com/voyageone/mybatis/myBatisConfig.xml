@@ -7,5 +7,6 @@
 	<settings>
 		<setting name="lazyLoadingEnabled" value="true" />
 		<setting name="defaultStatementTimeout" value="20000" />
+		<!--<setting name="mapUnderscoreToCamelCase" value="true" />-->
 	</settings>
 </configuration>
