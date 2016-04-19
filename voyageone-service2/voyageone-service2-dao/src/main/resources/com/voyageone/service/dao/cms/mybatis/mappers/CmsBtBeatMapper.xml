@@ -200,7 +200,7 @@
             b.modified,
             b.modifier,
             p.promotion_id,
-            channel_id,
+            p.channel_id,
             cart_id,
             promotion_status,
             promotion_name,
@@ -240,9 +240,9 @@
         UPDATE voyageone_cms2.cms_bt_beat_info
         SET product_code = #{product_code},
         modified = NOW(),
-            modifier = #{modifier}
+        modifier = #{modifier}
         WHERE id = #{id}
-              AND modified = #{modified}
+        AND modified = #{modified}
     </update>
 
     <select id="cms_bt_beat_info_selectListNeedBeatFullData" resultMap="beatInfo_With_Code_Task">
@@ -272,7 +272,7 @@
             t.modifier       task_modifier,
 
             p.promotion_id promotion_promotion_id,
-            channel_id promotion_channel_id,
+            p.channel_id promotion_channel_id,
             cart_id promotion_cart_id,
             promotion_status promotion_promotion_status,
             promotion_name promotion_promotion_name,
