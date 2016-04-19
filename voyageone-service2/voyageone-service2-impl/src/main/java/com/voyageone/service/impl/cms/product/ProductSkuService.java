@@ -431,8 +431,8 @@ public class ProductSkuService extends BaseService {
         }
 
         //update product price
-//        if ((boolean)resultField.get("isChanged")) {
-        if (bulkList.size() > 0) {
+        if ((boolean)resultField.get("isChanged")) {
+//        if (bulkList.size() > 0) {
 
             if (resultField.get("priceMsrpSt") != null) {
                 productUpdateMap.put("fields.priceMsrpSt", resultField.get("priceMsrpSt"));
@@ -566,6 +566,7 @@ public class ProductSkuService extends BaseService {
             result.put("isChanged", false);
         }
         result.put("field", field);
+
         return result;
     }
 
