@@ -101,12 +101,8 @@
             platform_id,
             cart_type,
             active
-        from
-            ct_cart
-        WHERE
-            active = '1'
-        order by
-            cart_id
+        from ct_cart
+        order by cart_id
     </select>
 
     <select id="com_mt_third_party_config_getAll" resultType="com.voyageone.common.configs.beans.ThirdPartyConfigBean">

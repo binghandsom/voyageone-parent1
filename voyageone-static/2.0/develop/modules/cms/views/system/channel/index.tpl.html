@@ -112,8 +112,8 @@
                                 class="fa fa-cog"></i></button>
 
                         <button class="btn btn-danger btn-xs ng-scope"
-                                ng-click="$parent.delete($index,el)"><i
-                                class="fa fa-trash"></i></button>
+                                ng-click="$parent.delete($index,el)" ng-show="el.status==1 || el.active==1"><i
+                                class="fa fa-trash" ></i></button>
                     </td>
                 </tr>
                 </tr>

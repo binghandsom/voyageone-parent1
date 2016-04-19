@@ -85,7 +85,8 @@
                     <td>{{vm.PLATFORM_DICT[el.platform_id]}}</td>
                     <td ng-controller="popupCtrl">
                         <button class="btn btn-success btn-xs ng-scope" ng-click="$parent.edit(el,this)"><i class="fa fa-pencil"></i></button>
-                        <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="$parent.delete($index,el.cart_id)"><i class="fa fa-trash-o"></i></button>
+                        <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="$parent.delete($index,el.cart_id)"
+                           ng-show="el.active==1"><i class="fa fa-trash-o"></i></button>
                     </td>
                 </tr>
                 </tbody>

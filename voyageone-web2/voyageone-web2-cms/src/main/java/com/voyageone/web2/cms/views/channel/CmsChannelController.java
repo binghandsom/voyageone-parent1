@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.hash.Hashing;
+import com.google.gson.Gson;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CompanyBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -9,7 +12,10 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ChannelService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -138,6 +144,16 @@ public class CmsChannelController extends CmsController {
          bean.setCreater(getUser().getUserName());
          channelService.save(bean);
          return success(true);
+    }
+
+    @RequestMapping("genKey")
+    public AjaxResponse genKey(@RequestBody Map bean) {
+        Gson gson = new Gson();
+        String result = gson.toJson(bean);
+        result= Hashing.md5().hashString(result, Charsets.UTF_8).toString().toUpperCase();
+
+        System.out.println(result);
+        return success(result);
     }
 }
 

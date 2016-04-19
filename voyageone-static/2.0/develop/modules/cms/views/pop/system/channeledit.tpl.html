@@ -14,7 +14,8 @@
                             <div class="col-sm-12">
                                 <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
                                 <div class="col-sm-7">
-                                    <input class="form-control" type="text" placeholder="请输入数字" ng-model="vm.order_channel_id"/>
+                                    <input class="form-control" type="text" placeholder="请输入数字" ng-model="vm.order_channel_id"
+                                     ng-disabled="!is_add"/>
                                 </div>
                                 <div class="col-sm-2">
                                     &nbsp;{{'TXT_REQUIRED' | translate}}
@@ -96,7 +97,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-show="is_add">
                             <div class="col-sm-12">
                                 <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
                                 <div class="col-sm-7">
@@ -114,10 +115,10 @@
                             <div class="col-sm-12">
                                 <label class="col-sm-3 control-label">Secrect Key</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" type="text" placeholder="D2016C8F771817F817......" ng-model="vm.screct_key"/>
+                                    <input class="form-control" type="text" placeholder="D2016C8F771817F817......" ng-model="vm.screct_key" disabled/>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button type="button" ng-click="genSecretKey()">&nbsp;重置</button>&nbsp;{{'TXT_REQUIRED' | translate}}
+                                    <button type="button" ng-click="genSecretKey()" >&nbsp;重置</button>&nbsp;{{'TXT_REQUIRED' | translate}}
                                 </div>
                             </div>
                         </div>
@@ -125,10 +126,10 @@
                             <div class="col-sm-12">
                                 <label class="col-sm-3 control-label">Session Key</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" type="text" placeholder="D2016C8F771817F817......" ng-model="vm.session_key"/>
+                                    <input class="form-control" type="text" placeholder="D2016C8F771817F817......" ng-model="vm.session_key" disabled/>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button type="button" ng-click="genSessionKey()">&nbsp;重置</button>&nbsp;{{'TXT_REQUIRED' | translate}}
+                                    <button type="button" ng-click="genSessionKey()" >&nbsp;重置</button>&nbsp;{{'TXT_REQUIRED' | translate}}
                                 </div>
                             </div>
                         </div>
