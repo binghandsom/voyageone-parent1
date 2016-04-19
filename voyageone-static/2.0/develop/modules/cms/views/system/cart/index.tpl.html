@@ -76,22 +76,22 @@
                 </thead>
                 <tbody ng-repeat="el in vm.data track by el.cart_id">
                 <tr>
-                    <td>{{$index}}</td>
+                    <td>{{$index+1}}</td>
                     <td>{{el.cart_id}}</td>
                     <td>{{el.name}}</td>
                     <td>{{el.short_name}}</td>
                     <td>{{el.description}}</td>
-                    <td>{{el.cart_type==3?'YES':'NO'}}</td>
+                    <td>{{vm.CART_TYPE_DICT[el.cart_type][1]}}</td>
                     <td>{{vm.PLATFORM_DICT[el.platform_id]}}</td>
                     <td ng-controller="popupCtrl">
-                        <button class="btn btn-success btn-xs ng-scope" ng-click="$parent.edit(el,this)"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-success btn-xs ng-scope" ng-click="$parent.edit(el,this)" ng-disabled="el.active==0"><i class="fa fa-pencil"></i></button>
                         <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="$parent.delete($index,el.cart_id)"
-                           ng-show="el.active==1"><i class="fa fa-trash-o"></i></button>
+                           ng-disabled="el.active==0"><i class="fa fa-trash-o"></i></button>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            <!--<vpagination config="categoryPageOption" total="{{categoryPageOption.total}}"></vpagination>-->
+            <vpagination config="page"></vpagination>
         </div><!-- /.box-body -->
     </div>
 </div><!-- end .wrapper-md -->

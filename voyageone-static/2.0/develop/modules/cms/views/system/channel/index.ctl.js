@@ -19,6 +19,7 @@ define([
         // init
         $scope.initialize = function () {
             var self = this;
+            self.refreshTable();
         }
 
         $scope.clear = function () {
