@@ -298,8 +298,8 @@ define([
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
-                        "templateUrl": "views/pop/jm/promotiondefaultSetting.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultSetting.ctl",
+                        "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
                         "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
                         "size": 'md',
                         "backdrop": "static"
