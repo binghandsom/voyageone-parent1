@@ -298,8 +298,8 @@ define([
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
-                        "templateUrl": "views/pop/jm/promotionDefaultSetting.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotionDefaultSetting.ctl",
+                        "templateUrl": "views/pop/jm/promotiondefaultSetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultSetting.ctl",
                         "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
                         "size": 'md',
                         "backdrop": "static"
@@ -307,8 +307,8 @@ define([
                 },
                 "jmProductDetail": {
                     "detail": {
-                        "templateUrl": "views/pop/jm/productDetail.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/productDetail.ctl",
+                        "templateUrl": "views/pop/jm/productdetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/productdetail.ctl",
                         "controller": 'popJmProductDetailController as $ctrl',
                         "size": 'lg',
                         "backdrop": "static"
@@ -316,8 +316,8 @@ define([
                 },
                 "jmPromotionDetail": {
                     "detail": {
-                        "templateUrl": "views/pop/jm/promotionDetail.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotionDetail.ctl",
+                        "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
                         "controller": 'popPromotionDetailCtl',
                         "size": 'md',
                         "backdrop": "static"
@@ -330,20 +330,20 @@ define([
                         "backdrop": "static"
                     },
                     "dealExtension": {
-                        "templateUrl": "views/pop/jm/dealExtension.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/dealExtension.ctl",
+                        "templateUrl": "views/pop/jm/dealextension.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
                         "controller": 'popDealExtensionCtl'
                     },
                     "priceModify": {
-                        "templateUrl": "views/pop/jm/priceModify.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/priceModify.ctl",
+                        "templateUrl": "views/pop/jm/pricemodify.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
                         "controller": 'popPriceModifyCtl'
                     }
                 },
                 "jmImageManage": {
                     "imageSetting": {
-                        "templateUrl": "views/pop/jm/imageSetting.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/imageSetting.ctl",
+                        "templateUrl": "views/pop/jm/imagesetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/imagesetting.ctl",
                         "controller": 'popImageSettingCtl as $ctrl'
                     }
                 }
