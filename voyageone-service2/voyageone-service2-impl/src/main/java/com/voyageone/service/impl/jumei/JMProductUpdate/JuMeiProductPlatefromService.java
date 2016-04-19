@@ -56,7 +56,7 @@ public class JuMeiProductPlatefromService {
                  result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(shippingSystemId, model, shopBean);//上新
                 if (!result.isResult()) {
                     model.setErrorMsg(result.getMsg());
-                    model.setSynchState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
+                    model.setState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
                     daoCmsBtJmPromotionProduct.update(model);
                 }
             } else if (model.getSynchState() == 0 || model.getSynchState() == 1) //更新 copyDeal
