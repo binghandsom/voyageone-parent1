@@ -429,10 +429,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                     List<String> transBaiduCn; // 百度翻译 - 输出参数
                     try {
-                        transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+                        if ("017".equals(feed.getChannelId())) {
+                            // lucky vitamin 不做翻译
+                            field.setOriginalTitleCn(""); // 标题
+                            field.setOriginalDesCn(""); // 长描述
+                        } else {
+                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
 
-                        field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-                        field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+                            field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+                            field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+                        }
 
                     } catch (Exception e) {
                         // 翻译失败的场合,全部设置为空, 运营自己翻译吧
