@@ -24,6 +24,18 @@ public class CmsConstants {
 	public static final String FEED_IO_UPDATEFIELDS_IMAGE_SPLIT = ";";
 	public final static String C_PROP_PATH_SPLIT_CHAR = ">";
 
+    // 上新的任务表中的上新状态值（0:未处理）
+    public static final int SX_WORKLOAD_PUBLISH_STATUS_INIT = 0;
+
+    // 上新的任务表中的上新状态值（1:已上新）
+    public static final int SX_WORKLOAD_PUBLISH_STATUS_OK = 1;
+
+    // 上新的任务表中的上新状态值（2:上新错误）
+    public static final int SX_WORKLOAD_PUBLISH_STATUS_ERROR = 2;
+
+    // 从上新的任务表中一次数据抽出最大件数
+    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
+
 	/**
 	 * 第三方平台的属性类型
 	 */

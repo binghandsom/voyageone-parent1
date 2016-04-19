@@ -212,7 +212,7 @@ public class GiltInsert extends BaseTaskService {
                 updateFull(itemIds);
                 productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
             } catch (Exception e) {
-                $error(e.getMessage());
+                $error(e);
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             } finally {
                 productSucceeList.clear();

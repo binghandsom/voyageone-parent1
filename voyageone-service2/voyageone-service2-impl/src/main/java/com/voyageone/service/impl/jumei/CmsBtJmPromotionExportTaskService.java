@@ -47,10 +47,11 @@ public class CmsBtJmPromotionExportTaskService {
         return dao.insert(entity);
     }
 
-    public void export(int JmBtPromotionExportTaskId) throws IOException, ExcelException {
+    public void export(int JmBtPromotionExportTaskId,String exportPath) throws IOException, ExcelException {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
         String fileName = "Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
-        String filePath = "/usr/JMExport/" + fileName;
+        //"/usr/JMExport/"
+        String filePath = exportPath+"/"+ fileName;
         model.setBeginTime(new Date());
         int TemplateType = model.getTemplateType();
         try {

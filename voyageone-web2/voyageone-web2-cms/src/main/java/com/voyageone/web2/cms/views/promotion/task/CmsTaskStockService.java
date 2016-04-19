@@ -12,7 +12,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
@@ -51,7 +50,10 @@ import java.util.*;
 public class CmsTaskStockService extends BaseAppService {
 
     @Autowired
-    private StockSeparateService stockSeparateService;
+    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+
+    @Autowired
+    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
 
     @Autowired
     private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
@@ -62,7 +64,7 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
 
-//    @Autowired
+    //    @Autowired
 //    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
@@ -319,27 +321,27 @@ public class CmsTaskStockService extends BaseAppService {
         //取得隔离渠道的数据
         for(TypeChannelBean cartId :typeChannelBeanList){
             for(Map.Entry<String, Object> entry : separateCartIdMap.entrySet()){
-                    Map<String,String> separatePlatformMap  = new HashMap<>();
-                    HashMap<String,Object> separateMap =(HashMap<String, Object>) entry.getValue();
-                    String sepCartId=separateMap.get("cart_id").toString();
-                    String revertTime=separateMap.get("activity_end").toString();
-                    afterRevertTime = addDateMin(revertTime, min);
-                    if(sepCartId.equals(cartId.getValue().toString())){
-                        //平台id
-                        separatePlatformMap.put("cartId", cartId.getValue());
-                        //平台名
-                        separatePlatformMap.put("cartName",cartId.getName());
-                        //隔离比例
-                        separatePlatformMap.put("value","");
-                        //类型（1：隔离，2：共享）
-                        separatePlatformMap.put("type","1");
-                        //还原时间
-                        separatePlatformMap.put("revertTime", afterRevertTime);
-                        //活动ID
-                        separatePlatformMap.put("promotionId", entry.getKey());
-                        //取得隔离渠道的名称
-                        separateCartName.put(cartId.getValue(),cartId.getName());
-                        //取得隔离渠道的数据的集合
+                Map<String,String> separatePlatformMap  = new HashMap<>();
+                HashMap<String,Object> separateMap =(HashMap<String, Object>) entry.getValue();
+                String sepCartId=separateMap.get("cart_id").toString();
+                String revertTime=separateMap.get("activity_end").toString();
+                afterRevertTime = addDateMin(revertTime, min);
+                if(sepCartId.equals(cartId.getValue().toString())){
+                    //平台id
+                    separatePlatformMap.put("cartId", cartId.getValue());
+                    //平台名
+                    separatePlatformMap.put("cartName",cartId.getName());
+                    //隔离比例
+                    separatePlatformMap.put("value","");
+                    //类型（1：隔离，2：共享）
+                    separatePlatformMap.put("type","1");
+                    //还原时间
+                    separatePlatformMap.put("revertTime", afterRevertTime);
+                    //活动ID
+                    separatePlatformMap.put("promotionId", entry.getKey());
+                    //取得隔离渠道的名称
+                    separateCartName.put(cartId.getValue(),cartId.getName());
+                    //取得隔离渠道的数据的集合
                     separatePlatformList.add(separatePlatformMap);
                 }
             }
@@ -1452,11 +1454,11 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("taskId", param.get("taskId"));
         // 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的状态
         sqlParam.put("statusList", Arrays.asList(
-                                                    STATUS_WAITING_SEPARATE,
-                                                    STATUS_SEPARATING,
-                                                    STATUS_SEPARATE_SUCCESS,
-                                                    STATUS_WAITING_REVERT,
-                                                    STATUS_REVERTING));
+                STATUS_WAITING_SEPARATE,
+                STATUS_SEPARATING,
+                STATUS_SEPARATE_SUCCESS,
+                STATUS_WAITING_REVERT,
+                STATUS_REVERTING));
         Integer seq = cmsBtStockSeparateItemDao.selectStockSeparateItemByStatus(sqlParam);
         // 库存隔离数据中是否存在状态为 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的数据,不允许删除任务
         if (seq != null) {
@@ -1557,7 +1559,7 @@ public class CmsTaskStockService extends BaseAppService {
      * 取得任务对应平台信息列表
      * 平台信息列表数据结构
      *    {"cartId":"23", "cartName":"天猫国际", "channelId":010},
-*         {"cartId":"27", "cartName":"聚美优品", "channelId":010}...
+     *         {"cartId":"27", "cartName":"聚美优品", "channelId":010}...
      *
      * @param taskId 任务id
      * @param channelId 渠道id
@@ -1641,8 +1643,6 @@ public class CmsTaskStockService extends BaseAppService {
             String property3 = (String) stockInfo.get("property3");
             String property4 = (String) stockInfo.get("property4");
             String qty = String.valueOf(stockInfo.get("qty"));
-            String separateQty = String.valueOf(stockInfo.get("separate_qty"));
-            String statusName = (String) stockInfo.get("status_name");
             // 画面上一行的数据
             Map<String, Object> lineInfo = new HashMap<String, Object>();
             // 画面上一行里平台相关的数据
@@ -1786,10 +1786,10 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam1.put("channelId", param.get("channelId"));
         // 状态 = 2：隔离成功,5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败
         sqlParam1.put("statusList", Arrays.asList( STATUS_SEPARATE_SUCCESS,
-                                                    STATUS_WAITING_REVERT,
-                                                    STATUS_REVERTING,
-                                                    STATUS_REVERT_SUCCESS,
-                                                    STATUS_REVERT_FAIL));
+                STATUS_WAITING_REVERT,
+                STATUS_REVERTING,
+                STATUS_REVERT_SUCCESS,
+                STATUS_REVERT_FAIL));
         sqlParam1.put("tableNameSuffix", param.get("tableNameSuffix"));
         List<Map<String,Object>> stockSeparateList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam1);
 
@@ -2109,19 +2109,6 @@ public class CmsTaskStockService extends BaseAppService {
         simpleTransaction.commit();
     }
 
-
-    /**
-     * 获取一页表示的Sku
-     *
-     * @param param 客户端参数
-     * @return 一页表示的Sku
-     */
-    public List<String> getCommonStockPageSkuList(Map param) {
-        Map<String,Object> sqlParam = new HashMap<>();
-        sqlParam.put("sql", getCommonStockPageSkuSql(param));
-        return stockSeparateService.getStockSeparateItemPageSku(sqlParam);
-    }
-
     /**
      * 删除隔离库存明细
      *
@@ -2248,17 +2235,6 @@ public class CmsTaskStockService extends BaseAppService {
     }
 
     /**
-     * 库存隔离数据是否移到history表
-     *
-     *
-     * @param param 客户端参数
-     * @return 获取取得属性列表
-     */
-    public boolean isHistoryExist(Map param){
-        return (stockSeparateService.getStockSeparateItemHistoryCnt(param) != 0);
-    }
-
-    /**
      * 新增库存隔离明细
      *
      * @param param 客户端参数
@@ -2284,31 +2260,6 @@ public class CmsTaskStockService extends BaseAppService {
         }
         simpleTransaction.commit();
     }
-
-    /**
-     * 取得一页表示的Sku的Sql
-     *
-     * @param param 客户端参数
-     * @return 一页表示的Sku的Sql
-     */
-    private String getCommonStockPageSkuSql(Map<String,Object> param){
-        String sql = "";
-        sql = "select sku from ( select distinct sku as sku from " + (String)param.get("tableName");
-        sql += getWhereSql(param) + " )t1 ";
-        String start = "";
-        String length = "";
-        if (StringUtils.isEmpty((String) param.get("start1"))) {
-            start = "0";
-        }
-        if (StringUtils.isEmpty((String) param.get("length1"))) {
-            length = "10";
-        }
-
-        sql += " limit " + start + "," + length;
-        return sql;
-    }
-
-
 
     /**
      * 新增库存隔离明细 输入验证

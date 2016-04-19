@@ -85,21 +85,20 @@ public class CmsBtJmPromotionImportTaskService {
         return dao.insert(entity);
     }
 
-    public void importFile(int JmBtPromotionImportTaskId) throws Exception {
+    public void importFile(int JmBtPromotionImportTaskId,String importPath) throws Exception {
         String errorMsg = "";
         boolean isError = false;
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = dao.select(JmBtPromotionImportTaskId);
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         try {
             dao.update(modelCmsBtJmPromotionImportTask);
-            importExcel(modelCmsBtJmPromotionImportTask);
+            importExcel(modelCmsBtJmPromotionImportTask, importPath);
         } catch (Exception ex) {
             ex.printStackTrace();
             modelCmsBtJmPromotionImportTask.setErrorCode(1);
             modelCmsBtJmPromotionImportTask.setErrorMsg(ex.getMessage() + ex.getStackTrace());
-            if(ex.getStackTrace().length>0)
-            {
-                modelCmsBtJmPromotionImportTask.setErrorMsg(modelCmsBtJmPromotionImportTask.getErrorMsg()+ex.getStackTrace()[0].toString());
+            if (ex.getStackTrace().length > 0) {
+                modelCmsBtJmPromotionImportTask.setErrorMsg(modelCmsBtJmPromotionImportTask.getErrorMsg() + ex.getStackTrace()[0].toString());
             }
         }
         modelCmsBtJmPromotionImportTask.setIsImport(true);
@@ -107,11 +106,12 @@ public class CmsBtJmPromotionImportTaskService {
         dao.update(modelCmsBtJmPromotionImportTask);
     }
 
-    private void importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask) throws Exception {
+    private void importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask,String importPath) throws Exception {
         boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = serviceCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
-        String filePath = "/usr/JMImport/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
+        //"/usr/JMImport/"
+        String filePath = importPath+"/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
         fileInputStream = new FileInputStream(excelFile);
@@ -177,7 +177,9 @@ public class CmsBtJmPromotionImportTaskService {
             }
             for (CmsBtJmPromotionSkuModel skuPromotionModel : saveInfo.getListPromotionSkuModel()) {
                 skuPromotionModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
-                skuPromotionModel.setCmsBtJmSkuId(mapSkuCodeId.get(skuPromotionModel.getSkuCode()));
+                if(skuPromotionModel.getCmsBtJmSkuId()==0) {
+                    skuPromotionModel.setCmsBtJmSkuId(mapSkuCodeId.get(skuPromotionModel.getSkuCode()));
+                }
                 if (skuPromotionModel.getId() == 0) {
                     daoCmsBtJmPromotionSku.insert(skuPromotionModel);
                 } else {
@@ -519,6 +521,7 @@ public class CmsBtJmPromotionImportTaskService {
         if (promotionSkuModel == null) {
             promotionSkuModel = new CmsBtJmPromotionSkuModel();
         }
+        promotionSkuModel.setCmsBtJmSkuId(importSkuModel.getId());
         if (promotionSkuModel.getSynchState() == 2) {//已上传
             if (importSkuModel.getDealPrice() != 0) {
                 promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
@@ -551,9 +554,9 @@ public class CmsBtJmPromotionImportTaskService {
         oldSkuModel = daoExtCmsBtJmSku.getBySkuCodeChannelId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId());
         importSkuModel.setChannelId(modelCmsBtJmPromotion.getChannelId());//渠道
         if (oldSkuModel != null) {
+            importSkuModel.setId(oldSkuModel.getId());
             if (oldSkuModel.getState() == 0)//未上新 全覆盖
             {
-                importSkuModel.setId(oldSkuModel.getId());
                 saveInfo.getListSkuModel().add(importSkuModel);//加入保存规格
             } else //已上新
             {

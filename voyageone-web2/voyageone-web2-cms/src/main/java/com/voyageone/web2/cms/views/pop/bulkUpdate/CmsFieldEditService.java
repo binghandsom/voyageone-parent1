@@ -154,7 +154,7 @@ public class CmsFieldEditService extends BaseAppService {
             }
             return field;
         } catch (Exception e) {
-            $error("CmsPropChangeService: " + e.getMessage());
+            $error("CmsPropChangeService: ", e);
         }
 
         return null;

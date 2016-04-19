@@ -3,16 +3,18 @@ package com.voyageone.service.model.jumei.businessmodel;
 /**
  * Created by dell on 2016/4/15.
  */
+//{"jmShippingStock":"2813","releaseDate":"11","productionArea":"22"
+//        ,"suitCrowds":"33","whiteSquareModel":"44","productReallyModel":"55","productUprightModel":"66","SpecialNote":"77"}
 public class JMDefaultSet {
       //聚美仓库id
-       String  jmShippingStock;
+       int  jmShippingStock;
         String releaseDate;
         String productionArea;
         String suitCrowds;
         String whiteSquareModel;
         String productReallyModel;
         String productUprightModel;
-        String  SpecialNote;
+        String  specialNote;
 
     public String getReleaseDate() {
         return releaseDate;
@@ -63,18 +65,18 @@ public class JMDefaultSet {
     }
 
     public String getSpecialNote() {
-        return SpecialNote;
+        return specialNote;
     }
 
     public void setSpecialNote(String specialNote) {
-        SpecialNote = specialNote;
+        this.specialNote = specialNote;
     }
 
-    public String getJmShippingStock() {
+    public int getJmShippingStock() {
         return jmShippingStock;
     }
 
-    public void setJmShippingStock(String jmShippingStock) {
+    public void setJmShippingStock(int jmShippingStock) {
         this.jmShippingStock = jmShippingStock;
     }
 }

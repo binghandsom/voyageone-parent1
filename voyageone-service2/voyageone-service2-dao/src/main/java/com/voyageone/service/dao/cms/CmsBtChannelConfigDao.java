@@ -11,9 +11,6 @@ public class CmsBtChannelConfigDao extends ServiceBaseDao {
 
     /**
      * 更具configKey返回制定的数据
-     * @param channelId
-     * @param configKey
-     * @return
      */
     public List<CmsBtChannelConfigModel> selectByConfigKey(String channelId, String configKey) {
         CmsBtChannelConfigModel model = new CmsBtChannelConfigModel();

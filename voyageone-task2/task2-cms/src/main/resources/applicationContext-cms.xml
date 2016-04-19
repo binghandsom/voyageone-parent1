@@ -75,7 +75,6 @@
         <!-- 设定活动结束的隔离数据状态为等待还原batch -->
         <task:scheduled ref="CmsStockWaitingRevertJob" method="run" cron="0 0/5 * * * ?"/>
 
-
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
