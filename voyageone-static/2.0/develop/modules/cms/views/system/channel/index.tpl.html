@@ -4,7 +4,7 @@
             <div class="panel panel-default">
                 <div class="container-fluid m-l-md m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_CHANNEL_ID"></label>
@@ -14,7 +14,7 @@
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
@@ -24,7 +24,7 @@
                                 </div><!-- .form-group -->
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
@@ -38,6 +38,15 @@
                                 </div><!-- .form-group -->
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" ng-model="active" ng-true-value="0" ng-false-value="1"> 已删除
+                                    </label>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
                         <div class="col-sm-12 text-center m-b-sm">
                             <div class="form-horizontal">
                                 <div class="form-group">
@@ -47,6 +56,9 @@
                                     <button class="btn btn-vo" ng-click="refreshTable()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
                                         | translate}}
                                     </button>
+                                    <span ng-controller="popupCtrl">
+                                    <button class="btn btn-success"  ng-click="$parent.openChannelEdit(-1,null,openChannelEdit)"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                    </span>
                                 </div><!-- .form-group -->
                             </div>
                         </div>
@@ -76,24 +88,32 @@
                     <td>{{el.full_name}}</td>
                     <td>
                         <div class="col-sm-5 col-sm-offset-3">
-                                <div class="table_main">
-                                    <ul>
-                                        <div class="col-sm-6">
-                                            <input type="radio" name="radio_{{el.order_channel_id}}" value="1" ng-model="el.is_usjoi"
-                               ng-click="save(el)"><span class="ng-binding">Yes</span>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <input type="radio" name="radio_{{el.order_channel_id}}" value="0" ng-model="el.is_usjoi"
-                                disabled><span>No</span>
-                                        </div>
-                                    </ul>
-                                </div>
+                            <div class="table_main">
+                                <ul>
+                                    <div class="col-sm-6">
+                                        <input type="radio" name="radio_{{el.order_channel_id}}" value="1" ng-model="el.is_usjoi"
+                                               ng-click="save(el)"><span class="ng-binding">Yes</span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="radio" name="radio_{{el.order_channel_id}}" value="0" ng-model="el.is_usjoi"
+                                               disabled><span>No</span>
+                                    </div>
+                                </ul>
+                            </div>
                         </div>
                     </td>
                     <td ng-controller="popupCtrl">
                         <button class="btn btn-success btn-xs ng-scope"
-                                ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
+                                ng-click="$parent.openChannelEdit($index,el,openChannelEdit)"><i
                                 class="fa fa-pencil"></i></button>
+
+                        <button class="btn btn-info btn-xs ng-scope"
+                                ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
+                                class="fa fa-cog"></i></button>
+
+                        <button class="btn btn-danger btn-xs ng-scope"
+                                ng-click="$parent.delete($index,el)" ng-show="el.status==1 || el.active==1"><i
+                                class="fa fa-trash" ></i></button>
                     </td>
                 </tr>
                 </tr>

@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.gilt.service.GiltSkuService;
 import com.voyageone.components.gilt.bean.GiltCategory;
 import com.voyageone.components.gilt.bean.GiltImage;
@@ -199,6 +200,7 @@ public class GiltAnalysisService extends BaseTaskService {
             try {
                 onStartupInThread();
             } catch (Exception e) {
+                e.printStackTrace();
                 $error(e);
             }
         });
@@ -215,7 +217,13 @@ public class GiltAnalysisService extends BaseTaskService {
 
         List<SuperFeedGiltBean> feedGiltBeanList = new ArrayList<>();
 
-        for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
+        for (GiltSku giltSku : skuList){
+            SuperFeedGiltBean superFeedGiltBean = toMySqlBean(giltSku);
+            if(superFeedGiltBean != null){
+                feedGiltBeanList.add(superFeedGiltBean);
+            }
+
+        }
 
         int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
@@ -306,6 +314,11 @@ public class GiltAnalysisService extends BaseTaskService {
 
         List<GiltCategory> categories = giltSku.getCategories();
 
+        if(categories == null || categories.size() == 0)
+        {
+            $info("categorie为空"+ JacksonUtil.bean2Json(giltSku));
+            return null;
+        }
         String catPath ="";
         for(GiltCategory categorie : categories){
             if(catPath.length() != 0) catPath+="-";

@@ -27,4 +27,8 @@ public class OrderChannelDao extends BaseDao {
     public int updateById(OrderChannelBean bean) {
         return updateTemplate.update(Constants.DAO_NAME_SPACE_COMMON + "tm_order_channel_update", bean);
     }
+
+    public int insertChannel(OrderChannelBean bean) {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_COMMON + "tm_order_channel_insert", bean);
+    }
 }

@@ -137,8 +137,6 @@ public class CmsPromotionDetailService extends BaseAppService {
         }
         // 获取Tag列表
         List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
-//        String channelId = promotion.getChannelId();
-//        Integer cartId = promotion.getCartId();
 
         for (CmsBtPromotionGroupModel productModel : productModels) {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
@@ -201,8 +199,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param) {
 
-        List<CmsBtPromotionCodeModel> promotionCodes = promotionCodeService.getPromotionCodeList(param);
-//        if (!CollectionUtils.isEmpty(promotionCodes)) {
+        //        if (!CollectionUtils.isEmpty(promotionCodes)) {
 //            promotionCodes.forEach(map -> {
 //                //SDK取得Product 数据
 //                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
@@ -214,7 +211,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 //                }
 //            });
 //        }
-        return promotionCodes;
+        return promotionCodeService.getPromotionCodeList(param);
     }
 
     /**
@@ -296,7 +293,9 @@ public class CmsPromotionDetailService extends BaseAppService {
 //    }
 
     /**
-     * resolvePromotionXls2
+     * @param xls xls文件流
+     * @return CmsBtPromotionGroupModel
+     * @throws Exception
      */
     private List<CmsBtPromotionGroupModel> resolvePromotionXls2(InputStream xls) throws Exception {
         List<CmsBtPromotionGroupModel> models = new ArrayList<>();

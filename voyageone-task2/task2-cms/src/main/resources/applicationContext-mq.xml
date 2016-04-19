@@ -8,11 +8,20 @@
 
     <rabbit:queue name="voyageone_cms_batchjob_promotion_queue" durable="true" auto-delete="false" exclusive="false"/>
     <rabbit:queue name="voyageone_cms_batchjob_JmBtPromotionImportTask_queue" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue name="voyageone_cms_batchjob_JuMeiProductUpdate_queue" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue name="voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue" auto-delete="false" exclusive="false"/>
+    <rabbit:queue name="voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue name="voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue" durable="true" auto-delete="false" exclusive="false"/>
 
 
     <rabbit:listener-container connection-factory="rabbitConnFactory" acknowledge="auto">
         <rabbit:listener queue-names="voyageone_cms_batchjob_promotion_queue" ref="cmsPromotionMqJob"/>
-        <rabbit:listener queue-names="voyageone_cms_batchjob_JmBtPromotionImportTask_queue" ref="jmBtPromotionImportJob"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_JmBtPromotionImportTask_queue" ref="juMeiBtPromotionImportJob"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_JmBtPromotionExportTask_queue" ref="juMeiBtPromotionExportJob"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_JuMeiProductUpdate_queue"      ref="juMeiProductUpdateJob" />
+        <rabbit:listener queue-names="voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue" ref="juMeiProductUpdateDealEndTimeJobService"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue" ref="cmsBuildPlatformCategoryTreeJdMqJob"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue" ref="cmsBuildPlatformCategorySchemaJdMqJob"/>
     </rabbit:listener-container>
 
 </beans>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.jumei.CmsMtTemplateImagesDao">
+    <resultMap id="ResultMap" type="CmsMtTemplateImagesModel">
+        
+    </resultMap>
+	
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`platform_id`,`channel_id`,`template_type`,`image_template_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`        from cms_mt_template_images
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="platformId != null">
+                        AND platform_id = #{platformId}
+                    </if>
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
+                    </if>
+                                <if test="templateType != null">
+                        AND template_type = #{templateType}
+                    </if>
+                                <if test="imageTemplateUrl != null">
+                        AND image_template_url = #{imageTemplateUrl}
+                    </if>
+                                <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
+                    </if>
+                                <if test="created != null">
+                        AND created = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND creater = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND modified = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`platform_id`,`channel_id`,`template_type`,`image_template_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier` from cms_mt_template_images 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="platformId != null">
+                        AND platform_id = #{platformId}
+                    </if> 
+                
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
+                    </if> 
+                
+                    <if test="templateType != null">
+                        AND template_type = #{templateType}
+                    </if> 
+                
+                    <if test="imageTemplateUrl != null">
+                        AND image_template_url = #{imageTemplateUrl}
+                    </if> 
+                
+                    <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND created = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND creater = #{creater}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND modified = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if> 
+        </where> limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`platform_id`,`channel_id`,`template_type`,`image_template_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier` from cms_mt_template_images where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_mt_template_images
+        set
+
+            `platform_id`=#{platformId}
+            ,`channel_id`=#{channelId}
+            ,`template_type`=#{templateType}
+            ,`image_template_url`=#{imageTemplateUrl}
+            ,`syn_flg`=#{synFlg}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_template_images
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_mt_template_images
+        (
+              `platform_id`,
+              `channel_id`,
+              `template_type`,
+              `image_template_url`,
+              `syn_flg`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{platformId},
+              #{channelId},
+              #{templateType},
+              #{imageTemplateUrl},
+              #{synFlg},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

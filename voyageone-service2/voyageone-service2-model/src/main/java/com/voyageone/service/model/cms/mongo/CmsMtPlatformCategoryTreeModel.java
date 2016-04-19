@@ -1,15 +1,14 @@
 package com.voyageone.service.model.cms.mongo;
 
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @Document
-public class CmsMtPlatformCategoryTreeModel extends BaseMongoModel {
+public class CmsMtPlatformCategoryTreeModel extends CartPartitionModel {
 
-    private Integer cartId;
     private String channelId;
     private String catId;
     private String catName;
@@ -21,7 +20,7 @@ public class CmsMtPlatformCategoryTreeModel extends BaseMongoModel {
     public CmsMtPlatformCategoryTreeModel() {
     }
 
-    public CmsMtPlatformCategoryTreeModel(String channelId, Integer cartId, String catId, String catName, String catPath, String parentCatId, Integer isParent, List<CmsMtPlatformCategoryTreeModel> children) {
+    public CmsMtPlatformCategoryTreeModel(String channelId, int cartId, String catId, String catName, String catPath, String parentCatId, Integer isParent, List<CmsMtPlatformCategoryTreeModel> children) {
         this.channelId = channelId;
         this.cartId = cartId;
         this.catId = catId;
@@ -38,14 +37,6 @@ public class CmsMtPlatformCategoryTreeModel extends BaseMongoModel {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
     }
 
     public String getCatId() {

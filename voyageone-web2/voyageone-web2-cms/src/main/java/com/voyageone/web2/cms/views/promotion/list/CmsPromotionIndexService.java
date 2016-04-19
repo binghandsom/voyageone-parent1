@@ -43,6 +43,10 @@ public class CmsPromotionIndexService extends BaseAppService {
 
     /**
      * 获取该channel的category类型.
+     *
+     * @param channelId chanelid
+     * @param language 语言
+     * @return mast数据
      */
     public Map<String, Object> init(String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
@@ -134,7 +138,6 @@ public class CmsPromotionIndexService extends BaseAppService {
      * @return boolean 是否终止输出
      */
     private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodeModel item, int startRowIndex) {
-        //boolean isContinueOutput = true;
         Sheet sheet = book.getSheetAt(0);
 
         Row styleRow = FileUtils.row(sheet, 1);

@@ -31,9 +31,10 @@ public class StockSeparateService extends BaseService {
         return cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
     }
 
-    public List<String>  getStockSeparateItemPageSku(Map<String, Object> sqlParam){
-        return cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
-    }
+    // TODO 因为梁兄帮promotion stock修改了将dao和service的访问,不知道这个方法对应的原始方法是哪个,我暂时注释掉-edward
+//    public List<String>  getStockSeparateItemPageSku(Map<String, Object> sqlParam){
+//        return cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
+//    }
 
     public int getStockSeparateItemHistoryCnt(Map<String, Object> param){
         return cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(param);
