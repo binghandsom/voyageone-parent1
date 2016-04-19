@@ -9,14 +9,14 @@ define([
 
     angularAMD.controller('popChannelEditCtl', function ($scope, $routeParams, context, usjoiService, $modalInstance) {
 
-        var is_add = !context.hasOwnProperty("order_channel_id"); //如果有context那么是新增页面
+
         /**
          * 初始化数据.
          */
         $scope.initialize = function () {
             var self = this;
+            self.is_add = !context.hasOwnProperty("order_channel_id"); //如果有context那么是新增页面
             self.vm =  _.extend({is_usjoi: "0", cart_ids: ''},context);
-            console.log(context);
             usjoiService.getCompanys().then(function (resp) {
                 self.COMPANYS = resp.data;
             });
@@ -29,7 +29,7 @@ define([
                 || !vm.send_name || !vm.screct_key || !vm.session_key) {
                 return; //表单错误
             }
-            if (is_add) {
+            if (self.is_add) {
                 usjoiService.save(self.vm).then(function () {
                     $modalInstance.close(self.vm);
                 });
@@ -42,10 +42,16 @@ define([
         };
 
         $scope.genSecretKey = function () {
-
+            var self=this;
+            usjoiService.genKey(_.extend({type: "secretkey", time: new Date().getTime()}, self.vm)).then(function (resp) {
+                self.vm.screct_key=resp.data;
+            });
         };
         $scope.genSessionKey = function () {
-
+            var self=this;
+            usjoiService.genKey(_.extend({type: "sessionkey", time: new Date().getTime()}, self.vm)).then(function (resp) {
+                self.vm.session_key = resp.data;
+            });
         };
     });
 });
