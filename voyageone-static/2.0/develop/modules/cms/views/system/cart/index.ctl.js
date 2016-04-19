@@ -61,7 +61,6 @@ define([
                 if (index != -1 && editedEl) {
                     $scope.vm.data[index] = editedEl
                 }
-                //_.filter($scope.vm.data, function (r) {r.cart_id===editedEl.cart_id})[0]=editedEl;
             });
         };
 
@@ -70,7 +69,6 @@ define([
                 if (addedEl) {
                     $scope.vm.data.push(addedEl);
                 }
-                //_.filter($scope.vm.data, function (r) {r.cart_id===editedEl.cart_id})[0]=editedEl;
             });
         };
 
