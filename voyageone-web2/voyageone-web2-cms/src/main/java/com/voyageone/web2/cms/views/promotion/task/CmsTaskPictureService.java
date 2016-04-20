@@ -174,6 +174,9 @@ class CmsTaskPictureService extends BaseAppService {
 
             String value = getString(row, 0, "#");
 
+            if (StringUtils.isEmpty(value))
+                break;
+
             if (!StringUtils.isNumeric(value))
                 throw new BusinessException("7000006");
 
