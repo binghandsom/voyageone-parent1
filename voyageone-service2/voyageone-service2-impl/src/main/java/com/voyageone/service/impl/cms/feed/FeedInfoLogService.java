@@ -1,7 +1,9 @@
 package com.voyageone.service.impl.cms.feed;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +18,16 @@ import java.util.List;
  * @version 2.0.0
  */
 @Service
-public class FeedCategoryService extends BaseService {
+public class FeedInfoLogService extends BaseService {
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    private CmsBtFeedInfoLogDao CmsBtFeedInfoLogDao;
 
     /**
-     * getList
+     * insertCmsBtFeedInfoLog
      */
-    public List<CmsBtFeedInfoModel> getList(String channelId, JomgoQuery queryObject) {
-        return cmsBtFeedInfoDao.select(queryObject, channelId);
-    }
-
-    /**
-     * getCnt
-     */
-    public long getCnt(String channelId, String queryStr) {
-        return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
+    public WriteResult insertCmsBtFeedInfoLog(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
+        return CmsBtFeedInfoLogDao.insertCmsBtFeedInfoLog(cmsBtFeedInfoModel);
     }
 
 }

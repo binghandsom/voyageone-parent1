@@ -27,9 +27,6 @@
         <!-- 生成主数据的schema:手动batch -->
         <task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!-- 生成主数据的类目树:手动batch -->
-        <task:scheduled ref="CmsCreateCmsMtCategoryTreeJob" method="run" cron="0 0/1 0-23 * * ?"/>
-
         <!-- 主数据到平台的默认mapping数据做成:手动batch -->
         <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 * * * ?"/>
 

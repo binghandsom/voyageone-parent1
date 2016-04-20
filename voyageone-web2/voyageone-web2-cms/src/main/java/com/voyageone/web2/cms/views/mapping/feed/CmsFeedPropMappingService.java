@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.mapping.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -17,6 +18,7 @@ import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
@@ -47,6 +49,9 @@ class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;
+
+    @Autowired
+    private FeedCategoryAttributeService feedCategoryAttributeService;
 
     @Autowired
     private CategorySchemaService categorySchemaService;
@@ -167,19 +172,17 @@ class CmsFeedPropMappingService extends BaseAppService {
      */
     Map<String, List<String>> getFeedAttributes(String feedCategoryPath, String lang, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeService.getFeedCategory(userSessionBean.getSelChannelId());
-
-        CmsMtFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
+        CmsMtFeedAttributesModel cmsMtFeedAttributesModel = feedCategoryAttributeService.getCategoryAttributeByCategory(userSessionBean.getSelChannelId(),feedCategoryPath);
 
         // 从 type/value 中取得 Feed 通用的属性
         Map<String, List<String>> attributes = Types.getTypeList(49, lang)
                 .stream()
                 .collect(toMap(TypeBean::getValue, t -> new ArrayList<>(0)));
 
-        if (feedCategoryModel == null)
+        if (cmsMtFeedAttributesModel == null)
             return attributes;
 
-        attributes.putAll(feedCategoryModel.getAttribute());
+        attributes.putAll(cmsMtFeedAttributesModel.getAttribute());
 
         return attributes;
     }

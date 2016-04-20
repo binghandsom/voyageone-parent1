@@ -63,4 +63,12 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao<CmsMtCategoryTreeModel> {
         return reslt;
     }
 
+    public WriteResult update(CmsMtCategoryTreeModel model) {
+        WriteResult reslt = super.update(model);
+        if (reslt.getN() > 0) {
+            setCache(model.getCatId(), model);
+        }
+        return reslt;
+    }
+
 }

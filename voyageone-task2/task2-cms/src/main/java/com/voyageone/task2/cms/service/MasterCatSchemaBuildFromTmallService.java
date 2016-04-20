@@ -17,6 +17,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
+import com.voyageone.service.impl.cms.CategoryTreeService;
 import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
@@ -52,6 +53,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
+
+    @Autowired
+    private CategoryTreeService categoryTreeService;
 
     Map<String, CmsMtCommonPropActionDefModel> allDefModelsMap = new HashMap<>();
 
@@ -308,6 +312,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                     //保存主数据schema
                     cmsMtCategorySchemaDao.insert(masterModel);
+
+                    //生成类目
+                    categoryTreeService.addCategory(masterModel.getCatFullPath(),getTaskName());
 
                     //save the fields which was deleted
                     CmsMtPlatformRemoveFieldsModel removeHistoryModel = new CmsMtPlatformRemoveFieldsModel();
