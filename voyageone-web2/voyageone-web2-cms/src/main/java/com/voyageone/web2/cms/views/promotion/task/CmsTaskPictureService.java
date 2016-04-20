@@ -40,7 +40,7 @@ import static com.voyageone.common.util.ExcelUtils.getString;
  * @version 2.0.0
  */
 @Service
-public class CmsTaskPictureService extends BaseAppService {
+class CmsTaskPictureService extends BaseAppService {
 
     @Autowired
     private TaskService taskService;
@@ -120,7 +120,7 @@ public class CmsTaskPictureService extends BaseAppService {
      * @param size    分页数
      * @return 数据集合
      */
-    public List<CmsBtBeatInfoModel> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
+    List<CmsBtBeatInfoModel> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
 
         return beatInfoService.getBeatInfoListByTaskId(task_id, flag, offset, size);
     }
@@ -132,7 +132,7 @@ public class CmsTaskPictureService extends BaseAppService {
      * @param flag    指定的任务状态
      * @return 数据集合
      */
-    public int getAllBeatCount(int task_id, BeatFlag flag) {
+    int getAllBeatCount(int task_id, BeatFlag flag) {
 
         return beatInfoService.getBeatInfoCountByTaskId(task_id, flag);
     }
@@ -142,7 +142,7 @@ public class CmsTaskPictureService extends BaseAppService {
      * @param task_id 任务 ID
      * @return 统计信息, List[Map{flag&count}]
      */
-    public List<Map> getBeatSummary(int task_id) {
+    List<Map> getBeatSummary(int task_id) {
         List<Map> result = beatInfoService.getBeatSummary(task_id);
         // 数据查询出来的是整数, 转换为枚举
         for (Map map : result)
@@ -150,8 +150,7 @@ public class CmsTaskPictureService extends BaseAppService {
         return result;
     }
 
-
-    public List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
+    List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
 
         // 如果存在以下标识数据, 就不能重新导入
         int count = beatInfoService.getCountInFlags(task_id, BeatFlag.BEATING, BeatFlag.RE_FAIL, BeatFlag.REVERT, BeatFlag.SUCCESS);
@@ -193,18 +192,12 @@ public class CmsTaskPictureService extends BaseAppService {
             models.add(model);
         }
 
-//        beatInfoService.removeTask(task_id);
-//
-//        beatInfoService.addTasks(models);
-//
-//        beatInfoService.updateDiffPromotionMessage(task_id, "与 Promotion 信息不符");
-
         beatInfoService.importBeatInfo(task_id, models);
 
         return getAllBeat(task_id, null, 0, size);
     }
 
-    public byte[] downloadBeatInfo(int task_id) {
+    byte[] downloadBeatInfo(int task_id) {
 
         List<CmsBtBeatInfoModel> beatInfoModels = beatInfoService.getBeatInfByTaskId(task_id);
 
@@ -250,30 +243,7 @@ public class CmsTaskPictureService extends BaseAppService {
         }
     }
 
-    public int setFlag(int beat_id, BeatFlag flag, UserSessionBean user) {
-
-        if (flag == null)
-            throw new BusinessException("7000002");
-
-        CmsBtBeatInfoModel beatInfoModel = beatInfoService.getBeatInfById(beat_id);
-
-        if (beatInfoModel == null)
-            return 0;
-
-        beatInfoModel.setBeatFlag(flag);
-        beatInfoModel.setModifier(user.getUserName());
-        return beatInfoService.updateBeatInfoFlag(beatInfoModel);
-    }
-
-    public int setFlags(int task_id, BeatFlag flag, UserSessionBean user) {
-
-        if (flag == null)
-            throw new BusinessException("7000002");
-
-        return beatInfoService.updateBeatInfoFlag(task_id, flag, user.getUserName());
-    }
-
-    public int control(Integer beat_id, Integer task_id, BeatFlag flag, UserSessionBean user) {
+    int control(Integer beat_id, Integer task_id, BeatFlag flag, UserSessionBean user) {
         if (beat_id != null)
             return setFlag(beat_id, flag, user);
         else if (task_id != null)
@@ -282,7 +252,7 @@ public class CmsTaskPictureService extends BaseAppService {
             return 0;
     }
 
-    public List<Map<String, Object>> getNewNumiid(Integer task_id) {
+    List<Map<String, Object>> getNewNumiid(Integer task_id) {
         if (task_id == null) return null;
         CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
@@ -291,14 +261,14 @@ public class CmsTaskPictureService extends BaseAppService {
         return promotionModelService.getPromotionModelDetailList(map);
     }
 
-    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
+    List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);
         return promotionCodeService.getPromotionCodeList(map);
     }
 
-    public List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
+    List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
         CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
@@ -353,5 +323,28 @@ public class CmsTaskPictureService extends BaseAppService {
         if (cellStyle != null) cell.setCellStyle(cellStyle);
 
         return cell;
+    }
+
+    private int setFlag(int beat_id, BeatFlag flag, UserSessionBean user) {
+
+        if (flag == null)
+            throw new BusinessException("7000002");
+
+        CmsBtBeatInfoModel beatInfoModel = beatInfoService.getBeatInfById(beat_id);
+
+        if (beatInfoModel == null)
+            return 0;
+
+        beatInfoModel.setBeatFlag(flag);
+        beatInfoModel.setModifier(user.getUserName());
+        return beatInfoService.updateBeatInfoFlag(beatInfoModel);
+    }
+
+    private int setFlags(int task_id, BeatFlag flag, UserSessionBean user) {
+
+        if (flag == null)
+            throw new BusinessException("7000002");
+
+        return beatInfoService.updateBeatInfoFlag(task_id, flag, user.getUserName());
     }
 }
