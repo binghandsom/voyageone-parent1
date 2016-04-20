@@ -25,6 +25,13 @@
         <if test="code != null and code != ''" >
             AND code = #{code}
         </if>
+        <if test="skuList != null and skuList.size() > 0">
+            and (sku in
+            <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                #{skuItem}
+            </foreach>
+            )
+        </if>
     </select>
 
     <select id="wms_bt_inventory_center_logic_selectLogicInventoryCnt" resultType="Object" parameterType="HashMap">
