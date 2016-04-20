@@ -67,6 +67,8 @@ public class FeedCategoryTreeService extends BaseService {
 
         if (categoryTree == null) {
             categoryTree = new CmsMtFeedCategoryTreeModel();
+            categoryTree.setCreated(DateTimeUtil.getNow());
+            categoryTree.setCreater(modifier);
             categoryTree.setChannelId(channelId);
             categoryTree.setCatPath(categorys.get(0));
             categoryTree.setCatName(categorys.get(0));
@@ -99,13 +101,19 @@ public class FeedCategoryTreeService extends BaseService {
             CmsMtFeedCategoryTreeModel node = findCategory(tree, temp);
             if (node == null) {
                 node = new CmsMtFeedCategoryTreeModel();
+                node.setModifier(null);
+                node.setModified(null);
+                node.setCreater(null);
+                node.setCreated(null);
                 node.setCatPath(temp);
                 node.setCatName(c[i]);
                 node.setCatId(MD5.getMD5(temp));
                 node.setParentCatId(befNode == null ? "0" : befNode.getCatId());
                 node.setIsParent(i < c.length - 1 ? 1 : 0);
                 node.setChildren(new ArrayList<>());
-                befNode.getChildren().add(node);
+                if (befNode != null) {
+                    befNode.getChildren().add(node);
+                }
                 befNode = node;
                 chgFlg = true;
             } else {
@@ -122,8 +130,7 @@ public class FeedCategoryTreeService extends BaseService {
      * @return CmsMtFeedCategoryTreeModel
      */
     public CmsMtFeedCategoryTreeModel getFeedCategoryByCategory(String channelId, String topCategory) {
-        CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategoryByCategory(channelId, topCategory);
-        return category;
+        return cmsMtFeedCategoryTreeDao.selectFeedCategoryByCategory(channelId, topCategory);
     }
 
     /**

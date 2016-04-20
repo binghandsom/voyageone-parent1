@@ -150,6 +150,7 @@ public class FeedToCmsService extends BaseService {
                         product.setUpdFlg(0);
                     }
                 }
+                product.setCatId(MD5.getMD5(product.getCategory()));
                 feedInfoService.updateFeedInfo(product);
 
                 brandList.add(product.getBrand());
