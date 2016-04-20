@@ -29,6 +29,7 @@ public class MqTest extends TestCase {
         Map<String,Object> message=new HashMap<String,Object>();
         message.put("promotionId","111");
         message.put("code","35476451212");
+        message.put("$consumer_retry_times$",1);
         sender.sendMessage("voyageone_mq_error_handle_testing", message);
     }
 

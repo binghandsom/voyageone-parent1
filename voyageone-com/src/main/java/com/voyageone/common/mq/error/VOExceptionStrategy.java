@@ -64,14 +64,14 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
         try {
             Map<String,Object> headers=messageProperties.getHeaders();
             if(!MapUtils.isEmpty(headers)&& //headers非空
-                    !StringUtils.isEmpty(headers.get("retryTimes"))&& //retryTimes非空
-                    (Integer.parseInt(headers.get("retryTimes").toString())>3)) { //retryTimes > 3
+                    !StringUtils.isEmpty(headers.get(CONSUMER_RETRY_KEY))&& //CONSUMER_RETRY_KEY非空
+                    (Integer.parseInt(headers.get(CONSUMER_RETRY_KEY).toString())>3)) { //CONSUMER_RETRY_KEY > 3
                 return; //不做任何处理
             }
             /* 插入数据库 */
             Map<String,Object> msgMap=JacksonUtil.jsonToMap(new String(message.getBody(),"UTF-8"));
             /* 加入CONSUMER_RETRY_KEY */
-            msgMap.put(CONSUMER_RETRY_KEY,StringUtils.isEmpty(headers.get("retryTimes"))?1:1+Integer.parseInt(headers.get("retryTimes").toString()));
+            msgMap.put(CONSUMER_RETRY_KEY,StringUtils.isEmpty(headers.get(CONSUMER_RETRY_KEY))?1:1+Integer.parseInt(headers.get(CONSUMER_RETRY_KEY).toString()));
             msgBackDao.insertBatchMessage(messageProperties.getReceivedRoutingKey(),msgMap);
         } catch (UnsupportedEncodingException e) {
             logger.error("rabbitmq listener error-handle exception",e);
