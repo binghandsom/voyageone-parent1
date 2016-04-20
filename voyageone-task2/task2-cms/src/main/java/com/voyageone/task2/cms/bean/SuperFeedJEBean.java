@@ -2,6 +2,11 @@ package com.voyageone.task2.cms.bean;
 
 import com.voyageone.common.util.MD5;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * SuperFeedJEBean
  * Created by zero on 7/28/2015.
@@ -1656,7 +1661,8 @@ public class SuperFeedJEBean {
 		temp.append(this.ProductMargin);
 		temp.append(this.BuyItNowPrice);
 		temp.append(this.RetailPrice);
-		temp.append(this.PictureURLs);
+        List<String> images = Arrays.asList(this.PictureURLs.split(","));
+        images.stream().map(s -> s.substring(s.lastIndexOf("/"))).sorted().collect(Collectors.toList()).forEach(temp::append);
 		temp.append(this.TaxProductCode);
 		temp.append(this.SupplierCode);
 		temp.append(this.SupplierPO);

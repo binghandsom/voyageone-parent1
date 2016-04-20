@@ -1,14 +1,11 @@
 package com.voyageone.web2.cms.views.test;
-import com.voyageone.service.impl.jumei.CmsBtJmApiLogService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmApiLogService;
 import com.voyageone.service.model.jumei.CmsBtJmApiLogModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
-import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:META-INF/context-web2.xml")
