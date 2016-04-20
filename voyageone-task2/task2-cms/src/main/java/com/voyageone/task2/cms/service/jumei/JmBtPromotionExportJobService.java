@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service.jumei;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.jumei.CmsBtJmPromotionExportTaskService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionExportTaskService;
 import com.voyageone.task2.base.BaseMQTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.slf4j.Logger;

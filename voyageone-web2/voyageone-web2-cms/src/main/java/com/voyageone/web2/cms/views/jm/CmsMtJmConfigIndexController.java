@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
-import com.voyageone.service.impl.jumei.CmsBtJmMasterPlatService;
-import com.voyageone.service.impl.jumei.CmsMtJmConfigService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterPlatService;
+import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.model.jumei.CmsMtJmConfigModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
