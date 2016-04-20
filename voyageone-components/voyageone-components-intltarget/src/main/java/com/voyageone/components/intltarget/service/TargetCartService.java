@@ -67,8 +67,8 @@ public class TargetCartService extends TargetBase{
     }
 
     /**
-     * 初始化checkOut
-     * @return check信息
+     * 添加paypalDetails
+     * @return TargetCartPayPal
      * @throws Exception
      */
     public TargetCartPayPal addCartPayPalDetails(TargetCartPayPalRequest request) throws Exception {

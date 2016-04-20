@@ -29,7 +29,7 @@ public class MqTest extends TestCase {
         Map<String,Object> message=new HashMap<String,Object>();
         message.put("promotionId","111");
         message.put("code","35476451212");
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_PROMOTION, message);
+        sender.sendMessage("voyageone_mq_error_handle_testing", message);
     }
 
 }
