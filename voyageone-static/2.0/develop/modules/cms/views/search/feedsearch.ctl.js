@@ -3,7 +3,8 @@
  */
 define([
     'angularAMD',
-    'modules/cms/controller/popup.ctl'
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/directives/keyValue.directive'
 ], function () {
 
     function searchIndex($scope, $routeParams, $feedSearchService, $translate) {

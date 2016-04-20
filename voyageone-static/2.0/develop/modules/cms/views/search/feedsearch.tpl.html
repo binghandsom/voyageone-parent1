@@ -29,7 +29,7 @@
                                     <div class="col-sm-8">
                                         <textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.fuzzySearch"></textarea>
                                         <div class="text-warnings">
-                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询包括:款号Model(多项换行分割),产品Code(多项换行分割),产品名称（英文）,详情描述（英文）
+                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割),产品名称（英文）,详情描述（英文）
                                         </div>
                                     </div>
                                 </div>
@@ -99,6 +99,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Status</label>
+                                    <div class="col-sm-8">
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="9" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="0" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_WaitingForImport' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="1" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_FinishImport' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="2" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_Error' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="3" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -130,6 +150,18 @@
                                         <input class="form-control" ng-model="vm.searchInfo.sizeType">
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                    <div class="col-sm-8 form-inline" style="padding-left:0px">
+                                        <div class="col-sm-5">
+                                            <select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
+                                                    ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
@@ -155,6 +187,8 @@
                         <th class="text-center mfb-xxt" style="white-space: nowrap">Code</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Name</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Model</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Status</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Inventory</th>
                         <th class="text-left mfb-xxx" style="white-space: nowrap">Short Description</th>
                         <th class="text-left mfb-xxx" style="white-space: nowrap">Long Description</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Color</th>
@@ -184,6 +218,8 @@
                         <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.name}}</td>
                         <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.model}}</td>
+                        <td class="text-left mfb-xxt" style="overflow: hidden;"><key-value type="feedStatus" ng-model="feedInfo.updFlg"></key-value></td>
+                        <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.qty}}</td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">
                             <span ng-if="feedInfo.shortDescription.length > 50"><popover-text content="feedInfo.shortDescription" direct="left" size="50"></popover-text></span>
                             <span ng-if="feedInfo.shortDescription.length <= 50">{{feedInfo.shortDescription}}</span>
