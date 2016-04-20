@@ -15,7 +15,7 @@ public abstract class BaseMQCmsService extends BaseMQAnnoService {
 
     @Override
     public String getTaskName() {
-        return "CmsGetSuperFeedJob";
+        return getClass().getSimpleName();
     }
 
 }
