@@ -233,8 +233,6 @@ define([
                             result = self.matched.property === feedCategoryBean.isPropertyMatched();
 
                         return result;
-                    }).sort(function (a, b) {
-                        return a.seq > b.seq ? 1 : -1;
                     });
 
                     // 绑定&显示

@@ -14,4 +14,9 @@ public class CmsBtFeedCategoryAttributeDao extends BaseMongoChannelDao<CmsMtFeed
         String query = "{\"catId\":\"" + catId + "\"}";
         return selectOneWithQuery(query, channelId);
     }
+
+    public CmsMtFeedAttributesModel selectCategoryAttributeByCategory(String channelId, String category){
+        String query = "{\"catPath\":\"" + category + "\"}";
+        return selectOneWithQuery(query, channelId);
+    }
 }

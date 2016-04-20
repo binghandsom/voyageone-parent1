@@ -26,7 +26,15 @@ public class FeedCategoryAttributeService extends BaseService {
     public CmsMtFeedAttributesModel getCategoryAttributeByCatId(String channelId, String catId){
         return cmsBtFeedCategoryAttributeDao.selectCategoryAttributeByCatId(channelId, catId);
     }
-
+    /**
+     * 根据叶子类目找出改类目下的属性值
+     * @param channelId 渠道ID
+     * @param category     叶子类目
+     * @return          属性值
+     */
+    public CmsMtFeedAttributesModel getCategoryAttributeByCategory(String channelId, String category){
+        return cmsBtFeedCategoryAttributeDao.selectCategoryAttributeByCategory(channelId, category);
+    }
     /**
      * 更新类目属性
      * @param cmsMtFeedAttributesModel 类目属性
