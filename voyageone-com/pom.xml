@@ -231,8 +231,12 @@
 			<groupId>com.voyageone</groupId>
 			<artifactId>jd-open-api-sdk-20160408</artifactId>
 		</dependency>
+		<!--<dependency>-->
+		<!--<groupId>com.voyageone</groupId>-->
+		<!--<artifactId>javacsv</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>net.sourceforge.javacsv</groupId>
 			<artifactId>javacsv</artifactId>
 		</dependency>
 
