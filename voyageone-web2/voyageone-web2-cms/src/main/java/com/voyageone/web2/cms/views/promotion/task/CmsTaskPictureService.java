@@ -178,7 +178,7 @@ class CmsTaskPictureService extends BaseAppService {
                 break;
 
             if (!StringUtils.isNumeric(value))
-                throw new BusinessException("7000006");
+                throw new BusinessException("7000006", row.getRowNum());
 
             CmsBtBeatInfoModel model = new CmsBtBeatInfoModel();
 
