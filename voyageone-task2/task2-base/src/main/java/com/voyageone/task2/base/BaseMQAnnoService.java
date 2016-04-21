@@ -1,10 +1,8 @@
 package com.voyageone.task2.base;
 
-import com.jd.open.api.sdk.internal.JSON.JSON;
-import com.rabbitmq.tools.json.JSONUtil;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.mq.error.MQException;
-import com.voyageone.common.mq.error.MQIgnoreException;
+import com.voyageone.service.impl.com.mq.exception.MQException;
+import com.voyageone.service.impl.com.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;

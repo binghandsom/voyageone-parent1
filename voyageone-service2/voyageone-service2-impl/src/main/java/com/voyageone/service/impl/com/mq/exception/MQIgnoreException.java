@@ -1,4 +1,4 @@
-package com.voyageone.common.mq.error;
+package com.voyageone.service.impl.com.mq.exception;
 
 import org.springframework.amqp.AmqpException;
 
