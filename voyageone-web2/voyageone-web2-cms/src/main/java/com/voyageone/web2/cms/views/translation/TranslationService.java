@@ -10,11 +10,9 @@ import com.voyageone.service.impl.cms.CustomWordService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
@@ -24,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by lewis on 15-12-16.
@@ -415,12 +415,12 @@ public class TranslationService extends BaseAppService {
             feedAttributes.put("weight", feedInfoModel.getWeight());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())) {
-            feedAttributes.put("short_description", feedInfoModel.getShort_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getShortDescription())) {
+            feedAttributes.put("shortDescription", feedInfoModel.getShortDescription());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())) {
-            feedAttributes.put("long_description", feedInfoModel.getLong_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getLongDescription())) {
+            feedAttributes.put("longDescription", feedInfoModel.getLongDescription());
         }
 
         if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))) {

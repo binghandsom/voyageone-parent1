@@ -28,7 +28,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -499,12 +498,12 @@ public class CmsProductDetailService extends BaseAppService {
             feedAttributes.put("weight", feedInfoModel.getWeight());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())) {
-            feedAttributes.put("short_description", feedInfoModel.getShort_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getShortDescription())) {
+            feedAttributes.put("shortDescription", feedInfoModel.getShortDescription());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())) {
-            feedAttributes.put("long_description", feedInfoModel.getLong_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getLongDescription())) {
+            feedAttributes.put("longDescription", feedInfoModel.getLongDescription());
         }
 
         if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))) {

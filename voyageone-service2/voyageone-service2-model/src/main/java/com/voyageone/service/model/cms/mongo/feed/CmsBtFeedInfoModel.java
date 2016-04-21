@@ -29,8 +29,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<String> image;
     private String brand;
     private String weight;
-    private String short_description;
-    private String long_description;
+    private String shortDescription;
+    private String longDescription;
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
     private Map<String,List<String>> attribute = new HashMap<>();
@@ -112,20 +112,20 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.brand = brand;
     }
 
-    public String getShort_description() {
-        return short_description;
+    public String getShortDescription() {
+        return shortDescription;
     }
 
-    public void setShort_description(String short_description) {
-        this.short_description = short_description;
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
     }
 
-    public String getLong_description() {
-        return long_description;
+    public String getLongDescription() {
+        return longDescription;
     }
 
-    public void setLong_description(String long_description) {
-        this.long_description = long_description;
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 
     public List<CmsBtFeedInfoModel_Sku> getSkus() {
@@ -182,8 +182,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
         attribute.put("weight", this.weight);
-        attribute.put("short_description", this.short_description);
-        attribute.put("long_description", this.long_description);
+        attribute.put("shortDescription", this.shortDescription);
+        attribute.put("longDescription", this.longDescription);
 
         // 增加了sku级别的价格属性的支持
         if (this.getSkus() != null && this.getSkus().size() > 0) {
@@ -252,8 +252,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         }
         cmsBtFeedInfoModel.setBrand(this.getBrand());
         cmsBtFeedInfoModel.setWeight(this.getWeight());
-        cmsBtFeedInfoModel.setShort_description(this.getShort_description());
-        cmsBtFeedInfoModel.setLong_description(this.getLong_description());
+        cmsBtFeedInfoModel.setshortDescription(this.getshortDescription());
+        cmsBtFeedInfoModel.setlongDescription(this.getlongDescription());
         cmsBtFeedInfoModel.setSkus(this.getSkus());
         cmsBtFeedInfoModel.setUpdFlg(0);
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);

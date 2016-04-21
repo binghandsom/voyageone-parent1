@@ -475,9 +475,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 产地
                 field.setOrigin(feed.getOrigin());
                 // 简短描述英文
-                field.setShortDesEn(feed.getShort_description());
+                field.setShortDesEn(feed.getShortDescription());
                 // 详情描述英文
-                field.setLongDesEn(feed.getLong_description());
+                field.setLongDesEn(feed.getLongDescription());
                 // 税号集货: 不要设置\
                 // jeff 2016/04 add start
                 // 税号个人
