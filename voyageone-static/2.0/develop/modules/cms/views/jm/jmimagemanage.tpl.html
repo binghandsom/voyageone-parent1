@@ -1,10 +1,22 @@
-<div class="wrapper-md" ng-init="$ctrl.initialize()">
-	<div class="vo_accordion vo_attr">
+<div class="wrapper-md" ng-init="ctrl.initialize()">
+	<uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+		<uib-accordion-group is-open="ctrl.status.open">
+			<uib-accordion-heading>
+				<i class="glyphicon glyphicon-th"></i>&nbsp;{{'TXT_IMAGE_MANAGER' | translate}}
+				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': ctrl.status.open, 'glyphicon-menu-down': !ctrl.status.open}"></i>
+			</uib-accordion-heading>
+<!--	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="glyphicon glyphicon-th"></i>&nbsp;{{'TXT_IMAGE_MANAGER' | translate}}</h4>
-				</div>
+					<h4 class="panel-title">
+						<a href="" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading">
+							<i class="glyphicon glyphicon-th"></i>&nbsp;{{'TXT_IMAGE_MANAGER' | translate}}
+							<i class="pull-right glyphicon glyphicon-menu-down ng-scope glyphicon-menu-up" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
+						</a>
+					</h4>
+				</div>-->
+				<!------------search----------->
 				<div class="container-fluid m-t-xs m-b-xs">
 					<div class="col-sm-12">
 						<div class="col-sm-4">
@@ -13,13 +25,13 @@
 									<label class="col-sm-3 control-label" translate="TXT_STATUS"></label>
 									<div class="col-sm-8">
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="0" ng-model="$ctrl.searchInfo.synFlgList[0]">
+											<input type="checkbox" value="0" ng-model="ctrl.searchInfo.synFlgList[0]">
 											<span class="fa fa-check"></span>&nbsp;{{'TXT_WAITING_UPLOAD' | translate}}</label>
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="1" ng-model="$ctrl.searchInfo.synFlgList[1]">
+											<input type="checkbox" value="1" ng-model="ctrl.searchInfo.synFlgList[1]">
 											<span class="fa fa-check"></span>&nbsp;{{'TXT_UPLOAD_SUCCESS' | translate}}</label>
 										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="2" ng-model="$ctrl.searchInfo.synFlgList[2]">
+											<input type="checkbox" value="2" ng-model="ctrl.searchInfo.synFlgList[2]">
 											<span class="fa fa-check"></span>&nbsp;{{'TXT_UPLOAD_FAILED' | translate}}</label>
 									</div>
 								</div>
@@ -27,17 +39,17 @@
 									<label class="col-sm-3 control-label" translate="TXT_UPDATE_TIME"></label>
 									<div class="col-sm-8 form-inline">
 										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" uib-datepicker-popup ng-model="$ctrl.searchInfo.beginModified"
-												   max-date="$ctrl.searchInfo.endModified" date-model-format="yyyy-MM-dd" is-open="$ctrl.datePicker1" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.beginModified"
+												   max-date="ctrl.searchInfo.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="$ctrl.datePicker1 = !$ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>&nbsp;~&nbsp;
 										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" uib-datepicker-popup ng-model="$ctrl.searchInfo.endModified"
-												   min-date="$ctrl.searchInfo.beginModified" date-model-format="yyyy-MM-dd" is-open="$ctrl.datePicker2" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.endModified"
+												   min-date="ctrl.searchInfo.beginModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="$ctrl.datePicker2 = !$ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>
 									</div>
@@ -49,13 +61,13 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ng-model="$ctrl.searchInfo.brandName">
+										<input type="text" class="form-control" ng-model="ctrl.searchInfo.brandName">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_PRODUCT_TYPE"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ng-model="$ctrl.searchInfo.productType">
+										<input type="text" class="form-control" ng-model="ctrl.searchInfo.productType">
 									</div>
 								</div>
 							</div>
@@ -65,13 +77,13 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_SIZE_TYPE"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ng-model="$ctrl.searchInfo.sizeType">
+										<input type="text" class="form-control" ng-model="ctrl.searchInfo.sizeType">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_DATA_TYPE"></label>
 									<div class="col-sm-8">
-										<select class="form-control" ng-model="$ctrl.searchInfo.dataType">
+										<select class="form-control" ng-model="ctrl.searchInfo.dataType">
 											<option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 											<option value="3">&nbsp;{{'TXT_SPECIAL_DESCRIPTION' | translate}}</option>
 											<option value="4">&nbsp;{{'TXT_BRAND_STORY' | translate}}</option>
@@ -84,17 +96,21 @@
 						</div>
 						<div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
 							<div class="form-horizontal form-inline">
-								<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
-								<button class="btn btn-vo" ng-click="$ctrl.initialize()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+								<button class="btn btn-vo" ng-click="ctrl.initialize()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 								<button class="btn btn-success" ng-click="openJmPromotionDefaultSetting()"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'BTN_SET_DEFAULT_VALUE' | translate}}</button>
-								<button class="btn btn-success" ng-click="$ctrl.loadJmMasterBrand()"><i class="glyphicon glyphicon-cog"></i>&nbsp;同步聚美品牌</button>
+								<button class="btn btn-success" ng-click="ctrl.loadJmMasterBrand()"><i class="glyphicon glyphicon-cog"></i>&nbsp;同步聚美品牌</button>
 							</div><!-- .form-inline -->
 						</div>
 					</div>
 				</div>
-			</div>
+     </uib-accordion-group>
+	</uib-accordion>
+<!--			</div>
 		</div>
-	</div>
+	</div>-->
+
+	<!------------------------------------------------------main table data------------------------------------------------------------>
 	<div class="box">
 		<div class="box-body">
 			<div class="table-responsive">
@@ -115,8 +131,8 @@
 						<th class="text-center mfb-x" translate="TXT_ACTION"></th>
 					</tr>
 					</thead>
-					<tbody ng-if="$ctrl.imageDataList.length">
-					<tr ng-repeat="imageData in $ctrl.imageDataList">
+					<tbody ng-if="ctrl.imageDataList.length">
+					<tr ng-repeat="imageData in ctrl.imageDataList">
 						<td class="text-center" ng-bind="imageData.id"></td>
 						<td>
 							<span class="label label-yellow-new" ng-if="imageData.synFlg == '0'">&nbsp;{{'TXT_WAITING_UPLOAD' | translate}}&nbsp;</span>
@@ -138,19 +154,19 @@
 						<td ng-bind="imageData.modified"></td>
 						<td class="text-left" ng-bind="imageData.errorMessage"></td>
 						<td class="text-center" ng-controller="popupCtrl">
-							<button title="重刷" class="btn btn-success btn-xs" ng-click="$ctrl.reUpload(imageData)" ng-disabled="imageData.value1 == ''"><i class="fa fa-refresh"></i></button>
-							<button title="保存" class="btn btn-vo btn-xs" ng-click="$ctrl.saveImage(imageData)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-							<button title="追加" class="btn btn-success btn-xs" ng-click="$ctrl.openImage(imageData, openImageSetting)"><i class="fa fa-plus"></i></button>
-							<button title="删除" class="btn btn-danger btn-xs" ng-click="$ctrl.deleteImage(imageData)" ng-disabled="imageData.imageIndex == 1"><i class="fa  fa-trash-o"></i></button>
+							<button title="重刷" class="btn btn-success btn-xs" ng-click="ctrl.reUpload(imageData)" ng-disabled="imageData.value1 == ''"><i class="fa fa-refresh"></i></button>
+							<button title="保存" class="btn btn-vo btn-xs" ng-click="ctrl.saveImage(imageData)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+							<button title="追加" class="btn btn-success btn-xs" ng-click="ctrl.openImage(imageData, openImageSetting)"><i class="fa fa-plus"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.deleteImage(imageData)" ng-disabled="imageData.imageIndex == 1"><i class="fa  fa-trash-o"></i></button>
 						</td>
 					</tr>
 					</tbody>
 				</table>
-				<div if-no-rows="$ctrl.imageDataList.length" ></div>
+				<div if-no-rows="ctrl.imageDataList.length" ></div>
 			</div>
 		</div><!-- /.box-body -->
 		<div class="m-t-xs">
-			<vpagination config="$ctrl.imageDataPageOption"></vpagination>
+			<vpagination config="ctrl.imageDataPageOption"></vpagination>
 		</div>
 	</div>
 </div><!-- end .wrapper-md -->

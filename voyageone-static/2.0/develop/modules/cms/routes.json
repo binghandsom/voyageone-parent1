@@ -18,7 +18,7 @@
     "hash": "/promotion/task",
     "templateUrl": "views/promotion/task/index.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/index.ctl",
-    "controller": "taskIndexController as $ctrl"
+    "controller": "taskIndexController as ctrl"
   },
   "promotion_task_price": {
     "url": "/promotion/task/price/",
@@ -31,28 +31,28 @@
     "hash": "/promotion/task/beat/:task_id",
     "templateUrl": "views/promotion/task/beat.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/beat.ctl",
-    "controller": "taskBeatController as $ctrl"
+    "controller": "taskBeatController as ctrl"
   },
   "promotion_task_stock_detail": {
     "url": "/promotion/task_stock/",
     "hash": "/promotion/task_stock/:task_id",
     "templateUrl": "views/promotion/task/stock.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stock.ctl",
-    "controller": "taskStockController as $ctrl"
+    "controller": "taskStockController as ctrl"
   },
   "promotion_task_stock_increment": {
     "url": "/promotion/task_stock_increment/",
     "hash": "/promotion/task_stock_increment/:task_id",
     "templateUrl": "views/promotion/task/stockIncrement.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrement.ctl",
-    "controller": "taskStockIncrementController as $ctrl"
+    "controller": "taskStockIncrementController as ctrl"
   },
   "promotion_task_stock_increment_detail": {
     "url": "/promotion/task_stock_increment_detail/",
     "hash": "/promotion/task_stock_increment_detail/:sub_task_id",
     "templateUrl": "views/promotion/task/stockIncrementDetail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrementDetail.ctl",
-    "controller": "taskStockIncrementDetailController as $ctrl"
+    "controller": "taskStockIncrementDetailController as ctrl"
   },
   "search_advance": {
     "hash": "/search/advance",
@@ -91,25 +91,25 @@
     "hash": "/mapping/feed",
     "templateUrl": "views/mapping/feed/list.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/list.ctl",
-    "controller": "feedMappingController as $ctrl"
+    "controller": "feedMappingController as ctrl"
   },
   "mapping_feed_prop": {
     "hash": "/mapping/feed/:params*",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
-    "controller": "feedPropMappingController as $ctrl"
+    "controller": "feedPropMappingController as ctrl"
   },
   "mapping_platform_list": {
     "hash": "/mapping/platform",
     "templateUrl": "views/mapping/platform/list.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/platform/list.ctl",
-    "controller": "platformMappingController as $ctrl"
+    "controller": "platformMappingController as ctrl"
   },
   "mapping_platform_prop": {
     "hash": "/mapping/platform/:cartId/:mainCategoryId",
     "templateUrl": "views/mapping/platform/prop.list.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/platform/prop.list.ctl",
-    "controller": "platformPropMappingController as $ctrl"
+    "controller": "platformPropMappingController as ctrl"
   },
   "mapping_dict_index": {
     "hash": "/mapping/dictionary",
@@ -203,7 +203,7 @@
     "hash": "/jm/image_manage",
     "templateUrl": "views/jm/jmimagemanage.tpl.html",
     "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl",
-    "controller": "jmImageManageController as $ctrl"
+    "controller": "jmImageManageController as ctrl"
   },
   "system_channel_list": {
     "hash": "/system/channel/index",

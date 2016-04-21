@@ -4,11 +4,13 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -47,6 +49,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private ProductPublishDao productPublishDao;
     @Autowired
     private PromotionDetailService promotionDetailService;
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
@@ -100,7 +104,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
                 CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
-                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
+                // tom 获取feed info的数据 START
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, cmsBtProductModel.getFields().getCode());
+                // tom 获取feed info的数据 END
+                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, feedInfo);
                 if (filtProductsByPlatform(sxProductBean)) {
                     sxProductBeans.add(sxProductBean);
                     if (productPlatform.getIsMain()) {
