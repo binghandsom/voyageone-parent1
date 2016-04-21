@@ -1,9 +1,8 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.dao.MqMsgBackDao;
-import com.voyageone.common.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -25,9 +24,6 @@ public class MqResumeService extends BaseTaskService {
     @Autowired
     private MqSender sender;
 
-    @Autowired
-    private MqMsgBackDao msgBackDao;
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.COM;
@@ -41,7 +37,7 @@ public class MqResumeService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // get data from db
-        msgBackDao.selectBatchMessage().forEach(message->{
+        sender.getBackMessageTop100().forEach(message->{
             MqRoutingKey routingKey = MqRoutingKey.valueOf((String)message.get("routingKey"));
             String messageMapStr = (String)message.get("messageMap");
 
@@ -53,7 +49,7 @@ public class MqResumeService extends BaseTaskService {
                     JsonUtil.jsonToMap(messageMapStr));
 
             // update db data flag
-            msgBackDao.updateBatchMessageStatus((int)message.get("id"));
+            sender.updateBackMessageFlag((int) message.get("id"));
         });
     }
 }

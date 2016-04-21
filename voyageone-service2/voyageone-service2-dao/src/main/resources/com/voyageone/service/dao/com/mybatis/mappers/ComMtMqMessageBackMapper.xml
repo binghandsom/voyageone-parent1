@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <select id="com_mt_mq_message_back_select100" resultType="Map">
+        select
+        id,
+        routing_key routingKey,
+        message_map messageMap
+        from
+        Synship.com_mt_mq_message_back
+        where flag=0
+        limit 100
+    </select>
+
+    <insert id="com_mt_mq_message_back_insert" parameterType="Map">
+        insert into Synship.com_mt_mq_message_back
+        (routing_key, message_map, flag, created, modified)
+        values
+        (#{routingKey}, #{messageMap}, 0, now(), now())
+    </insert>
+
+    <update id="com_mt_mq_message_back_update_flag" parameterType="Map">
+        update Synship.com_mt_mq_message_back
+        set flag=1, modified=now()
+        where flag=0 and id=#{id}
+    </update>
+
+</mapper>
