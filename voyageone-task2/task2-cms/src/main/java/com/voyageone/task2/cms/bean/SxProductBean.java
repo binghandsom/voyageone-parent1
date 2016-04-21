@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.bean;
 
 
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
@@ -10,10 +11,12 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Pla
 public class SxProductBean {
     private CmsBtProductModel cmsBtProductModel;
     private CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform;
+    private CmsBtFeedInfoModel cmsBtFeedInfoModel;
 
-    public SxProductBean(CmsBtProductModel cmsBtProductModel, CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform) {
+    public SxProductBean(CmsBtProductModel cmsBtProductModel, CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform, CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         this.cmsBtProductModelGroupPlatform = cmsBtProductModelGroupPlatform;
         this.cmsBtProductModel = cmsBtProductModel;
+        this.cmsBtFeedInfoModel = cmsBtFeedInfoModel;
     }
 
     public CmsBtProductModel getCmsBtProductModel() {
@@ -30,5 +33,13 @@ public class SxProductBean {
 
     public void setCmsBtProductModelGroupPlatform(CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform) {
         this.cmsBtProductModelGroupPlatform = cmsBtProductModelGroupPlatform;
+    }
+
+    public CmsBtFeedInfoModel getCmsBtFeedInfoModel() {
+        return cmsBtFeedInfoModel;
+    }
+
+    public void setCmsBtFeedInfoModel(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
+        this.cmsBtFeedInfoModel = cmsBtFeedInfoModel;
     }
 }
