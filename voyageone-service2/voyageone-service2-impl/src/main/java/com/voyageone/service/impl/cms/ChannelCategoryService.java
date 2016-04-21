@@ -4,8 +4,8 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.cms.CmsBtChannelCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
+import com.voyageone.service.daoext.cms.CmsBtChannelCategoryDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtChannelCategoryModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ChannelCategoryService extends BaseService {
 
     @Autowired
-    private CmsBtChannelCategoryDao cmsBtChannelCategoryDao;
+    private CmsBtChannelCategoryDaoExt cmsBtChannelCategoryDaoExt;
 
     @Autowired
     private CmsMtCategoryTreeDao cmsMtCategoryTreeDao;
@@ -33,7 +33,7 @@ public class ChannelCategoryService extends BaseService {
 
         List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
         for (CmsBtChannelCategoryModel mapping : mappings) {
-            String catId = mapping.getCatId();
+            String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel model = cmsMtCategoryTreeDao.selectByCatId(catId);
             if (model != null) {
                 result.add(model);
@@ -53,7 +53,7 @@ public class ChannelCategoryService extends BaseService {
 
         List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
         for (CmsBtChannelCategoryModel mapping : mappings) {
-            String catId = mapping.getCatId();
+            String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
 
             if (category.getIsParent() == 1) {
@@ -89,7 +89,7 @@ public class ChannelCategoryService extends BaseService {
 
         List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
         for (CmsBtChannelCategoryModel mapping : mappings) {
-            String catId = mapping.getCatId();
+            String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
 
             if (category.getIsParent() == 1) {
@@ -110,7 +110,7 @@ public class ChannelCategoryService extends BaseService {
      * 取得Mapping定义 根据channelId
      */
     public List<CmsBtChannelCategoryModel> getByChannelId(String channelId) {
-        return cmsBtChannelCategoryDao.selectbyChannelId(channelId);
+        return cmsBtChannelCategoryDaoExt.selectbyChannelId(channelId);
     }
 
     /**
@@ -118,7 +118,7 @@ public class ChannelCategoryService extends BaseService {
      */
     @VOTransactional
     public void save(CmsBtChannelCategoryModel model) {
-        cmsBtChannelCategoryDao.insert(model);
+        cmsBtChannelCategoryDaoExt.insert(model);
     }
 
     /**
@@ -126,6 +126,6 @@ public class ChannelCategoryService extends BaseService {
      */
     @VOTransactional
     public void saveWithList(List<CmsBtChannelCategoryModel> models) {
-        cmsBtChannelCategoryDao.insertWithList(models);
+        cmsBtChannelCategoryDaoExt.insertWithList(models);
     }
 }

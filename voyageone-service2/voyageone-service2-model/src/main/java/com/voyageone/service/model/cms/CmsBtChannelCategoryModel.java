@@ -1,37 +1,54 @@
 package com.voyageone.service.model.cms;
 
-
 import com.voyageone.base.dao.mysql.BaseModel;
 
 public class CmsBtChannelCategoryModel extends BaseModel {
 
+    /**
+     * Channel ID
+     */
     private String channelId;
 
-    private String catId;
 
-    public CmsBtChannelCategoryModel(){
-    }
+    /**
+     * 一级Category ID
+     */
+    private String categoryId;
 
-    public CmsBtChannelCategoryModel(String channelId, String catId, String modifier){
-        this.channelId = channelId;
-        this.catId = catId;
-        this.setModifier(modifier);
-        this.setCreater(modifier);
-    }
 
+    /**
+     * Channel ID
+     */
     public String getChannelId() {
-        return channelId;
+
+        return this.channelId;
     }
 
     public void setChannelId(String channelId) {
-        this.channelId = channelId;
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
+        }
+
     }
 
-    public String getCatId() {
-        return catId;
+
+    /**
+     * 一级Category ID
+     */
+    public String getCategoryId() {
+
+        return this.categoryId;
     }
 
-    public void setCatId(String catId) {
-        this.catId = catId;
+    public void setCategoryId(String categoryId) {
+        if (categoryId != null) {
+            this.categoryId = categoryId;
+        } else {
+            this.categoryId = "";
+        }
+
     }
+
 }

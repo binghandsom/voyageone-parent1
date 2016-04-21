@@ -34,8 +34,12 @@ public class CmsBtChannelCategoryServiceTest {
     @Test
     public void testCmsBtCategoryMappingDaoInsert() throws Exception {
         List<CmsBtChannelCategoryModel> lst = new ArrayList<>();
-        lst.add(new CmsBtChannelCategoryModel("001", "122684003", "123"));
-        lst.add(new CmsBtChannelCategoryModel("001", "50012029", "123"));
+//        lst.add(new CmsBtChannelCategoryModel("001", "50012029", "123"));
+        CmsBtChannelCategoryModel obj = new CmsBtChannelCategoryModel();
+        obj.setCategoryId("112233");
+        obj.setChannelId("445566");
+        lst.add(obj);
+
         cmsBtChannelCategoryService.saveWithList(lst);
     }
 }

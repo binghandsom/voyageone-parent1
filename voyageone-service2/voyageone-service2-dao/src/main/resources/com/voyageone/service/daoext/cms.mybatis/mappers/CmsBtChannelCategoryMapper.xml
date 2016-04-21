@@ -6,7 +6,7 @@
             parameterType="com.voyageone.service.model.cms.CmsBtChannelCategoryModel" >
         select
           channel_id channelId,
-          category_id catId,
+        category_id categoryId,
           created,
           creater,
           modified,
@@ -16,8 +16,8 @@
             <if test="channelId != null and channelId !=''">
                 channel_id = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="catId != null and catId !=''">
-                category_id = #{catId,jdbcType=VARCHAR}
+            <if test="categoryId != null and categoryId !=''">
+                category_id = #{categoryId,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -27,7 +27,7 @@
             <if test="channelId != null" >
                 channel_id,
             </if>
-            <if test="catId != null" >
+            <if test="categoryId != null">
                 category_id,
             </if>
                 created,
@@ -43,8 +43,8 @@
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="catId != null" >
-                #{catId,jdbcType=VARCHAR},
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=VARCHAR},
             </if>
                 now(),
             <if test="creater != null" >

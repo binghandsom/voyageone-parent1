@@ -1,27 +1,22 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtChannelCategoryModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
-public class CmsBtChannelCategoryDao extends ServiceBaseDao {
+public interface CmsBtChannelCategoryDao {
+    List<CmsBtChannelCategoryModel> selectList(Map<String, Object> map);
 
-    public List<CmsBtChannelCategoryModel> selectbyChannelId(String channelId) {
-        CmsBtChannelCategoryModel model = new CmsBtChannelCategoryModel();
-        model.setChannelId(channelId);
-        return selectList("select_cms_bt_channel_category", model);
-    }
+    CmsBtChannelCategoryModel selectOne(Map<String, Object> map);
 
-    public void insert(CmsBtChannelCategoryModel model) {
-        insert("insert_cms_bt_channel_category", model);
-    }
+    CmsBtChannelCategoryModel select(long id);
 
-    public void insertWithList(List<CmsBtChannelCategoryModel> models) {
-        models.forEach(s -> {
-            insert(s);
-        });
-    }
+    int insert(CmsBtChannelCategoryModel entity);
+
+    int update(CmsBtChannelCategoryModel entity);
+
+    int delete(long id);
 }
