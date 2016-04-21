@@ -47,18 +47,33 @@ public class FeedCategoryTreeService extends BaseService {
 
     /**
      * 获取channel下所有的类目树
+     *
      * @param channelId channelId
      * @return channel下所有的类目树
      */
-    public List<CmsMtFeedCategoryTreeModel> getFeedAllCategory(String channelId){
+    public List<CmsMtFeedCategoryTreeModel> getFeedAllCategoryTree(String channelId) {
         return cmsMtFeedCategoryTreeDao.selectFeedAllCategory(channelId);
+    }
+
+    /**
+     * 取出该channel下所有的类目 以list方式取得（拍平）
+     * @param channelId channelId
+     * @return channel下所有的类目list
+     */
+    public List<CmsMtFeedCategoryTreeModel> getFeedAllCategoryList(String channelId) {
+        List<CmsMtFeedCategoryTreeModel> result = new ArrayList<>();
+        List<CmsMtFeedCategoryTreeModel> topCategorys = getFeedAllCategoryTree(channelId);
+        topCategorys.forEach(item -> {
+            result.addAll(treeToList(item));
+        });
+        return result;
     }
 
     /**
      * 对一个channelid下的类目追加一个Category
      *
-     * @param channelId 渠道
-     * @param categoryPath  类目
+     * @param channelId    渠道
+     * @param categoryPath 类目
      */
     public void addCategory(String channelId, String categoryPath, String modifier) {
         List<String> categorys = Arrays.asList(categoryPath.split("-"));
@@ -81,7 +96,7 @@ public class FeedCategoryTreeService extends BaseService {
 //        if (addCategory(categoryTree, category) != null) {
 //            return;
 //        }
-        if(addSubCategory(categoryTree, categoryPath)){
+        if (addSubCategory(categoryTree, categoryPath)) {
             categoryTree.setModified(DateTimeUtil.getNow());
             categoryTree.setModifier(modifier);
             cmsMtFeedCategoryTreeDao.update(categoryTree);
@@ -123,8 +138,9 @@ public class FeedCategoryTreeService extends BaseService {
         }
         return chgFlg;
     }
+
     /**
-     * 根据一级类目获取一级类目下所有的类目
+     * 根据一级类目获取一级类目下所有的类目树
      *
      * @param channelId 渠道ID
      * @return CmsMtFeedCategoryTreeModel
@@ -148,6 +164,21 @@ public class FeedCategoryTreeService extends BaseService {
             }
         }
         return null;
+    }
+
+    /**
+     * 一棵树转成list（拍平）
+     * @param cmsMtFeedCategoryTree 一棵树
+     * @return 类目list
+     */
+    public List<CmsMtFeedCategoryTreeModel> treeToList(CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTree){
+        List<CmsMtFeedCategoryTreeModel> result = new ArrayList<>();
+        result.add(cmsMtFeedCategoryTree);
+        cmsMtFeedCategoryTree.getChildren().forEach(item -> {
+            result.addAll(treeToList(item));
+        });
+        cmsMtFeedCategoryTree.setChildren(null);
+        return result;
     }
 
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="cms_bt_size_map_select" parameterType="Map" resultType="com.voyageone.service.model.cms.CmsBtSizeMapModel">
+        SELECT
+        id,
+        size_map_group_id as sizeMapGroupId,
+        originalSize,
+        adjustSize,
+        active,
+        creater,
+        created,
+        modifier,
+        modified
+        FROM voyageone_cms2.cms_bt_size_map
+        WHERE size_map_group_id = #{sizeMapGroupId}
+        <if test="originalSize != null" >
+            AND originalSize = #{originalSize}
+        </if>
+    </select>
+
+</mapper>

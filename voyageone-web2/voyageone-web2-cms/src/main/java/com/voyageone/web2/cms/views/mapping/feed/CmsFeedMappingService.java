@@ -10,7 +10,6 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Scope;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FeedCategoryBean;
