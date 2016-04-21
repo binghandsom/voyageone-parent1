@@ -18,7 +18,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
 import com.voyageone.service.impl.cms.CategoryTreeService;
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
+import com.voyageone.service.bean.cms.CommonPropActionDefBean;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -57,7 +57,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     @Autowired
     private CategoryTreeService categoryTreeService;
 
-    Map<String, CmsMtCommonPropActionDefModel> allDefModelsMap = new HashMap<>();
+    Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
 
     @Override
     public SubSystem getSubSystem() {
@@ -102,20 +102,20 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(CartEnums.Cart.TG.getId()));
 
-        List<CmsMtCommonPropActionDefModel> allDefModels = cmsMtCommonPropDao.selectActionModelList();
+        List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDao.selectActionModelList();
 
-        List<CmsMtCommonPropActionDefModel> removelist =new ArrayList<>();
+        List<CommonPropActionDefBean> removelist =new ArrayList<>();
 
-        List<CmsMtCommonPropActionDefModel> addList =new ArrayList<>();
+        List<CommonPropActionDefBean> addList =new ArrayList<>();
 
-        List<CmsMtCommonPropActionDefModel> updateList =new ArrayList<>();
+        List<CommonPropActionDefBean> updateList =new ArrayList<>();
 
-        List<CmsMtCommonPropActionDefModel> comPropList =new ArrayList<>();
+        List<CommonPropActionDefBean> comPropList =new ArrayList<>();
 
         List<Field> comCategorySchema = new ArrayList<>();
 
         //先根据action type 分组
-        for (CmsMtCommonPropActionDefModel actionDefModel:allDefModels){
+        for (CommonPropActionDefBean actionDefModel:allDefModels){
 
             allDefModelsMap.put(actionDefModel.getPropId(),actionDefModel);
 
@@ -197,7 +197,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     }
 
                     //1. 先删除
-                    for (CmsMtCommonPropActionDefModel actionDefModel : removelist) {
+                    for (CommonPropActionDefBean actionDefModel : removelist) {
 
                         Field removeByIdField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
                         if (removeByIdField != null) {
@@ -234,7 +234,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
 
                     //4. 更新需要更新的 sub field
-                    for (CmsMtCommonPropActionDefModel actionDefModel : updateList) {
+                    for (CommonPropActionDefBean actionDefModel : updateList) {
 
                         Field updField = FieldUtil.getFieldById(masterFields, actionDefModel.getPlatformPropRefId());
 
@@ -286,7 +286,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     FieldUtil.removeFieldById(masterFields, "sku");
                     masterModel.setSku(sku);
 
-                    for (CmsMtCommonPropActionDefModel comModel:comPropList){
+                    for (CommonPropActionDefBean comModel:comPropList){
                         Field comField = FieldUtil.getFieldById(masterFields,comModel.getPropId());
                         comCategorySchema.add(comField);
                         FieldUtil.removeFieldById(masterFields,comModel.getPropId());
@@ -348,15 +348,15 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         });
     }
 
-    private void setValueType(CmsMtCommonPropActionDefModel actionDefModel, Field updField) {
+    private void setValueType(CommonPropActionDefBean actionDefModel, Field updField) {
         if (!StringUtil.isEmpty(actionDefModel.getValueType())){
             FieldValueTypeEnum valueType = FieldValueTypeEnum.getEnum(actionDefModel.getValueType());
             updField.setFieldValueType(valueType);
         }
     }
 
-    private void addField(List<CmsMtCommonPropActionDefModel> addList, List<Field> masterFields, List<Field> removeFields) {
-        for (CmsMtCommonPropActionDefModel actionDefModel : addList) {
+    private void addField(List<CommonPropActionDefBean> addList, List<Field> masterFields, List<Field> removeFields) {
+        for (CommonPropActionDefBean actionDefModel : addList) {
 
             Field isRmField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
 
@@ -386,7 +386,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 if (parentField == null){
 
-                    CmsMtCommonPropActionDefModel pModel = allDefModelsMap.get(actionDefModel.getParentPropId());
+                    CommonPropActionDefBean pModel = allDefModelsMap.get(actionDefModel.getParentPropId());
 
                     FieldTypeEnum pType = FieldTypeEnum.getEnum(pModel.getPropType());
 
@@ -421,7 +421,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         }
     }
 
-    private void updateField(List<Field> masterFields, CmsMtCommonPropActionDefModel actionDefModel, Field updField) {
+    private void updateField(List<Field> masterFields, CommonPropActionDefBean actionDefModel, Field updField) {
 
 
         updField.setId(actionDefModel.getPropId());
@@ -434,7 +434,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         FieldUtil.renameDependFieldId(updField,actionDefModel.getPropId(),actionDefModel.getPlatformPropRefId(),masterFields);
     }
 
-    private void setFieldDefaultValue(CmsMtCommonPropActionDefModel defModel, Field field){
+    private void setFieldDefaultValue(CommonPropActionDefBean defModel, Field field){
 
         FieldTypeEnum type = FieldTypeEnum.getEnum(defModel.getPropType());
 
