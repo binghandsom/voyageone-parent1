@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.service.bean.cms.Condition;
+import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
@@ -29,10 +30,6 @@ import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -68,7 +65,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
 	@Autowired
     MainPropDao mainPropDao;
-
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
     @Autowired
@@ -852,8 +850,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 设置group(现有的不变, 有增加的就增加)
-//            CmsBtProductModel_Group group = doSetGroup(feed, product);
-//            product.setGroups(group);
+            CmsBtProductGroupModel group = doSetGroup(feed, product);
+            product.setGroups(group);
 
             // TOM 20160413 这是一个错误, 这段话不应该要的 START
 //            // 更新状态, 准备重新上传到各个平台
@@ -866,90 +864,84 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             return product;
         }
 
-//		/**
-//         * 设置group
-//         * @param feed 品牌方提供的数据
-//         * @param product 商品数据(新建商品的场合应该是一个空的或者是一个size为0的group, 更新商品的时候, group里的东西保留, 只增加)
-//         * @return 设置好了的group
-//         */
-//        private CmsBtProductModel_Group doSetGroup(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
-//            CmsBtProductModel_Group group = product.getGroups();
-//            if (group == null) {
-//                group = new CmsBtProductModel_Group();
-//            }
-//
-//            // 获取当前channel, 有多少个platform
-//            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
-//            if (typeChannelBeanList == null) {
-//                return null;
-//            }
-//
-//            List<CmsBtProductModel_Group_Platform> platformList = group.getPlatforms();
-//            if (platformList == null) {
-//                platformList = new ArrayList<>();
-//            }
-//            // 循环一下
-//            for (TypeChannelBean shop : typeChannelBeanList) {
-//                // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
-//                boolean blnFound = false;
-//                for (CmsBtProductModel_Group_Platform platformCheck : platformList) {
-//                    if (platformCheck.getCartId() == Integer.parseInt(shop.getValue())) {
-//                        blnFound = true;
-//                    }
-//                }
-//                if (blnFound) {
-//                    continue;
-//                }
-//
-//                // 创建一个platform
-//                CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-//
-//                // cart id
-//                platform.setCartId(Integer.parseInt(shop.getValue()));
-//
-//                // 获取group id
-//                long groupId;
-//                groupId = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
-//
-//                // group id
-//                // 看看同一个model里是否已经有数据在cms里存在的
-//                //   如果已经有存在的话: 直接用哪个group id
-//                //   如果没有的话: 取一个最大的 + 1
-//                if (groupId == -1) {
-//                    // 获取唯一编号
-//                    platform.setGroupId(
-//                            commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID)
-//                    );
-//
-//                    // is Main
-//                    platform.setIsMain(true);
-//                } else {
-//                    platform.setGroupId(groupId);
-//
-//                    // is Main
-//                    platform.setIsMain(false);
-//                }
-//
-//                // num iid
-//                platform.setNumIId(""); // 因为没有上新, 所以不会有值
-//
-//                // display order
-//                platform.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
-//
-//                // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-//                platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-//                // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
-//                platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
-//
-//                // qty
-//                platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的
-//
-//                platformList.add(platform);
-//            }
-//            group.setPlatforms(platformList);
-//
-//            return group;
-//        }
+		/**
+         * 设置group
+         * @param feed 品牌方提供的数据
+         * @param product 商品数据(新建商品的场合应该是一个空的或者是一个size为0的group, 更新商品的时候, group里的东西保留, 只增加)
+         * @return 设置好了的group
+         */
+        private CmsBtProductGroupModel doSetGroup(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
+            CmsBtProductGroupModel group = product.getGroups();
+            if (group == null) {
+                group = new CmsBtProductGroupModel();
+            }
+
+            // 获取当前channel, 有多少个platform
+            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
+            if (typeChannelBeanList == null) {
+                return null;
+            }
+
+            List<CmsBtProductGroupModel> platformList = new ArrayList<>();
+
+            // 循环一下
+            for (TypeChannelBean shop : typeChannelBeanList) {
+                // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
+                boolean blnFound = false;
+                for (CmsBtProductGroupModel platformCheck : platformList) {
+                    if (platformCheck.getCartId() == Integer.parseInt(shop.getValue())) {
+                        blnFound = true;
+                    }
+                }
+                if (blnFound) {
+                    continue;
+                }
+
+                // 创建一个platform
+                CmsBtProductGroupModel platform = new CmsBtProductGroupModel();
+
+                // cart id
+                platform.setCartId(Integer.parseInt(shop.getValue()));
+
+                // 获取group id
+                long groupId = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+
+                // group id
+                // 看看同一个model里是否已经有数据在cms里存在的
+                //   如果已经有存在的话: 直接用哪个group id
+                //   如果没有的话: 取一个最大的 + 1
+                if (groupId == -1) {
+                    // 获取唯一编号
+                    platform.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+
+                    // is Main
+                    platform.setIsMain(true);
+                } else {
+                    platform.setGroupId(groupId);
+
+                    // is Main
+                    platform.setIsMain(false);
+                }
+
+                // num iid
+                platform.setNumIId(""); // 因为没有上新, 所以不会有值
+
+                // display order
+                platform.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
+
+                // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
+                platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+                // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
+                platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
+
+                // qty
+                platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的
+
+                platformList.add(platform);
+            }
+            cmsBtProductGroupDao.insertWithList(platformList);
+            return null;
+        }
 
         /**
          * 根据model, 到product表中去查找, 看看这家店里, 是否有相同的model已经存在

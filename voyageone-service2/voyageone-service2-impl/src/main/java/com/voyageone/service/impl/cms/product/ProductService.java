@@ -25,6 +25,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -45,8 +46,6 @@ import java.util.*;
 @Service
 public class ProductService extends BaseService {
 
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired

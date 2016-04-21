@@ -177,13 +177,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
             // 判断新增商品还是更新商品
             // 主product的platform的numIID是否为空，空为新增，非空为更新
             // 判断是新增商品还是更新商品
-//            if (!StringUtils.isEmpty(mainProduct.getGroups().getPlatformByGroupId(groupId).getNumIId())) {
-//                // 更新商品
-//                // 调用京东商品更新API
-//            } else {
-//                // 新增商品
-//                // 调用京东商品增加API
-//            }
+            if (!StringUtils.isEmpty(mainProduct.getGroups().getNumIId())) {
+                // 更新商品
+                // 调用京东商品更新API
+            } else {
+                // 新增商品
+                // 调用京东商品增加API
+            }
 
             // 回写product表(设置京东返回的商品ID  wareid)
 
@@ -264,29 +264,29 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
             List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
-//            CmsBtProductModel_Group_Platform mainProductPlatform = null;
+            CmsBtProductGroupModel mainProductPlatform = null;
             SxProductBean mainSxProduct = null;
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
-//                CmsBtProductModel_Group_Platform productPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(groupId);
-//                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
-//                // 判断sxProductBean中是否含有要在该平台中上新的sku(有要上新的返回true，没有返回false)
-//                if (filtProductsByPlatform(sxProductBean)) {
-//                    sxProductBeans.add(sxProductBean);
-//                    // 设置该要上新商品的主平台
-//                    if (productPlatform.getIsMain()) {
-//                        mainProductModel = cmsBtProductModel;
-//                        mainProductPlatform = productPlatform;
-//                        mainSxProduct = sxProductBean;
-//                    }
-//                }
+                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
+                // 判断sxProductBean中是否含有要在该平台中上新的sku(有要上新的返回true，没有返回false)
+                if (filtProductsByPlatform(sxProductBean)) {
+                    sxProductBeans.add(sxProductBean);
+                    // 设置该要上新商品的主平台
+                    if (productPlatform.getIsMain()) {
+                        mainProductModel = cmsBtProductModel;
+                        mainProductPlatform = productPlatform;
+                        mainSxProduct = sxProductBean;
+                    }
+                }
             }
             // 主商品
             workload.setMainProduct(mainSxProduct);
 
             if (mainSxProduct != null) {
                 // 平台ID
-//                workload.setCart_id(mainProductPlatform.getCartId());
+                workload.setCart_id(mainProductPlatform.getCartId());
                 // 类目ID
                 workload.setCatId(mainProductModel.getCatId());
 
@@ -295,18 +295,18 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
                 workload.setUpJobParam(upJobParam);
 
                 // 判断是新增商品还是更新商品
-//                if (!StringUtils.isEmpty(mainProductPlatform.getNumIId())) {
-//                    // 更新商品
-//                    workload.setIsPublished(1);
-//                    workload.setNumId(mainProductPlatform.getNumIId());
-//                    upJobParam.setMethod(UpJobParamBean.METHOD_UPDATE);
-//                } else {
-//                    // 新增商品
-//                    workload.setIsPublished(0);
-//                    upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
-//                }
-//                // 商品ID
-//                workload.setProductId(mainProductPlatform.getProductId());
+                if (!StringUtils.isEmpty(mainProductPlatform.getNumIId())) {
+                    // 更新商品
+                    workload.setIsPublished(1);
+                    workload.setNumId(mainProductPlatform.getNumIId());
+                    upJobParam.setMethod(UpJobParamBean.METHOD_UPDATE);
+                } else {
+                    // 新增商品
+                    workload.setIsPublished(0);
+                    upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
+                }
+                // 商品ID
+                workload.setProductId(mainProductPlatform.getProductId());
             }
             // WorkLoad状态(0:JOB_INIT)
             workload.setWorkload_status(new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT));
@@ -324,9 +324,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
      */
     private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
         CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-//        CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
         List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
-//        int cartId = cmsBtProductModelGroupPlatform.getCartId();
+        int cartId = cmsBtProductModelGroupPlatform.getCartId();
 
         if (cmsBtProductModelSkus == null) {
             return false;
@@ -334,9 +334,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
 
         for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
             CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
-//            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
-//                productSkuIterator.remove();
-//            }
+            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
+                productSkuIterator.remove();
+            }
         }
 
         return !cmsBtProductModelSkus.isEmpty();

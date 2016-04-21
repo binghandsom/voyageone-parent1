@@ -8,6 +8,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -94,51 +95,51 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
-//            CmsBtProductModel_Group_Platform mainProductPlatform = null;
+            CmsBtProductGroupModel mainProductPlatform = null;
             SxProductBean mainSxProduct = null;
-//
-//            for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
-//                CmsBtProductModel_Group_Platform productPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(groupId);
-//                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
-//                if (filtProductsByPlatform(sxProductBean)) {
-//                    sxProductBeans.add(sxProductBean);
-//                    if (productPlatform.getIsMain()) {
-//                        mainProductModel = cmsBtProductModel;
-//                        mainProductPlatform = productPlatform;
-//                        mainSxProduct = sxProductBean;
-//                    }
-//                }
-//            }
+
+            for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
+                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
+                if (filtProductsByPlatform(sxProductBean)) {
+                    sxProductBeans.add(sxProductBean);
+                    if (productPlatform.getIsMain()) {
+                        mainProductModel = cmsBtProductModel;
+                        mainProductPlatform = productPlatform;
+                        mainSxProduct = sxProductBean;
+                    }
+                }
+            }
 
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 START
             if (mainSxProduct != null) {
-//                if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
-//                    if (!"23".equals(mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId().toString())) {
-//                        continue;
-//                    }
-//                }
+                if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
+                    if (!"23".equals(mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId().toString())) {
+                        continue;
+                    }
+                }
             }
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 END
 
             workload.setMainProduct(mainSxProduct);
 
             if (mainSxProduct != null) {
-//                workload.setCart_id(mainProductPlatform.getCartId());
-//                workload.setCatId(mainProductModel.getCatId());
-//
-//                UpJobParamBean upJobParam = new UpJobParamBean();
-//                upJobParam.setForceAdd(false);
-//                workload.setUpJobParam(upJobParam);
-//
-//                if (mainProductPlatform.getNumIId() != null && !"".equals(mainProductPlatform.getNumIId())) {
-//                    workload.setIsPublished(1);
-//                    workload.setNumId(mainProductPlatform.getNumIId());
-//                    upJobParam.setMethod(UpJobParamBean.METHOD_UPDATE);
-//                } else {
-//                    workload.setIsPublished(0);
-//                    upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
-//                }
-//                workload.setProductId(mainProductPlatform.getProductId());
+                workload.setCart_id(mainProductPlatform.getCartId());
+                workload.setCatId(mainProductModel.getCatId());
+
+                UpJobParamBean upJobParam = new UpJobParamBean();
+                upJobParam.setForceAdd(false);
+                workload.setUpJobParam(upJobParam);
+
+                if (mainProductPlatform.getNumIId() != null && !"".equals(mainProductPlatform.getNumIId())) {
+                    workload.setIsPublished(1);
+                    workload.setNumId(mainProductPlatform.getNumIId());
+                    upJobParam.setMethod(UpJobParamBean.METHOD_UPDATE);
+                } else {
+                    workload.setIsPublished(0);
+                    upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
+                }
+                workload.setProductId(mainProductPlatform.getProductId());
             }
             workload.setWorkload_status(new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT));
 
@@ -155,9 +156,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
      */
     private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
         CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-//        CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
         List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
-//        int cartId = cmsBtProductModelGroupPlatform.getCartId();
+        int cartId = cmsBtProductModelGroupPlatform.getCartId();
 
         if (cmsBtProductModelSkus == null) {
             return false;
@@ -165,9 +166,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
         for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
             CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
-//            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
-//                productSkuIterator.remove();
-//            }
+            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
+                productSkuIterator.remove();
+            }
         }
         return !cmsBtProductModelSkus.isEmpty();
     }
@@ -207,10 +208,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
 
                 assert mainCmsProductModel != null;
-//                CmsBtProductModel_Group_Platform mainProductPlatform = mainCmsProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
-//
-//                CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
-//                CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
+                CmsBtProductGroupModel mainProductPlatform = mainCmsProductModel.getGroups();
+
+                CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
+                CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
                 String instockTime = null, onSaleTime = null, publishTime = null;
 
@@ -218,21 +219,21 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     publishTime = DateTimeUtil.getNow();
                 }
 
-//                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-//                        && platformActive == CmsConstants.PlatformActive.Onsale) {
-//                    onSaleTime = DateTimeUtil.getNow();
-//                }
-//                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-//                        && platformActive == CmsConstants.PlatformActive.Instock) {
-//                    instockTime = DateTimeUtil.getNow();
-//                }
-//
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
+                        && platformActive == CmsConstants.PlatformActive.Onsale) {
+                    onSaleTime = DateTimeUtil.getNow();
+                }
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
+                        && platformActive == CmsConstants.PlatformActive.Instock) {
+                    instockTime = DateTimeUtil.getNow();
+                }
+
                 CmsConstants.PlatformStatus newPlatformStatus = null;
-//                if (platformActive == CmsConstants.PlatformActive.Instock) {
-//                    newPlatformStatus = CmsConstants.PlatformStatus.Instock;
-//                } else {
-//                    newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
-//                }
+                if (platformActive == CmsConstants.PlatformActive.Instock) {
+                    newPlatformStatus = CmsConstants.PlatformStatus.Instock;
+                } else {
+                    newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
+                }
                 productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
 

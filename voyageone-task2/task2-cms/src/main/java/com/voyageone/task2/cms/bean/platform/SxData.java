@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.bean.platform;
 
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -20,7 +21,7 @@ public class SxData {
 	private int publishStatus;										// 上新状态
 
 	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表, 里面虽然有platform和sku信息(但是里面的内容是包含其他group的数据的)
-//	private List<CmsBtProductModel_Group_Platform> platformList;	// 只包含当前group中, 允许使用的platform信息
+	private List<CmsBtProductGroupModel> platformList;	// 只包含当前group中, 允许使用的platform信息
 	private List<CmsBtProductModel_Sku> skuList;					// 只包含当前group中, 允许使用的sku信息
 	private Map<String, Integer> qtyList;							// 只包含当前group中, 允许使用的库存信息
 
@@ -98,13 +99,13 @@ public class SxData {
 		this.productList = productList;
 	}
 
-//	public List<CmsBtProductModel_Group_Platform> getPlatformList() {
-//		return platformList;
-//	}
-//
-//	public void setPlatformList(List<CmsBtProductModel_Group_Platform> platformList) {
-//		this.platformList = platformList;
-//	}
+	public List<CmsBtProductGroupModel> getPlatformList() {
+		return platformList;
+	}
+
+	public void setPlatformList(List<CmsBtProductGroupModel> platformList) {
+		this.platformList = platformList;
+	}
 
 	public List<CmsBtProductModel_Sku> getSkuList() {
 		return skuList;
