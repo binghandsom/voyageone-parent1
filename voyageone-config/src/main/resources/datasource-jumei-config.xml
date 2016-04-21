@@ -47,7 +47,7 @@
     <bean id="updateTemplateDaoScan"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCamel"/>
         <!--property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAdmin"/ -->
-        <property name="basePackage" value="com.voyageone.service.dao.jumei,
+        <property name="basePackage" value="com.voyageone.service.dao.jumei,com.voyageone.service.dao.cms,
                                           com.voyageone.service.daoext.jumei"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>

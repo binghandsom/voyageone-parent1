@@ -16,17 +16,17 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
-import com.voyageone.service.dao.cms.CmsBtChannelConfigDao;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtChannelConfigModel;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import net.minidev.json.JSONObject;
@@ -69,7 +69,7 @@ public class ProductService extends BaseService {
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
-    private CmsBtChannelConfigDao cmsBtChannelConfigDao;
+    private CmsMtChannelConfigDao cmsMtChannelConfigDao;
 
     /**
      * 获取商品 根据ID获
@@ -809,7 +809,7 @@ public class ProductService extends BaseService {
             resultInfo.setClientNetPrice(String.valueOf(product.getSku(productSku).getClientNetPrice()));
 
             // 设置原始价格单位
-            List<CmsBtChannelConfigModel> channelConfigs = cmsBtChannelConfigDao.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
+            List<CmsMtChannelConfigModel> channelConfigs = cmsMtChannelConfigDao.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
             resultInfo.setClientPriceUnit(channelConfigs.get(0).getConfigValue1());
 
             // TODO 无法提供,属于主数据的非共通属性
@@ -1078,6 +1078,31 @@ public class ProductService extends BaseService {
             result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         }
         return result;
+    }
+
+    /**
+     * 取得逻辑库存
+     *
+     * @param channelId 渠道id
+     * @param skuList   待取得逻辑库存的sku对象
+     * @return 逻辑库存Map<sku, logicQty>
+     */
+    public Map<String, Integer> getLogicQty(String channelId, List<String> skuList) {
+        // 逻辑库存Map
+        Map<String, Integer> skuLogicQty = new HashMap<>();
+        skuList.forEach(sku -> skuLogicQty.put(sku, 0)); // 初始化
+
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(channelId, skuList);
+
+        if (listLogicInventory != null && listLogicInventory.size() > 0) {
+            for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
+                String sku = logicInventory.getSku();
+                Integer logicQty = logicInventory.getQtyChina();
+                skuLogicQty.merge(sku, logicQty, (val, newVal) -> val + newVal);
+            }
+        }
+
+        return skuLogicQty;
     }
 
 }

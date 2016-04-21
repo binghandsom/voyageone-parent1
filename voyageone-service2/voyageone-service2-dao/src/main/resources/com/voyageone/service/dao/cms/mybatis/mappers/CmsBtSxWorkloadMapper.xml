@@ -38,6 +38,17 @@
             seq=#{seq}
     </update>
 
+    <update id="cms_update_sx_workload_with_modifier" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        UPDATE
+        voyageone_cms2.cms_bt_sx_workload
+        SET
+        publish_status=#{publish_status},
+        modifier=#{modifier},
+        modified=now()
+        WHERE
+        seq=#{seq}
+    </update>
+
     <insert id="cms_insert_sx_workload" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
         insert into voyageone_cms2.cms_bt_sx_workload
         <trim prefix="(" suffix=")" suffixOverrides="," >

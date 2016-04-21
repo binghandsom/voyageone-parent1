@@ -52,6 +52,7 @@
         <result column="p_code" property="code" />
         <result column="p_color" property="color" />
         <result column="p_made_in_country" property="origin" />
+        <result column="product_type" property="productType"/>
         <result column="attributes_style_name" property="attributes_style_name" />
         <result column="attributes_material_value" property="attributes_material_value" />
         <result column="attributes_size_size_chart_id" property="attributes_size_size_chart_id" />
@@ -104,6 +105,7 @@
         ,${image} as image
         ,1 as image_type
         ,0 as display_order,
+        ${product_type} as product_type,
         attributes_style_name,
         attributes_material_value,
         attributes_size_size_chart_id
