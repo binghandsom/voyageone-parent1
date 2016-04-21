@@ -40,7 +40,7 @@ public class TargetGuestServiceTest {
         request.setPhone("8112142326");
         request.setSaveAsDefault("N");
         request.setSkipAddressValidation("N");
-        TargetGuestShippingAddress add = targetGuestService.getGuestShippingAddress(request);
+        TargetGuestShippingAddress add = targetGuestService.createGuestShippingAddress(request);
         System.out.println(JacksonUtil.bean2Json(add));
     }
 
@@ -85,5 +85,24 @@ public class TargetGuestServiceTest {
         TargetGuestPaymentTender tender=targetGuestService.addGuestPaymentTender(request);
         System.out.println(JacksonUtil.bean2Json(tender));
 
+    }
+
+    @Test
+    public void testUpdateGuestShippingAddress() throws Exception {
+        TargetGuestShippingAddressRequest request = new TargetGuestShippingAddressRequest();
+        request.setFirstName("Mary");
+        request.setLastName("Smith");
+        request.setMiddleName("K");
+        request.setAddressType("Shipping");
+        request.setAddressLine(Arrays.asList("416 Water st.", "Water St"));
+        request.setCity("New york");
+        request.setState("NY");
+        request.setZipCode("10002-7811");
+        request.setPhoneType("Home");
+        request.setPhone("8112142326");
+        request.setSaveAsDefault("N");
+        request.setSkipAddressValidation("N");
+        TargetGuestShippingAddress update = targetGuestService.updateGuestShippingAddress(request);
+        System.out.println(JacksonUtil.bean2Json(update));
     }
 }

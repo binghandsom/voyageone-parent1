@@ -78,7 +78,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_TASK)
-    public AjaxResponse initNewTask(@RequestBody Map param){
+    public AjaxResponse initNewTask(@RequestBody Map<String, Object> param){
         Map<String, Object> resultBean =new HashMap<>();
         //公司平台销售渠道
         param.put("channel_id", this.getUser().getSelChannelId());
@@ -157,7 +157,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_TASK)
-    public AjaxResponse saveTask(@RequestBody Map param) {
+    public AjaxResponse saveTask(@RequestBody Map<String, Object> param) {
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         //公司平台销售渠道
@@ -198,7 +198,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.DEL_TASK)
-    public AjaxResponse delTask(@RequestBody Map param) {
+    public AjaxResponse delTask(@RequestBody Map<String, Object> param) {
 
         // 删除库存隔离任务
         cmsTaskStockService.delTask(param);
@@ -334,7 +334,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SEARCH_STOCK)
-    public AjaxResponse searchStock(@RequestBody Map param) {
+    public AjaxResponse searchStock(@RequestBody Map<String, Object> param) {
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -343,7 +343,7 @@ public class CmsTaskStockController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 任务对应平台信息列表 只有首次取得
-        if (param.get("platformList") == null || ((List<Map<String, Object>>)param.get("platformList")).size() == 0) {
+        if (param.get("platformList") == null || ((List<Map<String, Object>>)param.get("platformList")).isEmpty()) {
             List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String) param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("platformList", platformList);
             param.put("platformList", platformList);
@@ -367,7 +367,7 @@ public class CmsTaskStockController extends CmsController {
         }
 
         // 取得属性列表 只有首次取得
-        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
+        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).isEmpty()) {
             List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("propertyList", propertyList);
             param.put("propertyList", propertyList);
@@ -554,7 +554,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_COMMON_STOCK_LIST)
-    public AjaxResponse getCommonStockList(@RequestBody Map param) {
+    public AjaxResponse getCommonStockList(@RequestBody Map<String, Object> param) {
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -654,7 +654,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_REAL_STOCK_LIST)
-    public AjaxResponse getRealStockList(@RequestBody Map param) {
+    public AjaxResponse getRealStockList(@RequestBody Map<String, Object> param) {
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -713,7 +713,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_USABLE_STOCK)
-    public AjaxResponse getUsableStock(@RequestBody Map param) {
+    public AjaxResponse getUsableStock(@RequestBody Map<String, Object> param) {
         // 取得可用库存
         String usableStock = cmsTaskStockService.getUsableStock((String) param.get("sku"), this.getUser().getSelChannelId());
         // 返回内容
@@ -762,7 +762,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_NEW_RECORD)
-    public AjaxResponse saveNewRecord(@RequestBody Map param) {
+    public AjaxResponse saveNewRecord(@RequestBody Map<String, Object> param) {
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 创建者/更新者用
@@ -814,8 +814,8 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_STOCK_INFO)
-    public ResponseEntity exportStockInfo(@RequestParam Map param) {
-        Map searchParam = new HashMap();
+    public ResponseEntity exportStockInfo(@RequestParam Map<String, Object> param) {
+        Map<String, Object> searchParam = new HashMap<>();
         // 渠道id
         searchParam.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -829,13 +829,13 @@ public class CmsTaskStockController extends CmsController {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
         }
 
-        searchParam.put("taskId", (String) param.get("task_id"));
-        searchParam.put("model", (String) param.get("model"));
-        searchParam.put("code", (String) param.get("code"));
-        searchParam.put("sku", (String) param.get("sku"));
-        searchParam.put("qtyFrom", (String) param.get("qtyFrom"));
-        searchParam.put("qtyTo", (String) param.get("qtyTo"));
-        searchParam.put("status", (String) param.get("status"));
+        searchParam.put("taskId", param.get("task_id"));
+        searchParam.put("model", param.get("model"));
+        searchParam.put("code", param.get("code"));
+        searchParam.put("sku", param.get("sku"));
+        searchParam.put("qtyFrom", param.get("qtyFrom"));
+        searchParam.put("qtyTo", param.get("qtyTo"));
+        searchParam.put("status", param.get("status"));
 
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
@@ -915,7 +915,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.IMPORT_STOCK_INFO)
-    public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+    public AjaxResponse importStockInfo(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
@@ -968,7 +968,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_SEPARATION)
-    public AjaxResponse executeStockSeparation(@RequestBody Map param) {
+    public AjaxResponse executeStockSeparation(@RequestBody Map<String, Object> param) {
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
 
@@ -1014,7 +1014,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_REVERT)
-    public AjaxResponse executeStockRevert(@RequestBody Map param) {
+    public AjaxResponse executeStockRevert(@RequestBody Map<String, Object> param) {
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // 渠道id
@@ -1085,7 +1085,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_RECORD)
-    public AjaxResponse saveRecord(@RequestBody Map param) {
+    public AjaxResponse saveRecord(@RequestBody Map<String, Object> param) {
         // 语言
         param.put("lang", this.getLang());
         // 创建者/更新者用
@@ -1127,7 +1127,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.DEL_RECORD)
-    public AjaxResponse delRecord(@RequestBody Map param) {
+    public AjaxResponse delRecord(@RequestBody Map<String, Object> param) {
         // 删除隔离库存明细
         cmsTaskStockService.delRecord((String) param.get("taskId"), (String) param.get("sku"));
         // 返回
@@ -1223,7 +1223,7 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_ERROR_INFO)
     public ResponseEntity exportErrorInfo(@RequestParam String taskId) {
-        Map<String, Object> param = new HashMap<String, Object>();
+        Map<String, Object> param = new HashMap<>();
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言

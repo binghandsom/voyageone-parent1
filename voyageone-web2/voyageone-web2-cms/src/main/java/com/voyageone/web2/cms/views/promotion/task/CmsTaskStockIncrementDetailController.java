@@ -110,7 +110,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
-    public AjaxResponse searchItem(@RequestBody Map param) {
+    public AjaxResponse searchItem(@RequestBody Map<String, Object> param) {
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -152,7 +152,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         }
 
         // 取得属性列表 只有首次取得
-        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
+        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).isEmpty()) {
             List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("propertyList", propertyList);
             param.put("propertyList", propertyList);
@@ -320,7 +320,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.DEL_ITEM)
-    public AjaxResponse delItem(@RequestBody Map param) {
+    public AjaxResponse delItem(@RequestBody Map<String, Object> param) {
 
         // 删除增量隔离库存明细
         cmsTaskStockIncrementDetailService.delItem((String) param.get("taskId"), (String) param.get("subTaskId"), (String) param.get("cartId"), (String) param.get("sku"));
@@ -355,9 +355,9 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXPORT_STOCK_INFO)
-    public ResponseEntity exportStockInfo(@RequestParam Map param) {
+    public ResponseEntity exportStockInfo(@RequestParam Map<String, Object> param) {
 
-        Map searchParam = new HashMap();
+        Map<String, Object> searchParam = new HashMap<>();
         // 渠道id
         searchParam.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -371,14 +371,14 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
         }
 
-        searchParam.put("taskId", (String) param.get("taskId"));
-        searchParam.put("subTaskId", (String) param.get("subTaskId"));
-        searchParam.put("model", (String) param.get("model"));
-        searchParam.put("code", (String) param.get("code"));
-        searchParam.put("sku", (String) param.get("sku"));
-        searchParam.put("status", (String) param.get("status"));
-        searchParam.put("cartId", (String) param.get("cartId"));
-        searchParam.put("cartName", (String) param.get("cartName"));
+        searchParam.put("taskId", param.get("taskId"));
+        searchParam.put("subTaskId", param.get("subTaskId"));
+        searchParam.put("model", param.get("model"));
+        searchParam.put("code", param.get("code"));
+        searchParam.put("sku", param.get("sku"));
+        searchParam.put("status", param.get("status"));
+        searchParam.put("cartId", param.get("cartId"));
+        searchParam.put("cartName", param.get("cartName"));
 
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
@@ -449,7 +449,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.IMPORT_STOCK_INFO)
-    public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+    public AjaxResponse importStockInfo(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
@@ -490,7 +490,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXECUTE_STOCK_INCREMENT_SEPARATION)
-    public AjaxResponse executeStockIncrementSeparation(@RequestBody Map param) {
+    public AjaxResponse executeStockIncrementSeparation(@RequestBody Map<String, Object> param) {
 
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
