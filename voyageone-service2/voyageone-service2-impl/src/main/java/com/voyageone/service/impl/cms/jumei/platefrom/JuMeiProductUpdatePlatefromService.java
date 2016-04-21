@@ -86,7 +86,10 @@ public class JuMeiProductUpdatePlatefromService {
         }
         /* 2)修改deal  sku  spu   商品属性  四个修改接口
             3) 新增spu  sku  两个接口*/
-        updateJMProductInfo(shippingSystemId, shopBean, info);
+        jmHtDealupdate(info, shopBean, shippingSystemId);//deal
+        jmHtProductUpdate(info, shopBean);//product
+        jmHtSpuSkuUpdateList(info, shopBean);//spu sku
+        jmAddListSku(info, shopBean);//添加未上新的sku
         service.saveJMUpdateProductInfo(info);
     }
 

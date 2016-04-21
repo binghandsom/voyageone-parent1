@@ -31,7 +31,7 @@ public class JuMeiUploadImageService {
 @Autowired
 JMShopBeanService serviceJMShopBean;
     @Autowired
-    JuMeiProductPlatefromDataService serviceJuMeiProductUpdate;
+    JuMeiProductUpdateService serviceJuMeiProductUpdate;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiUploadImageService.class);
 
     public void uploadImage(CmsBtJmProductImagesModel imageModel, ShopBean shopBean) throws Exception {
