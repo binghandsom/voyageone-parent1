@@ -4,8 +4,8 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
-import com.voyageone.service.impl.cms.jumei.platefrom.JMShopBeanService;
-import com.voyageone.service.impl.cms.jumei.platefrom.JuMeiProductPlatefromService;
+import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
+import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
@@ -30,7 +30,7 @@ public class CmsBtJmPromotionProductService {
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
-    JuMeiProductPlatefromService serviceJuMeiProductPlatefrom;
+    JuMeiProductPlatformService serviceJuMeiProductPlatform;
     @Autowired
     CmsMtJmConfigService serviceCmsMtJmConfig;
     @Autowired

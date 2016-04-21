@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.platefrom;
+package com.voyageone.service.impl.cms.jumei.platform;
 
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;

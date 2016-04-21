@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.platefrom;
+package com.voyageone.service.impl.cms.jumei.platform;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;

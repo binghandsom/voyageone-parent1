@@ -3,7 +3,7 @@ import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterBrandService;
 import com.voyageone.service.impl.cms.jumei.CmsMtMasterInfoService;
-import com.voyageone.service.impl.cms.jumei.platefrom.JuMeiUploadImageService;
+import com.voyageone.service.impl.cms.jumei.platform.JuMeiUploadImageService;
 import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;

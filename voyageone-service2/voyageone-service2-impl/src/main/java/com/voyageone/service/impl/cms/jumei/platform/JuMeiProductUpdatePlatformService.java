@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.platefrom;
+package com.voyageone.service.impl.cms.jumei.platform;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.JumeiHtDealService;
@@ -29,11 +29,11 @@ import java.util.Date;
  * Created by dell on 2016/4/12.
  */
 @Service
-public class JuMeiProductUpdatePlatefromService {
+public class JuMeiProductUpdatePlatformService {
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
     private static final String DESCRIPTION_USAGE = "<div>%s %s <br /></div>";
     private static final String DESCRIPTION_IMAGES = "%s<br />";
-    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductUpdatePlatefromService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductUpdatePlatformService.class);
     @Autowired
     JuMeiProductUpdateService service;
     @Autowired

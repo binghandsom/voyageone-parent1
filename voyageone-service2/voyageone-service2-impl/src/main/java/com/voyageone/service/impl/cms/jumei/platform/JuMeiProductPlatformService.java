@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.platefrom;
+package com.voyageone.service.impl.cms.jumei.platform;
 
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.ExceptionUtil;
@@ -18,18 +18,18 @@ import java.util.List;
  * Created by dell on 2016/4/19.
  */
 @Service
-public class JuMeiProductPlatefromService {
+public class JuMeiProductPlatformService {
     @Autowired
-    JuMeiProductAddPlatefromService serviceJuMeiProductAddPlatefrom;
+    JuMeiProductAddPlatformService serviceJuMeiProductAddPlatform;
     @Autowired
-    JuMeiProductUpdatePlatefromService serviceJuMeiProductUpdatePlatefrom;
+    JuMeiProductUpdatePlatformService serviceJuMeiProductUpdatePlatform;
     @Autowired
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     @Autowired
     JMShopBeanService serviceJMShopBean;
     @Autowired
     JuMeiProductUpdateService service;
-    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatefromService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatformService.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = service.getCmsBtJmPromotion(promotionId);
@@ -52,7 +52,7 @@ public class JuMeiProductPlatefromService {
         CallResult result=new CallResult();
         try {
             if (model.getState() == 0) {//上新
-                result = serviceJuMeiProductAddPlatefrom.addProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                result = serviceJuMeiProductAddPlatform.addProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
                 if (!result.isResult()) {
                     model.setErrorMsg(result.getMsg());
                     model.setState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
@@ -60,9 +60,9 @@ public class JuMeiProductPlatefromService {
                 }
             } else if (model.getSynchState() == 0 || model.getSynchState() == 1) //更新 copyDeal
             {
-                serviceJuMeiProductUpdatePlatefrom.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
+                serviceJuMeiProductUpdatePlatform.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
             } else { //只更新商品
-                serviceJuMeiProductUpdatePlatefrom.updateJMProductInfo(shippingSystemId, model, shopBean);
+                serviceJuMeiProductUpdatePlatform.updateJMProductInfo(shippingSystemId, model, shopBean);
             }
         } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
