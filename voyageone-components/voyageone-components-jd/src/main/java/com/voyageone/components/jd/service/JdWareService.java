@@ -305,7 +305,7 @@ public class JdWareService extends JdBase {
 //        }
         request.setImageData(jdProduct.getAttributes().getBytes());
         // 上传到的图片分类ID，为空上传至 默认分类(非必须)
-        request.setPictureCateId((long)0);
+        request.setPictureCateId(0);
         // 图片名称，不超过64字节，为空默认 未命名(非必须)
         request.setPictureName("图片名称");
 
