@@ -116,4 +116,14 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
                 (int) headers.get(retryKey) > VOExceptionStrategy.MAX_RETRY_TIMES;
     }
 
+
+    public TaskControlBean getTaskControlBean(List<TaskControlBean> taskControlList,String cfg_name) {
+        for (TaskControlBean taskControlBean : taskControlList) {
+            if (taskControlBean.getCfg_name().equals(cfg_name)) {
+                return taskControlBean;
+            }
+        }
+        return null;
+    }
+
 }
