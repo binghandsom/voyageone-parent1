@@ -28,14 +28,14 @@ public class CmsMtFeedCategoryTreeDaoTest {
 
     @Test
     public void testConcat() {
-        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeDao.selectTopCategory("010", "Bracelets");
-        CmsMtFeedCategoryModel feedCategoryModel = treeModelx.getCategoryTree().get(0);
-
-        List<CmsMtFeedCategoryModel> b = useStream(feedCategoryModel);
-
-        List<CmsMtFeedCategoryModel> a = useDefaultList(feedCategoryModel);
-
-        assert a.size() == b.size();
+//        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeDao.selectTopCategory("010", "Bracelets");
+//        CmsMtFeedCategoryModel feedCategoryModel = treeModelx.getCategoryTree().get(0);
+//
+//        List<CmsMtFeedCategoryModel> b = useStream(feedCategoryModel);
+//
+//        List<CmsMtFeedCategoryModel> a = useDefaultList(feedCategoryModel);
+//
+//        assert a.size() == b.size();
     }
 
     private List<CmsMtFeedCategoryModel> useStream(CmsMtFeedCategoryModel feedCategoryModel) {
