@@ -51,27 +51,27 @@ define([
                     "controller": 'popAuthorityNewCtl'
                 }
             },
-        "addattributevalue": {
-            "new": {
-                "templateUrl": "views/pop/addattributevalue/add.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/addattributevalue/add.ctl",
-                "controller": 'popAddAttributeValueCtl'
-            }
-        },
-        "addattributevaluenew": {
-            "new": {
-                "templateUrl": "views/pop/addattributevalue/new.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/addattributevalue/new.ctl",
-                "controller": 'popAddAttributeValueNewCtl'
-            }
-        },
-        "addattributevaluenews": {
-            "new": {
-                "templateUrl": "views/pop/addattributevalue/news.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/addattributevalue/news.ctl",
-                "controller": 'popAddAttributeValueNewsCtl'
-            }
-        },
+            "addattributevalue": {
+                "new": {
+                    "templateUrl": "views/pop/addattributevalue/add.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/addattributevalue/add.ctl",
+                    "controller": 'popAddAttributeValueCtl'
+                }
+            },
+            "addattributevaluenew": {
+                "new": {
+                    "templateUrl": "views/pop/addattributevalue/new.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/addattributevalue/new.ctl",
+                    "controller": 'popAddAttributeValueNewCtl'
+                }
+            },
+            "addattributevaluenews": {
+                "new": {
+                    "templateUrl": "views/pop/addattributevalue/news.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/addattributevalue/news.ctl",
+                    "controller": 'popAddAttributeValueNewsCtl'
+                }
+            },
             "bulkUpdate": {
                 "addToPromotion": {
                     "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
@@ -257,13 +257,13 @@ define([
                 "newBeat": {
                     "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
-                    "controller": 'popNewBeatCtl as $ctrl',
+                    "controller": 'popNewBeatCtl as ctrl',
                     "size": "md"
                 },
                 "addBeat": {
                     "templateUrl": "views/pop/promotion/addBeat.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/addBeat.ctl",
-                    "controller": 'popAddBeatCtl as $ctrl',
+                    "controller": 'popAddBeatCtl as ctrl',
                     "size": "md"
                 },
                 "newMrbStock": {
@@ -274,12 +274,13 @@ define([
                 "newMrbStockSku": {
                     "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
-                    "controller": 'popNewMrbStockSkuCtl'
+                    "controller": 'popNewMrbStockSkuCtl as ctrl',
+                    "size": "md"
                 },
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
-                    "controller": 'popSkuMrbStockDetailCtl'
+                    "controller": 'popSkuMrbStockDetailCtl as ctrl'
                 },
                 "addMrbStockIncrement": {
                     "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
@@ -287,20 +288,85 @@ define([
                     "controller": 'popAddStockIncrementCtl'
                 }
             },
-        "search": {
-            "imagedetail": {
-                "templateUrl": "views/pop/search/imagedetail.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
-                "controller": 'popImageDetailCtl'
+            "search": {
+                "joinJM": {
+                    "templateUrl": "views/pop/search/joinJM.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
+                    "controller": 'popJoinJMCtl'
+                }
             },
-            "codeDetail": {
-                "templateUrl": "views/pop/search/codeDetail.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
-                "controller": 'popCodeDetailCtl'
-            }
+            "jumei": {
+                "jmPromotionDefaultSetting": {
+                    "batch": {
+                        "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
+                        "controller": 'popJmPromotionDefaultSettingCtl as ctrl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    }
+                },
+                "jmProductDetail": {
+                    "detail": {
+                        "templateUrl": "views/pop/jm/productdetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/productdetail.ctl",
+                        "controller": 'popJmProductDetailController as ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    }
+                },
+                "jmPromotionDetail": {
+                    "detail": {
+                        "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
+                        "controller": 'popPromotionDetailCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    },
+                    "import": {
+                        "templateUrl": "views/pop/jm/import.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/import.ctl",
+                        "controller": 'popPromotionDetailImportCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    },
+                    "dealExtension": {
+                        "templateUrl": "views/pop/jm/dealextension.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
+                        "controller": 'popDealExtensionCtl'
+                    },
+                    "priceModify": {
+                        "templateUrl": "views/pop/jm/pricemodify.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
+                        "controller": 'popPriceModifyCtl'
+                    }
+                },
+                "jmImageManage": {
+                    "imageSetting": {
+                        "templateUrl": "views/pop/jm/imagesetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/imagesetting.ctl",
+                        "controller": 'popImageSettingCtl as ctrl'
+                    }
+                }
+            },
+            "search": {
+                "imagedetail": {
+                    "templateUrl": "views/pop/search/imagedetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
+                    "controller": 'popImageDetailCtl'
+                },
+                "codeDetail": {
+                    "templateUrl": "views/pop/search/codeDetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
+                    "controller": 'popCodeDetailCtl'
+                }
 
         },
         "system": {
+            "channelList": {
+                "templateUrl": "views/pop/system/channelList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                "controller": 'popChannelListCtl'
+            },
             "channelsetting": {
                 "templateUrl": "views/pop/system/channelsetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
@@ -325,14 +391,16 @@ define([
 
         function openModel(config, context) {
 
-            if (context) config.resolve = {
-                context: function () {
-                    return context;
-                }
-            };
+            if (context)
+                config.resolve = {
+                    context: function () {
+                        return context;
+                    }
+                };
 
             var defer = $q.defer();
             require([config.controllerUrl], function () {
+
                 defer.resolve($uibModal.open(config).result);
             });
             return defer.promise;
@@ -377,6 +445,7 @@ define([
                 });
             });
         }
+
         $scope.openAddattributevaluenews = openAddattributevaluenews;
         function openAddattributevaluenews(viewSize, data) {
             require([popActions.addattributevaluenews.new.controllerUrl], function () {
@@ -392,6 +461,7 @@ define([
                 });
             });
         }
+
         $scope.openAddattributevalue = openAddattributevalue;
         function openAddattributevalue(viewSize, data) {
             require([popActions.addattributevalue.new.controllerUrl], function () {
@@ -504,6 +574,13 @@ define([
          */
         $scope.openAddAttribute = function (context) {
             return openModel(popActions.custom.newAttribute, context);
+        };
+
+        /**
+         * 新增advance查询页,参加聚美活动弹出
+         * */
+        $scope.openJMActivity = function (context) {
+            return openModel(popActions.search.joinJM, context);
         };
 
         /**
@@ -627,7 +704,7 @@ define([
             return openModel(config, context);
         };
 
-        $scope.ppPlatformMapping.simpleItem = function(context) {
+        $scope.ppPlatformMapping.simpleItem = function (context) {
             return openModel(popActions.platformMapping.simple.item, context);
         };
 
@@ -738,6 +815,7 @@ define([
                 });
             });
         }
+
         /**
          * 打开promotion页面
          * @type {openPromotion}
@@ -755,7 +833,7 @@ define([
                         },
                         cartList: function () {
                             return cartList;
-                        },
+                        }
                     }
                 });
 
@@ -810,10 +888,10 @@ define([
 
         /**
          * 打开新建库存隔离任务
-         * @type {openMrbstock}
+         * @type {openMrbStock}
          */
-        $scope.openMrbstock = openMrbstock;
-        function openMrbstock(viewSize, data) {
+        $scope.openMrbStock = openMrbStock;
+        function openMrbStock(viewSize, data) {
             require([popActions.promotion.newMrbStock.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
@@ -872,13 +950,19 @@ define([
          * 显示该sku的库存隔离明细
          */
         $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
-        function openSkuMrbStockDetail(viewSize, data) {
+        function openSkuMrbStockDetail(viewSize, taskId, cartId, data) {
             require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
                     controller: popActions.promotion.skuMrbStockDetail.controller,
                     size: viewSize,
                     resolve: {
+                        taskId: function () {
+                            return taskId;
+                        },
+                        cartId: function () {
+                            return cartId;
+                        },
                         data: function () {
                             return data;
                         }
@@ -958,5 +1042,68 @@ define([
                 })
             });
         }
+
+        $scope.openJmPromotionDefaultSetting = function (context) {
+            return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
+        };
+
+
+        //聚美一览中，deal延期
+        $scope.openDealExtension = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.dealExtension, context);
+        };
+        //聚美一览中，price
+        $scope.openPriceModify = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
+        };
+        //聚美图片管理中，追加按钮
+        $scope.openImageSetting = function (context) {
+            return openModel(popActions.jumei.jmImageManage.imageSetting, context);
+        };
+
+        $scope.openJmProductDetail = function (context) {
+            return openModel(popActions.jumei.jmProductDetail.detail, context);
+        };
+
+
+        $scope.openJmPromotionDetail = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.detail, context);
+        };
+
+        $scope.openJmPromotionProductImport = openJmPromotionProductImport;
+        function openJmPromotionProductImport(context, fnInitial) {
+            require([popActions.jumei.jmPromotionDetail.import.controllerUrl], function () {
+                var modalInstance = $uibModal.open({
+                    templateUrl: popActions.jumei.jmPromotionDetail.import.templateUrl,
+                    controller: popActions.jumei.jmPromotionDetail.import.controller,
+                    resolve: {
+                        context: function () {
+                            return context;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+            });
+        }
+
+        //$scope.openJmPromotionProductImport = function (context,fnInitial) {
+        //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);
+        //    promise.then(function success(data) {
+        //        data.then(function () {
+        //            if (fnInitial) {
+        //                fnInitial();
+        //            }
+        //        })
+        //    }, function error(msg) {
+        //        console.error(msg);
+        //    });
+        //
+        //};
     }
 });

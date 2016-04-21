@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmPromotionSkuDao">
+    <resultMap id="ResultMap" type="CmsBtJmPromotionSkuModel">
+        
+    </resultMap>
+	
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`cms_bt_jm_sku_id`,`sku_code`,`jm_size`,`market_price`,`discount`,`deal_price`,`error_msg`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`channel_id`,`update_state`        from cms_bt_jm_promotion_sku
+        <where>
+                <if test="id != null">
+                        AND `id` = #{id}
+                    </if>
+                                <if test="cmsBtJmPromotionId != null">
+                        AND `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId}
+                    </if>
+                                <if test="cmsBtJmProductId != null">
+                        AND `cms_bt_jm_product_id` = #{cmsBtJmProductId}
+                    </if>
+                                <if test="cmsBtJmSkuId != null">
+                        AND `cms_bt_jm_sku_id` = #{cmsBtJmSkuId}
+                    </if>
+                                <if test="skuCode != null">
+                        AND `sku_code` = #{skuCode}
+                    </if>
+                                <if test="jmSize != null">
+                        AND `jm_size` = #{jmSize}
+                    </if>
+                                <if test="marketPrice != null">
+                        AND `market_price` = #{marketPrice}
+                    </if>
+                                <if test="discount != null">
+                        AND `discount` = #{discount}
+                    </if>
+                                <if test="dealPrice != null">
+                        AND `deal_price` = #{dealPrice}
+                    </if>
+                                <if test="errorMsg != null">
+                        AND `error_msg` = #{errorMsg}
+                    </if>
+                                <if test="synchState != null">
+                        AND `synch_state` = #{synchState}
+                    </if>
+                                <if test="creater != null">
+                        AND `creater` = #{creater}
+                    </if>
+                                <if test="created != null">
+                        AND `created` = #{created}
+                    </if>
+                                <if test="modified != null">
+                        AND `modified` = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND `modifier` = #{modifier}
+                    </if>
+                                <if test="state != null">
+                        AND `state` = #{state}
+                    </if>
+                                <if test="channelId != null">
+                        AND `channel_id` = #{channelId}
+                    </if>
+                                <if test="updateState != null">
+                        AND `update_state` = #{updateState}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`cms_bt_jm_sku_id`,`sku_code`,`jm_size`,`market_price`,`discount`,`deal_price`,`error_msg`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`channel_id`,`update_state` from cms_bt_jm_promotion_sku 
+        <where>
+                
+                    <if test="id != null">
+                        AND `id` = #{id}
+                    </if> 
+                
+                    <if test="cmsBtJmPromotionId != null">
+                        AND `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId}
+                    </if> 
+                
+                    <if test="cmsBtJmProductId != null">
+                        AND `cms_bt_jm_product_id` = #{cmsBtJmProductId}
+                    </if> 
+                
+                    <if test="cmsBtJmSkuId != null">
+                        AND `cms_bt_jm_sku_id` = #{cmsBtJmSkuId}
+                    </if> 
+                
+                    <if test="skuCode != null">
+                        AND `sku_code` = #{skuCode}
+                    </if> 
+                
+                    <if test="jmSize != null">
+                        AND `jm_size` = #{jmSize}
+                    </if> 
+                
+                    <if test="marketPrice != null">
+                        AND `market_price` = #{marketPrice}
+                    </if> 
+                
+                    <if test="discount != null">
+                        AND `discount` = #{discount}
+                    </if> 
+                
+                    <if test="dealPrice != null">
+                        AND `deal_price` = #{dealPrice}
+                    </if> 
+                
+                    <if test="errorMsg != null">
+                        AND `error_msg` = #{errorMsg}
+                    </if> 
+                
+                    <if test="synchState != null">
+                        AND `synch_state` = #{synchState}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND `creater` = #{creater}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND `created` = #{created}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND `modified` = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND `modifier` = #{modifier}
+                    </if> 
+                
+                    <if test="state != null">
+                        AND `state` = #{state}
+                    </if> 
+                
+                    <if test="channelId != null">
+                        AND `channel_id` = #{channelId}
+                    </if> 
+                
+                    <if test="updateState != null">
+                        AND `update_state` = #{updateState}
+                    </if> 
+        </where> limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`cms_bt_jm_promotion_id`,`cms_bt_jm_product_id`,`cms_bt_jm_sku_id`,`sku_code`,`jm_size`,`market_price`,`discount`,`deal_price`,`error_msg`,`synch_state`,`creater`,`created`,`modified`,`modifier`,`state`,`channel_id`,`update_state` from cms_bt_jm_promotion_sku where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_bt_jm_promotion_sku
+        set
+
+            `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
+            ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
+            ,`cms_bt_jm_sku_id`=#{cmsBtJmSkuId}
+            ,`sku_code`=#{skuCode}
+            ,`jm_size`=#{jmSize}
+            ,`market_price`=#{marketPrice}
+            ,`discount`=#{discount}
+            ,`deal_price`=#{dealPrice}
+            ,`error_msg`=#{errorMsg}
+            ,`synch_state`=#{synchState}
+            ,`modifier`=#{modifier}
+            ,`state`=#{state}
+            ,`channel_id`=#{channelId}
+            ,`update_state`=#{updateState}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_jm_promotion_sku
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_bt_jm_promotion_sku
+        (
+              `cms_bt_jm_promotion_id`,
+              `cms_bt_jm_product_id`,
+              `cms_bt_jm_sku_id`,
+              `sku_code`,
+              `jm_size`,
+              `market_price`,
+              `discount`,
+              `deal_price`,
+              `error_msg`,
+              `synch_state`,
+              `creater`,
+              `created`,
+              `modified`,
+              `modifier`,
+              `state`,
+              `channel_id`,
+              `update_state`
+        )
+        VALUES(
+              #{cmsBtJmPromotionId},
+              #{cmsBtJmProductId},
+              #{cmsBtJmSkuId},
+              #{skuCode},
+              #{jmSize},
+              #{marketPrice},
+              #{discount},
+              #{dealPrice},
+              #{errorMsg},
+              #{synchState},
+              #{creater},
+              #{created},
+              #{modified},
+              #{modifier},
+              #{state},
+              #{channelId},
+              #{updateState}
+        )
+    </insert>
+</mapper>

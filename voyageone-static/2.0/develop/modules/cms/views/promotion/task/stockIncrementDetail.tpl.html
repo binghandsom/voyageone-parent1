@@ -1,231 +1,108 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="ctrl.init()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;增量库存隔离明细</h4>
+					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE_DETAIL' | translate}}</h4>
 				</div>
 				<div class="container-fluid">
 					<div class="col-sm-12">
-						<div class="col-sm-3">
-							<div class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-3 control-label">品牌</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control">
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Model</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control">
-									</div>
+						<div class="form-horizontal">
+							<div ng-repeat="property in ctrl.propertyList" class="form-group col-sm-3">
+								<label class="col-sm-4 control-label">{{property.name}}</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control" ng-model="property.value">
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-3">
-							<div class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Name</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control">
-									</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-horizontal">
+							<div class="form-group col-sm-3">
+								<label class="col-sm-4 control-label">Model</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control" ng-model="ctrl.model">
 								</div>
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Code</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control">
-									</div>
+							</div>
+							<div class="form-group col-sm-3">
+								<label class="col-sm-4 control-label">Code</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control" ng-model="ctrl.code">
+								</div>
+							</div>
+							<div class="form-group col-sm-3">
+								<label class="col-sm-4 control-label">Sku</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control" ng-model="ctrl.sku">
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-3">
-							<div class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-3 control-label">性别</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control">
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Sku</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control">
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-3">
-							<div class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-3 control-label">SIZE</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control">
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-12 text-center m-b-md">
-							<div class="form-horizontal form-inline">
-								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
-							</div><!-- .form-inline -->
-						</div>
+					</div>
+					<div class="col-sm-12 text-center m-b-md" ng-controller="popupCtrl">
+						<div class="form-horizontal form-inline">
+							<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+							<button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+						</div><!-- .form-inline -->
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="pull-right form-inline btn-group" ng-controller="popupCtrl">
-		<button class="btn btn-danger" ng-click="openImportStock('md')"><i class="fa fa-reply-all"></i>&nbsp;批量导入</button>
-		<button class="btn btn-dangers"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;批量导出</button>
-		<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;启动增量所有</button>
+	<div class="pull-right form-inline btn-group" ng-controller="popupCtrl" ng-if="ctrl.stockList.length > 0">
+		<button class="btn btn-danger" ng-click="ctrl.openImport(openImportStock)"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
+		<button class="btn btn-dangers" ng-click="ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
+		<button class="btn btn-primary" ng-click="ctrl.executeStockIncrementSeparation()"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_INCREMENT_ALL' | translate}}</button>
 	</div>
 	<div class="form-inline pull-left btn-group m-b-xs">
-		<button class="btn btn-default-vo">总数：100000</button>
-		<button class="btn btn-default-vo">未进行：1000</button>
-		<button class="btn btn-default-vo">等待增量：5000</button>
-		<button class="btn btn-default-vo">增量成功：1000</button>
-		<button class="btn btn-default-vo">增量失败：0</button>
+		<label id="allNum" class="btn btn-default-vo btn-vo" ng-model="radioModel" uib-btn-radio="'总数：100000'" ng-click="ctrl.search('')" ng-class="ctrl.allNumClass">{{'TXT_ALL' | translate}}：{{ctrl.allNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'未进行：1000'" ng-click="ctrl.search('0')">{{'TXT_READY' | translate}}：{{ctrl.readyNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待增量：0'" ng-click="ctrl.search('1')">{{'TXT_WAITING_INCREMENT' | translate}}：{{ctrl.waitIncrementNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量中：0'" ng-click="ctrl.search('2')">{{'TXT_INCREASING' | translate}}：{{ctrl.increasingNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量成功：5000'" ng-click="ctrl.search('3')">{{'TXT_INCREMENT_SUCCESS' | translate}}：{{ctrl.incrementSuccessNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量失败：10000'" ng-click="ctrl.search('4')">{{'TXT_INCREMENT_FAILURE' | translate}}：{{ctrl.incrementFailureNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原：10000'" ng-click="ctrl.search('5')">{{'TXT_REVERT' | translate}}：{{ctrl.revertNum}}</label>
 	</div>
 	<div class="box">
 		<div class="box-body col-sm-12">
 			<div class="table-responsive">
-				<div class="col-sm-12 dropdown_table_main">
+				<div class="col-sm-12 dropdown_table_main"  if-no-rows="ctrl.stockList.length">
 					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
 						<thead>
 						<tr>
-							<th class="mfb-xt text-center">No.</th>
-							<th class="mfb-xxt text-center">Model</th>
-							<th class="mfb-xxt text-center">Code</th>
-							<th class="mfb-xxt text-center">Sku</th>
-							<th class="mfb-xxt text-center">品牌</th>
-							<th class="mfb-xxt text-left">Name(英文)</th>
-							<th class="mfb-xt text-center">性别</th>
-							<th class="mfb-xt text-center">Size</th>
-							<th class="mfb-xt text-center">可调配库存</th>
-							<th class="mfb-xt text-center">天猫旗舰店</th>
-							<th class="mfb-xt text-left">状态</th>
-							<th class="mfb-xt text-center">更新固定值</th>
-							<th class="mfb-xxt text-center">编辑</th>
+							<th class="text-center w5">Model</th>
+							<th class="text-center w5">Code</th>
+							<th class="text-center w10">Sku</th>
+							<th ng-repeat="property in ctrl.propertyList" class="text-center w10">{{property.name}}</th>
+							<th class="text-center w5">{{'TXT_USABLE_STOCK' | translate}}</th>
+							<th class="text-center w3">{{ctrl.cartName}}</th>
+							<th class="text-center w5">{{'TXT_STATUS' | translate}}</th>
+							<th class="text-center w5">{{'TXT_UPDATE_FIX_VALUE' | translate}}</th>
+							<th class="text-center w5">{{'BTN_EDIT' | translate}}</th>
 						</tr>
 						</thead>
 						<tbody>
-						<tr>
-							<td class="mfb-xt text-center">1</td>
-							<td class="text-center">352665</td>
-							<td class="mfb-xxt text-center">35265465</td>
-							<td class="mfb-xxt text-center"> 256354566-9</td>
-							<td class="mfb-xxt text-center"> Sneakerhead</td>
-							<td class="mfb-xxt text-left"> Puma Suede Classic+</td>
-							<td class="mfb-xt text-center"> 男</td>
-							<td class="mfb-xt text-center"> 9</td>
-							<td class="mfb-xt text-center">50</td>
-							<td class="mfb-xt text-center"><input class="form-control" placeholder="20"></td>
-							<td class="mfb-xt text-left">增量成功</td>
-							<th class="mfb-xt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></th>
-							<td class="mfb-xxt text-center">
-								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+						<tr ng-repeat="stock in ctrl.stockList">
+							<td class="text-center w5">{{stock.model}}</td>
+							<td class="text-center w5">{{stock.code}}</td>
+							<td class="text-center w10"> {{stock.sku}}</td>
+							<td ng-repeat="property in ctrl.propertyList" class="text-center w10"> {{stock[property.property]}}</td>
+							<td class="text-center w5">{{stock.qty}}</td>
+							<td class="text-center w3"><input class="form-control" placeholder="20"  ng-model="stock.incrementQty"></td>
+							<td class="text-center w5">{{stock.status}}</td>
+							<th class="text-center w5"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="stock.fixFlg"><span class="fa fa-check"></span></label></th>
+							<td class="text-center w5">
+								<button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="ctrl.saveItem(stock)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delItem(stock.sku)"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>
-						<tr>
-							<td class="mfb-xt text-center">2</td>
-							<td class="text-center">352665</td>
-							<td class="mfb-xxt text-center">35265465</td>
-							<td class="mfb-xxt text-center"> 256354566-10</td>
-							<td class="mfb-xxt text-center"> Sneakerhead</td>
-							<td class="mfb-xxt text-left"> Puma Suede Classic+</td>
-							<td class="mfb-xt text-center"> 男</td>
-							<td class="mfb-xt text-center"> 9</td>
-							<td class="mfb-xt text-center">60</td>
-							<td class="mfb-xt text-center"><input class="form-control" placeholder="10"></td>
-							<td class="mfb-xt text-left">增量失败</td>
-							<th class="mfb-xt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></th>
-							<td class="mfb-xxt text-center">
-								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xt text-center">3</td>
-							<td class="text-center">352665</td>
-							<td class="mfb-xxt text-center">35265465</td>
-							<td class="mfb-xxt text-center"> 256354566-11</td>
-							<td class="mfb-xxt text-center"> Sneakerhead</td>
-							<td class="mfb-xxt text-left"> Puma Suede Classic+</td>
-							<td class="mfb-xt text-center"> 男</td>
-							<td class="mfb-xt text-center"> 9</td>
-							<td class="mfb-xt text-center">50</td>
-							<td class="mfb-xt text-center"><input class="form-control" placeholder="20"></td>
-							<td class="mfb-xt text-left">未进行</td>
-							<th class="mfb-xt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></th>
-							<td class="mfb-xxt text-center">
-								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xt text-center">4</td>
-							<td class="text-center">352665</td>
-							<td class="mfb-xxt text-center">35265465</td>
-							<td class="mfb-xxt text-center"> 256354566-12</td>
-							<td class="mfb-xxt text-center"> Sneakerhead</td>
-							<td class="mfb-xxt text-left"> Puma Suede Classic+</td>
-							<td class="mfb-xt text-center"> 男</td>
-							<td class="mfb-xt text-center"> 9</td>
-							<td class="mfb-xt text-center">60</td>
-							<td class="mfb-xt text-center"><input class="form-control" placeholder="10"></td>
-							<td class="mfb-xt text-left">增量成功</td>
-							<th class="mfb-xt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></th>
-							<td class="mfb-xxt text-center">
-								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xt text-center">5</td>
-							<td class="text-center">352665</td>
-							<td class="mfb-xxt text-center">35265465</td>
-							<td class="mfb-xxt text-center"> 256354566-13</td>
-							<td class="mfb-xxt text-center"> Sneakerhead</td>
-							<td class="mfb-xxt text-left"> Puma Suede Classic+</td>
-							<td class="mfb-xt text-center"> 男</td>
-							<td class="mfb-xt text-center"> 9</td>
-							<td class="mfb-xt text-center">50</td>
-							<td class="mfb-xt text-center"><input class="form-control" placeholder="20"></td>
-							<td class="mfb-xt text-left">增量成功</td>
-							<th class="mfb-xt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></th>
-							<td class="mfb-xxt text-center">
-								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xt text-center">6</td>
-							<td class="text-center">352665</td>
-							<td class="mfb-xxt text-center">35265465</td>
-							<td class="mfb-xxt text-center"> 256354566-14</td>
-							<td class="mfb-xxt text-center"> Sneakerhead</td>
-							<td class="mfb-xxt text-left"> Puma Suede Classic+</td>
-							<td class="mfb-xt text-center"> 男</td>
-							<td class="mfb-xt text-center"> 9</td>
-							<td class="mfb-xt text-center">60</td>
-							<td class="mfb-xt text-center"><input class="form-control" placeholder="10"></td>
-							<td class="mfb-xt text-left">增量成功</td>
-							<th class="mfb-xt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span></label></th>
-							<td class="mfb-xxt text-center">
-								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							</td>
 						</tr>
 						</tbody>
 					</table>
 				</div><!-- .table-responsive -->
 			</div>
 		</div><!-- /.box-body -->
-		<div class="m-t-xs">
-			<vpagination config="vm.errorPageOption"></vpagination>
+		<div class="col-sm-12 m-t-md">
+			<vpagination config="ctrl.stockPageOption" total="ctrl.stockPageOption.total"></vpagination>
 		</div>
 	</div>
 

@@ -8,25 +8,20 @@
 
     <!-- Common相关配置 -->
     <import resource="classpath*:common-config.xml" />
-    <!-- DAO相关配置 -->
+    <import resource="classpath*:datasource-jumei-config.xml" />
     <import resource="classpath*:datasource-cms2-config.xml" />
     <import resource="classpath*:datasource-config-mongo-cms2.xml" />
-    <!-- SDK Client Config -->
     <import resource="classpath*:sdk-client-config.xml" />
-    <!-- MQ Config -->
     <import resource="classpath*:mq-config.xml" />
-    <!-- Redis Config -->
     <import resource="classpath*:redis-config.xml" />
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-jumei2-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />-->
-    <!-- SDK Client Config -->
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
-    <!-- MQ Config -->
     <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
-    <!-- Redis Config -->
     <!--<import resource="file:/usr/web/spring-config/redis-config.xml" />-->
 
 

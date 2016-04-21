@@ -11,8 +11,8 @@ public enum JumeiImageType {
     BRANDSTORY(4),      //品牌故事图
     SIZE(5),            //尺码图
     LOGISTICS(6),       //物流介绍
-    VERTICAL(7);        //竖图
-
+    VERTICAL(7),        //竖图
+    Special(8);         //商品定制图Product Code
     private int id;
 
     private JumeiImageType(int id) {
