@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

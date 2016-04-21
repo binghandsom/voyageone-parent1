@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +25,8 @@ public class MqSenderTest extends TestCase {
 
     @Test
     public void testSendMessage() throws Exception {
-        Map<String,Object> message=new HashMap<>();
-        message.put("id","111");
+        Map<String, Object> message = new HashMap<>();
+        message.put("id", "111");
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
     }
 

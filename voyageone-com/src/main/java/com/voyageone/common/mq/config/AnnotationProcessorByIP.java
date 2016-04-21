@@ -49,7 +49,7 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RabbitListenerAnnotationBeanPostSplitIPProcessor
+public class AnnotationProcessorByIP
         implements BeanPostProcessor, Ordered, BeanFactoryAware, SmartInitializingSingleton {
 
     /**

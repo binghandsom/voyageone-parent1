@@ -4,10 +4,14 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,8 +88,15 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             status = TaskControlEnums.Status.ERROR;
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
+        }  catch (MQIgnoreException me) {
+            logIssue(me, me.getMessage());
+            status = TaskControlEnums.Status.ERROR;
+            $error("MQIgnoreException，任务退出", me);
+            throw new MQIgnoreException(me);
         }  catch (Exception ex) {
-            logIssue(ex);
+            if (isOutRetryTimes(message)) {
+                logIssue(ex, ex.getMessage());
+            }
             status = TaskControlEnums.Status.ERROR;
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
@@ -93,6 +104,16 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             // 任务监控历史记录添加:结束
             taskDao.insertTaskHistory(taskID, status.getIs());
         }
+    }
+
+    private boolean isOutRetryTimes(Message message) {
+        MessageProperties messageProperties = message.getMessageProperties();
+        Map<String, Object> headers = messageProperties.getHeaders();
+        String retryKey = VOExceptionStrategy.CONSUMER_RETRY_KEY;
+        // RETRY>3 return
+        return !MapUtils.isEmpty(headers) && //headers非空
+                !StringUtils.isEmpty(headers.get(retryKey)) && //CONSUMER_RETRY_KEY非空
+                (int) headers.get(retryKey) > VOExceptionStrategy.MAX_RETRY_TIMES;
     }
 
 }
