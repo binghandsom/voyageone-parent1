@@ -1,7 +1,6 @@
-package com.voyageone.task2.cms.mq;
+package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,18 +18,16 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class MqTest extends TestCase {
+public class MqSenderTest extends TestCase {
 
     @Autowired
     private MqSender sender;
 
     @Test
     public void testSendMessage() throws Exception {
-        Map<String,Object> message=new HashMap<String,Object>();
-        message.put("promotionId","111");
-        message.put("code","35476451212");
-        message.put("$consumer_retry_times$",1);
-        sender.sendMessage("voyageone_mq_error_handle_testing", message);
+        Map<String,Object> message=new HashMap<>();
+        message.put("id","111");
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
     }
 
 }

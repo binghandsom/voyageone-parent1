@@ -1,7 +1,8 @@
-package com.voyageone.common.mq.enums;
+package com.voyageone.service.impl.com.mq.enums;
 
 /**
  * 根据需要定义
+ *
  * @author aooer 2016/2/29.
  * @version 2.0.0
  * @since 2.0.0
@@ -18,7 +19,7 @@ public enum MqRoutingKey {
     private String value;
 
     MqRoutingKey(String value) {
-        this.value=value;
+        this.value = value;
     }
 
     public String getValue() {

@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionImportTaskService;

@@ -1,7 +1,7 @@
-package com.voyageone.common.mq.error;
+package com.voyageone.service.impl.com.mq.exception;
 
-import com.voyageone.common.mq.dao.MqMsgBackDao;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.com.mq.MqSender;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MqMsgBackDao msgBackDao;
+    private MqSender sender;
 
     /**
      * 是否致命判定
@@ -72,7 +72,7 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
             Map<String,Object> msgMap=JacksonUtil.jsonToMap(new String(message.getBody(),"UTF-8"));
             /* 加入CONSUMER_RETRY_KEY */
             msgMap.put(CONSUMER_RETRY_KEY,StringUtils.isEmpty(headers.get(CONSUMER_RETRY_KEY))?1:1+Integer.parseInt(headers.get(CONSUMER_RETRY_KEY).toString()));
-            msgBackDao.insertBatchMessage(messageProperties.getReceivedRoutingKey(),msgMap);
+            sender.addBackMessage(messageProperties.getReceivedRoutingKey(),msgMap);
         } catch (UnsupportedEncodingException e) {
             logger.error("rabbitmq listener error-handle exception",e);
         }
