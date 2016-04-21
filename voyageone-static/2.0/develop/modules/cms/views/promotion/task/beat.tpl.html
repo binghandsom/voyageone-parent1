@@ -36,7 +36,7 @@
 			<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
 		</div>
 		<div class="btn-group pull-right">
-			<button class="btn btn-default-vo" ng-click="ctrl.flag = null; $ctrl.getData();" translate="TXT_SHOW_ALL"></button>
+			<button class="btn btn-default-vo" ng-click="ctrl.flag = null; ctrl.getData();" translate="TXT_SHOW_ALL"></button>
 			<button class="btn btn-default-vo" ng-repeat="item in ctrl.summary" ng-click="ctrl.flag = item.flag; ctrl.getData();">
 				<span>{{item.flag | translate}}</span>&nbsp;:&nbsp;<span>{{item.count}}</span>
 			</button>

@@ -33,7 +33,7 @@ define([
                 return new MappingBean(mapping);
             });
             this.selectedMapping = this.defaultMapping = this.mappings.find(function (mapping) {
-                return mapping.defaultMapping === 1;
+                return mapping.defaultMapping == 1;
             });
         }
 
