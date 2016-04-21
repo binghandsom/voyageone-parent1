@@ -9,7 +9,7 @@ import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Scope;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FeedCategoryBean;
@@ -48,12 +48,10 @@ public class CmsFeedMappingService extends BaseAppService {
 
     List<FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeService.getFeedCategory(user.getSelChannelId(), topCategoryId);
+        CmsMtFeedCategoryTreeModel topCategory = feedCategoryTreeService.getFeedCategoryByCategory(user.getSelChannelId(), topCategoryId);
 
-        if (treeModelx.getCategoryTree().isEmpty())
+        if (topCategory == null)
             throw new BusinessException("未找到类目");
-
-        CmsMtFeedCategoryModel topCategory = treeModelx.getCategoryTree().get(0);
 
         // 查询 Mapping 信息
         // 当前渠道的所有所有所有 Mapping, 所以所有的 DefaultMain 都可以在这 List 里找到
@@ -227,21 +225,21 @@ public class CmsFeedMappingService extends BaseAppService {
         return parentDefaultMapping;
     }
 
-    private void buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int[] seq, List<FeedCategoryBean> result) {
+    private void buildFeedCategoryBean(CmsMtFeedCategoryTreeModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int[] seq, List<FeedCategoryBean> result) {
 
         FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
         feedCategoryBean.setSeq(seq[0]++);
-        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getPath(), "-"));
-        feedCategoryBean.setIsChild(feedCategoryModel.getIsChild());
-        feedCategoryBean.setPath(feedCategoryModel.getPath());
-        if (feedMappingModelMap.containsKey(feedCategoryModel.getPath())) {
-            List<FeedCategoryBean.MappingBean> mappings = feedMappingModelMap.get(feedCategoryModel.getPath());
+        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getCatPath(), "-"));
+        feedCategoryBean.setIsChild(feedCategoryModel.getIsParent() == 1?0:1);
+        feedCategoryBean.setPath(feedCategoryModel.getCatPath());
+        if (feedMappingModelMap.containsKey(feedCategoryModel.getCatPath())) {
+            List<FeedCategoryBean.MappingBean> mappings = feedMappingModelMap.get(feedCategoryModel.getCatPath());
             feedCategoryBean.setMappings(mappings);
         }
 
         result.add(feedCategoryBean);
 
-        for (CmsMtFeedCategoryModel child : feedCategoryModel.getChild())
+        for (CmsMtFeedCategoryTreeModel child : feedCategoryModel.getChildren())
             buildFeedCategoryBean(child, feedMappingModelMap, seq, result);
     }
 }

@@ -84,6 +84,7 @@ class SEAnalysisContext {
         product.setAttribute(new HashMap<>());
         product.setUpdFlg(0);
         product.setChannelId(ChannelConfigEnums.Channel.SHOE_CITY.getId());
+        product.setProductType(feedBean.getProduct_type());
 
         codeList.add(product);
         codeMap.put(code, product);

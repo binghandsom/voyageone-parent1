@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.jm;
 
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.bean.cms.CallResult;
-import com.voyageone.service.impl.jumei.*;
+import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.model.jumei.CmsBtJmProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionSkuModel;

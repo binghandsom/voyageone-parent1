@@ -1,12 +1,12 @@
 package com.voyageone.components.jumei;
 
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.components.jumei.Reponse.HtDealCopyDealResponse;
-import com.voyageone.components.jumei.Reponse.HtDealUpdateDealEndTimeResponse;
-import com.voyageone.components.jumei.Reponse.HtDealUpdateResponse;
-import com.voyageone.components.jumei.Request.HtDealCopyDealRequest;
-import com.voyageone.components.jumei.Request.HtDealUpdateDealEndTimeRequest;
-import com.voyageone.components.jumei.Request.HtDealUpdateRequest;
+import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
+import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
+import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
+import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
+import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
+import com.voyageone.components.jumei.request.HtDealUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

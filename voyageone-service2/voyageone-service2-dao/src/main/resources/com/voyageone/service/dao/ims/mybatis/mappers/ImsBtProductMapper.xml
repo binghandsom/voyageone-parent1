@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="ims_bt_product_selectByChannelCartCode" parameterType="Map" resultType="com.voyageone.service.model.ims.ImsBtProductModel">
+        SELECT
+        seq,
+        channel_id as channelId,
+        cart_id as cartId,
+        product_id as productId,
+        model_id as modelId,
+        code,
+        num_iid as numIid,
+        product_code as productCode,
+        main_product_flg as mainProductFlg,
+        product_type as productType,
+        quantity_update_type as quantityUpdateType,
+        cn_group_id as cnGroupId,
+        is_published as isPublished,
+        publish_product_id as publishProductId,
+        publish_product_status as publishProductStatus,
+        pre_publish_datetime as prePublishDatetime,
+        publish_datetime as publishDatetime,
+        publish_skip as publishSkip,
+        publish_status as publishStatus,
+        publish_faild_comment as publishFaildComment,
+        publish_promotion_price_status as publishPromotionPriceStatus,
+        promotion_faild_comment as promotionFaildComment,
+        creater,
+        created,
+        modifier,
+        modified
+        FROM voyageone_ims.ims_bt_product
+        WHERE channel_id = #{channelId}
+        AND cart_id = #{cartId}
+        AND code = #{code}
+    </select>
+
+    <insert id="ims_bt_product_insert" parameterType="com.voyageone.service.model.ims.ImsBtProductModel" >
+        INSERT INTO voyageone_ims.ims_bt_product
+        (
+        channel_id,
+        cart_id,
+        code,
+        num_iid,
+        quantity_update_type,
+        created,
+        creater,
+        modified,
+        modifier
+        )
+        VALUES
+        (
+        #{channelId},
+        #{cartId},
+        #{code},
+        #{numIid},
+        #{quantityUpdateType},
+        now(),
+        #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+
+    <update id="ims_bt_product_updateBySeq" parameterType="com.voyageone.service.model.ims.ImsBtProductModel">
+        update voyageone_ims.ims_bt_product
+        set num_iid = #{numIid},
+        quantity_update_type = #{quantityUpdateType},
+        modified = now(),
+        modifier = #{modifier}
+        where seq = #{seq}
+    </update>
+
+</mapper>

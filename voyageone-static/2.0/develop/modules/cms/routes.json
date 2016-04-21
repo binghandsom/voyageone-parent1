@@ -94,7 +94,7 @@
     "controller": "feedMappingController as $ctrl"
   },
   "mapping_feed_prop": {
-    "hash": "/mapping/feed/:feedCategoryPath*\/:commonFlg",
+    "hash": "/mapping/feed/:params*",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
     "controller": "feedPropMappingController as $ctrl"
@@ -158,6 +158,11 @@
     "hash": "/channel/configuration",
     "templateUrl": "views/channel/configuration/configuration.tpl.html",
     "controllerUrl": "modules/cms/views/channel/configuration/configuration.ctl"
+  },
+  "channel_taglist": {
+    "hash": "/channel/taglist",
+    "templateUrl": "views/channel/taglist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
   },
   "translation_index": {
     "hash": "/translation/index",
