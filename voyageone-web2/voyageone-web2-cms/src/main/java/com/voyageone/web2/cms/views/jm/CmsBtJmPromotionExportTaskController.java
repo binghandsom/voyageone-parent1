@@ -1,7 +1,8 @@
 package com.voyageone.web2.cms.views.jm;
+
 import com.voyageone.common.configs.Properties;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionExportTaskService;
@@ -31,6 +32,7 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
     private CmsBtJmPromotionExportTaskService service;
     @Autowired
     private MqSender sender;
+
     ///cms/CmsBtJmPromotionExportTask/index/getByPromotionId
     //  @RequestMapping( value = "/cms/CmsBtJmPromotionExportTask/index/getByPromotionId", method = RequestMethod.POST)//CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.GET_BY_PROMOTIONID)
     // @ResponseBody
@@ -59,7 +61,7 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         model.setCreater(getUser().getUserName());
         model.setCreated(new java.util.Date());
         service.insert(model);
-        Map<String, Object> message = new HashMap<String, Object>();
+        Map<String, Object> message = new HashMap<>();
         message.put("id", model.getId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask, message);
         return success(result);

@@ -42,7 +42,7 @@
     <!-- mq 监听器注解处理bean -->
     <bean id="rabbitListenerAnnotationBeanPostSplitIPProcessor"
           name="org.springframework.amqp.rabbit.config.internalRabbitListenerAnnotationProcessor"
-          class="com.voyageone.common.mq.config.RabbitListenerAnnotationBeanPostSplitIPProcessor">
+          class="com.voyageone.common.mq.config.AnnotationProcessorByIP">
         <!-- 是否本地环境 -->
         <property name="local" value="true" />
     </bean>

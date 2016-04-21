@@ -1,17 +1,14 @@
 package com.voyageone.service.impl.com.mq;
 
+import com.voyageone.common.mq.config.AnnotationProcessorByIP;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.com.ComMtMqMessageBackDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,50 +20,54 @@ import java.util.Map;
 public class MqSender extends BaseService {
 
     @Autowired
+    private MqBackMessageService mqBackMessageService;
+
+    @Autowired
     private AmqpTemplate amqpTemplate;
 
     @Autowired
     private AmqpAdmin amqpAdmin;
 
     @Autowired
-    private ComMtMqMessageBackDao comMtMqMessageBackDao;
+    private AnnotationProcessorByIP annotationProcessorByIP;
 
-    public void sendMessage(MqRoutingKey routingKey, Map<String, Object> messageMap) {
+    private static final String CONSUMER_RETRY_KEY = "$consumer_retry_times$";
+
+    private static final String EXISTS_IP = "$EXISTS_IP$";
+
+//    public void sendMessage(MqRoutingKey routingKey, Map<String, Object> messageMap) {
+//        sendMessage(routingKey.getValue(), messageMap);
+//    }
+
+
+    public void sendMessage(String routingKey, Map<String, Object> messageMap) {
         try {
-            amqpAdmin.declareQueue(new Queue(routingKey.getValue()));
+            // isload add ipaddress to routingKey
+            if (annotationProcessorByIP.isLocal() && !routingKey.endsWith(EXISTS_IP)) {
+                routingKey += InetAddress.getLocalHost().toString().replace("/", "_") + EXISTS_IP;
+            }
+
+            //declareQueue
+            amqpAdmin.declareQueue(new Queue(routingKey));
             if (messageMap == null) {
                 messageMap = new HashMap<>();
             }
-            amqpTemplate.convertAndSend(routingKey.getValue(), JacksonUtil.bean2Json(messageMap));
+
+            int retryTimes = 0;
+            if (messageMap.containsKey(CONSUMER_RETRY_KEY)) {
+                retryTimes = (int)messageMap.get(CONSUMER_RETRY_KEY);
+                messageMap.remove(CONSUMER_RETRY_KEY); //从body移动COMSUMER_RETRY_KEY到header
+            }
+
+            final int finalRetryTimes = retryTimes;
+            amqpTemplate.send(routingKey, new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
+                setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
+            }}));
+
         } catch (Exception e) {
             $error(e.getMessage(), e);
-            comMtMqMessageBackDao.insertBackMessage(routingKey.toString(), messageMap);
+            mqBackMessageService.addBackMessage(routingKey, messageMap);
         }
-    }
-
-    /**
-     * 查询未处理的数据(Top 100)
-     */
-    public List<Map<String, Object>> getBackMessageTop100() {
-        return comMtMqMessageBackDao.selectBackMessageTop100();
-    }
-
-    /**
-     * 插入备份数据
-     * @param routingKey rk
-     * @param messageMap mm
-     */
-    public void addBackMessage(String routingKey, Map<String, Object> messageMap) {
-        comMtMqMessageBackDao.insertBackMessage(routingKey, messageMap);
-    }
-
-    /**
-     * 更新状态
-     *
-     * @param id 主键
-     */
-    public void updateBackMessageFlag(int id) {
-        comMtMqMessageBackDao.updateBackMessageFlag(id);
     }
 
 }
