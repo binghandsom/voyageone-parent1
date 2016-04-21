@@ -85,7 +85,7 @@
     "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
-    "controller": "productDetailController as $ctrl"
+    "controller": "productDetailController as ctrl"
   },
   "mapping_feed_list": {
     "hash": "/mapping/feed",

@@ -342,31 +342,31 @@
 					<div class="box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
 						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" width="{{vm.tblWidth}}">
 							<tbody ng-repeat="groupInfo in vm.groupList">
-							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.publishTime}" class="table_bg_gray">
 								<td colspan="8" class="control-label text-left form-inline" style="height:36px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
 									<label class="checkbox-inline c-checkbox">
 										<input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"  ng-controller="selectRowsCtrl"
 											   ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
 										<span class="fa fa-check"></span>
 									</label>
-									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'WaitingPublish'}">
-										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
+									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platformStatus == 'WaitingPublish'}">
+										&nbsp;{{groupInfo.groups.platformStatus}}&nbsp;
 									</span>
-									<span class="m-r-sm" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="groupInfo.groups.platforms[0].numIId"></a>
+									<span class="m-r-sm" ng-if="groupInfo.groups.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.numIId}}" target="_blank"  ng-bind="groupInfo.groups.numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
-										<a ng-if="groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.longTitle}}"
+										<a ng-if="groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groups.groupId}}" title="{{groupInfo.fields.longTitle}}"
 										   target="_blank">{{groupInfo.fields.longTitle | limitTo: 30}}{{groupInfo.fields.longTitle.length > 30 ? '...' : ''}}
 										</a>
-										<a ng-if="!groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameEn}}"
+										<a ng-if="!groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groups.groupId}}" title="{{groupInfo.fields.productNameEn}}"
 										   target="_blank">{{groupInfo.fields.productNameEn | limitTo: 30}}{{groupInfo.fields.productNameEn.length > 30 ? '...' : ''}}
 										</a>
 									</span>
 									<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
 								</td>
 							</tr>
-							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" style="">
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.publishTime}" style="">
 								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;">
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 									<div class="table_main pull-left" style="width:60%">
@@ -381,8 +381,8 @@
 								</td>
 								<td class="text-center" style="display:inline-block;width:85px;"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
-											class="btn btn-default btn-xs">{{groupInfo.groups.platforms[0].inventory || 0}}</button>-->
-									{{groupInfo.groups.platforms[0].qty || 0}}
+											class="btn btn-default btn-xs">{{groupInfo.groups.inventory || 0}}</button>-->
+									{{groupInfo.groups.qty || 0}}
 								</td>
 								<td class="text-center" style="display:inline-block;width:150px;">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})"
@@ -395,14 +395,14 @@
 								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
 
 								<td class="text-left" style="display:inline-block;width:150px;">
-									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
+									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
-											<ul ng-if="groupInfo.groups.platforms[0].publishTime">
+											<ul ng-if="groupInfo.groups.publishTime">
 												<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
 												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
-												<li><span>{{groupInfo.groups.platforms[0].publishTime.substring(0,19)}}</span></li>
+												<li><span>{{groupInfo.groups.publishTime.substring(0,19)}}</span></li>
 											</ul>
-											<ul ng-if="!groupInfo.groups.platforms[0].publishTime">
+											<ul ng-if="!groupInfo.groups.publishTime">
 												<li>{{'TXT_CREATE_TIME' | translate}}</li>
 												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
 												<li><span>{{groupInfo.created.substring(0,19)}}</span></li>
@@ -445,7 +445,7 @@
 					<div class="col-sm-12 box-body" if-no-rows="vm.productList.length" style="padding-left:0px">
 						<table class="table-hover vo_table vo_models" ng-if="vm.productList.length" width="{{vm.tblWidth2}}">
 							<tbody ng-repeat="productInfo in vm.productList">
-								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
+								<tr ng-class="{'table_bg_green_mint': productInfo.groups.publishTime}" class="table_bg_gray">
 									<td colspan="9" class="control-label text-left form-inline" style="height:36px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
 										<label class="checkbox-inline c-checkbox">
 											<input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox" ng-controller="selectRowsCtrl"
@@ -457,8 +457,8 @@
 										</span>
 										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo._prodMnFlg == 1">&nbsp;M&nbsp;</span>
 										<span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
-									    <span class="m-r-sm" ng-if="productInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="productInfo.groups.platforms[0].numIId"></a>
+									    <span class="m-r-sm" ng-if="productInfo.groups.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.numIId}}" target="_blank"  ng-bind="productInfo.groups.numIId"></a>
 									    </span>&nbsp;
 										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
 											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.fields.code"></a>
@@ -472,7 +472,7 @@
 										<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>
 								</tr>
-								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}">
+								<tr ng-class="{'table_bg_green_mint': productInfo.groups.publishTime}">
 									<td class="text-left" style="display:inline-block;width:165px;">
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 									</td>
@@ -497,14 +497,14 @@
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>
 									</td>
 									<td class="text-left m-t-lg" style="display:inline-block;width:165px; height:97px;">
-										<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
+										<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 											<div class="table_main">
-												<ul ng-if="productInfo.groups.platforms[0].publishTime">
+												<ul ng-if="productInfo.groups.publishTime">
 													<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
 													<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
-													<li><span>{{productInfo.groups.platforms[0].publishTime.substring(0, 19)}}</span></li>
+													<li><span>{{productInfo.groups.publishTime.substring(0, 19)}}</span></li>
 												</ul>
-												<ul ng-if="!productInfo.groups.platforms[0].publishTime">
+												<ul ng-if="!productInfo.groups.publishTime">
 													<li>{{'TXT_CREATE_TIME' | translate}}</li>
 													<!--<li><span>{{productInfo.publishDate}}</span></li>-->
 													<li><span>{{productInfo.created.substring(0, 19)}}</span></li>

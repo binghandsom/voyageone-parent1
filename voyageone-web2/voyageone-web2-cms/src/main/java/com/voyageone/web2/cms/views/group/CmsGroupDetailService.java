@@ -8,6 +8,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
@@ -62,23 +63,37 @@ public class CmsGroupDetailService extends BaseAppService {
      * 获取当前页的product列表
      */
     public List<CmsBtProductModel> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        // 先取得group信息，
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchValue(params, cmsSessionBean));
-        queryObject.setProjection(searchItems.split(";"));
-        int pageNum = Integer.valueOf(params.get("pageNum").toString());
-        int pageSize = Integer.valueOf(params.get("pageSize").toString());
-        queryObject.setSkip((pageNum - 1) * pageSize);
-        queryObject.setLimit(pageSize);
+        List<CmsBtProductGroupModel> rstList = cmsBtProductGroupDao.select(queryObject, userInfo.getSelChannelId());
+        if (rstList == null || rstList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductList 没有group数据 " + params.toString());
+            return new ArrayList<>(0);
+        }
+        CmsBtProductGroupModel grpObj = rstList.get(0);
+        List<String> codeList = grpObj.getProductCodes();
+        if (codeList == null || codeList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductList group下没有product数据 " + params.toString());
+            return new ArrayList<>(0);
+        }
+        String[] codeArr = new String[codeList.size()];
+        codeArr = codeList.toArray(codeArr);
 
-        return productService.getList(userInfo.getSelChannelId(), queryObject);
-    }
+        JomgoQuery grpQueryObject = new JomgoQuery();
+        grpQueryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+        grpQueryObject.setProjection(searchItems.split(";"));
 
-    /**
-     * 获取当前页的product列表
-     */
-    public long getProductCnt(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        String queryStr = getSearchValue(params, cmsSessionBean);
-        return productService.getCnt(userInfo.getSelChannelId(), queryStr);
+        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);
+        if (prodList == null || codeList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductList 没有product数据 " + params.toString());
+            return new ArrayList<>(0);
+        }
+        for (CmsBtProductModel prodObj : prodList) {
+            // 从group表合并platforms信息
+            prodObj.setGroups(grpObj);
+        }
+        return prodList;
     }
 
     /**

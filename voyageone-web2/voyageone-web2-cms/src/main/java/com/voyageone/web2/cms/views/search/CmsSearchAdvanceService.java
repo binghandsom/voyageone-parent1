@@ -14,6 +14,7 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.TagService;
@@ -63,6 +64,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private FeedCustomPropService feedCustomPropService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private BaseJomgoTemplate mongoTemplate;
 
@@ -146,7 +149,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         JomgoQuery qrpQuy = new JomgoQuery();
         qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
         qrpQuy.setProjection("{'_id':0,'mainProductCode':1}");
-        List<Map> grpList = mongoTemplate.find(qrpQuy, Map.class, "cms_bt_product_groups_c010");
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, userInfo.getSelChannelId());
         if (grpList == null || grpList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList grpList");
             return new ArrayList<String>(0);
@@ -201,25 +204,24 @@ public class CmsSearchAdvanceService extends BaseAppService {
             // 在group表中过滤platforms相关信息
             JomgoQuery qrpQuy = new JomgoQuery();
             qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
-            List<Map> grpList = mongoTemplate.find(qrpQuy, Map.class, "cms_bt_product_groups_c010");
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, channelId);
             if (grpList == null || grpList.isEmpty()) {
                 $warn("CmsSearchAdvanceService.getGroupExtraInfo grpList");
             }
             Map groupModelMap = grpList.get(0);
             // 设置其group信息，用于画面显示
             long grpId = (Long) groupModelMap.get("groupId");
-//            CmsBtProductModel_Group groupModel = new CmsBtProductModel_Group();
-//            CmsBtProductModel_Group_Platform platformModel = new CmsBtProductModel_Group_Platform();
-//            platformModel.setCartId(cartId);
-//            platformModel.setGroupId(grpId);
-//            platformModel.setInstockTime((String) groupModelMap.get("instockTime"));
-//            platformModel.setOnSaleTime((String) groupModelMap.get("onSaleTime"));
-//            platformModel.setPublishTime((String) groupModelMap.get("publishTime"));
-//            platformModel.setQty((Integer) groupModelMap.get("qty"));
-//            platformModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.valueOf((String) groupModelMap.get("platformStatus")));
-//            platformModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.valueOf((String) groupModelMap.get("platformActive")));
-//            groupModel.addPlatforms(platformModel);
-//            groupObj.setGroups(groupModel);
+            CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
+            platformModel.setCartId(cartId);
+            platformModel.setGroupId(grpId);
+            platformModel.setNumIId((String) groupModelMap.get("numIId"));
+            platformModel.setInstockTime((String) groupModelMap.get("instockTime"));
+            platformModel.setOnSaleTime((String) groupModelMap.get("onSaleTime"));
+            platformModel.setPublishTime((String) groupModelMap.get("publishTime"));
+            platformModel.setQty((Integer) groupModelMap.get("qty"));
+            platformModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.valueOf((String) groupModelMap.get("platformStatus")));
+            platformModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.valueOf((String) groupModelMap.get("platformActive")));
+            groupObj.setGroups(platformModel);
 
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
             if (channel == null) {
@@ -278,7 +280,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'fields.code':1,'_id':0}");
-        List<Map> prodList = mongoTemplate.find(queryObject, Map.class, "cms_bt_product_c010");
+        List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObject, userInfo.getSelChannelId());
         if (prodList == null || prodList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
             return new ArrayList<String>(0);
@@ -286,14 +288,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         // 取得符合条件的产品code列表
         List<String> codeList = new ArrayList<String>(prodList.size());
-        for (Map prodObj : prodList) {
-            Map fieldsObj = (Map) prodObj.get("fields");
-            if (fieldsObj != null) {
-                String pCode = org.apache.commons.lang3.StringUtils.trimToNull((String) fieldsObj.get("code"));
-                if (pCode != null) {
-                    codeList.add(pCode);
-                }
-            }
+        for (CmsBtProductModel prodObj : prodList) {
+             codeList.add(prodObj.getFields().getCode());
         }
 
         // 如果检索了groups.platforms相关信息，则必须对上面的结果prodList进行过滤
@@ -336,7 +332,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         JomgoQuery qrpQuy = new JomgoQuery();
         qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
         qrpQuy.setProjection("{'_id':0,'productCodes.$':1}");
-        List<Map> grpList = mongoTemplate.find(qrpQuy, Map.class, "cms_bt_product_groups_c010");
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, userInfo.getSelChannelId());
         if (grpList == null || grpList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList grpList");
             return new ArrayList<String>(0);
@@ -683,7 +679,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             FileUtils.cell(row, 1, unlock).setCellValue(item.getProdId());
 
-//            FileUtils.cell(row, 2, unlock).setCellValue(item.getGroups().getPlatformByCartId(Integer.valueOf(cartId)).getNumIId());
+            FileUtils.cell(row, 2, unlock).setCellValue(item.getGroups().getNumIId());
 
             FileUtils.cell(row, 3, unlock).setCellValue(item.getFields().getCode());
 
