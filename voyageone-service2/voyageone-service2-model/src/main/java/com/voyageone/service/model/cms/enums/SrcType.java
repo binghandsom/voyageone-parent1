@@ -15,7 +15,8 @@ public enum SrcType {
     propMain,
     optionMain,
     optionPlatform,
-    dict;
+    dict,
+    calculate;
 
     @JsonCreator
     public static SrcType fromJson(String srcType) {

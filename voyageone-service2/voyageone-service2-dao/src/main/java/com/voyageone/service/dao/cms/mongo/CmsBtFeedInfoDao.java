@@ -26,11 +26,18 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
      * @param updFlg updFlg=0: 等待反映到主数据, updFlg=1: 已经反映到主数据
      * @return 商品列表
      */
-    public List<CmsBtFeedInfoModel> selectProductByUpdFlg(String channelId, int updFlg) {
-        String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, updFlg);
-
+    //jeff 2016/06 change start
+    // public List<CmsBtFeedInfoModel> selectProductByUpdFlg(String channelId, int updFlg) {
+    public List<CmsBtFeedInfoModel> selectProductByUpdFlg(String channelId, int[] updFlg) {
+        // String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, updFlg);
+        String query = "{\"channelId\":\"" + channelId + "\",\"updFlg\":{$in:[";
+        for (int item : updFlg) {
+            query += String.valueOf(item) + ",";
+        }
+        query = query.substring(0, query.length() - 1) + "]}}";
         return select(query, channelId);
     }
+    //jeff 2016/06 change end
 
     /**
      * updateFeedInfoUpdFlg
