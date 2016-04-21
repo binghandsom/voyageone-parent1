@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.promotion;
 
-import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
@@ -22,24 +21,23 @@ public class PromotionCodeService extends BaseService {
     @Autowired
     private CmsBtPromotionCodeDao cmsBtPromotionCodeDao;
 
-    public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> param){
+    public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> param) {
         return cmsBtPromotionCodeDao.selectPromotionCodeList(param);
     }
 
-    public int getPromotionCodeListCnt(Map<String, Object> params){
+    public int getPromotionCodeListCnt(Map<String, Object> params) {
         return cmsBtPromotionCodeDao.selectPromotionCodeListCnt(params);
     }
 
-    public List<CmsBtPromotionCodeModel> getPromotionCodeListByIdOrgChannelId(int promotionId, String orgChannelId){
+    public List<CmsBtPromotionCodeModel> getPromotionCodeListByIdOrgChannelId(int promotionId, String orgChannelId) {
         Map<String, Object> params = new HashMap<>();
         params.put("promotionId", promotionId);
-        params.put("orgChannelId",orgChannelId);
+        params.put("orgChannelId", orgChannelId);
         return cmsBtPromotionCodeDao.selectPromotionCodeSkuList(params);
     }
 
-    @VOTransactional
-    public int deletePromotionCode(CmsBtPromotionCodeModel model){
-        return cmsBtPromotionCodeDao.deletePromotionCode(model);
+    public List<Map<String, Object>> getPromotionCodesByPromotionIds(List<String> promotionIdList) {
+        return cmsBtPromotionCodeDao.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
     }
 
 }

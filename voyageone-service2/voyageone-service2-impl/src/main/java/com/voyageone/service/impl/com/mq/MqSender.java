@@ -52,6 +52,15 @@ public class MqSender extends BaseService {
     }
 
     /**
+     * 插入备份数据
+     * @param routingKey rk
+     * @param messageMap mm
+     */
+    public void addBackMessage(String routingKey, Map<String, Object> messageMap) {
+        comMtMqMessageBackDao.insertBackMessage(routingKey, messageMap);
+    }
+
+    /**
      * 更新状态
      *
      * @param id 主键
