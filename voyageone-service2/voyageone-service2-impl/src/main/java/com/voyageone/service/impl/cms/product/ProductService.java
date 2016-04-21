@@ -16,17 +16,17 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
+import com.voyageone.service.dao.cms.CmsBtChannelConfigDao;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
-import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtChannelConfigModel;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import net.minidev.json.JSONObject;
@@ -46,15 +46,13 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     protected CmsBtProductLogDao cmsBtProductLogDao;
 
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
-
-    @Autowired
-    private ProductGroupService productGroupService;
 
     @Autowired
     private ProductSkuService productSkuService;
@@ -75,117 +73,64 @@ public class ProductService extends BaseService {
      * 获取商品 根据ID获
      */
     public CmsBtProductModel getProductById(String channelId, long prodId) {
-        return cmsBtProductDao.selectProductById(channelId, prodId);
-    }
-
-    /**
-     * 获取商品 根据ID获
-     */
-    public JSONObject getProductByIdWithJson(String channelId, long prodId) {
-        return cmsBtProductDao.selectProductByIdWithJson(channelId, prodId);
+        String query = "{\"prodId\":" + prodId + "}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
     /**
      * 获取商品 根据Code
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
-        return cmsBtProductDao.selectProductByCode(channelId, code);
-    }
-
-    /**
-     * 获取商品 根据query
-     */
-    public CmsBtProductModel getProductWithQuery(String channelId, String query) {
-        if (StringUtils.isEmpty(query)) {
-            return cmsBtProductDao.selectOne(channelId);
-        }
+        String query = "{\"fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
     /**
-     * 获取商品 根据query
+     * 根据多个groupsIds获取产品列表
+     * @param channelId
+     * @param groupId
+     * @param flag: true:检索主商品以外的商品,false:检索所有的商品
+     * @return
      */
-    public CmsBtProductModel getProductWithQuery(String channelId, JomgoQuery queryObject) {
-        return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-    }
-
-    /**
-     * 获取商品List 根据GroupId
-     */
-    public List<CmsBtProductModel> getProductByGroupId(String channelId, long groupId) {
-        return cmsBtProductDao.selectProductByGroupId(channelId, groupId);
-    }
-
-    /**
-     * 获取商品groupId Code List Map  根据CartId
-     *  key groupId
-     *  value: codeList
-     * @param channelId channel ID
-     * @param cartId cart ID
-     * @return code list
-     */
-    public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId) {
-
-        return getProductGroupIdCodesMapByCart(channelId,cartId,null);
-//        Map<String, List<String>> result = new LinkedHashMap<>();
-//
-//        JomgoQuery queryObject = new JomgoQuery();
-//        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
-//        queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
-//
-//        Iterator<CmsBtProductModel> productsIt = cmsBtProductDao.selectCursor(queryObject, channelId);
-//        while (productsIt.hasNext()) {
-//            CmsBtProductModel product = productsIt.next();
-//            if (product.getGroups() != null
-//                    && product.getGroups().getPlatforms() != null
-//                    && product.getGroups().getPlatforms().size() > 0) {
-//                Long groupId = product.getGroups().getPlatforms().get(0).getGroupId();
-//                if (groupId != null) {
-//                    if (!result.containsKey(groupId.toString())) {
-//                        result.put(groupId.toString(), new ArrayList<>());
-//                    }
-//                    List<String> listCode = result.get(groupId.toString());
-//                    if (product.getFields() != null) {
-//                        listCode.add(product.getFields().getCode());
-//                    }
-//                }
-//            }
-//        }
-//
-//        return result;
-    }
-
-    public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId, String orgChannelId) {
-        Map<String, List<String>> result = new LinkedHashMap<>();
-
+    public List<CmsBtProductModel> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
         JomgoQuery queryObject = new JomgoQuery();
-
-        if(StringUtils.isEmpty(orgChannelId)){
-            queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
-        }else{
-            queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + ",\"orgChannelId\":\"" + orgChannelId +"\"}");
+        queryObject.setQuery(String.format("{ \"groupId\":%d}", groupId));
+        CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery(queryObject, channelId);
+        if (grpObj == null) {
+            return null;
         }
-        queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
-
-        Iterator<CmsBtProductModel> productsIt = cmsBtProductDao.selectCursor(queryObject, channelId);
-        while (productsIt.hasNext()) {
-            CmsBtProductModel product = productsIt.next();
-            if (product.getGroups() != null
-                    && product.getGroups().getPlatforms() != null
-                    && product.getGroups().getPlatforms().size() > 0) {
-                Long groupId = product.getGroups().getPlatforms().get(0).getGroupId();
-                if (groupId != null) {
-                    if (!result.containsKey(groupId.toString())) {
-                        result.put(groupId.toString(), new ArrayList<>());
-                    }
-                    List<String> listCode = result.get(groupId.toString());
-                    if (product.getFields() != null) {
-                        listCode.add(product.getFields().getCode());
-                    }
-                }
+        List<String> codeList = grpObj.getProductCodes();
+        if (codeList == null || codeList.isEmpty()) {
+            return null;
+        }
+        if (flag) {
+            // 检索主商品以外的商品时，若该组仅有一个主商品，没有子商品，则返回空
+            if (codeList.size() <= 1) {
+                return null;
+            } else {
+                codeList.remove(0);
             }
         }
 
+        String[] codeArr = new String[codeList.size()];
+        codeArr = codeList.toArray(codeArr);
+        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+
+        return cmsBtProductDao.select(queryObject, channelId);
+    }
+
+    // 查询指定平台下各商品组中包含的商品code
+    // 返回的map中，key是group id，value中是商品code列表
+    public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId, String orgChannelId) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"cartId\":" + cartId + "}");
+        queryObject.setProjection("{'groupId':1,'productCodes':1,'_id':0}");
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);
+
+        Map<String, List<String>> result = new LinkedHashMap<>();
+        for (CmsBtProductGroupModel grpObj : grpList) {
+              result.put(grpObj.getGroupId().toString(), grpObj.getProductCodes());
+        }
         return result;
     }
 
@@ -268,7 +213,7 @@ public class ProductService extends BaseService {
     /**
      * add products
      */
-    public void createProduct(String channelId, CmsBtProductModel product, String modifier) {
+    public void createProduct(String channelId, final CmsBtProductModel product, String modifier) {
         /**
          * check row exist
          */
@@ -285,51 +230,15 @@ public class ProductService extends BaseService {
         }
 
         //update channel and modifier
+        CmsBtProductGroupModel grp = product.getGroups();
+        product.setGroups(null);
         product.setChannelId(channelId);
         product.setCreater(modifier);
         product.setModifier(modifier);
 
         //save
         cmsBtProductDao.insert(product);
-    }
-
-    /**
-     * add products
-     */
-    public void createProduct(String channelId, List<CmsBtProductModel> products, String modifier) {
-        /**
-         * update channel and modifier
-         */
-        List<Long> pids = new ArrayList<>();
-        List<String> productCodes = new ArrayList<>();
-        for (CmsBtProductModel product : products) {
-            pids.add(product.getProdId());
-            productCodes.add(product.getFields().getCode());
-            product.setChannelId(channelId);
-            product.setCreater(modifier);
-            product.setModifier(modifier);
-        }
-
-        /**
-         * check row exist
-         */
-        String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
-        String query = String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr);
-        long count = cmsBtProductDao.countByQuery(query, channelId);
-        if (count > 0) {
-            throw new RuntimeException("prodId has existed, not add!");
-        }
-        String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(productCodes) + "\"";
-        query = String.format("{ \"fields.code\" : { $in : [ %s ] } }", productCodesStr);
-        count = cmsBtProductDao.countByQuery(query, channelId);
-        if (count > 0) {
-            throw new RuntimeException("fields.code has existed, not add!");
-        }
-
-        /**
-         * execute insert
-         */
-        cmsBtProductDao.insertWithList(products);
+        product.setGroups(grp);
     }
 
     /**
@@ -405,17 +314,6 @@ public class ProductService extends BaseService {
         }
 
         /**
-         * Groups
-         */
-        CmsBtProductModel_Group group = productModel.getGroups();
-        for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {
-            Set<Long> productIds = new HashSet<>();
-            productIds.add(prodId);
-
-            productGroupService.saveGroups(channelId, productIds, platform);
-        }
-
-        /**
          * Feed
          */
         CmsBtProductModel_Feed feed = productModel.getFeed();
@@ -460,7 +358,7 @@ public class ProductService extends BaseService {
                 if (!StringUtils.isEmpty(request.getModifier())) {
                     modifier = request.getModifier();
                 }
-                insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getGroups().getPlatforms(), modifier);
+                insertSxWorkLoad(befStatus, aftStatus, channelId, productCode, modifier);
             }
 
             /**
@@ -504,138 +402,12 @@ public class ProductService extends BaseService {
 
     }
 
-//    /**
-//     * delete product
-//     *
-//     * @return ProductsDeleteResponse
-//     */
-//    public ProductsDeleteResponse deleteProducts(ProductsDeleteRequest request) {
-//        ProductsDeleteResponse response = new ProductsDeleteResponse();
-//
-//        checkCommRequest(request);
-//        //ChannelId
-//        String channelId = request.getChannelId();
-//        checkRequestChannelId(channelId);
-//
-//        request.check();
-//
-//        //getProductById
-//        Set<Long> pids = request.getProductIds();
-//        //getProductByCode
-//        Set<String> productCodes = request.getProductCodes();
-//
-//        boolean isExecute = false;
-//        List<Map<String, Object>> bulkList = new ArrayList<>();
-//        if (pids != null && pids.size() > 0) {
-//            for (Long pid : pids) {
-//                Map<String, Object> queryMap = new HashMap<>();
-//                queryMap.put("prodId", pid);
-//                bulkList.add(queryMap);
-//            }
-//            isExecute = true;
-//        } else if (productCodes != null && productCodes.size() > 0) {
-//            for (String productCode : productCodes) {
-//                Map<String, Object> queryMap = new HashMap<>();
-//                queryMap.put("fields.code", productCode);
-//                bulkList.add(queryMap);
-//            }
-//            isExecute = true;
-//        }
-//
-//        if (isExecute) {
-//            if (bulkList.size() > 0) {
-//                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkRemoveWithMap(channelId, bulkList);
-//                setResultCount(response, bulkWriteResult);
-//            }
-//        }
-//
-//        return response;
-//    }
-
-//    /**
-//     * updateStatusProduct
-//     *
-//     * @param request ProductStatusPutRequest
-//     * @return ProductGroupsPutResponse
-//     */
-//    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest request) {
-//        ProductGroupsPutResponse response = new ProductGroupsPutResponse();
-//
-//        checkCommRequest(request);
-//        //ChannelId
-//        String channelId = request.getChannelId();
-//        checkRequestChannelId(channelId);
-//
-//        request.check();
-//
-//        CmsConstants.ProductStatus aftStatus = request.getStatus();
-//
-//        HashMap<String, Object> queryMap = new HashMap<>();
-//        JomgoQuery queryObject = new JomgoQuery();
-//        queryObject.setProjection("prodId", "fields.status");
-//        if (request.getProductId() != null) {
-//            queryObject.setQuery("{\"prodId\":" + request.getProductId() + "}");
-//        } else {
-//            queryObject.setQuery("{\"fields.code\":\"" + request.getProductCode() + "\"}");
-//        }
-//
-//        CmsBtProductModel findModel = null;
-//        if (!StringUtils.isEmpty(queryObject.getQuery())) {
-//            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-//        }
-//
-//        HashMap<String, Object> updateMap = new HashMap<>();
-//        if (findModel != null) {
-//            String findStatus = null;
-//            if (findModel.getFields() != null && findModel.getFields().getStatus() != null) {
-//                findStatus = findModel.getFields().getStatus();
-//            }
-//            if (aftStatus != null && !aftStatus.toString().equals(findStatus)) {
-//                updateMap.put("fields.status", aftStatus.toString());
-//
-//                if (!StringUtils.isEmpty(request.getModifier())) {
-//                    updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
-//                    updateMap.put("modifier", request.getModifier());
-//                }
-//            }
-//        }
-//
-//        if (updateMap.size() > 0) {
-//            BulkUpdateModel model = new BulkUpdateModel();
-//            model.setUpdateMap(updateMap);
-//            model.setQueryMap(queryMap);
-//
-//            List<BulkUpdateModel> bulkList = new ArrayList<>();
-//            bulkList.add(model);
-//
-//            if (findModel != null && findModel.getFields() != null) {
-//                //insert　Product　History
-//                CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
-//                insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
-//
-//                //insert　SxWorkLoad
-//                String modifier = "0";
-//                if (!StringUtils.isEmpty(request.getModifier())) {
-//                    modifier = request.getModifier();
-//                }
-//                insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getProdId(), modifier);
-//            }
-//
-//            // 更新产品状态
-//            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-//            setResultCount(response, bulkWriteResult);
-//        }
-//
-//        return response;
-//    }
-
-
     private void insertProductHistory(CmsConstants.ProductStatus befStatus,
                                       CmsConstants.ProductStatus aftStatus,
                                       String channelId, Long productId) {
         if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
             if (productId != null) {
-                CmsBtProductModel productModel = cmsBtProductDao.selectProductById(channelId, productId);
+                CmsBtProductModel productModel = getProductById(channelId, productId);
                 CmsBtProductLogModel logModel = new CmsBtProductLogModel();
                 BeanUtil.copy(productModel, logModel);
                 logModel.set_id(null);
@@ -646,7 +418,7 @@ public class ProductService extends BaseService {
 
     private void insertSxWorkLoad(CmsConstants.ProductStatus befStatus,
                                   CmsConstants.ProductStatus aftStatus,
-                                  String channelId, List<CmsBtProductModel_Group_Platform> platforms, String modifier) {
+                                  String channelId, String productCode, String modifier) {
         if (befStatus != null && aftStatus != null) {
             boolean isNeed = false;
             // 从其他状态转为Pending
@@ -658,25 +430,18 @@ public class ProductService extends BaseService {
                 isNeed = true;
             }
 
-//            if (isNeed) {
-//                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-//                model.setChannelId(channelId);
-//                model.setGroupId(groupId);
-//                model.setPublishStatus(0);
-//                model.setCreater(modifier);
-//                model.setModifier(modifier);
-//                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
-//            }
-
             // 获得该店铺的上新平台列表
             List<Integer> carts = new ArrayList<>();
             for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
                 carts.add(Integer.valueOf(typeChannelBean.getValue()));
             }
 
+            // 根据商品code获取其所有group信息(所有平台)
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{'productCodes':{'$in':['" + productCode + "']}}", channelId);
+
             // 获取所有的可上新的平台group信息
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();
-            for(CmsBtProductModel_Group_Platform platform : platforms) {
+            for(CmsBtProductGroupModel platform : grpList) {
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                 if (carts.contains(platform.getCartId()) && isNeed) {
                     model.setChannelId(channelId);
@@ -741,19 +506,22 @@ public class ProductService extends BaseService {
     /**
      * 根据groupId批量更新产品的信息
      * @param channelId String
-     * @param groupId Long
+     * @param prodCode String
      * @param updateMap Map
      * @param modifier String
      */
-    public int updateTranslation(String channelId, Long groupId, Map<String, Object> updateMap, String modifier) {
-
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
+    public int updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
+        // 先根据产品code找到其model
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{'fields.code':'" + prodCode + "'},{'fields.model':1,'_id':0}",channelId);
+        String prodModel = prodObj.getFields().getModel();
 
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("groups.platforms.groupId", groupId);
+        queryMap.put("fields.model", prodModel);
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
         bulkList.add(model);
 
         // 批量更新product表
@@ -893,7 +661,7 @@ public class ProductService extends BaseService {
         }
 
         if (!StringUtils.isEmpty(cartId)) {
-            sbQuery.append(MongoUtils.splicingValue("groups.platforms.cartId", Integer.valueOf(cartId)));
+            sbQuery.append(MongoUtils.splicingValue("fields.productCarts", Integer.valueOf(cartId)));
             sbQuery.append(",");
         }
 
@@ -928,12 +696,15 @@ public class ProductService extends BaseService {
                 }
                 bean.setImgPath(imagePath);
 
+                // 取得该商品的组信息
+                CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery("{'cartId':" + cartId + ",'productCodes':'" + product.getFields().getCode() + "'},{'numIid':1,'_id':0}", channelId);
+
                 // TODO 目前写死,以后再想办法修改
                 String numIid = "";
-                switch (cartId) {
-                    case "23":
-                        numIid = product.getGroups().getPlatforms().size() > 0 && !StringUtils.isEmpty(product.getGroups().getPlatforms().get(0).getNumIId())
-                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + product.getGroups().getPlatforms().get(0).getNumIId() : "";
+                switch (CartEnums.Cart.getValueByID(cartId)) {
+                    case TG:
+                        numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getNumIId())
+                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + grpObj.getNumIId() : "";
                         break;
                 }
                 bean.setSkuTmallUrl(numIid);
@@ -969,8 +740,8 @@ public class ProductService extends BaseService {
                 break;
             case 1:
                 queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"groups.platforms.isMain\":1}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"groups.platforms.isMain\":1}]}";
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"fields.isMasterMain\":1}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"fields.isMasterMain\":1}]}";
                 break;
             default:
                 // add translateTime condition
@@ -1042,27 +813,27 @@ public class ProductService extends BaseService {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (String code : codeList) {
             HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("fields.code", code);
-            queryMap.put("groups.platforms.cartId", cartId);
+            queryMap.put("productCodes", code);
+            queryMap.put("cartId", cartId);
 
             HashMap<String, Object> updateMap = new HashMap<>();
             if (numIId != null) {
-                updateMap.put("groups.platforms.$.numIId", numIId);
+                updateMap.put("numIId", numIId);
             }
             if (productId != null) {
-                updateMap.put("groups.platforms.$.productId", productId);
+                updateMap.put("platformPid", productId);
             }
             if (publishTime != null) {
-                updateMap.put("groups.platforms.$.publishTime", publishTime);
+                updateMap.put("publishTime", publishTime);
             }
             if (onSalesTime != null) {
-                updateMap.put("groups.platforms.$.onSalesTime", onSalesTime);
+                updateMap.put("onSaleTime", onSalesTime);
             }
             if (instockTime != null) {
-                updateMap.put("groups.platforms.$.instockTime", instockTime);
+                updateMap.put("instockTime", instockTime);
             }
             if (status != null) {
-                updateMap.put("groups.platforms.$.platformStatus", status.toString());
+                updateMap.put("platformStatus", status.toString());
             }
 
             if (updateMap.size() > 0) {

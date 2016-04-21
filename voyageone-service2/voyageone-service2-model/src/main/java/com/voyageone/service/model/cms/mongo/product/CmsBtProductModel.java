@@ -29,7 +29,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private String platformName;
 
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
-    private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
+    private CmsBtProductGroupModel groups = new CmsBtProductGroupModel();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
@@ -83,11 +83,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.fields = fields;
     }
 
-    public CmsBtProductModel_Group getGroups() {
+    public CmsBtProductGroupModel getGroups() {
         return groups;
     }
 
-    public void setGroups(CmsBtProductModel_Group groups) {
+    public void setGroups(CmsBtProductGroupModel groups) {
         this.groups = groups;
     }
 

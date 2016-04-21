@@ -1338,12 +1338,12 @@ public class TmallProductService {
                     }
                     SingleCheckField priceField = (SingleCheckField) processFields.get(0);
                     List<PriceSectionBuilder.PriceOption> priceOptions = PriceSectionBuilder.transferFromTmall(priceField.getOptions());
-                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getSalePriceStart();
-
-                    String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
-                    priceField.setValue(priceSectionValue);
-
-                    contextBuildFields.addCustomField(priceField);
+//                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getSalePriceStart();
+//
+//                    String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
+//                    priceField.setValue(priceSectionValue);
+//
+//                    contextBuildFields.addCustomField(priceField);
                     break;
                 }
                 case TMALL_SERVICE_VERSION:
@@ -1548,7 +1548,7 @@ public class TmallProductService {
                     }
 
                     Field processField = processFields.get(0);
-                    CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
+                    CmsConstants.PlatformActive platformActive = null;//mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
                     if (platformActive == CmsConstants.PlatformActive.Onsale) {
                         ((SingleCheckField) processField).setValue("0");
                     } else if (platformActive == CmsConstants.PlatformActive.Instock) {

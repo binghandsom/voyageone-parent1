@@ -170,12 +170,12 @@ define([
                 //groupInfo.inventoryDetail = _setInventoryDetail(groupInfo.skus);
 
                 // 设置price detail
-                groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups.platforms[0]);
+                //groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups.platforms[0]);
 
-                groupInfo.groups.priceSale = _setPriceSale(groupInfo.groups.platforms[0]);
+                //groupInfo.groups.priceSale = _setPriceSale(groupInfo.groups.platforms[0]);
 
                 // 设置time detail
-                groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo);
+                //groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo);
 
             });
             data.groupSelList = tempGroupSelect.selectRowsInfo;
@@ -207,7 +207,7 @@ define([
                 productInfo.priceSale = _setPriceSale(productInfo.fields);
 
                 // 设置time detail
-                productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo);
+                //productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo);
 
             });
             data.productSelList = tempProductSelect.selectRowsInfo;

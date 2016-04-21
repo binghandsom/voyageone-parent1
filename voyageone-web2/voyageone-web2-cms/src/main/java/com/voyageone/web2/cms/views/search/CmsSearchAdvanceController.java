@@ -58,30 +58,37 @@ public class CmsSearchAdvanceController extends CmsController {
         CmsSessionBean cmsSession = getCmsSession();
 
         // 获取product列表
-        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, userInfo, cmsSession);
-        searchIndexService.checkProcStatus(productList, getLang());
-        resultBean.put("productList", productList);
-        long productListTotal = searchIndexService.getProductCnt(params, userInfo, cmsSession);
+        List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
+        // 分页
+        int endIdx = params.getProductPageSize();
+        int productListTotal = prodCodeList.size();
+        if (endIdx > productListTotal) {
+            endIdx = productListTotal;
+        }
+        List<String> currCodeList = prodCodeList.subList(0, endIdx);
+        List<CmsBtProductModel> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        searchIndexService.checkProcStatus(prodInfoList, getLang());
+        resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
         // 查询该商品是否有价格变动
-        List[] infoArr = searchIndexService.getGroupExtraInfo(productList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
+        List[] infoArr = searchIndexService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
-        resultBean.put("prodMainFlgList", infoArr[1]);
-        resultBean.put("prodOrgChaNameList", infoArr[2]);
+        resultBean.put("prodOrgChaNameList", infoArr[1]);
 
         // 获取group列表
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(productList, params, userInfo, cmsSession);
-        int staIdx = (params.getGroupPageNum() - 1) * params.getGroupPageSize();
-        int endIdx = staIdx + params.getGroupPageSize();
-        if (endIdx > groupList.size()) {
-            endIdx = groupList.size();
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, params, userInfo, cmsSession);
+        endIdx = params.getGroupPageSize();
+        int groupListTotal = groupCodeList.size();
+        if (endIdx > groupListTotal) {
+            endIdx = groupListTotal;
         }
-        List<CmsBtProductModel> currGrpList = groupList.subList(staIdx, endIdx);
-        searchIndexService.checkProcStatus(currGrpList, getLang());
-        resultBean.put("groupList", currGrpList);
-        resultBean.put("groupListTotal", groupList.size());
+        List<String> currGrpList = groupCodeList.subList(0, endIdx);
+        List<CmsBtProductModel> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
+        searchIndexService.checkProcStatus(grpInfoList, getLang());
+        resultBean.put("groupList", grpInfoList);
+        resultBean.put("groupListTotal", groupListTotal);
 
-        infoArr = searchIndexService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        infoArr = searchIndexService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -106,21 +113,23 @@ public class CmsSearchAdvanceController extends CmsController {
         CmsSessionBean cmsSession = getCmsSession();
 
         // 获取product列表
-        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, userInfo, cmsSession);
+        List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
 
         // 获取group列表
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(productList, params, userInfo, cmsSession);
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, params, userInfo, cmsSession);
         int staIdx = (params.getGroupPageNum() - 1) * params.getGroupPageSize();
         int endIdx = staIdx + params.getGroupPageSize();
-        if (endIdx > groupList.size()) {
-            endIdx = groupList.size();
+        int groupListTotal = groupCodeList.size();
+        if (endIdx > groupListTotal) {
+            endIdx = groupListTotal;
         }
-        List<CmsBtProductModel> currGrpList = groupList.subList(staIdx, endIdx);
-        searchIndexService.checkProcStatus(currGrpList, getLang());
-        resultBean.put("groupList", currGrpList);
-        resultBean.put("groupListTotal", groupList.size());
+        List<String> currGrpList = groupCodeList.subList(staIdx, endIdx);
+        List<CmsBtProductModel> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
+        searchIndexService.checkProcStatus(grpInfoList, getLang());
+        resultBean.put("groupList", grpInfoList);
+        resultBean.put("groupListTotal", groupListTotal);
 
-        List[] infoArr = searchIndexService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        List[] infoArr = searchIndexService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -142,17 +151,23 @@ public class CmsSearchAdvanceController extends CmsController {
         CmsSessionBean cmsSession = getCmsSession();
 
         // 获取product列表
-        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, getUser(), getCmsSession());
-        searchIndexService.checkProcStatus(productList, getLang());
-        resultBean.put("productList", productList);
-        long productListTotal = searchIndexService.getProductCnt(params, getUser(), getCmsSession());
+        List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
+        // 分页
+        int staIdx = (params.getProductPageNum() - 1) * params.getProductPageSize();
+        int endIdx = staIdx + params.getProductPageSize();
+        int productListTotal = prodCodeList.size();
+        if (endIdx > productListTotal) {
+            endIdx = productListTotal;
+        }
+        List<String> currCodeList = prodCodeList.subList(staIdx, endIdx);
+        List<CmsBtProductModel> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        searchIndexService.checkProcStatus(prodInfoList, getLang());
+        resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
-
         // 查询该商品是否有价格变动
-        List[] infoArr = searchIndexService.getGroupExtraInfo(productList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), false);
+        List[] infoArr = searchIndexService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
-        resultBean.put("prodMainFlgList", infoArr[1]);
-        resultBean.put("prodOrgChaNameList", infoArr[2]);
+        resultBean.put("prodOrgChaNameList", infoArr[1]);
 
         // 返回用户信息
         return success(resultBean);

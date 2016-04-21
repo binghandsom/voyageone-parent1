@@ -14,7 +14,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -246,10 +246,10 @@ public class ProductSkuService extends BaseService {
         for(ProductPriceBean model : productPrices){
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
             CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-            for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
-                List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
-                bulkList.add(calculatePriceRange(products, platform.getGroupId()));
-            }
+//            for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
+//                List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
+//                bulkList.add(calculatePriceRange(products, platform.getGroupId()));
+//            }
         }
         if(bulkList.size() > 0){
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");

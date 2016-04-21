@@ -147,7 +147,7 @@ define([
                 for (idx in $scope.vm.productList) {
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
-                    prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
+                    //prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
                     prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 }
 
@@ -238,7 +238,7 @@ define([
                 for (idx in $scope.vm.productList) {
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
-                    prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
+                    //prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
                     prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 }
             });

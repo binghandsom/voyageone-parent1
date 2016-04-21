@@ -4,7 +4,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.platform.SxData;
 import com.voyageone.task2.cms.dao.SkuInventoryDao;
@@ -42,17 +42,17 @@ public class SxGetProductInfo {
 		sxData.setProductList(cmsBtProductModelList);
 
 		// 分析出需要的platform (只取出当前的group的platform信息, 存放的是多个product的当前platform)
-		List<CmsBtProductModel_Group_Platform> platformList = new ArrayList<>();
-		for (CmsBtProductModel productModel : cmsBtProductModelList) {
-			platformList.add(productModel.getGroups().getPlatformByGroupId(groupId));
-
-			skuList.addAll(productModel.getSkus());
-		}
-		sxData.setPlatformList(platformList);
+//		List<CmsBtProductModel_Group_Platform> platformList = new ArrayList<>();
+//		for (CmsBtProductModel productModel : cmsBtProductModelList) {
+//			platformList.add(productModel.getGroups().getPlatformByGroupId(groupId));
+//
+//			skuList.addAll(productModel.getSkus());
+//		}
+//		sxData.setPlatformList(platformList);
 
 		// 设置一些基本信息
 		sxData.setChannelId(channelId);
-		sxData.setCartId(platformList.get(0).getCartId());
+//		sxData.setCartId(platformList.get(0).getCartId());
 		sxData.setGroupId(groupId);
 		// ShopBean
 		ShopBean shopBean = Shops.getShop(channelId, sxData.getCartId());
@@ -72,21 +72,21 @@ public class SxGetProductInfo {
 		sxData.setPlatformCategoryId(cmsMtPlatformMappingModel.getPlatformCategoryId());
 		// 平台上的productId
 		String platformProductId = "";
-		for (CmsBtProductModel_Group_Platform platform : platformList) {
-			if (!StringUtils.isEmpty(platform.getProductId())) {
-				platformProductId = platform.getProductId();
-				break;
-			}
-		}
+//		for (CmsBtProductModel_Group_Platform platform : platformList) {
+//			if (!StringUtils.isEmpty(platform.getProductId())) {
+//				platformProductId = platform.getProductId();
+//				break;
+//			}
+//		}
 		sxData.setPlatformProductId(platformProductId);
 		// 平台上的numIId
 		String platformNumIId = "";
-		for (CmsBtProductModel_Group_Platform platform : platformList) {
-			if (!StringUtils.isEmpty(platform.getNumIId())) {
-				platformNumIId = platform.getNumIId();
-				break;
-			}
-		}
+//		for (CmsBtProductModel_Group_Platform platform : platformList) {
+//			if (!StringUtils.isEmpty(platform.getNumIId())) {
+//				platformNumIId = platform.getNumIId();
+//				break;
+//			}
+//		}
 		sxData.setPlatformNumIId(platformNumIId);
 
 		// 获取group的所有商品的sku信息 (剔除不需要在当前cart中上新的sku, 内容是所有product在当前cart中需要上新的sku)
@@ -114,7 +114,7 @@ public class SxGetProductInfo {
 	 * 获取group的所有商品的主数据信息
 	 */
 	private List<CmsBtProductModel> getProductInfo(String channelId, Long groupId) {
-		return productService.getProductByGroupId(channelId, groupId);
+		return productService.getProductByGroupId(channelId, groupId, false);
 	}
 
 	/**
