@@ -78,6 +78,7 @@ public class BeatInfoService extends BaseService {
 
     @VOTransactional
     public void importBeatInfo(int taskId, List<CmsBtBeatInfoModel> models) {
+
         beatInfoDao.deleteByTask(taskId);
 
         beatInfoDao.insertList(models);
