@@ -2,9 +2,11 @@ package com.voyageone.service.impl.cms.sx;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -30,6 +32,9 @@ public class SxProductService extends BaseService {
 
     @Autowired
     private ImsBtProductDao imsBtProductDao;
+
+    @Autowired
+    private CmsBtSizeMapDao cmsBtSizeMapDao;
 
     private enum SkuSort {
         DIGIT("digit", 1), // 纯数字系列
@@ -189,11 +194,16 @@ public class SxProductService extends BaseService {
      * 尺码转换
      *
      * @param sizeMapGroupId 尺码对照表id
-     * @param size 转换前size
+     * @param originalSize   转换前size
      * @return 转后后size
      */
-    public String changeSize(String sizeMapGroupId, String size) {
+    public String changeSize(int sizeMapGroupId, String originalSize) {
         // cms_bt_size_map
+        CmsBtSizeMapModel result = cmsBtSizeMapDao.selectSizeMap(sizeMapGroupId, originalSize);
+        if (result != null) {
+            return result.getAdjustSize();
+        }
+
         return null;
     }
 
