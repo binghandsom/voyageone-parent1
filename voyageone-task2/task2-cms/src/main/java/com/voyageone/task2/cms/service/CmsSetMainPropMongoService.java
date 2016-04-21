@@ -2,10 +2,12 @@ package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.service.bean.cms.Condition;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
 import com.voyageone.service.model.cms.enums.SrcType;
@@ -88,6 +90,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     ProductSkuService productSkuService;
     @Autowired
     ProductService productService;
+    @Autowired
+    private FeedInfoService feedInfoService;
 
 	@Override
     public SubSystem getSubSystem() {
@@ -156,7 +160,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             String channelId = this.channel.getOrder_channel_id();
 
             // 查找当前渠道,所有等待反映到主数据的商品
-            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
+//            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
+            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
+            JomgoQuery queryObject = new JomgoQuery();
+            queryObject.setQuery(query);
+            queryObject.setLimit(50);
+            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // --------------------------------------------------------------------------------------------
             // 品牌mapping表
