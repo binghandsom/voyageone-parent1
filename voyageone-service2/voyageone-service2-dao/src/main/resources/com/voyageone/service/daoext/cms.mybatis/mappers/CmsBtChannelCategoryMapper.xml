@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <select id="select_cms_bt_channel_category" resultType="com.voyageone.service.model.cms.CmsBtChannelCategoryModel"
-            parameterType="com.voyageone.service.model.cms.CmsBtChannelCategoryModel" >
+    <select id="select_cms_mt_channel_category_config"
+            resultType="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel"
+            parameterType="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel">
         select
           channel_id channelId,
         category_id categoryId,
@@ -11,7 +12,7 @@
           creater,
           modified,
           modifier
-        from voyageone_cms2.cms_bt_channel_category
+        from voyageone_cms2.cms_mt_channel_category_config
         <where>
             <if test="channelId != null and channelId !=''">
                 channel_id = #{channelId,jdbcType=VARCHAR}
@@ -21,8 +22,9 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_channel_category" parameterType="com.voyageone.service.model.cms.CmsBtChannelCategoryModel" >
-        insert IGNORE into voyageone_cms2.cms_bt_channel_category
+    <insert id="insert_cms_mt_channel_category_config"
+            parameterType="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel">
+        insert IGNORE into voyageone_cms2.cms_mt_channel_category_config
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 channel_id,

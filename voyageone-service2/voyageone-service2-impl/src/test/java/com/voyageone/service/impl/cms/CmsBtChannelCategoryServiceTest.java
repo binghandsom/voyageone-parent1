@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.service.model.cms.CmsBtChannelCategoryModel;
+import com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,11 +33,11 @@ public class CmsBtChannelCategoryServiceTest {
 
     @Test
     public void testCmsBtCategoryMappingDaoInsert() throws Exception {
-        List<CmsBtChannelCategoryModel> lst = new ArrayList<>();
+        List<CmsMtChannelCategoryConfigModel> lst = new ArrayList<>();
 //        lst.add(new CmsBtChannelCategoryModel("001", "50012029", "123"));
-        CmsBtChannelCategoryModel obj = new CmsBtChannelCategoryModel();
+        CmsMtChannelCategoryConfigModel obj = new CmsMtChannelCategoryConfigModel();
         obj.setCategoryId("112233");
-        obj.setChannelId("445566");
+        obj.setChannelId("456");
         lst.add(obj);
 
         cmsBtChannelCategoryService.saveWithList(lst);

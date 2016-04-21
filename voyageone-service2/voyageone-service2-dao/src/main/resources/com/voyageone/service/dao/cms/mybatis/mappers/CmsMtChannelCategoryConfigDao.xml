@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtChannelCategoryDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsBtChannelCategoryModel">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtChannelCategoryConfigDao">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel">
 
     </resultMap>
 
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`channel_id`,`category_id`,`created`,`creater`,`modified`,`modifier` from cms_bt_channel_category
+        select `id`,`channel_id`,`category_id`,`created`,`creater`,`modified`,`modifier` from
+        cms_mt_channel_category_config
         <where>
             <if test="id != null">
                 AND `id` = #{id}
@@ -33,7 +34,8 @@
         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`category_id`,`created`,`creater`,`modified`,`modifier` from cms_bt_channel_category
+        select `id`,`channel_id`,`category_id`,`created`,`creater`,`modified`,`modifier` from
+        cms_mt_channel_category_config
         <where>
 
             <if test="id != null">
@@ -67,11 +69,12 @@
         limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`category_id`,`created`,`creater`,`modified`,`modifier` from cms_bt_channel_category where id=#{id}
+        select `id`,`channel_id`,`category_id`,`created`,`creater`,`modified`,`modifier` from
+        cms_mt_channel_category_config where id=#{id}
     </select>
 
     <update id="update">
-        update cms_bt_channel_category
+        update cms_mt_channel_category_config
         set
 
             `channel_id`=#{channelId}
@@ -81,13 +84,13 @@
    </update>
 
     <delete id="delete">
-        delete from  cms_bt_channel_category
+        delete from cms_mt_channel_category_config
         where id=#{id}
 
     </delete>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_channel_category
+        INSERT INTO cms_mt_channel_category_config
         (
               `channel_id`,
               `category_id`,
