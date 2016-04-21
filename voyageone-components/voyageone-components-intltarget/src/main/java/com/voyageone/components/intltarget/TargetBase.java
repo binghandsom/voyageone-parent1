@@ -45,6 +45,10 @@ public abstract class TargetBase extends ComponentBase {
      */
     protected <E> E getApiResponseWithKey(String url, Object reqdata, Class<E> clazz, boolean isNeedToken) throws Exception {
         String result = reqTargetApi(url, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(reqdata)), true, isNeedToken);
+        if(result.toUpperCase().contains("ERROR")){
+            logger.warn("URL:"+url+"\nreqData:"+reqdata+"\nclazz:"+clazz+"\nisNeedToken:"+isNeedToken);
+            logger.warn("Error Info:"+result);
+        }
         return StringUtils.isEmpty(result) ? null : JacksonUtil.json2Bean(result, clazz);
     }
 

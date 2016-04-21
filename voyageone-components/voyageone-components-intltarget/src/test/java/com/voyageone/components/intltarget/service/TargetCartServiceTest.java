@@ -46,4 +46,29 @@ public class TargetCartServiceTest {
         TargetCartCheckout checkout=targetCartService.checkout(request);
         System.out.println(JacksonUtil.bean2Json(checkout));
     }
+
+    @Test
+    public void testAddCartOrderTrackingEmail() throws Exception {
+
+        TargetCartEmailRequest request=new TargetCartEmailRequest();
+        request.setConfirmEmail("naveen@gmail.com");
+        request.setTrackEmail("naveen@gmail.com");
+        System.out.println(targetCartService.addCartOrderTrackingEmail(request));
+    }
+
+    @Test
+    public void testAddCartPayPalDetails() throws Exception {
+
+        TargetCartPayPalRequest request=new TargetCartPayPalRequest();
+        request.setToken("EC-4M092016DE677641J");
+        TargetCartPayPal payPal=targetCartService.addCartPayPalDetails(request);
+        System.out.println(JacksonUtil.bean2Json(payPal));
+    }
+
+    @Test
+    public void testInitiateCheckout() throws Exception {
+
+        TargetCartCheckout checkout=targetCartService.initiateCheckout();
+        System.out.println(JacksonUtil.bean2Json(checkout));
+    }
 }

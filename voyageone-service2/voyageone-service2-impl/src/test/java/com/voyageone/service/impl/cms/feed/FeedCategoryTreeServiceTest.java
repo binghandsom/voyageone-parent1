@@ -10,8 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @author james.li on 2016/4/18.
  * @version 2.0.0
@@ -25,7 +23,18 @@ public class FeedCategoryTreeServiceTest {
     FeedCategoryTreeService feedCategoryTreeService;
     @Test
     public void testGetFeedAllCategory() throws Exception {
-        List<CmsMtFeedCategoryTreeModel> tree =  feedCategoryTreeService.getFeedAllCategory("010");
+        List<CmsMtFeedCategoryTreeModel> tree =  feedCategoryTreeService.getFeedAllCategoryTree("010");
         System.out.println(JacksonUtil.bean2Json(tree));
+    }
+
+    @Test
+    public void testGetFeedCategoryByCategoryList() throws Exception {
+        List<CmsMtFeedCategoryTreeModel> list = feedCategoryTreeService.getFeedAllCategoryList("010");
+        System.out.println(JacksonUtil.bean2JsonNotNull(list));
+    }
+
+    @Test
+    public void testTreeToList() throws Exception {
+
     }
 }

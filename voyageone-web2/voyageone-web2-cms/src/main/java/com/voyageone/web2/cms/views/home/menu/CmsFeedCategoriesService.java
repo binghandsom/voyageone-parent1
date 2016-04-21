@@ -7,6 +7,7 @@ import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,9 @@ public final class CmsFeedCategoriesService extends BaseAppService {
     public List<CmsMtCategoryTreeModel> getFeedCategoryMap(String channelId) throws IOException {
 
         // 获取整个类目树
-        CmsMtFeedCategoryTreeModelx treeModelX = feedCategoryTreeService.getFeedCategory(channelId);
+        List<CmsMtFeedCategoryTreeModel> feedCategorys = feedCategoryTreeService.getFeedAllCategoryTree(channelId);
 
-        if (treeModelX.getCategoryTree().isEmpty())
+        if (feedCategorys.isEmpty())
             throw new BusinessException("未找到类目");
 
         // 获取已经绑定的类目
@@ -61,7 +62,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
             feedMappingModelMap.put(feedMappingModel.getScope().getFeedCategoryPath(), mtCategoryMap.get(feedMappingModel.getScope().getMainCategoryPath()));
 
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
-        for(CmsMtFeedCategoryModel feedCategory : treeModelX.getCategoryTree()) {
+        for(CmsMtFeedCategoryTreeModel feedCategory : feedCategorys) {
             result.add(buildFeedCategoryBean(feedCategory, feedMappingModelMap, true));
         }
 
@@ -71,21 +72,21 @@ public final class CmsFeedCategoriesService extends BaseAppService {
     /**
      * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
      */
-    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, String> feedMappingModelMap, Boolean setMainFlag) {
+    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryTreeModel feedCategoryModel, Map<String, String> feedMappingModelMap, Boolean setMainFlag) {
 
         CmsMtCategoryTreeModel cmsMtCategoryTreeModel = new CmsMtCategoryTreeModel();
 
-        cmsMtCategoryTreeModel.setCatId(setMainFlag ? feedMappingModelMap.get(feedCategoryModel.getPath()) : feedCategoryModel.getCid());
-        cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getName());
-        cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getPath());
-        cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsChild() == 1 ? 0 : 1);
+        cmsMtCategoryTreeModel.setCatId(setMainFlag ? feedMappingModelMap.get(feedCategoryModel.getCatPath()) : feedCategoryModel.getCatId());
+        cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getCatName());
+        cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getCatPath());
+        cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsParent());
 
         // 先取出暂时保存
-        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
+        List<CmsMtFeedCategoryTreeModel> children = feedCategoryModel.getChildren();
         List<CmsMtCategoryTreeModel> newChild = new ArrayList<>();
 
         if (children != null && !children.isEmpty()) {
-            for (CmsMtFeedCategoryModel child : children) {
+            for (CmsMtFeedCategoryTreeModel child : children) {
                 newChild.add(buildFeedCategoryBean(child, feedMappingModelMap, setMainFlag));
             }
         }

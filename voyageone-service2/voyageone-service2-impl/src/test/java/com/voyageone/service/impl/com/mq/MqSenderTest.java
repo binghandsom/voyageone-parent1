@@ -1,6 +1,6 @@
-package com.voyageone.common.mq;
+package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.common.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,15 +17,15 @@ import java.util.Map;
  * @since 2.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:test-context.xml")
-public class MqTest extends TestCase {
+@ContextConfiguration(locations = "classpath:applicationContext.xml")
+public class MqSenderTest extends TestCase {
 
     @Autowired
     private MqSender sender;
 
     @Test
     public void testSendMessage() throws Exception {
-        Map<String,Object> message=new HashMap<String,Object>();
+        Map<String,Object> message=new HashMap<>();
         message.put("id","111");
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
     }

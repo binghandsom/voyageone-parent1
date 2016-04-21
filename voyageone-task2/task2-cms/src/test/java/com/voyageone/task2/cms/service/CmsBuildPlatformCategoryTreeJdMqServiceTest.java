@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.enums.MqRoutingKey;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.enums.MqRoutingKey;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by desmond on 2016/4/8.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsBuildPlatformCategoryTreeJdMqServiceTest {
@@ -23,7 +20,7 @@ public class CmsBuildPlatformCategoryTreeJdMqServiceTest {
 
     @Test
     public void testSendMessage() throws Exception {
-        Map<String,Object> message=new HashMap<String,Object>();
+        Map<String,Object> message=new HashMap<>();
         message.put("test","111");
         sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategoryTreeJdJob, message);
     }

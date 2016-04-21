@@ -19,7 +19,7 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
     public CMappingJacksonObjectMapper() {
         super();
         //long 自动按字符串序列化  js没有长整型
-        this.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
+        //this.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
         //按方法get set 后名字大小写序列化
 //        this.setPropertyNamingStrategy(new CDefaultPropertyNamingStrategy());
         //自定义显示日期格式
