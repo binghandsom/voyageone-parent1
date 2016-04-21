@@ -7,7 +7,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
+import com.voyageone.service.bean.cms.CommonPropActionDefBean;
 import net.minidev.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
         logger.info("");
         List<JSONObject> masterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
         logger.info("总件数： "+masterSchemaIds.size());
-        List<CmsMtCommonPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.selectActionModelList();
+        List<CommonPropActionDefBean> commPropActionDefModels = cmsMtCommonPropDao.selectActionModelList();
         int schemaCount = 0;
         for (JSONObject schemaId:masterSchemaIds) {
             schemaCount++;
@@ -70,7 +70,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
 
             logger.info("Schema 数:"+schemaCount+"件， Category Id: " + schemaModel.get("catId"));
 
-            for (CmsMtCommonPropActionDefModel defModel:commPropActionDefModels){
+            for (CommonPropActionDefBean defModel:commPropActionDefModels){
                 ActionType actionType = ActionType.valueOf(Integer.valueOf(defModel.getActionType()));
                 Field verifyField = null;
                     switch (actionType){

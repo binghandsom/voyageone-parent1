@@ -140,6 +140,7 @@ public class GiltInsert extends BaseTaskService {
             map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
             map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
             map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
+            map.put("product_type", (Feeds.getVal1(channel, FeedEnums.Name.product_type)));
             return map;
         }
 

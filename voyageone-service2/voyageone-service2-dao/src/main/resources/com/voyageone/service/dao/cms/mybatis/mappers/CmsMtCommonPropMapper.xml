@@ -28,7 +28,7 @@
         from voyageone_cms2.cms_mt_common_prop
     </select>
 
-    <select id="select_cms_mt_common_prop_actionDefAll" parameterType="HashMap"  resultType="com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel">
+    <select id="select_cms_mt_common_prop_actionDefAll" parameterType="HashMap"  resultType="com.voyageone.service.bean.cms.CommonPropActionDefBean">
         select
             prop_id AS propId,
             prop_name AS propName,

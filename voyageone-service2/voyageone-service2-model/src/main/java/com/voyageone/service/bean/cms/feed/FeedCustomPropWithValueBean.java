@@ -1,6 +1,4 @@
-package com.voyageone.service.model.cms;
-
-import com.voyageone.base.dao.mysql.BaseModel;
+package com.voyageone.service.bean.cms.feed;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +22,7 @@ import java.util.Map;
  * 			如果一个商品是B类目的话, 那么A1属性就是需要显示的, 并且显示的翻译就是"A10"
  * Created by zhujiaye on 16/2/26.
  */
-public class CmsBtFeedCustomPropAndValueModel extends BaseModel {
+public class FeedCustomPropWithValueBean {
 	private int id;							// 序号
 	private String channel_id;				// channel id
 	private String feed_cat_path;			// 类目名称

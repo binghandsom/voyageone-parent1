@@ -1,4 +1,4 @@
-package com.voyageone.service.model.cms;
+package com.voyageone.service.bean.cms;
 
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Created by lewis on 15-12-7.
  */
-public class CmsMtCommonPropActionDefRuleModel {
+public class CommonPropActionDefRuleBean {
 
     private final String IS_REQUIRED = "required";
     private final String IS_DISPLAY = "isDisplay";
@@ -30,7 +30,7 @@ public class CmsMtCommonPropActionDefRuleModel {
 
     private Map<String, Object> rulMap;
 
-    public CmsMtCommonPropActionDefRuleModel(String actionRules) {
+    public CommonPropActionDefRuleBean(String actionRules) {
         rulMap = getActionMap(actionRules);
     }
 
@@ -133,18 +133,18 @@ public class CmsMtCommonPropActionDefRuleModel {
      * @param defModels
      * @return
      */
-    public static List<CmsMtCommonPropActionDefModel> buildComPropHierarchical(List<CmsMtCommonPropActionDefModel> defModels) {
+    public static List<CommonPropActionDefBean> buildComPropHierarchical(List<CommonPropActionDefBean> defModels) {
 
-        List<CmsMtCommonPropActionDefModel> assistDefModels = new ArrayList<>(defModels);
+        List<CommonPropActionDefBean> assistDefModels = new ArrayList<>(defModels);
 
 
         for (int i = 0; i < defModels.size(); i++) {
-            CmsMtCommonPropActionDefModel defModelItem = defModels.get(i);
+            CommonPropActionDefBean defModelItem = defModels.get(i);
             ActionType actionType = ActionType.valueOf(Integer.valueOf(defModelItem.getActionType()));
-            List<CmsMtCommonPropActionDefModel> sunDefModels = new ArrayList<>();
-            for (Iterator<CmsMtCommonPropActionDefModel> assIterator = assistDefModels.iterator(); assIterator.hasNext();) {
+            List<CommonPropActionDefBean> sunDefModels = new ArrayList<>();
+            for (Iterator<CommonPropActionDefBean> assIterator = assistDefModels.iterator(); assIterator.hasNext();) {
 
-                CmsMtCommonPropActionDefModel subPlatformCatItem = assIterator.next();
+                CommonPropActionDefBean subPlatformCatItem = assIterator.next();
                 if (ActionType.ADD.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId())) {
                     sunDefModels.add(subPlatformCatItem);
                     assIterator.remove();

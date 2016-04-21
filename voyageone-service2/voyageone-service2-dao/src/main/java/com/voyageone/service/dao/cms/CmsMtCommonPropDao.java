@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
+import com.voyageone.service.bean.cms.CommonPropActionDefBean;
 import com.voyageone.service.model.cms.CmsMtCommonPropModel;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ public class CmsMtCommonPropDao extends ServiceBaseDao {
         return selectList("select_cms_mt_common_prop_all");
     }
 
-    public List<CmsMtCommonPropActionDefModel> selectActionModelList(){
+    public List<CommonPropActionDefBean> selectActionModelList(){
         return  selectList("select_cms_mt_common_prop_actionDefAll");
     }
 

@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FeedToCmsServiceTest {
 
     @Autowired
-    FeedToCmsService feedToCmsService;
+    FeedCategoryTreeService feedCategoryTreeService;
 
     @Test
     public void testGetFeedCategory() throws Exception {
@@ -113,9 +114,8 @@ public class FeedToCmsServiceTest {
 
     @Test
     public void testAddCategory() throws Exception {
-        // 因为代码修改导致的test编译不过修改  -edward
-//        feedToCmsService.addCategory("111","b-b-e");
-//        feedToCmsService.addCategory("111","f-g-h");
-//        feedToCmsService.addCategory("111","f-g-i");
+        feedCategoryTreeService.addCategory("111","b-b-e","james");
+        feedCategoryTreeService.addCategory("111","f-g-h","james");
+        feedCategoryTreeService.addCategory("111","f-g-i","james");
     }
 }
