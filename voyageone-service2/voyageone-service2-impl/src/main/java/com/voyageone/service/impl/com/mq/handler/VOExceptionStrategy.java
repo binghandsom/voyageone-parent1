@@ -1,5 +1,7 @@
-package com.voyageone.service.impl.com.mq.exception;
+package com.voyageone.service.impl.com.mq.handler;
 
+import com.voyageone.common.mq.exception.MQException;
+import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MqSender;
 import org.apache.commons.collections.MapUtils;
