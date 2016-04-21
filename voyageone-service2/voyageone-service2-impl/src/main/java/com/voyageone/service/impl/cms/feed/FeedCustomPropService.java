@@ -5,7 +5,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropAndValueDao;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
+import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class FeedCustomPropService extends BaseService {
 
 
 	// 自定义属性
-	private List<CmsBtFeedCustomPropAndValueModel> customPropList;
+	private List<FeedCustomPropWithValueBean> customPropList;
 	private Map<String, Map<String, Map<String, List<String>>>> customPropMap; // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
 	// 翻译: 全店共通
 	private Map<String, String> propCommonPublic;
@@ -53,7 +53,7 @@ public class FeedCustomPropService extends BaseService {
 
 		// 获取表里的数据 (当前渠道的所有数据)
 		customPropList = cmsBtFeedCustomPropAndValueDao.selectPropList(channel_id);
-		for (CmsBtFeedCustomPropAndValueModel customProp : customPropList) {
+		for (FeedCustomPropWithValueBean customProp : customPropList) {
 			customProp.setMapPropValue(new HashMap<>());
 		}
 		List<CmsBtFeedCustomPropValueModel> propValueList = cmsBtFeedCustomPropAndValueDao.selectPropValue(channel_id);
@@ -66,7 +66,7 @@ public class FeedCustomPropService extends BaseService {
 				propCommonPublic.put(propValue.getFeed_value_original(), propValue.getFeed_value_translation());
 			} else {
 				// 找找看, 找得到就挂上去, 找不到也不管, 直接扔掉
-				for (CmsBtFeedCustomPropAndValueModel customProp : customPropList) {
+				for (FeedCustomPropWithValueBean customProp : customPropList) {
 					if (customProp.getId() == propValue.getProp_id()) {
 						// 找到了
 						List<String> lst = new ArrayList<>();
@@ -80,7 +80,7 @@ public class FeedCustomPropService extends BaseService {
 		}
 
 		// 获取无视category级别的共通
-		for (CmsBtFeedCustomPropAndValueModel customProp : customPropList) {
+		for (FeedCustomPropWithValueBean customProp : customPropList) {
 			if (StringUtils.isEmpty(customProp.getFeed_cat_path()) || "0".equals(customProp.getFeed_cat_path())) {
 				// 设置属性名称
 				propCommon.put(customProp.getId(), new HashMap<>());
@@ -95,7 +95,7 @@ public class FeedCustomPropService extends BaseService {
 			Integer key = entry.getKey(); // 属性id
 			Map<String, String> val = entry.getValue();	// 属性值的翻译列表
 
-			for (CmsBtFeedCustomPropAndValueModel customProp : customPropList) {
+			for (FeedCustomPropWithValueBean customProp : customPropList) {
 				if (customProp.getId() == key) {
 					propCommonN.put(customProp.getFeed_prop_original(), val);
 
@@ -105,7 +105,7 @@ public class FeedCustomPropService extends BaseService {
 		}
 
 		// 在category级的结构体中补充一些无视category级别备选的翻译数据
-		for (CmsBtFeedCustomPropAndValueModel propModel : customPropList) {
+		for (FeedCustomPropWithValueBean propModel : customPropList) {
 			// 遍历所有属性值
 			for (Map.Entry<String, List<String>> entry : propModel.getMapPropValue().entrySet()) {
 				String key = entry.getKey();		// 属性值
@@ -134,7 +134,7 @@ public class FeedCustomPropService extends BaseService {
 
 		// 设置简化版 (<类目名称 <属性名称, <属性值, 属性值翻译>>>)
 		customPropMap = new HashMap<>();
-		for (CmsBtFeedCustomPropAndValueModel propModel : customPropList) {
+		for (FeedCustomPropWithValueBean propModel : customPropList) {
 			// 属性值英文全部变成小写
 			Map<String, List<String>> propValueLower = new HashMap<>();
 			{
@@ -177,7 +177,7 @@ public class FeedCustomPropService extends BaseService {
 	 * @param feed_cat_path	feed cat path
 	 * @return 自定义属性列表 (返回的内容里, 其实主要就是feed_prop_original 和 feed_prop_translation比较有用)
 	 */
-	public List<CmsBtFeedCustomPropAndValueModel> getPropList(
+	public List<FeedCustomPropWithValueBean> getPropList(
 			String channel_id,
 			String feed_cat_path
 	) {
@@ -185,10 +185,10 @@ public class FeedCustomPropService extends BaseService {
 			doInit(channel_id);
 		}
 
-		List<CmsBtFeedCustomPropAndValueModel> result = new ArrayList<>();
+		List<FeedCustomPropWithValueBean> result = new ArrayList<>();
 
 		// 抽出公共字段
-		for (CmsBtFeedCustomPropAndValueModel propModel : customPropList) {
+		for (FeedCustomPropWithValueBean propModel : customPropList) {
 			if (StringUtils.isEmpty(propModel.getFeed_cat_path()) || "0".equals(propModel.getFeed_cat_path())) {
 				result.add(propModel);
 			}
@@ -197,14 +197,14 @@ public class FeedCustomPropService extends BaseService {
 		// 设定类目字段
 		if (!StringUtils.isEmpty(feed_cat_path) && !"0".equals(feed_cat_path)) {
 			// 遍历一下
-			for (CmsBtFeedCustomPropAndValueModel propModel : customPropList) {
+			for (FeedCustomPropWithValueBean propModel : customPropList) {
 				// 如果类目名称一致
 				if (propModel.getFeed_cat_path().equals(feed_cat_path)) {
 					String fanyi = propModel.getFeed_prop_translation();
 
 					// 看看公共属性里是否有存在
 					boolean blnFound = false;
-					for (CmsBtFeedCustomPropAndValueModel prop : result) {
+					for (FeedCustomPropWithValueBean prop : result) {
 						// 找到了的场合
 						if (prop.getFeed_prop_original().equals(propModel.getFeed_prop_original())) {
 							// 看看是否有翻译
@@ -235,7 +235,7 @@ public class FeedCustomPropService extends BaseService {
 		return result;
 	}
 
-	public List<CmsBtFeedCustomPropAndValueModel> getPropListForEdit() {
+	public List<FeedCustomPropWithValueBean> getPropListForEdit() {
 		// TODO: 这里是给前台编辑用的, 用来抽出基本的信息
 
 		return null;

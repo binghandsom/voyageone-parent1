@@ -1,12 +1,16 @@
 package com.voyageone.service.impl.cms.sx;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
-import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +31,10 @@ public class SxProductService extends BaseService {
     private CmsBtSxWorkloadDao sxWorkloadDao;
 
     @Autowired
-    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+    private ImsBtProductDao imsBtProductDao;
+
+    @Autowired
+    private CmsBtSizeMapDao cmsBtSizeMapDao;
 
     private enum SkuSort {
         DIGIT("digit", 1), // 纯数字系列
@@ -136,15 +143,68 @@ public class SxProductService extends BaseService {
      *
      * @param sxWorkloadModel bean
      * @param publishStatus   status
-     * @modifier 更新者
+     * @param modifier 更新者
      */
-    public void updateSxWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
+    public int updateSxWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
         CmsBtSxWorkloadModel upModel = new CmsBtSxWorkloadModel();
         BeanUtils.copyProperties(sxWorkloadModel, upModel);
         upModel.setPublishStatus(publishStatus);
         upModel.setModifier(modifier);
-        sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+        return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
     }
 
+    /**
+     * 回写ims_bt_product表
+     *
+     * @param sxData 上新数据
+     * @param updateType s:sku级别, p:product级别
+     * @param modifier 更新者
+     */
+    public void updateImsBtProduct(SxData sxData, String updateType, String modifier) {
+        // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
+        List<CmsBtProductModel> sxProductList = sxData.getProductList();
+        for (CmsBtProductModel sxProduct : sxProductList) {
+            String code = sxProduct.getFields().getCode();
+
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
+                    sxData.getChannelId(),
+                    sxData.getCartId(),
+                    code);
+            if (imsBtProductModel == null) {
+                // 没找到就插入
+                imsBtProductModel = new ImsBtProductModel();
+                imsBtProductModel.setChannelId(sxData.getChannelId());
+                imsBtProductModel.setCartId(sxData.getCartId());
+                imsBtProductModel.setCode(code);
+                imsBtProductModel.setNumIid(sxData.getPlatform().getNumIId());
+                imsBtProductModel.setQuantityUpdateType(updateType);
+
+                imsBtProductDao.insertImsBtProduct(imsBtProductModel, modifier);
+            } else {
+                // 找到了, 更新
+                imsBtProductModel.setNumIid(sxData.getPlatform().getNumIId());
+                imsBtProductModel.setQuantityUpdateType(updateType);
+
+                imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+            }
+        }
+    }
+
+    /**
+     * 尺码转换
+     *
+     * @param sizeMapGroupId 尺码对照表id
+     * @param originalSize   转换前size
+     * @return 转后后size
+     */
+    public String changeSize(int sizeMapGroupId, String originalSize) {
+        // cms_bt_size_map
+        CmsBtSizeMapModel result = cmsBtSizeMapDao.selectSizeMap(sizeMapGroupId, originalSize);
+        if (result != null) {
+            return result.getAdjustSize();
+        }
+
+        return null;
+    }
 
 }

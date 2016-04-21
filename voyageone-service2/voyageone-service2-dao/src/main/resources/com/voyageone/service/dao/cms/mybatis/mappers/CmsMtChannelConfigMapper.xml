@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 查找制定configKey的数据 -->
-    <select id="cms_mt_channel_config_selectByConfigKey" resultType="com.voyageone.service.model.cms.CmsBtChannelConfigModel" parameterType="com.voyageone.service.model.cms.CmsBtChannelConfigModel">
+    <select id="cms_mt_channel_config_selectByConfigKey" resultType="com.voyageone.service.model.cms.CmsMtChannelConfigModel" parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
         SELECT
         a.seq,
         a.channel_id as channelId,
