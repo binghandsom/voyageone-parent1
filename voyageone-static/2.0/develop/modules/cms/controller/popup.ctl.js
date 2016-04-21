@@ -257,13 +257,13 @@ define([
                 "newBeat": {
                     "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
-                    "controller": 'popNewBeatCtl as $ctrl',
+                    "controller": 'popNewBeatCtl as ctrl',
                     "size": "md"
                 },
                 "addBeat": {
                     "templateUrl": "views/pop/promotion/addBeat.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/addBeat.ctl",
-                    "controller": 'popAddBeatCtl as $ctrl',
+                    "controller": 'popAddBeatCtl as ctrl',
                     "size": "md"
                 },
                 "newMrbStock": {
@@ -274,13 +274,13 @@ define([
                 "newMrbStockSku": {
                     "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
-                    "controller": 'popNewMrbStockSkuCtl as $ctrl',
+                    "controller": 'popNewMrbStockSkuCtl as ctrl',
                     "size": "md"
                 },
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
-                    "controller": 'popSkuMrbStockDetailCtl as $ctrl'
+                    "controller": 'popSkuMrbStockDetailCtl as ctrl'
                 },
                 "addMrbStockIncrement": {
                     "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
@@ -300,7 +300,7 @@ define([
                     "batch": {
                         "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
-                        "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
+                        "controller": 'popJmPromotionDefaultSettingCtl as ctrl',
                         "size": 'md',
                         "backdrop": "static"
                     }
@@ -309,7 +309,7 @@ define([
                     "detail": {
                         "templateUrl": "views/pop/jm/productdetail.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/jm/productdetail.ctl",
-                        "controller": 'popJmProductDetailController as $ctrl',
+                        "controller": 'popJmProductDetailController as ctrl',
                         "size": 'lg',
                         "backdrop": "static"
                     }
@@ -344,7 +344,7 @@ define([
                     "imageSetting": {
                         "templateUrl": "views/pop/jm/imagesetting.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/jm/imagesetting.ctl",
-                        "controller": 'popImageSettingCtl as $ctrl'
+                        "controller": 'popImageSettingCtl as ctrl'
                     }
                 }
             },
