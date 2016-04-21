@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
+import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class CmsBtFeedCustomPropServiceTest {
         customPropService.doInit("010");
 
         // 获取属性列表测试
-        List<CmsBtFeedCustomPropAndValueModel> propModelList;
+        List<FeedCustomPropWithValueBean> propModelList;
         propModelList = customPropService.getPropList("010", "0");
         propModelList = customPropService.getPropList("010", "test - ring - demond - 1");
         propModelList = customPropService.getPropList("010", "test - ring - demond - 2");

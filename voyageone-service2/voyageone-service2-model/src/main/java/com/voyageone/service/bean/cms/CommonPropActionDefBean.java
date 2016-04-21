@@ -1,14 +1,12 @@
-package com.voyageone.service.model.cms;
+package com.voyageone.service.bean.cms;
 
-
-import com.voyageone.base.dao.mysql.BaseModel;
 
 import java.util.List;
 
 /**
  * Created by lewis on 15-12-7.
  */
-public class CmsMtCommonPropActionDefModel extends BaseModel {
+public class CommonPropActionDefBean {
 
     private String propId;
     private String propName;
@@ -22,9 +20,9 @@ public class CmsMtCommonPropActionDefModel extends BaseModel {
     private String tips;
     private String valueType;
     private String defaultValue;
-    private CmsMtCommonPropActionDefRuleModel ruleMode;
+    private CommonPropActionDefRuleBean ruleMode;
 
-    private List<CmsMtCommonPropActionDefModel> defModels;
+    private List<CommonPropActionDefBean> defModels;
 
     public String getParentPropId() {
         return parentPropId;
@@ -34,11 +32,11 @@ public class CmsMtCommonPropActionDefModel extends BaseModel {
         this.parentPropId = parentPropId;
     }
 
-    public List<CmsMtCommonPropActionDefModel> getDefModels() {
+    public List<CommonPropActionDefBean> getDefModels() {
         return defModels;
     }
 
-    public void setDefModels(List<CmsMtCommonPropActionDefModel> defModels) {
+    public void setDefModels(List<CommonPropActionDefBean> defModels) {
         this.defModels = defModels;
     }
 
@@ -58,7 +56,7 @@ public class CmsMtCommonPropActionDefModel extends BaseModel {
         this.propId = propId;
     }
 
-    public CmsMtCommonPropActionDefRuleModel getRuleMode() {
+    public CommonPropActionDefRuleBean getRuleMode() {
         return ruleMode;
     }
 
@@ -108,7 +106,7 @@ public class CmsMtCommonPropActionDefModel extends BaseModel {
 
     public void setActionRules(String actionRules) {
         this.actionRules = actionRules;
-        this.ruleMode = new CmsMtCommonPropActionDefRuleModel(this.actionRules);
+        this.ruleMode = new CommonPropActionDefRuleBean(this.actionRules);
     }
 
     public String getTips() {
