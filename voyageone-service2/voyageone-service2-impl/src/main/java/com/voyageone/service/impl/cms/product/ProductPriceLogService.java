@@ -24,17 +24,14 @@ import java.util.*;
 public class ProductPriceLogService extends BaseService {
 
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
 
 
     /**
      * 价格履历更新
      * @param channelId 渠道id
-     * @param productAfter ProductPrice and SKUPrice Model更新后
-     * @param productBefore ProductPrice and SKUPrice Model更新前
+     * @param productAfter ProductPrice Model更新后
+     * @param productBefore ProductPrice Model更新前
      * @param comment 价格履历表中的注释字段
      * @param modifier 修改者
      */
@@ -203,6 +200,14 @@ public class ProductPriceLogService extends BaseService {
 
     /**
      * 创建 SKU PriceLog Model
+     * @param channelId 渠道id
+     * @param productId 商品id
+     * @param code 商品Code
+     * @param skuBefore ProductPrice and SKUPrice Model更新前
+     * @param skuAfter ProductPrice and SKUPrice Model更新后
+     * @param comment 价格履历表中的注释字段
+     * @param modifier 修改者
+     * @return SKU PriceLog Model对象
      */
     private CmsBtPriceLogModel createPriceLogModel(String channelId, Long productId, String code , ProductSkuPriceBean skuBefore , ProductSkuPriceBean skuAfter, String comment, String modifier) {
         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
