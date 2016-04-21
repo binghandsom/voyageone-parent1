@@ -55,7 +55,7 @@
     </bean>
 
     <!-- 致命异常判定策略 -->
-    <bean id="voExceptionStrategy" class="com.voyageone.common.mq.error.VOExceptionStrategy" />
+    <bean id="voExceptionStrategy" class="com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy" />
 
 
 </beans>

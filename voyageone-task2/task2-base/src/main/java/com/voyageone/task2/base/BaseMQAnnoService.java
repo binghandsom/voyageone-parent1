@@ -1,8 +1,8 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.impl.com.mq.exception.MQException;
-import com.voyageone.service.impl.com.mq.exception.MQIgnoreException;
+import com.voyageone.common.mq.exception.MQException;
+import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -88,9 +88,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             logIssue(ex);
             status = TaskControlEnums.Status.ERROR;
             $error("出现异常，任务退出", ex);
-            MQException mqException = new MQException(ex);
-            mqException.setMqMessage(message);
-            throw mqException;
+            throw new MQException(ex, message);
         } finally {
             // 任务监控历史记录添加:结束
             taskDao.insertTaskHistory(taskID, status.getIs());
