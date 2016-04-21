@@ -4,30 +4,54 @@ package com.voyageone.service.model.cms.mongo.feed;
  * Created by james.li on 2015/11/27.
  */
 public class CmsBtFeedInfoModel_Sku {
-    private Double price_current;
-    private Double price_msrp;
-    private Double price_net;
-    private Double price_client_retail;
-    private Double price_client_msrp;
+    private Double priceCurrent;
+    private Double priceMsrp;
+    private Double priceNet;
+    private Double priceClientRetail;
+    private Double priceClientMsrp;
     private String sku;
     private String size;
     private String barcode;
     private String clientSku;
 
-    public Double getPrice_current() {
-        return price_current;
+    public Double getPriceCurrent() {
+        return priceCurrent;
     }
 
-    public void setPrice_current(Double price_current) {
-        this.price_current = price_current;
+    public void setPriceCurrent(Double priceCurrent) {
+        this.priceCurrent = priceCurrent;
     }
 
-    public Double getPrice_msrp() {
-        return price_msrp;
+    public Double getPriceMsrp() {
+        return priceMsrp;
     }
 
-    public void setPrice_msrp(Double price_msrp) {
-        this.price_msrp = price_msrp;
+    public void setPriceMsrp(Double priceMsrp) {
+        this.priceMsrp = priceMsrp;
+    }
+
+    public Double getPriceNet() {
+        return priceNet;
+    }
+
+    public void setPriceNet(Double priceNet) {
+        this.priceNet = priceNet;
+    }
+
+    public Double getPriceClientRetail() {
+        return priceClientRetail;
+    }
+
+    public void setPriceClientRetail(Double priceClientRetail) {
+        this.priceClientRetail = priceClientRetail;
+    }
+
+    public Double getPriceClientMsrp() {
+        return priceClientMsrp;
+    }
+
+    public void setPriceClientMsrp(Double priceClientMsrp) {
+        this.priceClientMsrp = priceClientMsrp;
     }
 
     public String getSku() {
@@ -60,30 +84,6 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setClientSku(String clientSku) {
         this.clientSku = clientSku;
-    }
-
-    public Double getPrice_net() {
-        return price_net;
-    }
-
-    public void setPrice_net(Double price_net) {
-        this.price_net = price_net;
-    }
-
-    public Double getPrice_client_retail() {
-        return price_client_retail;
-    }
-
-    public void setPrice_client_retail(Double price_client_retail) {
-        this.price_client_retail = price_client_retail;
-    }
-
-    public Double getPrice_client_msrp() {
-        return price_client_msrp;
-    }
-
-    public void setPrice_client_msrp(Double price_client_msrp) {
-        this.price_client_msrp = price_client_msrp;
     }
 
     @Override

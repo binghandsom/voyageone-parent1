@@ -1082,11 +1082,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, Double taxRate, String formula) {
 
-            Double priceClientMsrp = feedSkuInfo.getPrice_client_msrp();
-            Double priceClientRetail = feedSkuInfo.getPrice_client_retail();
-            Double priceNet = feedSkuInfo.getPrice_net();
-            Double priceMsrp = feedSkuInfo.getPrice_msrp();
-            Double priceCurrent = feedSkuInfo.getPrice_current();
+            Double priceClientMsrp = feedSkuInfo.getPriceClientMsrp();
+            Double priceClientRetail = feedSkuInfo.getPriceClientRetail();
+            Double priceNet = feedSkuInfo.getPriceNet();
+            Double priceMsrp = feedSkuInfo.getPriceMsrp();
+            Double priceCurrent = feedSkuInfo.getPriceCurrent();
 
             if (taxRate == null || StringUtils.isEmpty(formula)) {
                 return  0.0;
@@ -1459,9 +1459,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 skuPriceModel.setPriceRetail(calculatePriceByFormula(sku, taxRate, priceRetailFormula));
                 // jeff 2016/04 change end
 
-                skuPriceModel.setClientMsrpPrice(sku.getPrice_client_msrp());
-                skuPriceModel.setClientRetailPrice(sku.getPrice_client_retail());
-                skuPriceModel.setClientNetPrice(sku.getPrice_net());
+                skuPriceModel.setClientMsrpPrice(sku.getPriceClientMsrp());
+                skuPriceModel.setClientRetailPrice(sku.getPriceClientRetail());
+                skuPriceModel.setClientNetPrice(sku.getPriceNet());
 
                 // jeff 2016/04 change start
                 // 如果是新的SKU, 那么: PriceRetail -> priceSale
