@@ -52,6 +52,7 @@
             GROUP BY
                 promotion_id,
                 num_iid
+            LIMIT 0,200
         ) t1
     LEFT JOIN (
         SELECT
