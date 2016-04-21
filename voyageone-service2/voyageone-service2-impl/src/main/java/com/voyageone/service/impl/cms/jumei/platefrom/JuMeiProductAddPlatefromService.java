@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.cms.jumei.platefrom;
+
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.JumeiHtDealService;

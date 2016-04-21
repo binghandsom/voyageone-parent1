@@ -99,7 +99,8 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         CallResult result = new CallResult();
         try {
             String userName = getUser().getUserName();
-            serviceCmsBtJmMasterBrand.loadJmMasterBrand(userName);
+           String channelId= getUser().getSelChannelId();
+            serviceCmsBtJmMasterBrand.loadJmMasterBrand(userName,channelId);
         } catch (Exception ex) {
             LOG.error("loadJmMasterBrand", ex);
             result.setMsg("聚美同步失败");

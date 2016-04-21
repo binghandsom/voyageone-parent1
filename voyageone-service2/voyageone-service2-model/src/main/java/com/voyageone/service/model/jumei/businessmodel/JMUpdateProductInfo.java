@@ -16,18 +16,23 @@ public class JMUpdateProductInfo {
     List<CmsBtJmSkuModel> listCmsBtJmSku;
 
     public Map<Integer, CmsBtJmSkuModel> getMapCmsBtJmSkuModel() {
+        if (mapCmsBtJmSkuModel.size() == 0) {
+            loadData();
+        }
         return mapCmsBtJmSkuModel;
     }
-
     public void setMapCmsBtJmSkuModel(Map<Integer, CmsBtJmSkuModel> mapCmsBtJmSkuModel) {
         this.mapCmsBtJmSkuModel = mapCmsBtJmSkuModel;
     }
-
     Map<Integer, CmsBtJmSkuModel> mapCmsBtJmSkuModel = new HashMap<>();//key:skuid
     Map<String, CmsBtJmSkuModel> mapCodeCmsBtJmSkuModel = new HashMap<>();//key:SkuCode
     Map<Integer, CmsBtJmPromotionSkuModel> mapSkuIdCmsBtJmPromotionSkuModel = new HashMap<>();//key:skuid value:CmsBtJmPromotionSkuModel
 
     public Map<Integer, CmsBtJmPromotionSkuModel> getMapSkuIdCmsBtJmPromotionSkuModel() {
+        if(mapSkuIdCmsBtJmPromotionSkuModel.size()==0)
+        {
+            loadData();
+        }
         return mapSkuIdCmsBtJmPromotionSkuModel;
     }
 
@@ -36,6 +41,10 @@ public class JMUpdateProductInfo {
     }
 
     public Map<String, CmsBtJmSkuModel> getMapCodeCmsBtJmSkuModel() {
+        if(mapCodeCmsBtJmSkuModel.size()==0)
+        {
+            loadData();
+        }
         return mapCodeCmsBtJmSkuModel;
     }
 
@@ -49,6 +58,8 @@ public class JMUpdateProductInfo {
             mapCmsBtJmSkuModel.put(model.getId(), model);
             mapCodeCmsBtJmSkuModel.put(model.getSkuCode(), model);
         }
+
+        mapSkuIdCmsBtJmPromotionSkuModel.clear();
         for (CmsBtJmPromotionSkuModel model : listCmsBtJmPromotionSku) {
             mapSkuIdCmsBtJmPromotionSkuModel.put(model.getCmsBtJmSkuId(), model);
         }

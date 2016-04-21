@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.feed;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -46,6 +47,12 @@ class SEAnalysisContext {
         sku.setPrice_net(feedBean.getCost().doubleValue());
         BigDecimal price = new BigDecimal(getPriceCurrent(feedBean));
         sku.setPrice_current(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+        sku.setPrice_msrp(CommonUtil.getRoundUp2Digits(sku.getPrice_current() / 0.7));
+
+        sku.setPrice_client_msrp(CommonUtil.getRoundUp2Digits(sku.getPrice_msrp() / 6.5));
+
+        sku.setPrice_client_retail(CommonUtil.getRoundUp2Digits(sku.getPrice_current() / 6.5));
 
         CmsBtFeedInfoModel code = getProduct(feedBean);
 

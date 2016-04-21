@@ -5,7 +5,6 @@ import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import org.apache.ibatis.annotations.Param;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +17,8 @@ public interface CmsBtJmPromotionProductDaoExt {
     public List getListByWhere(Map<String, Object> map);
 
     public List getPromotionProductInfoListByWhere(Map<String, Object> map);
+
+    public int getPromotionProductInfoCountByWhere(Map<String, Object> ma);
 
     public List getExportInfoListByPromotionId(int promotionId);
 

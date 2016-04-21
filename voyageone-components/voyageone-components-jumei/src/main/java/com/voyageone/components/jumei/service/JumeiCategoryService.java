@@ -16,11 +16,8 @@ import java.util.Map;
  */
 @Service
 public class JumeiCategoryService extends JmBase {
-
     private List<JmCategoryBean> categoryListLevel4 = null;
-
     private static String CATEGORY_URL = "v1/category/query";
-
     /**
      * initCategoryListLevel4
      */

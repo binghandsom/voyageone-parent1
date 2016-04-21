@@ -37,7 +37,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public String getOrgChannelId() {
 
-        return orgChannelId;
+        return orgChannelId == null?this.channelId:orgChannelId;
     }
 
     public void setOrgChannelId(String orgChannelId) {

@@ -31,7 +31,7 @@ public class JuMeiUploadImageService {
 @Autowired
 JMShopBeanService serviceJMShopBean;
     @Autowired
-    JuMeiProductUpdateService serviceJuMeiProductUpdate;
+    JuMeiProductPlatefromDataService serviceJuMeiProductUpdate;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiUploadImageService.class);
 
     public void uploadImage(CmsBtJmProductImagesModel imageModel, ShopBean shopBean) throws Exception {
@@ -43,7 +43,7 @@ JMShopBeanService serviceJMShopBean;
         imageModel.setValue2(jmUrl);
     }
     public void uploadImage(CmsMtMasterInfoModel imageModel) throws Exception {
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
+        ShopBean shopBean = serviceJMShopBean.getShopBean(imageModel.getChannelId());
         String jmUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean(imageModel));
         imageModel.setValue2(jmUrl);
     }

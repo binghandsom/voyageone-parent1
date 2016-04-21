@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.jumei;
 
-import com.voyageone.service.impl.cms.jumei.platefrom.JuMeiProductAddPlatefromService;
+import com.voyageone.service.impl.cms.jumei.platefrom.JuMeiProductPlatefromService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.core.Message;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class JuMeiProductUpdateJobService extends BaseMQCmsService {
     @Autowired
-    private JuMeiProductAddPlatefromService service;
+    private JuMeiProductPlatefromService service;
 
     @RabbitListener(queues = MqRoutingKey.CMS_BATCH_JuMeiProductUpdate)
     protected void onMessage(Message message){
@@ -30,6 +30,6 @@ public class JuMeiProductUpdateJobService extends BaseMQCmsService {
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         int id = (int) Double.parseDouble(messageMap.get("id").toString());
-        service.addProductAndDealByPromotionId(id);
+        service.updateJmByPromotionId(id);
     }
 }

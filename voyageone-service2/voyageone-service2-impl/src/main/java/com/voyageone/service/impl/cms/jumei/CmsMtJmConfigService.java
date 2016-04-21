@@ -46,5 +46,10 @@ public class CmsMtJmConfigService {
 
         return  jmDefaultSet;
     }
+    public int getShippingSystemId(String ChannelId) throws Exception {
+        JMDefaultSet defaultSet = getJMDefaultSet(ChannelId);
+        return defaultSet.getJmShippingStock();
+        //  return 2813;
+    }
 }
 

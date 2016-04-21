@@ -2,15 +2,11 @@ package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.service.bean.cms.Condition;
-import com.voyageone.service.model.cms.enums.MappingPropType;
-import com.voyageone.service.model.cms.enums.Operation;
-import com.voyageone.service.model.cms.enums.SrcType;
 import com.voyageone.common.Constants;
-import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -22,28 +18,39 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
+import com.voyageone.service.bean.cms.Condition;
+import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.CmsBtImagesDao;
+import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
+import com.voyageone.service.model.cms.CmsBtImagesModel;
+import com.voyageone.service.model.cms.enums.MappingPropType;
+import com.voyageone.service.model.cms.enums.Operation;
+import com.voyageone.service.model.cms.enums.SrcType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Mapping;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
-import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_BatchField;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -99,6 +106,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     ProductPriceLogService productPriceLogService;
     @Autowired
     private CmsBtImagesDao cmsBtImageDao;
+    @Autowired
+    private FeedInfoService feedInfoService;
 
     public static final int FEED_UPDFLG_0 = 0;
     public static final int FEED_UPDFLG_2 = 2;
@@ -186,7 +195,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             String channelId = this.channel.getOrder_channel_id();
 
             // 查找当前渠道,所有等待反映到主数据的商品
-            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, new int[]{0,2});
+//            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
+            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
+            JomgoQuery queryObject = new JomgoQuery();
+            queryObject.setQuery(query);
+            queryObject.setLimit(50);
+            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // --------------------------------------------------------------------------------------------
             // 品牌mapping表
@@ -656,7 +670,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 创建新的group
-            CmsBtProductModel_Group group = doSetGroup(feed, product);
+            CmsBtProductGroupModel group = doSetGroup(feed, product);
             product.setGroups(group);
 
             // --------- batchFields ------------------------------------------------------

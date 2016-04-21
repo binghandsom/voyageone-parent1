@@ -25,6 +25,7 @@ public class JuMeiDealService {
     JMShopBeanService serviceJMShopBean;
     public   void updateDealEndTime(int promotionId) throws Exception {
         Map<String, Object> parameterPromotionProduct = new HashMap<>();
+
         parameterPromotionProduct.put("promotionId", promotionId);
         parameterPromotionProduct.put("dealEndTimeState", 1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
