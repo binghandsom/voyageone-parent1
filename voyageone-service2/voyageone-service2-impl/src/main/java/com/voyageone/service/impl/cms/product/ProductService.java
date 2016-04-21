@@ -37,6 +37,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toMap;
+
 /**
  * product Service
  *
@@ -354,7 +356,14 @@ public class ProductService extends BaseService {
                 CmsConstants.ProductStatus aftStatus = CmsConstants.ProductStatus.valueOf(productModel.getFields().getStatus());
                 insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
 
+                // jeff 2016/04 del start
                 //insert　SxWorkLoad
+//                String modifier = "0";
+//                if (!StringUtils.isEmpty(request.getModifier())) {
+//                    modifier = request.getModifier();
+//                }
+//                insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getGroups().getPlatforms(), modifier);
+                // jeff 2016/04 del end
                 String modifier = "0";
                 if (!StringUtils.isEmpty(request.getModifier())) {
                     modifier = request.getModifier();

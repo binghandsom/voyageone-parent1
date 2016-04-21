@@ -6,9 +6,9 @@ package com.voyageone.service.impl.com.mq.config;
  * @since 2.0.0
  */
 public class MqRoutingKey {
-
-    public static final String CMS_BATCH_PROMOTION = "voyageone_cms_batchjob_promotion_queue";
-
+    /**
+     * jumei mq task
+     */
     public static final String CMS_BATCH_JmBtPromotionImportTask = "voyageone_cms_batchjob_JmBtPromotionImportTask_queue";
 
     public static final String CMS_BATCH_JmBtPromotionExportTask = "voyageone_cms_batchjob_JmBtPromotionExportTask_queue";
@@ -17,6 +17,9 @@ public class MqRoutingKey {
 
     public static final String CMS_BATCH_JuMeiProductUpdateDealEndTimeJob = "voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue";
 
+    /**
+     * jd mq task
+     */
     public static final String CMS_BATCH_PlatformCategoryTreeJdJob = "voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue";
 
     public static final String CMS_BATCH_PlatformCategorySchemaJdJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue";
