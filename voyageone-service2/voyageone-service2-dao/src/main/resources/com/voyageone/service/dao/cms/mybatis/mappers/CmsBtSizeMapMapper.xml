@@ -7,7 +7,7 @@
         id,
         size_map_group_id as sizeMapGroupId,
         original_size as originalSize,
-        adjust_size as adjustSize,.
+        adjust_size as adjustSize,
         active,
         creater,
         created,
