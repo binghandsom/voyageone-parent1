@@ -1080,4 +1080,29 @@ public class ProductService extends BaseService {
         return result;
     }
 
+    /**
+     * 取得逻辑库存
+     *
+     * @param channelId 渠道id
+     * @param skuList   待取得逻辑库存的sku对象
+     * @return 逻辑库存Map<sku, logicQty>
+     */
+    public Map<String, Integer> getLogicQty(String channelId, List<String> skuList) {
+        // 逻辑库存Map
+        Map<String, Integer> skuLogicQty = new HashMap<>();
+        skuList.forEach(sku -> skuLogicQty.put(sku, 0)); // 初始化
+
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(channelId, skuList);
+
+        if (listLogicInventory != null && listLogicInventory.size() > 0) {
+            for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
+                String sku = logicInventory.getSku();
+                Integer logicQty = logicInventory.getQtyChina();
+                skuLogicQty.merge(sku, logicQty, (val, newVal) -> val + newVal);
+            }
+        }
+
+        return skuLogicQty;
+    }
+
 }

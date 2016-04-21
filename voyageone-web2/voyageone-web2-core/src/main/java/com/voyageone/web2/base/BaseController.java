@@ -122,7 +122,7 @@ public abstract class BaseController extends BaseAppComponent {
 
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        $debug(JacksonUtil.bean2Json(response));
+        $info(JacksonUtil.bean2Json(response));
         return response;
     }
 
