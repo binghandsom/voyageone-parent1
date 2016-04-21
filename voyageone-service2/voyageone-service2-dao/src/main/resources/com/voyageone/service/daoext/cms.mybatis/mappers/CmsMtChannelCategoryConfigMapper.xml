@@ -6,12 +6,12 @@
             resultType="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel"
             parameterType="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel">
         select
-          channel_id channelId,
+        channel_id channelId,
         category_id categoryId,
-          created,
-          creater,
-          modified,
-          modifier
+        created,
+        creater,
+        modified,
+        modifier
         from voyageone_cms2.cms_mt_channel_category_config
         <where>
             <if test="channelId != null and channelId !=''">
@@ -25,35 +25,35 @@
     <insert id="insert_cms_mt_channel_category_config"
             parameterType="com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel">
         insert IGNORE into voyageone_cms2.cms_mt_channel_category_config
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="channelId != null" >
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelId != null">
                 channel_id,
             </if>
             <if test="categoryId != null">
                 category_id,
             </if>
-                created,
-            <if test="creater != null" >
+            created,
+            <if test="creater != null">
                 creater,
             </if>
-                modified,
-            <if test="modifier != null" >
+            modified,
+            <if test="modifier != null">
                 modifier,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="channelId != null" >
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channelId != null">
                 #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="categoryId != null">
                 #{categoryId,jdbcType=VARCHAR},
             </if>
-                now(),
-            <if test="creater != null" >
+            now(),
+            <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
             </if>
-               now(),
-            <if test="modifier != null" >
+            now(),
+            <if test="modifier != null">
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>

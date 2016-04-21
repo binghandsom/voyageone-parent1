@@ -18,11 +18,11 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
-import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -45,11 +45,9 @@ import java.util.*;
 public class ProductService extends BaseService {
 
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
     protected CmsBtProductLogDao cmsBtProductLogDao;
-
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
 
@@ -69,7 +67,7 @@ public class ProductService extends BaseService {
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
-    private CmsMtChannelConfigDao cmsMtChannelConfigDao;
+    private CmsMtChannelConfigDaoExt cmsMtChannelConfigDaoExt;
 
     /**
      * 获取商品 根据ID获
@@ -809,7 +807,7 @@ public class ProductService extends BaseService {
             resultInfo.setClientNetPrice(String.valueOf(product.getSku(productSku).getClientNetPrice()));
 
             // 设置原始价格单位
-            List<CmsMtChannelConfigModel> channelConfigs = cmsMtChannelConfigDao.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
+            List<CmsMtChannelConfigModel> channelConfigs = cmsMtChannelConfigDaoExt.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
             resultInfo.setClientPriceUnit(channelConfigs.get(0).getConfigValue1());
 
             // TODO 无法提供,属于主数据的非共通属性
