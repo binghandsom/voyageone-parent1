@@ -17,8 +17,9 @@ public class SxData {
 	private Long groupId;
 
 	private CmsBtProductModel mainProduct; // 主商品
-	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表, 里面虽然有platform和sku信息(但是里面的内容是包含其他group的数据的)
-	private List<CmsBtProductModel_Sku> skuList;	// 只包含当前group中, 允许使用的sku信息
+	private CmsBtProductModel_Group_Platform platform; // 平台信息(也是当前group信息)
+	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表(product下所有sku都没有当前cartId，则去除)
+	private List<CmsBtProductModel_Sku> skuList;	// 只包含当前group，cart中, 允许使用的sku信息
 
 	public String getChannelId() {
 		return channelId;
@@ -50,6 +51,14 @@ public class SxData {
 
 	public void setMainProduct(CmsBtProductModel mainProduct) {
 		this.mainProduct = mainProduct;
+	}
+
+	public CmsBtProductModel_Group_Platform getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(CmsBtProductModel_Group_Platform platform) {
+		this.platform = platform;
 	}
 
 	public List<CmsBtProductModel> getProductList() {
