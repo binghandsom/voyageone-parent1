@@ -10,11 +10,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-/**
- * Created by dell on 2016/4/21.
- */
-@Service
 public class AliYunOSSClient {
     String endpoint;// = "http://oss-cn-shenzhen.aliyuncs.com/";//http://oss-cn-hangzhou.aliyuncs.com";
     String accessKeyId;// = "v5l02zcFVl6rBKXg";
@@ -44,6 +39,9 @@ public class AliYunOSSClient {
     }
     OSSClient create()
     {
+//        String endpoint = "http://oss-cn-shenzhen.aliyuncs.com/";//http://oss-cn-hangzhou.aliyuncs.com";
+//        String accessKeyId = "v5l02zcFVl6rBKXg";
+//        String accessKeySecret = "c6VxvbVsDLZI4vAePHn6PxsEAuQGuq";
         OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         return client;
     }

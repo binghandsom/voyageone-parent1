@@ -15,12 +15,12 @@ public class LiquidFireClient {
     String savePath;//生成的图片保存路径  /usr/images
     int connectTimeout = 30 * 1000;
     int readTimeout = 30 * 1000;
-    public void LiquidFireClient(String LiquidFireUrl,String savePath) {
+    public  LiquidFireClient(String LiquidFireUrl,String savePath) {
         this.setUrl(LiquidFireUrl);
         this.setSavePath(savePath);
     }
-    public void LiquidFireClient(String LiquidFireUrl,String savePath,int connectTimeout,int readTimeout) {
-        LiquidFireClient(url, savePath);
+    public  LiquidFireClient(String LiquidFireUrl,String savePath,int connectTimeout,int readTimeout) {
+        this(LiquidFireUrl, savePath);
         this.setConnectTimeout(connectTimeout);
         this.setReadTimeout(readTimeout);
     }
