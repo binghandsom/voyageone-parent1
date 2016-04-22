@@ -55,12 +55,12 @@ public class CmsBtProductGroupModel extends BaseMongoMap<String, Object> {
         setAttribute("numIId", numIId);
     }
 
-    public String getProductId() {
-        return getAttribute("productId");
+    public String getPlatformPid() {
+        return getAttribute("platformPid");
     }
 
-    public void setProductId(String productId) {
-        setAttribute("productId", productId);
+    public void setPlatformPid(String platformPid) {
+        setAttribute("platformPid", platformPid);
     }
 
     public boolean getIsMain() {
@@ -104,12 +104,12 @@ public class CmsBtProductGroupModel extends BaseMongoMap<String, Object> {
         setAttribute("onSaleTime", onSaleTime);
     }
 
-    public String getInstockTime() {
-        return getAttribute("instockTime");
+    public String getInStockTime() {
+        return getAttribute("inStockTime");
     }
 
-    public void setInstockTime(String instockTime) {
-        setAttribute("instockTime", instockTime);
+    public void setInStockTime(String inStockTime) {
+        setAttribute("inStockTime", inStockTime);
     }
 
     // platform status 等待上新/在售/在库
@@ -145,5 +145,13 @@ public class CmsBtProductGroupModel extends BaseMongoMap<String, Object> {
 
     public void setProductCodes(List para) {
         setAttribute("productCodes", para);
+    }
+
+    public void setMainProductCode(String mainProductCode) {
+        setAttribute("mainProductCode", mainProductCode);
+    }
+
+    public String getMainProductCode() {
+        return getAttribute("mainProductCode");
     }
 }

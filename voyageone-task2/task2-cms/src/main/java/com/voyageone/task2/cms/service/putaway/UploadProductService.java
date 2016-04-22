@@ -146,7 +146,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     workload.setIsPublished(0);
                     upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
                 }
-                workload.setProductId(mainProductPlatform.getProductId());
+                workload.setProductId(mainProductPlatform.getPlatformPid());
             }
             workload.setWorkload_status(new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT));
 
@@ -220,29 +220,29 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-                String instockTime = null, onSaleTime = null, publishTime = null;
+                String inStockTime = null, onSaleTime = null, publishTime = null;
 
                 if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
                     publishTime = DateTimeUtil.getNow();
                 }
 
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-                        && platformActive == CmsConstants.PlatformActive.Onsale) {
+                        && platformActive == CmsConstants.PlatformActive.ToOnsale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-                        && platformActive == CmsConstants.PlatformActive.Instock) {
-                    instockTime = DateTimeUtil.getNow();
+                        && platformActive == CmsConstants.PlatformActive.ToInstock) {
+                    inStockTime = DateTimeUtil.getNow();
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
-                if (platformActive == CmsConstants.PlatformActive.Instock) {
+                if (platformActive == CmsConstants.PlatformActive.ToInstock) {
                     newPlatformStatus = CmsConstants.PlatformStatus.Instock;
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
                 }
                 productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
-                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
+                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, inStockTime, newPlatformStatus);
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);

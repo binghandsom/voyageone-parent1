@@ -7,7 +7,7 @@
             resultType="com.voyageone.service.model.cms.CmsMtChannelConfigModel"
             parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
         SELECT
-        a.seq,
+        a.id,
         a.channel_id as channelId,
         a.config_key as configKey,
         a.config_code as configCode,

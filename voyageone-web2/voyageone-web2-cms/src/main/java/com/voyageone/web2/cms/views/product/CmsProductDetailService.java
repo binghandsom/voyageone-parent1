@@ -20,14 +20,16 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -49,27 +51,22 @@ import java.util.*;
 @Service
 public class CmsProductDetailService extends BaseAppService {
 
-    @Autowired
-    private CommonSchemaService commonSchemaService;
-
-    @Autowired
-    private FeedInfoService feedInfoService;
-
-    @Autowired
-    private FeedCustomPropService feedCustomPropService;
-
-    @Autowired
-    private ProductService productService;
-
+    private static final String FIELD_SKU_CARTS = "skuCarts";
+    private static final String COMPLETE_STATUS = "1";
     @Autowired
     protected CategorySchemaService categorySchemaService;
-
+    @Autowired
+    private CommonSchemaService commonSchemaService;
+    @Autowired
+    private FeedInfoService feedInfoService;
+    @Autowired
+    private FeedCustomPropService feedCustomPropService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private PromotionDetailService promotionDetailService;
-
-    private static final String FIELD_SKU_CARTS = "skuCarts";
-
-    private static final String COMPLETE_STATUS = "1";
 
     /**
      * 获取类目以及类目属性信息.
@@ -86,7 +83,7 @@ public class CmsProductDetailService extends BaseAppService {
         CustomAttributesBean customAttributes = new CustomAttributesBean();
 
         // 获取product data.
-        CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
+        CmsBtProductModel productValueModel = getProductModel(channelId, prodId, cartId);
 
         //商品各种状态.
         CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
@@ -190,21 +187,15 @@ public class CmsProductDetailService extends BaseAppService {
         boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
         infoMap.put("isminimall", isMiniMall ? 1 : 0);
 
+        // 判断是否主商品
         boolean isMain = false;
-//        CmsBtProductModel_Group gpList = productValueModel.getGroups();
-//        if (gpList != null) {
-//            List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
-//            if (pltList != null && pltList.size() > 0) {
-//                for (CmsBtProductModel_Group_Platform pltObj : pltList) {
-//                    if (pltObj.getCartId() == cartId && pltObj.getIsMain()) {
-//                        isMain = true;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
+        CmsBtProductGroupModel gpList = productValueModel.getGroups();
+        if (gpList != null) {
+            if (productValueModel.getFields().getCode().equals(gpList.getMainProductCode())) {
+                isMain = true;
+            }
+        }
         infoMap.put("isMain", isMain ? 1 : 0);
-
         return infoMap;
     }
 
@@ -343,7 +334,7 @@ public class CmsProductDetailService extends BaseAppService {
             cmsBtPromotionCodeModel.setProductCode(oldProduct.getFields().getCode());
             cmsBtPromotionCodeModel.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
             cmsBtPromotionCodeModel.setPromotionId(0);
-//            cmsBtPromotionCodeModel.setNumIid(oldProduct.getGroups().getPlatformByCartId(23).getNumIId());
+            cmsBtPromotionCodeModel.setNumIid(oldProduct.getGroups().getNumIId());
             cmsBtPromotionCodeModel.setChannelId(channelId);
             cmsBtPromotionCodeModel.setCartId(23);
             cmsBtPromotionCodeModel.setModifier(userName);
@@ -355,9 +346,7 @@ public class CmsProductDetailService extends BaseAppService {
             Map<String, Object> updObj = new HashMap<>();
             updObj.put("fields.translateStatus", "0");
             updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-//            newProduct.getGroups().getPlatforms().forEach(cmsBtProductModel_group_platform -> {
-//                productService.updateTranslation(channelId, cmsBtProductModel_group_platform.getGroupId(), updObj, userName);
-//            });
+            productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
         }
 
         return newModified;
@@ -410,24 +399,23 @@ public class CmsProductDetailService extends BaseAppService {
 
             // 获取所有model
             String model = product.getFeed().getOrgAtts().get("modelCode").toString();
-            if (!models.contains(model))
+            if (!models.contains(model)) {
                 models.add(model);
-
-//            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
-//                // 获取已经上新的产品数据
-//                Integer cartId = Integer.valueOf(platform.getCartId().toString());
-//                String numIid = platform.getNumIId();
-//                if (!StringUtils.isEmpty(numIid)) {
-//                    String cartName = CartType.getCartNameById(cartId, language);
-//                    if (numIids.get(cartName) != null) {
-//                        numIids.get(cartName).add(numIid);
-//                    } else {
-//                        List<String> tempList = new ArrayList<>();
-//                        tempList.add(numIid);
-//                        numIids.put(cartName, tempList);
-//                    }
-//                }
-//            }
+            }
+            CmsBtProductGroupModel platform = product.getGroups();
+            // 获取已经上新的产品数据
+            Integer cartId = Integer.valueOf(platform.getCartId().toString());
+            String numIid = platform.getNumIId();
+            if (!StringUtils.isEmpty(numIid)) {
+                String cartName = CartType.getCartNameById(cartId, language);
+                if (numIids.get(cartName) != null) {
+                    numIids.get(cartName).add(numIid);
+                } else {
+                    List<String> tempList = new ArrayList<>();
+                    tempList.add(numIid);
+                    numIids.put(cartName, tempList);
+                }
+            }
         }
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -582,20 +570,18 @@ public class CmsProductDetailService extends BaseAppService {
     /**
      * 获取product model.
      */
-    private CmsBtProductModel getProductModel(String channelId, Long prodId) {
-
+    private CmsBtProductModel getProductModel(String channelId, Long prodId, int cartId) {
         CmsBtProductModel productValueModel = productService.getProductById(channelId, prodId);
-
         if (productValueModel == null) {
-
             //product 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的产品信息不存在！";
-
             $error(errMsg);
-
             throw new BusinessException(errMsg);
         }
 
+        // 根据产品code找到group
+        CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery("{'cartId':" + cartId + ",'productCodes':'"+ productValueModel.getFields().getCode() + "'}", channelId);
+        productValueModel.setGroups(grpObj);
         return productValueModel;
     }
 
@@ -908,17 +894,17 @@ public class CmsProductDetailService extends BaseAppService {
      */
     private Map<String, String[]> getCustomAttributesCnAttsShow(String feedCategory, CmsBtProductModel_Feed feed, String channelId) {
         // 获取
-        List<CmsBtFeedCustomPropModel> feedPropTranslateList = feedCustomPropService.getFeedCustomPropWithCategory(channelId, feedCategory);
+        List<CmsMtFeedCustomPropModel> feedPropTranslateList = feedCustomPropService.getFeedCustomPropWithCategory(channelId, feedCategory);
 
         // 获取
         Map<String, String[]> result = new HashMap<>();
-        for (CmsBtFeedCustomPropModel feedProp : feedPropTranslateList) {
+        for (CmsMtFeedCustomPropModel feedProp : feedPropTranslateList) {
             // 如果自定义属性包含在翻译的内容中
-            if (feed.getCustomIds().contains(feedProp.getFeedProp())) {
+            if (feed.getCustomIds().contains(feedProp.getFeedPropOriginal())) {
                 String[] cnAttWithTranslate = new String[2];
-                cnAttWithTranslate[0] = feedProp.getFeedPropTranslate();
-                cnAttWithTranslate[1] = feed.getCnAtts().containsKey(feedProp.getFeedProp()) ? feed.getCnAtts().get(feedProp.getFeedProp()).toString() : "";
-                result.put(feedProp.getFeedProp(), cnAttWithTranslate);
+                cnAttWithTranslate[0] = feedProp.getFeedPropTranslation();
+                cnAttWithTranslate[1] = feed.getCnAtts().containsKey(feedProp.getFeedPropOriginal()) ? feed.getCnAtts().get(feedProp.getFeedPropOriginal()).toString() : "";
+                result.put(feedProp.getFeedPropOriginal(), cnAttWithTranslate);
             }
         }
 

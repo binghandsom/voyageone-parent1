@@ -5,6 +5,7 @@ return angular.module("voyageone.angular",[
 "voyageone.angular.directives.enterClick",
 "voyageone.angular.directives.fileStyle",
 "voyageone.angular.directives.ifNoRows",
+"voyageone.angular.directives.keyValue",
 "voyageone.angular.directives.uiNav",
 "voyageone.angular.directives.schema",
 "voyageone.angular.directives.voption",

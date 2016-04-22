@@ -31,7 +31,16 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoChannelDao<CmsMtFeedCateg
         String query = "{\"catName\":\"" + category + "\"}";
         return selectOneWithQuery(query, channelId);
     }
-
+    /**
+     * 查询 Feed 类目
+     *
+     * @param channelId 渠道
+     * @return Feed 类目的弱类型模型
+     */
+    public CmsMtFeedCategoryTreeModel selectFeedCategoryByCategoryId(String channelId, String categoryId) {
+        String query = "{\"catId\":\"" + categoryId + "\"}";
+        return selectOneWithQuery(query, channelId);
+    }
 
     public List<CmsMtFeedCategoryTreeModel> selectFeedAllCategory(String channelId) {
         String query = "{}";
@@ -55,50 +64,10 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoChannelDao<CmsMtFeedCateg
      * @param channelId 渠道
      * @return Feed 类目的强类型模型
      */
-    public CmsMtFeedCategoryTreeModelx selectTopCategories(String channelId) {
+    public List<CmsMtFeedCategoryTreeModel> selectTopCategories(String channelId) {
         String query = "{\"channelId\":\"" + channelId + "\"}";
-        String projection = "{'categoryTree.child':0}";
-        return mongoTemplate.findOne(query, projection, CmsMtFeedCategoryTreeModelx.class);
+        String projection = "{'children':0}";
+        return selectWithProjection(query, projection, channelId);
     }
 
-    /**
-     * 查询 channelId 下 cid 为 categoryId 的顶级类目
-     *
-     * @param channelId  渠道
-     * @param categoryId 类目 ID
-     * @return 只包含目标类目的强类型模型
-     */
-    public CmsMtFeedCategoryTreeModelx selectTopCategory(String channelId, String categoryId) {
-        String query = String.format("{channelId: '%s', 'categoryTree.cid': '%s'}", channelId, categoryId);
-        String projection = "{'categoryTree.$':1}";
-        return mongoTemplate.findOne(query, projection, CmsMtFeedCategoryTreeModelx.class);
-    }
-
-    /**
-     * 查询 channelId 下的顶级类目信息
-     *
-     * @param channelId 渠道ID
-     * @param topCategoryPath TOP CategoryPath
-     * @return TOP Category
-     */
-    public CmsMtFeedCategoryTreeModel selectHasTrueChild(String channelId, String topCategoryPath) {
-
-        int count = StringUtils.countMatches(topCategoryPath, "-");
-
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < count; i++)
-            builder.append(".child");
-
-        String query = String.format("{\"categoryTree%s\":{$elemMatch:{\"path\": \"%s\", \"isChild\": 1}}}",
-                channelId, builder, topCategoryPath);
-
-        JomgoQuery jomgoQuery = new JomgoQuery();
-
-        jomgoQuery.setQuery(query);
-
-        jomgoQuery.setProjection("_id");
-
-        return selectOneWithQuery(jomgoQuery,channelId);
-    }
 }

@@ -82,7 +82,7 @@
                 </thead>
                 <tbody ng-if="tableSource.length">
                 <tr ng-repeat="el in tableSource">
-                    <td class="text-center mfb-xt3">{{$index}}</td>
+                    <td class="text-center mfb-xt3">{{$index+1}}</td>
                     <td>{{el.order_channel_id}}</td>
                     <td>{{el.name}}</td>
                     <td>{{el.full_name}}</td>
@@ -104,15 +104,17 @@
                     </td>
                     <td ng-controller="popupCtrl">
                         <button class="btn btn-success btn-xs ng-scope"
-                                ng-click="$parent.openChannelEdit($index,el,openChannelEdit)"><i
+                                ng-click="$parent.openChannelEdit($index,el,openChannelEdit)"
+                                ng-disabled="el.status==0 || el.active==0"><i
                                 class="fa fa-pencil"></i></button>
 
                         <button class="btn btn-info btn-xs ng-scope"
+                                ng-disabled="el.status==0 || el.active==0"
                                 ng-click="$parent.openChannelSetting(el,openChannelSetting)"><i
                                 class="fa fa-cog"></i></button>
 
                         <button class="btn btn-danger btn-xs ng-scope"
-                                ng-click="$parent.delete($index,el)" ng-show="el.status==1 || el.active==1"><i
+                                ng-click="$parent.delete($index,el)" ng-disabled="el.status==0 || el.active==0"><i
                                 class="fa fa-trash" ></i></button>
                     </td>
                 </tr>

@@ -46,6 +46,7 @@
             </if>
         </where>
     </select>
+
     <delete id="deleteByPrimaryKey" parameterType="com.voyageone.service.model.cms.CmsMtChannelValuesModel">
         delete from voyageone_cms2.cms_mt_channel_values
         <where>

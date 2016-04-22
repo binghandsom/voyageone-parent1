@@ -252,7 +252,7 @@ public class CmsProductDaoTest {
 //        platformMode.setIsMain(false);
 //        platformMode.setDisplayOrder(27);
 //        platformMode.setPublishTime("2015-10-12 16:19:00");
-//        platformMode.setInstockTime("2015-10-18 16:19:00");
+//        platformMode.setInStockTime("2015-10-18 16:19:00");
 ////        platformMode.setStatus("InStock1");
 ////        platformMode.setPublishStatus(" 等待上新1");
 ////        platformMode.setComment("1");

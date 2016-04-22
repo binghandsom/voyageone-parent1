@@ -3,9 +3,10 @@
  */
 
 define([
+    'underscore',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/search.advance.service'
-], function () {
+], function (_) {
 
     function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, confirm, $translate, notify, alert) {
 
@@ -147,7 +148,6 @@ define([
                 for (idx in $scope.vm.productList) {
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
-                    //prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
                     prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 }
 
@@ -238,7 +238,6 @@ define([
                 for (idx in $scope.vm.productList) {
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
-                    //prodObj._prodMnFlg = res.data.prodMainFlgList[idx];
                     prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 }
             });

@@ -198,7 +198,7 @@ define([
                 var self = this;
                 self.feedMappingService.getTopCategories().then(function (res) {
                     self.topCategories = res.data;
-                    self.selectedTop = self.topCategories[0].cid;
+                    self.selectedTop = self.topCategories[0].catId;
                     self.refreshTable();
                 });
             },

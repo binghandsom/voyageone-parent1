@@ -3,26 +3,28 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 获取指定店铺的所有的自定义属性 -->
-    <select id="cms_bt_feed_custom_prop_select" parameterType="HashMap" resultType="com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean">
+    <select id="cms_mt_feed_custom_prop_select" parameterType="HashMap"
+            resultType="com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean">
         select    id
         , channel_id
         , feed_cat_path
         , feed_prop_original
         , feed_prop_translation
         , display_order
-        from      voyageone_cms2.cms_bt_feed_custom_prop
+        from voyageone_cms2.cms_mt_feed_custom_prop
         where     channel_id = #{channel_id}
         order by  display_order
     </select>
 
     <!-- 获取指定店铺的所有的自定义属性的值的翻译 -->
-    <select id="cms_bt_feed_custom_prop_value_select" parameterType="HashMap" resultType="com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel">
+    <select id="cms_mt_feed_custom_option_select" parameterType="HashMap"
+            resultType="com.voyageone.service.model.cms.CmsMtFeedCustomOptionModel">
         select    id
         , channel_id
         , prop_id
         , feed_value_original
         , feed_value_translation
-        from      voyageone_cms2.cms_bt_feed_custom_prop_value
+        from voyageone_cms2.cms_mt_feed_custom_option
         where     channel_id = #{channel_id}
     </select>
 

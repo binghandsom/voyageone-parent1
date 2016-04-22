@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
@@ -13,6 +15,7 @@ import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.Paramete
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -56,7 +59,7 @@ public class CmsBtJmPromotionProductService {
     }
     public int getPromotionProductInfoCountByWhere(Map<String, Object> map)
     {
-       return  daoExt.getPromotionProductInfoCountByWhere(map);
+        return  daoExt.getPromotionProductInfoCountByWhere(map);
     }
 
     public int delete(int id) {
@@ -105,14 +108,14 @@ public class CmsBtJmPromotionProductService {
     public CmsBtJmPromotionProductModel selectOne(Map<String, Object> param) {
         return dao.selectOne(param);
     }
-//    public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
-//        CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
-//        int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
-//        ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
-//       // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
-//        CallResult     result=   serviceJuMeiProductPlatefrom.updateJm(model, shopBean, ShippingSystemId);
-//       // }
-//        return result;
-//    }
+    public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
+        CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
+        int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
+        ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
+        // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
+        CallResult     result=   serviceJuMeiProductPlatform.updateJm(model, shopBean, ShippingSystemId);
+        // }
+        return result;
+    }
 }
 

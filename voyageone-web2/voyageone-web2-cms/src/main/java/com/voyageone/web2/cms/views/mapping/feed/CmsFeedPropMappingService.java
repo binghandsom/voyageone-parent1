@@ -126,9 +126,9 @@ class CmsFeedPropMappingService extends BaseAppService {
      * @param getFieldMappingBean 查询参数
      * @return 属性匹配设定
      */
-    Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean) {
+    Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel mappingModel = feedMappingService.getMapping(new ObjectId(getFieldMappingBean.getMappingId()));
+        CmsBtFeedMappingModel mappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),new ObjectId(getFieldMappingBean.getMappingId()));
 
         if (mappingModel == null)
             return null;
@@ -150,9 +150,9 @@ class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 获取类目匹配中已匹配的主类目属性
      */
-    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean) {
+    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(setMappingBean.getMappingId()));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),new ObjectId(setMappingBean.getMappingId()));
 
         List<Prop> props = feedMappingModel.getProps();
 
@@ -202,9 +202,9 @@ class CmsFeedPropMappingService extends BaseAppService {
      *
      * @param saveFieldMappingBean 请求参数
      */
-    boolean saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean) {
+    boolean saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(saveFieldMappingBean.getMappingId()));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),new ObjectId(saveFieldMappingBean.getMappingId()));
 
         if (feedMappingModel == null)
             throw new BusinessException("没找到 Mapping");

@@ -19,6 +19,7 @@ import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -34,6 +35,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -69,11 +71,14 @@ public class CmsSearchAdvanceService extends BaseAppService {
     @Autowired
     private BaseJomgoTemplate mongoTemplate;
 
+    @Resource
+    private CmsBtJmPromotionService jmPromotionService;
+
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.carts;skus;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;fields.productCarts;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
@@ -120,6 +125,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", userInfo.getSelChannelId());
         masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
+
+        //add by holysky  新增一些页的聚美促销活动预加载
+        masterData.put("jmPromotionList", jmPromotionService.getJMActivePromotions(String.valueOf(params.get("channelId"))));
+
+
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
@@ -215,7 +225,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             platformModel.setCartId(cartId);
             platformModel.setGroupId(grpId);
             platformModel.setNumIId((String) groupModelMap.get("numIId"));
-            platformModel.setInstockTime((String) groupModelMap.get("instockTime"));
+            platformModel.setInStockTime((String) groupModelMap.get("inStockTime"));
             platformModel.setOnSaleTime((String) groupModelMap.get("onSaleTime"));
             platformModel.setPublishTime((String) groupModelMap.get("publishTime"));
             platformModel.setQty((Integer) groupModelMap.get("qty"));

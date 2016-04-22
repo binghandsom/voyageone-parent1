@@ -28,6 +28,9 @@ public class FeedMappingService extends BaseService {
     @Autowired
     private CmsMtFeedCategoryTreeDao feedCategoryTreeDao;
 
+    @Autowired
+    private FeedCategoryTreeService feedCategoryTreeService;
+
     public CmsBtFeedMappingModel getDefault(Channel channel, String feedCategory) {
         return getDefault(channel, feedCategory, true);
     }
@@ -44,8 +47,8 @@ public class FeedMappingService extends BaseService {
         return feedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
     }
 
-    public CmsBtFeedMappingModel getMapping(ObjectId objectId) {
-        return feedMappingDao.findOne(objectId);
+    public CmsBtFeedMappingModel getMapping(Channel channel,ObjectId objectId) {
+        return feedMappingDao.findOne(objectId,channel.getId());
     }
 
     public WriteResult setMapping(CmsBtFeedMappingModel feedMappingModel) {
@@ -58,13 +61,13 @@ public class FeedMappingService extends BaseService {
 
     public boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
 
-        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeDao.selectHasTrueChild(channel.getId(), topCategoryPath);
+        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeService.getCategoryNote(channel.getId(), topCategoryPath);
 
-        return treeModel != null && !StringUtils.isEmpty(treeModel.get_id());
+        return treeModel != null && treeModel.getIsParent() == 0;
     }
 
-    public CmsBtFeedMappingModel getMappingWithoutProps(ObjectId mappingId) {
-        return feedMappingDao.findOneWithoutProps(mappingId);
+    public CmsBtFeedMappingModel getMappingWithoutProps(Channel channel,ObjectId mappingId) {
+        return feedMappingDao.findOneWithoutProps(mappingId,channel.getId());
     }
 
     public List<CmsBtFeedMappingModel> getMappingsWithoutProps(String feedCategoryPath, String selChannelId) {

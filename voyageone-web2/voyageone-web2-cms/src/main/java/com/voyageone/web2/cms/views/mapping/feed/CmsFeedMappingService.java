@@ -42,13 +42,13 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private FeedMappingService feedMappingService;
 
-    List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    List<CmsMtFeedCategoryTreeModel> getTopCategories(UserSessionBean user) {
         return feedCategoryTreeService.getOnlyTopFeedCategories(user.getSelChannelId());
     }
 
     List<FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModel topCategory = feedCategoryTreeService.getFeedCategoryByCategory(user.getSelChannelId(), topCategoryId);
+        CmsMtFeedCategoryTreeModel topCategory = feedCategoryTreeService.getFeedCategoryByCategoryId(user.getSelChannelId(), topCategoryId);
 
         if (topCategory == null)
             throw new BusinessException("未找到类目");
@@ -84,7 +84,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         List<CmsBtFeedMappingModel> mappings = new ArrayList<>();
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMappingWithoutProps(new ObjectId(param.getMappingId()));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMappingWithoutProps(user.getSelChannel(),new ObjectId(param.getMappingId()));
 
         mappings.add(feedMappingModel);
 
@@ -154,7 +154,7 @@ public class CmsFeedMappingService extends BaseAppService {
         defaultMapping.setMatchOver(0);
         defaultMapping.setDefaultMapping(1);
         defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
-
+        defaultMapping.setChannelId(user.getSelChannelId());
         feedMappingService.setMapping(defaultMapping);
 
         return defaultMapping;
@@ -181,9 +181,9 @@ public class CmsFeedMappingService extends BaseAppService {
     /**
      * 切换 MatchOver
      */
-    boolean switchMatchOver(String mappingId) {
+    boolean switchMatchOver(String mappingId, UserSessionBean user) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(mappingId));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(user.getSelChannel(),new ObjectId(mappingId));
 
         feedMappingModel.setMatchOver(feedMappingModel.getMatchOver() == 1 ? 0 : 1);
 

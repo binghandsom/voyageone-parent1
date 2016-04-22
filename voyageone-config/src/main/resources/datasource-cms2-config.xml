@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
      http://www.springframework.org/schema/tx  
@@ -40,25 +40,6 @@
     <bean id="updateTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactoryMaster"/>
     </bean>
-
-    <!--<bean id="sqlSessionFactoryMasterCamel"-->
-          <!--class="org.mybatis.spring.SqlSessionFactoryBean"-->
-          <!--p:dataSource-ref="dataSourceMaster"-->
-          <!--p:typeAliasesPackage="com.voyageone.service.model.jumei"-->
-          <!--p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"-->
-          <!--p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>-->
-
-    <!--<bean id="updateTemplateCamel" class="org.mybatis.spring.SqlSessionTemplate">-->
-        <!--<constructor-arg ref="sqlSessionFactoryMasterCamel"/>-->
-    <!--</bean>-->
-    <!--&lt;!&ndash;mybatis的dao接口和mapper的扫描&ndash;&gt;-->
-    <!--<bean id="updateTemplateDaoScan"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
-        <!--<property name="sqlSessionTemplateBeanName" value="updateTemplateCamel"/>-->
-        <!--&lt;!&ndash;property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAdmin"/ &ndash;&gt;-->
-        <!--<property name="basePackage" value="com.voyageone.service.dao.jumei,-->
-                                          <!--com.voyageone.service.daoext.jumei"/>-->
-        <!--<property name="annotationClass" value="org.springframework.stereotype.Repository"/>-->
-    <!--</bean>-->
 
     <!-- JDBC事务管理器 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
@@ -105,23 +86,5 @@
     <bean id="selectTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactorySlave"/>
     </bean>
-
-    <!--<bean id="sqlSessionFactorySlaveCamel"-->
-          <!--class="org.mybatis.spring.SqlSessionFactoryBean"-->
-          <!--p:dataSource-ref="dataSourceSlave"-->
-    <!--p:typeAliasesPackage="com.voyagenne.jumeimodel"-->
-          <!--p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"-->
-          <!--p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>-->
-
-    <!--<bean id="selectTemplateCamel" class="org.mybatis.spring.SqlSessionTemplate">-->
-        <!--<constructor-arg ref="sqlSessionFactorySlaveCamel"/>-->
-    <!--</bean>-->
-    <!--&lt;!&ndash;mybatis的dao接口和mapper的扫描&ndash;&gt;-->
-    <!--<bean id="selectTemplateDaoScan"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
-        <!--<property name="sqlSessionTemplateBeanName" value="selectTemplateCamel"/>-->
-        <!--&lt;!&ndash;property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAdmin"/ &ndash;&gt;-->
-        <!--<property name="basePackage" value=" com.voyageone.service.dao.jumei"/>-->
-        <!--<property name="annotationClass" value="org.springframework.stereotype.Repository"/>-->
-    <!--</bean>-->
 
 </beans>

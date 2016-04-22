@@ -164,8 +164,6 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
                 daoCmsBtJmProduct.update(saveInfo.getProductModel());
             }
             saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
-            saveInfo.getPromotionProductModel().setUpdateState(1);
-            saveInfo.getPromotionProductModel().setSkuCount(saveInfo.getListPromotionSkuModel().size());
             if (saveInfo.getPromotionProductModel().getId() == 0) {
                 daoCmsBtJmPromotionProduct.insert(saveInfo.getPromotionProductModel());
             } else {
@@ -246,16 +244,11 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             //2.  cms_bt_jm_promotion_sku  cms_bt_jm_sku
             List<CmsBtJmImportSku> productCmsBtJmImportSkuList = getListCmsBtJmImportSkuByProductCode(listSkuModel, importProductModel.getProductCode());
             loadSaveSkuInfoByImportModel(creater, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
-            try {
                 if (productCmsBtJmImportSkuList.size() > 0) {
                     saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
                     saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
                     saveInfo.getPromotionProductModel().setDiscount(BigDecimalUtil.divide(saveInfo.getPromotionProductModel().getDealPrice(), saveInfo.getPromotionProductModel().getMarketPrice(), 2));
                 }
-            }catch (Exception ex)
-            {
-                String aa="";
-            }
             //3.cms_mt_master_info
             loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveImportInfo);
 
