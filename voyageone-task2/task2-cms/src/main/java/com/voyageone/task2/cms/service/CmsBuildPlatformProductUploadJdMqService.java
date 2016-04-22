@@ -269,7 +269,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
                 CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
-                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
+                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, null);
                 // 判断sxProductBean中是否含有要在该平台中上新的sku(有要上新的返回true，没有返回false)
                 if (filtProductsByPlatform(sxProductBean)) {
                     sxProductBeans.add(sxProductBean);
