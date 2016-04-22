@@ -1089,7 +1089,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
             // 先去看看是否有存在的了
             JomgoQuery queryObject = new JomgoQuery();
-            queryObject.setQuery("{\"productCodes\", \"" + code + "\"}");
+            queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
             return productGroupService.getList(channelId, queryObject);
         }
 
