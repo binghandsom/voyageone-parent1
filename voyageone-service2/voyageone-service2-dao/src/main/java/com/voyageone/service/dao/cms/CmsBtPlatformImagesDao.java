@@ -19,7 +19,7 @@ public class CmsBtPlatformImagesDao extends ServiceBaseDao {
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
         param.put("cartId", cartId);
-        param.put("cartId", searchId);
+        param.put("searchId", searchId);
         return selectList("cms_bt_platform_images_select", param);
     }
 
@@ -27,9 +27,9 @@ public class CmsBtPlatformImagesDao extends ServiceBaseDao {
         return insert("cms_bt_platform_images_insertByList", listData);
     }
 
-    public int updatePlatformImagesBySeq(CmsBtPlatformImagesModel platformImagesModel, String modifier) {
+    public int updatePlatformImagesById(CmsBtPlatformImagesModel platformImagesModel, String modifier) {
         platformImagesModel.setModifier(modifier);
-        return update("cms_bt_platform_images_updateBySeq", platformImagesModel);
+        return update("cms_bt_platform_images_updateById", platformImagesModel);
     }
 
 }

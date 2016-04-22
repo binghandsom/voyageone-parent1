@@ -5,13 +5,16 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
@@ -34,7 +37,8 @@ public class ProductSkuService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
 
@@ -248,25 +252,31 @@ public class ProductSkuService extends BaseService {
      *  更新group里的价格
      */
     private void updateGroupPrice(String channelId, List<ProductPriceBean> productPrices) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("prodId", "fields", "skus", "groups");
-
         List<BulkUpdateModel> bulkList = new ArrayList<>();
-        for(ProductPriceBean model : productPrices){
-            queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
-            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-//            for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
-//                List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
-//                bulkList.add(calculatePriceRange(products, platform.getGroupId()));
-//            }
+        for (ProductPriceBean model : productPrices) {
+            // 先根据产品id找到产品code
+            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{'prodId':" + model.getProductId() + "},{'fields.code':1}", channelId);
+            // 再根据产品code从group表中找出其所在group的信息
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{'productCodes':'" + findModel.getFields().getCode() + "'},{'productCodes':1,'groupId':1}", channelId);
+            grpList.forEach(grpObj -> {
+                // 其所在group下的所有产品code
+                List<String> codeList = grpObj.getProductCodes();
+                if (codeList != null && codeList.size() > 0) {
+                    // 再找到所有产品fields信息
+                    String[] codeArr = new String[codeList.size()];
+                    codeArr = codeList.toArray(codeArr);
+                    List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{'fields':1}", channelId);
+                    bulkList.add(calculatePriceRange(prodList, grpObj.getGroupId()));
+                }
+            });
         }
-        if(bulkList.size() > 0){
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        if (bulkList.size() > 0) {
+            cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
         }
     }
 
+    // 计算价格区间
     private BulkUpdateModel calculatePriceRange(List<CmsBtProductModel> products, Long groupId) {
-
         Double priceSaleSt = null;
         Double priceSaleEd = null;
         Double priceRetailSt = null;
@@ -274,45 +284,46 @@ public class ProductSkuService extends BaseService {
         Double priceMsrpSt = null;
         Double priceMsrpEd = null;
 
-        for(CmsBtProductModel product : products){
-            if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt){
+        for (CmsBtProductModel product : products) {
+            if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt) {
                 priceSaleSt = product.getFields().getPriceSaleSt();
             }
-            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd){
+            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd) {
                 priceSaleEd = product.getFields().getPriceSaleEd();
             }
 
-            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt){
+            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt) {
                 priceRetailSt = product.getFields().getPriceRetailSt();
             }
-            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd){
+            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd) {
                 priceRetailEd = product.getFields().getPriceRetailEd();
             }
 
-            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt){
+            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt) {
                 priceMsrpSt = product.getFields().getPriceMsrpSt();
             }
-            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd){
+            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd) {
                 priceMsrpEd = product.getFields().getPriceMsrpEd();
             }
         }
 
         Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("groups.platforms.$.priceSaleSt",priceSaleSt);
-        updateMap.put("groups.platforms.$.priceSaleEd",priceSaleEd);
-        updateMap.put("groups.platforms.$.priceRetailSt",priceRetailSt);
-        updateMap.put("groups.platforms.$.priceRetailEd",priceRetailEd);
-        updateMap.put("groups.platforms.$.priceMsrpSt",priceMsrpSt);
-        updateMap.put("groups.platforms.$.priceMsrpEd",priceMsrpEd);
+        updateMap.put("priceSaleSt", priceSaleSt);
+        updateMap.put("priceSaleEd", priceSaleEd);
+        updateMap.put("priceRetailSt", priceRetailSt);
+        updateMap.put("priceRetailEd", priceRetailEd);
+        updateMap.put("priceMsrpSt", priceMsrpSt);
+        updateMap.put("priceMsrpEd", priceMsrpEd);
 
         BulkUpdateModel bulk = new BulkUpdateModel();
         bulk.setUpdateMap(updateMap);
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("groups.platforms.groupId", groupId);
+        queryMap.put("groupId", groupId);
         bulk.setQueryMap(queryMap);
 
         return bulk;
     }
+
     /**
      * 批量更新价格信息 根据CodeList
      */
