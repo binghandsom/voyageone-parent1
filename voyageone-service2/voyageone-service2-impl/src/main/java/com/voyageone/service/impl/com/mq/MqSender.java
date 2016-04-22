@@ -66,7 +66,10 @@ public class MqSender extends BaseService {
 
         } catch (Exception e) {
             $error(e.getMessage(), e);
-            mqBackMessageService.addBackMessage(routingKey, messageMap);
+            try {
+                mqBackMessageService.addBackMessage(routingKey, messageMap);
+            } catch (Exception ignored) {
+            }
         }
     }
 
