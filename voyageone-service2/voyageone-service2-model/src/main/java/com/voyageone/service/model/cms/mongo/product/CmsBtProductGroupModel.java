@@ -104,12 +104,12 @@ public class CmsBtProductGroupModel extends BaseMongoMap<String, Object> {
         setAttribute("onSaleTime", onSaleTime);
     }
 
-    public String getInstockTime() {
-        return getAttribute("instockTime");
+    public String getInStockTime() {
+        return getAttribute("inStockTime");
     }
 
-    public void setInstockTime(String instockTime) {
-        setAttribute("instockTime", instockTime);
+    public void setInStockTime(String inStockTime) {
+        setAttribute("inStockTime", inStockTime);
     }
 
     // platform status 等待上新/在售/在库

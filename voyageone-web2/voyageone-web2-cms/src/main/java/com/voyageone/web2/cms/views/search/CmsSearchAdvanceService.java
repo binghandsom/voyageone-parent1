@@ -225,7 +225,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             platformModel.setCartId(cartId);
             platformModel.setGroupId(grpId);
             platformModel.setNumIId((String) groupModelMap.get("numIId"));
-            platformModel.setInstockTime((String) groupModelMap.get("instockTime"));
+            platformModel.setInStockTime((String) groupModelMap.get("inStockTime"));
             platformModel.setOnSaleTime((String) groupModelMap.get("onSaleTime"));
             platformModel.setPublishTime((String) groupModelMap.get("publishTime"));
             platformModel.setQty((Integer) groupModelMap.get("qty"));

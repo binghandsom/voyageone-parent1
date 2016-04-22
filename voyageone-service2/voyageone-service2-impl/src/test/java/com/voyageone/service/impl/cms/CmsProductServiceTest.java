@@ -128,7 +128,7 @@ public class CmsProductServiceTest {
 //        platform.setIsMain(false);
 //        platform.setDisplayOrder(random.nextInt(100));
 //        platform.setPublishTime("2015-11-12 16:19:00");
-//        platform.setInstockTime("2015-11-18 16:19:00");
+//        platform.setInStockTime("2015-11-18 16:19:00");
 ////        platform.setStatus("InStock");
 ////        platform.setPublishStatus("等待上新");
 ////        platform.setComment("");

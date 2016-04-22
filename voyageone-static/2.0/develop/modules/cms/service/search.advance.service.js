@@ -319,8 +319,8 @@ define([
             if(!_.isEmpty(platforms.publishTime))
                 result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
-            if(!_.isEmpty(platforms.instockTime))
-                result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.instockTime.substring(0, 19));
+            if(!_.isEmpty(platforms.inStockTime))
+                result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.inStockTime.substring(0, 19));
 
             return result;
         }
