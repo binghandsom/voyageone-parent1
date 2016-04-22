@@ -1,10 +1,6 @@
 package com.voyageone.components.jd.service;
 
-import com.jd.open.api.sdk.request.imgzone.ImgzonePictureReplaceRequest;
-import com.jd.open.api.sdk.request.imgzone.ImgzonePictureUploadRequest;
 import com.jd.open.api.sdk.request.ware.*;
-import com.jd.open.api.sdk.response.imgzone.ImgzonePictureReplaceResponse;
-import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.jd.open.api.sdk.response.ware.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -462,186 +458,186 @@ public class JdWareService extends JdBase {
 
 
 
-    /**
-     * 京东增加SKU信息
-     *
-     * @param shop ShopBean      店铺信息
-     * @param jdProduct JdProductBean   京东商品对象
-     * @return String    新增的SKUID
-     */
-    public String addProductSku(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
-        WareSkuAddRequest request = new WareSkuAddRequest();
-
-        // 商品id(必须)
-        request.setWareId("wareid");
-        // Sku属性(100041:150041^1000046:15844)(必须)
-        request.setAttributes(jdProduct.getAttributes());
-        // 京东价格(必须)
-        request.setAttributes(jdProduct.getJdPrice());
-        // 库存(必须)
-        request.setStockNum(jdProduct.getStockNum());
-        // 流水号(非必须)
-        request.setTradeNo(jdProduct.getTradeNo());
-        // sku外部id(非必须)
-        request.setTradeNo(jdProduct.getTradeNo());
-
-        String retSkuId = "";
-
-        try {
-            // 调用京东增加SKU信息API(360buy.ware.sku.add)
-            WareSkuAddResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
-
-            if (response != null) {
-                // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    // 返回SKUID
-                    retSkuId = response.getSkuId();
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("调用京东API增加SKU信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId());
-
-            throw new BusinessException(shop.getShop_name() + "增加京东SKU信息失败 " + ex.getMessage());
-        }
-
-
-        return retSkuId;
-    }
-
-    /**
-     * 京东修改SKU信息
-     *
-     * @param shop ShopBean      店铺信息
-     * @param jdProduct JdProductBean   京东商品对象
-     * @return String    修改对象
-     */
-    public String updateProductSku(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
-        WareSkuUpdateRequest request = new WareSkuUpdateRequest();
-        // if null 更新的时候，如果属性为null，就不设置，如果是空，就让它改为空
-        // sku的id(必须)
-        request.setSkuId("skuid");
-        // 商品id(必须)
-        request.setWareId("wareid");
-        // 外部id(非必须)
-        request.setOuterId(jdProduct.getOuterId());
-        // 京东价格(必须)
-        request.setAttributes(jdProduct.getJdPrice());
-        // 库存(必须)
-        request.setStockNum(jdProduct.getStockNum());
-        // 流水号(非必须)
-        request.setTradeNo(jdProduct.getTradeNo());
-
-        String retModified = "";
-
-        try {
-            // 调用京东修改SKU信息API( 360buy.ware.sku.update)
-            WareSkuUpdateResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
-
-            if (response != null) {
-                // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    // 返回SKU修改状态
-                    retModified = response.getModified();
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("调用京东API修改SKU信息失败 " + "SKU id:" + request.getSkuId() + ",商品id:" + request.getWareId());
-
-            throw new BusinessException(shop.getShop_name() + "修改京东SKU信息失败 " + ex.getMessage());
-        }
-
-
-        return retModified;
-    }
-
-    /**
-     * 京东上传单张图片
-     *
-     * @param shop ShopBean      店铺信息
-     * @param jdProduct JdProductBean   京东商品对象
-     * @return String    新增的图片ID
-     */
-    public String uploadPicture(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
-        ImgzonePictureUploadRequest request = new ImgzonePictureUploadRequest();
-
-        // 图片二进制文件流，允许png、jpg、gif、jpeg、bmp图片格式，1M以内(必须)
-//        byte[] bytes = IOUtils.toByteArray(inputStream);("byte[] imagedata")\
-//        if (charset != null) {
-//            request.setImageData(jdProduct.getAttributes().getBytes(charset));
-//        } else {
-//            request.setImageData(jdProduct.getAttributes().getBytes());
+//    /**
+//     * 京东增加SKU信息
+//     *
+//     * @param shop ShopBean      店铺信息
+//     * @param jdProduct JdProductBean   京东商品对象
+//     * @return String    新增的SKUID
+//     */
+//    public String addProductSku(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
+//        WareSkuAddRequest request = new WareSkuAddRequest();
+//
+//        // 商品id(必须)
+//        request.setWareId("wareid");
+//        // Sku属性(100041:150041^1000046:15844)(必须)
+//        request.setAttributes(jdProduct.getAttributes());
+//        // 京东价格(必须)
+//        request.setAttributes(jdProduct.getJdPrice());
+//        // 库存(必须)
+//        request.setStockNum(jdProduct.getStockNum());
+//        // 流水号(非必须)
+//        request.setTradeNo(jdProduct.getTradeNo());
+//        // sku外部id(非必须)
+//        request.setTradeNo(jdProduct.getTradeNo());
+//
+//        String retSkuId = "";
+//
+//        try {
+//            // 调用京东增加SKU信息API(360buy.ware.sku.add)
+//            WareSkuAddResponse response = reqApi(shop, request);
+//
+//            if (response != null) {
+//                // 京东返回正常的场合
+//                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+//                    // 返回SKUID
+//                    retSkuId = response.getSkuId();
+//                }
+//            }
+//        } catch (Exception ex) {
+//            logger.error("调用京东API增加SKU信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId());
+//
+//            throw new BusinessException(shop.getShop_name() + "增加京东SKU信息失败 " + ex.getMessage());
 //        }
-        request.setImageData(jdProduct.getAttributes().getBytes());
-        // 上传到的图片分类ID，为空上传至 默认分类(非必须)
-        request.setPictureCateId(0);
-        // 图片名称，不超过64字节，为空默认 未命名(非必须)
-        request.setPictureName("图片名称");
+//
+//
+//        return retSkuId;
+//    }
+//
+//    /**
+//     * 京东修改SKU信息
+//     *
+//     * @param shop ShopBean      店铺信息
+//     * @param jdProduct JdProductBean   京东商品对象
+//     * @return String    修改对象
+//     */
+//    public String updateProductSku(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
+//        WareSkuUpdateRequest request = new WareSkuUpdateRequest();
+//        // if null 更新的时候，如果属性为null，就不设置，如果是空，就让它改为空
+//        // sku的id(必须)
+//        request.setSkuId("skuid");
+//        // 商品id(必须)
+//        request.setWareId("wareid");
+//        // 外部id(非必须)
+//        request.setOuterId(jdProduct.getOuterId());
+//        // 京东价格(必须)
+//        request.setAttributes(jdProduct.getJdPrice());
+//        // 库存(必须)
+//        request.setStockNum(jdProduct.getStockNum());
+//        // 流水号(非必须)
+//        request.setTradeNo(jdProduct.getTradeNo());
+//
+//        String retModified = "";
+//
+//        try {
+//            // 调用京东修改SKU信息API( 360buy.ware.sku.update)
+//            WareSkuUpdateResponse response = reqApi(shop, request);
+//
+//            if (response != null) {
+//                // 京东返回正常的场合
+//                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+//                    // 返回SKU修改状态
+//                    retModified = response.getModified();
+//                }
+//            }
+//        } catch (Exception ex) {
+//            logger.error("调用京东API修改SKU信息失败 " + "SKU id:" + request.getSkuId() + ",商品id:" + request.getWareId());
+//
+//            throw new BusinessException(shop.getShop_name() + "修改京东SKU信息失败 " + ex.getMessage());
+//        }
+//
+//
+//        return retModified;
+//    }
 
-        String retPictureId = "";
-
-        try {
-            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
-            ImgzonePictureUploadResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
-
-            if (response != null) {
-                // 京东返回正常的场合(返回码：1，操作成功)
-                if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_OK.equals(response.getReturnCode())) {
-                    // 返回SKUID
-                    retPictureId = response.getPictureId();
-                } else if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_NG.equals(response.getReturnCode())) {
-                    // 操作失败原因
-                    logger.error("调用京东图片空间API上传单张图片信息失败 图片名称：" + request.getPictureName() + "失败原因:" + response.getDesc());
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("调用京东图片空间API上传单张图片信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
-
-            throw new BusinessException(shop.getShop_name() + "京东上传单张图片信息失败 " + ex.getMessage());
-        }
-
-        return retPictureId;
-    }
-
-    /**
-     * 京东替换单张图片
-     *
-     * @param shop ShopBean      店铺信息
-     * @param jdProduct JdProductBean   京东商品对象
-     * @return String    替换图片操作返回码(1，操作成功；0，操作失败)
-     */
-    public String replacePicture(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
-        ImgzonePictureReplaceRequest request = new ImgzonePictureReplaceRequest();
-
-        // 图片ID(必须)
-        request.setPictureId("图片id");
-        // 图片二进制文件流，允许png、jpg、gif、jpeg、bmp图片格式，1M以内(必须)
-        request.setImageData(jdProduct.getAttributes().getBytes());
-
-        // 返回码
-        String retReturnCode = "";
-
-        try {
-            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
-            ImgzonePictureReplaceResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
-
-            if (response != null) {
-                // 京东返回正常的场合(返回码：1，操作成功)
-                if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_OK.equals(response.getReturnCode())) {
-                    // 返回码
-                    retReturnCode = String.valueOf(response.getReturnCode());
-                } else if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_NG.equals(response.getReturnCode())) {
-                    // 返回码
-                    retReturnCode = String.valueOf(response.getReturnCode());
-                    // 操作失败原因
-                    logger.error("调用京东图片空间API替换单张图片信息失败 图片ID：" + request.getPictureId() + "失败原因:" + response.getDesc());
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("调用京东图片空间API替换单张图片信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",picture_id:" + request.getPictureId());
-
-            throw new BusinessException(shop.getShop_name() + "京东替换单张图片信息失败 " + ex.getMessage());
-        }
-
-        return retReturnCode;
-    }
+//    /**
+//     * 京东上传单张图片
+//     *
+//     * @param shop ShopBean      店铺信息
+//     * @param jdProduct JdProductBean   京东商品对象
+//     * @return String    新增的图片ID
+//     */
+//    public String uploadPicture(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
+//        ImgzonePictureUploadRequest request = new ImgzonePictureUploadRequest();
+//
+//        // 图片二进制文件流，允许png、jpg、gif、jpeg、bmp图片格式，1M以内(必须)
+////        byte[] bytes = IOUtils.toByteArray(inputStream);("byte[] imagedata")\
+////        if (charset != null) {
+////            request.setImageData(jdProduct.getAttributes().getBytes(charset));
+////        } else {
+////            request.setImageData(jdProduct.getAttributes().getBytes());
+////        }
+//        request.setImageData(jdProduct.getAttributes().getBytes());
+//        // 上传到的图片分类ID，为空上传至 默认分类(非必须)
+//        request.setPictureCateId(0);
+//        // 图片名称，不超过64字节，为空默认 未命名(非必须)
+//        request.setPictureName("图片名称");
+//
+//        String retPictureId = "";
+//
+//        try {
+//            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
+//            ImgzonePictureUploadResponse response = reqApi(shop, request);
+//
+//            if (response != null) {
+//                // 京东返回正常的场合(返回码：1，操作成功)
+//                if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_OK.equals(response.getReturnCode())) {
+//                    // 返回SKUID
+//                    retPictureId = response.getPictureId();
+//                } else if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_NG.equals(response.getReturnCode())) {
+//                    // 操作失败原因
+//                    logger.error("调用京东图片空间API上传单张图片信息失败 图片名称：" + request.getPictureName() + "失败原因:" + response.getDesc());
+//                }
+//            }
+//        } catch (Exception ex) {
+//            logger.error("调用京东图片空间API上传单张图片信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+//
+//            throw new BusinessException(shop.getShop_name() + "京东上传单张图片信息失败 " + ex.getMessage());
+//        }
+//
+//        return retPictureId;
+//    }
+//
+//    /**
+//     * 京东替换单张图片
+//     *
+//     * @param shop ShopBean      店铺信息
+//     * @param jdProduct JdProductBean   京东商品对象
+//     * @return String    替换图片操作返回码(1，操作成功；0，操作失败)
+//     */
+//    public String replacePicture(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
+//        ImgzonePictureReplaceRequest request = new ImgzonePictureReplaceRequest();
+//
+//        // 图片ID(必须)
+//        request.setPictureId("图片id");
+//        // 图片二进制文件流，允许png、jpg、gif、jpeg、bmp图片格式，1M以内(必须)
+//        request.setImageData(jdProduct.getAttributes().getBytes());
+//
+//        // 返回码
+//        String retReturnCode = "";
+//
+//        try {
+//            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
+//            ImgzonePictureReplaceResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+//
+//            if (response != null) {
+//                // 京东返回正常的场合(返回码：1，操作成功)
+//                if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_OK.equals(response.getReturnCode())) {
+//                    // 返回码
+//                    retReturnCode = String.valueOf(response.getReturnCode());
+//                } else if (JdConstants.C_JD_IMGZONE_RETURN_SUCCESS_NG.equals(response.getReturnCode())) {
+//                    // 返回码
+//                    retReturnCode = String.valueOf(response.getReturnCode());
+//                    // 操作失败原因
+//                    logger.error("调用京东图片空间API替换单张图片信息失败 图片ID：" + request.getPictureId() + "失败原因:" + response.getDesc());
+//                }
+//            }
+//        } catch (Exception ex) {
+//            logger.error("调用京东图片空间API替换单张图片信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",picture_id:" + request.getPictureId());
+//
+//            throw new BusinessException(shop.getShop_name() + "京东替换单张图片信息失败 " + ex.getMessage());
+//        }
+//
+//        return retReturnCode;
+//    }
 }
