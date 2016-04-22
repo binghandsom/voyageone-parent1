@@ -28,7 +28,7 @@ import java.util.Map;
  * @date: 2016/4/11 18:04
  */
 @RestController
-@RequestMapping(value = "/cms/channel/usjoi",method = { RequestMethod.POST})
+@RequestMapping(value = "/cms/channel/usjoi", method = {RequestMethod.POST})
 public class CmsChannelController extends CmsController {
 
     @Resource
@@ -41,14 +41,13 @@ public class CmsChannelController extends CmsController {
     public AjaxResponse doGetList(@RequestBody Map<String, String> params) {
 
         String isUsjoiStr = params.get("allowMinimallOption");
-        Integer isUsjoi=-1;
+        Integer isUsjoi = -1;
         if (!StringUtils.isNullOrBlank2(isUsjoiStr)) {
             isUsjoi = Integer.valueOf(isUsjoiStr);
         }
-        List data = channelService.getChannelListBy(params.get("channelId"), params.get("channelName"), isUsjoi,params.get("active"));
+        List data = channelService.getChannelListBy(params.get("channelId"), params.get("channelName"), isUsjoi, params.get("active"));
         return success(Page.fromMap(params).withData(data));// page
     }
-
 
 
     @RequestMapping("update")
@@ -84,21 +83,18 @@ public class CmsChannelController extends CmsController {
     }
 
 
-
-     @RequestMapping("save")
+    @RequestMapping("save")
     public AjaxResponse save(@RequestBody OrderChannelBean bean) {
-         bean.setCreater(getUser().getUserName());
-         channelService.save(bean);
-         return success(true);
+        bean.setCreater(getUser().getUserName());
+        channelService.save(bean);
+        return success(true);
     }
 
     @RequestMapping("genKey")
     public AjaxResponse genKey(@RequestBody Map bean) {
         Gson gson = new Gson();
         String result = gson.toJson(bean);
-        result= Hashing.md5().hashString(result, Charsets.UTF_8).toString().toUpperCase();
-
-        System.out.println(result);
+        result = Hashing.md5().hashString(result, Charsets.UTF_8).toString().toUpperCase();
         return success(result);
     }
 }

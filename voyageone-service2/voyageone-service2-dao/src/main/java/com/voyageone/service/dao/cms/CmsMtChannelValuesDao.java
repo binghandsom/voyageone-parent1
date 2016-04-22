@@ -17,4 +17,6 @@ public interface CmsMtChannelValuesDao {
     public int insert(CmsMtChannelValuesModel entity);
     public int update(CmsMtChannelValuesModel entity);
 
+
+//    public int delete(CmsMtChannelValuesModel entity);
 }

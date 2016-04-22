@@ -130,6 +130,12 @@
         "insert": "insert",
         "update": "update"
       },
+      "jmPromotionProductAddService": {
+        "root": "/cms/jm/promotion/product/",
+        "add": "add"
+      },
+
+
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
@@ -274,6 +280,10 @@
         }
       }
     },
+
+
+
+
     "pop": {
       "$addToPromotionService": {
         "root": "/cms/pop/add_to_promotion",

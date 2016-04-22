@@ -19,6 +19,7 @@ import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -34,6 +35,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,6 +70,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private BaseJomgoTemplate mongoTemplate;
+
+    @Resource
+    private CmsBtJmPromotionService jmPromotionService;
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
@@ -120,6 +125,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", userInfo.getSelChannelId());
         masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
+
+        //add by holysky  新增一些页的聚美促销活动预加载
+        masterData.put("jmPromotionList", jmPromotionService.getJMActivePromotions(String.valueOf(params.get("channelId"))));
+
+
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
