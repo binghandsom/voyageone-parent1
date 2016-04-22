@@ -491,7 +491,7 @@
 											{{productInfo.priceSale}}
 										</button><label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 									</td>
-									<td class="text-left m-t-lg" style="display:inline-block;width:180px; height:120px;">{{productInfo.platformName}}</td>
+									<td class="text-left m-t-lg" style="display:inline-block;width:180px; height:120px;"><key-value type="carts" ng-model="productInfo.fields.productCarts"></key-value></td>
 									<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;height: 120px;">
 										<span ng-if="prop1.value.length > 100"><popover-text content="prop1.value" direct="left"></popover-text></span>
 										<span ng-if="prop1.value.length <= 100">{{prop1.value}}</span>
