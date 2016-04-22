@@ -1,6 +1,8 @@
 package com.voyageone.common.spring;
 
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CMappingJacksonObjectMapper extends ObjectMapper {
@@ -19,7 +20,7 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
     public CMappingJacksonObjectMapper() {
         super();
         //long 自动按字符串序列化  js没有长整型
-        this.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
+//        this.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
         //按方法get set 后名字大小写序列化
 //        this.setPropertyNamingStrategy(new CDefaultPropertyNamingStrategy());
         //自定义显示日期格式
