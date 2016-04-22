@@ -1,5 +1,6 @@
 package com.voyageone.components.jd.service;
 
+import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
 import com.jd.open.api.sdk.request.ware.*;
 import com.jd.open.api.sdk.response.ware.*;
 import com.voyageone.base.exception.BusinessException;
@@ -11,6 +12,8 @@ import com.voyageone.components.jd.bean.JdProductBean;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 京东商品类API调用服务
@@ -33,118 +36,101 @@ public class JdWareService extends JdBase {
     public Long addProduct(ShopBean shop, JdProductBean jdProduct) throws BusinessException {
         WareAddRequest request = new WareAddRequest();
 
+        // 流水号(非必须)
+        if (jdProduct.getTradeNo() != null)           request.setTradeNo(jdProduct.getTradeNo());
+        // 产地(非必须)
+        if (jdProduct.getWareLocation() != null)      request.setWareLocation(jdProduct.getWareLocation());
         // 类目id(必须)
         request.setCid(jdProduct.getCid());
-        // 商品所属的自定义店内分类列表
-        // 商品所属的自定义店内分类列表。按分号分隔。结构："cid1-cid11;cid2-cid22;..."
-        // 如果自定义店内分类存在叶子类目，格式是cid1-cid11
-        // 如果自定义店内分类不存在叶子类目，格式是cid1-cid1
-        request.setShopCategory(jdProduct.getShopCategory());
+        // 自定义店内分类(非必须)
+        if (jdProduct.getShopCategory() != null)      request.setShopCategory(jdProduct.getShopCategory());
         // 商品标题(必须)
-        request.setTitle(jdProduct.getTitle());
+        if (jdProduct.getTitle() != null) request.setTitle(jdProduct.getTitle()); else request.setTitle("");
         // UPC编码(非必须)
-        request.setUpcCode(jdProduct.getUpcCode());
+        if (jdProduct.getUpcCode() != null)           request.setUpcCode(jdProduct.getUpcCode());
         // 操作类型 现只支持：offsale 或onsale,默认为下架状态 (非必须)
-        request.setOptionType(jdProduct.getOptionType());
+        if (jdProduct.getOptionType() != null)        request.setOptionType(jdProduct.getOptionType());
         // 外部商品编号，对应商家后台货号(非必须)
-        request.setItemNum(jdProduct.getItemNum());
-        // 产地(非必须)
-        request.setWareLocation(jdProduct.getWareLocation());
-        // 生产厂商(非必须)
-        request.setProducter(jdProduct.getProducter());
-        // 包装规格 (非必须)
-        request.setWrap(jdProduct.getWrap());
-        // 长(单位:mm)(必须)
-        request.setLength(jdProduct.getLength());
-        // 宽(单位:mm)(必须)
-        request.setWide(jdProduct.getWide());
-        // 高(单位:mm)(必须)
-        request.setHigh(jdProduct.getHigh());
-        // 重量(单位:kg)(必须)
-        request.setWeight(jdProduct.getWeight());
-        // 进货价,精确到2位小数，单位:元(非必须)
-        request.setCostPrice(jdProduct.getCostPrice());
-        // 市场价, 精确到2位小数，单位:元(必须)
-        request.setJdPrice(jdProduct.getJdPrice());
-        // 京东价,精确到2位小数，单位:元(必须)
-        request.setMarketPrice(jdProduct.getMarketPrice());
-        // 描述（最多支持3万个英文字符(必须)
-        request.setNotes(jdProduct.getNotes());
-        // 图片信息（图片尺寸为800*800，单张大小不超过 1024K）(必须)
-        // 图片信息，通过程序对图片进行Byte[] 格式的处理后，生成参数信息（第一 读取图片；第二 将图片通过base64转化成字符串，然后赋值给ware_image属性）图片类型只支持：png和jpg的，图片须800x800的  图片不能大于1M
-        // 根据URL换码协议，会将POST发送的数据里面是"+"全部被替换成空格，所以ware_image参数经过MD5加密完毕后，需要将ware_image对应的值中的"+"转换成%2B（如果php.ini配置自动转义，则不需要转码）
-        request.setWareImage(jdProduct.getWareImage());
-        // 包装清单(非必须)
-        request.setPackListing(jdProduct.getPackListing());
-        // 售后服务(非必须)
-        request.setService(jdProduct.getService());
+        if (jdProduct.getItemNum() != null)           request.setItemNum(jdProduct.getItemNum());
         // 库存(必须)
-        request.setStockNum(jdProduct.getStockNum());
-
-        // =========================SKU相关项目新增时不设置======================
-        // 自定义属性值别名(非必须)
-//        // 属性ID:属性值ID:别名 ，多组之间用^分开，如aid:vid:别名^aid1:vid1:别名1 例：1000000041:1500368001:淡蓝色
-//        request.setPropertyAlias(jdProduct.getPropertyAlias());
-        // =========================SKU相关项目新增时不设置======================
-
-        // 商品属性列表（必须）
-        // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值
-        request.setAttributes(jdProduct.getAttributes());
-
-        // =========================SKU相关项目新增时不设置======================
-//        // sku 价格,多组之间用"|"分隔，格式:p1|p2(非必须)
-//        request.setSkuPrices(jdProduct.getSkuPrices());
-//        // sku属性(非必须)
-//        // sku 属性,一组sku 属性之间用"^"分隔，多组用"|"分隔格式:aid:vid^aid1:vid2|aid3:vid3^aid4:vid4（需要从类目服务接口获取）
-//        request.setSkuProperties(jdProduct.getSkuProperties());
-//        // sku 库存,多组之间用"|"分隔， 格式:s1|s2(非必须)
-//        request.setSkuStocks(jdProduct.getSkuStocks());
-//        // SKU外部ID(非必须)
-//        // SKU外部ID，对个之间用"|"分隔格，比如：sdf|sds（支持没有sku的情况下，可以输入外部id，并将外部id绑定在默认生成的sku上），对应商家后台“商家skuid”
-//        request.setOuterId(jdProduct.getOuterId());
-        // =========================SKU相关项目新增时不设置======================
-
-        // 流水号(非必须)
-        request.setTradeNo(jdProduct.getTradeNo());
+        if (jdProduct.getStockNum() != null) request.setStockNum(jdProduct.getStockNum()); else request.setStockNum("0");
+        // 生产厂商(非必须)
+        if (jdProduct.getProducter() != null)         request.setProducter(jdProduct.getProducter());
+        // 包装规格 (非必须)
+        if (jdProduct.getWrap() != null)              request.setWrap(jdProduct.getWrap());
+        // 长(单位:mm)(必须)
+        if (jdProduct.getLength() != null) request.setLength(jdProduct.getLength()); else request.setLength("1");
+        // 宽(单位:mm)(必须)
+        if (jdProduct.getWide() != null) request.setWide(jdProduct.getWide()); else request.setWide("1");
+        // 高(单位:mm)(必须)
+        if (jdProduct.getHigh() != null) request.setHigh(jdProduct.getHigh()); else request.setHigh("1");
+        // 重量(单位:kg)(必须)
+        if (jdProduct.getWeight() != null) request.setWeight(jdProduct.getWeight()); else request.setWeight("1");
+        // 进货价,精确到2位小数，单位:元(非必须)
+        if (jdProduct.getCostPrice() != null)         request.setCostPrice(jdProduct.getCostPrice());
+        // 市场价, 精确到2位小数，单位:元(必须)
+        if (jdProduct.getMarketPrice() != null) request.setMarketPrice(jdProduct.getMarketPrice()); else request.setMarketPrice("999999999");
+        // 京东价,精确到2位小数，单位:元(必须)
+        if (jdProduct.getJdPrice() != null) request.setJdPrice(jdProduct.getJdPrice()); else request.setJdPrice("999999999");
+        // 描述（最多支持3万个英文字符(必须)
+        if (jdProduct.getNotes() != null) request.setNotes(jdProduct.getNotes()); else request.setNotes("");
+        // 图片信息（图片尺寸为800*800，单张大小不超过 1024K）(必须)
+        if (jdProduct.getWareImage() != null) request.setWareImage(jdProduct.getWareImage()); else request.setWareImage(new byte[1]);
+        // 包装清单(非必须)
+        if (jdProduct.getPackListing() != null)       request.setPackListing(jdProduct.getPackListing());
+        // 售后服务(非必须)
+        if (jdProduct.getService() != null)           request.setService(jdProduct.getService());
+//        // sku属性,一组sku 属性之间用^分隔，多组用|分隔格式(非必须)
+//      if (jdProduct.getXXX() != null)               request.setSkuProperties(jdProduct.getSkuProperties());
+        // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
+        if (jdProduct.getAttributes() != null) request.setAttributes(jdProduct.getAttributes()); else request.setAttributes("");
+//        // sku价格,多组之间用‘|’分隔，格式:p1|p2 (非必须)
+//      if (jdProduct.getSkuPrices() != null)         request.setSkuPrices(jdProduct.getSkuPrices());
+//        // sku 库存,多组之间用‘|’分隔， 格式:s1|s2(非必须)
+//      if (jdProduct.getSkuStocks() != null)         request.setSkuStocks(jdProduct.getSkuStocks());
+//        // 自定义属性值别名：属性ID:属性值ID:别名(非必须)
+//      if (jdProduct.getPropertyAlias() != null)     request.setPropertyAlias(jdProduct.getPropertyAlias());
+//        // SKU外部ID，对个之间用‘|’分隔格(非必须)
+//      if (jdProduct.getOuterId() != null)           request.setOuterId(jdProduct.getOuterId());
         // 是否先款后货,false为否，true为是 (非必须)
-        request.setPayFirst(jdProduct.getPayFirst());
+        if (jdProduct.getPayFirst() != null)          request.setPayFirst(jdProduct.getPayFirst());
         // 发票限制：非必须输入，true为限制，false为不限制开增值税发票，FBP、LBP、SOPL、SOP类型商品均可输入(非必须)
-        request.setCanVAT(jdProduct.getCanVAT());
+        if (jdProduct.getCanVAT() != null)            request.setCanVAT(jdProduct.getCanVAT());
         // 是否进口商品：非必须输入，false为否，true为是，FBP类型商品可输入(非必须)
-        request.setImported(jdProduct.getImported());
+        if (jdProduct.getImported() != null)          request.setImported(jdProduct.getImported());
         // 是否保健品：非必须输入，false为否，true为是，FBP类型商品可输入  (非必须)
-        request.setHealthProduct(jdProduct.getHealthProduct());
+        if (jdProduct.getHealthProduct() != null)     request.setHealthProduct(jdProduct.getHealthProduct());
         // 是否保质期管理商品, false为否，true为是(非必须)
-        request.setShelfLife(jdProduct.getShelfLife());
+        if (jdProduct.getShelfLife() != null)         request.setShelfLife(jdProduct.getShelfLife());
         // 保质期：非必须输入，0-99999范围区间，FBP类型商品可输入(非必须)
-        request.setShelfLifeDays(jdProduct.getShelfLifeDays());
+        if (jdProduct.getShelfLifeDays() != null)     request.setShelfLifeDays(jdProduct.getShelfLifeDays());
         // 是否序列号管理：非必须输入，false为否，true为是，FBP类型商品可输入(非必须)
-        request.setSerialNo(jdProduct.getSerialNo());
+        if (jdProduct.getSerialNo() != null)          request.setSerialNo(jdProduct.getSerialNo());
         // 大家电购物卡：非必须输入，false为否，true为是，FBP类型商品可输入  (非必须)
-        request.setAppliancesCard(jdProduct.getAppliancesCard());
+        if (jdProduct.getAppliancesCard() != null)    request.setAppliancesCard(jdProduct.getAppliancesCard());
         // 是否特殊液体：非必须输入，false为否，true为是，FBP、LBP、SOPL类型商品可输入(非必须)
-        request.setSpecialWet(jdProduct.getSpecialWet());
+        if (jdProduct.getSpecialWet() != null)        request.setSpecialWet(jdProduct.getSpecialWet());
         // 商品件型：FBP类型商品必须输入，非FBP类型商品可输入非必填，0免费、1超大件、2超大件半件、3大件、4大件半件、5中件、6中件半件、7小件、8超小件(必须)
-        request.setWareBigSmallModel(jdProduct.getWareBigSmallModel());
+        if (jdProduct.getWareBigSmallModel() != null) request.setWareBigSmallModel(jdProduct.getWareBigSmallModel()); else request.setWareBigSmallModel("");
         // 商品包装：FBP类型商品必须输入，非FBP类型商品可输入非必填，1普通商品、2易碎品、3裸瓶液体、4带包装液体、5按原包装出库(必须)
-        request.setWarePackType(jdProduct.getWarePackType());
+        if (jdProduct.getWarePackType() != null) request.setWarePackType(jdProduct.getWarePackType()); else request.setWarePackType("");
         // 用户自行输入的类目属性ID串结构：‘pid1|pid2|pid3’,属性的pid调用360buy.ware.get.attribute取得, 输入类型input_type=3即输入(非必须)
-        request.setInputPids(jdProduct.getInputPids());
+        if (jdProduct.getInputPids() != null)         request.setInputPids(jdProduct.getInputPids());
         // 用户自行输入的属性值,结构:‘输入值|输入值2|输入值3’图书品类输入值规则： ISBN：数字、字母格式 出版时间：日期格式“yyyy-mm-dd”
         // 版次：数字格式 印刷时间：日期格式“yyyy-mm-dd” 印次：数字格式 页数：数字格式 字数：数字格式 套装数量：数字格式 附件数量：数字格式(非必须)
-        request.setInputStrs(jdProduct.getInputStrs());
+        if (jdProduct.getInputStrs() != null)         request.setInputStrs(jdProduct.getInputStrs());
         // 是否输入验证码 true:是;false:否  (非必须)
-        request.setHasCheckCode(jdProduct.getHasCheckCode());
+        if (jdProduct.getHasCheckCode() != null)      request.setHasCheckCode(jdProduct.getHasCheckCode());
         // 广告词内容最大支持45个字符(非必须)
-        request.setAdContent(jdProduct.getAdContent());
+        if (jdProduct.getAdContent() != null)         request.setAdContent(jdProduct.getAdContent());
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
-        request.setListTime(jdProduct.getListTime());
+        if (jdProduct.getListTime() != null)          request.setListTime(jdProduct.getListTime());
 
         long wareId = 0;
 
         try {
             // 调用京东新增商品API(360buy.ware.add)
-            WareAddResponse response = reqApi(shop, request);
+            WareAddResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
 
             if (response != null) {
                 // 京东返回正常的场合
@@ -174,60 +160,6 @@ public class JdWareService extends JdBase {
         WareUpdateRequest request = new WareUpdateRequest();
 
         // if null 更新的时候，如果属性为null，就不设置，如果是空，就让它改为空
-        // 商品id(必须)
-        request.setWareId(jdProduct.getWareId());
-        // 自定义店内分类 (保留字段)(非必须)
-        if (jdProduct.getShopCategory() != null)       request.setShopCategory(jdProduct.getShopCategory());
-        // 商品标题(非必须)
-        if (jdProduct.getTitle() != null)              request.setTitle(jdProduct.getTitle());
-        // UPC编码(非必须)
-        if (jdProduct.getUpcCode() != null)            request.setUpcCode(jdProduct.getUpcCode());
-        // 操作类型 现只支持：offsale(下架)或onsale(上架),如果不传操作类型，商品保持原状态 (非必须)
-        if (jdProduct.getOptionType() != null)         request.setOptionType(jdProduct.getOptionType());
-        // 外部商品编号，对应商家后台货号(非必须)
-        if (jdProduct.getItemNum() != null)            request.setItemNum(jdProduct.getItemNum());
-        // SKU外部ID，对应商家后台“商家skuid”多组之间用"|"分隔，格式:sku1|sku2(非必须)
-        if (jdProduct.getOuterId() != null)            request.setOuterId(jdProduct.getOuterId());
-        // 产地(非必须)
-        if (jdProduct.getWareLocation() != null)       request.setWareLocation(jdProduct.getWareLocation());
-        // 生产厂商(非必须)
-        if (jdProduct.getProducter() != null)          request.setProducter(jdProduct.getProducter());
-        // 包装规格 (非必须)
-        if (jdProduct.getWrap() != null)               request.setWrap(jdProduct.getWrap());
-        // 长(单位:mm)如不确定，默认为0(必须)
-        if (jdProduct.getLength() != null)             request.setLength(jdProduct.getLength());
-        // 宽(单位:mm)如不确定，默认为0(必须)
-        if (jdProduct.getWide() != null)               request.setWide(jdProduct.getWide());
-        // 高(单位:mm)如不确定，默认为0(必须)
-        if (jdProduct.getHigh() != null)               request.setHigh(jdProduct.getHigh());
-        // 重量(单位:kg)如不确定，默认为0(必须)
-        if (jdProduct.getWeight() != null)             request.setWeight(jdProduct.getWeight());
-        // 进货价,精确到2位小数，单位:元(非必须)
-        if (jdProduct.getCostPrice() != null)          request.setCostPrice(jdProduct.getCostPrice());
-        // 市场价, 精确到2位小数，单位:元(必须)
-        if (jdProduct.getJdPrice() != null)            request.setJdPrice(jdProduct.getJdPrice());
-        // 京东价,精确到2位小数，单位:元(必须)
-        if (jdProduct.getMarketPrice() != null)        request.setMarketPrice(jdProduct.getMarketPrice());
-        // 描述(必须)
-        if (jdProduct.getNotes() != null)              request.setNotes(jdProduct.getNotes());
-        // 包装清单(非必须)
-        if (jdProduct.getPackListing() != null)        request.setPackListing(jdProduct.getPackListing());
-        // 售后服务(非必须)
-        if (jdProduct.getService() != null)            request.setService(jdProduct.getService());
-        // 自定义属性值别名(非必须)
-        // 属性ID:属性值ID:别名，多组之间用^分开，如aid:vid:别名^aid1:vid1:别名1
-        if (jdProduct.getPropertyAlias() != null)      request.setPropertyAlias(jdProduct.getPropertyAlias());
-        // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
-        if (jdProduct.getAttributes() != null)         request.setAttributes(jdProduct.getAttributes());
-        // sku价格,多组之间用‘|’分隔，格式:p1|p2 (非必须)
-        if (jdProduct.getSkuPrices() != null)          request.setSkuPrices(jdProduct.getSkuPrices());
-        // sku属性(非必须)
-        // 一组sku 属性之间用"^"分隔，多组用"|"分隔格式:aid:vid^aid1:vid2|aid3:vid3^aid4:vid4 100041:150041^1000046:15844|1001:1501^10006:1504
-        if (jdProduct.getSkuProperties() != null)      request.setSkuProperties(jdProduct.getSkuProperties());
-        // sku 库存,多组之间用"|"分隔， 格式:sku1|sku2(非必须)
-        if (jdProduct.getSkuStocks() != null)          request.setSkuStocks(jdProduct.getSkuStocks());
-        // 流水号(非必须)
-        if (jdProduct.getTradeNo() != null)            request.setTradeNo(jdProduct.getTradeNo());
         // 是否先款后货,false为否，true为是 (非必须)
         if (jdProduct.getPayFirst() != null)           request.setPayFirst(jdProduct.getPayFirst());
         // 发票限制：非必须输入，true为限制，false为不限制开增值税发票，FBP、LBP、SOPL、SOP类型商品均可输入(非必须)
@@ -236,8 +168,6 @@ public class JdWareService extends JdBase {
         if (jdProduct.getImported() != null)           request.setImported(jdProduct.getImported());
         // 是否保健品：非必须输入，false为否，true为是，FBP类型商品可输入  (非必须)
         if (jdProduct.getHealthProduct() != null)      request.setHealthProduct(jdProduct.getHealthProduct());
-        // 是否保质期管理商品, false为否，true为是(非必须)
-        if (jdProduct.getShelfLife() != null)          request.setShelfLife(jdProduct.getShelfLife());
         // 保质期：非必须输入，0-99999范围区间，FBP类型商品可输入(非必须)
         if (jdProduct.getShelfLifeDays() != null)      request.setShelfLifeDays(jdProduct.getShelfLifeDays());
         // 是否序列号管理：非必须输入，false为否，true为是，FBP类型商品可输入(非必须)
@@ -250,13 +180,69 @@ public class JdWareService extends JdBase {
         if (jdProduct.getWareBigSmallModel() != null)  request.setWareBigSmallModel(jdProduct.getWareBigSmallModel());
         // 商品包装：FBP类型商品必须输入，非FBP类型商品可输入非必填，1普通商品、2易碎品、3裸瓶液体、4带包装液体、5按原包装出库(必须)
         if (jdProduct.getWarePackType() != null)       request.setWarePackType(jdProduct.getWarePackType());
+        // 是否保质期管理商品, false为否，true为是(非必须)
+        if (jdProduct.getShelfLife() != null)          request.setShelfLife(jdProduct.getShelfLife());
+        // 商品id(必须)
+        request.setWareId(jdProduct.getWareId());
+        // 自定义店内分类 (非必须)
+        if (jdProduct.getShopCategory() != null)       request.setShopCategory(jdProduct.getShopCategory());
+        // 商品标题(必须)
+        if (jdProduct.getTitle() != null)              request.setTitle(jdProduct.getTitle());
+        // UPC编码(非必须)
+        if (jdProduct.getUpcCode() != null)            request.setUpcCode(jdProduct.getUpcCode());
+        // 操作类型 现只支持：offsale 或onsale,默认为下架状态 (非必须)
+        if (jdProduct.getOptionType() != null)         request.setOptionType(jdProduct.getOptionType());
+        // 外部商品编号，对应商家后台货号(非必须)
+        if (jdProduct.getItemNum() != null)            request.setItemNum(jdProduct.getItemNum());
+        // 库存数(针对FBP输入无效)(非必须)
+        if (jdProduct.getStockNum() != null)           request.setStockNum(jdProduct.getStockNum());
+        // 产地(非必须)
+        if (jdProduct.getWareLocation() != null)       request.setWareLocation(jdProduct.getWareLocation());
+        // 生产厂商(非必须)
+        if (jdProduct.getProducter() != null)          request.setProducter(jdProduct.getProducter());
+        // 包装规格 (非必须)
+        if (jdProduct.getWrap() != null)               request.setWrap(jdProduct.getWrap());
+        // 长(单位:mm)(必须)
+        if (jdProduct.getLength() != null)             request.setLength(jdProduct.getLength());
+        // 宽(单位:mm)(必须)
+        if (jdProduct.getWide() != null)               request.setWide(jdProduct.getWide());
+        // 高(单位:mm)(必须)
+        if (jdProduct.getHigh() != null)               request.setHigh(jdProduct.getHigh());
+        // 重量(单位:kg)(必须)
+        if (jdProduct.getWeight() != null)             request.setWeight(jdProduct.getWeight());
+        // 进货价,精确到2位小数，单位:元(非必须)
+        if (jdProduct.getCostPrice() != null)          request.setCostPrice(jdProduct.getCostPrice());
+        // 市场价, 精确到2位小数，单位:元(必须)
+        if (jdProduct.getMarketPrice() != null)        request.setMarketPrice(jdProduct.getMarketPrice());
+        // 京东价,精确到2位小数，单位:元(必须)
+        if (jdProduct.getJdPrice() != null)            request.setJdPrice(jdProduct.getJdPrice());
+        // 描述（最多支持3万个英文字符(必须)
+        if (jdProduct.getNotes() != null)              request.setNotes(jdProduct.getNotes());
+        // rate 费率（更新商品比新增商品多一个rate参数，但意义不明，目前未使用）
+//        request.setRate("");
+        // 包装清单(非必须)
+        if (jdProduct.getPackListing() != null)        request.setPackListing(jdProduct.getPackListing());
+        // 售后服务(非必须)
+        if (jdProduct.getService() != null)            request.setService(jdProduct.getService());
+        // sku属性,一组sku 属性之间用^分隔，多组用|分隔格式(非必须)
+        if (jdProduct.getSkuProperties() != null)      request.setSkuProperties(jdProduct.getSkuProperties());
+        // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
+        if (jdProduct.getAttributes() != null)         request.setAttributes(jdProduct.getAttributes());
+        // sku价格,多组之间用‘|’分隔，格式:p1|p2 (非必须)
+        if (jdProduct.getSkuPrices() != null)          request.setSkuPrices(jdProduct.getSkuPrices());
+        // sku 库存,多组之间用‘|’分隔， 格式:s1|s2(非必须)
+        if (jdProduct.getSkuStocks() != null)          request.setSkuStocks(jdProduct.getSkuStocks());
+        // 流水号(非必须)
+        if (jdProduct.getTradeNo() != null)            request.setTradeNo(jdProduct.getTradeNo());
+        // 自定义属性值别名：属性ID:属性值ID:别名(非必须)
+        if (jdProduct.getPropertyAlias() != null)      request.setPropertyAlias(jdProduct.getPropertyAlias());
+        // SKU外部ID，对个之间用‘|’分隔格(非必须)
+        if (jdProduct.getOuterId() != null)            request.setOuterId(jdProduct.getOuterId());
         // 用户自行输入的类目属性ID串结构：‘pid1|pid2|pid3’,属性的pid调用360buy.ware.get.attribute取得, 输入类型input_type=3即输入(非必须)
         if (jdProduct.getInputPids() != null)          request.setInputPids(jdProduct.getInputPids());
         // 用户自行输入的属性值,结构:‘输入值|输入值2|输入值3’图书品类输入值规则： ISBN：数字、字母格式 出版时间：日期格式“yyyy-mm-dd”
         // 版次：数字格式 印刷时间：日期格式“yyyy-mm-dd” 印次：数字格式 页数：数字格式 字数：数字格式 套装数量：数字格式 附件数量：数字格式(非必须)
         if (jdProduct.getInputStrs() != null)          request.setInputStrs(jdProduct.getInputStrs());
-        // 库存数(针对FBP输入无效)(非必须)
-        if (jdProduct.getStockNum() != null)           request.setStockNum(jdProduct.getStockNum());
         // 是否输入验证码 true:是;false:否  (非必须)
         if (jdProduct.getHasCheckCode() != null)       request.setHasCheckCode(jdProduct.getHasCheckCode());
         // 广告词内容最大支持45个字符(非必须)
@@ -269,7 +255,7 @@ public class JdWareService extends JdBase {
 
         try {
             // 调用京东修改商品API(360buy.ware.update)
-            WareUpdateResponse response = reqApi(shop, request);
+            WareUpdateResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
 
             if (response != null) {
                 // 京东返回正常的场合
@@ -285,6 +271,45 @@ public class JdWareService extends JdBase {
         }
 
         return retModified;
+    }
+
+    /**
+     * 京东删除商品
+     *
+     * @param shop ShopBean      店铺信息
+     * @param strWareId String   商品id
+     * @param tradeNo String     流水号
+     * @return boolean           删除商品是否成功
+     */
+    public boolean deleteWare(ShopBean shop, String strWareId, String tradeNo) throws BusinessException {
+        WareDeleteRequest request = new WareDeleteRequest();
+
+        // 商品id(必须)
+        request.setWareId(strWareId);
+        // 流水号(必须)
+        request.setTradeNo(tradeNo);
+
+        try {
+            // 调用京东根据商品Id，流水号删除商品API(360buy.ware.delete)
+            WareDeleteResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                String strReturnCode = response.getCode();
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(strReturnCode)) {
+                    // 返回删除商品成功
+                    return true;
+                }
+            }
+
+        } catch (Exception ex) {
+            logger.error("调用京东API删除商品失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId());
+
+            throw new BusinessException(shop.getShop_name() + "京东根据删除商品失败 " + ex.getMessage());
+        }
+
+        logger.error("调用京东API删除商品失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId());
+        return false;
     }
 
     /**
@@ -315,7 +340,7 @@ public class JdWareService extends JdBase {
 
         try {
             // 调用京东根据商品Id，销售属性值Id增加图片API(360buy.ware.propimg.add)
-            WarePropimgAddResponse response = reqApi(shop, request, MAX_RETRY_TIMES);
+            WarePropimgAddResponse response = reqApi(shop, request);
 
             if (response != null) {
                 // 京东返回正常的场合
@@ -332,6 +357,7 @@ public class JdWareService extends JdBase {
             throw new BusinessException(shop.getShop_name() + "京东根据商品Id，销售属性值Id增加图片失败 " + ex.getMessage());
         }
 
+        logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
         return false;
     }
 
@@ -355,40 +381,40 @@ public class JdWareService extends JdBase {
         throw new BusinessException("通过URL取得图片失败. url:"+url);
     }
 
-//    /**
-//     * 获取指定商品上的所有图片列表
-//     *
-//     * @param shop ShopBean  店铺信息
-//     * @param wareId String  京东商品id
-//     * @return String  指定商品上的所有图片列表
-//     */
-//    public List<Image> getImagesByWareId(ShopBean shop, long wareId) throws BusinessException {
-//        List<Image> imageList = new ArrayList<>();
-//
-//        ImageReadFindImagesByWareIdRequest request = new ImageReadFindImagesByWareIdRequest();
-//        // 商品id(必须)
-//        request.setWareId(wareId);
-//
-//        try {
-//            // 调用京东获取商品上的所有图片列表API( jingdong.image.read.findImagesByWareId)
-//            ImageReadFindImagesByWareIdResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
-//
-//            if (response != null) {
-//                // 京东返回正常的场合
-//                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-//                    // 返回图片列表
-//                    imageList = response.getImages();
-//                }
-//            }
-//        } catch (Exception ex) {
-//            logger.error("调用京东API获取商品上的所有图片列表失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
-//
-//            throw new BusinessException(shop.getShop_name() + "获取京东获取商品上的所有图片列表失败 " + ex.getMessage());
-//        }
-//
-//        return imageList;
-//    }
-//
+    /**
+     * 获取指定商品上的所有图片列表
+     *
+     * @param shop ShopBean  店铺信息
+     * @param wareId String  京东商品id
+     * @return String  指定商品上的所有图片列表
+     */
+    public List<Image> getImagesByWareId(ShopBean shop, long wareId) throws BusinessException {
+        List<Image> imageList = new ArrayList<>();
+
+        ImageReadFindImagesByWareIdRequest request = new ImageReadFindImagesByWareIdRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+
+        try {
+            // 调用京东获取商品上的所有图片列表API( jingdong.image.read.findImagesByWareId)
+            ImageReadFindImagesByWareIdResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回图片列表
+                    imageList = response.getImages();
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API获取商品上的所有图片列表失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
+
+            throw new BusinessException(shop.getShop_name() + "获取京东获取商品上的所有图片列表失败 " + ex.getMessage());
+        }
+
+        return imageList;
+    }
+
 //    /**
 //     * 删除指定商品上的所有图片列表
 //     *
@@ -409,7 +435,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东获取商品上的所有图片列表API( jingdong.image.read.findImagesByWareId)
-//            ImageReadFindImagesByWareIdResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+//            ImageWriteDeleteResponse response = reqApi(shop, request);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合
@@ -485,7 +511,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东增加SKU信息API(360buy.ware.sku.add)
-//            WareSkuAddResponse response = reqApi(shop, request);
+//            WareSkuAddResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合
@@ -531,7 +557,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东修改SKU信息API( 360buy.ware.sku.update)
-//            WareSkuUpdateResponse response = reqApi(shop, request);
+//            WareSkuUpdateResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合
@@ -549,7 +575,7 @@ public class JdWareService extends JdBase {
 //
 //        return retModified;
 //    }
-
+//
 //    /**
 //     * 京东上传单张图片
 //     *
@@ -569,7 +595,7 @@ public class JdWareService extends JdBase {
 ////        }
 //        request.setImageData(jdProduct.getAttributes().getBytes());
 //        // 上传到的图片分类ID，为空上传至 默认分类(非必须)
-//        request.setPictureCateId(0);
+//        request.setPictureCateId((long)0);
 //        // 图片名称，不超过64字节，为空默认 未命名(非必须)
 //        request.setPictureName("图片名称");
 //
@@ -577,7 +603,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
-//            ImgzonePictureUploadResponse response = reqApi(shop, request);
+//            ImgzonePictureUploadResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合(返回码：1，操作成功)
@@ -640,4 +666,5 @@ public class JdWareService extends JdBase {
 //
 //        return retReturnCode;
 //    }
+
 }
