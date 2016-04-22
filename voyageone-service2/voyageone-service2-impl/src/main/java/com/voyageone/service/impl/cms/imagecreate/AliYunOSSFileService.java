@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.components.aliyun.AliYunOSSClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
@@ -13,8 +14,14 @@ public class AliYunOSSFileService {
     @Autowired
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
     private void putOSS(String filefullName, String keySuffixWithSlash) throws FileNotFoundException {
-        AliYunOSSClient client = new AliYunOSSClient(ImageConfig.getAliYunEndpoint(), ImageConfig.getAliYunAccessKeyId(), ImageConfig.getAliYunAccessKeySecret());
-        client.putOSS(filefullName, "shenzhen-vo", keySuffixWithSlash);
+        try {
+            AliYunOSSClient client = new AliYunOSSClient(ImageConfig.getAliYunEndpoint(), ImageConfig.getAliYunAccessKeyId(), ImageConfig.getAliYunAccessKeySecret());
+            client.putOSS(filefullName, "shenzhen-vo", keySuffixWithSlash);
+        } catch (IllegalArgumentException ex) {
+            throw new BusinessException("100201", ex.getMessage(), ex);
+        } catch (Exception ex) {
+            throw new BusinessException("1002", "上传阿里云OSS错误", ex);
+        }
     }
     public void putOSS(CmsMtImageCreateFileModel modelFile) throws FileNotFoundException {
         if (modelFile.getOssState() == 0) {//上传阿里OSS

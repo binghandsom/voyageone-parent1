@@ -26,10 +26,11 @@ public class CmsMtImageCreateFileService {
     CmsMtImageCreateFileDao dao;
     @Autowired
     CmsMtImageCreateTemplateService serviceCmsMtImageCreateTemplate;
-@Autowired
+    @Autowired
     AliYunOSSFileService serviceAliYunOSSFile;
     @Autowired
     LiquidFireImageService serviceLiquidFireImage;
+
     public CmsMtImageCreateFileModel select(int id) {
         return dao.select(id);
     }
@@ -52,9 +53,8 @@ public class CmsMtImageCreateFileService {
         CallResult result = new CallResult();
         long hashCode = HashCodeUtil.getHashCode(requesttQueryString);//hashCode做缓存key
         CmsMtImageCreateFileModel modelFile = getByHashCode(hashCode);
-        CmsMtImageCreateTemplateModel modelTemplate = null;
         if (modelFile == null) {
-            modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
+            CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
             final String ossFilePath = "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
             modelFile = new CmsMtImageCreateFileModel();
             modelFile.setChannelId(channelId);
@@ -67,18 +67,19 @@ public class CmsMtImageCreateFileService {
             modelFile.setCreater(Creater);
             modelFile.setModifier(Creater);
             modelFile.setOssFilePath(ossFilePath);
-            modelFile.setState(1);
-            modelFile.setOssState(1);
+            modelFile.setState(0);
+            modelFile.setOssState(0);
             dao.insert(modelFile);
         }
-        serviceLiquidFireImage.createImage(modelFile);
-        serviceAliYunOSSFile.putOSS(modelFile);
+        if (modelFile.getState() == 0) { //生成图片
+            serviceLiquidFireImage.createImage(modelFile);
+        }
+        if (modelFile.getOssState() == 0) { //上传图片到阿里云OSS
+            serviceAliYunOSSFile.putOSS(modelFile);
+        }
         result.setResultData(modelFile.getOssFilePath());
         return result;
     }
-
-
-
 
     //获取模板
     public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(CmsMtImageCreateTemplateModel modelTemplate, int templateId) {
@@ -87,9 +88,5 @@ public class CmsMtImageCreateFileService {
         }
         return modelTemplate;
     }
-
-
-
-
 }
 
