@@ -460,6 +460,9 @@ define(function(){
         "REVERT": "正在还原",
         "RE_SUCCESS": "还原成功",
         "RE_FAIL": "还原失败",
-        "CANT_BEAT": "信息错误"
+        "CANT_BEAT": "信息错误",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "每页显示"
     };
 });

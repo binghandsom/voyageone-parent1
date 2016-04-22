@@ -10,7 +10,24 @@
         var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
         // 有数据分页样式
         if (!$templateCache.get(templateKey)) {
-            $templateCache.put(templateKey, '<div class="col-sm-3">\n' + '    <div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-4 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-5 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
+            $templateCache.put(templateKey, '<div class="col-sm-3">\n' + '    ' +
+                '<div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' +
+                '<button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' +
+                "</div>\n" + "</div>\n" + '<div class="col-sm-4 text-center">\n' +
+                /**添加每页可选，add by pwj*/
+                '<small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_PAGER_SIZE\' | translate}}&nbsp;&nbsp;<select ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption"></select></small>'+
+                "&emsp;<small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" +
+                "</div>\n" + '<div class="col-sm-5 text-right text-center-xs"><div>' +
+                '<ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' +
+                '<li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first">' +
+                '<a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' +
+                '<li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' +
+                '<li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' +
+                '<li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' +
+                '<li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' +
+                '<li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next">' +
+                '<a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' +
+                '<li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "</ul>\n" + "</div>");
         }
         // 无数据分页样式
         if (!$templateCache.get(templateKeyNoData)) {
@@ -72,6 +89,17 @@
                         tempHtml = $compile($templateCache.get(templateKey))(scope);
                     }
                     element.html(tempHtml);
+                }
+                scope.perpages = {
+                    availableOptions: [10,20,50,100 ],
+                    selectedOption:scope.config.size
+                };
+
+                scope.changePerPage = function(perpage){
+                    scope.config.size = parseInt(perpage);
+                    //当改变页数时，切换到第一页
+                    scope.config.curr = 1;
+                    p.goPage(parseInt(scope.config.curr));
                 }
             }
         };
