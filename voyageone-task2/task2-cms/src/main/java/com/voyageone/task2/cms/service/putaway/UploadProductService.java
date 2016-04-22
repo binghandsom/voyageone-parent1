@@ -146,7 +146,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     workload.setIsPublished(0);
                     upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
                 }
-                workload.setProductId(mainProductPlatform.getProductId());
+                workload.setProductId(mainProductPlatform.getPlatformPid());
             }
             workload.setWorkload_status(new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT));
 
