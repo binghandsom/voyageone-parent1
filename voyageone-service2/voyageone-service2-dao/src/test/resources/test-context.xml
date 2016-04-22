@@ -10,7 +10,7 @@
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone"/>
     <!--<import resource="classpath*:datasource-jumei-config.xml" />-->
-    <!--<import resource="classpath*:datasource-cms2-config.xml" />-->
+    <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
     <import resource="classpath*:datasource-config-mongo-cms2.xml" />
 
