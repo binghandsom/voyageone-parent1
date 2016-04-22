@@ -446,7 +446,7 @@ public class ProductService extends BaseService {
 //                model.setModifier(modifier);
 //                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
 
-        List<Map> carts = cmsProduct.getFields().getProductCarts();
+        List<CmsBtProductModel_Field_Carts> carts = cmsProduct.getFields().getProductCarts();
 
         // 获得该店铺的上新平台列表
 //        List<Integer> carts = new ArrayList<>();
