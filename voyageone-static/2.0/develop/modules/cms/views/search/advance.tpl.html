@@ -457,7 +457,7 @@
 										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
-										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo._prodMnFlg == 1">&nbsp;M&nbsp;</span>
+										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
 										<span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groups.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.numIId}}" target="_blank"  ng-bind="productInfo.groups.numIId"></a>

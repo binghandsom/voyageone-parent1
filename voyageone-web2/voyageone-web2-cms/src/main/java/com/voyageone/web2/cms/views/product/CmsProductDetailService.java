@@ -20,6 +20,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -60,7 +61,8 @@ public class CmsProductDetailService extends BaseAppService {
 
     @Autowired
     private ProductService productService;
-
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     protected CategorySchemaService categorySchemaService;
 
@@ -86,7 +88,7 @@ public class CmsProductDetailService extends BaseAppService {
         CustomAttributesBean customAttributes = new CustomAttributesBean();
 
         // 获取product data.
-        CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
+        CmsBtProductModel productValueModel = getProductModel(channelId, prodId, cartId);
 
         //商品各种状态.
         CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
@@ -190,21 +192,15 @@ public class CmsProductDetailService extends BaseAppService {
         boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
         infoMap.put("isminimall", isMiniMall ? 1 : 0);
 
+        // 判断是否主商品
         boolean isMain = false;
-//        CmsBtProductModel_Group gpList = productValueModel.getGroups();
-//        if (gpList != null) {
-//            List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
-//            if (pltList != null && pltList.size() > 0) {
-//                for (CmsBtProductModel_Group_Platform pltObj : pltList) {
-//                    if (pltObj.getCartId() == cartId && pltObj.getIsMain()) {
-//                        isMain = true;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
+        CmsBtProductGroupModel gpList = productValueModel.getGroups();
+        if (gpList != null) {
+            if (productValueModel.getFields().getCode().equals(gpList.getMainProductCode())) {
+                isMain = true;
+            }
+        }
         infoMap.put("isMain", isMain ? 1 : 0);
-
         return infoMap;
     }
 
@@ -582,20 +578,18 @@ public class CmsProductDetailService extends BaseAppService {
     /**
      * 获取product model.
      */
-    private CmsBtProductModel getProductModel(String channelId, Long prodId) {
-
+    private CmsBtProductModel getProductModel(String channelId, Long prodId, int cartId) {
         CmsBtProductModel productValueModel = productService.getProductById(channelId, prodId);
-
         if (productValueModel == null) {
-
             //product 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的产品信息不存在！";
-
             $error(errMsg);
-
             throw new BusinessException(errMsg);
         }
 
+        // 根据产品code找到group
+        CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery("{'cartId':" + cartId + ",'productCarts':'"+ productValueModel.getFields().getCode() + "'}", channelId);
+        productValueModel.setGroups(grpObj);
         return productValueModel;
     }
 
