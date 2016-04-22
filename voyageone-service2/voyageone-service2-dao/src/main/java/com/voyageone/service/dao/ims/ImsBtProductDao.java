@@ -1,12 +1,10 @@
 package com.voyageone.service.dao.ims;
 
-import com.voyageone.common.Constants;
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

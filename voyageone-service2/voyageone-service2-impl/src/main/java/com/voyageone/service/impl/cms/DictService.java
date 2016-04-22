@@ -47,6 +47,10 @@ public class DictService extends BaseService {
         return resultInfo;
     }
 
+    public List<CmsMtDictModel> getModesByChannelCartId(String order_channel_id, int cartId) {
+        return cmsMtDictDao.selectByChannelCartId(order_channel_id, cartId);
+    }
+
     /**
      * 检测现有数据是否符合
      * @param cmsMtDictModel CmsMtDictModel
