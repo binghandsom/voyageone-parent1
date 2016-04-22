@@ -446,7 +446,7 @@ public class ProductService extends BaseService {
 //                model.setModifier(modifier);
 //                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
 
-        List<Map> carts = cmsProduct.getFields().getProductCarts();
+        List<CmsBtProductModel_Field_Carts> carts = cmsProduct.getFields().getProductCarts();
 
         // 获得该店铺的上新平台列表
 //        List<Integer> carts = new ArrayList<>();
@@ -472,11 +472,11 @@ public class ProductService extends BaseService {
 //                    models.add(model);
 //                }
 //            }
-        for(Map cartInfo : carts) {
+        for(CmsBtProductModel_Field_Carts cartInfo : carts) {
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
             model.setChannelId(channelId);
-            model.setGroupId(platformsMap.get((Integer) cartInfo.get("cartId")));
-            model.setCartId((Integer) cartInfo.get("cartId"));
+            model.setGroupId(platformsMap.get(cartInfo.getCartId()));
+            model.setCartId(cartInfo.getCartId());
             model.setPublishStatus(0);
             model.setCreater(modifier);
             model.setModifier(modifier);
