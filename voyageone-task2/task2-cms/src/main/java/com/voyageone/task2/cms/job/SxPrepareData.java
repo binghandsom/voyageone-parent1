@@ -79,18 +79,10 @@ public class SxPrepareData {
         fields.setPriceSaleSt(500.00);
         fields.setPriceSaleEd(800.00);
 
-        CmsBtProductModel_Group groups = product.getGroups();
-
-        groups.setSalePriceStart(500.00);
-        groups.setSalePriceEnd(800.00);
-
-        List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
-        CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(groupId);
-        platform.setCartId(23);
-        platform.setIsMain(isMain);
-        platforms.add(platform);
-        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
+        CmsBtProductGroupModel groups = product.getGroups();
+        groups.setGroupId(groupId);
+        groups.setCartId(23);
+        groups.setPlatformActive(CmsConstants.PlatformActive.Instock);
 
         List<CmsBtProductModel_Sku> skus = product.getSkus();
         for (int i=1; i<3; i++) {

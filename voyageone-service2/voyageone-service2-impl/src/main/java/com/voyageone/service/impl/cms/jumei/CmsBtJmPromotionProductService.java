@@ -1,8 +1,11 @@
 package com.voyageone.service.impl.cms.jumei;
+
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
+import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.businessmodel.ProductIdListInfo;
 import com.voyageone.service.model.jumei.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
@@ -26,7 +29,12 @@ public class CmsBtJmPromotionProductService {
     CmsBtJmPromotionProductDaoExt daoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-
+    @Autowired
+    JuMeiProductPlatformService serviceJuMeiProductPlatform;
+    @Autowired
+    CmsMtJmConfigService serviceCmsMtJmConfig;
+    @Autowired
+    JMShopBeanService serviceJMShopBean;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -46,6 +54,10 @@ public class CmsBtJmPromotionProductService {
     public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
         return daoExt.getPromotionProductInfoListByWhere(map);
     }
+    public int getPromotionProductInfoCountByWhere(Map<String, Object> map)
+    {
+       return  daoExt.getPromotionProductInfoCountByWhere(map);
+    }
 
     public int delete(int id) {
         return dao.delete(id);
@@ -59,37 +71,48 @@ public class CmsBtJmPromotionProductService {
         dao.update(model);
         return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
     }
+
     @VOTransactional
     public void deleteByPromotionId(int promotionId) {
         daoExt.deleteByPromotionId(promotionId);
         daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
     }
+
     @VOTransactional
     public void deleteByProductIdList(ProductIdListInfo parameter) {
         daoExt.deleteByProductIdListInfo(parameter);
         daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
     }
+
     //所有未上心商品上新
     public int jmNewUpdateAll(int promotionId) {
         return daoExt.jmNewUpdateAll(promotionId);
     }
+
     //部分商品上新
     public int jmNewByProductIdListInfo(ProductIdListInfo parameter) {
         return daoExt.jmNewByProductIdListInfo(parameter);
     }
-
     //所有未上心商品上新
-    public int updateDealEndTimeAll( ParameterUpdateDealEndTimeAll parameter) {
+    public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
         return daoExt.updateDealEndTimeAll(parameter);
     }
     //部分商品上新
     public int updateDealEndTime(ParameterUpdateDealEndTime parameter) {
         return daoExt.updateDealEndTime(parameter);
     }
-
     // 根据条件检索出promoiton的product数据
     public CmsBtJmPromotionProductModel selectOne(Map<String, Object> param) {
         return dao.selectOne(param);
     }
+//    public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
+//        CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
+//        int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
+//        ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
+//       // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
+//        CallResult     result=   serviceJuMeiProductPlatefrom.updateJm(model, shopBean, ShippingSystemId);
+//       // }
+//        return result;
+//    }
 }
 

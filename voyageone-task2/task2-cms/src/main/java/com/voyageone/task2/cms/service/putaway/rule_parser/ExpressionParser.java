@@ -44,7 +44,7 @@ public class ExpressionParser {
 
         this.masterWordParser = new MasterWordParser(mainSxProduct.getCmsBtProductModel());
         this.feedCnWordParser = new FeedCnWordParser(mainSxProduct.getCmsBtProductModel());
-        this.feedOrgWordParser = new FeedOrgWordParser(mainSxProduct.getCmsBtProductModel());
+        this.feedOrgWordParser = new FeedOrgWordParser(mainSxProduct.getCmsBtProductModel(), mainSxProduct.getCmsBtFeedInfoModel());
         this.skuWordParser = new SkuWordParser();
     }
 

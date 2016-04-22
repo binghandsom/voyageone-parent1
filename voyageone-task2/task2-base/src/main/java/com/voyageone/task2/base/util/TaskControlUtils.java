@@ -122,6 +122,19 @@ public class TaskControlUtils {
     }
 
     /**
+     * 取得配置属性对应的结束时间(单个)
+     *
+     * @param taskControlList List
+     * @return 对应值2
+     */
+    public static String getEndTime(List<TaskControlBean> taskControlList, TaskControlEnums.Name name, String val1) {
+
+        return taskControlList.stream()
+                .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()) && taskControlBean.getCfg_val1().equals(val1))
+                .map(TaskControlBean::getEnd_time).findFirst().orElse(null);
+    }
+
+    /**
      * 取得任务是否可以运行的标志位
      *
      * @param taskControlList job 配置

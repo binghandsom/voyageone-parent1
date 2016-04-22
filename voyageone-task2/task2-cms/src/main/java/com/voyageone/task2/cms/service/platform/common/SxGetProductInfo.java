@@ -1,22 +1,25 @@
 package com.voyageone.task2.cms.service.platform.common;
 
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.cms.bean.platform.SxData;
-import com.voyageone.task2.cms.dao.SkuInventoryDao;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.task2.cms.bean.platform.SxData;
+import com.voyageone.task2.cms.dao.SkuInventoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by zhujiaye on 16/2/14.
@@ -25,6 +28,8 @@ import java.util.Map;
 public class SxGetProductInfo {
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private CmsBtProductGroupDao cmsBtProductGroupDao;
 	@Autowired
 	private SkuInventoryDao skuInventoryDao;
 	@Autowired
@@ -42,10 +47,10 @@ public class SxGetProductInfo {
 		sxData.setProductList(cmsBtProductModelList);
 
 		// 分析出需要的platform (只取出当前的group的platform信息, 存放的是多个product的当前platform)
-		List<CmsBtProductModel_Group_Platform> platformList = new ArrayList<>();
+		CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
+		List<CmsBtProductGroupModel> platformList = new ArrayList<>();
 		for (CmsBtProductModel productModel : cmsBtProductModelList) {
-			platformList.add(productModel.getGroups().getPlatformByGroupId(groupId));
-
+			platformList.add(grpObj);
 			skuList.addAll(productModel.getSkus());
 		}
 		sxData.setPlatformList(platformList);
@@ -72,16 +77,16 @@ public class SxGetProductInfo {
 		sxData.setPlatformCategoryId(cmsMtPlatformMappingModel.getPlatformCategoryId());
 		// 平台上的productId
 		String platformProductId = "";
-		for (CmsBtProductModel_Group_Platform platform : platformList) {
-			if (!StringUtils.isEmpty(platform.getProductId())) {
-				platformProductId = platform.getProductId();
+		for (CmsBtProductGroupModel platform : platformList) {
+			if (!StringUtils.isEmpty((String) platform.get("platformPid"))) {
+				platformProductId = (String) platform.get("platformPid");
 				break;
 			}
 		}
 		sxData.setPlatformProductId(platformProductId);
 		// 平台上的numIId
 		String platformNumIId = "";
-		for (CmsBtProductModel_Group_Platform platform : platformList) {
+		for (CmsBtProductGroupModel platform : platformList) {
 			if (!StringUtils.isEmpty(platform.getNumIId())) {
 				platformNumIId = platform.getNumIId();
 				break;
@@ -114,7 +119,7 @@ public class SxGetProductInfo {
 	 * 获取group的所有商品的主数据信息
 	 */
 	private List<CmsBtProductModel> getProductInfo(String channelId, Long groupId) {
-		return productService.getProductByGroupId(channelId, groupId);
+		return productService.getProductByGroupId(channelId, groupId, false);
 	}
 
 	/**

@@ -9,12 +9,16 @@
         $scope.showInfo = showInfo;
         function showInfo(values) {
             var tempHtml = "";
-            angular.forEach(values, function(data, index) {
-                tempHtml += data;
-                if (index !== values.length) {
-                    tempHtml += "<br>";
-                }
-            });
+            if (values instanceof Array) {
+                angular.forEach(values, function(data, index) {
+                    tempHtml += data;
+                    if (index !== values.length) {
+                        tempHtml += "<br>";
+                    }
+                });
+            } else  {
+                tempHtml += values;
+            }
             return tempHtml;
         }
     });

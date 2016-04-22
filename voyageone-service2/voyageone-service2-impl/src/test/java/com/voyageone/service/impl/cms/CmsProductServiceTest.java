@@ -110,35 +110,35 @@ public class CmsProductServiceTest {
         fields.setPriceChange(random.nextInt(1));
 
 
-        CmsBtProductModel_Group groups = product.getGroups();
-        groups.setMsrpStart(100.00 + random.nextInt(100));
-        groups.setMsrpEnd(200.00 + random.nextInt(100));
-        groups.setRetailPriceStart(300.00 + random.nextInt(100));
-        groups.setRetailPriceEnd(400.00 + random.nextInt(100));
-        groups.setSalePriceStart(500.00 + random.nextInt(100));
-        groups.setSalePriceEnd(600.00 + random.nextInt(100));
-        groups.setCurrentPriceStart(700.00 + random.nextInt(100));
-        groups.setCurrentPriceEnd(800.00 + random.nextInt(100));
-
-        List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
-        CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
-        platform.setCartId(21);
-        platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
-        platform.setIsMain(false);
-        platform.setDisplayOrder(random.nextInt(100));
-        platform.setPublishTime("2015-11-12 16:19:00");
-        platform.setInstockTime("2015-11-18 16:19:00");
-//        platform.setStatus("InStock");
-//        platform.setPublishStatus("等待上新");
-//        platform.setComment("");
-//        platform.setInventory(random.nextInt(100));
-        platforms.add(platform);
-
-        platform = new CmsBtProductModel_Group_Platform(platform);
-        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
-        platform.setCartId(23);
-        platforms.add(platform);
+//        CmsBtProductModel_Group groups = product.getGroups();
+//        groups.setMsrpStart(100.00 + random.nextInt(100));
+//        groups.setMsrpEnd(200.00 + random.nextInt(100));
+//        groups.setRetailPriceStart(300.00 + random.nextInt(100));
+//        groups.setRetailPriceEnd(400.00 + random.nextInt(100));
+//        groups.setSalePriceStart(500.00 + random.nextInt(100));
+//        groups.setSalePriceEnd(600.00 + random.nextInt(100));
+//        groups.setCurrentPriceStart(700.00 + random.nextInt(100));
+//        groups.setCurrentPriceEnd(800.00 + random.nextInt(100));
+//
+//        List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
+//        CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
+//        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
+//        platform.setCartId(21);
+//        platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
+//        platform.setIsMain(false);
+//        platform.setDisplayOrder(random.nextInt(100));
+//        platform.setPublishTime("2015-11-12 16:19:00");
+//        platform.setInstockTime("2015-11-18 16:19:00");
+////        platform.setStatus("InStock");
+////        platform.setPublishStatus("等待上新");
+////        platform.setComment("");
+////        platform.setInventory(random.nextInt(100));
+//        platforms.add(platform);
+//
+//        platform = new CmsBtProductModel_Group_Platform(platform);
+//        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
+//        platform.setCartId(23);
+//        platforms.add(platform);
 
         List<CmsBtProductModel_Sku> skus = product.getSkus();
         for (int i=1; i<3+random.nextInt(5); i++) {
@@ -178,7 +178,7 @@ public class CmsProductServiceTest {
         System.out.println(ret.getFeed().getCnAtts());
         System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("21")));
         System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("20")));
-        System.out.println(ret.getGroups().getCurrentPriceEnd());
+//        System.out.println(ret.getGroups().getCurrentPriceEnd());
     }
 
 //    @Test

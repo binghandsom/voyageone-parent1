@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.platefrom;
+package com.voyageone.service.impl.cms.jumei.platform;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;
@@ -43,7 +43,7 @@ JMShopBeanService serviceJMShopBean;
         imageModel.setValue2(jmUrl);
     }
     public void uploadImage(CmsMtMasterInfoModel imageModel) throws Exception {
-        ShopBean shopBean = serviceJMShopBean.getShopBean();
+        ShopBean shopBean = serviceJMShopBean.getShopBean(imageModel.getChannelId());
         String jmUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean(imageModel));
         imageModel.setValue2(jmUrl);
     }

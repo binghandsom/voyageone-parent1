@@ -255,13 +255,13 @@ define([
                 "newBeat": {
                     "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
-                    "controller": 'popNewBeatCtl as $ctrl',
+                    "controller": 'popNewBeatCtl as ctrl',
                     "size": "md"
                 },
                 "addBeat": {
                     "templateUrl": "views/pop/promotion/addBeat.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/addBeat.ctl",
-                    "controller": 'popAddBeatCtl as $ctrl',
+                    "controller": 'popAddBeatCtl as ctrl',
                     "size": "md"
                 },
                 "newMrbStock": {
@@ -272,13 +272,13 @@ define([
                 "newMrbStockSku": {
                     "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
-                    "controller": 'popNewMrbStockSkuCtl as $ctrl',
+                    "controller": 'popNewMrbStockSkuCtl as ctrl',
                     "size": "md"
                 },
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
-                    "controller": 'popSkuMrbStockDetailCtl as $ctrl'
+                    "controller": 'popSkuMrbStockDetailCtl as ctrl'
                 },
                 "addMrbStockIncrement": {
                     "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
@@ -291,31 +291,31 @@ define([
                     "templateUrl": "views/pop/search/joinJM.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
                     "controller": 'popJoinJMCtl'
-                },
+                }
             },
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
-                        "templateUrl": "views/pop/jm/promotionDefaultSetting.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotionDefaultSetting.ctl",
-                        "controller": 'popJmPromotionDefaultSettingCtl as $ctrl',
+                        "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
+                        "controller": 'popJmPromotionDefaultSettingCtl as ctrl',
                         "size": 'md',
                         "backdrop": "static"
                     }
                 },
                 "jmProductDetail": {
                     "detail": {
-                        "templateUrl": "views/pop/jm/productDetail.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/productDetail.ctl",
-                        "controller": 'popJmProductDetailController as $ctrl',
+                        "templateUrl": "views/pop/jm/productdetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/productdetail.ctl",
+                        "controller": 'popJmProductDetailController as ctrl',
                         "size": 'lg',
                         "backdrop": "static"
                     }
                 },
                 "jmPromotionDetail": {
                     "detail": {
-                        "templateUrl": "views/pop/jm/promotionDetail.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/promotionDetail.ctl",
+                        "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
                         "controller": 'popPromotionDetailCtl',
                         "size": 'md',
                         "backdrop": "static"
@@ -328,21 +328,21 @@ define([
                         "backdrop": "static"
                     },
                     "dealExtension": {
-                        "templateUrl": "views/pop/jm/dealExtension.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/dealExtension.ctl",
+                        "templateUrl": "views/pop/jm/dealextension.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
                         "controller": 'popDealExtensionCtl'
                     },
                     "priceModify": {
-                        "templateUrl": "views/pop/jm/priceModify.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/priceModify.ctl",
+                        "templateUrl": "views/pop/jm/pricemodify.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
                         "controller": 'popPriceModifyCtl'
                     }
                 },
                 "jmImageManage": {
                     "imageSetting": {
-                        "templateUrl": "views/pop/jm/imageSetting.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/jm/imageSetting.ctl",
-                        "controller": 'popImageSettingCtl as $ctrl'
+                        "templateUrl": "views/pop/jm/imagesetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/imagesetting.ctl",
+                        "controller": 'popImageSettingCtl as ctrl'
                     }
                 }
             },
@@ -360,6 +360,11 @@ define([
 
         },
         "system": {
+            "channelList": {
+                "templateUrl": "views/pop/system/channelList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                "controller": 'popChannelListCtl'
+            },
             "channelsetting": {
                 "templateUrl": "views/pop/system/channelsetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",

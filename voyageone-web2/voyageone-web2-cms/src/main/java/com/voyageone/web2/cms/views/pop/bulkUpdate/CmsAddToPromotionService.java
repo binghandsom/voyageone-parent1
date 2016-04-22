@@ -39,7 +39,7 @@ public class CmsAddToPromotionService extends BaseAppService {
     private PromotionDetailService promotionDetailService;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
-        int tag_id = (int) params.get("refTagId");
+        int tag_id = Integer.valueOf(params.get("refTagId").toString());
         return this.selectListByParentTagId(tag_id);
     }
 

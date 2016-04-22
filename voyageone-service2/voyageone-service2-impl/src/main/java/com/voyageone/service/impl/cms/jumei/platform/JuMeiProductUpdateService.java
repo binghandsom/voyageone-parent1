@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.platefrom;
+package com.voyageone.service.impl.cms.jumei.platform;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.jumei.*;

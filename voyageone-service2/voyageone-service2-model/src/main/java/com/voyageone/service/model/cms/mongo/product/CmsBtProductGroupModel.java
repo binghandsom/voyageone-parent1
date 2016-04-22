@@ -4,20 +4,21 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 
+import java.util.List;
 import java.util.Map;
 
 /**
- * 的商品Model Group>Platform
+ * 商品Model Group>Platform
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Object> {
+public class CmsBtProductGroupModel extends BaseMongoMap<String, Object> {
 
-    public CmsBtProductModel_Group_Platform() {
+    public CmsBtProductGroupModel() {
 
     }
-    public CmsBtProductModel_Group_Platform(Map m) {
+    public CmsBtProductGroupModel(Map m) {
         this.putAll(m);
     }
 
@@ -138,4 +139,11 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("qty", qty);
     }
 
+    public List<String> getProductCodes() {
+        return getAttribute("productCodes");
+    }
+
+    public void setProductCodes(List para) {
+        setAttribute("productCodes", para);
+    }
 }

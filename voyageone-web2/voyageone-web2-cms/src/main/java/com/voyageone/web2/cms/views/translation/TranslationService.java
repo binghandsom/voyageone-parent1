@@ -10,11 +10,9 @@ import com.voyageone.service.impl.cms.CustomWordService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
@@ -24,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by lewis on 15-12-16.
@@ -143,54 +143,10 @@ public class TranslationService extends BaseAppService {
      * @return
      */
     public TranslateTaskBean saveTask(UserSessionBean userInfo, ProductTranslationBean taskBean, String transSts) {
-
         // check翻译数据是否正确
         if("1".equalsIgnoreCase(transSts)){
             verifyParameter(taskBean);
         }
-
-        // 先查询该商品对应的group信息
-//        $debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
-//
-//
-//        DBObject excObj = new BasicDBObject();
-//        excObj.put("groups.platforms.cartId", 1);
-//        excObj.put("groups.platforms.groupId", 1);
-//        excObj.put("groups.platforms.isMain", 1);
-//
-//        List<DBObject> rslt = mongoDao.find("cms_bt_product_c" + userInfo.getSelChannel(), new BasicDBObject("prodId", taskBean.getProdId()), excObj);
-//        int groupId = 0;
-//        for (DBObject obj : rslt) {
-//            DBObject groupObj = (DBObject) obj.get("groups");
-//            if (groupObj != null) {
-//                Object platObj = groupObj.get("platforms");
-//                if (platObj != null) {
-//                    for (Object obj2 : (List) platObj) {
-//                        int cartId = (Integer) ((DBObject) obj2).get("cartId");
-//                        int isMain = (Integer) ((DBObject) obj2).get("isMain");
-//                        if (cartId == 1 && isMain == 1) {
-//                            groupId = (Integer) ((DBObject) obj2).get("groupId");
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        DBObject params = new BasicDBObject();
-//        if (groupId == 0) {
-//            $warn("TranslationService.saveTask() 无group信息 商品ProdId=" + taskBean.getProdId());
-//            // 只更新该商品信息
-//            params.put("prodId", taskBean.getProdId());
-//        } else {
-//            // 更新该group下的商品信息
-//            DBObject pal4 = new BasicDBObject();
-//            pal4.put("cartId", 1);
-//            pal4.put("groupId", groupId);
-//            DBObject pal3 = new BasicDBObject();
-//            pal3.put("$elemMatch", pal4);
-//            params.put("groups.platforms", pal3);
-//        }
 
         Map<String, Object> updObj = new HashMap<>();
         updObj.put("fields.translator", userInfo.getUserName());
@@ -204,7 +160,7 @@ public class TranslationService extends BaseAppService {
         updObj.put("fields.originalDesCn", taskBean.getLongDesCn());
         updObj.put("fields.shortDesCn", taskBean.getShortDesCn());
 
-        productService.updateTranslation(userInfo.getSelChannelId(), taskBean.getGroupId(), updObj, userInfo.getUserName());
+        productService.updateTranslation(userInfo.getSelChannelId(), taskBean.getProductCode(), updObj, userInfo.getUserName());
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setModifiedTime(DateTimeUtil.getNowTimeStamp());
@@ -353,20 +309,20 @@ public class TranslationService extends BaseAppService {
             translationBean.setTranslator(productModel.getFields().getTranslator());
             translationBean.setTranSts(NumberUtils.toInt(productModel.getFields().getTranslateStatus()));
 
-            // 设置该商品在MT上面的groupId
-            for (CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
-                if (platForm.getCartId() == CartType.MASTER.getCartId())
-                    translationBean.setGroupId(platForm.getGroupId());
-            }
-
-            // 获取其他产品的图片
-            List<CmsBtProductModel> listOtherProducts
-                    = productGroupService.getProductIdsByGroupId(channelId, productModel.getGroups().getPlatforms().get(0).getGroupId(), true);
-            List<Object> otherProducts = new ArrayList<>();
-            for (CmsBtProductModel product : listOtherProducts) {
-                otherProducts.add(product.getFields().getImages1().get(0));
-            }
-            translationBean.setOtherProducts(otherProducts);
+//            // 设置该商品在MT上面的groupId
+//            for (CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
+//                if (platForm.getCartId() == CartType.MASTER.getCartId())
+//                    translationBean.setGroupId(platForm.getGroupId());
+//            }
+//
+//            // 获取其他产品的图片
+//            List<CmsBtProductModel> listOtherProducts
+//                    = productGroupService.getProductIdsByGroupId(channelId, productModel.getGroups().getPlatforms().get(0).getGroupId(), true);
+//            List<Object> otherProducts = new ArrayList<>();
+//            for (CmsBtProductModel product : listOtherProducts) {
+//                otherProducts.add(product.getFields().getImages1().get(0));
+//            }
+//            translationBean.setOtherProducts(otherProducts);
 
             translateTaskBeanList.add(translationBean);
 
@@ -459,12 +415,12 @@ public class TranslationService extends BaseAppService {
             feedAttributes.put("weight", feedInfoModel.getWeight());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())) {
-            feedAttributes.put("short_description", feedInfoModel.getShort_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getShortDescription())) {
+            feedAttributes.put("shortDescription", feedInfoModel.getShortDescription());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())) {
-            feedAttributes.put("long_description", feedInfoModel.getLong_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getLongDescription())) {
+            feedAttributes.put("longDescription", feedInfoModel.getLongDescription());
         }
 
         if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))) {

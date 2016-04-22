@@ -21,8 +21,8 @@ define([
             });
         };
         $scope.ok = function(){
-            console.log("save");
-            console.log($scope.model);
+            //console.log("save");
+            //console.log($scope.model);
             if(!$scope.model.id) {
                 jmPromotionService.insert($scope.model).then(function (res) {
 

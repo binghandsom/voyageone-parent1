@@ -33,6 +33,9 @@ define([
             this.searchInfo = {synFlgList: []};
             this.imageDataList = [];
             this.imageDataPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)}
+            this.status = {
+                open: true
+            }
         }
 
         JmImageManageController.prototype = {
@@ -101,7 +104,7 @@ define([
             loadJmMasterBrand:function() {
                 var self = this;
                 self.cmsMtMasterInfoService.loadJmMasterBrand().then(function (result) {
-                    console.log(result);
+                    //console.log(result);
                     if (result.data.result) {
                         self.alert("同步成功");
                     }

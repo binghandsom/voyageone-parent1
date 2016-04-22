@@ -4,12 +4,15 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -46,6 +49,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private ProductPublishDao productPublishDao;
     @Autowired
     private PromotionDetailService promotionDetailService;
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
@@ -91,15 +96,18 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             workload.setOrder_channel_id(channelId);
             workload.setGroupId(groupId);
 
-            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId);
+            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
-            CmsBtProductModel_Group_Platform mainProductPlatform = null;
+            CmsBtProductGroupModel mainProductPlatform = null;
             SxProductBean mainSxProduct = null;
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
-                CmsBtProductModel_Group_Platform productPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(groupId);
-                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
+                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+                // tom 获取feed info的数据 START
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, cmsBtProductModel.getFields().getCode());
+                // tom 获取feed info的数据 END
+                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, feedInfo);
                 if (filtProductsByPlatform(sxProductBean)) {
                     sxProductBeans.add(sxProductBean);
                     if (productPlatform.getIsMain()) {
@@ -155,7 +163,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
      */
     private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
         CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-        CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
         List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
         int cartId = cmsBtProductModelGroupPlatform.getCartId();
 
@@ -207,7 +215,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
 
                 assert mainCmsProductModel != null;
-                CmsBtProductModel_Group_Platform mainProductPlatform = mainCmsProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
+                CmsBtProductGroupModel mainProductPlatform = mainCmsProductModel.getGroups();
 
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
@@ -227,7 +235,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     instockTime = DateTimeUtil.getNow();
                 }
 
-                CmsConstants.PlatformStatus newPlatformStatus;
+                CmsConstants.PlatformStatus newPlatformStatus = null;
                 if (platformActive == CmsConstants.PlatformActive.Instock) {
                     newPlatformStatus = CmsConstants.PlatformStatus.Instock;
                 } else {

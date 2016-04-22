@@ -36,6 +36,7 @@ import com.voyageone.task2.cms.bean.UpJobParamBean;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -176,7 +177,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
             // 判断新增商品还是更新商品
             // 主product的platform的numIID是否为空，空为新增，非空为更新
             // 判断是新增商品还是更新商品
-            if (!StringUtils.isEmpty(mainProduct.getGroups().getPlatformByGroupId(groupId).getNumIId())) {
+            if (!StringUtils.isEmpty(mainProduct.getGroups().getNumIId())) {
                 // 更新商品
                 // 调用京东商品更新API
             } else {
@@ -260,15 +261,15 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
             workload.setGroupId(groupId);
 
             // 根据GroupId获取商品List
-            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId);
+            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
-            CmsBtProductModel_Group_Platform mainProductPlatform = null;
+            CmsBtProductGroupModel mainProductPlatform = null;
             SxProductBean mainSxProduct = null;
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
-                CmsBtProductModel_Group_Platform productPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(groupId);
-                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform);
+                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, null);
                 // 判断sxProductBean中是否含有要在该平台中上新的sku(有要上新的返回true，没有返回false)
                 if (filtProductsByPlatform(sxProductBean)) {
                     sxProductBeans.add(sxProductBean);
@@ -323,7 +324,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
      */
     private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
         CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-        CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
         List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
         int cartId = cmsBtProductModelGroupPlatform.getCartId();
 
@@ -614,33 +615,24 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
         }
 
         // 设置platform信息
-        List<CmsBtProductModel_Group_Platform> platformList = cmsProduct.getGroups().getPlatforms();
-        for (CmsBtProductModel_Group_Platform platform : platformList) {
+        Map platform = new HashMap();
+        platform.put("numIid", oldCmsDataBean.getNum_iid());
+        platform.put("productId", oldCmsDataBean.getProduct_id());
 
-            if (platform.getCartId() == Integer.parseInt(oldCmsDataBean.getCart_id())) {
-                platform.setNumIId(oldCmsDataBean.getNum_iid());
-                platform.setProductId(oldCmsDataBean.getProduct_id());
-
-                String status = fields.get("item_status").toString();
-                switch (status) {
-                    case "0": // 出售中
-//                        platform.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
-//                        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
-                        break;
-                    default: // 定时上架 或者 仓库中
-//                        platform.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
-//                        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
-                }
-
-                // 更新group
-                Set<Long> lngSet = new HashSet<>();
-                lngSet.add(cmsProduct.getProdId());
-                productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), lngSet, platform);
-                $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
-
+        String status = fields.get("item_status").toString();
+        switch (status) {
+            case "0": // 出售中
+                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Onsale.name());
+                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
                 break;
-            }
+            default: // 定时上架 或者 仓库中
+                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Instock.name());
+                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
         }
+
+        // 更新group
+        productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), cmsProduct.getFields().getCode(), Integer.parseInt(oldCmsDataBean.getCart_id()), platform);
+        $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
 
         // 设置sku信息
         List<CmsBtProductModel_Sku> skus = cmsProduct.getSkus();

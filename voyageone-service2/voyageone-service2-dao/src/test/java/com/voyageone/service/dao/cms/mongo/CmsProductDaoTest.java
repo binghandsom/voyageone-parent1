@@ -5,7 +5,7 @@ import com.mongodb.*;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
@@ -31,23 +31,23 @@ public class CmsProductDaoTest {
         System.out.println(model.toString());
     }
 
-    @Test
-    public void testSelectProductByCode() throws Exception {
-        long start = System.currentTimeMillis();
-        CmsBtProductModel model = cmsBtProductDao.selectProductByCode("010", "51A0HC13E1-00LCNB0");
-        System.out.println("time total:=" + (System.currentTimeMillis() - start));
-        System.out.println(model.toString());
-    }
+//    @Test
+//    public void testSelectProductByCode() throws Exception {
+//        long start = System.currentTimeMillis();
+//        CmsBtProductModel model = cmsBtProductDao.selectProductByCode("010", "51A0HC13E1-00LCNB0");
+//        System.out.println("time total:=" + (System.currentTimeMillis() - start));
+//        System.out.println(model.toString());
+//    }
 
-    @Test
-    public void testSelectProductLikeCatIdPath() throws Exception {
-        long start = System.currentTimeMillis();
-        List<CmsBtProductModel> modelList = cmsBtProductDao.selectLeftLikeCatIdPath("100", "-100-10000-17");
-        System.out.println("time total:=" + (System.currentTimeMillis() - start) + "; size:=" + modelList.size());
-        for (CmsBtProductModel model : modelList) {
-            //System.out.println(model.toString());
-        }
-    }
+//    @Test
+//    public void testSelectProductLikeCatIdPath() throws Exception {
+//        long start = System.currentTimeMillis();
+//        List<CmsBtProductModel> modelList = cmsBtProductDao.selectLeftLikeCatIdPath("100", "-100-10000-17");
+//        System.out.println("time total:=" + (System.currentTimeMillis() - start) + "; size:=" + modelList.size());
+//        for (CmsBtProductModel model : modelList) {
+//            //System.out.println(model.toString());
+//        }
+//    }
 
     @Test
     public void selectAllReturnCursor() {
@@ -243,22 +243,22 @@ public class CmsProductDaoTest {
 
     }
 
-    @Test
-    public void testUpdateWithGroupPlatform() {
-        CmsBtProductModel_Group_Platform platformMode = new CmsBtProductModel_Group_Platform();
-        platformMode.setGroupId((long)45);
-        platformMode.setCartId(21);
-        platformMode.setNumIId("1000702");
-        platformMode.setIsMain(false);
-        platformMode.setDisplayOrder(27);
-        platformMode.setPublishTime("2015-10-12 16:19:00");
-        platformMode.setInstockTime("2015-10-18 16:19:00");
-//        platformMode.setStatus("InStock1");
-//        platformMode.setPublishStatus(" 等待上新1");
-//        platformMode.setComment("1");
-//        platformMode.setInventory(25);
-        cmsBtProductDao.updateWithPlatform("001", "2000702", platformMode);
-    }
+//    @Test
+//    public void testUpdateWithGroupPlatform() {
+//        CmsBtProductModel_Group_Platform platformMode = new CmsBtProductModel_Group_Platform();
+//        platformMode.setGroupId((long)45);
+//        platformMode.setCartId(21);
+//        platformMode.setNumIId("1000702");
+//        platformMode.setIsMain(false);
+//        platformMode.setDisplayOrder(27);
+//        platformMode.setPublishTime("2015-10-12 16:19:00");
+//        platformMode.setInstockTime("2015-10-18 16:19:00");
+////        platformMode.setStatus("InStock1");
+////        platformMode.setPublishStatus(" 等待上新1");
+////        platformMode.setComment("1");
+////        platformMode.setInventory(25);
+//        cmsBtProductDao.updateWithPlatform("001", "2000702", platformMode);
+//    }
 
     @Test
     public void testUpdateWithSku() {

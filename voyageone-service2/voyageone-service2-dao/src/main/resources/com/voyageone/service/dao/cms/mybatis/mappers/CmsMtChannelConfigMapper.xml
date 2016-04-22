@@ -1,27 +1,182 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.sql">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtChannelConfigDao">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
 
-    <!-- 查找制定configKey的数据 -->
-    <select id="cms_mt_channel_config_selectByConfigKey" resultType="com.voyageone.service.model.cms.CmsMtChannelConfigModel" parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
-        SELECT
-        a.seq,
-        a.channel_id as channelId,
-        a.config_key as configKey,
-        a.config_code as configCode,
-        a.config_value1 as configValue1,
-        a.config_value2 as configValue2,
-        a.config_value3 as configValue3,
-        a.comment,
-        a.created,
-        a.creater,
-        a.modified,
-        a.modifier,
-        a.status,
-        a.config_type as configType
-        FROM voyageone_cms2.cms_mt_channel_config a
-        WHERE a.channel_id = #{channelId}
-        AND a.config_key = #{configKey}
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`config_key`,`config_code`,`config_value1`,`config_value2`,`config_value3`,`comment`,`created`,`creater`,`modified`,`modifier`,`status`,`config_type`
+        from cms_mt_channel_config
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="configKey != null">
+                AND `config_key` = #{configKey}
+            </if>
+            <if test="configCode != null">
+                AND `config_code` = #{configCode}
+            </if>
+            <if test="configValue1 != null">
+                AND `config_value1` = #{configValue1}
+            </if>
+            <if test="configValue2 != null">
+                AND `config_value2` = #{configValue2}
+            </if>
+            <if test="configValue3 != null">
+                AND `config_value3` = #{configValue3}
+            </if>
+            <if test="comment != null">
+                AND `comment` = #{comment}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+            <if test="status != null">
+                AND `status` = #{status}
+            </if>
+            <if test="configType != null">
+                AND `config_type` = #{configType}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`config_key`,`config_code`,`config_value1`,`config_value2`,`config_value3`,`comment`,`created`,`creater`,`modified`,`modifier`,`status`,`config_type`
+        from cms_mt_channel_config
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="configKey != null">
+                AND `config_key` = #{configKey}
+            </if>
+
+            <if test="configCode != null">
+                AND `config_code` = #{configCode}
+            </if>
+
+            <if test="configValue1 != null">
+                AND `config_value1` = #{configValue1}
+            </if>
+
+            <if test="configValue2 != null">
+                AND `config_value2` = #{configValue2}
+            </if>
+
+            <if test="configValue3 != null">
+                AND `config_value3` = #{configValue3}
+            </if>
+
+            <if test="comment != null">
+                AND `comment` = #{comment}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+
+            <if test="status != null">
+                AND `status` = #{status}
+            </if>
+
+            <if test="configType != null">
+                AND `config_type` = #{configType}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`config_key`,`config_code`,`config_value1`,`config_value2`,`config_value3`,`comment`,`created`,`creater`,`modified`,`modifier`,`status`,`config_type` from cms_mt_channel_config where id=#{id}
     </select>
 
+    <update id="update">
+        update cms_mt_channel_config
+        set
+
+        `channel_id`=#{channelId}
+        ,`config_key`=#{configKey}
+        ,`config_code`=#{configCode}
+        ,`config_value1`=#{configValue1}
+        ,`config_value2`=#{configValue2}
+        ,`config_value3`=#{configValue3}
+        ,`comment`=#{comment}
+        ,`modifier`=#{modifier}
+        ,`status`=#{status}
+        ,`config_type`=#{configType}
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from  cms_mt_channel_config
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_mt_channel_config
+        (
+              `channel_id`,
+              `config_key`,
+              `config_code`,
+              `config_value1`,
+              `config_value2`,
+              `config_value3`,
+              `comment`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`,
+              `status`,
+              `config_type`
+        )
+        VALUES(
+              #{channelId},
+              #{configKey},
+              #{configCode},
+              #{configValue1},
+              #{configValue2},
+              #{configValue3},
+              #{comment},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier},
+              #{status},
+              #{configType}
+        )
+    </insert>
 </mapper>

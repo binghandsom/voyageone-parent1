@@ -332,33 +332,24 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         }
 
         // 设置platform信息
-        List<CmsBtProductModel_Group_Platform> platformList = cmsProduct.getGroups().getPlatforms();
-        for (CmsBtProductModel_Group_Platform platform : platformList) {
+        Map platform = new HashMap();
+        platform.put("numIid", oldCmsDataBean.getNum_iid());
+        platform.put("productId", oldCmsDataBean.getProduct_id());
 
-            if (platform.getCartId() == Integer.parseInt(oldCmsDataBean.getCart_id())) {
-                platform.setNumIId(oldCmsDataBean.getNum_iid());
-                platform.setProductId(oldCmsDataBean.getProduct_id());
-
-                String status = fields.get("item_status").toString();
-                switch (status) {
-                    case "0": // 出售中
-                        platform.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
-                        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
-                        break;
-                    default: // 定时上架 或者 仓库中
-                        platform.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
-                        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
-                }
-
-                // 更新group
-                Set<Long> lngSet = new HashSet<>();
-                lngSet.add(cmsProduct.getProdId());
-                productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), lngSet, platform);
-                $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
-
+        String status = fields.get("item_status").toString();
+        switch (status) {
+            case "0": // 出售中
+                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Onsale.name());
+                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
                 break;
-            }
+            default: // 定时上架 或者 仓库中
+                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Instock.name());
+                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
         }
+
+        // 更新group
+        productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), cmsProduct.getFields().getCode(), Integer.parseInt(oldCmsDataBean.getCart_id()), platform);
+        $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
 
         // 设置sku信息
         List<CmsBtProductModel_Sku> skus = cmsProduct.getSkus();

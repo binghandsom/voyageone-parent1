@@ -21,7 +21,8 @@
           task.task_comment,
           control.cfg_name,
           control.cfg_val1,
-          control.cfg_val2
+          control.cfg_val2,
+          control.end_time
         from
           tm_task_control control,
           com_mt_task task
@@ -49,7 +50,28 @@
             #{process_type}
           )
     </select>
-    
+    <update id="tm_task_control_update" parameterType="com.voyageone.task2.base.modelbean.TaskControlBean" >
+        update tm_task_control
+        <set >
+            <if test="end_time != null" >
+                end_time = #{end_time},
+            </if>
+            <if test="task_comment != null" >
+                comment = #{task_comment},
+            </if>
+        </set>
+        <where>
+            <if test="cfg_name != null" >
+                cfg_name = #{cfg_name}
+            </if>
+            <if test="cfg_val1 != null" >
+                and cfg_val1 = #{cfg_val1}
+            </if>
+            <if test="cfg_val2 != null" >
+                and cfg_val2 = #{cfg_val2}
+            </if>
+        </where>
+    </update>
     <select id="com_bt_task_history_getLastRunTime" parameterType="HashMap" resultType="String">
     	SELECT
 			DATE_FORMAT(t.process_time,'%Y-%m-%d %H:%i:%s')

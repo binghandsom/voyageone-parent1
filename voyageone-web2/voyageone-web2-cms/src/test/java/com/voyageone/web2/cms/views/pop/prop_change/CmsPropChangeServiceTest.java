@@ -44,7 +44,7 @@ public class CmsPropChangeServiceTest {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
         userInfo.setUserName("test");
-        cmsPropChangeService.setProductFields(params, userInfo);
+        cmsPropChangeService.setProductFields(params, userInfo, 1);
         assert true;
     }
 

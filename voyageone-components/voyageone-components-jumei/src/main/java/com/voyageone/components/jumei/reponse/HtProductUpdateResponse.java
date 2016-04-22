@@ -13,30 +13,31 @@ public class HtProductUpdateResponse extends JMResponse {
     @Override
     public void setBody(String body) throws IOException {
         Map<String, Object> map = JacksonUtil.jsonToMap(body);
-        if(map.containsKey("is_Success")) {
-            this.setIs_Success(Integer.getInteger(map.get("is_Success").toString()));
-        }
-        if(map.containsKey("error"))
-        {
-            this.setError((Map<String, Object>) map.get("error"));
+        if (map.containsKey("is_Success") && (map.get("is_Success").toString().equals("1"))) {
+            this.setIs_Success(true);
+        } else {
+            this.setErrorMsg(body);
         }
         this.body = body;
     }
     String body;
-    int is_Success;
-    public int getIs_Success() {
+    boolean is_Success;
+    public boolean getIs_Success() {
         return is_Success;
     }
-    public void setIs_Success(int is_Success) {
+    public void setIs_Success(boolean is_Success) {
         this.is_Success = is_Success;
     }
-    public Map<String, Object> getError() {
-        return error;
+
+    public String getErrorMsg() {
+        return errorMsg;
     }
-    public void setError(Map<String, Object> error) {
-        this.error = error;
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
-    Map<String, Object> error;
+
+    String errorMsg;
 
 
 }

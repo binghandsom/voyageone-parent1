@@ -23,11 +23,11 @@ $scope.upload = function(){
 }
 
 uploader.onProgressItem = function(fileItem, progress) {
-    console.info('onProgressItem', fileItem, progress);
+    //console.info('onProgressItem', fileItem, progress);
 };
 
 uploader.onSuccessItem = function(fileItem, response, status, headers) {
-    console.info('onSuccessItem', fileItem, response, status, headers);
+    //console.info('onSuccessItem', fileItem, response, status, headers);
     if(response.data){
         if(response.data.fail.length == 0){
             $scope.$close();

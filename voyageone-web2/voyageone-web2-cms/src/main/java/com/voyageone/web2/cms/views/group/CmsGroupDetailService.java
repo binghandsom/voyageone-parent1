@@ -3,9 +3,13 @@ package com.voyageone.web2.cms.views.group;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,20 +27,20 @@ import java.util.Map;
  * @version 2.0.0, 16/1/14
  */
 @Service
-public class CmsGroupDetailService {
+public class CmsGroupDetailService extends BaseAppService {
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
 
     @Autowired
     protected ProductGroupService productGroupService;
-
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private ProductService productService;
 
     private final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
-            "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups:retailPriceEnd;" +
-            "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus";
+            "modifier;fields;skus";
 
     private final static String searchProductIds = "channelId;prodId;fields.code";
 
@@ -58,23 +63,37 @@ public class CmsGroupDetailService {
      * 获取当前页的product列表
      */
     public List<CmsBtProductModel> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        // 先取得group信息，
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchValue(params, cmsSessionBean));
-        queryObject.setProjection(searchItems.split(";"));
-        int pageNum = Integer.valueOf(params.get("pageNum").toString());
-        int pageSize = Integer.valueOf(params.get("pageSize").toString());
-        queryObject.setSkip((pageNum - 1) * pageSize);
-        queryObject.setLimit(pageSize);
+        List<CmsBtProductGroupModel> rstList = cmsBtProductGroupDao.select(queryObject, userInfo.getSelChannelId());
+        if (rstList == null || rstList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductList 没有group数据 " + params.toString());
+            return new ArrayList<>(0);
+        }
+        CmsBtProductGroupModel grpObj = rstList.get(0);
+        List<String> codeList = grpObj.getProductCodes();
+        if (codeList == null || codeList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductList group下没有product数据 " + params.toString());
+            return new ArrayList<>(0);
+        }
+        String[] codeArr = new String[codeList.size()];
+        codeArr = codeList.toArray(codeArr);
 
-        return productService.getList(userInfo.getSelChannelId(), queryObject);
-    }
+        JomgoQuery grpQueryObject = new JomgoQuery();
+        grpQueryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+        grpQueryObject.setProjection(searchItems.split(";"));
 
-    /**
-     * 获取当前页的product列表
-     */
-    public long getProductCnt(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        String queryStr = getSearchValue(params, cmsSessionBean);
-        return productService.getCnt(userInfo.getSelChannelId(), queryStr);
+        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);
+        if (prodList == null || codeList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductList 没有product数据 " + params.toString());
+            return new ArrayList<>(0);
+        }
+        for (CmsBtProductModel prodObj : prodList) {
+            // 从group表合并platforms信息
+            prodObj.setGroups(grpObj);
+        }
+        return prodList;
     }
 
     /**
@@ -82,8 +101,23 @@ public class CmsGroupDetailService {
      */
     public List<CmsBtProductModel> getProductIdList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(getSearchValue(params, cmsSessionBean));
-        queryObject.setProjection(searchProductIds);
+        queryObject.setQuery(String.format("{ \"groupId\":%d}", Long.valueOf((String) params.get("id"))));
+        CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery(queryObject, userInfo.getSelChannelId());
+        if (grpObj == null) {
+            $warn("CmsGroupDetailService.getProductIdList 没有group信息 " + params.toString());
+            return new ArrayList<>(0);
+        }
+
+        List<String> codeList = grpObj.getProductCodes();
+        if (codeList == null || codeList.isEmpty()) {
+            $warn("CmsGroupDetailService.getProductIdList 没有product code list信息 " + params.toString());
+            return new ArrayList<>(0);
+        }
+
+        String[] codeArr = new String[codeList.size()];
+        codeArr = codeList.toArray(codeArr);
+        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+        queryObject.setProjection(searchProductIds.split(";"));
         return productService.getList(userInfo.getSelChannelId(), queryObject);
     }
 
@@ -91,23 +125,14 @@ public class CmsGroupDetailService {
      * 获取group的检索条件
      */
     private String getSearchValue (Map<String, Object> params, CmsSessionBean cmsSessionBean) {
-
         StringBuilder result = new StringBuilder();
 
-        // 设置platform检索条件
-        StringBuilder resultPlatforms = new StringBuilder();
-
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
-        resultPlatforms.append(",");
+        result.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
+        result.append(",");
 
         // 添加platform id
-        resultPlatforms.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
-        resultPlatforms.append(",");
-
-        result.append(MongoUtils.splicingValue("groups.platforms"
-                , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
-                , "$elemMatch"));
+        result.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
 
         return "{" + result.toString() + "}";
     }
@@ -135,9 +160,7 @@ public class CmsGroupDetailService {
         }
 
         Long groupId = Long.parseLong(String.valueOf(groupIdObj));
-
         String channelId = userSession.getSelChannelId();
-
         Long productId = Long.parseLong(String.valueOf(prodIdObj));
 
         int modifiedCount = productGroupService.updateMainProduct(channelId, productId, groupId, userSession.getUserName());
