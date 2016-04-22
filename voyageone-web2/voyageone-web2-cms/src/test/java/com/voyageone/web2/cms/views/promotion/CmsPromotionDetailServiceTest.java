@@ -56,7 +56,7 @@ public class CmsPromotionDetailServiceTest {
         param.put("promotionId", 1);
         param.put("start", 1);
         param.put("length", 10);
-        cmsPromotionDetailService.getPromotionGroup(param);
+        cmsPromotionDetailService.getPromotionGroup(param, 0);
     }
 
     @Test

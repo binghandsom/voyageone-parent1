@@ -78,8 +78,8 @@ public class SxGetProductInfo {
 		// 平台上的productId
 		String platformProductId = "";
 		for (CmsBtProductGroupModel platform : platformList) {
-			if (!StringUtils.isEmpty((String) platform.get("platformPid"))) {
-				platformProductId = (String) platform.get("platformPid");
+			if (!StringUtils.isEmpty(platform.getPlatformPid())) {
+				platformProductId = platform.getPlatformPid();
 				break;
 			}
 		}

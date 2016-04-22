@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -171,18 +172,23 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param param 参数hashmap  属性有PromotionId channelId
      * @return 以model为单位的数据
      */
-    public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
+    public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param, int cartId) {
         List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);
 
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
                 if (map.get("productId") != null && !map.get("productId").toString().equalsIgnoreCase("0")) {
+                    String channelId = (String) param.get("channelId");
+                    long productId = Long.parseLong(map.get("productId").toString());
 
-                    CmsBtProductModel cmsBtProductModel = productService.getProductById(param.get("channelId").toString(),Long.parseLong(map.get("productId").toString()));
+                    JomgoQuery queryObject = new JomgoQuery();
+                    queryObject.setQuery("{'prodId':" + productId + "}");
+                    queryObject.setProjection("{'productCarts':{'$elemMatch':{'cartId':" + cartId + "}}}");
 
-                    if (cmsBtProductModel != null) {
+                    List<CmsBtProductModel> modelList = productService.getList(channelId, queryObject);
+                    if (modelList != null && modelList.size() > 0) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-//                        map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                        map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
                     }
                 }
             });
