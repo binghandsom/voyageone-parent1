@@ -5,6 +5,7 @@ import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -190,28 +191,29 @@ public class CmsFeedCustPropService extends BaseAppService {
     // 取得类目路径数据
     public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
 //        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
-        List<CmsMtFeedCategoryModel> feedBeanList = feedCategoryTreeService.getTopFeedCategories(user.getSelChannelId());
+        List<CmsMtFeedCategoryTreeModel> feedBeanList = feedCategoryTreeService.getFeedAllCategoryTree(user.getSelChannelId());
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
-        for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
+        for(CmsMtFeedCategoryTreeModel feedCategory : feedBeanList) {
             result.add(buildFeedCategoryBean(feedCategory));
         }
         return result;
     }
 
-    public List<CmsMtFeedCategoryModel> getCategoryList (UserSessionBean userInfo) {
+    public List<CmsMtFeedCategoryTreeModel> getCategoryList (UserSessionBean userInfo) {
         //HashMap dataMap = new HashMap(1);
-        List<CmsMtFeedCategoryModel> topTree = feedCategoryTreeService.getTopFeedCategories(userInfo.getSelChannelId());
-        List<CmsMtFeedCategoryModel> rsltList = new ArrayList<>();
-        CmsMtFeedCategoryModel comMdl = new CmsMtFeedCategoryModel();
-        comMdl.setPath("0");
-        comMdl.setName("共通属性");
-        comMdl.setCid("共通属性");
+        List<CmsMtFeedCategoryTreeModel> topTree = feedCategoryTreeService.getFeedAllCategoryList(userInfo.getSelChannelId());
+        List<CmsMtFeedCategoryTreeModel> rsltList = new ArrayList<>();
+        CmsMtFeedCategoryTreeModel comMdl = new CmsMtFeedCategoryTreeModel();
+        comMdl.setCatPath("0");
+        comMdl.setCatName("共通属性");
+        comMdl.setCatId("共通属性");
         rsltList.add(comMdl);
-        getSubCatTree2List(topTree, rsltList);
-        for (CmsMtFeedCategoryModel catItem : rsltList) {
-            catItem.setChild(null);
-            catItem.setAttribute(null);
-        }
+        rsltList.addAll(topTree);
+//        getSubCatTree2List(topTree, rsltList);
+//        for (CmsMtFeedCategoryModel catItem : rsltList) {
+//            catItem.setChild(null);
+//            catItem.setAttribute(null);
+//        }
 
         return rsltList;
     }
@@ -369,21 +371,21 @@ public class CmsFeedCustPropService extends BaseAppService {
     /**
      * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
      */
-    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel) {
+    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryTreeModel feedCategoryModel) {
 
         CmsMtCategoryTreeModel cmsMtCategoryTreeModel = new CmsMtCategoryTreeModel();
 
-        cmsMtCategoryTreeModel.setCatId(feedCategoryModel.getCid());
-        cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getName());
-        cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getPath());
-        cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsChild() == 1 ? 0 : 1);
+        cmsMtCategoryTreeModel.setCatId(feedCategoryModel.getCatId());
+        cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getCatName());
+        cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getCatPath());
+        cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsParent());
 
         // 先取出暂时保存
-        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
+        List<CmsMtFeedCategoryTreeModel> children = feedCategoryModel.getChildren();
         List<CmsMtCategoryTreeModel> newChild = new ArrayList<>();
 
         if (children != null && !children.isEmpty())
-            for (CmsMtFeedCategoryModel child : children) {
+            for (CmsMtFeedCategoryTreeModel child : children) {
                 newChild.add(buildFeedCategoryBean(child));
             }
         cmsMtCategoryTreeModel.setChildren(newChild);

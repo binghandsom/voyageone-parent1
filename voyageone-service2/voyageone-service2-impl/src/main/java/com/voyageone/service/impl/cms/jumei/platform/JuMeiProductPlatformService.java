@@ -40,7 +40,7 @@ public class JuMeiProductPlatformService {
         int shippingSystemId = service.getShippingSystemId(modelCmsBtJmPromotion.getChannelId());
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-                updateJm(modelCmsBtJmPromotion, model, shopBean, shippingSystemId);
+                updateJm(model, shopBean, shippingSystemId);
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
@@ -48,11 +48,11 @@ public class JuMeiProductPlatformService {
         }
         LOG.info(promotionId + " 聚美上新end");
     }
-    public CallResult updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
+    public CallResult updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
         CallResult result=new CallResult();
         try {
             if (model.getState() == 0) {//上新
-                result = serviceJuMeiProductAddPlatform.addProductAndDeal(modelCmsBtJmPromotion, shippingSystemId, model, shopBean);//上新
+                result = serviceJuMeiProductAddPlatform.addProductAndDeal(shippingSystemId, model, shopBean);//上新
                 if (!result.isResult()) {
                     model.setErrorMsg(result.getMsg());
                     model.setState(EnumJuMeiUpdateState.Error.getId());//同步更新失败

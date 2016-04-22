@@ -59,14 +59,14 @@
         </foreach>
     </insert>
 
-    <update id="cms_bt_platform_images_updateBySeq" parameterType="com.voyageone.service.model.cms.CmsBtPlatformImagesModel">
+    <update id="cms_bt_platform_images_updateById" parameterType="com.voyageone.service.model.cms.CmsBtPlatformImagesModel">
         update voyageone_cms2.cms_bt_platform_images
         set platform_img_url = #{platformImgUrl},
         platform_img_id = #{platformImgId},
         upd_flg = #{updFlg},
         modified = now(),
         modifier = #{modifier}
-        where seq = #{seq}
+        where id = #{id}
     </update>
 
 </mapper>

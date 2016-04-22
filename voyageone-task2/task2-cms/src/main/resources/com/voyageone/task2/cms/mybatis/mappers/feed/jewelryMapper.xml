@@ -9,8 +9,8 @@
         <result column="m_brand" property="brand" />
         <result column="m_model" property="model" />
         <result column="p_name" property="name" />
-        <result column="pe_short_description" property="short_description" />
-        <result column="pe_long_description" property="long_description" />
+        <result column="pe_short_description" property="shortDescription" />
+        <result column="pe_long_description" property="LongDescription" />
         <result column="m_size_type" property="sizeType" />
         <result column="m_weight" property="weight" />
         <result column="p_code" property="code" />
