@@ -227,16 +227,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
 
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-                        && platformActive == CmsConstants.PlatformActive.ToOnsale) {
+                        && platformActive == CmsConstants.PlatformActive.Onsale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-                        && platformActive == CmsConstants.PlatformActive.ToInstock) {
+                        && platformActive == CmsConstants.PlatformActive.Instock) {
                     inStockTime = DateTimeUtil.getNow();
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
-                if (platformActive == CmsConstants.PlatformActive.ToInstock) {
+                if (platformActive == CmsConstants.PlatformActive.Instock) {
                     newPlatformStatus = CmsConstants.PlatformStatus.Instock;
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.Onsale;

@@ -340,11 +340,11 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         switch (status) {
             case "0": // 出售中
                 platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Onsale.name());
-                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToOnsale.name());
+                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
                 break;
             default: // 定时上架 或者 仓库中
                 platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Instock.name());
-                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToInstock.name());
+                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
         }
 
         // 更新group

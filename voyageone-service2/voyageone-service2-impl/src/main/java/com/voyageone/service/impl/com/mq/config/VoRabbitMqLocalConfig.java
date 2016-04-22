@@ -1,4 +1,4 @@
-package com.voyageone.common.mq.config;
+package com.voyageone.service.impl.com.mq.config;
 
 /**
  * @author aooer 2016/4/22.
