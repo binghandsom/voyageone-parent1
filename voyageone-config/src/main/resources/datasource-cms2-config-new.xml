@@ -37,7 +37,7 @@
           p:dataSource-ref="dataSourceCms2"
           p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.util , com.voyageone.service.model.cms"
           p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"
-          p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
+          p:mapperLocations="classpath*:com/voyageone/**/*Mapper*.xml"/>
 
     <bean id="updateTemplateCms2" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactoryMasterCms2"/>

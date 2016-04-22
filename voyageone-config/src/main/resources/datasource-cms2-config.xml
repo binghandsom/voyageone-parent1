@@ -85,5 +85,6 @@
 
     <bean id="selectTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactorySlave"/>
+    </bean>
 
 </beans>
