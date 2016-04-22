@@ -5,17 +5,21 @@ import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.ims.ImsBtProductModel;
@@ -37,6 +41,9 @@ import java.util.*;
 public class SxProductService extends BaseService {
 
     @Autowired
+    private TbPictureService tbPictureService;
+
+    @Autowired
     private CmsBtSxWorkloadDao sxWorkloadDao;
 
     @Autowired
@@ -46,10 +53,13 @@ public class SxProductService extends BaseService {
     private CmsBtSizeMapDao cmsBtSizeMapDao;
 
     @Autowired
-    private TbPictureService tbPictureService;
+    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
 
     @Autowired
-    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
+
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     /** upd_flg=0,需要上传(重新上传) */
     private static final String UPD_FLG_ADD ="0";
@@ -262,6 +272,11 @@ public class SxProductService extends BaseService {
                     String destUrl = "";
                     String pictureId = "";
                     Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                    // test用 start
+//                    Picture picture = new Picture();
+//                    picture.setPicturePath("456.jgp");
+//                    picture.setPictureId(Long.valueOf("456"));
+                    // test用 end
                     if (picture != null) {
                         destUrl = picture.getPicturePath();
                         pictureId = String.valueOf(picture.getPictureId());
@@ -283,6 +298,11 @@ public class SxProductService extends BaseService {
                 String destUrl = "";
                 String pictureId = "";
                 Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                // test用 start
+//                Picture picture = new Picture();
+//                picture.setPicturePath("123.jgp");
+//                picture.setPictureId(Long.valueOf("123"));
+                // test用 end
                 if (picture != null) {
                     destUrl = picture.getPicturePath();
                     pictureId = String.valueOf(picture.getPictureId());
@@ -394,5 +414,71 @@ public class SxProductService extends BaseService {
 
     private String decodeImageUrl(String encodedValue) {
         return encodedValue.substring(0, encodedValue.length() - 2);
+    }
+
+    /**
+     * 上新用的商品数据取得
+     *
+     * @param channelId channelId
+     * @param groupId groupId
+     * @return SxData
+     */
+    public SxData getSxProductDataByGroupId(String channelId, Long groupId) {
+        // 获取group信息
+        CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
+        if (grpModel == null) {
+            return null;
+        }
+
+        SxData sxData = new SxData();
+        sxData.setChannelId(channelId);
+        sxData.setGroupId(groupId);
+        sxData.setPlatform(grpModel);
+
+        // 该group下的主商品code
+        String mainProductCode = grpModel.getMainProductCode();
+
+        // 该group对应的cartId
+        Integer cartId = grpModel.getCartId();
+        sxData.setCartId(cartId);
+
+        // 该group下的所有code
+        List<String> productCodeList = grpModel.getProductCodes();
+        String[] codeArr = new String[productCodeList.size()];
+        codeArr = productCodeList.toArray(codeArr);
+
+        // 通过上面取得的code，得到对应的产品信息，以及sku信息
+        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
+        List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
+        for (CmsBtProductModel productModel: productModelList) {
+            if (mainProductCode.equals(productModel.getFields().getCode())) {
+                // 主商品
+                sxData.setMainProduct(productModel);
+            }
+
+            List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+            List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+            productModelSku.forEach(sku -> {
+                if (sku.getSkuCarts().contains(cartId)) {
+                    skus.add(sku);
+                }
+            });
+
+            if (skus.size() > 0) {
+                productModel.setSkus(skus);
+                skuList.addAll(skus);
+            } else {
+                // 该product下没有允许在该平台上上架的sku
+                removeProductList.add(productModel);
+            }
+        }
+
+        removeProductList.forEach(product -> productModelList.remove(product));
+
+        sxData.setProductList(productModelList);
+        sxData.setSkuList(skuList);
+
+        return sxData;
     }
 }
