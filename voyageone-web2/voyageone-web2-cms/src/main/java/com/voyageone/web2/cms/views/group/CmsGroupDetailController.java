@@ -55,12 +55,16 @@ public class CmsGroupDetailController extends CmsController {
 
         int pageNum = Integer.valueOf(params.get("pageNum").toString());
         int pageSize = Integer.valueOf(params.get("pageSize").toString());
-//        queryObject.setSkip((pageNum - 1) * pageSize);
-//        queryObject.setLimit(pageSize);
+        int staIdx = (pageNum - 1) * pageSize;
+        int endIdx = staIdx + pageSize;
+        int listTotal = productList.size();
+        if (endIdx > listTotal) {
+            endIdx = listTotal;
+        }
 
         Map<String, Object> resultBean = new HashMap<>();
-        resultBean.put("productList", productList);
-        resultBean.put("productListTotal", productList.size());
+        resultBean.put("productList", productList.subList(staIdx, endIdx));
+        resultBean.put("productListTotal", listTotal);
 
         List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
         resultBean.put("productIds", productIds);
