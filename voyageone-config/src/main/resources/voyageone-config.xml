@@ -17,8 +17,7 @@
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->
-    <!--<import resource="file:/usr/web/spring-config/datasource-jumei2-config.xml" />-->
-    <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config-new.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
