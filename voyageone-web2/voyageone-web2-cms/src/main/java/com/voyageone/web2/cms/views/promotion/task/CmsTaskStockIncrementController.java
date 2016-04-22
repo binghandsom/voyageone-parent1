@@ -30,12 +30,11 @@ public class CmsTaskStockIncrementController extends CmsController {
     private CmsTaskStockService cmsTaskStockService;
 
     /**
-     *
-     * @param param
+     *searchSubTask
      * @return resultBean
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_SUB_TASK)
-    public AjaxResponse searchSubTask(@RequestBody Map param) {
+    public AjaxResponse searchSubTask(@RequestBody Map<String, Object> param) {
         //调用CmsTaskStockIncrementService
         Map<String, Object> resultBean=cmsTaskStockIncrementService.getIncrementInfoBySubTaskID(param);
         // 返回
@@ -69,7 +68,7 @@ public class CmsTaskStockIncrementController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.GET_PLATFORM_LIST)
-    public AjaxResponse getPlatFormList(@RequestBody Map param) {
+    public AjaxResponse getPlatFormList(@RequestBody Map<String, Object> param) {
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
@@ -123,7 +122,7 @@ public class CmsTaskStockIncrementController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_TASK)
-    public AjaxResponse searchTask(@RequestBody Map param) {
+    public AjaxResponse searchTask(@RequestBody Map<String, Object> param) {
         // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
@@ -188,7 +187,7 @@ public class CmsTaskStockIncrementController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SAVE_TASK)
-    public AjaxResponse saveTask(@RequestBody Map param) {
+    public AjaxResponse saveTask(@RequestBody Map<String, Object> param) {
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         //公司平台销售渠道
@@ -229,7 +228,7 @@ public class CmsTaskStockIncrementController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.DEL_TASK)
-    public AjaxResponse delTask(@RequestBody Map param) {
+    public AjaxResponse delTask(@RequestBody Map<String, Object> param) {
 
         // 删除增量库存隔离任务
         cmsTaskStockIncrementService.delTask((String) param.get("taskId"), (String) param.get("subTaskId"));

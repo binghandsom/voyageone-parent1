@@ -6,8 +6,8 @@
         SELECT
         id,
         size_map_group_id as sizeMapGroupId,
-        originalSize,
-        adjustSize,
+        original_size as originalSize,
+        adjust_size as adjustSize,
         active,
         creater,
         created,
@@ -16,7 +16,7 @@
         FROM voyageone_cms2.cms_bt_size_map
         WHERE size_map_group_id = #{sizeMapGroupId}
         <if test="originalSize != null" >
-            AND originalSize = #{originalSize}
+            AND original_size = #{originalSize}
         </if>
     </select>
 

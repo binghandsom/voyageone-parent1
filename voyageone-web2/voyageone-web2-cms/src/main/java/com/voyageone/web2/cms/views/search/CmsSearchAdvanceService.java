@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -12,6 +13,8 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.TagService;
@@ -59,11 +62,17 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private TagService tagService;
     @Autowired
     private FeedCustomPropService feedCustomPropService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private BaseJomgoTemplate mongoTemplate;
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
-            "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
+            "groups.salePriceStart;groups.salePriceEnd;groups.carts;skus;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
@@ -128,118 +137,34 @@ public class CmsSearchAdvanceService extends BaseAppService {
     /**
      * 返回当前页的group列表
      */
-    public List<CmsBtProductModel> getGroupList(List<CmsBtProductModel> productList, CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, true));
-        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
-        queryObject.setSort(setSortValue(searchValue));
+    public List<String> getGroupCodeList(List<String> codeList, CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        String[] codeArr = new String[codeList.size()];
+        codeArr = codeList.toArray(codeArr);
+        StringBuilder resultPlatforms = new StringBuilder();
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
+        resultPlatforms.append(",");
+        resultPlatforms.append(MongoUtils.splicingValue("productCodes", codeArr, "$in"));
 
-        List<CmsBtProductModel> grpList = productService.getList(userInfo.getSelChannelId(), queryObject);
-
-        if (productList.size() > 0) {
-            // 再找出其主商品
-            int cartId = (int) cmsSessionBean.getPlatformType().get("cartId");
-            List<Long> grpIdList = new ArrayList<>();
-            for (CmsBtProductModel prodObj : productList) {
-                CmsBtProductModel_Group gpList = prodObj.getGroups();
-                //long grpId = 0;
-                if (gpList != null) {
-                    List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
-                    if (pltList != null && pltList.size() > 0) {
-                        for (CmsBtProductModel_Group_Platform pltObj : pltList) {
-                            if (pltObj.getCartId() == cartId) {
-                                grpIdList.add(pltObj.getGroupId());
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (grpIdList.size() > 0) {
-                StringBuilder inStr = new StringBuilder("{'$in':[");
-                for (int i = 0, leng = grpIdList.size(); i < leng; i++) {
-                    if (i == 0) {
-                        inStr.append(grpIdList.get(i));
-                    } else {
-                        inStr.append(",");
-                        inStr.append(grpIdList.get(i));
-                    }
-                }
-                inStr.append("]}");
-
-                JomgoQuery queryObj = new JomgoQuery();
-                queryObj.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
-                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + cartId + ",'groupId':" + inStr.toString() + "}}}");
-
-                List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
-                for (CmsBtProductModel prodModel : grpList2) {
-                    long prodId = prodModel.getProdId();
-                    boolean hasGrp = false;
-                    for (CmsBtProductModel grpObj : grpList) {
-                        if (grpObj.getProdId() == prodId) {
-                            // 已经存在该主商品，则不追加
-                            hasGrp = true;
-                            break;
-                        }
-                    }
-                    if (!hasGrp) {
-                        grpList.add(prodModel);
-                    }
-                }
-            }
+        // 在group表中过滤platforms相关信息
+        JomgoQuery qrpQuy = new JomgoQuery();
+        qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
+        qrpQuy.setProjection("{'_id':0,'mainProductCode':1}");
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, userInfo.getSelChannelId());
+        if (grpList == null || grpList.isEmpty()) {
+            $warn("CmsSearchAdvanceService.getProductCodeList grpList");
+            return new ArrayList<String>(0);
         }
-        return grpList;
-    }
 
-    /**
-     * 取得当前主商品所在组的所有商品的图片
-     */
-    public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
-        JomgoQuery queryObj = new JomgoQuery();
-        queryObj.setProjection("{'fields.images1':1,'_id':0}");
-
-        List<List<Map<String, String>>> rslt = new ArrayList<>();
-        for (CmsBtProductModel groupObj : groupsList) {
-            long grpId = 0;
-            List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
-            if (ptmList != null) {
-                for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == cartId) {
-                        grpId = ptmObj.getGroupId();
-                        break;
-                    }
-                }
-            }
-            if (grpId == 0) {
-                // 当前主商品所在组没有其他商品
-                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
-                rslt.add(new ArrayList<>(0));
-                continue;
-            }
-
-            queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
-            List<CmsBtProductModel> imgList = productService.getList(channelId, queryObj);
-            if (imgList == null || imgList.isEmpty()) {
-                $info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
-                rslt.add(new ArrayList<>(0));
-                continue;
-            }
-
-            List<Map<String, String>> images1Arr = new ArrayList<>();
-            for (CmsBtProductModel imgObj : imgList) {
-                CmsBtProductModel_Field fields = imgObj.getFields();
-                if (fields != null) {
-                    List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
-                    if (imgaes != null && imgaes.size() > 0) {
-                        Map<String, String> map = new HashMap<>(1);
-                        map.put("value", imgaes.get(0).getName());
-                        images1Arr.add(map);
-                    }
-                }
-            }
-            rslt.add(images1Arr);
+        // 将上面查询的结果放到一个临时map中,以过滤重复code
+        Map<String, String> codeList2 = new HashMap<String, String>();
+        for (Map grpObj : grpList) {
+            String pCd = (String) grpObj.get("mainProductCode");
+            codeList2.put(pCd, pCd);
         }
-        return rslt;
+
+        List<String> grpCodeList = new ArrayList<String>(codeList2.size());
+        codeList2.keySet().forEach(pCd -> grpCodeList.add(pCd));
+        return grpCodeList;
     }
 
     /**
@@ -249,39 +174,54 @@ public class CmsSearchAdvanceService extends BaseAppService {
         List[] rslt;
         List<List<Map<String, String>>> imgList = new ArrayList<>();
         List<Integer> chgFlgList = new ArrayList<>();
-        List<Integer> mainFlgList = new ArrayList<>();
         List<String> orgChaNameList = new ArrayList<>();
 
         JomgoQuery queryObj = new JomgoQuery();
+        queryObj.setProjection("{'fields.images1':1,'_id':0}");
+
         if (hasImgFlg) {
-            queryObj.setProjection("{'skus.priceChgFlg':1,'fields.images1':1,'_id':0}");
             rslt = new List[2];
             rslt[0] = chgFlgList;
             rslt[1] = imgList;
         } else {
-            queryObj.setProjection("{'fields.images1':1,'_id':0}");
-            rslt = new List[3];
+            rslt = new List[2];
             rslt[0] = chgFlgList;
-            rslt[1] = mainFlgList;
-            rslt[2] = orgChaNameList;
+            rslt[1] = orgChaNameList;
         }
 
         for (CmsBtProductModel groupObj : groupsList) {
-            long grpId = 0;
-            List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
-            if (ptmList != null) {
-                for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == cartId) {
-                        grpId = ptmObj.getGroupId();
-                        if (ptmObj.getIsMain()) {
-                            mainFlgList.add(1);
-                        } else {
-                            mainFlgList.add(0);
-                        }
-                        break;
-                    }
-                }
+            CmsBtProductModel_Field fields = groupObj.getFields();
+            String prodCode = null;
+            if (fields != null) {
+                prodCode = fields.getCode();
             }
+            // 从group表合并platforms信息
+            StringBuilder resultPlatforms = new StringBuilder();
+            resultPlatforms.append(MongoUtils.splicingValue("cartId", cartId));
+            resultPlatforms.append(",");
+            resultPlatforms.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
+
+            // 在group表中过滤platforms相关信息
+            JomgoQuery qrpQuy = new JomgoQuery();
+            qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, channelId);
+            if (grpList == null || grpList.isEmpty()) {
+                $warn("CmsSearchAdvanceService.getGroupExtraInfo grpList");
+            }
+            Map groupModelMap = grpList.get(0);
+            // 设置其group信息，用于画面显示
+            long grpId = (Long) groupModelMap.get("groupId");
+            CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
+            platformModel.setCartId(cartId);
+            platformModel.setGroupId(grpId);
+            platformModel.setNumIId((String) groupModelMap.get("numIId"));
+            platformModel.setInstockTime((String) groupModelMap.get("instockTime"));
+            platformModel.setOnSaleTime((String) groupModelMap.get("onSaleTime"));
+            platformModel.setPublishTime((String) groupModelMap.get("publishTime"));
+            platformModel.setQty((Integer) groupModelMap.get("qty"));
+            platformModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.valueOf((String) groupModelMap.get("platformStatus")));
+            platformModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.valueOf((String) groupModelMap.get("platformActive")));
+            groupObj.setGroups(platformModel);
 
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
             if (channel == null) {
@@ -291,73 +231,44 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
 
             boolean hasChg = false;
-            List<CmsBtProductModel> infoList = null;
-            if (grpId == 0) {
-                // 当前主商品所在组没有其他商品
-                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
-            } else {
-                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
-                infoList = productService.getList(channelId, queryObj);
-                if (infoList == null || infoList.isEmpty()) {
-                    $info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
-                }
-            }
-            if (grpId == 0 || infoList == null || infoList.isEmpty()) {
-                List<CmsBtProductModel_Sku> skus = groupObj.getSkus();
-                if (skus != null) {
-                    for (CmsBtProductModel_Sku skuObj : skus) {
-                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty(skuObj.getAttribute("priceChgFlg"));
-                        if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
-                            hasChg = true;
-                            break;
-                        } else {
-                            hasChg = false;
-                        }
+            List<CmsBtProductModel_Sku> skus = groupObj.getSkus();
+            if (skus != null) {
+                for (CmsBtProductModel_Sku skuObj : skus) {
+                    String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
+                    if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
+                        hasChg = true;
+                        break;
+                    } else {
+                        hasChg = false;
                     }
                 }
-
-                if (hasChg) {
-                    chgFlgList.add(1);
-                } else {
-                    chgFlgList.add(0);
-                }
-                imgList.add(new ArrayList<>(0));
-                continue;
+            }
+            if (hasChg) {
+                chgFlgList.add(1);
+            } else {
+                chgFlgList.add(0);
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<>();
-            for (CmsBtProductModel itemObj : infoList) {
-                List<CmsBtProductModel_Sku> skus = itemObj.getSkus();
-                if (skus != null) {
-                    for (CmsBtProductModel_Sku skuObj : skus) {
-                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
-                        if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
-                            hasChg = true;
-                            break;
-                        } else {
-                            hasChg = false;
-                        }
-                    }
-                }
-                if (hasImgFlg) {
-                    CmsBtProductModel_Field fields = itemObj.getFields();
-                    if (fields != null) {
-                        List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
-                        if (imgaes != null && imgaes.size() > 0) {
+            if (hasImgFlg) {
+                // 获取子商品的图片
+                List pCdList = (List) groupModelMap.get("productCodes");
+                if (pCdList != null && pCdList.size() > 1) {
+                    for (int i = 1, leng = pCdList.size(); i < leng; i ++) {
+                        String pCd = (String) pCdList.get(i);
+                        // 根据商品code找到其主图片
+                        queryObj.setQuery("{" + MongoUtils.splicingValue("fields.code", pCd) + "}");
+                        CmsBtProductModel prod = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getFields().getImages1();
+                        if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);
-                            map.put("value", imgaes.get(0).getName());
+                            map.put("value", fldImgList.get(0).getName());
                             images1Arr.add(map);
                         }
                     }
                 }
             }
             imgList.add(images1Arr);
-
-            if (hasChg) {
-                chgFlgList.add(1);
-            } else {
-                chgFlgList.add(0);
-            }
         }
         return rslt;
     }
@@ -365,21 +276,106 @@ public class CmsSearchAdvanceService extends BaseAppService {
     /**
      * 获取当前页的product列表
      */
-    public List<CmsBtProductModel> getProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<String> getProductCodeList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, false));
-        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
-        queryObject.setSort(setSortValue(searchValue));
-        queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
-        queryObject.setLimit(searchValue.getProductPageSize());
-        return productService.getList(userInfo.getSelChannelId(), queryObject);
+        queryObject.setProjection("{'fields.code':1,'_id':0}");
+        List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObject, userInfo.getSelChannelId());
+        if (prodList == null || prodList.isEmpty()) {
+            $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
+            return new ArrayList<String>(0);
+        }
+
+        // 取得符合条件的产品code列表
+        List<String> codeList = new ArrayList<String>(prodList.size());
+        for (CmsBtProductModel prodObj : prodList) {
+             codeList.add(prodObj.getFields().getCode());
+        }
+
+        // 如果检索了groups.platforms相关信息，则必须对上面的结果prodList进行过滤
+        // 设置platform检索条件
+        StringBuilder resultPlatforms = new StringBuilder();
+
+        // 添加platform cart
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
+        resultPlatforms.append(",");
+
+        // 获取platform status
+        if (searchValue.getPlatformStatus() != null
+                && searchValue.getPlatformStatus().length > 0) {
+            // 获取platform status
+            resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
+            resultPlatforms.append(",");
+        }
+
+        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
+            resultPlatforms.append("\"publishTime\":{" );
+            // 获取publishTime start
+            if (searchValue.getPublishTimeStart() != null) {
+                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+            }
+            // 获取publishTime End
+            if (searchValue.getPublishTimeTo() != null) {
+                if (searchValue.getPublishTimeStart() != null) {
+                    resultPlatforms.append(",");
+                }
+                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+            }
+            resultPlatforms.append("},");
+        }
+
+        String[] codeArr = new String[codeList.size()];
+        codeArr = codeList.toArray(codeArr);
+        resultPlatforms.append(MongoUtils.splicingValue("productCodes", codeArr, "$in"));
+
+        // 在group表中过滤platforms相关信息
+        JomgoQuery qrpQuy = new JomgoQuery();
+        qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
+        qrpQuy.setProjection("{'_id':0,'productCodes.$':1}");
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, userInfo.getSelChannelId());
+        if (grpList == null || grpList.isEmpty()) {
+            $warn("CmsSearchAdvanceService.getProductCodeList grpList");
+            return new ArrayList<String>(0);
+        }
+
+        // 将上面查询的结果放到一个临时map中
+        Map<String, String> codeList2 = new HashMap<String, String>();
+        for (Map grpObj : grpList) {
+            List<String> pCdList = (List) grpObj.get("productCodes");
+            if (pCdList == null || pCdList.isEmpty()) {
+                continue;
+            } else {
+                pCdList.forEach(pCd ->codeList2.put(pCd, pCd));
+            }
+        }
+        // 除去不符合条件的code
+        for (int i = codeList.size() - 1; i >= 0; i --) {
+            String pCode = codeList.get(i);
+            if (!codeList2.containsKey(pCode)) {
+                codeList.remove(i);
+            }
+        }
+        return codeList;
     }
 
     /**
-     * 获取当前页的product列表Cnt
+     * 获取当前页的product列表
      */
-    public long getProductCnt(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        return productService.getCnt(userInfo.getSelChannelId(), getSearchQuery(searchValue, cmsSessionBean, false));
+    public List<CmsBtProductModel> getProductInfoList(List<String> prodCodeList, CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        // 最后再获取本页实际产品信息
+        JomgoQuery queryObject = new JomgoQuery();
+        String[] codeArr = new String[prodCodeList.size()];
+        codeArr = prodCodeList.toArray(codeArr);
+        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
+        queryObject.setSort(setSortValue(searchValue));
+
+        List<CmsBtProductModel> prodInfoList = productService.getList(userInfo.getSelChannelId(), queryObject);
+        if (prodInfoList == null || prodInfoList.isEmpty()) {
+            $warn("CmsSearchAdvanceService.getProductInfoList prodInfoList");
+        }
+
+        return prodInfoList;
     }
 
     /**
@@ -457,51 +453,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
-
         StringBuilder result = new StringBuilder();
-
-        // 设置platform检索条件
-        StringBuilder resultPlatforms = new StringBuilder();
-
-        // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
-        resultPlatforms.append(",");
-
-        // 获取platform status
-        if (searchValue.getPlatformStatus() != null
-                && searchValue.getPlatformStatus().length > 0) {
-            // 获取platform status
-            resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
-            resultPlatforms.append(",");
-        }
-
-        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append("\"publishTime\":{" );
-            // 获取publishTime start
-            if (searchValue.getPublishTimeStart() != null) {
-                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
-            }
-            // 获取publishTime End
-            if (searchValue.getPublishTimeTo() != null) {
-                if (searchValue.getPublishTimeStart() != null) {
-                    resultPlatforms.append(",");
-                }
-                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
-            }
-            resultPlatforms.append("},");
-        }
-
-        if (isMain) {
-            // 设置查询主商品
-            resultPlatforms.append(MongoUtils.splicingValue("isMain", 1));
-            resultPlatforms.append(",");
-        }
-
-        result.append(MongoUtils.splicingValue("groups.platforms"
-                , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
-                , "$elemMatch"));
-        result.append(",");
-
         // 获取其他检索条件
         result.append(getSearchValueForMongo(searchValue));
 
@@ -727,7 +679,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             FileUtils.cell(row, 1, unlock).setCellValue(item.getProdId());
 
-            FileUtils.cell(row, 2, unlock).setCellValue(item.getGroups().getPlatformByCartId(Integer.valueOf(cartId)).getNumIId());
+            FileUtils.cell(row, 2, unlock).setCellValue(item.getGroups().getNumIId());
 
             FileUtils.cell(row, 3, unlock).setCellValue(item.getFields().getCode());
 

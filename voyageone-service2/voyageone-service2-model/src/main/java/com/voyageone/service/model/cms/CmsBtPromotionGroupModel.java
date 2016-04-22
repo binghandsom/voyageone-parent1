@@ -3,7 +3,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,14 +96,14 @@ public class CmsBtPromotionGroupModel extends BaseModel {
         this.setCreater(operator);
 
         this.setModifier(operator);
-        CmsBtProductModel_Group_Platform platform = productInfo.getGroups().getPlatformByCartId(cartId);
-        if(platform !=  null){
-            // numIid
-            this.setNumIid(platform.getNumIId() == null ? "": platform.getNumIId());
-            // modelId
-            this.setModelId(platform.getGroupId());
-
-        }
+        // TODO-- group信息另外设置
+//        CmsBtProductModel_Group_Platform platform = productInfo.getGroups().getPlatformByCartId(cartId);
+//        if(platform !=  null){
+//            // numIid
+//            this.setNumIid(platform.getNumIId() == null ? "": platform.getNumIId());
+//            // modelId
+//            this.setModelId(platform.getGroupId());
+//        }
 
     }
     public int getSeq() {

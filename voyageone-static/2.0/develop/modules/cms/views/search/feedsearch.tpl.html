@@ -146,55 +146,59 @@
     <div class="box">
         <div class="box-body">
             <div class="table-responsive">
-                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2000px;margin-bottom:0px" ng-controller="popupCtrl">
+                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2000px;table-layout: fixed;margin-bottom:0px" ng-controller="popupCtrl">
                     <thead>
                     <tr>
-                        <th class="text-center mfb-xt3">No.</th>
-                        <th>图片</th>
-                        <th>Category</th>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Model</th>
-                        <th>Short Description</th>
-                        <th style="width:200px">Long Description</th>
-                        <th>Color</th>
-                        <th>Origin</th>
-                        <th>Product Type</th>
-                        <th>Size Type</th>
-                        <th>Brand</th>
-                        <th>MSRP(USD)</th>
-                        <th>Retail Price(USD)</th>
-                        <th>Cost Price(USD)</th>
-                        <th>MSRP(RMB)</th>
-                        <th>Retail Price(RMB)</th>
-                        <th>SKU 数</th>
+                        <th class="text-center mfb-xt" style="white-space: nowrap">No.</th>
+                        <th class="text-center mfb-x" style="white-space: nowrap">图片</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Category</th>
+                        <th class="text-center mfb-xxt" style="white-space: nowrap">Code</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Name</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Model</th>
+                        <th class="text-left mfb-xxx" style="white-space: nowrap">Short Description</th>
+                        <th class="text-left mfb-xxx" style="white-space: nowrap">Long Description</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Color</th>
+                        <th class="text-left mfb-x" style="white-space: nowrap">Origin</th>
+                        <th class="text-left mfb-x" style="white-space: nowrap">Product Type</th>
+                        <th class="text-left mfb-x" style="white-space: nowrap">Size Type</th>
+                        <th class="text-left mfb-x" style="white-space: nowrap">Brand</th>
+                        <th class="text-right mfb-x" style="white-space: nowrap">MSRP(USD)</th>
+                        <th class="text-right mfb-xxx" style="white-space: nowrap">Retail Price(USD)</th>
+                        <th class="text-right mfb-xxx" style="white-space: nowrap">Cost Price(USD)</th>
+                        <th class="text-right mfb-x" style="white-space: nowrap">MSRP(RMB)</th>
+                        <th class="text-right mfb-xxt" style="white-space: nowrap">Retail Price(RMB)</th>
+                        <th class="text-center mfb-x" style="white-space: nowrap">SKU 数</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
-                    <tr style="height: 200px;" ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
-                        <td style="height: 200px;overflow: hidden;" class="text-center mfb-xt3">{{$index + 1}}</td>
-                        <td style="height: 200px;overflow: hidden;"  ng-controller="popupCtrl" >
-                            <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
+                    <tr  ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
+                        <td style="overflow: hidden;" class="text-center mfb-xt3">{{$index + 1}}</td>
+                        <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
+                            <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
                         </td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.category}}</td>
-                        <td style="height: 200px;overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
-                        <td style="height: 200px;overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.name}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.model}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.short_description}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.long_description}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.color}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.origin}}</td>
-                        <td style="height: 200px;overflow: hidden;"></td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.sizeType}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.brand}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.skus[0].price_client_msrp}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.skus[0].price_client_retail}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.skus[0].price_net}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.skus[0].price_msrp}}</td>
-                        <td style="height: 200px;overflow: hidden;">{{feedInfo.skus[0].price_current}}</td>
-                        <td style="height: 200px;overflow: hidden;">
+                        <td style="overflow: hidden;" class="text-left mfb-xxt">{{feedInfo.category}}</td>
+                        <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
+                        <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
+                        <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.name}}</td>
+                        <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.model}}</td>
+                        <td class="text-left mfb-xxt" style="overflow: hidden;">
+                            <popover-text content="feedInfo.short_description" direct="left"></popover-text>
+                        </td>
+                        <td class="text-left mfb-xxt" style="overflow: hidden;">
+                            <popover-text content="feedInfo.long_description" direct="left"></popover-text>
+                        </td>
+                        <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.color}}</td>
+                        <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.origin}}</td>
+                        <td class="text-left mfb-x" style="overflow: hidden;"></td>
+                        <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.sizeType}}</td>
+                        <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.brand}}</td>
+                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].price_client_msrp}}</td>
+                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].price_client_retail}}</td>
+                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].price_net}}</td>
+                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].price_msrp}}</td>
+                        <td class="text-right mfb-xxt" style="overflow: hidden;">{{feedInfo.skus[0].price_current}}</td>
+                        <td class="text-center mfb-x" style="overflow: hidden;">
                             <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
                                 <div class="table_main">
                                     <ul>

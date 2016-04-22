@@ -7,22 +7,25 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * @version 2.0.0
  */
 public class CmsBtPriceLogModel extends BaseModel {
-    private int seq;
+    private Long id;
     private String channelId;
-    private int productId;
+    private Long productId;
     private String code;
     private String sku;
     private String msrpPrice;
     private String retailPrice;
     private String salePrice;
+    private String clientMsrpPrice;
+    private String clientRetailPrice;
+    private String clientNetPrice;
     private String comment;
 
-    public int getSeq() {
-        return seq;
+    public long getId() {
+        return id;
     }
 
-    public void setSeq(int seq) {
-        this.seq = seq;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getChannelId() {
@@ -33,11 +36,11 @@ public class CmsBtPriceLogModel extends BaseModel {
         this.channelId = channelId;
     }
 
-    public int getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
@@ -79,6 +82,30 @@ public class CmsBtPriceLogModel extends BaseModel {
 
     public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public String getClientMsrpPrice() {
+        return clientMsrpPrice;
+    }
+
+    public void serClientMsrpPrice(String clientMsrpPrice) {
+        this.clientMsrpPrice = clientMsrpPrice;
+    }
+
+    public String getClientRetailPrice() {
+        return clientRetailPrice;
+    }
+
+    public void setClientRetailPrice(String clientRetailPrice) {
+        this.clientRetailPrice = clientRetailPrice;
+    }
+
+    public String getClientNetPrice() {
+        return clientNetPrice;
+    }
+
+    public void setClientNetPrice(String clientNetPrice) {
+        this.clientNetPrice = clientNetPrice;
     }
 
     public String getComment() {

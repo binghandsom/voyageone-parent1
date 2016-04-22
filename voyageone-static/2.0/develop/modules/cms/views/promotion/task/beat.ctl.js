@@ -85,20 +85,25 @@ define([
                 ttt.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
             },
 
-            getData: function (flag) {
-                var ttt = this;
-                var po = ttt.pageOption;
-                if (flag) po.curr = 1;
+            getData: function () {
+                var self = this;
+                var po = self.pageOption;
+
+                if (self.lastFlag !== self.flag) {
+                    self.lastFlag = self.flag;
+                    po.curr = 1;
+                }
+
                 var offset = (po.curr - 1) * po.size;
-                ttt.taskBeatService.page({
-                    task_id: ttt.task_id,
-                    flag: flag,
+                self.taskBeatService.page({
+                    task_id: self.task_id,
+                    flag: self.flag,
                     offset: offset,
-                    size: ttt.pageOption.size
+                    size: self.pageOption.size
                 }).then(function (res) {
-                    ttt.data = res.data.list;
-                    ttt.pageOption.total = res.data.total;
-                    ttt.summary = res.data.summary;
+                    self.data = res.data.list;
+                    self.pageOption.total = res.data.total;
+                    self.summary = res.data.summary;
                 })
             },
 

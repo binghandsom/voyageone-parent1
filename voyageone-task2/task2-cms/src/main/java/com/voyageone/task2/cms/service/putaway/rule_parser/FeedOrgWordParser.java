@@ -4,6 +4,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.FeedOrgWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +21,11 @@ public class FeedOrgWordParser {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private CmsBtProductModel cmsBtProductModel;
+    private CmsBtFeedInfoModel cmsBtFeedInfoModel;
 
-    public FeedOrgWordParser(CmsBtProductModel cmsBtProductModel) {
+    public FeedOrgWordParser(CmsBtProductModel cmsBtProductModel, CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         this.cmsBtProductModel = cmsBtProductModel;
+        this.cmsBtFeedInfoModel = cmsBtFeedInfoModel;
     }
 
     //目前只支持解析model级别的属性
@@ -64,8 +67,21 @@ public class FeedOrgWordParser {
             Map<String, String> extra = feedOrgWord.getExtra();
             Object plainPropValueObj;
 
-            plainPropValueObj = cmsBtProductModel.getFeed().getOrgAtts().getAttribute(propName);
+            // tom 获取feed info的数据 START
+//            plainPropValueObj = cmsBtProductModel.getFeed().getOrgAtts().getAttribute(propName);
 
+            // 使用feed info表的数据
+            if (cmsBtFeedInfoModel.getAttribute().containsKey(propName)) {
+                // 先看看attribute里有没有
+                plainPropValueObj = cmsBtFeedInfoModel.getAttribute().get(propName).get(0);
+            } else if (cmsBtFeedInfoModel.getFullAttribute().containsKey(propName)) {
+                // 再看看外面有没有
+                plainPropValueObj = cmsBtFeedInfoModel.getFullAttribute().get(propName);
+            } else {
+                // 找不到这个属性, 那就设为空的吧
+                plainPropValueObj = null;
+            }
+            // tom 获取feed info的数据 END
             if (plainPropValueObj == null) {
                 return null;
             }

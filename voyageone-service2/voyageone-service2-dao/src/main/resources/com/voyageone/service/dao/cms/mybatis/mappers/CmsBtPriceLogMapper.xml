@@ -122,7 +122,7 @@
         </if>
     </select>
 
-    <insert id="insert_cms_bt_cms_bt_price_log" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
+    <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_price_log (
             channel_id,
             product_id,
@@ -131,20 +131,26 @@
             msrp_price,
             retail_price,
             sale_price,
+            client_msrp_price,
+            client_retail_price,
+            client_net_price,
             comment,
             created,
             creater,
             modified,
             modifier
         ) value (
-            #{item.channelId},
-            #{item.productId},
-            #{item.code},
-            #{item.sku},
-            #{item.msrpPrice},
-            #{item.retailPrice},
-            #{item.salePrice},
-            #{item.comment},
+            #{channelId},
+            #{productId},
+            #{code},
+            #{sku},
+            #{msrpPrice},
+            #{retailPrice},
+            #{salePrice},
+            #{clientMsrpPrice},
+            #{clientRetailPrice},
+            #{clientNetPrice},
+            #{comment},
             now(),
             #{item.creater},
             now(),
@@ -161,6 +167,9 @@
             msrp_price,
             retail_price,
             sale_price,
+            client_msrp_price,
+            client_retail_price,
+            client_net_price,
             comment,
             created,
             creater,
@@ -176,6 +185,9 @@
                 #{item.msrpPrice},
                 #{item.retailPrice},
                 #{item.salePrice},
+                #{item.clientMsrpPrice},
+                #{item.clientRetailPrice},
+                #{item.clientNetPrice},
                 #{item.comment},
                 now(),
                 #{item.creater},

@@ -2,7 +2,6 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

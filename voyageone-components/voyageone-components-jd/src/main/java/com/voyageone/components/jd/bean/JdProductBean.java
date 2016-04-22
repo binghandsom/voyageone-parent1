@@ -11,6 +11,7 @@ package com.voyageone.components.jd.bean;
  * @since 2.0.0
  */
 public class JdProductBean {
+    private String wareId;              // 京东商品ID
     private String skuUpcCodes;         //
     private String tradeNo;             // 流水号
     private String wareLocation;        // 产地
@@ -57,6 +58,14 @@ public class JdProductBean {
     private String hasCheckCode;        // 是否输入验证码 true:是;false:否
     private String adContent;           // 广告词内容最大支持45个字符
     private String listTime;            // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。
+
+    public String getWareId() {
+        return this.wareId;
+    }
+
+    public void setWareId(String wareId) {
+        this.wareId = wareId;
+    }
 
     public String getSkuUpcCodes() {
         return this.skuUpcCodes;

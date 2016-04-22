@@ -28,7 +28,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -192,18 +191,18 @@ public class CmsProductDetailService extends BaseAppService {
         infoMap.put("isminimall", isMiniMall ? 1 : 0);
 
         boolean isMain = false;
-        CmsBtProductModel_Group gpList = productValueModel.getGroups();
-        if (gpList != null) {
-            List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
-            if (pltList != null && pltList.size() > 0) {
-                for (CmsBtProductModel_Group_Platform pltObj : pltList) {
-                    if (pltObj.getCartId() == cartId && pltObj.getIsMain()) {
-                        isMain = true;
-                        break;
-                    }
-                }
-            }
-        }
+//        CmsBtProductModel_Group gpList = productValueModel.getGroups();
+//        if (gpList != null) {
+//            List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
+//            if (pltList != null && pltList.size() > 0) {
+//                for (CmsBtProductModel_Group_Platform pltObj : pltList) {
+//                    if (pltObj.getCartId() == cartId && pltObj.getIsMain()) {
+//                        isMain = true;
+//                        break;
+//                    }
+//                }
+//            }
+//        }
         infoMap.put("isMain", isMain ? 1 : 0);
 
         return infoMap;
@@ -344,7 +343,7 @@ public class CmsProductDetailService extends BaseAppService {
             cmsBtPromotionCodeModel.setProductCode(oldProduct.getFields().getCode());
             cmsBtPromotionCodeModel.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
             cmsBtPromotionCodeModel.setPromotionId(0);
-            cmsBtPromotionCodeModel.setNumIid(oldProduct.getGroups().getPlatformByCartId(23).getNumIId());
+//            cmsBtPromotionCodeModel.setNumIid(oldProduct.getGroups().getPlatformByCartId(23).getNumIId());
             cmsBtPromotionCodeModel.setChannelId(channelId);
             cmsBtPromotionCodeModel.setCartId(23);
             cmsBtPromotionCodeModel.setModifier(userName);
@@ -356,9 +355,9 @@ public class CmsProductDetailService extends BaseAppService {
             Map<String, Object> updObj = new HashMap<>();
             updObj.put("fields.translateStatus", "0");
             updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-            newProduct.getGroups().getPlatforms().forEach(cmsBtProductModel_group_platform -> {
-                productService.updateTranslation(channelId, cmsBtProductModel_group_platform.getGroupId(), updObj, userName);
-            });
+//            newProduct.getGroups().getPlatforms().forEach(cmsBtProductModel_group_platform -> {
+//                productService.updateTranslation(channelId, cmsBtProductModel_group_platform.getGroupId(), updObj, userName);
+//            });
         }
 
         return newModified;
@@ -414,21 +413,21 @@ public class CmsProductDetailService extends BaseAppService {
             if (!models.contains(model))
                 models.add(model);
 
-            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
-                // 获取已经上新的产品数据
-                Integer cartId = Integer.valueOf(platform.getCartId().toString());
-                String numIid = platform.getNumIId();
-                if (!StringUtils.isEmpty(numIid)) {
-                    String cartName = CartType.getCartNameById(cartId, language);
-                    if (numIids.get(cartName) != null) {
-                        numIids.get(cartName).add(numIid);
-                    } else {
-                        List<String> tempList = new ArrayList<>();
-                        tempList.add(numIid);
-                        numIids.put(cartName, tempList);
-                    }
-                }
-            }
+//            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+//                // 获取已经上新的产品数据
+//                Integer cartId = Integer.valueOf(platform.getCartId().toString());
+//                String numIid = platform.getNumIId();
+//                if (!StringUtils.isEmpty(numIid)) {
+//                    String cartName = CartType.getCartNameById(cartId, language);
+//                    if (numIids.get(cartName) != null) {
+//                        numIids.get(cartName).add(numIid);
+//                    } else {
+//                        List<String> tempList = new ArrayList<>();
+//                        tempList.add(numIid);
+//                        numIids.put(cartName, tempList);
+//                    }
+//                }
+//            }
         }
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -499,12 +498,12 @@ public class CmsProductDetailService extends BaseAppService {
             feedAttributes.put("weight", feedInfoModel.getWeight());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())) {
-            feedAttributes.put("short_description", feedInfoModel.getShort_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getShortDescription())) {
+            feedAttributes.put("shortDescription", feedInfoModel.getShortDescription());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())) {
-            feedAttributes.put("long_description", feedInfoModel.getLong_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getLongDescription())) {
+            feedAttributes.put("longDescription", feedInfoModel.getLongDescription());
         }
 
         if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))) {

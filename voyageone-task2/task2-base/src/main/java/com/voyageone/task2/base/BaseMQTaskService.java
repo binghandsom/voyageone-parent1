@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseMQTaskService extends BaseTaskService{
+public abstract class BaseMQTaskService extends BaseTaskService {
 
     /**
      * @deprecated
@@ -23,7 +23,9 @@ public abstract class BaseMQTaskService extends BaseTaskService{
      * @throws Exception
      */
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {}
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        throw new Exception("not support!");
+    }
 
     /**
      * MqJobService需要实现此方法

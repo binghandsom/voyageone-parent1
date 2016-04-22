@@ -12,11 +12,11 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,8 @@ public class CmsFieldEditService extends BaseAppService {
 
     @Autowired
     private CategorySchemaService categorySchemaService;
-
+    @Autowired
+    private ProductGroupService productGroupService;
     @Autowired
     private ProductService productService;
 
@@ -68,7 +70,7 @@ public class CmsFieldEditService extends BaseAppService {
     /**
      * 批量修改属性.
      */
-    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo) {
+    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = prop.get("id").toString();
         List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
@@ -90,13 +92,15 @@ public class CmsFieldEditService extends BaseAppService {
                 break;
 
             if ("platformActive".equals(prop_id)) {
-                CmsBtProductModel_Group group = productModel.getGroups();
-                for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {
-                    if ("Onsale".equals(field[1].toString()))
-                        platform.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Onsale);
-                    else if ("Instock".equals(field[1].toString()))
-                        platform.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Instock);
+                Map platform = new HashMap();
+                if ("Onsale".equals(field[1].toString())) {
+                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
+                } else if ("Instock".equals(field[1].toString())) {
+                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
                 }
+
+                // 更新group
+                productGroupService.saveGroups(userInfo.getSelChannelId(), productModel.getFields().getCode(), cartId, platform);
             } else {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);
             }

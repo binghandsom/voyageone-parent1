@@ -164,6 +164,8 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
                 daoCmsBtJmProduct.update(saveInfo.getProductModel());
             }
             saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
+            saveInfo.getPromotionProductModel().setUpdateState(1);
+            saveInfo.getPromotionProductModel().setSkuCount(saveInfo.getListPromotionSkuModel().size());
             if (saveInfo.getPromotionProductModel().getId() == 0) {
                 daoCmsBtJmPromotionProduct.insert(saveInfo.getPromotionProductModel());
             } else {

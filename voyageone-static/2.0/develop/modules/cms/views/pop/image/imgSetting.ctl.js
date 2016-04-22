@@ -27,11 +27,11 @@ define([
 		}
 
 		uploader.onProgressItem = function(fileItem, progress) {
-			console.info('onProgressItem', fileItem, progress);
+			//console.info('onProgressItem', fileItem, progress);
 		};
 
 		uploader.onSuccessItem = function(fileItem, response, status, headers) {
-			console.info('onSuccessItem', fileItem, response, status, headers);
+			//console.info('onSuccessItem', fileItem, response, status, headers);
 			if(response.data){
 				response.data.imageType = context.imageType;
 				$scope.$close(response.data);

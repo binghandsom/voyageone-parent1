@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductLogService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,14 +15,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsProductLogServiceTest {
     @Autowired
-    CmsBtProductDao cmsBtProductDao;
+    ProductService productService;
 
     @Autowired
     ProductLogService productLogService;
 
     @Test
     public void testInsertCmsBtProduct() throws Exception {
-        CmsBtProductModel ret = cmsBtProductDao.selectProductByCode("001", "00341");
+        CmsBtProductModel ret = productService.getProductByCode("001", "00341");
         productLogService.insertProductHistory(ret);
     }
 }

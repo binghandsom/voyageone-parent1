@@ -17,10 +17,10 @@ define([
             $scope.vm.messager = "读入中";
         };
         uploader.onProgressItem = function (fileItem, progress) {
-            console.info('onProgressItem', fileItem, progress);
+            //console.info('onProgressItem', fileItem, progress);
         };
         uploader.onSuccessItem = function (fileItem, response, status, headers) {
-            console.info('onSuccessItem', fileItem, response, status, headers);
+            //console.info('onSuccessItem', fileItem, response, status, headers);
             if (response.data) {
                 if (response.data.result) {
                     $scope.$close();

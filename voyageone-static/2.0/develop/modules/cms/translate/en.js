@@ -367,8 +367,6 @@ define(function() {
         "TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX": "When choosing reset mode, old data will be all deleted. Go on ?",
         "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
         "TXT_MSG_INPUT_WORD_LENCHK2": "words",
-        "TXT_MSG_INPUT_WORD_LENCHK": "you can input ",
-        "TXT_MSG_INPUT_WORD_LENCHK2": " words",
         "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",

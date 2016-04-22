@@ -182,7 +182,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
                     if (cmsBtProductModel != null) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                        map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+//                        map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
                     }
                 }
             });

@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="$ctrl.init()">
+<div class="wrapper-md" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -10,20 +10,20 @@
                     <div class="form-inline m-b-sm pull-left">
                         <label translate="TXT_PLATFORM_TYPE_WITH_COLON"></label>
                         <select class="form-control m-r-xxs"
-                                ng-model="$ctrl.selected.cart"
-                                ng-change="$ctrl.loadCategories()"
-                                ng-options="v.value as v.name for v in $ctrl.carts"></select>
+                                ng-model="ctrl.selected.cart"
+                                ng-change="ctrl.loadCategories()"
+                                ng-options="v.value as v.name for v in ctrl.carts"></select>
                         <select class="form-control m-r-xxs"
-                                ng-model="$ctrl.matched.category"
-                                ng-options="v as k for (k, v) in $ctrl.options.category"></select>
+                                ng-model="ctrl.matched.category"
+                                ng-options="v as k for (k, v) in ctrl.options.category"></select>
                         <select class="form-control m-r-xxs"
-                                ng-model="$ctrl.matched.property"
-                                ng-options="v as k for (k, v) in $ctrl.options.property"></select>
-                        <input ng-model="$ctrl.matched.keyWord" type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
-                        <button class="btn btn-default" ng-click="$ctrl.clear()">
+                                ng-model="ctrl.matched.property"
+                                ng-options="v as k for (k, v) in ctrl.options.property"></select>
+                        <input ng-model="ctrl.matched.keyWord" type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
+                        <button class="btn btn-default" ng-click="ctrl.clear()">
                             <i class="fa fa-remove"></i>&nbsp;<span>{{'BTN_CLEAR' | translate}}</span>
                         </button>
-                        <!--<button class="btn btn-vo btn-xxs" ng-click="$ctrl.shown()">-->
+                        <!--<button class="btn btn-vo btn-xxs" ng-click="ctrl.shown()">-->
                             <!--<i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>-->
                         <!--</button>-->
                     </div><!-- /right-btn -->
@@ -48,14 +48,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="category in $ctrl.mainCategories track by category.catId"
-                        ng-if="$ctrl.shown(category)">
+                    <tr ng-repeat="category in ctrl.mainCategories track by category.catId"
+                        ng-if="ctrl.shown(category)">
                         <td class="mfb-xt text-center">{{::$index + 1}}</td>
                         <td class="text-left">{{::category.catPath}}</td>
                         <td class="text-left">{{category.mapping}}</td>
                         <td class="mfb-xxxs">
                             <div class="btn-group">
-                                <button ng-click="$ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
+                                <button ng-click="ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_CATEGORY' | translate}}
                                 </button>
                                 <button class="btn btn-default btn-xs"
@@ -70,7 +70,7 @@
                             </span>
                         </td>
                         <td class="mfb-xxx text-center">
-                            <a target="_blank" ng-href="#/mapping/platform/{{$ctrl.selected.cart}}/{{::category.catId}}" ng-if="category.matched">
+                            <a target="_blank" ng-href="#/mapping/platform/{{ctrl.selected.cart}}/{{::category.catId}}" ng-if="category.matched">
                                 <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}
                             </a>
                         </td>

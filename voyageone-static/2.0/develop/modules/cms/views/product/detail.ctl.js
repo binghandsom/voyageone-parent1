@@ -131,7 +131,7 @@ define([
                         self.productDetails.modified = res.data.modified;
                         this.productDetailService._setProductStatus(self.productDetails.productStatus);
                         self.productDetailsCopy = angular.copy(self.productDetails);
-                        self.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
