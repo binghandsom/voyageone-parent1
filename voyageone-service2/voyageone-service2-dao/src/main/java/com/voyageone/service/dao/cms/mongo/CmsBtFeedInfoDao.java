@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.stereotype.Repository;
@@ -35,7 +36,10 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
             query += String.valueOf(item) + ",";
         }
         query = query.substring(0, query.length() - 1) + "]}}";
-        return select(query, channelId);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(query);
+        queryObject.setLimit(50);
+        return select(queryObject, channelId);
     }
     //jeff 2016/06 change end
 

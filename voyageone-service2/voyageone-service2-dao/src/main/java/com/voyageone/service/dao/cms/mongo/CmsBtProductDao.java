@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms.mongo;
 
+import com.google.common.base.Joiner;
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
@@ -10,6 +11,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,17 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
+
+
+    public List<CmsBtProductModel> selectProductByIds( List<Long> ids,String channelId) {
+        if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
+            return Collections.emptyList();
+        }
+        String idsStr = Joiner.on(",").join(ids);
+
+        String query = "{prodId:{$in:[" + idsStr + "]}}";
+        return select(query, channelId);
+    }
     /**
      * 批量更新记录
      * @param channelId 渠道ID

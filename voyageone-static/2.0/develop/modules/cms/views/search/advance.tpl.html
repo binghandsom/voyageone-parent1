@@ -307,9 +307,9 @@
 					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
 					<!--<span class="caret"></span>-->
 					<!--</button>-->
-					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
-						<li ng-repeat="promotion in vm.masterData.promotionList">
-							<a href ng-click="openJMActivity('')">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+					<ul uib-dropdown-menu ng-if="vm.masterData.jmPromotionList.length">
+						<li ng-repeat="promotion in vm.masterData.jmPromotionList">
+							<a href ng-click="openJMActivity(promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.name}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
 				</div>&nbsp;

@@ -5,7 +5,7 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-     http://www.springframework.org/schema/tx  
+     http://www.springframework.org/schema/tx
      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
     <bean id="dataSourceCms2" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
@@ -37,7 +37,7 @@
           p:dataSource-ref="dataSourceCms2"
           p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.util , com.voyageone.service.model.cms"
           p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"
-          p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
+          p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>
 
     <bean id="updateTemplateCms2" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactoryMasterCms2"/>
@@ -47,7 +47,9 @@
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCms2"/>
         <property name="basePackage" value="com.voyageone.service.dao.cms,
                                             com.voyageone.service.dao.jumei,
-                                            com.voyageone.service.daoext.jumei"/>
+                                            com.voyageone.service.daoext.jumei,
+                                            com.voyageone.service.daoext.synship,
+                                            "/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
 

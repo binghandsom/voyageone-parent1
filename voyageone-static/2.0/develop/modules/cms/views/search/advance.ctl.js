@@ -3,9 +3,10 @@
  */
 
 define([
+    'underscore',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/search.advance.service'
-], function () {
+], function (_) {
 
     function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, confirm, $translate, notify, alert) {
 

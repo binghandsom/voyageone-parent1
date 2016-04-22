@@ -473,11 +473,11 @@ public class ProductService extends BaseService {
 //                    models.add(model);
 //                }
 //            }
-        for(Map cartInfo : carts) {
+        for(CmsBtProductModel_Field_Carts cartInfo : carts) {
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
             model.setChannelId(channelId);
-            model.setGroupId(platformsMap.get((Integer) cartInfo.get("cartId")));
-            model.setCartId((Integer) cartInfo.get("cartId"));
+            model.setGroupId(platformsMap.get(cartInfo.getCartId()));
+            model.setCartId(cartInfo.getCartId());
             model.setPublishStatus(0);
             model.setCreater(modifier);
             model.setModifier(modifier);
@@ -838,7 +838,7 @@ public class ProductService extends BaseService {
     public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId,
                                                   long groupId, List<String> codeList,
                                                   String numIId, String productId,
-                                                  String publishTime, String onSalesTime, String instockTime,
+                                                  String publishTime, String onSalesTime, String inStockTime,
                                                   CmsConstants.PlatformStatus status) {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -860,8 +860,8 @@ public class ProductService extends BaseService {
             if (onSalesTime != null) {
                 updateMap.put("onSaleTime", onSalesTime);
             }
-            if (instockTime != null) {
-                updateMap.put("instockTime", instockTime);
+            if (inStockTime != null) {
+                updateMap.put("inStockTime", inStockTime);
             }
             if (status != null) {
                 updateMap.put("platformStatus", status.toString());

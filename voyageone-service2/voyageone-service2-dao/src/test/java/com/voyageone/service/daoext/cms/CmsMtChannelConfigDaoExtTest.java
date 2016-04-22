@@ -1,6 +1,5 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Created by shiqin on 2016-04-12.
+ * Created by shiqin on 2016-04-21.
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)

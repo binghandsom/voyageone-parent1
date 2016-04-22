@@ -347,6 +347,11 @@ define([
                 }
             },
             "search": {
+                "joinJM": {
+                    "templateUrl": "views/pop/search/joinJM.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
+                    "controller": 'popJoinJMCtl'
+                },
                 "imagedetail": {
                     "templateUrl": "views/pop/search/imagedetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
@@ -579,11 +584,49 @@ define([
             return openModel(popActions.custom.newAttribute, context);
         };
 
+
+
+
+        // function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
+        //    require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
+        //        if (selList && selList.length) {
+        //            var modalInstance = $uibModal.open({
+        //                templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
+        //                controller: popActions.bulkUpdate.addToPromotion.controller,
+        //                size: viewSize,
+        //                resolve: {
+        //                    promotion: function () {
+        //                        //var productIds = [];
+        //                        //_.forEach(selList, function (object) {
+        //                        //    productIds.push(object);
+        //                        //});
+        //                        var productIds = [];
+        //                        _.forEach(selList, function (object) {
+        //                            productIds.push(object.id);
+        //                        });
+        //                        return {"promotion": promotion, "productIds": productIds, "products": selList};
+        //                    }
+        //                }
+        //            });
+        //
+        //            // 回调主页面的刷新操作
+        //            modalInstance.result.then(function () {
+        //                fnInitial();
+        //            })
+        //        } else {
+        //            alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+        //        }
+        //    });
+        //}
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
-        $scope.openJMActivity = function (context) {
-            return openModel(popActions.search.joinJM, context);
+        $scope.openJMActivity = function (promotion, selList, fnInitial) {
+            if(selList && selList.length) {
+                return openModel(popActions.search.joinJM, {promotion:promotion,products:selList});
+            }else{
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
         };
 
         /**

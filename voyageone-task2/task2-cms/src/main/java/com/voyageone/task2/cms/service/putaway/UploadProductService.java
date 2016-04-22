@@ -221,29 +221,29 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-                String instockTime = null, onSaleTime = null, publishTime = null;
+                String inStockTime = null, onSaleTime = null, publishTime = null;
 
                 if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
                     publishTime = DateTimeUtil.getNow();
                 }
 
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-                        && platformActive == CmsConstants.PlatformActive.ToOnsale) {
+                        && platformActive == CmsConstants.PlatformActive.Onsale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-                        && platformActive == CmsConstants.PlatformActive.ToInstock) {
-                    instockTime = DateTimeUtil.getNow();
+                        && platformActive == CmsConstants.PlatformActive.Instock) {
+                    inStockTime = DateTimeUtil.getNow();
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
-                if (platformActive == CmsConstants.PlatformActive.ToInstock) {
+                if (platformActive == CmsConstants.PlatformActive.Instock) {
                     newPlatformStatus = CmsConstants.PlatformStatus.Instock;
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
                 }
                 productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
-                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
+                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, inStockTime, newPlatformStatus);
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);

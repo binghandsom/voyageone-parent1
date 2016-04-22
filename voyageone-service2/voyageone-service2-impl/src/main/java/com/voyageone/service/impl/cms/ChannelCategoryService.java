@@ -55,7 +55,6 @@ public class ChannelCategoryService extends BaseService {
         for (CmsMtChannelCategoryConfigModel mapping : mappings) {
             String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
-
             if (category.getIsParent() == 1) {
 
                 // 将父类添加到result结果集

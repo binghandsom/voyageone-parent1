@@ -1,8 +1,8 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
+import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.service.model.cms.CmsMtFeedCustomOptionModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by zhujiaye on 16/2/26.
  */
 @Repository
-public class CmsBtFeedCustomPropAndValueDao extends ServiceBaseDao {
+public class CmsMtFeedCustomOptionDaoExt extends ServiceBaseDao {
 
 	/**
 	 * 获取自定义属性列表
@@ -30,7 +30,7 @@ public class CmsBtFeedCustomPropAndValueDao extends ServiceBaseDao {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("channel_id", channel_id);
 
-		return selectList("cms_bt_feed_custom_prop_select", paramMap);
+		return selectList("cms_mt_feed_custom_prop_select", paramMap);
 	}
 
 	/**
@@ -38,12 +38,12 @@ public class CmsBtFeedCustomPropAndValueDao extends ServiceBaseDao {
 	 * @param channel_id channel id
 	 * @return 自定义属性值翻译列表
 	 */
-	public List<CmsBtFeedCustomPropValueModel> selectPropValue(String channel_id) {
+	public List<CmsMtFeedCustomOptionModel> selectPropValue(String channel_id) {
 
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("channel_id", channel_id);
 
-		return selectList("cms_bt_feed_custom_prop_value_select", paramMap);
+		return selectList("cms_mt_feed_custom_option_select", paramMap);
 	}
 
 }

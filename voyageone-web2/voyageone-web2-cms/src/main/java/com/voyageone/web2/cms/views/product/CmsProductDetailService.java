@@ -27,8 +27,8 @@ import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
@@ -51,28 +51,22 @@ import java.util.*;
 @Service
 public class CmsProductDetailService extends BaseAppService {
 
+    private static final String FIELD_SKU_CARTS = "skuCarts";
+    private static final String COMPLETE_STATUS = "1";
+    @Autowired
+    protected CategorySchemaService categorySchemaService;
     @Autowired
     private CommonSchemaService commonSchemaService;
-
     @Autowired
     private FeedInfoService feedInfoService;
-
     @Autowired
     private FeedCustomPropService feedCustomPropService;
-
     @Autowired
     private ProductService productService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
-    protected CategorySchemaService categorySchemaService;
-
-    @Autowired
     private PromotionDetailService promotionDetailService;
-
-    private static final String FIELD_SKU_CARTS = "skuCarts";
-
-    private static final String COMPLETE_STATUS = "1";
 
     /**
      * 获取类目以及类目属性信息.
@@ -899,17 +893,17 @@ public class CmsProductDetailService extends BaseAppService {
      */
     private Map<String, String[]> getCustomAttributesCnAttsShow(String feedCategory, CmsBtProductModel_Feed feed, String channelId) {
         // 获取
-        List<CmsBtFeedCustomPropModel> feedPropTranslateList = feedCustomPropService.getFeedCustomPropWithCategory(channelId, feedCategory);
+        List<CmsMtFeedCustomPropModel> feedPropTranslateList = feedCustomPropService.getFeedCustomPropWithCategory(channelId, feedCategory);
 
         // 获取
         Map<String, String[]> result = new HashMap<>();
-        for (CmsBtFeedCustomPropModel feedProp : feedPropTranslateList) {
+        for (CmsMtFeedCustomPropModel feedProp : feedPropTranslateList) {
             // 如果自定义属性包含在翻译的内容中
-            if (feed.getCustomIds().contains(feedProp.getFeedProp())) {
+            if (feed.getCustomIds().contains(feedProp.getFeedPropOriginal())) {
                 String[] cnAttWithTranslate = new String[2];
-                cnAttWithTranslate[0] = feedProp.getFeedPropTranslate();
-                cnAttWithTranslate[1] = feed.getCnAtts().containsKey(feedProp.getFeedProp()) ? feed.getCnAtts().get(feedProp.getFeedProp()).toString() : "";
-                result.put(feedProp.getFeedProp(), cnAttWithTranslate);
+                cnAttWithTranslate[0] = feedProp.getFeedPropTranslation();
+                cnAttWithTranslate[1] = feed.getCnAtts().containsKey(feedProp.getFeedPropOriginal()) ? feed.getCnAtts().get(feedProp.getFeedPropOriginal()).toString() : "";
+                result.put(feedProp.getFeedPropOriginal(), cnAttWithTranslate);
             }
         }
 
