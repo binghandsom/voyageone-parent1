@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtPlatformSkusDao">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsMtPlatformSkusModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`cart_id`,`platform_category_id`,`attr_type`,`idx`,`attr_name`,`attr_value`,`active`,`creater`,`created`,`modifier`,`modified`
+        from cms_mt_platform_skus
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+            <if test="platformCategoryId != null">
+                AND `platform_category_id` = #{platformCategoryId}
+            </if>
+            <if test="attrType != null">
+                AND `attr_type` = #{attrType}
+            </if>
+            <if test="idx != null">
+                AND `idx` = #{idx}
+            </if>
+            <if test="attrName != null">
+                AND `attr_name` = #{attrName}
+            </if>
+            <if test="attrValue != null">
+                AND `attr_value` = #{attrValue}
+            </if>
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`cart_id`,`platform_category_id`,`attr_type`,`idx`,`attr_name`,`attr_value`,`active`,`creater`,`created`,`modifier`,`modified`
+        from cms_mt_platform_skus
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+
+            <if test="platformCategoryId != null">
+                AND `platform_category_id` = #{platformCategoryId}
+            </if>
+
+            <if test="attrType != null">
+                AND `attr_type` = #{attrType}
+            </if>
+
+            <if test="idx != null">
+                AND `idx` = #{idx}
+            </if>
+
+            <if test="attrName != null">
+                AND `attr_name` = #{attrName}
+            </if>
+
+            <if test="attrValue != null">
+                AND `attr_value` = #{attrValue}
+            </if>
+
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`cart_id`,`platform_category_id`,`attr_type`,`idx`,`attr_name`,`attr_value`,`active`,`creater`,`created`,`modifier`,`modified` from cms_mt_platform_skus where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_mt_platform_skus
+        set
+
+            `channel_id`=#{channelId}
+            ,`cart_id`=#{cartId}
+            ,`platform_category_id`=#{platformCategoryId}
+            ,`attr_type`=#{attrType}
+            ,`idx`=#{idx}
+            ,`attr_name`=#{attrName}
+            ,`attr_value`=#{attrValue}
+            ,`active`=#{active}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_platform_skus
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_mt_platform_skus
+        (
+              `channel_id`,
+              `cart_id`,
+              `platform_category_id`,
+              `attr_type`,
+              `idx`,
+              `attr_name`,
+              `attr_value`,
+              `active`,
+              `creater`,
+              `created`,
+              `modifier`,
+              `modified`
+        )
+        VALUES(
+              #{channelId},
+              #{cartId},
+              #{platformCategoryId},
+              #{attrType},
+              #{idx},
+              #{attrName},
+              #{attrValue},
+              #{active},
+              #{creater},
+              #{created},
+              #{modifier},
+              #{modified}
+        )
+    </insert>
+</mapper>
