@@ -534,10 +534,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         CmsBtProductGroupModel mainProductPlatform = mainProduct.getGroups();
         com.voyageone.common.CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-        if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.Instock) {
+        if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.ToInstock) {
             // 如果是Instock， 那么offsale
             retOptionType = OptioinType_offsale;
-        } else if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.Onsale) {
+        } else if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.ToOnsale) {
             // 如果是Onsale， 那么onsale
             retOptionType = OptioinType_onsale;
         }

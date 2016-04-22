@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+     http://www.springframework.org/schema/tx  
+     http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+    <bean id="dataSourceCms2" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl"
+                  value="jdbc:mysql://10.0.0.24:3306/voyageone_cms2?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="user" value="root"/>
+        <property name="password" value="sneakerhead"/>
+        <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="initialPoolSize" value="5"></property>
+        <!--连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxPoolSize" value="30"></property>
+        <property name="minPoolSize" value="5"></property>
+        <property name="testConnectionOnCheckout" value="true"></property>
+        <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
+        <property name="testConnectionOnCheckin" value="true"></property>
+        <!--定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个一显著提高测试速度。注意： 测试的表必须在初始数据源的时候就存在。Default: null-->
+        <property name="preferredTestQuery" value="SELECT CURRENT_DATE"></property>
+        <!--最大空闲时间,单位为秒。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="14400"></property>
+        <!--强迫连接池扑杀任何的连接，这些连接超过了设置的秒数。(现将其设置为数据库wait_timeout的1/2)-->
+        <property name="maxConnectionAge" value="14400"></property>
+
+    </bean>
+
+
+    <bean id="sqlSessionFactoryMasterCms2"
+          class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSourceCms2"
+          p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.util , com.voyageone.service.model.cms"
+          p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"
+          p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
+
+    <bean id="updateTemplateCms2" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactoryMasterCms2"/>
+    </bean>
+    <!--mybatis的dao接口和mapper的扫描-->
+    <bean id="updateTemplateDaoScanCms2" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionTemplateBeanName" value="updateTemplateCms2"/>
+        <property name="basePackage" value="com.voyageone.service.dao.cms,
+                                            com.voyageone.service.dao.jumei,
+                                            com.voyageone.service.daoext.jumei"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+
+    <!-- JDBC事务管理器 -->
+    <bean id="transactionManagerCms2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="dataSourceCms2"/>
+
+    <bean id="simpleTransactionCms2" class="com.voyageone.common.components.transaction.SimpleTransaction"
+          p:transactionManager-ref="transactionManagerCms2"/>
+
+    <bean id="transactionRunnerCms2" class="com.voyageone.common.components.transaction.TransactionRunner"
+          p:simpleTransaction-ref="simpleTransactionCms2"/>
+
+    <tx:annotation-driven transaction-manager="transactionManagerCms2"/>
+
+
+</beans>
