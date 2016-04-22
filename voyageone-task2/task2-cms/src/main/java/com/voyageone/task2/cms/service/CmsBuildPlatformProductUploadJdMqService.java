@@ -21,11 +21,12 @@ import com.voyageone.service.impl.cms.PlatformProductUploadJdService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseMQTaskService;
+import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -37,6 +38,8 @@ import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import org.apache.commons.collections.map.HashedMap;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +53,7 @@ import java.util.*;
  * @version 2.0.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService {
+public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
     private static final String JOB_NAME = "CmsBuildPlatformProductUploadJdJob";
 
@@ -75,24 +78,19 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQTaskService 
     @Autowired
     private ProductService productService;
 
-    @Override
-    public SubSystem getSubSystem() {
-        return SubSystem.CMS;
-    }
-
-    @Override
-    public String getTaskName() {
-        return JOB_NAME;
-    }
-
     // workload和与它相关的SxWorkloadModel的对应关系
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
 
     // workload对象列表
     private Set<WorkLoadBean> workLoadBeans;
 
+    //@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategoryTreeJdJob)
+    protected void onMessage(Message message){
+        super.onMessage(message);
+    }
+
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
+    public void onStartup(Map<String, Object> messageMap) throws Exception {
         doMain(taskControlList);
     }
 
