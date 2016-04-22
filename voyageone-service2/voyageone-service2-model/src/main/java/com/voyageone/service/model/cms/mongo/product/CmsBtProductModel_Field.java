@@ -440,4 +440,21 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return super.put(key, value);
     }
 
+    //code 产品code
+    public List<Integer> getProductCarts() {
+        return getAttribute("productCarts");
+    }
+
+    public void setProductCarts(List<Integer> productCarts) {
+        setAttribute("productCarts", productCarts);
+    }
+
+    // 主数据平台是否为主商品
+    public int getIsMasterMain() {
+        return getAttribute("isMasterMain");
+    }
+
+    public void setIsMasterMain(int isMasterMain) {
+        setAttribute("isMasterMain", isMasterMain);
+    }
 }

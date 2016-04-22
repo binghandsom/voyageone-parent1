@@ -100,14 +100,14 @@ public class JuMeiProductAddPlatformService {
 //    }
 
     //上新
-    public CallResult addProductAndDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    public CallResult addProductAndDeal(int shippingSystemId, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         JMNewProductInfo updateInfo = service.getJMNewProductInfo(model);
         updateInfo.loadData();
         CallResult result = checkJMNewProductInfo(updateInfo);//验证
         if (!result.isResult()) {
             return result;
         }
-        JmProductBean jmProductBean = selfBeanToJmBean(updateInfo, modelCmsBtJmPromotion, shippingSystemId);
+        JmProductBean jmProductBean = selfBeanToJmBean(updateInfo, shippingSystemId);
         for (CmsBtJmProductImagesModel imgemodel : updateInfo.getListCmsBtJmProductImages()) {
             if (imgemodel.getSynFlg() == 0) { //上传图片
                 serviceJuMeiUploadImageJob.uploadImage(imgemodel, shopBean);
@@ -185,7 +185,7 @@ public class JuMeiProductAddPlatformService {
         }
         return result;
     }
-    private JmProductBean selfBeanToJmBean(JMNewProductInfo info, CmsBtJmPromotionModel modelCmsBtJmPromotion, int shippingSystemId) throws Exception {
+    private JmProductBean selfBeanToJmBean(JMNewProductInfo info,int shippingSystemId) throws Exception {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
         String partner_sku_nos = "";

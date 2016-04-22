@@ -108,7 +108,7 @@ public class CmsBtJmPromotionImportTaskService {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = serviceCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         //"/usr/JMImport/"
-        String filePath = importPath + "/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
+        String filePath = importPath+"/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
         fileInputStream = new FileInputStream(excelFile);
@@ -132,12 +132,12 @@ public class CmsBtJmPromotionImportTaskService {
         List<ExcelColumn> listSpecialColumn = EnumJMSpecialImageImportColumn.getListExcelColumn();
         ExcelImportUtil.importSheet(specialImageSheet, listSpecialColumn, listSpecialImageModel, listSpecialErrorMap, CmsBtJmImportSpecialImage.class);
 
-        JmProductImportAllInfo info = new JmProductImportAllInfo();
-        info.setModelCmsBtJmPromotion(modelCmsBtJmPromotion);
-        info.setListProductModel(listProductModel);
-        info.setListSkuModel(listSkuModel);
-        info.setListSpecialImageModel(listSpecialImageModel);
-        saveJmProductImportAllInfo(info, modelCmsBtJmPromotionImportTask.getCreater());
+        // List<CmsMtMasterInfoModel> listSaveCmsMtMasterInfoModel=new ArrayList<>();
+        // List<CmsBtJmProductImportSaveInfo> listCmsBtJmProductImportSaveInfo=new ArrayList<>();
+        CmsBtJmImportSaveInfo saveImportInfo = loadListSaveInfo(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, listProductModel, listSkuModel, listSpecialImageModel);
+        transactionRunner.runWithTran(() -> {
+            saveListCmsBtJmProductImportSaveInfo(saveImportInfo);//保存
+        });
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0 | listSpecialErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
@@ -148,13 +148,7 @@ public class CmsBtJmPromotionImportTaskService {
         }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductModel.size());
     }
-    //保存所有商品导入信息
-public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String creater) {
-    CmsBtJmImportSaveInfo saveImportInfo = loadListSaveInfo(info, creater);
-    transactionRunner.runWithTran(() -> {
-        saveListCmsBtJmProductImportSaveInfo(saveImportInfo);//保存
-    });
-}
+
     private void saveListCmsBtJmProductImportSaveInfo(CmsBtJmImportSaveInfo saveImportInfo) {
         Map<String, Integer> mapSkuCodeId = new HashMap<>();
         for (CmsBtJmProductImportSaveInfo saveInfo : saveImportInfo.getListProductSaveInfo()) {
@@ -210,12 +204,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         }
     }
 
-    private CmsBtJmImportSaveInfo loadListSaveInfo(JmProductImportAllInfo info,String creater) {
-        CmsBtJmPromotionModel modelCmsBtJmPromotion=info.getModelCmsBtJmPromotion();
-         List<CmsBtJmImportProduct> listProductModel=info.getListProductModel();
-         List<CmsBtJmImportSku> listSkuModel=info.getListSkuModel();
-         List<CmsBtJmImportSpecialImage> listSpecialImageModel=info.getListSpecialImageModel();
-
+    private CmsBtJmImportSaveInfo loadListSaveInfo(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, List<CmsBtJmImportProduct> listProductModel, List<CmsBtJmImportSku> listSkuModel, List<CmsBtJmImportSpecialImage> listSpecialImageModel) {
         CmsBtJmImportSaveInfo saveImportInfo=new CmsBtJmImportSaveInfo();
         List<CmsBtJmProductImportSaveInfo> listCmsBtJmProductImportSaveInfo = new ArrayList<>();
         List<CmsMtMasterInfoModel> listSaveCmsMtMasterInfoModel=new ArrayList<>();
@@ -241,11 +230,11 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
                 saveInfo.setProductModel(importProductModel);//商品
             }
             //1.活动商品  cms_bt_jm_promotion_product
-            loadSavePromotionProductInfoByImportModel(creater, modelCmsBtJmPromotion, saveInfo, oldProductModel, importProductModel);
+            loadSavePromotionProductInfoByImportModel(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, saveInfo, oldProductModel, importProductModel);
 
             //2.  cms_bt_jm_promotion_sku  cms_bt_jm_sku
             List<CmsBtJmImportSku> productCmsBtJmImportSkuList = getListCmsBtJmImportSkuByProductCode(listSkuModel, importProductModel.getProductCode());
-            loadSaveSkuInfoByImportModel(creater, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
+            loadSaveSkuInfoByImportModel(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
             try {
                 if (productCmsBtJmImportSkuList.size() > 0) {
                     saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
@@ -308,7 +297,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             oldProductModel.setHsUnit(importProductModel.getHsUnit());
         }
     }
-    private void loadSavePromotionProductInfoByImportModel(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmProductModel oldProductModel, CmsBtJmImportProduct importProductModel) {
+    private void loadSavePromotionProductInfoByImportModel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmProductModel oldProductModel, CmsBtJmImportProduct importProductModel) {
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct;
         modelCmsBtJmPromotionProduct = daoExtCmsBtJmPromotionProduct.getByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (modelCmsBtJmPromotionProduct == null) {
@@ -337,7 +326,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             //modelCmsBtJmPromotionProduct.setDealPrice();
             //modelCmsBtJmPromotionProduct.setMarketPrice();
             modelCmsBtJmPromotionProduct.setCreated(new Date());
-            modelCmsBtJmPromotionProduct.setCreater(Creater);
+            modelCmsBtJmPromotionProduct.setCreater(modelCmsBtJmPromotionImportTask.getCreater());
         }
         saveInfo.setPromotionProductModel(modelCmsBtJmPromotionProduct);//活动商品
     }
@@ -516,16 +505,16 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
     }
 
 
-    private void loadSaveSkuInfoByImportModel(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, List<CmsBtJmImportSku> listProductSku, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmImportProduct importProductModel) {
+    private void loadSaveSkuInfoByImportModel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, List<CmsBtJmImportSku> listProductSku, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmImportProduct importProductModel) {
         CmsBtJmSkuModel oldSkuModel = null;
         CmsBtJmPromotionSkuModel promotionSkuModel = null;
         for (CmsBtJmImportSku importSkuModel : listProductSku) {
             oldSkuModel = loadSku(modelCmsBtJmPromotion, saveInfo, importSkuModel);//sku
-            loadPromotionSku(Creater, modelCmsBtJmPromotion, saveInfo, oldSkuModel, importSkuModel);//promotionSku
+            loadPromotionSku(modelCmsBtJmPromotionImportTask, modelCmsBtJmPromotion, saveInfo, oldSkuModel, importSkuModel);//promotionSku
         }
     }
 
-    private void loadPromotionSku(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmSkuModel oldSkuModel, CmsBtJmImportSku importSkuModel) {
+    private void loadPromotionSku(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmSkuModel oldSkuModel, CmsBtJmImportSku importSkuModel) {
         CmsBtJmPromotionSkuModel promotionSkuModel;
         promotionSkuModel = daoExtCmsBtJmPromotionSku.getBySkuCodeChannelIdCmsBtJmPromotionId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (promotionSkuModel == null) {
@@ -552,9 +541,9 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             //promotionSkuModel.setCmsBtJmProductId();
             //promotionSkuModel.setCmsBtJmSkuId();
             promotionSkuModel.setCreated(new Date());
-            promotionSkuModel.setCreater(Creater);
+            promotionSkuModel.setCreater(modelCmsBtJmPromotionImportTask.getCreater());
             promotionSkuModel.setJmSize(importSkuModel.getJmSize());
-            promotionSkuModel.setModifier(Creater);
+            promotionSkuModel.setModifier(modelCmsBtJmPromotionImportTask.getCreater());
             saveInfo.getListPromotionSkuModel().add(promotionSkuModel);//加入活动规格
         }
     }
