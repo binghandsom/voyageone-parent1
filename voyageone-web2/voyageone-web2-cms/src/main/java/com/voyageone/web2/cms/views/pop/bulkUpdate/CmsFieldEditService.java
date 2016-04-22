@@ -94,9 +94,9 @@ public class CmsFieldEditService extends BaseAppService {
             if ("platformActive".equals(prop_id)) {
                 Map platform = new HashMap();
                 if ("Onsale".equals(field[1].toString())) {
-                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToOnsale.name());
+                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
                 } else if ("Instock".equals(field[1].toString())) {
-                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToInstock.name());
+                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
                 }
 
                 // 更新group
