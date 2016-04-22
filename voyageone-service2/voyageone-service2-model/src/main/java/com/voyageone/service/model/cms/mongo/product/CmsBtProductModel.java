@@ -34,6 +34,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private List<String> tags = new ArrayList<>();
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
+    private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
     public String getOrgChannelId() {
 
@@ -132,5 +133,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setFeed(CmsBtProductModel_Feed feed) {
         this.feed = feed;
+    }
+
+    //code 产品code
+    public List<CmsBtProductModel_Carts> getCarts() {
+        return carts;
+    }
+
+    public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
+        this.carts = productCarts;
     }
 }

@@ -104,13 +104,14 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
                 CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+                String prodCode = cmsBtProductModel.getFields().getCode();
                 // tom 获取feed info的数据 START
-                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, cmsBtProductModel.getFields().getCode());
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, prodCode);
                 // tom 获取feed info的数据 END
                 SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, feedInfo);
                 if (filtProductsByPlatform(sxProductBean)) {
                     sxProductBeans.add(sxProductBean);
-                    if (productPlatform.getIsMain()) {
+                    if (prodCode.equals(productPlatform.getMainProductCode())) {
                         mainProductModel = cmsBtProductModel;
                         mainProductPlatform = productPlatform;
                         mainSxProduct = sxProductBean;
@@ -121,7 +122,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 START
             if (mainSxProduct != null) {
                 if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
-                    if (!"23".equals(mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId().toString())) {
+                    if (23 != mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId()) {
                         continue;
                     }
                 }

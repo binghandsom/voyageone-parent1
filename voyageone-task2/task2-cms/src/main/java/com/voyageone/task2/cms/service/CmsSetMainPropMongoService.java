@@ -20,7 +20,6 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
@@ -574,9 +573,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // jeff 2016/04 add start
             if (newFlg) {
-                // ProductCarts
-                field.setProductCarts(getProductCarts(feed));
-
                 // isMain
                 field.setIsMasterMain(getIsMasterMain(feed));
             }
@@ -626,7 +622,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (field == null) {
                 return null;
             }
-
+            // ProductCarts
+            product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // 获取当前channel, 有多少个platform
@@ -903,6 +900,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
             }
             // jeff 2016/04 add end
+            // ProductCarts
+            product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // SKU级属性列表
@@ -1217,18 +1216,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed 品牌方提供的数据
          * @return ProductCarts信息
          */
-        private List<CmsBtProductModel_Field_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
+        private List<CmsBtProductModel_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }
 
-            List<CmsBtProductModel_Field_Carts> carts = new ArrayList<>();
+            List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
-                CmsBtProductModel_Field_Carts cart = new CmsBtProductModel_Field_Carts();
+                CmsBtProductModel_Carts cart = new CmsBtProductModel_Carts();
                 cart.setCartId(Integer.parseInt(shop.getValue()));
                 cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
                 carts.add(cart);
