@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.jm;
 
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.cms.jumei.*;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.jumei.CmsBtJmProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionSkuModel;
@@ -237,7 +237,8 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
     public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
-        CallResult result = serviceCmsBtJmPromotionProduct.updateJM(promotionProductId);
-        return success(result);
+//        CallResult result = serviceCmsBtJmPromotionProduct.updateJM(promotionProductId);
+//        return success(result);
+        return null;
     }
 }

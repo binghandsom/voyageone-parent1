@@ -10,7 +10,7 @@
         <result column="m_model" property="model" />
         <result column="p_name" property="name" />
         <result column="pe_short_description" property="shortDescription" />
-        <result column="pe_long_description" property="LongDescription" />
+        <result column="pe_long_description" property="longDescription" />
         <result column="m_size_type" property="sizeType" />
         <result column="m_weight" property="weight" />
         <result column="p_code" property="code" />

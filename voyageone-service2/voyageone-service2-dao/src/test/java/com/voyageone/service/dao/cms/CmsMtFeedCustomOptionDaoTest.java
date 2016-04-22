@@ -1,22 +1,24 @@
-package com.voyageone.service.dao.jumei;
+package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.daoext.jumei.CmsBtJmProductDaoExt;
-import com.voyageone.service.model.jumei.CmsBtJmProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+/**
+ * Created by Ethan Shi on 2016/4/22.
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class CmsBtJmProductDaoExtTest {
+public class CmsMtFeedCustomOptionDaoTest {
+
     @Autowired
-    CmsBtJmProductDaoExt daoExt;
+    private CmsMtFeedCustomOptionDao cmsMtFeedCustomOptionDao;
 
     @Test
-    public void  getByProductCodeChannelIdTest()
-    {
-        CmsBtJmProductModel model= daoExt.getByProductCodeChannelId("012","12137BMA-001");
+    public void testSelect() throws Exception {
+        cmsMtFeedCustomOptionDao.select(1);
     }
 }

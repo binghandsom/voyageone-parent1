@@ -441,11 +441,11 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //code 产品code
-    public List<Integer> getProductCarts() {
+    public List<CmsBtProductModel_Field_Carts> getProductCarts() {
         return getAttribute("productCarts");
     }
 
-    public void setProductCarts(List<Integer> productCarts) {
+    public void setProductCarts(List<CmsBtProductModel_Field_Carts> productCarts) {
         setAttribute("productCarts", productCarts);
     }
 

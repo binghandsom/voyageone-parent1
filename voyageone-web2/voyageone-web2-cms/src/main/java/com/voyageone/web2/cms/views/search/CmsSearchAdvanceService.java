@@ -73,7 +73,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.carts;skus;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;fields.productCarts;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小

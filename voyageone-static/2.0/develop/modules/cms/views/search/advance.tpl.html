@@ -457,7 +457,7 @@
 										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
-										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo._prodMnFlg == 1">&nbsp;M&nbsp;</span>
+										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
 										<span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groups.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.numIId}}" target="_blank"  ng-bind="productInfo.groups.numIId"></a>
@@ -491,7 +491,7 @@
 											{{productInfo.priceSale}}
 										</button><label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 									</td>
-									<td class="text-left m-t-lg" style="display:inline-block;width:180px; height:120px;">{{productInfo.platformName}}</td>
+									<td class="text-left m-t-lg" style="display:inline-block;width:180px; height:120px;"><key-value type="carts" ng-model="productInfo.fields.productCarts"></key-value></td>
 									<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;height: 120px;">
 										<span ng-if="prop1.value.length > 100"><popover-text content="prop1.value" direct="left"></popover-text></span>
 										<span ng-if="prop1.value.length <= 100">{{prop1.value}}</span>

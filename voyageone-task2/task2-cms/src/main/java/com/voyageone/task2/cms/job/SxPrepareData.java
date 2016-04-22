@@ -82,7 +82,7 @@ public class SxPrepareData {
         CmsBtProductGroupModel groups = product.getGroups();
         groups.setGroupId(groupId);
         groups.setCartId(23);
-        groups.setPlatformActive(CmsConstants.PlatformActive.Instock);
+        groups.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
 
         List<CmsBtProductModel_Sku> skus = product.getSkus();
         for (int i=1; i<3; i++) {

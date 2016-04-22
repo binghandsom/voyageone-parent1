@@ -124,19 +124,24 @@ public class ProductGroupService extends BaseService {
      * 根据modelCode, cartId获取商品的group id
      */
     public CmsBtProductGroupModel selectProductGroupByModelCodeAndCartId(String channelId, String modelCode, String cartId) {
-        String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\"}, {\"fields.code\":1}", modelCode);
+        // jeff 2016/04 change start
+        // String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\"}, {\"fields.code\":1}", modelCode);
+        String query = String.format("{'feed.orgAtts.modelCode':'%s','fields.isMasterMain':1},{'fields.code':1}", modelCode);
+        // jeff 2016/04 change end
         List<CmsBtProductModel> prodList = cmsBtProductDao.select(query, channelId);
         if (prodList == null || prodList.isEmpty()) {
             return null;
         }
-        List<String> codeList = new ArrayList<>(prodList.size());
-        prodList.forEach(cmsBtProductModel -> codeList.add(cmsBtProductModel.getFields().getCode()));
+        // jeff 2016/04 change start
+        // List<String> codeList = new ArrayList<>(prodList.size());
+        // prodList.forEach(cmsBtProductModel -> codeList.add(cmsBtProductModel.getFields().getCode()));
         JomgoQuery queryObject = new JomgoQuery();
-        String[] codeArr = new String[codeList.size()];
-        codeArr = codeList.toArray(codeArr);
-        queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
+        // String[] codeArr = new String[codeList.size()];
+        // codeArr = codeList.toArray(codeArr);
+        // queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
+        queryObject.setQuery("{\"productCodes\", " + prodList.get(0).getFields().getCode() + ",\"cartId\":" + cartId + "}");
         queryObject.setProjection("{'groupId':1,'_id':0}");
-
+        // jeff 2016/04 change end
         List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);
         if (grpList == null || grpList.isEmpty()) {
             return null;
