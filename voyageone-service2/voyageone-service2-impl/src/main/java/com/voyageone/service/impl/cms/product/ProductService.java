@@ -449,19 +449,23 @@ public class ProductService extends BaseService {
 //        List<CmsBtProductModel_Group_Platform> platforms = cmsProduct.getGroups().getPlatforms();
 //        Map<Integer, Long> platformsMap = platforms.stream().collect(toMap(platform -> platform.getCartId(), platform -> platform.getGroupId()));
 //
-//        Set<Integer> skuCartAll = new HashSet<>();
-//        for(CmsBtProductModel_Sku sku : cmsProduct.getSkus()) {
-//            skuCartAll.addAll(sku.getSkuCarts());
-//        }
-//
-//        // 获得该店铺的上新平台列表
-//        List<Integer> carts = new ArrayList<>();
-//        for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
-//            carts.add(Integer.valueOf(typeChannelBean.getValue()));
-//        }
+        Set<Integer> skuCartAll = new HashSet<>();
+        for(CmsBtProductModel_Sku sku : cmsProduct.getSkus()) {
+            skuCartAll.addAll(sku.getSkuCarts());
+        }
 
-//        // 获取所有的可上新的平台group信息
-//        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+        // 获得该店铺的上新平台列表
+        List<Integer> carts = new ArrayList<>();
+        for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
+            carts.add(Integer.valueOf(typeChannelBean.getValue()));
+        }
+
+        // 根据商品code获取其所有group信息(所有平台)
+        List<CmsBtProductGroupModel> platforms = cmsBtProductGroupDao.select("{'productCodes':{'$in':['" + cmsProduct.getFields().getCode() + "']}}", channelId);
+        Map<Integer, Long> platformsMap = platforms.stream().collect(toMap(platform -> platform.getCartId(), platform -> platform.getGroupId()));
+
+        // 获取所有的可上新的平台group信息
+        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
 //            for(CmsBtProductModel_Group_Platform platform : platforms) {
 //                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
 //                if (carts.contains(platform.getCartId()) && isNeed) {
@@ -474,42 +478,42 @@ public class ProductService extends BaseService {
 //                    models.add(model);
 //                }
 //            }
-//        for(Integer cartId : carts) {
-//            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-//            if (skuCartAll.contains(cartId)) {
-//                model.setChannelId(channelId);
-//                model.setGroupId(platformsMap.get(cartId));
-//                model.setCartId(cartId);
-//                model.setPublishStatus(0);
-//                model.setCreater(modifier);
-//                model.setModifier(modifier);
-//                models.add(model);
-//            }
-//        }
-
-        // 获得该店铺的上新平台列表
-        List<Integer> carts = new ArrayList<>();
-        for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
-            carts.add(Integer.valueOf(typeChannelBean.getValue()));
-        }
-
-        // 根据商品code获取其所有group信息(所有平台)
-        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{'productCodes':{'$in':['" + cmsProduct.getFields().getCode() + "']}}", channelId);
-
-        // 获取所有的可上新的平台group信息
-        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
-        for(CmsBtProductGroupModel platform : grpList) {
+        for(Integer cartId : carts) {
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-            if (carts.contains(platform.getCartId())) {
+            if (skuCartAll.contains(cartId)) {
                 model.setChannelId(channelId);
-                model.setGroupId(platform.getGroupId());
-                model.setCartId(platform.getCartId());
+                model.setGroupId(platformsMap.get(cartId));
+                model.setCartId(cartId);
                 model.setPublishStatus(0);
                 model.setCreater(modifier);
                 model.setModifier(modifier);
                 models.add(model);
             }
         }
+
+//        // 获得该店铺的上新平台列表
+//        List<Integer> carts = new ArrayList<>();
+//        for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
+//            carts.add(Integer.valueOf(typeChannelBean.getValue()));
+//        }
+//
+//        // 根据商品code获取其所有group信息(所有平台)
+//        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{'productCodes':{'$in':['" + cmsProduct.getFields().getCode() + "']}}", channelId);
+//
+//        // 获取所有的可上新的平台group信息
+//        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+//        for(CmsBtProductGroupModel platform : grpList) {
+//            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+//            if (carts.contains(platform.getCartId())) {
+//                model.setChannelId(channelId);
+//                model.setGroupId(platform.getGroupId());
+//                model.setCartId(platform.getCartId());
+//                model.setPublishStatus(0);
+//                model.setCreater(modifier);
+//                model.setModifier(modifier);
+//                models.add(model);
+//            }
+//        }
 
         if (models.size() > 0) {
             cmsBtSxWorkloadDao.insertSxWorkloadModels(models);
