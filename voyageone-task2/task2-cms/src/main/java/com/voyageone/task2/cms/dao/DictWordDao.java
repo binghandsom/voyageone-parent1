@@ -30,4 +30,14 @@ public class DictWordDao extends BaseDao{
         dataMap.put("name", name);
         return selectOne(Constants.DAO_NAME_SPACE_CMS + "cms_selectDictWordsByName", dataMap);
     }
+
+    /**
+     * 根据channel_id获取对应的字典对象列表
+     *
+     * @param orderChannelId String 渠道id
+     * @return List<DictWordBean> 字典对象列表
+     */
+    public List<DictWordBean> selectDictWordByChannel(String orderChannelId) {
+        return selectOne(Constants.DAO_NAME_SPACE_CMS + "cms_selectDictWordsByChannel", orderChannelId);
+    }
 }

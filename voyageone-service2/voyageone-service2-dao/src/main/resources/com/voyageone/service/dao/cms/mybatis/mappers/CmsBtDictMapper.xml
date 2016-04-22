@@ -102,4 +102,20 @@
         INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)
         VALUES (#{id},#{order_channel_id}, #{cart_id}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
     </insert>
+
+    <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
+        SELECT
+        id,
+        order_channel_id,
+        cart_id,
+        name,
+        value,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_mt_dict
+        WHERE order_channel_id = #{order_channel_id}
+          AND cart_id = #{cart_id}
+    </select>
 </mapper>

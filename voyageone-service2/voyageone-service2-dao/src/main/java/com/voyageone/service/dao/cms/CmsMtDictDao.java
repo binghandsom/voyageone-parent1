@@ -5,7 +5,9 @@ import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsMtDictModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jonas, 1/19/16.
@@ -49,5 +51,19 @@ public class CmsMtDictDao extends ServiceBaseDao {
 
     public List<CmsMtDictModel> selectSimpleDict(String channel_id) {
         return selectList("cms_mt_dict_selectSimpleDict", parameters("channel_id", channel_id));
+    }
+
+    /**
+     * 根据channel_id,cart_id获取对应的字典对象列表
+     *
+     * @param orderChannelId String 渠道id
+     * @param cartId int            平台id
+     * @return List<CmsMtDictModel> 字典对象列表
+     */
+    public List<CmsMtDictModel> selectByChannelCartId(String orderChannelId, int cartId) {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("order_channel_id", orderChannelId);
+        dataMap.put("cartId", cartId);
+        return selectOne("cms_mt_dict_selectByChannelCartId", dataMap);
     }
 }
