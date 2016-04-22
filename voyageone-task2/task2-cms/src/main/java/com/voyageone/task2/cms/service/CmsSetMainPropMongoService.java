@@ -164,7 +164,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setQuery(query);
-            queryObject.setLimit(150);
+            queryObject.setLimit(500);
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // --------------------------------------------------------------------------------------------
