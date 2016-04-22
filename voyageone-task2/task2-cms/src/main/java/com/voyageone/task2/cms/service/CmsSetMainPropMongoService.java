@@ -1027,15 +1027,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), "PLATFORM_ACTIVE", String.valueOf(group.getCartId()));
                     if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-                        if (CmsConstants.PlatformActive.ToOnsale.toString().equals(cmsChannelConfigBean.getConfigValue1())) {
-                            group.setPlatformActive(CmsConstants.PlatformActive.ToOnsale);
+                        if (CmsConstants.PlatformActive.Onsale.toString().equals(cmsChannelConfigBean.getConfigValue1())) {
+                            group.setPlatformActive(CmsConstants.PlatformActive.Onsale);
                         } else {
                             // platform active:上新的动作: 暂时默认是放到:仓库中
-                            group.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
+                            group.setPlatformActive(CmsConstants.PlatformActive.Instock);
                         }
                     } else {
                         // platform active:上新的动作: 暂时默认是放到:仓库中
-                        group.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
+                        group.setPlatformActive(CmsConstants.PlatformActive.Instock);
                     }
 
                     // ProductCodes
