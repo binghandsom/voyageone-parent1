@@ -187,8 +187,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
         // 增加了sku级别的价格属性的支持
         if (this.getSkus() != null && this.getSkus().size() > 0) {
-            attribute.put("price_current", this.getSkus().get(0).getPrice_current());
-            attribute.put("price_msrp", this.getSkus().get(0).getPrice_msrp());
+            attribute.put("price_current", this.getSkus().get(0).getPriceCurrent());
+            attribute.put("price_msrp", this.getSkus().get(0).getPriceMsrp());
         } else {
             attribute.put("price_current", "0");
             attribute.put("price_msrp", "0");
@@ -252,8 +252,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         }
         cmsBtFeedInfoModel.setBrand(this.getBrand());
         cmsBtFeedInfoModel.setWeight(this.getWeight());
-        cmsBtFeedInfoModel.setshortDescription(this.getshortDescription());
-        cmsBtFeedInfoModel.setlongDescription(this.getlongDescription());
+        cmsBtFeedInfoModel.setShortDescription(this.getShortDescription());
+        cmsBtFeedInfoModel.setLongDescription(this.getLongDescription());
         cmsBtFeedInfoModel.setSkus(this.getSkus());
         cmsBtFeedInfoModel.setUpdFlg(0);
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
