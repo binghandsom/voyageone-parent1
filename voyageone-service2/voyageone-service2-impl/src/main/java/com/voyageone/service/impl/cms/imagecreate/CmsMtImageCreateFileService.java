@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * Created by dell on 2016/3/18.
  */
@@ -23,7 +26,10 @@ public class CmsMtImageCreateFileService {
     CmsMtImageCreateFileDao dao;
     @Autowired
     CmsMtImageCreateTemplateService serviceCmsMtImageCreateTemplate;
-
+@Autowired
+    AliYunOSSFileService serviceAliYunOSSFile;
+    @Autowired
+    LiquidFireImageService serviceLiquidFireImage;
     public CmsMtImageCreateFileModel select(int id) {
         return dao.select(id);
     }
@@ -36,56 +42,54 @@ public class CmsMtImageCreateFileService {
         return dao.insert(entity);
     }
 
+    public CmsMtImageCreateFileModel getByHashCode(long hashCode) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("hashCode", hashCode);
+        return dao.selectOne(map);
+    }
 
-    public Object getImage(String channelId, int templateId, String file, String vparam,String requesttQueryString,String Creater) throws Exception {
+    public Object getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
         CallResult result = new CallResult();
         long hashCode = HashCodeUtil.getHashCode(requesttQueryString);//hashCode做缓存key
-        String fileName = Long.toString(hashCode);
-        CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
-        String filePath = createImage(modelTemplate.getContent(), vparam, fileName);//返回本地文件路径
-        final String ossFilePath = "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
-        putOSS(filePath, ossFilePath);
-        CmsMtImageCreateFileModel modelFile = new CmsMtImageCreateFileModel();
-        modelFile.setChannelId(channelId);
-        modelFile.setVparam(vparam);
-        modelFile.setTemplateId(templateId);
-        modelFile.setFile(file);//文件名字
-        modelFile.setHashCode(hashCode);
-        modelFile.setRequestQueryString(requesttQueryString);
-        modelFile.setCreated(new Date());
-        modelFile.setCreater(Creater);
-        modelFile.setModifier(Creater);
-        modelFile.setFilePath(filePath);
-        modelFile.setOssFilePath(ossFilePath);
-        modelFile.setState(1);
-        modelFile.setOssState(1);
-        dao.insert(modelFile);
+        CmsMtImageCreateFileModel modelFile = getByHashCode(hashCode);
+        CmsMtImageCreateTemplateModel modelTemplate = null;
+        if (modelFile == null) {
+            modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
+            final String ossFilePath = "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
+            modelFile = new CmsMtImageCreateFileModel();
+            modelFile.setChannelId(channelId);
+            modelFile.setVparam(vparam);
+            modelFile.setTemplateId(templateId);
+            modelFile.setFile(file);//文件名字
+            modelFile.setHashCode(hashCode);
+            modelFile.setRequestQueryString(requesttQueryString);
+            modelFile.setCreated(new Date());
+            modelFile.setCreater(Creater);
+            modelFile.setModifier(Creater);
+            modelFile.setOssFilePath(ossFilePath);
+            modelFile.setState(1);
+            modelFile.setOssState(1);
+            dao.insert(modelFile);
+        }
+        serviceLiquidFireImage.createImage(modelFile);
+        serviceAliYunOSSFile.putOSS(modelFile);
         result.setResultData(modelFile.getOssFilePath());
         return result;
     }
-    private  void  putOSS(String filefullName,String keySuffixWithSlash) throws FileNotFoundException {
-        AliYunOSSClient client = new AliYunOSSClient(ImageConfig.getAliYunEndpoint(), ImageConfig.getAliYunAccessKeyId(), ImageConfig.getAliYunAccessKeySecret());
-        client.putOSS(filefullName,"shenzhen-vo", keySuffixWithSlash);
-    }
-    private String createImage(String templateContent, String vparam,String fileName) throws Exception {
-        try {
-            LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
-            String[] vparamList = vparam.split(",");
-            String source = String.format(templateContent, vparamList);
-            String fullName = client.getImage(source, fileName);
-            return fullName;
-        }
-        catch ( java.net.ConnectException ex)
-        {
-            ex.printStackTrace();
-            throw  ex;
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            throw  ex;
-        }
 
+
+
+
+    //获取模板
+    public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(CmsMtImageCreateTemplateModel modelTemplate, int templateId) {
+        if (modelTemplate == null) {
+            modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
+        }
+        return modelTemplate;
     }
+
+
+
+
 }
 
