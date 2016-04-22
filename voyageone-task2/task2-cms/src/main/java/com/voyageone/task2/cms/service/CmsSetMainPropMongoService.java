@@ -1217,21 +1217,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed 品牌方提供的数据
          * @return ProductCarts信息
          */
-        private List<Map> getProductCarts(CmsBtFeedInfoModel feed) {
+        private List<CmsBtProductModel_Field_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }
 
-            List<Map> carts = new ArrayList<>();
+            List<CmsBtProductModel_Field_Carts> carts = new ArrayList<>();
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
-                Map cart = new HashMap<>();
-                cart.put("cartId", Integer.parseInt(shop.getValue()));
-                cart.put("platformStatus", CmsConstants.PlatformStatus.WaitingPublish);
-
+                CmsBtProductModel_Field_Carts cart = new CmsBtProductModel_Field_Carts();
+                cart.setCartId(Integer.parseInt(shop.getValue()));
+                cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
                 carts.add(cart);
             }
 
