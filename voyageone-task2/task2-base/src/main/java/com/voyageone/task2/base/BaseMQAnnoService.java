@@ -11,11 +11,14 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author aooer 2016/4/18.
@@ -26,6 +29,8 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     //taskControlList job配置
     protected List<TaskControlBean> taskControlList = null;
+
+    private ExecutorService threadPool = null;
 
     /**
      * @deprecated
@@ -76,6 +81,14 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         // 任务监控历史记录添加:启动
         taskDao.insertTaskHistory(taskID, status.getIs());
 
+        if(ObjectUtils.isEmpty(threadPool)){
+            String threadCount= TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+            threadPool = Executors.newFixedThreadPool(StringUtils.isEmpty(threadCount)?1:Integer.parseInt(threadCount));
+        }
+        threadPool.execute(()->process(message,status,taskID));
+    }
+
+    private void process(Message message,TaskControlEnums.Status status,String taskID){
         try {
             String messageStr = new String(message.getBody(), "UTF-8");
             Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
