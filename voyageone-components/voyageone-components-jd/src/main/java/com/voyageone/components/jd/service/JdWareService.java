@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 public class JdWareService extends JdBase {
 
-    // 上新重试次数
+    // 重试次数
     private static final int MAX_RETRY_TIMES = 3;
 
     /**
@@ -130,7 +130,7 @@ public class JdWareService extends JdBase {
 
         try {
             // 调用京东新增商品API(360buy.ware.add)
-            WareAddResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+            WareAddResponse response = reqApi(shop, request);
 
             if (response != null) {
                 // 京东返回正常的场合
@@ -255,7 +255,7 @@ public class JdWareService extends JdBase {
 
         try {
             // 调用京东修改商品API(360buy.ware.update)
-            WareUpdateResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+            WareUpdateResponse response = reqApi(shop, request);
 
             if (response != null) {
                 // 京东返回正常的场合
@@ -270,6 +270,7 @@ public class JdWareService extends JdBase {
             throw new BusinessException(shop.getShop_name() + "修改京东商品信息失败 " + ex.getMessage());
         }
 
+        logger.error("调用京东API修改商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId());
         return retModified;
     }
 
@@ -313,10 +314,13 @@ public class JdWareService extends JdBase {
     }
 
     /**
-     * 京东根据商品Id，销售属性值Id增加图片(新增主图)
+     * 京东根据商品Id，销售属性值增加图片
+     * 新增商品主图时，属性值Id(颜色值Id)请输入0000000000
+     * 新增SKU图片时，属性值Id(颜色值Id)请输入颜色值Id
      *
      * @param shop ShopBean      店铺信息
      * @param strWareId String   商品id
+     * @param attrValueId String 属性值Id(颜色值Id)
      * @param picUrl String      图片url
      * @param isMainPic Boolean  是否主图
      * @return boolean           新增主图是否成功
@@ -335,8 +339,6 @@ public class JdWareService extends JdBase {
         InputStream is = getImgInputStream(picUrl, MAX_RETRY_TIMES);
         com.jd.open.api.sdk.FileItem fileItem = new com.jd.open.api.sdk.FileItem(is.toString());
         request.setImage(fileItem);
-
-        int count_exist = 0;
 
         try {
             // 调用京东根据商品Id，销售属性值Id增加图片API(360buy.ware.propimg.add)
@@ -396,7 +398,7 @@ public class JdWareService extends JdBase {
         request.setWareId(wareId);
 
         try {
-            // 调用京东获取商品上的所有图片列表API( jingdong.image.read.findImagesByWareId)
+            // 调用京东获取商品上的所有图片列表API(jingdong.image.read.findImagesByWareId)
             ImageReadFindImagesByWareIdResponse response = reqApi(shop, request);
 
             if (response != null) {
@@ -415,47 +417,85 @@ public class JdWareService extends JdBase {
         return imageList;
     }
 
-//    /**
-//     * 删除指定商品上的所有图片列表
-//     *
-//     * @param shop ShopBean  店铺信息
-//     * @param wareId String  京东商品id
-//     * @return String  指定商品上的所有图片列表
-//     */
-//    public List<Image> deleteImagesByWareId(ShopBean shop, long wareId, String colorIds, String indexes) throws BusinessException {
-//        List<Image> imageList = new ArrayList<>();
-//
-//        ImageWriteDeleteRequest request = new ImageWriteDeleteRequest();
-//        // 商品id(必须)
-//        request.setWareId(wareId);
-//        // 颜色id数组("jingdong,yanfa,pop")(必须)
-//        request.setColorIds(colorIds);
-//        // 图片位置数组("123,234,345")(必须)
-//        request.setImgIndexes(indexes);
-//
-//        try {
-//            // 调用京东获取商品上的所有图片列表API( jingdong.image.read.findImagesByWareId)
-//            ImageWriteDeleteResponse response = reqApi(shop, request);
-//
-//            if (response != null) {
-//                // 京东返回正常的场合
-//                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-//                    // 返回图片列表
-//                    imageList = response.getImages();
-//                }
-//            }
-//        } catch (Exception ex) {
-//            logger.error("调用京东API获取商品上的所有图片列表失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
-//
-//            throw new BusinessException(shop.getShop_name() + "获取京东获取商品上的所有图片列表失败 " + ex.getMessage());
-//        }
-//
-//        return imageList;
-//    }
+    /**
+     * 删除指定商品上的所有图片列表
+     *
+     * @param shop ShopBean  店铺信息
+     * @param wareId long  京东商品id
+     * @param colorIds String 颜色id数组(例："jingdong,yanfa,pop")
+     * @param indexes String 图片位置数组，index值：1-N。如果删除靠前的index，系统会自动把后面的图片自动挪动(例："123,234,345")
+     * @return boolean  删除指定商品上的所有图片是否成功
+     */
+    public boolean deleteImagesByWareId(ShopBean shop, long wareId, String colorIds, String indexes) throws BusinessException {
 
+        ImageWriteDeleteRequest request = new ImageWriteDeleteRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+        // 颜色id数组("jingdong,yanfa,pop")(必须)
+        request.setColorIds(colorIds);
+        // 图片位置数组("123,234,345")(必须)
+        request.setImgIndexes(indexes);
 
+        try {
+            // 调用京东删除商品图片API(jingdong.image.write.delete)
+            ImageWriteDeleteResponse response = reqApi(shop, request);
 
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回图片列表
+                    return response.getSuccess();
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API删除指定商品上的所有图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
 
+            throw new BusinessException(shop.getShop_name() + "调用京东API删除指定商品上的所有图片失败 " + ex.getMessage());
+        }
+
+        logger.error("调用京东API删除指定商品上的所有图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
+        return false;
+    }
+
+    /**
+     * 根据商品Id，销售属性值Id删除图片
+     *
+     * @param shop ShopBean  店铺信息
+     * @param wareId long    京东商品id
+     * @param attrValueId String 属性值Id(颜色值Id)
+     * @param imageId String     图片Id
+     * @return boolean  删除指定商品上的所有图片是否成功
+     */
+    public boolean deleteImagesByImageId(ShopBean shop, long wareId, String attrValueId, String imageId) throws BusinessException {
+
+        WarePropimgDeleteRequest request = new WarePropimgDeleteRequest();
+        // 商品id(必须)
+        request.setWareId(String.valueOf(wareId));
+        // 属性值Id(颜色值Id)(必须)
+        request.setAttributeValueId(attrValueId);
+        // 图片Id(必须)
+        request.setImageId(imageId);
+
+        try {
+            // 调用京东删除商品图片API(jingdong.image.write.delete)
+            WarePropimgDeleteResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回图片删除成功
+                    return true;
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API根据商品Id，销售属性值Id删除图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
+
+            throw new BusinessException(shop.getShop_name() + "根据商品Id，销售属性值Id删除图片失败 " + ex.getMessage());
+        }
+
+        logger.error("调用京东API根据商品Id，销售属性值Id删除图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
+        return false;
+    }
 
 
 
@@ -511,7 +551,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东增加SKU信息API(360buy.ware.sku.add)
-//            WareSkuAddResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+//            WareSkuAddResponse response = reqApi(shop, request);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合
@@ -557,7 +597,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东修改SKU信息API( 360buy.ware.sku.update)
-//            WareSkuUpdateResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+//            WareSkuUpdateResponse response = reqApi(shop, request);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合
@@ -603,7 +643,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
-//            ImgzonePictureUploadResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+//            ImgzonePictureUploadResponse response = reqApi(shop, request);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合(返回码：1，操作成功)
@@ -644,7 +684,7 @@ public class JdWareService extends JdBase {
 //
 //        try {
 //            // 调用京东图片空间API上传单张图片(jingdong.imgzone.picture.upload)
-//            ImgzonePictureReplaceResponse response = reqApi(shop, request, this.MAX_RETRY_TIMES);
+//            ImgzonePictureReplaceResponse response = reqApi(shop, request);
 //
 //            if (response != null) {
 //                // 京东返回正常的场合(返回码：1，操作成功)
