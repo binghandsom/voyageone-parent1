@@ -208,7 +208,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         }
     }
 
-    private CmsBtJmImportSaveInfo loadListSaveInfo(JmProductImportAllInfo info,String creater) {
+    public CmsBtJmImportSaveInfo loadListSaveInfo(JmProductImportAllInfo info,String creater) {
         CmsBtJmPromotionModel modelCmsBtJmPromotion=info.getModelCmsBtJmPromotion();
          List<CmsBtJmImportProduct> listProductModel=info.getListProductModel();
          List<CmsBtJmImportSku> listSkuModel=info.getListSkuModel();

@@ -112,9 +112,17 @@ public class CmsBtJmPromotionService {
             return;
         }
 
+        JmProductImportAllInfo importInfo = buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
+
+//        System.out.println(importInfo);
+
+        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfo,creater);
+
+
+    }
+
+    protected JmProductImportAllInfo buildJmProductImportAllInfo(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId, Double discount, Integer priceType) {
         List<CmsBtProductModel> orginProducts = productDao.selectProductByIds(productIds, channelId);
-
-
         JmProductImportAllInfo importInfo = new JmProductImportAllInfo();
         importInfo.setModelCmsBtJmPromotion(promotion);
         orginProducts.parallelStream().forEach(product -> {
@@ -122,12 +130,7 @@ public class CmsBtJmPromotionService {
             importInfo.getListSkuModel().addAll(buildSkusFrom(product, discount, priceType));
             importInfo.getListSpecialImageModel().add(buildImagesFrom(product));
         });
-
-//        System.out.println(importInfo);
-
-        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfo,creater);
-
-
+        return importInfo;
     }
 
 

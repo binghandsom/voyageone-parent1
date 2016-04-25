@@ -1338,7 +1338,7 @@ public class TmallProductService {
                     }
                     SingleCheckField priceField = (SingleCheckField) processFields.get(0);
                     List<PriceSectionBuilder.PriceOption> priceOptions = PriceSectionBuilder.transferFromTmall(priceField.getOptions());
-                    double usePrice = (Double) mainSxProduct.getCmsBtProductModel().getGroups().get("priceSaleSt");
+                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getPriceSaleSt();
 
                     String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
                     priceField.setValue(priceSectionValue);
@@ -1549,9 +1549,9 @@ public class TmallProductService {
 
                     Field processField = processFields.get(0);
                     CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
-                    if (platformActive == CmsConstants.PlatformActive.ToOnsale) {
+                    if (platformActive == CmsConstants.PlatformActive.Onsale) {
                         ((SingleCheckField) processField).setValue("0");
-                    } else if (platformActive == CmsConstants.PlatformActive.ToInstock) {
+                    } else if (platformActive == CmsConstants.PlatformActive.Instock) {
                         ((SingleCheckField) processField).setValue("2");
                     } else {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("PlatformActive must be Onsale or Instock, but now it is " + platformActive));

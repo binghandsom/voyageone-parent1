@@ -71,7 +71,7 @@
             modified,
             modifier
         FROM voyageone_cms2.cms_mt_dict
-        WHERE order_channel_id = #{order_channel_id} AND name = #{name}
+        WHERE order_channel_id = #{orderChannelId} AND name = #{name}
     </select>
 
     <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtDictModel" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
@@ -86,7 +86,7 @@
             modified,
             modifier
         FROM voyageone_cms2.cms_mt_dict
-        WHERE order_channel_id = #{order_channel_id} AND id = #{id}
+        WHERE order_channel_id = #{orderChannelId} AND id = #{id}
     </select>
 
     <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
@@ -95,12 +95,12 @@
         order_channel_id,
         name
         FROM voyageone_cms2.cms_mt_dict
-        WHERE order_channel_id = #{channel_id}
+        WHERE order_channel_id = #{channelId}
     </select>
 
     <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtDictModel">
         INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)
-        VALUES (#{id},#{order_channel_id}, #{cart_id}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
+        VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
     </insert>
 
     <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
@@ -115,7 +115,7 @@
         modified,
         modifier
         FROM voyageone_cms2.cms_mt_dict
-        WHERE order_channel_id = #{order_channel_id}
-          AND cart_id = #{cart_id}
+        WHERE order_channel_id = #{orderChannelId}
+        AND cart_id = #{cartId}
     </select>
 </mapper>

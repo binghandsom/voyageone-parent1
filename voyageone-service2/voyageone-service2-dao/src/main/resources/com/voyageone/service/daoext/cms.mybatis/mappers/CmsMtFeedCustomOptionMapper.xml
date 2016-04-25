@@ -25,7 +25,7 @@
         , feed_value_original
         , feed_value_translation
         from voyageone_cms2.cms_mt_feed_custom_option
-        where     channel_id = #{channel_id}
+        where channel_id = #{channelId}
     </select>
 
 </mapper>

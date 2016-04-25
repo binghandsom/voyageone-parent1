@@ -9,14 +9,14 @@ import java.util.regex.Pattern;
  * Created by jeff.duan on 2016/4/20.
  */
 public class CmsBtImagesModel extends BaseModel {
-    private Long id;
+    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
+    //    private Long id;
     private String channelId;
     private String code;
     private String originalUrl;
     private String imgName;
     private Integer updFlg;
-    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
-    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
     public CmsBtImagesModel(String channelId, String code, String imageUrl, int index, String modifier){
         this.channelId = channelId;
@@ -30,13 +30,13 @@ public class CmsBtImagesModel extends BaseModel {
     public CmsBtImagesModel(){
         super();
     }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getCode() {
         return code;
