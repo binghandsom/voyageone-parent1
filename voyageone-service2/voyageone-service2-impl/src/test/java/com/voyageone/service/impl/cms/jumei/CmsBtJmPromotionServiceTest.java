@@ -52,7 +52,7 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
             "\"activityStart\":\"2016-04-12 00:00:00\",\"modifier\":\"will\",\"shippingSystemId\":0," +
             "\"activityPcId\":\"5454\",\"cmsBtJmMasterBrandName\":\"\",\"prePeriodEnd\":\"2016-04-21 00:00:00\"," +
             "\"name\":\"ttrtrtr\",\"activityAppId\":\"5454\",\"creater\":\"will\",\"modified\":\"2016-04-20 19:25:08\"," +
-            "\"id\":1017,\"cmsBtJmMasterBrandId\":0,\"category\":\"\",\"brand\":\"54545\",\"channelId\":\"997\"," +
+            "\"id\":1017,\"cmsBtJmMasterBrandId\":0,\"category\":\"\",\"brand\":\"54545\",\"channelId\":\"010\"," +
             "\"activityEnd\":\"2016-04-28 00:00:00\",\"$$hashKey\":\"object:4483\"}";
 
 
@@ -71,6 +71,8 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
         //1.image 空  模板未配置
         //2.sku不对   没导完
 
+        assertTrue("导入数据为空",importInfos.getListProductModel().size()>0);
+
         CmsBtJmImportSaveInfo realSaveInfos = jmPromotionImportTaskService.loadListSaveInfo(importInfos, "will");
         jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfos,"will");
         assertTrue(realSaveInfos != null);
@@ -85,7 +87,6 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
             assertTrue(skus.size() > 0);
             assertTrue(images.size() > 0); //error
         });
-
 
         //数据case
         Set<String> originProductCodes = importInfos.getListProductModel().stream().map(bean -> bean.getProductCode()).collect(toSet());

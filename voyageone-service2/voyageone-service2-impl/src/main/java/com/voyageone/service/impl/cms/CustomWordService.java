@@ -21,10 +21,13 @@ public class CustomWordService extends BaseService {
     private CmsMtCustomWordDao customWordDao;
 
     public List<CmsMtCustomWordModel> getModels() {
-        return customWordDao.selectWithParam();
+//        return customWordDao.selectWithParam();
+        return null;
     }
 
     public List<Map<String, Object>> getTransLenSet(String chnId) {
-        return customWordDao.selectTransLenSet(chnId);
+
+//        return customWordDao.selectTransLenSet(chnId);
+        return null;
     }
 }
