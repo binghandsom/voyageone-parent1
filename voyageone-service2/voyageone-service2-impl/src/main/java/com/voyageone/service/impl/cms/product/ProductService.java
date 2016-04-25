@@ -165,6 +165,47 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
+    // 查询产品信息(合并该产品的组信息)
+    // queryObject中必须包含输出项:"fields.code"，否则将查询不到组信息
+    public List<CmsBtProductModel> getListWithGroup(String channelId, int cartId, JomgoQuery queryObject) {
+        List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObject, channelId);
+        if (prodList == null || prodList.isEmpty()) {
+            return prodList;
+        }
+
+        for (CmsBtProductModel prodObj : prodList) {
+            // 从group表合并platforms信息
+            StringBuilder qurStr = new StringBuilder();
+            qurStr.append(MongoUtils.splicingValue("cartId", cartId));
+            qurStr.append(",");
+            qurStr.append(MongoUtils.splicingValue("productCodes", prodObj.getFields().getCode()));
+
+            // 在group表中过滤platforms相关信息
+            JomgoQuery qrpQuy = new JomgoQuery();
+            qrpQuy.setQuery("{" + qurStr.toString() + "}");
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, channelId);
+            if (grpList == null || grpList.isEmpty()) {
+                $warn("ProductService.getListWithGroup prodCode=" + prodObj.getFields().getCode());
+            } else {
+                CmsBtProductGroupModel groupModelMap = grpList.get(0);
+                // 设置其group信息，用于画面显示
+                long grpId = groupModelMap.getGroupId();
+                CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
+                platformModel.setCartId(cartId);
+                platformModel.setGroupId(grpId);
+                platformModel.setNumIId(groupModelMap.getNumIId());
+                platformModel.setInstockTime(groupModelMap.getInstockTime());
+                platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
+                platformModel.setPublishTime(groupModelMap.getPublishTime());
+                platformModel.setQty(groupModelMap.getQty());
+                platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
+                platformModel.setPlatformActive(groupModelMap.getPlatformActive());
+                prodObj.setGroups(platformModel);
+            }
+        }
+        return prodList;
+    }
+
     /**
      * getCnt
      */
