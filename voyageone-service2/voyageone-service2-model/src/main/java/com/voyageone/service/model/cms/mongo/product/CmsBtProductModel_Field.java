@@ -448,4 +448,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public void setIsMasterMain(int isMasterMain) {
         setAttribute("isMasterMain", isMasterMain);
     }
+
+    public int getMasterGroupQuantity() {
+        return getAttribute("masterGroupQuantity") != null ? Integer.parseInt(getAttribute("masterGroupQuantity").toString()) : 0;
+    }
+
+    public void setMasterGroupQuantity(int qty) {
+        setAttribute("masterGroupQuantity", qty);
+    }
 }

@@ -20,6 +20,7 @@
         <result column="Dosage Size" property="DosageSize"/>
         <result column="Dosage Units" property="DosageUnits"/>
         <result column="Suggested Use" property="SuggestedUse"/>
+        <result column="Secondary Categories" property="secondaryCategories"/>
         <result column="Warnings" property="Warnings"/>
         <result column="clientProductURL" property="clientProductURL"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
@@ -77,6 +78,7 @@
         ,`Suggested Use`
         ,`Dosage Size`
         ,`Dosage Units`
+        ,`Secondary Categories`
         from
         ${tableName}
         ${keyword}

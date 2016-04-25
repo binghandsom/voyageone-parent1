@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.common.sql">
 
     <select id="tm_code_getAll" resultType="com.voyageone.common.configs.beans.CodeBean">
-        SELECT * FROM tm_code ORDER BY id
+        SELECT * FROM Synship.tm_code ORDER BY id
     </select>
 
     <select id="cms_mt_feed_config_getAll" resultType="com.voyageone.common.configs.beans.FeedBean">
@@ -11,26 +11,26 @@
     </select>
 
     <select id="tm_order_channel_config_getAll" resultType="com.voyageone.common.configs.beans.OrderChannelConfigBean">
-        SELECT * FROM tm_order_channel_config ORDER BY order_channel_id, cfg_name, cfg_val1
+        SELECT * FROM Synship.tm_order_channel_config ORDER BY order_channel_id, cfg_name, cfg_val1
     </select>
 
     <select id="tm_port_config_getAll" resultType="com.voyageone.common.configs.beans.PortConfigBean">
-        SELECT * FROM tm_port_config ORDER BY port, cfg_name, cfg_val1
+        SELECT * FROM Synship.tm_port_config ORDER BY port, cfg_name, cfg_val1
     </select>
 
     <select id="tm_order_channel_getAll" resultType="com.voyageone.common.configs.beans.OrderChannelBean">
-        SELECT * FROM tm_order_channel ORDER BY order_channel_id
+        SELECT * FROM Synship.tm_order_channel ORDER BY order_channel_id
     </select>
 
     <select id="viw_com_cart_shop_channel_mapping_getAll" resultType="com.voyageone.common.configs.beans.ShopBean">
         SELECT
           *
         FROM
-          viw_com_cart_shop_channel_mapping
+          Synship.viw_com_cart_shop_channel_mapping
       </select>
 
     <select id="tm_channel_shop_config_getAll" resultType="com.voyageone.common.configs.beans.ShopConfigBean">
-        select * from tm_channel_shop_config order by order_channel_id,cart_id,cfg_name,cfg_val1
+        select * from Synship.tm_channel_shop_config order by order_channel_id,cart_id,cfg_name,cfg_val1
     </select>
 
     <select id="com_mt_value_getAll" resultType="com.voyageone.common.configs.beans.TypeBean">
@@ -44,8 +44,8 @@
           mt_value.lang_id,
           mt_type.comment
         FROM
-          com_mt_value mt_value,
-          com_mt_type mt_type
+          Synship.com_mt_value mt_value,
+          Synship.com_mt_type mt_type
         WHERE
           mt_value.type_id = mt_type.id
          ORDER BY
@@ -67,8 +67,8 @@
         mt_type.comment,
         mt_value.display_order
         FROM
-        com_mt_value_channel mt_value,
-        com_mt_type mt_type
+        Synship.com_mt_value_channel mt_value,
+        Synship.com_mt_type mt_type
         WHERE
         mt_value.type_id = mt_type.id
         ORDER BY
@@ -78,14 +78,14 @@
     </select>
 
     <select id="tm_discount_rate_getDiscountRate" resultType="com.voyageone.common.configs.beans.DiscountRateBean">
-        select * from tm_discount_rate order by order_channel_id,ship_channel
+        select * from Synship.tm_discount_rate order by order_channel_id,ship_channel
     </select>
 
     <select id="wms_mt_store_getAll" resultType="com.voyageone.common.configs.beans.StoreBean">
         select
             *
         from
-            wms_mt_store
+            Synship.wms_mt_store
         WHERE
             active = '1'
         order by
@@ -101,7 +101,7 @@
             platform_id,
             cart_type,
             active
-        from ct_cart
+        from Synship.ct_cart
         order by cart_id
     </select>
 
@@ -116,12 +116,12 @@
             prop_val4,
             prop_val5,
             prop_val6
-        from com_mt_third_party_config
+        from Synship.com_mt_third_party_config
         order by channel_id,prop_name
     </select>
 
     <select id="ct_store_config_getAll" resultType="com.voyageone.common.configs.beans.StoreConfigBean">
-        SELECT * FROM ct_store_config ORDER BY store_id, cfg_name, cfg_val1
+        SELECT * FROM Synship.ct_store_config ORDER BY store_id, cfg_name, cfg_val1
     </select>
 
     <select id="tm_carrier_channel_getAll" resultType="com.voyageone.common.configs.beans.CarrierBean">
@@ -139,8 +139,8 @@
             , tm_carrier.alias_name                  alias_name
             , tm_carrier_channel.wsdl_url            wsdl_url
             , tm_carrier_channel.comments            comments
-        from     tm_carrier
-        join     tm_carrier_channel
+        from     Synship.tm_carrier
+        join     Synship.tm_carrier_channel
         on     tm_carrier.carrier = tm_carrier_channel.carrier
         order by tm_carrier_channel.order_channel_id
                   , tm_carrier_channel.carrier
@@ -166,14 +166,14 @@
     </select>
 
     <insert id="ct_cart_insertOrUpdate" parameterType="com.voyageone.common.configs.beans.CartBean">
-        INSERT INTO ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, status)
+        INSERT INTO Synship.ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, status)
         VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier}, 1)
         on duplicate key update name=#{name},short_name=#{short_name},description=#{description},platform_id=#{platform_id},cart_type=#{cart_type},
          modified=now(),modifier=#{modifier}
     </insert>
 
      <insert id="ct_cart_insert" parameterType="com.voyageone.common.configs.beans.CartBean">
-        INSERT INTO ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, active)
+        INSERT INTO Synship.ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, active)
         VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier}, 1)
     </insert>
 
