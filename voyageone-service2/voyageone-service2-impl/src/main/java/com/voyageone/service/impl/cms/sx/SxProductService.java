@@ -223,15 +223,16 @@ public class SxProductService extends BaseService {
     /**
      * 尺码转换
      *
-     * @param sizeMapGroupId 尺码对照表id
+     * @param cmsBtSizeMapModelList 尺码对照表
      * @param originalSize   转换前size
      * @return 转后后size
      */
-    public String changeSize(int sizeMapGroupId, String originalSize) {
-        // cms_bt_size_map
-        CmsBtSizeMapModel result = cmsBtSizeMapDao.selectSizeMap(sizeMapGroupId, originalSize);
-        if (result != null) {
-            return result.getAdjustSize();
+    public String changeSize(List<CmsBtSizeMapModel> cmsBtSizeMapModelList, String originalSize) {
+
+        for (CmsBtSizeMapModel cmsBtSizeMapModel : cmsBtSizeMapModelList) {
+            if (originalSize.equals(cmsBtSizeMapModel.getOriginalSize())) {
+                return cmsBtSizeMapModel.getAdjustSize();
+            }
         }
 
         return null;
