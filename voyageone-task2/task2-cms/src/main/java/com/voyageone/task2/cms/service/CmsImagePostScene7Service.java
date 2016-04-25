@@ -11,7 +11,7 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
+import com.voyageone.service.daoext.cms.CmsBtFeedProductImageDaoExt;
 import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -20,11 +20,12 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author james.li on 2016/1/6.
@@ -33,11 +34,10 @@ import java.util.concurrent.*;
 @Service
 public class CmsImagePostScene7Service extends BaseTaskService {
 
-    @Autowired
-    CmsBtFeedProductImageDao cmsBtFeedProductImageDao;
-
     // Scene7FTP设置
     private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
+    @Autowired
+    CmsBtFeedProductImageDaoExt cmsBtFeedProductImageDaoExt;
 
     @Override
     public SubSystem getSubSystem() {
@@ -63,7 +63,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 ExecutorService es  = Executors.newFixedThreadPool(10);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
-                    List<CmsBtFeedProductImageModel> imageUrlList = cmsBtFeedProductImageDao.selectImagebyUrl(feedImage);
+                    List<CmsBtFeedProductImageModel> imageUrlList = cmsBtFeedProductImageDaoExt.selectImagebyUrl(feedImage);
                     $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
                         List<List<CmsBtFeedProductImageModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
@@ -114,7 +114,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             subSuccessImageUrlList.forEach(cmsBtFeedProductImageModel -> {
                 cmsBtFeedProductImageModel.setSentFlag(1);
                 cmsBtFeedProductImageModel.setModifier(getTaskName());
-                cmsBtFeedProductImageDao.updateImage(cmsBtFeedProductImageModel);
+                cmsBtFeedProductImageDaoExt.updateImage(cmsBtFeedProductImageModel);
             });
         }
 
@@ -122,7 +122,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             urlErrorList.forEach(cmsBtFeedProductImageModel -> {
                 cmsBtFeedProductImageModel.setSentFlag(3);
                 cmsBtFeedProductImageModel.setModifier(getTaskName());
-                cmsBtFeedProductImageDao.updateImage(cmsBtFeedProductImageModel);
+                cmsBtFeedProductImageDaoExt.updateImage(cmsBtFeedProductImageModel);
             });
         }
 
@@ -197,7 +197,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                                 imageUrlList.get(i).setSentFlag(3);
                                 imageUrlList.get(i).setModifier(getTaskName());
 
-                                cmsBtFeedProductImageDao.updateImage(imageUrlList.get(i));
+                                cmsBtFeedProductImageDaoExt.updateImage(imageUrlList.get(i));
                                 // 记录url错误图片以便删除这张图片相关记录
 //                                urlErrorList.add(imageUrlList.get(i));
 
