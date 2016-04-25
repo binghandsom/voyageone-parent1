@@ -14,6 +14,7 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
     private String DosageUnits;
     private String SuggestedUse;
     private String Warnings;
+    private String secondaryCategories;
 
     public String getManufacturer() {
         return Manufacturer;
@@ -55,4 +56,20 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
         Warnings = warnings;
     }
 
+    public String getSecondaryCategories() {
+        return secondaryCategories;
+    }
+
+    public void setSecondaryCategories(String secondaryCategories) {
+        this.secondaryCategories = secondaryCategories;
+    }
+
+    @Override
+    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(){
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = super.getCmsBtFeedInfoModel();
+        String temp[] = this.secondaryCategories.split(":");
+        cmsBtFeedInfoModel.setProductType(temp.length > 0 ? temp[0] : "");
+        cmsBtFeedInfoModel.setSizeType(temp.length > 0?temp[0]:"");
+        return cmsBtFeedInfoModel;
+    }
 }
