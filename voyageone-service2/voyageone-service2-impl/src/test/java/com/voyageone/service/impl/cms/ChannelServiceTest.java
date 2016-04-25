@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.BaseTest;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +13,7 @@ import java.util.List;
  * @date: 2016/4/13 10:47
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
-public class ChannelServiceTest extends BaseTest {
+public class ChannelServiceTest {
 
 
     @Resource ChannelService service;
