@@ -2,10 +2,8 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-import java.util.Date;
-
 public class CmsMtChannelValuesModel extends BaseModel {
-    private Integer id;
+//    private Integer id;
 
     private String channelId;
 
@@ -15,13 +13,13 @@ public class CmsMtChannelValuesModel extends BaseModel {
 
     private String value;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+//    public Integer getId() {
+//        return id;
+//    }
+//
+//    public void setId(Integer id) {
+//        this.id = id;
+//    }
 
     public String getChannelId() {
         return channelId;

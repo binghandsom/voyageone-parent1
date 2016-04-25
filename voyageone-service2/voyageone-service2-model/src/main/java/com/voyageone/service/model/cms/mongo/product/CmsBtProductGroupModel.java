@@ -1,8 +1,6 @@
 package com.voyageone.service.model.cms.mongo.product;
 
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
@@ -10,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 商品Model Group>Platform
+ * 商品Model Group Channel
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
@@ -37,14 +35,6 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Double priceRetailEd;
     private Double priceSaleSt;
     private Double priceSaleEd;
-
-    public Double getPriceSaleEd() {
-        return priceSaleEd;
-    }
-
-    public void setPriceSaleEd(Double priceSaleEd) {
-        this.priceSaleEd = priceSaleEd;
-    }
 
     public Long getGroupId() {
         return groupId;
@@ -172,6 +162,14 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     public void setPriceSaleSt(Double priceSaleSt) {
         this.priceSaleSt = priceSaleSt;
+    }
+
+    public double getPriceSaleEd() {
+        return priceSaleEd;
+    }
+
+    public void setPriceSaleEd(double priceSaleEd) {
+        this.priceSaleEd = priceSaleEd;
     }
 
     // platform status 等待上新/在售/在库
