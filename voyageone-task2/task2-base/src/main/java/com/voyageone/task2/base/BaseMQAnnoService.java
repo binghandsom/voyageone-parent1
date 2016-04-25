@@ -3,11 +3,13 @@ package com.voyageone.task2.base;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -54,8 +56,9 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     @RabbitHandler
     private void onMessage(byte[] message,@Headers Map headers) throws Exception {
-        onMessage(new Message(message,
-                JacksonUtil.json2Bean(JacksonUtil.bean2Json(headers),MessageProperties.class)));
+        MessageProperties messageProperties = new MessageProperties();
+        BeanUtils.populate(messageProperties, headers);
+        onMessage(new Message(message, messageProperties));
     }
 
     /**
