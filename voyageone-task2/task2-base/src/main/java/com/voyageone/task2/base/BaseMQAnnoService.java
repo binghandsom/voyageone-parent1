@@ -11,6 +11,8 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -49,6 +51,12 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
      * @throws Exception
      */
     public abstract void onStartup(Map<String, Object> messageMap) throws Exception;
+
+    @RabbitHandler
+    private void onMessage(byte[] message,@Headers Map headers) throws Exception {
+        onMessage(new Message(message,
+                JacksonUtil.json2Bean(JacksonUtil.bean2Json(headers),MessageProperties.class)));
+    }
 
     /**
      * 监听通知消息，执行任务
