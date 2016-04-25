@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.common.mq.config.AnnotationProcessorByIP;
+import com.voyageone.service.impl.com.mq.config.AnnotationProcessorByIP;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.amqp.core.*;
@@ -66,7 +66,10 @@ public class MqSender extends BaseService {
 
         } catch (Exception e) {
             $error(e.getMessage(), e);
-            mqBackMessageService.addBackMessage(routingKey, messageMap);
+            try {
+                mqBackMessageService.addBackMessage(routingKey, messageMap);
+            } catch (Exception ignored) {
+            }
         }
     }
 

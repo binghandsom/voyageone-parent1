@@ -20,7 +20,6 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
@@ -194,11 +193,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 查找当前渠道,所有等待反映到主数据的商品
 //            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
-            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
-            JomgoQuery queryObject = new JomgoQuery();
-            queryObject.setQuery(query);
-            queryObject.setLimit(50);
-            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
+//            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
+//            JomgoQuery queryObject = new JomgoQuery();
+//            queryObject.setQuery(query);
+//            queryObject.setLimit(50);
+//            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
+            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, new int[]{0,2});
 
             // --------------------------------------------------------------------------------------------
             // 品牌mapping表
@@ -574,9 +574,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // jeff 2016/04 add start
             if (newFlg) {
-                // ProductCarts
-                field.setProductCarts(getProductCarts(feed));
-
                 // isMain
                 field.setIsMasterMain(getIsMasterMain(feed));
             }
@@ -626,7 +623,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (field == null) {
                 return null;
             }
-
+            // ProductCarts
+            product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // 获取当前channel, 有多少个platform
@@ -903,6 +901,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
             }
             // jeff 2016/04 add end
+            // ProductCarts
+            product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // SKU级属性列表
@@ -1010,6 +1010,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     group = new CmsBtProductGroupModel();
 
+                    // 渠道id
+                    group.setChannelId(feed.getChannelId());
+
                     // cart id
                     group.setCartId(Integer.parseInt(shop.getValue()));
 
@@ -1027,15 +1030,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), "PLATFORM_ACTIVE", String.valueOf(group.getCartId()));
                     if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-                        if (CmsConstants.PlatformActive.ToOnsale.toString().equals(cmsChannelConfigBean.getConfigValue1())) {
-                            group.setPlatformActive(CmsConstants.PlatformActive.ToOnsale);
+                        if (CmsConstants.PlatformActive.Onsale.toString().equals(cmsChannelConfigBean.getConfigValue1())) {
+                            group.setPlatformActive(CmsConstants.PlatformActive.Onsale);
                         } else {
                             // platform active:上新的动作: 暂时默认是放到:仓库中
-                            group.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
+                            group.setPlatformActive(CmsConstants.PlatformActive.Instock);
                         }
                     } else {
                         // platform active:上新的动作: 暂时默认是放到:仓库中
-                        group.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
+                        group.setPlatformActive(CmsConstants.PlatformActive.Instock);
                     }
 
                     // ProductCodes
@@ -1055,6 +1058,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
 
+                group.setCreater(getTaskName());
+                group.setModifier(getTaskName());
                 groups.add(group);
             }
             cmsBtProductGroupDao.insertWithList(groups);
@@ -1089,7 +1094,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
             // 先去看看是否有存在的了
             JomgoQuery queryObject = new JomgoQuery();
-            queryObject.setQuery("{\"productCodes\", \"" + code + "\"}");
+            queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
             return productGroupService.getList(channelId, queryObject);
         }
 
@@ -1217,18 +1222,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed 品牌方提供的数据
          * @return ProductCarts信息
          */
-        private List<CmsBtProductModel_Field_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
+        private List<CmsBtProductModel_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }
 
-            List<CmsBtProductModel_Field_Carts> carts = new ArrayList<>();
+            List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
-                CmsBtProductModel_Field_Carts cart = new CmsBtProductModel_Field_Carts();
+                CmsBtProductModel_Carts cart = new CmsBtProductModel_Carts();
                 cart.setCartId(Integer.parseInt(shop.getValue()));
                 cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
                 carts.add(cart);

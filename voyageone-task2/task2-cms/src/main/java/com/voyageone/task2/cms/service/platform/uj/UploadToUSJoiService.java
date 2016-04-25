@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
+import com.mongodb.util.JSON;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -27,6 +28,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -147,7 +149,7 @@ public class UploadToUSJoiService extends BaseTaskService{
                     productModel.setGroups(pr.getGroups());
 
                     // 更新group
-                    productGroupService.saveGroups(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode(), sxWorkLoadBean.getCartId(), pr.getGroups());
+                    productGroupService.saveGroups(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode(), sxWorkLoadBean.getCartId(), new BeanMap(pr.getGroups()));
 
                     ProductUpdateBean requestModel = new ProductUpdateBean();
                     requestModel.setProductModel(productModel);
@@ -238,14 +240,8 @@ public class UploadToUSJoiService extends BaseTaskService{
             if (groupId == -1) {
                 // 获取唯一编号
                 platform.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
-
-                // is Main
-                platform.setIsMain(true);
             } else {
                 platform.setGroupId(groupId);
-
-                // is Main
-                platform.setIsMain(false);
             }
 
             // num iid
@@ -257,7 +253,7 @@ public class UploadToUSJoiService extends BaseTaskService{
             // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
             platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
             // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
-            platform.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
+            platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
 
             // qty
             platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的

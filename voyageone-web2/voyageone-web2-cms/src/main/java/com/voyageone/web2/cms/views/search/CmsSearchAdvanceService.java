@@ -129,8 +129,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
         //add by holysky  新增一些页的聚美促销活动预加载
         masterData.put("jmPromotionList", jmPromotionService.getJMActivePromotions(String.valueOf(params.get("channelId"))));
 
-
-
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
@@ -167,8 +165,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         // 将上面查询的结果放到一个临时map中,以过滤重复code
         Map<String, String> codeList2 = new HashMap<String, String>();
-        for (Map grpObj : grpList) {
-            String pCd = (String) grpObj.get("mainProductCode");
+        for (CmsBtProductGroupModel grpObj : grpList) {
+            String pCd = grpObj.getMainProductCode();
             codeList2.put(pCd, pCd);
         }
 
@@ -218,19 +216,19 @@ public class CmsSearchAdvanceService extends BaseAppService {
             if (grpList == null || grpList.isEmpty()) {
                 $warn("CmsSearchAdvanceService.getGroupExtraInfo grpList");
             }
-            Map groupModelMap = grpList.get(0);
+            CmsBtProductGroupModel groupModelMap = grpList.get(0);
             // 设置其group信息，用于画面显示
-            long grpId = (Long) groupModelMap.get("groupId");
+            long grpId = groupModelMap.getGroupId();
             CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
             platformModel.setCartId(cartId);
             platformModel.setGroupId(grpId);
-            platformModel.setNumIId((String) groupModelMap.get("numIId"));
-            platformModel.setInStockTime((String) groupModelMap.get("inStockTime"));
-            platformModel.setOnSaleTime((String) groupModelMap.get("onSaleTime"));
-            platformModel.setPublishTime((String) groupModelMap.get("publishTime"));
-            platformModel.setQty((Integer) groupModelMap.get("qty"));
-            platformModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.valueOf((String) groupModelMap.get("platformStatus")));
-            platformModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.valueOf((String) groupModelMap.get("platformActive")));
+            platformModel.setNumIId(groupModelMap.getNumIId());
+            platformModel.setInstockTime(groupModelMap.getInstockTime());
+            platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
+            platformModel.setPublishTime(groupModelMap.getPublishTime());
+            platformModel.setQty(groupModelMap.getQty());
+            platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
+            platformModel.setPlatformActive(groupModelMap.getPlatformActive());
             groupObj.setGroups(platformModel);
 
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
@@ -262,7 +260,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<Map<String, String>> images1Arr = new ArrayList<>();
             if (hasImgFlg) {
                 // 获取子商品的图片
-                List pCdList = (List) groupModelMap.get("productCodes");
+                List pCdList = (List) groupModelMap.getProductCodes();
                 if (pCdList != null && pCdList.size() > 1) {
                     for (int i = 1, leng = pCdList.size(); i < leng; i ++) {
                         String pCd = (String) pCdList.get(i);
@@ -350,8 +348,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         // 将上面查询的结果放到一个临时map中
         Map<String, String> codeList2 = new HashMap<String, String>();
-        for (Map grpObj : grpList) {
-            List<String> pCdList = (List) grpObj.get("productCodes");
+        for (CmsBtProductGroupModel grpObj : grpList) {
+            List<String> pCdList = (List) grpObj.getProductCodes();
             if (pCdList == null || pCdList.isEmpty()) {
                 continue;
             } else {

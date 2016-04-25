@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.voyageone.common.mq.config;
+package com.voyageone.service.impl.com.mq.config;
 
 import org.springframework.amqp.rabbit.config.RabbitListenerConfigUtils;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;

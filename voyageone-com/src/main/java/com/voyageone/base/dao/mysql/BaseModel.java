@@ -7,6 +7,8 @@ package com.voyageone.base.dao.mysql;
  */
 public class BaseModel {
 
+    private int id;
+
     private String created;
 
     private String creater;
@@ -45,5 +47,17 @@ public class BaseModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    /**
+
+     */
+    public int getId() {
+
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

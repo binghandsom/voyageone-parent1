@@ -4,7 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.service.dao.cms.CmsMtDictDao;
+import com.voyageone.service.daoext.cms.CmsMtDictDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtDictModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +23,21 @@ import java.util.Map;
 public class DictService extends BaseService {
 
     @Autowired
-    private CmsMtDictDao cmsMtDictDao;
+    private CmsMtDictDaoExt cmsMtDictDaoExt;
 
     /**
      * 获取渠道所有字典的简单信息
      */
     public CmsMtDictModel getDict(CmsMtDictModel cmsMtDictModel) {
-        return cmsMtDictDao.selectById(cmsMtDictModel);
+        return cmsMtDictDaoExt.selectById(cmsMtDictModel);
     }
 
     public List<CmsMtDictModel> getModesByChannel(CmsDictionaryIndexBean params) {
-        return cmsMtDictDao.selectByChannel(params);
+        return cmsMtDictDaoExt.selectByChannel(params);
     }
 
     public int getCountByChannel(CmsDictionaryIndexBean params) {
-        return cmsMtDictDao.selectAllCount(params);
+        return cmsMtDictDaoExt.selectAllCount(params);
     }
 
     public Map<String, Object> getModesAndTotalCountByChannel(CmsDictionaryIndexBean params) {
@@ -48,7 +48,7 @@ public class DictService extends BaseService {
     }
 
     public List<CmsMtDictModel> getModesByChannelCartId(String order_channel_id, int cartId) {
-        return cmsMtDictDao.selectByChannelCartId(order_channel_id, cartId);
+        return cmsMtDictDaoExt.selectByChannelCartId(order_channel_id, cartId);
     }
 
     /**
@@ -64,7 +64,7 @@ public class DictService extends BaseService {
             throw new BusinessException("字典定义内容不存在!");
 
         if (isNameCheck) {
-            if (cmsMtDictDao.selectByName(cmsMtDictModel).size() > 1) {
+            if (cmsMtDictDaoExt.selectByName(cmsMtDictModel).size() > 1) {
                 throw new BusinessException("该字典名称已经存在,请重新设定字典名称!");
             }
         }
@@ -77,7 +77,7 @@ public class DictService extends BaseService {
     public int addDict(CmsMtDictModel cmsMtDictModel) {
         // 检测新字典项数据
         checkDict(cmsMtDictModel, true);
-        return cmsMtDictDao.insertDict(cmsMtDictModel);
+        return cmsMtDictDaoExt.insertDict(cmsMtDictModel);
     }
 
     /**
@@ -85,8 +85,8 @@ public class DictService extends BaseService {
      */
     @VOTransactional
     public int removeDict(CmsMtDictModel cmsMtDictModel) {
-        cmsMtDictDao.insertDictLog(cmsMtDictModel);
-        return cmsMtDictDao.deleteDict(cmsMtDictModel);
+        cmsMtDictDaoExt.insertDictLog(cmsMtDictModel);
+        return cmsMtDictDaoExt.deleteDict(cmsMtDictModel);
     }
 
     /**
@@ -101,7 +101,7 @@ public class DictService extends BaseService {
             throw new BusinessException("该条数据已经被其他人更新过了,请确认!");
         }
 
-        cmsMtDictDao.insertDictLog(oldCmsMtDictModel);
-        return cmsMtDictDao.updateDict(cmsMtDictModel);
+        cmsMtDictDaoExt.insertDictLog(oldCmsMtDictModel);
+        return cmsMtDictDaoExt.updateDict(cmsMtDictModel);
     }
 }
