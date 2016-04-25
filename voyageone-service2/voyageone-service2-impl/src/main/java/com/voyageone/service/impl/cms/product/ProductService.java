@@ -473,7 +473,7 @@ public class ProductService extends BaseService {
 //                    models.add(model);
 //                }
 //            }
-        for(CmsBtProductModel_Field_Carts cartInfo : carts) {
+        for(CmsBtProductModel_Carts cartInfo : carts) {
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
             model.setChannelId(channelId);
             model.setGroupId(platformsMap.get(cartInfo.getCartId()));
