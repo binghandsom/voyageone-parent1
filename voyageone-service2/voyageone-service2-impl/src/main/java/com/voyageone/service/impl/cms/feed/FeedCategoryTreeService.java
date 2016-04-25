@@ -24,10 +24,10 @@ public class FeedCategoryTreeService extends BaseService {
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
 
-    // 取得Top类目路径数据
-    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId) {
-        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
-    }
+//    // 取得Top类目路径数据
+//    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId) {
+//        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
+//    }
 
     public List<CmsMtFeedCategoryTreeModel> getOnlyTopFeedCategories(String channelId) {
         return cmsMtFeedCategoryTreeDao.selectTopCategories(channelId);
