@@ -193,11 +193,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 查找当前渠道,所有等待反映到主数据的商品
 //            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
-            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
-            JomgoQuery queryObject = new JomgoQuery();
-            queryObject.setQuery(query);
-            queryObject.setLimit(50);
-            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
+//            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
+//            JomgoQuery queryObject = new JomgoQuery();
+//            queryObject.setQuery(query);
+//            queryObject.setLimit(50);
+//            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
+            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, new int[]{0,2});
 
             // --------------------------------------------------------------------------------------------
             // 品牌mapping表
@@ -1009,6 +1010,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     group = new CmsBtProductGroupModel();
 
+                    // 渠道id
+                    group.setChannelId(feed.getChannelId());
+
                     // cart id
                     group.setCartId(Integer.parseInt(shop.getValue()));
 
@@ -1054,6 +1058,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
 
+                group.setCreater(getTaskName());
+                group.setModifier(getTaskName());
                 groups.add(group);
             }
             cmsBtProductGroupDao.insertWithList(groups);
