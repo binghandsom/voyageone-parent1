@@ -75,10 +75,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private CmsBtJmPromotionService jmPromotionService;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;platformName;orgChannelId;" +
-            "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
-            "groups.salePriceStart;groups.salePriceEnd;groups.carts;skus;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;fields.productCarts;fields.isMasterMain;" +
+    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;" +
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
@@ -213,23 +211,25 @@ public class CmsSearchAdvanceService extends BaseAppService {
             JomgoQuery qrpQuy = new JomgoQuery();
             qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
             List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, channelId);
+            CmsBtProductGroupModel groupModelMap = null;
             if (grpList == null || grpList.isEmpty()) {
-                $warn("CmsSearchAdvanceService.getGroupExtraInfo grpList");
+                $warn("CmsSearchAdvanceService.getGroupExtraInfo prodCode=" + prodCode);
+            } else {
+                groupModelMap = grpList.get(0);
+                // 设置其group信息，用于画面显示
+                long grpId = groupModelMap.getGroupId();
+                CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
+                platformModel.setCartId(cartId);
+                platformModel.setGroupId(grpId);
+                platformModel.setNumIId(groupModelMap.getNumIId());
+                platformModel.setInstockTime(groupModelMap.getInstockTime());
+                platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
+                platformModel.setPublishTime(groupModelMap.getPublishTime());
+                platformModel.setQty(groupModelMap.getQty());
+                platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
+                platformModel.setPlatformActive(groupModelMap.getPlatformActive());
+                groupObj.setGroups(platformModel);
             }
-            CmsBtProductGroupModel groupModelMap = grpList.get(0);
-            // 设置其group信息，用于画面显示
-            long grpId = groupModelMap.getGroupId();
-            CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
-            platformModel.setCartId(cartId);
-            platformModel.setGroupId(grpId);
-            platformModel.setNumIId(groupModelMap.getNumIId());
-            platformModel.setInstockTime(groupModelMap.getInstockTime());
-            platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
-            platformModel.setPublishTime(groupModelMap.getPublishTime());
-            platformModel.setQty(groupModelMap.getQty());
-            platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
-            platformModel.setPlatformActive(groupModelMap.getPlatformActive());
-            groupObj.setGroups(platformModel);
 
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
             if (channel == null) {
@@ -258,7 +258,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<>();
-            if (hasImgFlg) {
+            if (hasImgFlg && groupModelMap != null) {
                 // 获取子商品的图片
                 List pCdList = (List) groupModelMap.getProductCodes();
                 if (pCdList != null && pCdList.size() > 1) {
@@ -298,70 +298,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
         List<String> codeList = new ArrayList<String>(prodList.size());
         for (CmsBtProductModel prodObj : prodList) {
              codeList.add(prodObj.getFields().getCode());
-        }
-
-        // 如果检索了groups.platforms相关信息，则必须对上面的结果prodList进行过滤
-        // 设置platform检索条件
-        StringBuilder resultPlatforms = new StringBuilder();
-
-        // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
-        resultPlatforms.append(",");
-
-        // 获取platform status
-        if (searchValue.getPlatformStatus() != null
-                && searchValue.getPlatformStatus().length > 0) {
-            // 获取platform status
-            resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
-            resultPlatforms.append(",");
-        }
-
-        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append("\"publishTime\":{" );
-            // 获取publishTime start
-            if (searchValue.getPublishTimeStart() != null) {
-                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
-            }
-            // 获取publishTime End
-            if (searchValue.getPublishTimeTo() != null) {
-                if (searchValue.getPublishTimeStart() != null) {
-                    resultPlatforms.append(",");
-                }
-                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
-            }
-            resultPlatforms.append("},");
-        }
-
-        String[] codeArr = new String[codeList.size()];
-        codeArr = codeList.toArray(codeArr);
-        resultPlatforms.append(MongoUtils.splicingValue("productCodes", codeArr, "$in"));
-
-        // 在group表中过滤platforms相关信息
-        JomgoQuery qrpQuy = new JomgoQuery();
-        qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
-        qrpQuy.setProjection("{'_id':0,'productCodes.$':1}");
-        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, userInfo.getSelChannelId());
-        if (grpList == null || grpList.isEmpty()) {
-            $warn("CmsSearchAdvanceService.getProductCodeList grpList");
-            return new ArrayList<String>(0);
-        }
-
-        // 将上面查询的结果放到一个临时map中
-        Map<String, String> codeList2 = new HashMap<String, String>();
-        for (CmsBtProductGroupModel grpObj : grpList) {
-            List<String> pCdList = (List) grpObj.getProductCodes();
-            if (pCdList == null || pCdList.isEmpty()) {
-                continue;
-            } else {
-                pCdList.forEach(pCd ->codeList2.put(pCd, pCd));
-            }
-        }
-        // 除去不符合条件的code
-        for (int i = codeList.size() - 1; i >= 0; i --) {
-            String pCode = codeList.get(i);
-            if (!codeList2.containsKey(pCode)) {
-                codeList.remove(i);
-            }
         }
         return codeList;
     }
@@ -462,6 +398,42 @@ public class CmsSearchAdvanceService extends BaseAppService {
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
         StringBuilder result = new StringBuilder();
+
+        // 设置platform检索条件
+        StringBuilder resultPlatforms = new StringBuilder();
+
+        // 添加platform cart
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
+        resultPlatforms.append(",");
+
+        // 获取platform status
+        if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().length > 0) {
+            // 获取platform status
+            resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
+            resultPlatforms.append(",");
+        }
+
+        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
+            resultPlatforms.append("\"publishTime\":{" );
+            // 获取publishTime start
+            if (searchValue.getPublishTimeStart() != null) {
+                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+            }
+            // 获取publishTime End
+            if (searchValue.getPublishTimeTo() != null) {
+                if (searchValue.getPublishTimeStart() != null) {
+                    resultPlatforms.append(",");
+                }
+                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+            }
+            resultPlatforms.append("},");
+        }
+
+        result.append(MongoUtils.splicingValue("carts"
+                , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
+                , "$elemMatch"));
+        result.append(",");
+
         // 获取其他检索条件
         result.append(getSearchValueForMongo(searchValue));
 
