@@ -842,10 +842,15 @@ public class ProductService extends BaseService {
                                                   CmsConstants.PlatformStatus status) {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
-        for (String code : codeList) {
+        // deleted by morse.lu 2016/04/25 start
+//        for (String code : codeList) {
+            // deleted by morse.lu 2016/04/25 end
             HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("productCodes", code);
-            queryMap.put("cartId", cartId);
+            // modified by morse.lu 2016/04/25 start
+//            queryMap.put("productCodes", code);
+//            queryMap.put("cartId", cartId);
+            queryMap.put("groupId", groupId);
+            // modified by morse.lu 2016/04/25 end
 
             HashMap<String, Object> updateMap = new HashMap<>();
             if (numIId != null) {
@@ -873,11 +878,15 @@ public class ProductService extends BaseService {
                 model.setQueryMap(queryMap);
                 bulkList.add(model);
             }
-        }
+//        }
 
         BulkWriteResult result = null;
         if (bulkList.size()>0) {
-            result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+            // modified by morse.lu 2016/04/25 start
+            // group信息从product表剥离出来，更新cms_bt_product_group_cxx
+//            result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+            result = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
+            // modified by morse.lu 2016/04/25 end
         }
         return result;
     }
