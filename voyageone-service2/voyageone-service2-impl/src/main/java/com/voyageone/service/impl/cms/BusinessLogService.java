@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.service.dao.cms.CmsBtBusinessLogDao;
+import com.voyageone.service.daoext.cms.CmsBtBusinessLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +19,19 @@ import java.util.Map;
 public class BusinessLogService extends BaseService {
 
     @Autowired
-    private CmsBtBusinessLogDao cmsBtBusinessLogDao;
+    private CmsBtBusinessLogDaoExt cmsBtBusinessLogDaoExt;
 
     public List<CmsBtBusinessLogModel> getList(Map params){
-        return cmsBtBusinessLogDao.selectByCondition(params);
+        return cmsBtBusinessLogDaoExt.selectByCondition(params);
     }
 
     public int getCount(Map params){
-        return cmsBtBusinessLogDao.selectByConditionCnt(params);
+        return cmsBtBusinessLogDaoExt.selectByConditionCnt(params);
     }
 
     @VOTransactional
     public int updateFinishStatus(Map params){
-        return cmsBtBusinessLogDao.updateStatusFinish(params);
+        return cmsBtBusinessLogDaoExt.updateStatusFinish(params);
     }
 
 }
