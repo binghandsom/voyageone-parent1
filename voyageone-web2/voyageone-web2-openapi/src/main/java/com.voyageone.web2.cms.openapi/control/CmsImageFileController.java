@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.openapi.control;
 
 import com.voyageone.service.impl.cms.imagecreate.CmsMtImageCreateFileService;
+import com.voyageone.service.model.openapi.ProductGetImageRespone;
 import com.voyageone.web2.cms.openapi.OpenAipBaseController;
 import com.voyageone.web2.sdk.api.request.ProductForOmsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductForOmsGetResponse;
@@ -24,8 +25,8 @@ public class CmsImageFileController extends OpenAipBaseController {
     CmsMtImageCreateFileService service;
     ///http://localhost:8081/rest/product/getImage?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered
     @RequestMapping(value = "/product/getImage", method = RequestMethod.GET)
-    public Object get(HttpServletRequest request, @RequestParam String cId, @RequestParam int templateId, @RequestParam String file, @RequestParam String vparam) throws Exception {
+    public ProductGetImageRespone get(HttpServletRequest request, @RequestParam String cId, @RequestParam int templateId, @RequestParam String file, @RequestParam String vparam) throws Exception {
         String queryString = request.getQueryString();
-        return service.getImage(cId, templateId, file, vparam, queryString, "请求创建图片");
+        return service.getImage(cId, templateId, file, vparam, queryString, "SystemCreateImage");
     }
 }

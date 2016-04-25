@@ -347,6 +347,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         jmProductBean.setForeign_language_name(jmBtProductImport.getForeignLanguageName());
         // Todo
 
+
         // sku
         List<JmProductBean_Spus> spus = new ArrayList<>();
         jmProductBean.setSpus(spus);

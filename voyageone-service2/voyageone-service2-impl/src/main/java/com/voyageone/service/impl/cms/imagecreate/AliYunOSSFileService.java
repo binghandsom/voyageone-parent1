@@ -17,8 +17,6 @@ public class AliYunOSSFileService {
         try {
             AliYunOSSClient client = new AliYunOSSClient(ImageConfig.getAliYunEndpoint(), ImageConfig.getAliYunAccessKeyId(), ImageConfig.getAliYunAccessKeySecret());
             client.putOSS(filefullName, "shenzhen-vo", keySuffixWithSlash);
-        } catch (IllegalArgumentException ex) {
-            throw new BusinessException("100201", ex.getMessage(), ex);
         } catch (Exception ex) {
             throw new BusinessException("1002", "上传阿里云OSS错误", ex);
         }
