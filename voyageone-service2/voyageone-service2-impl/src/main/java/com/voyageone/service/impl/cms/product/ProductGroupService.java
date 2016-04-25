@@ -224,10 +224,10 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
-                    bulkUpdateMap.put("carts.platformStatus", model.getPlatformStatus().name());
+                    bulkUpdateMap.put("carts.$.platformStatus", model.getPlatformStatus().name());
                 }
                 if (!isPublishedProducts.get(code)) {
-                    bulkUpdateMap.put("carts.publishTime", model.getPublishTime());
+                    bulkUpdateMap.put("carts.$.publishTime", model.getPublishTime());
                 }
 
                 // 设定批量更新条件和值
