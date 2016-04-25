@@ -164,6 +164,11 @@
     "templateUrl": "views/channel/taglist/index.tpl.html",
     "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
   },
+  "channel_store_operation": {
+    "hash": "/channel/storeoperation",
+    "templateUrl": "views/channel/storeoperation/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/storeoperation/index.ctl"
+  },
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
