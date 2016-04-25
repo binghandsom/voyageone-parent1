@@ -20,10 +20,10 @@
     <select id="cms_mt_feed_custom_option_select" parameterType="HashMap"
             resultType="com.voyageone.service.model.cms.CmsMtFeedCustomOptionModel">
         select    id
-        , channel_id
-        , prop_id
-        , feed_value_original
-        , feed_value_translation
+        , channel_id as channelId
+        , prop_id as propId
+        , feed_value_original as feedValueOriginal
+        , feed_value_translation as feedValueTranslation
         from voyageone_cms2.cms_mt_feed_custom_option
         where channel_id = #{channelId}
     </select>
