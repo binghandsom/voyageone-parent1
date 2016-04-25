@@ -13,6 +13,9 @@ import com.voyageone.service.model.jumei.businessmodel.CmsBtJmProductImportSaveI
 import com.voyageone.service.model.jumei.businessmodel.JmProductImportAllInfo;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
@@ -36,6 +39,7 @@ import static org.junit.Assume.*;
  * @date: 2016/4/25 10:36
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
+
 public class CmsBtJmPromotionServiceTest extends BaseTest {
 
     @Resource
@@ -64,7 +68,11 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
         int priceType = 1;
         JmProductImportAllInfo importInfos = jmPromotionService.buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
 
+        //1.image 空  模板未配置
+        //2.sku不对   没导完
+
         CmsBtJmImportSaveInfo realSaveInfos = jmPromotionImportTaskService.loadListSaveInfo(importInfos, "will");
+        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfos,"will");
         assertTrue(realSaveInfos != null);
         List<CmsBtJmProductImportSaveInfo> saveInfos = realSaveInfos.getListProductSaveInfo();
         assertTrue(saveInfos != null && saveInfos.size() > 0);
