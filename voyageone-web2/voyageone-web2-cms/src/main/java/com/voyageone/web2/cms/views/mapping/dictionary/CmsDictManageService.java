@@ -1,14 +1,14 @@
 package com.voyageone.web2.cms.views.mapping.dictionary;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.bean.cms.DictionaryMasterPropBean;
-import com.voyageone.service.model.cms.enums.DictionaryMasterProp;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.service.bean.cms.DictionaryMasterPropBean;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.impl.cms.CustomWordService;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.model.cms.CmsMtDictModel;
+import com.voyageone.service.model.cms.enums.DictionaryMasterProp;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -40,7 +40,7 @@ public class CmsDictManageService extends BaseAppService {
      * 获取渠道所有字典的简单信息
      */
     public CmsMtDictModel getDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
-        cmsMtDictModel.setOrder_channel_id(user.getSelChannelId());
+        cmsMtDictModel.setOrderChannelId(user.getSelChannelId());
         return dictService.getDict(cmsMtDictModel);
     }
 
@@ -80,7 +80,7 @@ public class CmsDictManageService extends BaseAppService {
      * @return 更新的字典项
      */
     public void addDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
-        cmsMtDictModel.setOrder_channel_id(user.getSelChannelId());
+        cmsMtDictModel.setOrderChannelId(user.getSelChannelId());
         cmsMtDictModel.setCreater(user.getUserName());
         cmsMtDictModel.setModifier(user.getUserName());
 
@@ -97,7 +97,7 @@ public class CmsDictManageService extends BaseAppService {
      * @return 更新结果
      */
     public int delDict(CmsMtDictModel cmsMtDictModel, UserSessionBean userInfo) {
-        cmsMtDictModel.setOrder_channel_id(userInfo.getSelChannelId());
+        cmsMtDictModel.setOrderChannelId(userInfo.getSelChannelId());
         cmsMtDictModel.setModifier(userInfo.getUserName());
         return dictService.removeDict(cmsMtDictModel);
     }
@@ -110,7 +110,7 @@ public class CmsDictManageService extends BaseAppService {
      * @return 更新结果
      */
     public int setDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
-        cmsMtDictModel.setOrder_channel_id(user.getSelChannelId());
+        cmsMtDictModel.setOrderChannelId(user.getSelChannelId());
         cmsMtDictModel.setModifier(user.getUserName());
         return dictService.saveDict(cmsMtDictModel);
     }

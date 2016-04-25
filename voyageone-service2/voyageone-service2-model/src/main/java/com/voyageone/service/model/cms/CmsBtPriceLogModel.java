@@ -7,7 +7,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * @version 2.0.0
  */
 public class CmsBtPriceLogModel extends BaseModel {
-    private Long id;
+    //    private Long id;
     private String channelId;
     private Long productId;
     private String code;
@@ -20,13 +20,13 @@ public class CmsBtPriceLogModel extends BaseModel {
     private String clientNetPrice;
     private String comment;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+//    public long getId() {
+//        return id;
+//    }
+//
+//    public void setId(long id) {
+//        this.id = id;
+//    }
 
     public String getChannelId() {
         return channelId;

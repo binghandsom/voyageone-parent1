@@ -6,7 +6,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * Created by james.li on 2015/12/7.
  */
 public class CmsMtCommonPropModel extends BaseModel {
-    private Integer id;
+//    private Integer id;
 
     private String propId;
 
@@ -28,13 +28,13 @@ public class CmsMtCommonPropModel extends BaseModel {
 
     private String mapping;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+//    public Integer getId() {
+//        return id;
+//    }
+//
+//    public void setId(Integer id) {
+//        this.id = id;
+//    }
 
     public String getPropId() {
         return propId;
