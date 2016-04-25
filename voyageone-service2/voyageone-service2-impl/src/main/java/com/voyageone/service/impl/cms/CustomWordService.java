@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtCustomWord;
+import com.voyageone.service.model.cms.CmsMtCustomWordModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class CustomWordService extends BaseService {
     @Autowired
     private CmsMtCustomWordDao customWordDao;
 
-    public List<CmsMtCustomWord> getModels() {
+    public List<CmsMtCustomWordModel> getModels() {
         return customWordDao.selectWithParam();
     }
 
