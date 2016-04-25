@@ -1,22 +1,21 @@
 package com.voyageone.service.model.cms.mongo.product;
 
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * 商品Model Group>Platform
+ * 商品Model Group Channel
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductGroupModel extends CartPartitionModel {
+public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     private long groupId = 0;
+    protected int cartId = 0;
     private String numIId = null;
     private String platformPid = null;
     private int displayOrder = 0;
@@ -36,20 +35,20 @@ public class CmsBtProductGroupModel extends CartPartitionModel {
     private double priceSaleSt = 0;
     private double priceSaleEd = 0;
 
-    public double getPriceSaleEd() {
-        return priceSaleEd;
-    }
-
-    public void setPriceSaleEd(double priceSaleEd) {
-        this.priceSaleEd = priceSaleEd;
-    }
-
     public long getGroupId() {
         return groupId;
     }
 
     public void setGroupId(long groupId) {
         this.groupId = groupId;
+    }
+
+    public int getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
     }
 
     public String getNumIId() {
@@ -162,6 +161,14 @@ public class CmsBtProductGroupModel extends CartPartitionModel {
 
     public void setPriceSaleSt(double priceSaleSt) {
         this.priceSaleSt = priceSaleSt;
+    }
+
+    public double getPriceSaleEd() {
+        return priceSaleEd;
+    }
+
+    public void setPriceSaleEd(double priceSaleEd) {
+        this.priceSaleEd = priceSaleEd;
     }
 
     // platform status 等待上新/在售/在库
