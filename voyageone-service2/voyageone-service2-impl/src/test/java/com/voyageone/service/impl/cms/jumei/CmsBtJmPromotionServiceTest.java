@@ -97,11 +97,5 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
         }).flatMap(l->l.stream()).collect(Collectors.toSet());
 
         assertEquals(originProductCodes,skuProductCodes); //所有的sku中的productCode 必须和原先选定的productCode相等
-
-        //images
-
-
-
-
     }
 }
