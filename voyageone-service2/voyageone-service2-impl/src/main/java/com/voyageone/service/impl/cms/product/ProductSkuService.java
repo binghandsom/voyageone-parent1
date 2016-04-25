@@ -729,7 +729,10 @@ public class ProductSkuService extends BaseService {
             priceList.sort((o1, o2) -> o2.compareTo(o1));
             start = priceList.get(priceList.size() - 1);
             end = priceList.get(0);
-            if (priceStart == null || priceEnd == null
+            // jeff 2016/06 change start
+            // if (priceStart == null || priceEnd == null
+            // jeff 2016/06 change end
+            if (priceStart == 0 || priceEnd == 0
                 || start.compareTo(priceStart) != 0
                 || end.compareTo(priceEnd) != 0) {
                 isChanged = true;
