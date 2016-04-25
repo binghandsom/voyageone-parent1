@@ -2,180 +2,345 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-/**
- * @author aooer 2016/1/20.
- * @version 2.0.0
- * @since 2.0.0
- */
 public class CmsBtBusinessLogModel extends BaseModel {
 
-    private Integer seq;
+    /**
 
+     */
     private String channelId;
+    /**
 
+     */
     private String catId;
+    /**
 
-    private Integer cartId;
+     */
+    private int cartId;
+    /**
 
-    private Long groupId;
+     */
+    private String groupId;
+    /**
 
+     */
     private String groupName;
+    /**
+     * 主商品的product_id
+     */
+    private String productId;
+    /**
 
-    private Long productId;
-
+     */
     private String productName;
-
-    private Long promotionId;
-
+    /**
+     * 只有promotion操作error的时候才插入
+     */
+    private String promotionId;
+    /**
+     * 只有promotion操作error的时候才插入
+     */
     private String promotionName;
-
+    /**
+     * 如果错误时，没有model就不要设置
+     */
     private String model;
-
+    /**
+     * 如果错误时，没有code就不要设置
+     */
     private String code;
-
+    /**
+     * 如果错误时，没有sku就不要设置
+     */
     private String sku;
+    /**
+     * 1:上新错误
+     */
+    private int errorTypeId;
+    /**
 
-    private Integer errorTypeId;
-
+     */
     private String errorCode;
+    /**
+     * 1:店铺内分类 2:活动标签 3:货位标签
+     */
+    private String errorMsg;
+    /**
+     * 0:未处理 1:已处理
+     */
+    private int status;
 
-    private String errMsg;
 
-    private Boolean status;
+    /**
 
-    public Integer getSeq() {
-        return seq;
-    }
-
-    public void setSeq(Integer seq) {
-        this.seq = seq;
-    }
-
+     */
     public String getChannelId() {
-        return channelId;
+
+        return this.channelId;
     }
 
     public void setChannelId(String channelId) {
-        this.channelId = channelId;
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getCatId() {
-        return catId;
+
+        return this.catId;
     }
 
     public void setCatId(String catId) {
-        this.catId = catId;
+        if (catId != null) {
+            this.catId = catId;
+        } else {
+            this.catId = "";
+        }
+
     }
 
-    public Integer getCartId() {
-        return cartId;
+
+    /**
+
+     */
+    public int getCartId() {
+
+        return this.cartId;
     }
 
-    public void setCartId(Integer cartId) {
+    public void setCartId(int cartId) {
         this.cartId = cartId;
     }
 
-    public Long getGroupId() {
-        return groupId;
+
+    /**
+
+     */
+    public String getGroupId() {
+
+        return this.groupId;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setGroupId(String groupId) {
+        if (groupId != null) {
+            this.groupId = groupId;
+        } else {
+            this.groupId = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getGroupName() {
-        return groupName;
+
+        return this.groupName;
     }
 
     public void setGroupName(String groupName) {
-        this.groupName = groupName;
+        if (groupName != null) {
+            this.groupName = groupName;
+        } else {
+            this.groupName = "";
+        }
+
     }
 
-    public Long getProductId() {
-        return productId;
+
+    /**
+     * 主商品的product_id
+     */
+    public String getProductId() {
+
+        return this.productId;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setProductId(String productId) {
+        if (productId != null) {
+            this.productId = productId;
+        } else {
+            this.productId = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getProductName() {
-        return productName;
+
+        return this.productName;
     }
 
     public void setProductName(String productName) {
-        this.productName = productName;
+        if (productName != null) {
+            this.productName = productName;
+        } else {
+            this.productName = "";
+        }
+
     }
 
-    public Long getPromotionId() {
-        return promotionId;
+
+    /**
+     * 只有promotion操作error的时候才插入
+     */
+    public String getPromotionId() {
+
+        return this.promotionId;
     }
 
-    public void setPromotionId(Long promotionId) {
-        this.promotionId = promotionId;
+    public void setPromotionId(String promotionId) {
+        if (promotionId != null) {
+            this.promotionId = promotionId;
+        } else {
+            this.promotionId = "";
+        }
+
     }
 
+
+    /**
+     * 只有promotion操作error的时候才插入
+     */
     public String getPromotionName() {
-        return promotionName;
+
+        return this.promotionName;
     }
 
     public void setPromotionName(String promotionName) {
-        this.promotionName = promotionName;
+        if (promotionName != null) {
+            this.promotionName = promotionName;
+        } else {
+            this.promotionName = "";
+        }
+
     }
 
+
+    /**
+     * 如果错误时，没有model就不要设置
+     */
     public String getModel() {
-        return model;
+
+        return this.model;
     }
 
     public void setModel(String model) {
-        this.model = model;
+        if (model != null) {
+            this.model = model;
+        } else {
+            this.model = "";
+        }
+
     }
 
+
+    /**
+     * 如果错误时，没有code就不要设置
+     */
     public String getCode() {
-        return code;
+
+        return this.code;
     }
 
     public void setCode(String code) {
-        this.code = code;
+        if (code != null) {
+            this.code = code;
+        } else {
+            this.code = "";
+        }
+
     }
 
+
+    /**
+     * 如果错误时，没有sku就不要设置
+     */
     public String getSku() {
-        return sku;
+
+        return this.sku;
     }
 
     public void setSku(String sku) {
-        this.sku = sku;
+        if (sku != null) {
+            this.sku = sku;
+        } else {
+            this.sku = "";
+        }
+
     }
 
-    public Integer getErrorTypeId() {
-        return errorTypeId;
+
+    /**
+     * 1:上新错误
+     */
+    public int getErrorTypeId() {
+
+        return this.errorTypeId;
     }
 
-    public void setErrorTypeId(Integer errorTypeId) {
+    public void setErrorTypeId(int errorTypeId) {
         this.errorTypeId = errorTypeId;
     }
 
+
+    /**
+
+     */
     public String getErrorCode() {
-        return errorCode;
+
+        return this.errorCode;
     }
 
     public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
+        if (errorCode != null) {
+            this.errorCode = errorCode;
+        } else {
+            this.errorCode = "";
+        }
+
     }
 
-    public String getErrMsg() {
-        return errMsg;
+
+    /**
+     * 1:店铺内分类 2:活动标签 3:货位标签
+     */
+    public String getErrorMsg() {
+
+        return this.errorMsg;
     }
 
-    public void setErrMsg(String errMsg) {
-        this.errMsg = errMsg;
+    public void setErrorMsg(String errorMsg) {
+        if (errorMsg != null) {
+            this.errorMsg = errorMsg;
+        } else {
+            this.errorMsg = "";
+        }
+
     }
 
-    public Boolean getStatus() {
-        return status;
+
+    /**
+     * 0:未处理 1:已处理
+     */
+    public int getStatus() {
+
+        return this.status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
+
+
 }

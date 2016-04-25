@@ -125,6 +125,16 @@ define([
                     "controllerUrl": "modules/cms/views/pop/custom/addtaglist.ctl",
                     "controller": 'popAddTagListCtl'
                 },
+                "storeoperation": {
+                    "templateUrl": "views/pop/custom/storeoperation.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/storeoperation.ctl",
+                    "controller": 'popStoreOperationCtl'
+                },
+                "confirmstoreopp": {
+                    "templateUrl": "views/pop/custom/confirmstoreopp.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/confirmstoreopp.ctl",
+                    "controller": 'popConfirmStoreOppCtl'
+                },
 
             },
             "configuration": {
@@ -838,7 +848,14 @@ define([
                 });
             });
         }
-
+        //全店操作页面中，操作按钮弹出
+        $scope.openNewOpp = function (context) {
+            return openModel(popActions.custom.storeoperation,context);
+        };
+        //全店操作页面中，确认操作按钮弹出
+        $scope.openConfirmOpp = function (context) {
+            return openModel(popActions.custom.confirmstoreopp,context);
+        };
         /**
          * 打开price历史页面
          * @type {openHistoryPrice}

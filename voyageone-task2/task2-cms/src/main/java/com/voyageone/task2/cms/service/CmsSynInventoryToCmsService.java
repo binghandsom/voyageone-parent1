@@ -95,12 +95,12 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                 //批量更新code级库存 TODO
                 bulkUpdateCodeQty(orderChannelID, "", codeInventoryList, getTaskName());
 
-                updateGroupQty(orderChannelID,"", codeInventoryList);
+                //updateGroupQty(orderChannelID,"", codeInventoryList); group下的库存数据字段qty已删除
                 //usjoi的对应
                 // 如果这个channel是usjoi的子channel的场合 997的库存也更新
                 if(Channels.isUsJoi(orderChannelID)){
                     bulkUpdateCodeQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList, getTaskName());
-                    updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
+                    //updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -110,49 +110,49 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         }
     }
 
-    private void updateGroupQty(String channelId, String orgChannelId, List<InventoryForCmsBean> codeInventoryList){
-        //获取本渠道的cart
-//            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
-        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
-        $info("orderChannelID:" + channelId + "    cart数:" + cartList.size());
-
-
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        for (int j = 0; j < cartList.size(); j++) {
-
-            int cartId = Integer.parseInt(cartList.get(j).getValue());
-            $info("cartId:" + cartId + "   start" );
-
-            //获取本Cart下所有group TODO
-            Map<String, List<String>> groupList = getGroupByCartList(channelId, cartId, orgChannelId);
-
-            groupList.forEach((s, codes) -> {
-                int Inventory = getGroupInventory(codeInventoryList, codes);
-                for (String code : codes) {
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("groups.platforms.$.qty", Inventory);
-                    HashMap<String, Object> queryMap = new HashMap<>();
-                    queryMap.put("fields.code", code);
-                    queryMap.put("groups.platforms.cartId", cartId);
-                    BulkUpdateModel model = new BulkUpdateModel();
-                    model.setUpdateMap(updateMap);
-                    model.setQueryMap(queryMap);
-                    bulkList.add(model);
-                    //批量插入group级记录到mysql 10000条插入一次 TODO
-                    if (bulkList.size() >= BULK_COUNT) {
-                        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
-                        bulkList.clear();
-                    }
-                }
-            });
-        }
-
-        if (bulkList.size() > 0) {
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
-            bulkList.clear();
-        }
-
-    }
+//    private void updateGroupQty(String channelId, String orgChannelId, List<InventoryForCmsBean> codeInventoryList){
+//        //获取本渠道的cart
+////            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
+//        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
+//        $info("orderChannelID:" + channelId + "    cart数:" + cartList.size());
+//
+//
+//        List<BulkUpdateModel> bulkList = new ArrayList<>();
+//        for (int j = 0; j < cartList.size(); j++) {
+//
+//            int cartId = Integer.parseInt(cartList.get(j).getValue());
+//            $info("cartId:" + cartId + "   start" );
+//
+//            //获取本Cart下所有group TODO
+//            Map<String, List<String>> groupList = getGroupByCartList(channelId, cartId, orgChannelId);
+//
+//            groupList.forEach((s, codes) -> {
+//                int Inventory = getGroupInventory(codeInventoryList, codes);
+//                for (String code : codes) {
+//                    HashMap<String, Object> updateMap = new HashMap<>();
+//                    updateMap.put("groups.platforms.$.qty", Inventory);
+//                    HashMap<String, Object> queryMap = new HashMap<>();
+//                    queryMap.put("fields.code", code);
+//                    queryMap.put("groups.platforms.cartId", cartId);
+//                    BulkUpdateModel model = new BulkUpdateModel();
+//                    model.setUpdateMap(updateMap);
+//                    model.setQueryMap(queryMap);
+//                    bulkList.add(model);
+//                    //批量插入group级记录到mysql 10000条插入一次 TODO
+//                    if (bulkList.size() >= BULK_COUNT) {
+//                        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+//                        bulkList.clear();
+//                    }
+//                }
+//            });
+//        }
+//
+//        if (bulkList.size() > 0) {
+//            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+//            bulkList.clear();
+//        }
+//
+//    }
 
     /**
      * 增加商品的Tag

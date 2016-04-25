@@ -404,10 +404,9 @@ public class CmsProductDetailService extends BaseAppService {
             }
             CmsBtProductGroupModel platform = product.getGroups();
             // 获取已经上新的产品数据
-            Integer cartId = Integer.valueOf(platform.getCartId().toString());
             String numIid = platform.getNumIId();
             if (!StringUtils.isEmpty(numIid)) {
-                String cartName = CartType.getCartNameById(cartId, language);
+                String cartName = CartType.getCartNameById(platform.getCartId(), language);
                 if (numIids.get(cartName) != null) {
                     numIids.get(cartName).add(numIid);
                 } else {

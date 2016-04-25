@@ -32,12 +32,12 @@ public class CmsPromotionDetailController extends CmsController {
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
-
+        int cartId = Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
 
         int cnt = cmsPromotionDetailService.getPromotionModelListCnt(params);
-        List<Map<String,Object>> resultBean = cmsPromotionDetailService.getPromotionGroup(params);
+        List<Map<String,Object>> resultBean = cmsPromotionDetailService.getPromotionGroup(params, cartId);
         Map<String,Object> result = new HashMap<>();
         result.put("resultData",resultBean);
         result.put("total",cnt);

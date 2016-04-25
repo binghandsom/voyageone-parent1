@@ -36,7 +36,7 @@
     <bean id="sqlSessionFactoryMasterCamel"
           class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSourceJuMei"
-          p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.util,com.voyageone.service.model"
+          p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.util,com.voyageone.service.model.cms"
           p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"
           p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>
 

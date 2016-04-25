@@ -18,22 +18,13 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private String catPath;
     private String orgChannelId;
 
-    public String getPlatformName() {
-        return platformName;
-    }
-
-    public void setPlatformName(String platformName) {
-        this.platformName = platformName;
-    }
-
-    private String platformName;
-
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
     private CmsBtProductGroupModel groups = new CmsBtProductGroupModel();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
+    private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
     public String getOrgChannelId() {
 
@@ -132,5 +123,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setFeed(CmsBtProductModel_Feed feed) {
         this.feed = feed;
+    }
+
+    //code 产品code
+    public List<CmsBtProductModel_Carts> getCarts() {
+        return carts;
+    }
+
+    public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
+        this.carts = productCarts;
     }
 }

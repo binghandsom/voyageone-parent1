@@ -2,118 +2,253 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-/**
- * Created by james.li on 2015/12/7.
- */
 public class CmsMtCommonPropModel extends BaseModel {
-    private Integer id;
 
     private String propId;
+    /**
 
+     */
+    private String propParentId;
+    /**
+
+     */
     private String propName;
+    /**
 
+     */
     private String propType;
+    /**
+     * 0:add 1:del 2:自动改名顺序+1
+     */
+    private int actionType;
+    /**
 
-    private String propLevel;
-
-    private String actionType;
-
+     */
     private String platformPropRefId;
-
+    /**
+     * 1:必须 0:非必须
+     */
     private String rules;
+    /**
 
+     */
     private String defult;
+    /**
 
+     */
+    private int isComm;
+    /**
+
+     */
+    private int isCode;
+    /**
+     * 提示信息
+     */
     private String tips;
+    /**
 
-    private String mapping;
+     */
+    private String valueType;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    /**
 
+     */
     public String getPropId() {
-        return propId;
+
+        return this.propId;
     }
 
     public void setPropId(String propId) {
-        this.propId = propId;
+        if (propId != null) {
+            this.propId = propId;
+        } else {
+            this.propId = "";
+        }
+
     }
 
+
+    /**
+
+     */
+    public String getPropParentId() {
+
+        return this.propParentId;
+    }
+
+    public void setPropParentId(String propParentId) {
+        if (propParentId != null) {
+            this.propParentId = propParentId;
+        } else {
+            this.propParentId = "";
+        }
+
+    }
+
+
+    /**
+
+     */
     public String getPropName() {
-        return propName;
+
+        return this.propName;
     }
 
     public void setPropName(String propName) {
-        this.propName = propName;
+        if (propName != null) {
+            this.propName = propName;
+        } else {
+            this.propName = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getPropType() {
-        return propType;
+
+        return this.propType;
     }
 
     public void setPropType(String propType) {
-        this.propType = propType;
+        if (propType != null) {
+            this.propType = propType;
+        } else {
+            this.propType = "";
+        }
+
     }
 
-    public String getPropLevel() {
-        return propLevel;
+
+    /**
+     * 0:add 1:del 2:自动改名顺序+1
+     */
+    public int getActionType() {
+
+        return this.actionType;
     }
 
-    public void setPropLevel(String propLevel) {
-        this.propLevel = propLevel;
-    }
-
-    public String getActionType() {
-        return actionType;
-    }
-
-    public void setActionType(String actionType) {
+    public void setActionType(int actionType) {
         this.actionType = actionType;
     }
 
+
+    /**
+
+     */
     public String getPlatformPropRefId() {
-        return platformPropRefId;
+
+        return this.platformPropRefId;
     }
 
     public void setPlatformPropRefId(String platformPropRefId) {
-        this.platformPropRefId = platformPropRefId;
+        if (platformPropRefId != null) {
+            this.platformPropRefId = platformPropRefId;
+        } else {
+            this.platformPropRefId = "";
+        }
+
     }
 
+
+    /**
+     * 1:必须 0:非必须
+     */
     public String getRules() {
-        return rules;
+
+        return this.rules;
     }
 
     public void setRules(String rules) {
-        this.rules = rules;
+        if (rules != null) {
+            this.rules = rules;
+        } else {
+            this.rules = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getDefult() {
-        return defult;
+
+        return this.defult;
     }
 
     public void setDefult(String defult) {
-        this.defult = defult;
+        if (defult != null) {
+            this.defult = defult;
+        } else {
+            this.defult = "";
+        }
+
     }
 
+
+    /**
+
+     */
+    public int getIsComm() {
+
+        return this.isComm;
+    }
+
+    public void setIsComm(int isComm) {
+        this.isComm = isComm;
+    }
+
+
+    /**
+
+     */
+    public int getIsCode() {
+
+        return this.isCode;
+    }
+
+    public void setIsCode(int isCode) {
+        this.isCode = isCode;
+    }
+
+
+    /**
+     * 提示信息
+     */
     public String getTips() {
-        return tips;
+
+        return this.tips;
     }
 
     public void setTips(String tips) {
-        this.tips = tips;
+        if (tips != null) {
+            this.tips = tips;
+        } else {
+            this.tips = "";
+        }
+
     }
 
-    public String getMapping() {
-        return mapping;
+
+    /**
+
+     */
+    public String getValueType() {
+
+        return this.valueType;
     }
 
-    public void setMapping(String mapping) {
-        this.mapping = mapping;
+    public void setValueType(String valueType) {
+        if (valueType != null) {
+            this.valueType = valueType;
+        } else {
+            this.valueType = "";
+        }
+
     }
 
 }

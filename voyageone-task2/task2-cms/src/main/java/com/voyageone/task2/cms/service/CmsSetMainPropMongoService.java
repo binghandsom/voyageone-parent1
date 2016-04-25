@@ -20,7 +20,6 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
@@ -58,6 +57,7 @@ import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
+import org.hibernate.validator.internal.util.logging.Log_$logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -194,11 +194,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 查找当前渠道,所有等待反映到主数据的商品
 //            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
-            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
-            JomgoQuery queryObject = new JomgoQuery();
-            queryObject.setQuery(query);
-            queryObject.setLimit(50);
-            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
+//            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
+//            JomgoQuery queryObject = new JomgoQuery();
+//            queryObject.setQuery(query);
+//            queryObject.setLimit(50);
+//            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
+            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, new int[]{0,2});
 
             // --------------------------------------------------------------------------------------------
             // 品牌mapping表
@@ -574,9 +575,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // jeff 2016/04 add start
             if (newFlg) {
-                // ProductCarts
-                field.setProductCarts(getProductCarts(feed));
-
                 // isMain
                 field.setIsMasterMain(getIsMasterMain(feed));
             }
@@ -626,7 +624,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (field == null) {
                 return null;
             }
-
+            // ProductCarts
+            product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // 获取当前channel, 有多少个platform
@@ -985,13 +984,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 根据code, 到group表中去查找所有的group信息
-            List<CmsBtProductGroupModel> groups = getGroupsByCode(feed.getChannelId(), feed.getCode());
+            List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
+
+            // 新追加的Group
+            List<CmsBtProductGroupModel> newGroups = new ArrayList<>();
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
                 // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
                 boolean blnFound = false;
-                for (CmsBtProductGroupModel group : groups) {
+                for (CmsBtProductGroupModel group : existGroups) {
                     if (group.getCartId() == Integer.parseInt(shop.getValue())) {
                         blnFound = true;
                     }
@@ -1009,6 +1011,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (group == null) {
 
                     group = new CmsBtProductGroupModel();
+
+                    // 渠道id
+                    group.setChannelId(feed.getChannelId());
 
                     // cart id
                     group.setCartId(Integer.parseInt(shop.getValue()));
@@ -1055,9 +1060,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
 
-                groups.add(group);
+                group.setCreater(getTaskName());
+                group.setModifier(getTaskName());
+                newGroups.add(group);
             }
-            cmsBtProductGroupDao.insertWithList(groups);
+            if (newGroups.size() > 0) {
+                cmsBtProductGroupDao.insertWithList(newGroups);
+            }
         }
 
         /**
@@ -1138,17 +1147,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return  0.0;
             }
             // 根据公式计算价格
-            ExpressionParser parser = new SpelExpressionParser();
-            formula = formula.replaceAll("\\[price_client_msrp\\]", String.valueOf(priceClientMsrp))
-                    .replaceAll("\\[price_client_retail\\]", String.valueOf(priceClientRetail))
-                    .replaceAll("\\[price_net\\]", String.valueOf(priceNet))
-                    .replaceAll("\\[price_msrp\\]", String.valueOf(priceMsrp))
-                    .replaceAll("\\[price_current\\]", String.valueOf(priceCurrent))
-                    .replaceAll("\\[tax_rate\\]", String.valueOf(taxRate));
-            double valueDouble = parser.parseExpression(formula).getValue(Double.class);
-            // 四舍五入取整
-            BigDecimal valueBigDecimal =  new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
-            return valueBigDecimal.doubleValue();
+            try {
+                ExpressionParser parser = new SpelExpressionParser();
+                formula = formula.replaceAll("\\[price_client_msrp\\]", String.valueOf(priceClientMsrp))
+                        .replaceAll("\\[price_client_retail\\]", String.valueOf(priceClientRetail))
+                        .replaceAll("\\[price_net\\]", String.valueOf(priceNet))
+                        .replaceAll("\\[price_msrp\\]", String.valueOf(priceMsrp))
+                        .replaceAll("\\[price_current\\]", String.valueOf(priceCurrent))
+                        .replaceAll("\\[tax_rate\\]", String.valueOf(taxRate));
+                double valueDouble = parser.parseExpression(formula).getValue(Double.class);
+                // 四舍五入取整
+                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
+                return valueBigDecimal.doubleValue();
+
+            } catch (Exception ex) {
+                $error(ex);
+                throw new RuntimeException("Formula Calculate Fail!", ex);
+            }
         }
 
         /**
@@ -1217,18 +1232,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed 品牌方提供的数据
          * @return ProductCarts信息
          */
-        private List<CmsBtProductModel_Field_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
+        private List<CmsBtProductModel_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }
 
-            List<CmsBtProductModel_Field_Carts> carts = new ArrayList<>();
+            List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
-                CmsBtProductModel_Field_Carts cart = new CmsBtProductModel_Field_Carts();
+                CmsBtProductModel_Carts cart = new CmsBtProductModel_Carts();
                 cart.setCartId(Integer.parseInt(shop.getValue()));
                 cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
                 carts.add(cart);

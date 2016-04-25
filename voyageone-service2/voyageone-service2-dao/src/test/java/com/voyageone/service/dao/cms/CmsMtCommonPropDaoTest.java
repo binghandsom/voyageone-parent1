@@ -7,43 +7,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Created by lewis on 15-12-8.
+ * Created by Ethan Shi on 2016/4/25.
  */
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsMtCommonPropDaoTest {
 
     @Autowired
     private CmsMtCommonPropDao cmsMtCommonPropDao;
 
     @Test
-    public void testGetActionModelList() throws Exception {
-//        List<CmsMtCommonPropActionDefModel> delModelsById = cmsMtCommonPropDao.selectActionModelList();
-
-//        Assert.assertTrue(delModelsById.size()>0);
-
-//        for (MtCommPropActionDefModel model:delModelsById){
-//            Assert.assertTrue(StringUtils.isEmpty(model.getPlatformPropRefId()));
-//            Assert.assertTrue("1".equals(model.getActionType()));
-//        }
-//
-//        List<MtCommPropActionDefModel> delModelsByIdAndName = cmsMtCommonPropDao.selectActionModelList("2",null);
-//        for (MtCommPropActionDefModel model:delModelsByIdAndName){
-//            Assert.assertTrue(StringUtils.isEmpty(model.getPlatformPropRefId()));
-//            Assert.assertTrue("2".equals(model.getActionType()));
-//        }
-//
-//        List<MtCommPropActionDefModel> updModels = cmsMtCommonPropDao.selectActionModelList("0","");
-//        for (MtCommPropActionDefModel model:updModels){
-//            Assert.assertFalse(StringUtils.isEmpty(model.getPlatformPropRefId()));
-//            Assert.assertTrue("0".equals(model.getActionType()));
-//        }
-//
-//        List<MtCommPropActionDefModel> addModels = cmsMtCommonPropDao.selectActionModelList("0",null);
-//        for (MtCommPropActionDefModel model:addModels){
-//            Assert.assertTrue(StringUtils.isEmpty(model.getPlatformPropRefId()));
-//            Assert.assertTrue("0".equals(model.getActionType()));
-//        }
+    public void testSelect() throws Exception {
+        cmsMtCommonPropDao.select(1);
 
     }
 }

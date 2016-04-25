@@ -1,13 +1,25 @@
 package com.voyageone.task2.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaReader;
+import com.voyageone.common.masterdate.schema.field.ComplexField;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.OptionsField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.bean.cms.*;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.rule_expression.*;
+import com.voyageone.service.bean.cms.ComplexMappingBean;
+import com.voyageone.service.bean.cms.MappingBean;
+import com.voyageone.service.bean.cms.SimpleMappingBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.model.cms.CmsMtCommonPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -15,13 +27,6 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingForInsertModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.*;
-import com.voyageone.common.masterdate.schema.option.Option;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.ims.rule_expression.*;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,21 +41,16 @@ import java.util.stream.Collectors;
 @Service
 public class CmsPlatformMappingService extends BaseTaskService {
     private final static String JOB_NAME = "platformMappingTask";
-
-    @Autowired
-    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
-
-    @Autowired
-    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
-
-    @Autowired
-    CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
-
-    @Autowired
-    CmsMtCommonPropDao cmsMtCommonPropDao;
-
     // CmsMtCommonProp数据
     private static List<CmsMtCommonPropModel> commonProp;
+    @Autowired
+    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
+    @Autowired
+    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    @Autowired
+    CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    @Autowired
+    CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
     @Override
     public SubSystem getSubSystem() {
@@ -65,7 +65,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        commonProp = cmsMtCommonPropDao.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtils.isEmpty(cmsMtCommonPropModel.getPlatformPropRefId())).collect(Collectors.toList());
+        commonProp = cmsMtCommonPropDaoExt.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtils.isEmpty(cmsMtCommonPropModel.getPlatformPropRefId())).collect(Collectors.toList());
 
         for (TaskControlBean taskControl : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
