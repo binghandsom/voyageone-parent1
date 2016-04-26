@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -56,17 +57,33 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
             "\"activityEnd\":\"2016-04-28 00:00:00\",\"$$hashKey\":\"object:4483\"}";
 
 
+
+//    @Resource
+//    CmsBtTagDao dao;
+//
+//    @Test
+//    public void testInsert() throws Exception {
+//        CmsBtTagModel tag = new CmsBtTagModel();
+//        tag.setChannelId("010");
+//        tag.setParentTagId(0);
+//        tag.setTagName("zhaotianwu");
+//        tag.setTagPath("xxx/xxx");
+//        tag.setTagPathName("xxx/xxx");
+//        tag.setTagType(1);
+//        tag.setModifier("zhao");
+//        tag.setCreater("zhao");
+//        dao.insertCmsBtTag(tag);
+//
+//    }
+
+    /**
+     * 测试待生成的导入数据是否正确
+     * @throws Exception
+     */
     @Test
-    public void testAddProductionToPromotion() throws Exception {
+    public void testGenImportData() throws Exception {
 
-        List<Long> productIds = ImmutableList.of(5924L, 5925L, 5926L);
-        CmsBtJmPromotionModel promotion = new Gson().fromJson(promotionStr, CmsBtJmPromotionModel.class);
-
-
-        String channelId = "010";
-        double discount = 1.0;
-        int priceType = 1;
-        JmProductImportAllInfo importInfos = jmPromotionService.buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
+        JmProductImportAllInfo importInfos = prepareData();
 
         //1.image 空  模板未配置
         //2.sku不对   没导完
@@ -96,7 +113,34 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
         Set<String> skuProductCodes = saveInfos.stream().map(bean -> {
             return bean.getListSkuModel().stream().map(sku -> sku.getProductCode()).collect(toList());
         }).flatMap(l->l.stream()).collect(Collectors.toSet());
-
         assertEquals(originProductCodes,skuProductCodes); //所有的sku中的productCode 必须和原先选定的productCode相等
     }
+
+    @Test
+    @Transactional(readOnly = false)
+    public void testSaveImportInfos() throws Exception {
+        JmProductImportAllInfo importInfos = prepareData();
+        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfos,"will");
+
+
+
+    }
+
+    /**
+     * 准备数据
+     * @return
+     */
+    private JmProductImportAllInfo prepareData() {
+        List<Long> productIds = ImmutableList.of(5924L, 5925L, 5926L);
+        CmsBtJmPromotionModel promotion = new Gson().fromJson(promotionStr, CmsBtJmPromotionModel.class);
+
+
+        String channelId = "010";
+        double discount = 1.0;
+        int priceType = 1;
+        return jmPromotionService.buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
+    }
+
+
+
 }

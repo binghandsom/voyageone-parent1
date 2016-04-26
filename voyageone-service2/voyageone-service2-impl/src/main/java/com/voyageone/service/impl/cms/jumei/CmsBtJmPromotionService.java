@@ -195,7 +195,7 @@ public class CmsBtJmPromotionService {
     }
 
     /**
-     * 对应mongo表中fields.images1数据
+     * 对应mongo表中fields.images1数据构建需要插入到聚美活动的图片
      * @param model
      * @return
      */

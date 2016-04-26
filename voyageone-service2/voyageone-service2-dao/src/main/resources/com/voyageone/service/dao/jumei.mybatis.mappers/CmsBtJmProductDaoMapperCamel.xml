@@ -398,6 +398,7 @@
             ,`send_flg`=#{sendFlg}
             ,`state`=#{state}
             ,`modifier`=#{modifier}
+            ,`modified`=now()
             ,`syn_flg`=#{synFlg}
             ,`specialNote`=#{specialNote}
             ,`last_jm_hash_id`=#{lastJmHashId}
