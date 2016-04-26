@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.service.impl.com.mq.config.AnnotationProcessorByIP;
+import com.voyageone.common.mq.config.AnnotationProcessorByIP;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.amqp.core.*;
@@ -43,12 +43,12 @@ public class MqSender extends BaseService {
     public void sendMessage(String routingKey, Map<String, Object> messageMap) {
         try {
             // isload add ipaddress to routingKey
-            if (annotationProcessorByIP.isLocal() && !routingKey.endsWith(EXISTS_IP)) {
-                routingKey += InetAddress.getLocalHost().toString().replace("/", "_") + EXISTS_IP;
+            if (annotationProcessorByIP.isLocal() && !routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
+                routingKey = MQConfigUtils.getAddStrQueneName(routingKey);
             }
 
             //declareQueue
-            amqpAdmin.declareQueue(new Queue(routingKey));
+            amqpAdmin.declareQueue(new Queue(routingKey, true, false, true));
             if (messageMap == null) {
                 messageMap = new HashMap<>();
             }

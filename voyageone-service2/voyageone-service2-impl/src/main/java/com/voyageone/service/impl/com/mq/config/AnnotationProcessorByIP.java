@@ -42,8 +42,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -83,6 +81,18 @@ public class AnnotationProcessorByIP
     public void setLocal(boolean local) {
         this.local = local;
     }
+
+
+    private AmqpAdmin amqpAdmin;
+
+    public AmqpAdmin getAmqpAdmin() {
+        return amqpAdmin;
+    }
+
+    public void setAmqpAdmin(AmqpAdmin amqpAdmin) {
+        this.amqpAdmin = amqpAdmin;
+    }
+
 
     @Override
     public int getOrder() {
@@ -261,21 +271,8 @@ public class AnnotationProcessorByIP
         endpoint.setBean(bean);
         endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
         endpoint.setId(getEndpointId(rabbitListener));
-        String[] queues=resolveQueues(rabbitListener);
+        endpoint.setQueueNames(resolveQueues(rabbitListener));
 
-        if(local) {
-            /**
-             * add ip to quenes key aooer
-             */
-            for (int i = 0; i < queues.length; i++) {
-                try {
-                    queues[i] += InetAddress.getLocalHost().toString().replace("/", "_")+"$EXISTS_IP$";
-                } catch (UnknownHostException ignored) {
-                }
-            }
-        }
-
-        endpoint.setQueueNames(queues);
         String group = rabbitListener.group();
         if (StringUtils.hasText(group)) {
             Object resolvedGroup = resolveExpression(group);
@@ -338,6 +335,17 @@ public class AnnotationProcessorByIP
 
     private String[] resolveQueues(RabbitListener rabbitListener) {
         String[] queues = rabbitListener.queues();
+
+        if(local) {
+            /**
+             * add ip to quenes key aooer
+             */
+            for (int i = 0; i < queues.length; i++) {
+                queues[i] = MQConfigUtils.getAddStrQueneName(queues[i]);
+                amqpAdmin.declareQueue(new Queue(queues[i], true, false, true));
+            }
+        }
+
         QueueBinding[] bindings = rabbitListener.bindings();
         if (queues.length > 0 && bindings.length > 0) {
             throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
