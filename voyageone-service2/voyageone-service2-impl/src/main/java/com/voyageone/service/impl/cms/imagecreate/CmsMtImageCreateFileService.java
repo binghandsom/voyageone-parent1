@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
@@ -26,7 +27,7 @@ public class CmsMtImageCreateFileService {
     CmsMtImageCreateFileDao dao;
 
     @Autowired
-    TransactionRunner transactionRunnerCms2;
+    TransactionRunner transactionRunner;
 
     @Autowired
     CmsMtImageCreateTemplateService serviceCmsMtImageCreateTemplate;
@@ -140,6 +141,9 @@ public class CmsMtImageCreateFileService {
         AddListRespone result = new AddListRespone();
         try {
             checkAddListParameter(parameter);
+//            transactionRunner.runWithTran(() -> {
+//
+//            });
             for (CreateImageParameter imageInfo : parameter.getData()) {
                 long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
                 if (!existsHashCode(hashCode)) {//1.创建记录信息
@@ -163,6 +167,10 @@ public class CmsMtImageCreateFileService {
         return result;
     }
     public  void  checkAddListParameter(AddListParameter parameter) throws OpenApiException {
+        if(parameter.getData().size()>100)
+        {
+           //throw  new OpenApiException("");
+        }
         for (CreateImageParameter imageInfo : parameter.getData()) {
             if (StringUtil.isEmpty(imageInfo.getChannelId())) {
                 throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);

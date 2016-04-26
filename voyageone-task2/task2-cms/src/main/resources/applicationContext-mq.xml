@@ -12,7 +12,12 @@
     <rabbit:queue name="voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue" auto-delete="false" exclusive="false"/>
     <rabbit:queue name="voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue" durable="true" auto-delete="false" exclusive="false"/>
     <rabbit:queue name="voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue" durable="true" auto-delete="false" exclusive="false"/>
-
+    <rabbit:queue name="voyageone_cms_batchjob_AliYunOSSJob_queue" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue name="voyageone_cms_batchjob_LiquidFireJob_queue" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue name="voyageone_cms_batchjob_USCDNJob_queue" durable="true" auto-delete="false" exclusive="false"/>
+    <!--CMS_BATCH_AliYunOSSJob("voyageone_cms_batchjob_AliYunOSSJob_queue"),-->
+    <!--CMS_BATCH_LiquidFireJob("voyageone_cms_batchjob_LiquidFireJob_queue"),-->
+    <!--CMS_BATCH_USCDNJob("voyageone_cms_batchjob_USCDNJob_queue");-->
 
     <rabbit:listener-container connection-factory="rabbitConnFactory" acknowledge="auto">
         <rabbit:listener queue-names="voyageone_cms_batchjob_promotion_queue" ref="cmsPromotionMqJob"/>
@@ -22,6 +27,11 @@
         <rabbit:listener queue-names="voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue" ref="juMeiProductUpdateDealEndTimeJobService"/>
         <rabbit:listener queue-names="voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue" ref="cmsBuildPlatformCategoryTreeJdMqJob"/>
         <rabbit:listener queue-names="voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue" ref="cmsBuildPlatformCategorySchemaJdMqJob"/>
+
+        <rabbit:listener queue-names="voyageone_cms_batchjob_AliYunOSSJob_queue" ref="aliYunOSSJob"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_LiquidFireJob_queue" ref="liquidFireJob"/>
+        <rabbit:listener queue-names="voyageone_cms_batchjob_USCDNJob_queue" ref="uSCDNJob"/>
+
     </rabbit:listener-container>
 
 </beans>
