@@ -1,9 +1,9 @@
-package com.voyageone.service.model.openapi;
+package com.voyageone.service.model.openapi.image;
 
 /**
  * Created by dell on 2016/4/25.
  */
-public class ProductGetImageResultData {
+public class GetImageResultData {
     String oSSFilePath;
     String usCDNFilePath;
     public String getOSSFilePath() {

@@ -1,22 +1,24 @@
 package com.voyageone.service.model.openapi;
 
 /**
- * Created by dell on 2016/4/25.
+ * Created by dell on 2016/4/26.
  */
-public class ProductGetImageRespone {
+public abstract class OpenApiRespone {
     long requestId;
+    int errorCode;
+    String errorMsg;
+
     public long getRequestId() {
         return requestId;
     }
+
     public void setRequestId(long requestId) {
         this.requestId = requestId;
     }
-    int errorCode;
-    String errorMsg;
-    ProductGetImageResultData resultData;
-    public ProductGetImageRespone() {
-        this.setResultData(new ProductGetImageResultData());
+
+    public OpenApiRespone() {
     }
+
     public int getErrorCode() {
         return errorCode;
     }
@@ -31,12 +33,5 @@ public class ProductGetImageRespone {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
-    }
-
-    public ProductGetImageResultData getResultData() {
-        return resultData;
-    }
-    public void setResultData(ProductGetImageResultData resultData) {
-        this.resultData = resultData;
     }
 }

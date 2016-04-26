@@ -7,7 +7,7 @@
 
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`hash_code`,`request_query_string`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_file
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_file
         <where>
             <if test="id != null">
                 AND `id` = #{id}
@@ -69,7 +69,7 @@
         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`hash_code`,`request_query_string`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file
         <where>
 
             <if test="id != null">
@@ -150,7 +150,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`hash_code`,`request_query_string`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file where id=#{id}
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file where id=#{id}
     </select>
 
     <update id="update">
@@ -158,7 +158,6 @@
         set
 
         `hash_code`=#{hashCode}
-        ,`request_query_string`=#{requestQueryString}
         ,`channel_id`=#{channelId}
         ,`template_id`=#{templateId}
         ,`file`=#{file}
@@ -185,7 +184,6 @@
         INSERT INTO cms_mt_image_create_file
         (
         `hash_code`,
-        `request_query_string`,
         `channel_id`,
         `template_id`,
         `file`,
@@ -205,7 +203,6 @@
         )
         VALUES(
         #{hashCode},
-        #{requestQueryString},
         #{channelId},
         #{templateId},
         #{file},

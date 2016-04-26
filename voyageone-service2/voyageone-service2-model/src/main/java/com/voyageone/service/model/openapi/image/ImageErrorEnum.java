@@ -1,6 +1,8 @@
-package com.voyageone.service.model.openapi;
+package com.voyageone.service.model.openapi.image;
 
-public enum  ProductGetImageErrorEnum implements ErrorEnumInterface {
+import com.voyageone.service.model.openapi.ErrorEnumInterface;
+
+public enum ImageErrorEnum implements ErrorEnumInterface {
     ImageTemplateNotNull(10101, "Image template must not be null"),
     ChannelIdNotNull(10102, "ChannelId must not be null"),
     FileNotNull(10103, "File  must not be null"),
@@ -24,7 +26,7 @@ public enum  ProductGetImageErrorEnum implements ErrorEnumInterface {
     public void setMsg(String msg) {
         this.msg = msg;
     }
-    ProductGetImageErrorEnum(int code, String msg) {
+    ImageErrorEnum(int code, String msg) {
         this.setCode(code);
         this.setMsg(msg);
     }

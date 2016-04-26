@@ -9,7 +9,6 @@ public class CmsMtImageCreateFileModel implements Serializable
 {
    public CmsMtImageCreateFileModel()
     {
-        setRequestQueryString(""); 
         setChannelId(""); 
         setFile(""); 
         setFilePath(""); 
@@ -34,14 +33,6 @@ public class CmsMtImageCreateFileModel implements Serializable
 请求参数生成的hashcode
         */
      private long hashCode;
-    
-    
- /**
-请求参数
-        */
-     private String requestQueryString;
-    
-    
  /**
 渠道id
         */
@@ -166,25 +157,7 @@ oss阿里云上传状态   1:上传成功
         }
     
         
-         /**
-           请求参数
-        */
-        public String getRequestQueryString()
-        {
-         
-        return this.requestQueryString;
-        }
-        public void setRequestQueryString(String requestQueryString)
-        {
-        if(requestQueryString!=null){
-this.requestQueryString=requestQueryString;
- }
-else
-{
-this.requestQueryString="";
-}
 
-        }
     
         
          /**

@@ -1,14 +1,13 @@
 package com.voyageone.service.impl.cms.imagecreate;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.components.liquifire.service.LiquidFireClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import com.voyageone.service.model.openapi.OpenApiException;
-import com.voyageone.service.model.openapi.ProductGetImageErrorEnum;
+import com.voyageone.service.model.openapi.image.ImageErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+
 @Service
 public class LiquidFireImageService {
     @Autowired
@@ -19,7 +18,7 @@ public class LiquidFireImageService {
 
         CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(modelFile.getTemplateId());//获取模板
         if (modelTemplate == null) {
-            throw new OpenApiException(ProductGetImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
+            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
         }
         try {
             String filePath = createImage(modelTemplate.getContent(), modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
@@ -27,7 +26,7 @@ public class LiquidFireImageService {
             modelFile.setState(1);
             daoCmsMtImageCreateFile.update(modelFile);
         } catch (Exception ex) {
-            throw new OpenApiException(ProductGetImageErrorEnum.LiquidCreateImageError,ex);
+            throw new OpenApiException(ImageErrorEnum.LiquidCreateImageError,ex);
 //            throw new BusinessException("100101", "生成图片错误", ex);
         }
     }

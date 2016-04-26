@@ -1,15 +1,12 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.components.aliyun.AliYunOSSClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.openapi.OpenApiException;
-import com.voyageone.service.model.openapi.ProductGetImageErrorEnum;
+import com.voyageone.service.model.openapi.image.ImageErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
 
 @Service
 public class AliYunOSSFileService {
@@ -20,7 +17,7 @@ public class AliYunOSSFileService {
             AliYunOSSClient client = new AliYunOSSClient(ImageConfig.getAliYunEndpoint(), ImageConfig.getAliYunAccessKeyId(), ImageConfig.getAliYunAccessKeySecret());
             client.putOSS(filefullName, "shenzhen-vo", keySuffixWithSlash);
         } catch (Exception ex) {
-            throw new OpenApiException(ProductGetImageErrorEnum.AliyunOSSUploadError,"上传阿里云OSS错误", ex);
+            throw new OpenApiException(ImageErrorEnum.AliyunOSSUploadError,"上传阿里云OSS错误", ex);
         }
     }
     public void upload(CmsMtImageCreateFileModel modelFile) throws OpenApiException {
