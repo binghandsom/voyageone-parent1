@@ -164,11 +164,11 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         this.priceSaleSt = priceSaleSt;
     }
 
-    public double getPriceSaleEd() {
+    public Double getPriceSaleEd() {
         return priceSaleEd;
     }
 
-    public void setPriceSaleEd(double priceSaleEd) {
+    public void setPriceSaleEd(Double priceSaleEd) {
         this.priceSaleEd = priceSaleEd;
     }
 

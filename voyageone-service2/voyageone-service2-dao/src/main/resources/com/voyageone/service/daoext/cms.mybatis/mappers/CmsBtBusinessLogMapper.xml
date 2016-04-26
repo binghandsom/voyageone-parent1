@@ -5,7 +5,7 @@
     <!--<resultMap id="CmsBtBusinessLogModel" type="com.voyageone.service.model.cms.CmsBtBusinessLogModel"/>
 -->
     <sql id="fields">
-	   seq,
+	   id,
        channel_id channelId,
        cat_id catId,
        cart_id cartId,
@@ -29,8 +29,11 @@
 	</sql>
 
     <!-- 根据条件查询 -->
-    <select id="select_business_log_By_Condition" resultType="com.voyageone.service.model.cms.CmsBtBusinessLogModel" parameterType="Map" >
-        select <include refid="fields"/> from voyageone_cms2.cms_bt_business_log
+    <select id="select_business_log_By_Condition" resultType="com.voyageone.service.model.cms.CmsBtBusinessLogModel"
+            parameterType="Map">
+        select
+        <include refid="fields"/>
+        from voyageone_cms2.cms_bt_business_log
         where status = 0
         <if test="channelId != null and channelId != ''">
             and channel_id = #{channelId}
@@ -93,8 +96,8 @@
     </select>
 
     <!-- 根据seq修改状态  status = 1-->
-    <update id="update_business_log_status_finish" parameterType="Map" >
-        update voyageone_cms2.cms_bt_business_log set status = 1 where seq=#{seq}
+    <update id="update_business_log_status_finish" parameterType="Map">
+        update voyageone_cms2.cms_bt_business_log set status = 1 where id=#{seq}
     </update>
 
 </mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtFeedProductImageDao">
+    <resultMap id="ResultMap" type="CmsBtFeedProductImageModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`code`,`image_type_id`,`image_url`,`image_name`,`sent_flag`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_feed_product_image
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="code != null">
+                AND `code` = #{code}
+            </if>
+            <if test="imageTypeId != null">
+                AND `image_type_id` = #{imageTypeId}
+            </if>
+            <if test="imageUrl != null">
+                AND `image_url` = #{imageUrl}
+            </if>
+            <if test="imageName != null">
+                AND `image_name` = #{imageName}
+            </if>
+            <if test="sentFlag != null">
+                AND `sent_flag` = #{sentFlag}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`code`,`image_type_id`,`image_url`,`image_name`,`sent_flag`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_feed_product_image
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="code != null">
+                AND `code` = #{code}
+            </if>
+
+            <if test="imageTypeId != null">
+                AND `image_type_id` = #{imageTypeId}
+            </if>
+
+            <if test="imageUrl != null">
+                AND `image_url` = #{imageUrl}
+            </if>
+
+            <if test="imageName != null">
+                AND `image_name` = #{imageName}
+            </if>
+
+            <if test="sentFlag != null">
+                AND `sent_flag` = #{sentFlag}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`code`,`image_type_id`,`image_url`,`image_name`,`sent_flag`,`created`,`creater`,`modified`,`modifier` from cms_bt_feed_product_image where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_feed_product_image
+        set
+
+            `channel_id`=#{channelId}
+            ,`code`=#{code}
+            ,`image_type_id`=#{imageTypeId}
+            ,`image_url`=#{imageUrl}
+            ,`image_name`=#{imageName}
+            ,`sent_flag`=#{sentFlag}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_feed_product_image
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_feed_product_image
+        (
+              `channel_id`,
+              `code`,
+              `image_type_id`,
+              `image_url`,
+              `image_name`,
+              `sent_flag`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{code},
+              #{imageTypeId},
+              #{imageUrl},
+              #{imageName},
+              #{sentFlag},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

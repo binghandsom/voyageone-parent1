@@ -57,7 +57,6 @@ import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
-import org.hibernate.validator.internal.util.logging.Log_$logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -295,12 +294,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 查看属性是否匹配完成
                 if (mapping.getMatchOver() == 0) {
                     // 如果没有匹配完成的话, 那就看看是否有共通
-                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getScope().getMainCategoryPath());
+                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
                     if (mapping == null || mapping.getMatchOver() == 0) {
                         // 没有共通mapping, 或者没有匹配完成
                         // 记下log, 跳过当前记录
 //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getMainCategoryPath()));
 
                         return;
                     }
@@ -612,7 +611,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.setChannelId(feed.getChannelId());
 
             if (!skip_mapping_check) {
-                String catPath = mapping.getScope().getMainCategoryPath();
+                String catPath = mapping.getMainCategoryPath();
                 product.setCatId(MD5.getMD5(catPath)); // 主类目id
                 product.setCatPath(catPath); // 主类目path
             }

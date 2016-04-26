@@ -360,7 +360,7 @@ define([
                     
                     self.feedMappingService.getMappingInfo({
                         mappingId: self.mapping._id,
-                        to: self.mapping.scope.mainCategoryPath
+                        to: self.mapping.mainCategoryPath
                     }).then(function(res){
                         var map = res.data;
 

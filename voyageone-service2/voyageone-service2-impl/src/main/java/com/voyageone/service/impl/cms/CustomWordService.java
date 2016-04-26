@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
+import com.voyageone.service.bean.cms.CmsMtCustomWordBean;
+import com.voyageone.service.daoext.cms.CmsMtCustomWordDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtCustomWordModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +18,13 @@ import java.util.Map;
 public class CustomWordService extends BaseService {
 
     @Autowired
-    private CmsMtCustomWordDao customWordDao;
+    private CmsMtCustomWordDaoExt customWordDaoExt;
 
-    public List<CmsMtCustomWordModel> getModels() {
-//        return customWordDao.selectWithParam();
-        return null;
+    public List<CmsMtCustomWordBean> getModels() {
+        return customWordDaoExt.selectWithParam();
     }
 
     public List<Map<String, Object>> getTransLenSet(String chnId) {
-
-//        return customWordDao.selectTransLenSet(chnId);
-        return null;
+        return customWordDaoExt.selectTransLenSet(chnId);
     }
 }

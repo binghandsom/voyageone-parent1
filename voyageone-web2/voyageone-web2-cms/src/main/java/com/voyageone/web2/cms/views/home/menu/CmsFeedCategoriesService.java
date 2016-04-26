@@ -6,9 +6,7 @@ import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +57,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
         // 将绑定好的类目转成map
         Map<String, String> feedMappingModelMap = new HashMap<>();
         for (CmsBtFeedMappingModel feedMappingModel : feedMappingModels)
-            feedMappingModelMap.put(feedMappingModel.getScope().getFeedCategoryPath(), mtCategoryMap.get(feedMappingModel.getScope().getMainCategoryPath()));
+            feedMappingModelMap.put(feedMappingModel.getFeedCategoryPath(), mtCategoryMap.get(feedMappingModel.getMainCategoryPath()));
 
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
         for(CmsMtFeedCategoryTreeModel feedCategory : feedCategorys) {

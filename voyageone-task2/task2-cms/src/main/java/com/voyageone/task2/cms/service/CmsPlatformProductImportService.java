@@ -332,23 +332,37 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         }
 
         // 设置platform信息
-        Map platform = new HashMap();
-        platform.put("numIid", oldCmsDataBean.getNum_iid());
-        platform.put("productId", oldCmsDataBean.getProduct_id());
-
+        // edward 2016-04-23 对应删除了saveGroups方法 - start
+//        Map platform = new HashMap();
+//        platform.put("numIid", oldCmsDataBean.getNum_iid());
+//        platform.put("productId", oldCmsDataBean.getProduct_id());
+//
+//        String status = fields.get("item_status").toString();
+//        switch (status) {
+//            case "0": // 出售中
+//                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Onsale.name());
+//                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToOnsale.name());
+//                break;
+//            default: // 定时上架 或者 仓库中
+//                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Instock.name());
+//                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToInstock.name());
+//        }
+//
+//        // 更新group
+//        productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), cmsProduct.getFields().getCode(), Integer.parseInt(oldCmsDataBean.getCart_id()), platform);
+        CmsBtProductGroupModel CmsBtProductGroupModel = new CmsBtProductGroupModel();
+        CmsBtProductGroupModel.setNumIId(oldCmsDataBean.getNum_iid());
+        CmsBtProductGroupModel.setProductCodes(new ArrayList<String>(){{add(oldCmsDataBean.getCode());}});
         String status = fields.get("item_status").toString();
         switch (status) {
             case "0": // 出售中
-                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Onsale.name());
-                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
+                CmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
                 break;
             default: // 定时上架 或者 仓库中
-                platform.put("platformStatus", com.voyageone.common.CmsConstants.PlatformStatus.Instock.name());
-                platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
+                CmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
         }
-
-        // 更新group
-        productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), cmsProduct.getFields().getCode(), Integer.parseInt(oldCmsDataBean.getCart_id()), platform);
+        productGroupService.update(CmsBtProductGroupModel);
+        // edward 2016-04-23 对应删除了saveGroups方法 - end
         $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
 
         // 设置sku信息

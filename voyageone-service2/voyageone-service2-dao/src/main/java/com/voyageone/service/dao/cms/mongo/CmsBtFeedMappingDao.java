@@ -30,7 +30,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
         JomgoQuery query = new JomgoQuery();
 
         // 为了防止categoryPath里有单引号, 这里外侧改为双引号
-        query.setQuery(String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", defaultMapping: 1 }",
+        query.setQuery(String.format("{ \"channelId\": \"%s\", \"feedCategoryPath\": \"%s\", defaultMapping: 1 }",
                 channelId, feedCategory));
 
         if (!withProps)
@@ -48,7 +48,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
      * @return 类目和属性对应关系
      */
     public CmsBtFeedMappingModel selectByKey(String channelId, String feedCategory, String mainCategoryIdPath) {
-        String query = String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", \"scope.mainCategoryPath\": \"%s\"}",
+        String query = String.format("{ \"channelId\": \"%s\", \"feedCategoryPath\": \"%s\", \"mainCategoryPath\": \"%s\"}",
                 channelId, feedCategory, mainCategoryIdPath);
 
         return selectOneWithQuery(query,channelId);
@@ -62,7 +62,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
      */
     public List<CmsBtFeedMappingModel> findMappingByChannelId(String selChannelId) {
 
-        String strQuery = String.format("{\"scope.channelId\": \"%s\"}", selChannelId);
+        String strQuery = String.format("{\"channelId\": \"%s\"}", selChannelId);
 
         String projection = "{\"props\": 0}";
 
@@ -77,7 +77,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
      */
     public List<CmsBtFeedMappingModel> findMappingWithoutProps(String selChannelId) {
 
-        String strQuery = String.format("{\"scope.channelId\": \"%s\"}", selChannelId);
+        String strQuery = String.format("{\"channelId\": \"%s\"}", selChannelId);
 
         String projection = "{\"props\": 0}";
 
@@ -93,7 +93,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
      */
     public CmsBtFeedMappingModel findDefaultMainMapping(String channelId, String mainCategoryPath) {
 
-        String query = String.format("{ 'scope.channelId': '%s', 'scope.mainCategoryPath': '%s', 'defaultMain': 1 }",
+        String query = String.format("{ 'channelId': '%s', 'mainCategoryPath': '%s', 'defaultMain': 1 }",
                 channelId, mainCategoryPath);
 
         return selectOneWithQuery(query,channelId);
@@ -110,7 +110,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
 
     public List<CmsBtFeedMappingModel> findMappingsWithoutProps(String feedCategoryPath, String selChannelId) {
 
-        String strQuery = String.format("{\"scope.channelId\":\"%s\",\"scope.feedCategoryPath\":\"%s\"}",
+        String strQuery = String.format("{\"channelId\":\"%s\",\"feedCategoryPath\":\"%s\"}",
                 selChannelId, feedCategoryPath);
 
         String projection = "{\"props\": 0}";
