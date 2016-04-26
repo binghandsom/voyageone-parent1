@@ -16,6 +16,7 @@
 
 package com.voyageone.service.impl.com.mq.config;
 
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.config.RabbitListenerConfigUtils;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ import org.springframework.context.annotation.Role;
 public class RabbitBootstrapConfiguration {
 
 	@Autowired
+	private AmqpAdmin amqpAdmin;
+
+	@Autowired
 	private VoRabbitMqLocalConfig voRabbitMqLocalConfig;
 
 	@Bean(name = RabbitListenerConfigUtils.RABBIT_LISTENER_ANNOTATION_PROCESSOR_BEAN_NAME)
@@ -35,6 +39,7 @@ public class RabbitBootstrapConfiguration {
 	public AnnotationProcessorByIP rabbitListenerAnnotationProcessor() {
 		AnnotationProcessorByIP annotationProcessorByIP = new AnnotationProcessorByIP();
 		annotationProcessorByIP.setLocal(voRabbitMqLocalConfig.isLocal());
+		annotationProcessorByIP.setAmqpAdmin(amqpAdmin);
 		return annotationProcessorByIP;
 	}
 
