@@ -591,20 +591,9 @@ public class ProductService extends BaseService {
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.model", prodModel);
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        bulkList.add(model);
-
-        // 批量更新product表
-        int result = 0;
-        if (bulkList.size() > 0) {
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
-            result = bulkWriteResult.getModifiedCount();
-        }
-        return result;
+        cmsBtProductDao.update(channelId, queryMap, updateMap);
+        return 0;
     }
 
     /**
