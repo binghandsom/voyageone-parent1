@@ -272,7 +272,23 @@ public class AnnotationProcessorByIP
         endpoint.setBean(bean);
         endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
         endpoint.setId(getEndpointId(rabbitListener));
-        endpoint.setQueueNames(resolveQueues(rabbitListener));
+
+        /**
+         * add ip to quenes key aooer start
+         */
+        String[] queues = resolveQueues(rabbitListener);
+        if(local) {
+            for (int i = 0; i < queues.length; i++) {
+                queues[i] = MQConfigUtils.getAddStrQueneName(queues[i]);
+            }
+        }
+        for (String queue : queues) {
+            amqpAdmin.declareQueue(new Queue(queue, true, false, true));
+        }
+        endpoint.setQueueNames(queues);
+        /**
+         * add ip to quenes key aooer end
+         */
 
         String group = rabbitListener.group();
         if (StringUtils.hasText(group)) {
@@ -336,25 +352,14 @@ public class AnnotationProcessorByIP
 
     private String[] resolveQueues(RabbitListener rabbitListener) {
         String[] queues = rabbitListener.queues();
-
-        if(local) {
-            /**
-             * add ip to quenes key aooer
-             */
-            for (int i = 0; i < queues.length; i++) {
-                queues[i] = MQConfigUtils.getAddStrQueneName(queues[i]);
-                amqpAdmin.declareQueue(new Queue(queues[i], true, false, true));
-            }
-        }
-
         QueueBinding[] bindings = rabbitListener.bindings();
         if (queues.length > 0 && bindings.length > 0) {
             throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
         }
         List<String> result = new ArrayList<String>();
         if (queues.length > 0) {
-            for (int i = 0; i < queues.length; i++) {
-                Object resolvedValue = resolveExpression(queues[i]);
+            for (String queue : queues) {
+                Object resolvedValue = resolveExpression(queue);
                 resolveAsString(resolvedValue, result);
             }
         }
