@@ -6,11 +6,11 @@ import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,7 +93,7 @@ public class CmsAddToPromotionService extends BaseAppService {
                 request.setProductCode(String.valueOf(item.get("code")));
                 request.setPromotionId(promotionId);
                 request.setPromotionPrice(0.00);
-                request.setTagId(tagInfo.getTagId());
+                request.setTagId(tagInfo.getId());
                 request.setTagPath(tagInfo.getTagPath());
 
                 promotionDetailService.addPromotionDetail(request);
@@ -122,7 +122,7 @@ public class CmsAddToPromotionService extends BaseAppService {
     private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, Integer tagName) {
 
         for (CmsBtTagModel tag : tags) {
-            if (tag.getTagId().equals(tagName)) {
+            if (tag.getId() == tagName.intValue()) {
                 return tag;
             }
         }

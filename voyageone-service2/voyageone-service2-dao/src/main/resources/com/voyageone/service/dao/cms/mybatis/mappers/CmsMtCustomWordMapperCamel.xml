@@ -99,10 +99,10 @@
         VALUES(
               #{wordName},
               #{wordDesc},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

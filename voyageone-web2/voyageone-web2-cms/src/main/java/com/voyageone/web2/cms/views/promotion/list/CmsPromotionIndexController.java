@@ -1,10 +1,11 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +41,12 @@ public class CmsPromotionIndexController extends CmsController {
     }
 
     @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION, PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
-    public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
+    public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionBean cmsBtPromotionBean) {
         String channelId = getUser().getSelChannelId();
-        cmsBtPromotionModel.setChannelId(channelId);
-        cmsBtPromotionModel.setCreater(getUser().getUserName());
-        cmsBtPromotionModel.setModifier(getUser().getUserName());
-        return success(cmsPromotionService.addOrUpdate(cmsBtPromotionModel));
+        cmsBtPromotionBean.setChannelId(channelId);
+        cmsBtPromotionBean.setCreater(getUser().getUserName());
+        cmsBtPromotionBean.setModifier(getUser().getUserName());
+        return success(cmsPromotionService.addOrUpdate(cmsBtPromotionBean));
     }
 
     @RequestMapping(PROMOTION.LIST.INDEX.DEL_PROMOTION)

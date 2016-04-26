@@ -30,16 +30,18 @@ public class CmsTaskStockIncrementController extends CmsController {
     private CmsTaskStockService cmsTaskStockService;
 
     /**
-     *searchSubTask
+     * searchSubTask
+     *
      * @return resultBean
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_SUB_TASK)
     public AjaxResponse searchSubTask(@RequestBody Map<String, Object> param) {
         //调用CmsTaskStockIncrementService
-        Map<String, Object> resultBean=cmsTaskStockIncrementService.getIncrementInfoBySubTaskID(param);
+        Map<String, Object> resultBean = cmsTaskStockIncrementService.getIncrementInfoBySubTaskID(param);
         // 返回
         return success(resultBean);
     }
+
     /**
      * @api {post} /cms/promotion/task_stock_increment/getPlatFormList 2.1 取得隔离任务的隔离平台
      * @apiName CmsTaskStockIncrementController.getPlatFormList
@@ -61,11 +63,10 @@ public class CmsTaskStockIncrementController extends CmsController {
      *                     {"cartId":"27", "cartName":"聚美优品"} ]
      *  }
      * }
-     * @apiExample  业务说明
-     *  1.根据任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
+     * @apiExample 业务说明
+     * 1.根据任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
      * @apiExample 使用表
-     *  cms_bt_stock_separate_platform_info
-     *
+     * cms_bt_stock_separate_platform_info
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.GET_PLATFORM_LIST)
     public AjaxResponse getPlatFormList(@RequestBody Map<String, Object> param) {
@@ -73,7 +74,7 @@ public class CmsTaskStockIncrementController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 取得任务对应平台信息列表
-        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String)param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
+        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String) param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
         resultBean.put("platformList", platformList);
 //        if (platformList == null || platformList.size() == 0) {
 //            resultBean.put("hasAuthority", false);
@@ -113,13 +114,12 @@ public class CmsTaskStockIncrementController extends CmsController {
      *  }
      * }
      * 说明："taskName":增量任务名。"cartName":平台名。
-     * @apiExample  业务说明
+     * @apiExample 业务说明
      *  1.根据任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
      *  2.根据参数.任务id，增量任务名从cms_bt_stock_separate_increment_task表检索增量库存隔离任务。
      * @apiExample 使用表
      *  cms_bt_stock_separate_platform_info
      *  cms_bt_stock_separate_increment_task
-     *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_TASK)
     public AjaxResponse searchTask(@RequestBody Map<String, Object> param) {
@@ -159,11 +159,11 @@ public class CmsTaskStockIncrementController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
-     * @apiErrorExample  错误示例
+     * @apiErrorExample 错误示例
      * {
      *  "code": "1", "message": "增量比例/值不正确", "displayType":null, "redirectTo":null, "data":null
      * }
-     * @apiExample  业务说明
+     * @apiExample 业务说明
      *  1.check输入信息。增量比例或增量值必须输入，并且必须设定而且为大于0的整数。
      *                   任务名长度check。
      *  2.如果是新建增量任务时（参数.增量任务id没有内容），将增量任务信息插入到cms_bt_stock_separate_increment_task表。
@@ -236,7 +236,6 @@ public class CmsTaskStockIncrementController extends CmsController {
         // 返回
         return success(null);
     }
-
 
 
 }

@@ -13,7 +13,7 @@ import java.util.List;
  * Created by DELL on 2016/1/26.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsBtSxWorkloadDaoTest {
 
     @Autowired
