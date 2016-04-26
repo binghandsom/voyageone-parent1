@@ -26,8 +26,8 @@ public class CmsFieldEnum {
         brand,
         model,
         category_id,
-        title_cn,
-        title_en,
+        longTitle,   // mongo数据库里的名字变了:title_cn->longTitle
+        productNameEn, // mongo数据库里的名字变了:title_en->productNameEn
         long_description_cn,
         long_description_en,
         short_description_cn,
