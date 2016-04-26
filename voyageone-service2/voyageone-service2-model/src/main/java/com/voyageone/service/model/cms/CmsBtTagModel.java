@@ -2,6 +2,8 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
+import java.util.List;
+
 /**
  * @author jerry 15/12/30
  * @version 2.0.0
@@ -17,6 +19,10 @@ public class CmsBtTagModel extends BaseModel {
     private Integer tagStatus;
     private Integer sortOrder;
     private Integer parentTagId;
+    private List<CmsBtTagModel> children;
+    private Boolean isLeaf;
+    private Integer isActive;
+    private String tagChildrenName;
 
     public String getTagName() {
         return tagName;
@@ -88,5 +94,37 @@ public class CmsBtTagModel extends BaseModel {
 
     public void setParentTagId(Integer parentTagId) {
         this.parentTagId = parentTagId;
+    }
+
+    public List<CmsBtTagModel> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<CmsBtTagModel> children) {
+        this.children = children;
+    }
+
+    public Boolean getIsLeaf() {
+        return isLeaf;
+    }
+
+    public void setIsLeaf(Boolean isLeaf) {
+        this.isLeaf = isLeaf;
+    }
+
+    public Integer getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Integer isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getTagChildrenName() {
+        return tagChildrenName;
+    }
+
+    public void setTagChildrenName(String tagChildrenName) {
+        this.tagChildrenName = tagChildrenName;
     }
 }

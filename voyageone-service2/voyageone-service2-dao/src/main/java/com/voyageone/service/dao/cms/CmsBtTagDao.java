@@ -59,4 +59,8 @@ public class CmsBtTagDao extends ServiceBaseDao {
 
         return selectList("select_one_by_tag_name", paraIn);
     }
+
+    public List<CmsBtTagModel> selectListByChannelIdAndTagType(String channelId,String tagType) {
+        return selectList("select_list_by_channel_id_and_tag_type", parameters("channelId", channelId, "tagType", tagType));
+    }
 }

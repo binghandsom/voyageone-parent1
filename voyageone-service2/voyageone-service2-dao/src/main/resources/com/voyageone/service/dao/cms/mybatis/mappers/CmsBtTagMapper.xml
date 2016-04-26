@@ -30,6 +30,9 @@
             <if test="parentTagId != null" >
                 parent_tag_id,
             </if>
+            <if test="isActive != null" >
+                is_active,
+            </if>
             created,
             <if test="creater != null" >
                 creater,
@@ -63,6 +66,9 @@
             </if>
             <if test="parentTagId != null" >
                 #{parentTagId,jdbcType=INTEGER},
+            </if>
+            <if test="isActive != null" >
+                #{isActive,jdbcType=INTEGER},
             </if>
             now(),
             <if test="creater != null" >
@@ -100,6 +106,9 @@
             <if test="parentTagId != null" >
                 parent_tag_id = #{parentTagId,jdbcType=INTEGER},
             </if>
+            <if test="isActive !=null">
+                is_active = #{isActive,jdbcType=INTEGER},
+            </if>
             modified = now(),
             <if test="modifier != null" >
                 modifier = #{modifier,jdbcType=VARCHAR},
@@ -127,10 +136,12 @@
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
+        <result column="tag_path_name" property="tagChildrenName" jdbcType="VARCHAR" />
         <result column="tag_type" property="tagType" jdbcType="INTEGER" />
         <result column="tag_status" property="tagStatus" jdbcType="INTEGER" />
         <result column="sort_order" property="sortOrder" jdbcType="INTEGER" />
         <result column="parent_tag_id" property="parentTagId" jdbcType="INTEGER" />
+        <result column="is_active" property="isActive" jdbcType="INTEGER" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
@@ -239,6 +250,30 @@
         from voyageone_cms2.cms_bt_tag tag
         where
             channel_id = #{channelId,jdbcType=VARCHAR}
+        order by tag.tag_id
+    </select>
+    <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
+    <select id="select_list_by_channel_id_and_tag_type" resultMap="TagMap" parameterType="String">
+        select
+        tag.tag_id,
+        tag.tag_name,
+        tag.channel_id,
+        tag.tag_path,
+        tag.tag_path_name,
+        tag.tag_type,
+        tag.tag_status,
+        tag.sort_order,
+        tag.parent_tag_id,
+        tag.is_active,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where
+        channel_id = #{channelId}
+        and tag_type = #{tagType}
+        and tag.is_active=1
         order by tag.tag_id
     </select>
 </mapper>
