@@ -51,4 +51,15 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
 
         return updateRes.getN();
     }
+
+
+    /**
+     * 更新所有FeedInfo的UpdFlg
+     */
+    public int updateAllUpdFlg(String channelId,int updFlg){
+
+        WriteResult updateRes = mongoTemplate.updateMulti("{}", String.format("{ $set: {updFlg: %d}}", updFlg),
+                getCollectionName(channelId));
+        return updateRes.getN();
+    }
 }

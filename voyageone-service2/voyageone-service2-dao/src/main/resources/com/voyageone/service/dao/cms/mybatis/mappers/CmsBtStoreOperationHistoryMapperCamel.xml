@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao">
+
+    <select id="selectList" resultType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel">
+
+        select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="operationType != null">
+                AND `operation_type` = #{operationType}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultType="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao">
+        select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="operationType != null">
+                AND `operation_type` = #{operationType}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultType="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao">
+        select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_store_operation_history
+        set
+
+            `operation_type`=#{operationType}
+            ,`modifier`=#{modifier}
+         where id=#{id}
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_store_operation_history where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_store_operation_history
+        (
+              `operation_type`,
+              `modified`,
+              `modifier`,
+              `created`,
+              `creater`
+        )
+        VALUES(
+              #{operationType},
+              #{modified},
+              #{modifier},
+              #{created},
+              #{creater}
+        )
+    </insert>
+</mapper>

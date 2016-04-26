@@ -1296,7 +1296,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private List<CmsBtProductModel_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
             // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
+            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }

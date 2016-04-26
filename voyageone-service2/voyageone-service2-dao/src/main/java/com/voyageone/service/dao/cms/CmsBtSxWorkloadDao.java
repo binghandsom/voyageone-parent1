@@ -11,6 +11,7 @@ import java.util.List;
  */
 @Repository
 public class CmsBtSxWorkloadDao extends ServiceBaseDao {
+
     public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannel(int recordCount, String channelId) {
         return selectList("cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId));
     }
@@ -41,5 +42,22 @@ public class CmsBtSxWorkloadDao extends ServiceBaseDao {
 
     public void insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
         insert("cms_insert_sx_workloads", models);
+    }
+
+    /**
+     * 如果数据库中存在对应的channelId,groupId,cartId,publishStatus为0的记录那么返回true
+     * @return
+     */
+    public boolean hasUnpublishRecord(CmsBtSxWorkloadModel model) {
+        return countSxWorkloadModelBy(model.getChannelId(),model.getGroupId(),0,model.getCartId())>0;
+    }
+
+    public int countSxWorkloadModelBy(String channelId,Long groupId,Integer publishStatus,Integer cartId){
+        List<CmsBtSxWorkloadModel> result = selectList("cms_select_sx_workload", parameters("channel_id", channelId,
+                "groupId", groupId,
+                "publishStatus", publishStatus,
+                "cartId", cartId
+        ));
+        return result.size();
     }
 }

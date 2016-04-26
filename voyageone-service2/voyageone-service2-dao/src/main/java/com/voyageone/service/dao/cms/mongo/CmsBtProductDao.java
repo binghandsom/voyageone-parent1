@@ -107,4 +107,13 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return result.size() <= 0;
     }
 
+    public long countByFieldStatusEqualApproved(String channelId) {
+        String query="{fields.status:/^approved$/i}"; //执行大小写不敏感的匹配
+        return countByQuery(query,channelId);
+    }
+
+    public List<CmsBtProductModel> selectByFieldStatusEqualApproved(String channelId) {
+        String query="{fields.status:/^approved$/i}"; //执行大小写不敏感的匹配
+        return select(query, channelId);
+    }
 }
