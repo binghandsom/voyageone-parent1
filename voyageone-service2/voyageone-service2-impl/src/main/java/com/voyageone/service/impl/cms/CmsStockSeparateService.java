@@ -16,7 +16,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class StockSeparateService extends BaseService {
+public class CmsStockSeparateService extends BaseService {
 
     @Autowired
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
