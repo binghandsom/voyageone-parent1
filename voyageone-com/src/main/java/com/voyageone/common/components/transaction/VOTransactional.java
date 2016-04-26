@@ -1,5 +1,8 @@
 package com.voyageone.common.components.transaction;
 
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.annotation.ElementType;
@@ -16,4 +19,14 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Transactional(rollbackFor=Exception.class)
-public @interface VOTransactional {}
+public @interface VOTransactional {
+
+    Propagation propagation() default Propagation.REQUIRED;
+
+    Isolation isolation() default Isolation.DEFAULT;
+
+    int timeout() default -1;
+
+    boolean readOnly() default true;
+
+}

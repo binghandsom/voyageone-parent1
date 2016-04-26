@@ -68,13 +68,14 @@ public class CmsBtPromotionDao extends ServiceBaseDao {
 	public int deleteById(Map<?, ?> condtionParams) {
 		return update("delete_cms_bt_promotion_by_id", condtionParams);
 	}
+
 	/**
 	 * 条件查询
 	 *
-	 * @param  PromotionID PromotionID
+	 * @param  promotionId PromotionID
 	 * @return String
 	 */
-	public HashMap selectPromotionIDByCartId(String PromotionID){
-		return selectOne("select_cms_bt_promotion_by_cat_id", PromotionID);
+	public Map<String,String> selectPromotionIDByCartId(String promotionId){
+		return selectOne("select_cms_bt_promotion_by_cat_id", promotionId);
 	}
 }
