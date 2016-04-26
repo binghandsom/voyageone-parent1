@@ -458,6 +458,9 @@ define(function() {
         "REVERT": "Reverting",
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
-        "CANT_BEAT": "Info Error"
+        "CANT_BEAT": "Info Error",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "page-size"
     };
 });
