@@ -69,7 +69,7 @@ public class CmsFeedMappingController extends CmsController {
     @RequestMapping(FEED.GET_MAPPING_INFO)
     public AjaxResponse getMappingInfo(@RequestBody SetMappingBean params) {
 
-        Map<String, Object> map = feedPropMappingService.getMainCategoryInfo(params.getTo());
+        Map<String, Object> map = feedPropMappingService.getMainCategoryInfo(params.getTo(), getUser().getSelChannelId(), getLang());
 
         Map<MappingPropType, List<String>> matched = feedPropMappingService.getMatched(params, getUser());
 
