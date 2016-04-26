@@ -26,10 +26,10 @@ public class CreateImageParameter {
     public void setFile(String file) {
         this.file = file;
     }
-    public String getvParam() {
+    public String getVParam() {
         return vParam;
     }
-    public void setvParam(String vParam) {
+    public void setVParam(String vParam) {
         this.vParam = vParam;
     }
 }

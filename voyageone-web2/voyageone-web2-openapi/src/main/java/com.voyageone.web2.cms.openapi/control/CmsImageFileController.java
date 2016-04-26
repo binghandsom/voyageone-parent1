@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.openapi.control;
 
 import com.voyageone.service.impl.cms.imagecreate.CmsMtImageCreateFileService;
 import com.voyageone.service.model.openapi.image.AddListParameter;
+import com.voyageone.service.model.openapi.image.AddListRespone;
 import com.voyageone.service.model.openapi.image.GetImageRespone;
 import com.voyageone.web2.cms.openapi.OpenAipBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,8 @@ public class CmsImageFileController extends OpenAipBaseController {
         return service.getImage(cId, templateId, file, vparam, queryString, "SystemCreateImage");
     }
     @RequestMapping(value = "/product/image/addList", method = RequestMethod.GET)
-    public Object addList(@RequestParam AddListParameter parameter) {
-        return null;
+    public AddListRespone addList(@RequestParam AddListParameter parameter) {
+        return  service.addList(parameter);
+
     }
 }

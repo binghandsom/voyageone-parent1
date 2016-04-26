@@ -2,24 +2,20 @@ package com.voyageone.service.impl.cms.imagecreate;
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.HashCodeUtil;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import com.voyageone.service.model.openapi.*;
-import com.voyageone.service.model.openapi.image.AddListParameter;
-import com.voyageone.service.model.openapi.image.CreateImageParameter;
-import com.voyageone.service.model.openapi.image.ImageErrorEnum;
-import com.voyageone.service.model.openapi.image.GetImageRespone;
+import com.voyageone.service.model.openapi.image.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -103,8 +99,11 @@ public class CmsMtImageCreateFileService {
         return result;
     }
 
-    private CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String Creater, long hashCode) {
+    private CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String Creater, long hashCode) throws OpenApiException {
         CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
+        if (modelTemplate == null) {
+            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + templateId);
+        }
         final String ossFilePath = "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
         final String USCDNFilePath = ImageConfig.getUSCDNWorkingDirectory() + "/products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
         CmsMtImageCreateFileModel modelFile = new CmsMtImageCreateFileModel();
@@ -137,17 +136,48 @@ public class CmsMtImageCreateFileService {
         return HashCodeUtil.getHashCode(parameter);
     }
 
-    @VOTransactional
-    public Object addList(@RequestParam AddListParameter parameter) {
+    public AddListRespone addList(AddListParameter parameter) {
+        AddListRespone result = new AddListRespone();
+        try {
+            checkAddListParameter(parameter);
+            for (CreateImageParameter imageInfo : parameter.getData()) {
+                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
+                if (!existsHashCode(hashCode)) {//1.创建记录信息
+                    createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
+                }
+            }
+        } catch (OpenApiException ex) {
+            result.setErrorCode(ex.getErrorCode());
+            result.setErrorMsg(ex.getMsg());
+            if (ex.getSuppressed() != null) {
+                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+                LOG.error("AddList requestId:" + requestId, ex);
+            }
+        } catch (Exception ex) {
+            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+            LOG.error("AddList requestId:" + requestId, ex);
+            result.setRequestId(requestId);
+            result.setErrorCode(ImageErrorEnum.SystemError.getCode());
+            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
+        }
+        return result;
+    }
+    public  void  checkAddListParameter(AddListParameter parameter) throws OpenApiException {
         for (CreateImageParameter imageInfo : parameter.getData()) {
-            long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getvParam());
-            if (existsHashCode(hashCode)) {//1.创建记录信息
-                createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getvParam(), "system addList", hashCode);
+            if (StringUtil.isEmpty(imageInfo.getChannelId())) {
+                throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);
+            }
+            if (imageInfo.getTemplateId() != 0) {
+                throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull);
+            }
+            if (StringUtil.isEmpty(imageInfo.getFile())) {
+                throw new OpenApiException(ImageErrorEnum.FileNotNull);
+            }
+            if (StringUtil.isEmpty(imageInfo.getVParam())) {
+                throw new OpenApiException(ImageErrorEnum.VParamNotNull);
             }
         }
-        return null;
     }
-
     public boolean existsHashCode(long hashCode) {
         return getByHashCode(hashCode) != null; //加缓存判断
     }
