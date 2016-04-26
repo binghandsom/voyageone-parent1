@@ -53,6 +53,7 @@ import java.util.Set;
  * @version 2.0.0
  */
 @Service
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
 public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
     @Autowired
@@ -96,10 +97,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     // 价格类型(京东价格)
     private final static String PriceType_jdprice = "sale_price";
 
-    @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
-    protected void onMessage(Message message){
-        super.onMessage(message);
-    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {

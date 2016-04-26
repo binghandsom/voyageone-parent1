@@ -18,15 +18,11 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_JuMeiProductUpdateDealEndTimeJob)
 public class JuMeiProductUpdateDealEndTimeJobService extends BaseMQCmsService {
 
     @Autowired
     private JuMeiDealService service;
-
-    @RabbitListener(queues = MqRoutingKey.CMS_BATCH_JuMeiProductUpdateDealEndTimeJob)
-    protected void onMessage(Message message) {
-        super.onMessage(message);
-    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {

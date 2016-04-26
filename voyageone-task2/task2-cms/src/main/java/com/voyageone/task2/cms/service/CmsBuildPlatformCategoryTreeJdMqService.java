@@ -31,6 +31,7 @@ import java.util.Map;
  * 京东平台类目信息取得
  */
 @Service
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategoryTreeJdJob)
 public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQCmsService {
 
     @Autowired
@@ -42,11 +43,6 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQCmsService {
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
-    }
-
-    @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategoryTreeJdJob)
-    protected void onMessage(Message message){
-        super.onMessage(message);
     }
 
     @Override

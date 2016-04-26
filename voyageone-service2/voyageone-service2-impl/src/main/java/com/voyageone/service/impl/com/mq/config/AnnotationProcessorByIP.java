@@ -16,6 +16,7 @@
 
 package com.voyageone.service.impl.com.mq.config;
 
+import com.voyageone.common.mq.config.MQConfigUtils;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Queue;
@@ -42,8 +43,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -83,6 +82,18 @@ public class AnnotationProcessorByIP
     public void setLocal(boolean local) {
         this.local = local;
     }
+
+
+    private AmqpAdmin amqpAdmin;
+
+    public AmqpAdmin getAmqpAdmin() {
+        return amqpAdmin;
+    }
+
+    public void setAmqpAdmin(AmqpAdmin amqpAdmin) {
+        this.amqpAdmin = amqpAdmin;
+    }
+
 
     @Override
     public int getOrder() {
@@ -261,21 +272,24 @@ public class AnnotationProcessorByIP
         endpoint.setBean(bean);
         endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
         endpoint.setId(getEndpointId(rabbitListener));
-        String[] queues=resolveQueues(rabbitListener);
 
+        /**
+         * add ip to quenes key aooer start
+         */
+        String[] queues = resolveQueues(rabbitListener);
         if(local) {
-            /**
-             * add ip to quenes key aooer
-             */
             for (int i = 0; i < queues.length; i++) {
-                try {
-                    queues[i] += InetAddress.getLocalHost().toString().replace("/", "_")+"$EXISTS_IP$";
-                } catch (UnknownHostException ignored) {
-                }
+                queues[i] = MQConfigUtils.getAddStrQueneName(queues[i]);
             }
         }
-
+        for (String queue : queues) {
+            amqpAdmin.declareQueue(new Queue(queue, true, false, true));
+        }
         endpoint.setQueueNames(queues);
+        /**
+         * add ip to quenes key aooer end
+         */
+
         String group = rabbitListener.group();
         if (StringUtils.hasText(group)) {
             Object resolvedGroup = resolveExpression(group);
@@ -344,8 +358,8 @@ public class AnnotationProcessorByIP
         }
         List<String> result = new ArrayList<String>();
         if (queues.length > 0) {
-            for (int i = 0; i < queues.length; i++) {
-                Object resolvedValue = resolveExpression(queues[i]);
+            for (String queue : queues) {
+                Object resolvedValue = resolveExpression(queue);
                 resolveAsString(resolvedValue, result);
             }
         }

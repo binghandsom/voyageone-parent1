@@ -21,15 +21,11 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask)
 public class JmBtPromotionImportJobService extends BaseMQCmsService {
 
     @Autowired
     private CmsBtJmPromotionImportTaskService service;
-
-    @RabbitListener(queues = MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask)
-    protected void onMessage(Message message) {
-        super.onMessage(message);
-    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
