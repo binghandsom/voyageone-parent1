@@ -48,6 +48,7 @@
         <property name="basePackage" value="com.voyageone.service.dao.cms,
                                             com.voyageone.service.dao.jumei,
                                             com.voyageone.service.daoext.jumei,
+                                            com.voyageone.task2.cms.dao.feed,
                                             com.voyageone.service.daoext.synship,
                                             "/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
