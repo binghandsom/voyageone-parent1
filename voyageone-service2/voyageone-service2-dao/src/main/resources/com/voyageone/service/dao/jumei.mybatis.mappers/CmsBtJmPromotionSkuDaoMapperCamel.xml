@@ -164,6 +164,7 @@
             ,`state`=#{state}
             ,`channel_id`=#{channelId}
             ,`update_state`=#{updateState}
+            ,`modified`=now()
          where id=#{id}
    </update>
 

@@ -203,10 +203,10 @@
               #{isCode},
               #{tips},
               #{valueType},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

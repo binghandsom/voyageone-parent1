@@ -28,6 +28,7 @@ import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.impl.cms.MongoSequenceService;
@@ -37,6 +38,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
@@ -57,7 +59,6 @@ import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
-import org.hibernate.validator.internal.util.logging.Log_$logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -106,6 +107,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private CmsBtImagesDao cmsBtImageDao;
     @Autowired
     private FeedInfoService feedInfoService;
+    @Autowired
+    private CmsBtDataAmountDao cmsBtDataAmountDao;
 
     public static final int FEED_UPDFLG_0 = 0;
     public static final int FEED_UPDFLG_2 = 2;
@@ -193,13 +196,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             String channelId = this.channel.getOrder_channel_id();
 
             // 查找当前渠道,所有等待反映到主数据的商品
-//            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
-//            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
-//            JomgoQuery queryObject = new JomgoQuery();
-//            queryObject.setQuery(query);
-//            queryObject.setLimit(50);
-//            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
-            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, new int[]{0,2});
+            // List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
+            String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
+            JomgoQuery queryObject = new JomgoQuery();
+            queryObject.setQuery(query);
+            queryObject.setLimit(500);
+            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // --------------------------------------------------------------------------------------------
             // 品牌mapping表
@@ -237,6 +239,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 feed.setFullAttribute();
                 doSaveProductMainProp(feed, channelId, mapBrandMapping);
             }
+
+            // jeff 2016/04 add start
+            // 将新建的件数，更新的件数插到cms_bt_data_amount表
+            insertDataAmount();
+            // jeff 2016/04 add end
 
             $info(channel.getFull_name() + "产品导入主数据结束");
 
@@ -295,12 +302,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 查看属性是否匹配完成
                 if (mapping.getMatchOver() == 0) {
                     // 如果没有匹配完成的话, 那就看看是否有共通
-                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getScope().getMainCategoryPath());
+                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
                     if (mapping == null || mapping.getMatchOver() == 0) {
                         // 没有共通mapping, 或者没有匹配完成
                         // 记下log, 跳过当前记录
 //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getMainCategoryPath()));
 
                         return;
                     }
@@ -378,7 +385,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             ProductPriceBean productPriceBean = doSetPrice(channelId, feed, cmsProduct ,mapping);
 
             // 更新价格履历
-            productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Maser价格更新", getTaskName());
+            productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Master价格更新", getTaskName());
 
             // 更新图片
             doUpdateImage(channelId, feed.getCode(), feed.getImage());
@@ -421,9 +428,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param mapBrandMapping 品牌mapping一览
          * @param schemaModel 主类目的属性的schema
          * @param newFlg 新建flg (true:新建商品 false:更新的商品)
+         * @param productField 商品属性
          * @return 返回整个儿的Fields的内容
          */
-        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg) {
+        // jeff 2016/04 change start
+        // private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg) {
+        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg, CmsBtProductModel_Field productField) {
             // --------- 商品属性信息设定 ------------------------------------------------------
             CmsBtProductModel_Field field = new CmsBtProductModel_Field();
 
@@ -443,16 +453,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 新建的场合才设置的属性
-            // jeff 2016/04 change start
 //            if (newFlg) {
-            if (newFlg || FEED_UPDFLG_2 == feed.getUpdFlg()) {
-                // jeff 2016/04 change end
-                // TODO: 现在mapping画面功能还不够强大, 共通属性和SKU属性先暂时写死在代码里, 等我写完上新代码回过头来再想办法改 (tom.zhu)
-                // 主数据的field里, 暂时强制写死的字段(共通属性)
-                // 产品code
+            // TODO: 现在mapping画面功能还不够强大, 共通属性和SKU属性先暂时写死在代码里, 等我写完上新代码回过头来再想办法改 (tom.zhu)
+            // 主数据的field里, 暂时强制写死的字段(共通属性)
+            // 产品code
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getCode()))) {
                 field.setCode(feed.getCode());
+            }
 
-                // 品牌
+            // 品牌
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getBrand()))) {
                 if (mapBrandMapping.containsKey(feed.getBrand())) {
                     field.setBrand(mapBrandMapping.get(feed.getBrand()));
                 } else {
@@ -464,40 +474,60 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     return null;
                 }
-                // 产品名称（英文）
+            }
+            // 产品名称（英文）
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getProductNameEn()))) {
                 field.setProductNameEn(feed.getName());
-                // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
-                // 款号model
+            }
+            // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
+            // 款号model
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getModel()))) {
                 field.setModel(feed.getModel());
-                // 颜色
+            }
+            // 颜色
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getColor()))) {
                 field.setColor(feed.getColor());
-                // 产地
+            }
+            // 产地
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getOrigin()))) {
                 field.setOrigin(feed.getOrigin());
-                // 简短描述英文
+            }
+            // 简短描述英文
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getShortDesEn()))) {
                 field.setShortDesEn(feed.getShortDescription());
-                // 详情描述英文
+            }
+            // 详情描述英文
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getLongDesEn()))) {
                 field.setLongDesEn(feed.getLongDescription());
-                // 税号集货: 不要设置\
-                // jeff 2016/04 add start
-                // 税号个人
+            }
+            // 税号集货: 不要设置\
+            // 税号个人
+            if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getHsCodePrivate()))) {
                 field.setHsCodePrivate(getPropSimpleValueByMapping(MappingPropType.COMMON, Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, mapping));
-                // jeff 2016/04 add end
-                // 产品状态
+            }
+            // 产品状态
+            if (newFlg || !newFlg && StringUtils.isEmpty(productField.getStatus())) {
                 field.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
+            }
 
-                {
-                    // 所有的翻译内容
-                    Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
-                    // 翻译(标题 和 长描述)
-                    String strProductNameEn = field.getProductNameEn();
-                    String strLongDesEn = field.getLongDesEn();
-                    for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
-                        strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
-                        strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
-                    }
-                    // 调用百度翻译
-                    List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
+            {
+                // 所有的翻译内容
+                String transFlg = "";
+                Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
+                // 翻译(标题 和 长描述)
+                String strProductNameEn = field.getProductNameEn();
+                String strLongDesEn = field.getLongDesEn();
+                for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
+                    strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
+                    strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
+                }
+                // 调用百度翻译
+                List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
+                if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                     transBaiduOrg.add(strProductNameEn); // 标题
+                    transFlg = "标题";
+                }
+                if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
                     if (!StringUtils.isEmpty(strLongDesEn)) {
                         // TODO: 临时关掉017
                         if ("010".equals(feed.getChannelId())) {
@@ -506,49 +536,72 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         } else {
                             transBaiduOrg.add(strLongDesEn); // 长描述
                         }
+                        transFlg = "长描述";
                     }
-                    List<String> transBaiduCn; // 百度翻译 - 输出参数
-                    try {
-                        if ("017".equals(feed.getChannelId())) {
-                            // lucky vitamin 不做翻译
+                }
+                List<String> transBaiduCn; // 百度翻译 - 输出参数
+                try {
+                    if ("017".equals(feed.getChannelId())) {
+                        // lucky vitamin 不做翻译
+                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                             field.setOriginalTitleCn(""); // 标题
-                            field.setOriginalDesCn(""); // 长描述
-                        } else {
-                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
-
-                            field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-                            field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
                         }
+                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
+                            field.setOriginalDesCn(""); // 长描述
+                        }
+                    } else {
+                        if (transBaiduOrg.size() > 0) {
+                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+                            if (transBaiduOrg.size() == 2) {
+                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+                            } else {
+                                if ("标题".equals(transFlg)) {
+                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+                                } else {
+                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
+                                }
+                            }
+                        }
+                    }
 
-                    } catch (Exception e) {
-                        // 翻译失败的场合,全部设置为空, 运营自己翻译吧
+                } catch (Exception e) {
+                    // 翻译失败的场合,全部设置为空, 运营自己翻译吧
+                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                         field.setOriginalTitleCn(""); // 标题
+                    }
+                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
                         field.setOriginalDesCn(""); // 长描述
                     }
                 }
             }
+//            }
 
             // 官方网站链接
-            if (feed.getClientProductURL() == null) {
-                field.setClientProductUrl("");
-            } else {
-                field.setClientProductUrl(feed.getClientProductURL());
+            if (newFlg || !newFlg && StringUtils.isEmpty(productField.getClientProductUrl())) {
+                if (feed.getClientProductURL() == null) {
+                    field.setClientProductUrl("");
+                } else {
+                    field.setClientProductUrl(feed.getClientProductURL());
+                }
             }
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
-                List<Map<String, Object>> multiComplex = new LinkedList<>();
+                if (newFlg || !newFlg && productField.getAttribute("images1") == null) {
+                    List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                List<String> lstImageOrg = feed.getImage();
-                if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                    for (String imgOrg : lstImageOrg) {
-                        Map<String, Object> multiComplexChildren = new HashMap<>();
-                        multiComplexChildren.put("image1", imgOrg);
-                        multiComplex.add(multiComplexChildren);
+                    List<String> lstImageOrg = feed.getImage();
+                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                        for (String imgOrg : lstImageOrg) {
+                            Map<String, Object> multiComplexChildren = new HashMap<>();
+                            multiComplexChildren.put("image1", imgOrg);
+                            multiComplex.add(multiComplexChildren);
+                        }
                     }
-                }
 
-                field.put("images1", multiComplex);
+                    field.put("images1", multiComplex);
+                }
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
@@ -557,27 +610,33 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             switch (feed.getChannelId()) {
                 case "010":
                     // 产品分类
-                    field.setProductType(feed.getAttribute().get("ItemClassification").get(0));
+                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getProductType())) {
+                        field.setProductType(feed.getAttribute().get("ItemClassification").get(0));
+                    }
                     // 适用人群
-                    switch (feed.getSizeType()) {
-                        case "Women's":
-                            field.setSizeType("women");
-                            break;
-                        case "Men's":
-                            field.setSizeType("men");
-                            break;
+                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getSizeType())) {
+                        switch (feed.getSizeType()) {
+                            case "Women's":
+                                field.setSizeType("women");
+                                break;
+                            case "Men's":
+                                field.setSizeType("men");
+                                break;
+                        }
                     }
 
                     break;
                 case "012":
                     break;
             }
+            // jeff 2016/04 change end
 
             // jeff 2016/04 add start
-            if (newFlg) {
+            if (newFlg || !newFlg && productField.getAttribute("isMasterMain") == null) {
                 // isMain
                 field.setIsMasterMain(getIsMasterMain(feed));
             }
+            // jeff 2016/04 add end
 
             return field;
         }
@@ -612,7 +671,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.setChannelId(feed.getChannelId());
 
             if (!skip_mapping_check) {
-                String catPath = mapping.getScope().getMainCategoryPath();
+                String catPath = mapping.getMainCategoryPath();
                 product.setCatId(MD5.getMD5(catPath)); // 主类目id
                 product.setCatPath(catPath); // 主类目path
             }
@@ -620,7 +679,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
             CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true);
+            // jeff 2016/04 change start
+            // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true);
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true, new CmsBtProductModel_Field());
+            // jeff 2016/04 change end
             if (field == null) {
                 return null;
             }
@@ -879,7 +941,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // --------- 获取主类目的schema信息 ------------------------------------------------------
             CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
             // 更新Fields字段
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false);
+            // jeff 2016/04 change start
+            // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false);
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getFields());
+            // jeff 2016/04 change end
             if (field == null) {
                 return null;
             }
@@ -895,11 +960,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             field.setStatus(productStatus);
             // jeff 2016/04 add start
             // 更新的场合，虽然不更新下面2个字段，但是之后要用到这2个字段，所以原样取出
-            if (FEED_UPDFLG_0 == feed.getUpdFlg()) {
+            if (StringUtils.isEmpty(field.getCode())) {
                 field.setCode(product.getFields().getCode());
-                if (!StringUtils.isEmpty(product.getFields().getHsCodePrivate())) {
-                    field.setHsCodePrivate(product.getFields().getHsCodePrivate());
-                }
+            }
+            if (StringUtils.isEmpty(field.getHsCodePrivate())) {
+                field.setHsCodePrivate(product.getFields().getHsCodePrivate());
             }
             // jeff 2016/04 add end
             product.setFields(field);
@@ -1264,6 +1329,30 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return 1;
             }
             return 0;
+        }
+
+        /**
+         *  将新建的件数，更新的件数插到cms_bt_data_amount表
+         */
+        private void insertDataAmount() {
+
+            // 新建的件数
+            CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
+            insertModel.setChannelId(channel.getOrder_channel_id());
+            insertModel.setAmountName("FEED_TO_MASTER_INSERT");
+            insertModel.setAmountVal(String.valueOf(insertCnt));
+            insertModel.setComment("Feed导入Master新建");
+            insertModel.setCreater(getTaskName());
+            cmsBtDataAmountDao.insert(insertModel);
+
+            // 新建的件数
+            CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
+            updateModel.setChannelId(channel.getOrder_channel_id());
+            updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
+            updateModel.setAmountVal(String.valueOf(updateCnt));
+            updateModel.setComment("Feed导入Master更新");
+            updateModel.setCreater(getTaskName());
+            cmsBtDataAmountDao.insert(updateModel);
         }
         // jeff 2016/04 add end
 

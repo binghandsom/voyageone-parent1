@@ -9,9 +9,9 @@
                 <div class="container-fluid m-t-sm m-b-xs m-l-xs m-r-xs">
                     <div class="col-sm-12">
                         <div class="col-sm-12 m-t-xs m-b-xs" style="border-bottom:1px solid #efefef;padding-bottom:4px">
-                            <span>&nbsp;<span>{{::ctrl.mapping.scope.feedCategoryPath}}</span><sup>{{'TXT_FEED_CATEGORY'
+                            <span>&nbsp;<span>{{::ctrl.mapping.feedCategoryPath}}</span><sup>{{'TXT_FEED_CATEGORY'
                                 | translate}}</sup>&nbsp;<i class="fa fa-exchange"></i>&nbsp;</span>
-                            <select ng-model="ctrl.mapping" ng-change="ctrl.changeMapping()" ng-options="m as m.scope.mainCategoryPath for m in ctrl.mappings" title="当前进行属性匹配的主类目"></select>
+                            <select ng-model="ctrl.mapping" ng-change="ctrl.changeMapping()" ng-options="m as m.mainCategoryPath for m in ctrl.mappings" title="当前进行属性匹配的主类目"></select>
                             <sup class="font-bold text-vo">{{'TXT_MASTER_CATEGORY' | translate}}</sup><sup
                                 class="font-bold text-vo" ng-if="ctrl.isCommon"><strong><span>(</span><span>{{'TXT_MASTER_CATEGORY_COMMON_FLG'
                             | translate}}</span><span>)</span></strong></sup>

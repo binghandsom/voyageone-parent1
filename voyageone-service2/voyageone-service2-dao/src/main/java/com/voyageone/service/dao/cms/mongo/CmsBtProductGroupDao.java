@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CmsBtProductGroupDao extends BaseMongoChannelDao<CmsBtProductGroupModel> {
 
-
 }

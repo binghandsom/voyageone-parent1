@@ -8,14 +8,16 @@ import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.promotion.*;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.impl.cms.promotion.PromotionModelService;
+import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -108,7 +110,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 request.setProductCode(item.getCode());
                 request.setPromotionId(promotionId);
                 request.setPromotionPrice(item.getPrice());
-                request.setTagId(tagId.getTagId());
+                request.setTagId(tagId.getId());
                 request.setTagPath(tagId.getTagPath());
 
                 promotionDetailService.addPromotionDetail(request);
@@ -143,7 +145,7 @@ public class CmsPromotionDetailService extends BaseAppService {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
                 CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
                 if (tag != null) {
-                    cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
+                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
                 }
             });
 
@@ -174,6 +176,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param, int cartId) {
         List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);
+        JomgoQuery queryObject = new JomgoQuery();
 
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
@@ -181,11 +184,10 @@ public class CmsPromotionDetailService extends BaseAppService {
                     String channelId = (String) param.get("channelId");
                     long productId = Long.parseLong(map.get("productId").toString());
 
-                    JomgoQuery queryObject = new JomgoQuery();
                     queryObject.setQuery("{'prodId':" + productId + "}");
-                    queryObject.setProjection("{'productCarts':{'$elemMatch':{'cartId':" + cartId + "}}}");
+                    queryObject.setProjection("{'fields.code':1,'carts':{'$elemMatch':{'cartId':" + cartId + "}}}");
 
-                    List<CmsBtProductModel> modelList = productService.getList(channelId, queryObject);
+                    List<CmsBtProductModel> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
                     if (modelList != null && modelList.size() > 0) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                         map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
@@ -203,21 +205,28 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param param 参数hashmap  属性有PromotionId channelId
      * @return 以code为单位的数据
      */
-    public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param) {
+    public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param, int cartId) {
+        List<CmsBtPromotionCodeModel> promList = promotionCodeService.getPromotionCodeList(param);
 
-        //        if (!CollectionUtils.isEmpty(promotionCodes)) {
-//            promotionCodes.forEach(map -> {
-//                //SDK取得Product 数据
-//                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
-//                if (cmsBtProductModel != null) {
-////                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-////                    map.setSkuCount(cmsBtProductModel.getSkus().size());
-//                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-//                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
-//                }
-//            });
-//        }
-        return promotionCodeService.getPromotionCodeList(param);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("{'batchField':1,'fields.code':1,'_id':0}");
+
+        if (!CollectionUtils.isEmpty(promList)) {
+            promList.forEach(map -> {
+                // 取得Product 数据
+                queryObject.setQuery("{\"prodId\":" + map.getProductId() + "}");
+
+                List<CmsBtProductModel> prodList = productService.getListWithGroup((String) param.get("channelId"), cartId, queryObject);
+                if (prodList != null && prodList.size() > 0) {
+//                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+//                    map.setSkuCount(cmsBtProductModel.getSkus().size());
+                    CmsBtProductModel cmsBtProductModel = prodList.get(0);
+                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatformStatus());
+                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty());
+                }
+            });
+        }
+        return promList;
     }
 
     /**
@@ -489,7 +498,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtTagModel searchTagById(List<CmsBtTagModel> tags, int tagId) {
 
         for (CmsBtTagModel tag : tags) {
-            if (tag.getTagId() == tagId) {
+            if (tag.getId() == tagId) {
                 return tag;
             }
         }

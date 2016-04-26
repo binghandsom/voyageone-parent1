@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
-import com.mongodb.util.JSON;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -15,7 +14,6 @@ import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -24,17 +22,19 @@ import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * @author james.li on 2016/4/6.
@@ -149,7 +149,8 @@ public class UploadToUSJoiService extends BaseTaskService{
                     productModel.setGroups(pr.getGroups());
 
                     // 更新group
-                    productGroupService.saveGroups(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode(), sxWorkLoadBean.getCartId(), new BeanMap(pr.getGroups()));
+                    // TODO: 16/4/23 edward 需要重新实现获取平台的groups对象
+//                    productGroupService.saveGroups(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode(), sxWorkLoadBean.getCartId(), pr.getGroups());
 
                     ProductUpdateBean requestModel = new ProductUpdateBean();
                     requestModel.setProductModel(productModel);
@@ -240,8 +241,16 @@ public class UploadToUSJoiService extends BaseTaskService{
             if (groupId == -1) {
                 // 获取唯一编号
                 platform.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+
+                // is Main
+                // TODO 修改设置isMain属性
+//                platform.setIsMain(true);
             } else {
                 platform.setGroupId(groupId);
+
+                // is Main
+                // TODO 修改设置isMain属性
+//                platform.setIsMain(false);
             }
 
             // num iid

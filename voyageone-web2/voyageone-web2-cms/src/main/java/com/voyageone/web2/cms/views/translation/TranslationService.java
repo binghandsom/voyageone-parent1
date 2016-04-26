@@ -5,7 +5,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CustomWordService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -23,8 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
-
 /**
  * Created by lewis on 15-12-16.
  */
@@ -33,8 +30,6 @@ public class TranslationService extends BaseAppService {
 
     @Autowired
     private FeedInfoService feedInfoService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private ProductService productService;
 
@@ -66,8 +61,7 @@ public class TranslationService extends BaseAppService {
     /**
      * 获取当前用户未完成的任务.
      *
-     * @param userInfo
-     * @return
+     * @param userInfo UserSessionBean
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
@@ -103,8 +97,8 @@ public class TranslationService extends BaseAppService {
     /**
      * 用户获取任务列表，自动分发任务.
      *
-     * @param userInfo
-     * @param translateTaskBean
+     * @param userInfo UserSessionBean
+     * @param translateTaskBean TranslateTaskBean
      */
     public TranslateTaskBean assignTask(UserSessionBean userInfo,TranslateTaskBean translateTaskBean) {
 
@@ -137,10 +131,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 暂时保存翻译任务.
-     * @param userInfo
-     * @param taskBean
-     * @param transSts
-     * @return
      */
     public TranslateTaskBean saveTask(UserSessionBean userInfo, ProductTranslationBean taskBean, String transSts) {
         // check翻译数据是否正确
@@ -204,10 +194,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 根据条件获取当前用户所有任务.
-     *
-     * @param userInfo
-     * @param reqBean
-     * @return
      */
     public TranslateTaskBean searchUserTasks(UserSessionBean userInfo, Map reqBean) {
         String condition = (String) reqBean.get("searchCondition");
@@ -253,8 +239,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 组装task beans。
-     * @param cmsBtProductModels
-     * @return
      */
     private List<ProductTranslationBean> buildTranslateTaskBeen(String channelId, List<CmsBtProductModel> cmsBtProductModels) {
         List<ProductTranslationBean> translateTaskBeanList = new ArrayList<>(cmsBtProductModels.size());
@@ -332,8 +316,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取个人完成翻译数.
-     * @param channelId
-     * @param userName
      */
     private int getDoneTaskCount(String channelId, String userName) {
         String doneTaskCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.translator':'%s'}", userName);
@@ -342,7 +324,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取所有完成的数量.
-     * @param channelId
      */
     private int getTotalDoneCount(String channelId) {
         String totalDoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':'1'}";
@@ -351,7 +332,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 设定个人完成翻译数、完成翻译总数、待翻译总数.
-     * @param channelId
      */
     private int getTotalUndoneCount(String channelId) {
         String totalUndoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']}}";
@@ -360,10 +340,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取 feed info model.
-     *
-     * @param channelId
-     * @param productCode
-     * @return
      */
     public Map<String, String> getFeedAttributes(String channelId, String productCode) {
 
@@ -485,8 +461,6 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取翻译时标题和描述的长度设置
-     * @param chnId
-     * @return
      */
     public Map<String, Object> getTransLenSet(String chnId) {
         Map<String, Object> setInfo = new HashMap<>();
@@ -501,22 +475,13 @@ public class TranslationService extends BaseAppService {
 
     /**
      * 获取当前用户未完成的任务.
-     *
-     * @param userInfo
-     * @param prodCode
      */
     public TranslateTaskBean cancelUserTask(UserSessionBean userInfo, String prodCode) {
         if (StringUtils.isEmpty(prodCode)) {
             throw new BusinessException("cancelUserTask::没有参数");
         }
-        Map paraMap = new HashMap<>(1);
-        paraMap.put("fields.code", prodCode);
-        Map rsMap = new HashMap<>(3);
-        rsMap.put("fields.translateStatus", "0");
-        rsMap.put("modifier", userInfo.getUserName());
-        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
 
-        cmsBtProductDao.update(userInfo.getSelChannelId(), paraMap, rsMap);
+        productService.updateTranslateStatus(userInfo.getSelChannelId(), prodCode, "0", userInfo.getUserName());
 
         TranslateTaskBean result = new TranslateTaskBean();
         result.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));

@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
-import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class TagService extends BaseService {
 
     @Autowired
     // mysql
-    private CmsBtTagDao cmsBtTagDao;
+    private CmsBtTagDaoExt cmsBtTagDaoExt;
 
     /**
      * Tag追加
@@ -61,20 +61,20 @@ public class TagService extends BaseService {
         // 父Tag追加的场合
         if (request.getParentTagId() == 0) {
             // TagName 对应Tag存在检查
-            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
+            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDaoExt.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
             if (cmsBtTagModelList.size() > 0) {
                 throw new RuntimeException("tag name is exist");
             }
             // 子Tag追加的场合
         } else {
             // 父TagId存在检查
-            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByParentTagId(request.getParentTagId());
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDaoExt.selectCmsBtTagByParentTagId(request.getParentTagId());
             if (cmsBtTagModel == null) {
                 throw new RuntimeException("parent tag not found");
             }
 
             // TagName 对应Tag存在检查
-            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
+            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDaoExt.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
             if (cmsBtTagModelList.size() > 0) {
                 throw new RuntimeException("tag name is exist");
             }
@@ -102,10 +102,10 @@ public class TagService extends BaseService {
         cmsBtTagModel.setCreater(request.getModifier());
         cmsBtTagModel.setModifier(request.getModifier());
 
-        int recordCount = cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
+        int recordCount = cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
 
         if (recordCount > 0) {
-            tagId = cmsBtTagModel.getTagId();
+            tagId = cmsBtTagModel.getId();
         }
 
         return tagId;
@@ -131,10 +131,10 @@ public class TagService extends BaseService {
         }
 
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setTagId(tagId);
+        cmsBtTagModel.setId(tagId);
         cmsBtTagModel.setTagPath(tagPath);
 
-        int updateRecCount = cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+        int updateRecCount = cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
 
         if (updateRecCount > 0) {
             ret = true;
@@ -156,7 +156,7 @@ public class TagService extends BaseService {
         if (parentTagId == 0) {
             ret = tagName;
         } else {
-            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByTagId(parentTagId);
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDaoExt.selectCmsBtTagByTagId(parentTagId);
             ret = cmsBtTagModel.getTagName() + ">" + tagName;
         }
 
@@ -167,13 +167,13 @@ public class TagService extends BaseService {
      * ParentTagId检索Tags
      */
     public List<CmsBtTagModel> getListByParentTagId(int parentTagId) {
-        return cmsBtTagDao.selectListByParentTagId(parentTagId);
+        return cmsBtTagDaoExt.selectListByParentTagId(parentTagId);
     }
 
     /**
      * 根据ChannelId检索Tags
      */
     public List<CmsBtTagModel> getListByChannelId(String channelId) {
-        return cmsBtTagDao.selectListByChannelId(channelId);
+        return cmsBtTagDaoExt.selectListByChannelId(channelId);
     }
 }
