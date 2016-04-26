@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.jumei;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.jd.open.api.sdk.request.order.OrderGetRequest;
-import com.voyageone.BaseTest;
 import com.voyageone.service.model.jumei.CmsBtJmProductImagesModel;
 import com.voyageone.service.model.jumei.CmsBtJmProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
@@ -41,7 +40,7 @@ import static org.junit.Assume.*;
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
 
-public class CmsBtJmPromotionServiceTest extends BaseTest {
+public class CmsBtJmPromotionServiceTest {
 
     @Resource
     CmsBtJmPromotionService jmPromotionService;
