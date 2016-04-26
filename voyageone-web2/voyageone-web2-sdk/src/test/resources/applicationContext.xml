@@ -13,7 +13,7 @@
     <import resource="classpath*:voyageone-config.xml" />
 
     <!-- 类扫描路径配置 -->
-    <context:component-scan base-package="com.voyageone.web2.sdk"/>
+    <context:component-scan base-package="com.voyageone"/>
 
 
 </beans>

@@ -32,4 +32,8 @@ public class PromotionSkuService extends BaseService {
     public int remove(int promotionId, long productId){
         return cmsPromotionSkuDao.deletePromotionSkuByProductId(promotionId, productId);
     }
+
+    public List<Map<String, Object>> getCmsBtPromotionSkuByPromotionIds(List<String> promotionIdList) {
+       return cmsPromotionSkuDao.selectCmsBtPromotionSkuByPromotionIds(promotionIdList);
+    }
 }
