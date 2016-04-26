@@ -55,6 +55,7 @@ public class CmsBtPromotionSkuDao extends ServiceBaseDao {
         params.setProductCode(productCode);
         return delete("delete_cms_bt_promotion_sku", params);
     }
+	
     public List<Map<String, Object>> selectCmsBtPromotionSkuByPromotionIds(List<String>  promotionIdList){
         return selectList("select_cms_bt_promotion_sku_bt_promotionIds", promotionIdList);
     }
