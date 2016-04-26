@@ -17,13 +17,13 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
-import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
@@ -48,13 +48,13 @@ import static java.util.stream.Collectors.toMap;
 public class ProductService extends BaseService {
 
     @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
     protected CmsBtProductLogDao cmsBtProductLogDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
-    private CmsBtPriceLogDao cmsBtPriceLogDao;
+    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
 
     @Autowired
     private ProductSkuService productSkuService;
@@ -223,7 +223,7 @@ public class ProductService extends BaseService {
         if ("sku".equals(flag)) {
             params.put("sku", "0");
         }
-        return cmsBtPriceLogDao.selectPriceLogByCode(params);
+        return cmsBtPriceLogDaoExt.selectPriceLogByCode(params);
     }
 
     /**
@@ -235,7 +235,7 @@ public class ProductService extends BaseService {
         if ("sku".equals(flag)) {
             params.put("sku", "0");
         }
-        return cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
+        return cmsBtPriceLogDaoExt.selectPriceLogByCodeCnt(params);
     }
 
     public boolean checkProductDataIsReady(String channelId, Long productId) {
