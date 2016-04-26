@@ -22,7 +22,7 @@ define([
         ];
 
         $scope.page = {
-            curr: 1, total: 0, size: 20, fetch: function () {
+            curr: 1, total: 0, fetch: function () {
                 $scope.search();
             }
         };

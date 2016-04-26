@@ -357,7 +357,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     private CmsBtPromotionGroupsBean getMode(Row row) {
 
-        CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
+        CmsBtPromotionGroupsBean model = new CmsBtPromotionGroupsBean();
         model.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
         model.setCatPath(ExcelUtils.getString(row, CmsConstants.CellNum.catPathCellNum));
         model.setProductModel(ExcelUtils.getString(row, CmsConstants.CellNum.groupNameCellNum));
@@ -448,7 +448,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     private CmsBtPromotionSkuBean getSku(Row row) {
 
-        CmsBtPromotionSkuModel sku = new CmsBtPromotionSkuModel();
+        CmsBtPromotionSkuBean sku = new CmsBtPromotionSkuBean();
         sku.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
         if (row.getCell(CmsConstants.CellNum.inventoryCellNum) != null) {
             sku.setQty(getNumericCellValue(row.getCell(CmsConstants.CellNum.inventoryCellNum)).intValue());

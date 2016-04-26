@@ -8,7 +8,7 @@ define([
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [],"promotionIdList": []};
         $scope.searchInfo = {};
-        $scope.groupPageOption = {curr: 1, total: 0, size: 30, fetch: $scope.search};
+        $scope.groupPageOption = {curr: 1, total: 0, fetch: $scope.search};
         $scope.datePicker = [];
         $scope.currentChannelId = cookieService.channel();
         $scope.initialize = function () {

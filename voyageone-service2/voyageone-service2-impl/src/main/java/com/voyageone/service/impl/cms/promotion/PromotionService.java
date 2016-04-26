@@ -5,6 +5,8 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtPromotionLogDao;
@@ -75,6 +77,22 @@ public class PromotionService extends BaseService {
      */
     public List<CmsBtPromotionBean> getByCondition(Map<String, Object> params) {
         return cmsBtPromotionDaoExt.selectByCondition(params);
+    }
+
+    /**
+     * 根据channelId获取promotion列表
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId) {
+        Map<String, Object> params = new HashMap<>();
+        if(Channels.isUsJoi(channelId)){
+            params.put("orgChannelId", params.get("channelId"));
+            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            params.put("channelId", channelId);
+        }
+        return this.getByCondition(params);
     }
 
     /**
