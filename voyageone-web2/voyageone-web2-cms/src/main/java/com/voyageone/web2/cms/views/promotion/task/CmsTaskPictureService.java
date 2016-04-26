@@ -1,21 +1,21 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.impl.cms.BeatInfoService;
-import com.voyageone.service.impl.cms.TaskService;
-import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.impl.cms.BeatInfoService;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
-import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
+import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -264,7 +264,7 @@ class CmsTaskPictureService extends BaseAppService {
         return promotionModelService.getPromotionModelDetailList(map);
     }
 
-    List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
+    List<CmsBtPromotionCodesBean> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);

@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.service.dao.cms.CmsBtPromotionModelDao;
+import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
+import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 public class PromotionModelService extends BaseService {
 
     @Autowired
-    private CmsBtPromotionModelDao cmsPromotionModelDao;
+    private CmsBtPromotionGroupsDaoExt cmsPromotionModelDao;
 
     public List<Map<String,Object>> getPromotionModelDetailList(Map<String,Object> param) {
         return cmsPromotionModelDao.selectPromotionModelDetailList(param);
@@ -30,7 +30,7 @@ public class PromotionModelService extends BaseService {
     }
 
     @VOTransactional
-    public int deleteCmsPromotionModel(CmsBtPromotionGroupModel model){
+    public int deleteCmsPromotionModel(CmsBtPromotionGroupsBean model) {
         return cmsPromotionModelDao.deleteCmsPromotionModel(model);
     }
 

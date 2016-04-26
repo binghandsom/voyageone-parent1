@@ -1,8 +1,9 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.Constants;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.model.cms.enums.BeatFlag;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -25,7 +26,7 @@ public class CmsBtBeatInfoModel extends BaseModel {
 
     private String message = Constants.EmptyString;
 
-    private CmsBtPromotionCodeModel promotion_code;
+    private CmsBtPromotionCodesBean promotion_code;
 
     private CmsBtPromotionModel promotion;
 
@@ -71,12 +72,12 @@ public class CmsBtBeatInfoModel extends BaseModel {
         this.syn_flag = syn_flag;
     }
 
-    public void setBeatFlag(BeatFlag flag) {
-        setSyn_flag(flag.getFlag());
-    }
-
     public BeatFlag getBeatFlag() {
         return BeatFlag.valueOf(getSyn_flag());
+    }
+
+    public void setBeatFlag(BeatFlag flag) {
+        setSyn_flag(flag.getFlag());
     }
 
     public String getMessage() {
@@ -94,11 +95,11 @@ public class CmsBtBeatInfoModel extends BaseModel {
         this.message = null;
     }
 
-    public CmsBtPromotionCodeModel getPromotion_code() {
+    public CmsBtPromotionCodesBean getPromotion_code() {
         return promotion_code;
     }
 
-    public void setPromotion_code(CmsBtPromotionCodeModel promotion_code) {
+    public void setPromotion_code(CmsBtPromotionCodesBean promotion_code) {
         this.promotion_code = promotion_code;
     }
 
