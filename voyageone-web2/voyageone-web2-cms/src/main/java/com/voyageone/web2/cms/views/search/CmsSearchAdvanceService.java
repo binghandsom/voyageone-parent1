@@ -346,7 +346,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         List<List<Map<String, String>>> imgList = new ArrayList<>();
         List<Integer> chgFlgList = new ArrayList<>();
         List<String> orgChaNameList = new ArrayList<>();
-        List<List<Long>> prodIdList = new ArrayList<>();
+        List<List<Map<String, Object>>> prodIdList = new ArrayList<>();
 
         if (hasImgFlg) {
             rslt = new List[3];
@@ -422,7 +422,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<>();
-            List<Long> groupProdIdList = new ArrayList<>();
+            List<Map<String, Object>> groupProdIdList = new ArrayList<>();
             if (hasImgFlg && groupModelMap != null) {
                 // 获取子商品的图片
                 List pCdList = (List) groupModelMap.getProductCodes();
@@ -431,7 +431,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 //                        String pCd = (String) pCdList.get(i);
                         // 根据商品code找到其主图片
                         JomgoQuery queryObj = new JomgoQuery();
-                        queryObj.setProjection("{'fields.images1':1,'prodId': 1, '_id':0}");
+                        queryObj.setProjection("{'fields.images1':1,'prodId': 1, 'fields.code': 1,'_id':0}");
                         queryObj.setQuery("{\"fields.code\":\"" + String.valueOf(pCdList.get(i))  + "\"}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
                         List<CmsBtProductModel_Field_Image> fldImgList = prod.getFields().getImages1();
@@ -442,7 +442,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                         }
 
                         // 设定该group对应的prodId
-                        groupProdIdList.add(prod.getProdId());
+                        Map<String, Object> proMap = new HashMap<>();
+                        proMap.put("prodId", prod.getProdId());
+                        proMap.put("code", prod.getFields().getCode());
+                        groupProdIdList.add(proMap);
 
                     }
                 }

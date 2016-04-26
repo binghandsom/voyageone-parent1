@@ -41,6 +41,9 @@ define([
         $scope.bindCategory = bindCategory;
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
+        $scope.openAddPromotion = openAddPromotion;
+        //$scope.openJMActivity = openJMActivity;
+        //$scope.openBulkUpdate = openBulkUpdate;
 
         /**
          * 初始化数据.
@@ -243,6 +246,32 @@ define([
             });
         }
 
+        /**
+         * popup出添加到promotion的功能
+         * @param promotion
+         * @param openAddToPromotion
+         */
+        function openAddPromotion (promotion, openAddToPromotion) {
+            var selList = [];
+            if ($scope.vm.currTab === 'group') {
+                _.forEach($scope.vm.groupSelList.selList, function (info) {
+                    selList.push({"id": info.id, "code": info.code});
+                    _.forEach(info.prodIds, function (prodInfo) {
+                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
+                    })
+                });
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            openAddToPromotion(promotion, selList).then(function (res) {
+                search ()
+            })
+        }
+
+        /**
+         * popup弹出切换主数据类目
+         * @param popupNewCategory
+         */
         function openCategoryMapping (popupNewCategory) {
             var selList = $scope.vm.currTab === 'group' ? $scope.vm.groupSelList.selList : $scope.vm.productSelList.selList;
             if (selList && selList.length) {

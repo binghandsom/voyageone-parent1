@@ -5,17 +5,17 @@
 define([
     'angularAMD'
 ], function (angularAMD) {
-    angularAMD.controller('popAddToPromotionCtl', function ($scope, $addToPromotionService, $translate, $modalInstance, notify, promotion) {
+    angularAMD.controller('popAddToPromotionCtl', function ($scope, $addToPromotionService, $translate, $modalInstance, notify, context) {
 
         $scope.vm = {
             promotionInfo: {
                 tagId: null,
-                products: promotion.products,
-                productIds: promotion.productIds,
-                promotionId: promotion.promotion.promotionId,
-                cartId: promotion.promotion.cartId
+                products: context.products,
+                productIds: context.productIds,
+                promotionId: context.promotion.id,
+                cartId: context.promotion.cartId
             },
-            promotion: promotion.promotion,
+            promotion: context.promotion,
             subPromotionList: []
         };
 
