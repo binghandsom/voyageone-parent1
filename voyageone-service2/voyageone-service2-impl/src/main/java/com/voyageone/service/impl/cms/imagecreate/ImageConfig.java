@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.imagecreate;
 import com.voyageone.common.configs.Codes;
 public class ImageConfig {
+    //阿里OSS
     public static String getAliYunEndpoint() {
         return getValue("AliYun_OSS_Confige", "endpoint");
     }
@@ -14,13 +15,40 @@ public class ImageConfig {
         String value = Codes.getCodeName(id,code);
         return value;
     }
-
     public static String getLiquidFireUrl() {
         return getValue("LiquidFire_Confige", "url");
     }
     public static String getLiquidFireImageSavePath() {
         return getValue("LiquidFire_Confige", "imageSavePath");
     }
+
+    public  static String getUSCDNUrl()
+    {
+        return getValue("US_CDN_Confige", "url");
+    }
+    public  static String getUSCDNUserName()
+    {
+        return getValue("US_CDN_Confige", "userName");
+    }
+    public  static String getUSCDNPassword()
+    {
+        return getValue("US_CDN_Confige", "password");
+    }
+    public  static String getUSCDNWorkingDirectory()
+    {
+        return getValue("US_CDN_Confige", "workingDirectory");
+    }
+
+//    -- USCDN配置
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('US_CDN_Confige','url','ftp.vny.FB70.omicroncdn.net','','',NOW(),'system','system',1);
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('US_CDN_Confige','userName','admin@voyageone.com','','',NOW(),'system','system',1);
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('US_CDN_Confige','password','Voyage1#','','',NOW(),'system','system',1);
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('US_CDN_Confige','workingDirectory','/sneakerhead/images','','',NOW(),'system','system',1);
+
 //    -- 阿里云OSS配置
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
 //    VALUE('AliYun_OSS_Confige','endpoint','http://oss-cn-hangzhou.aliyuncs.com','','阿里云oss endpoint',NOW(),'system','system',1);

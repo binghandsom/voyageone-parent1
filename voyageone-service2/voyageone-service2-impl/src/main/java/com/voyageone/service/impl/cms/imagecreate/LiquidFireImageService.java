@@ -27,7 +27,7 @@ public class LiquidFireImageService {
             modelFile.setState(1);
             daoCmsMtImageCreateFile.update(modelFile);
         } catch (Exception ex) {
-            throw new OpenApiException(ProductGetImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId(), ex);
+            throw new OpenApiException(ProductGetImageErrorEnum.LiquidCreateImageError,ex);
 //            throw new BusinessException("100101", "生成图片错误", ex);
         }
     }

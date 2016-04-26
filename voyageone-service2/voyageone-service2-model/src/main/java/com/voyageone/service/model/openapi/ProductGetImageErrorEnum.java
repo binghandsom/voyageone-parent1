@@ -7,6 +7,8 @@ public enum  ProductGetImageErrorEnum implements ErrorEnumInterface {
     VParamNotNull(10104, "VParam template must not be null"),
     LiquidCreateImageError(10201, "Call  liquid interface exception"),
     AliyunOSSUploadError(10202, "Call  aliyun OSS interface exception"),
+    USCDNUploadError(10203, "Call  US CDN interface exception"),
+
     SystemError(10200, " System exception");
     int code;
     String msg;

@@ -96,6 +96,7 @@
         <voyageone.components.tmall.version>0.0.1-SNAPSHOT</voyageone.components.tmall.version>
         <voyageone.components.yimei.version>0.0.1-SNAPSHOT</voyageone.components.yimei.version>
         <voyageone.components.liquifire.version>0.0.1-SNAPSHOT</voyageone.components.liquifire.version>
+        <voyageone.components.uscdn.version>0.0.1-SNAPSHOT</voyageone.components.uscdn.version>
 
     </properties>
 

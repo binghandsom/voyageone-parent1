@@ -35,6 +35,8 @@ public class CmsMtImageCreateFileService {
     @Autowired
     AliYunOSSFileService serviceAliYunOSSFile;
     @Autowired
+    USCDNFileService serviceUSCDNFile;
+    @Autowired
     LiquidFireImageService serviceLiquidFireImage;
     private static final Logger LOG = LoggerFactory.getLogger(CmsMtImageCreateFileService.class);
     public CmsMtImageCreateFileModel select(int id) {
@@ -54,7 +56,6 @@ public class CmsMtImageCreateFileService {
         map.put("hashCode", hashCode);
         return dao.selectOne(map);
     }
-
     public ProductGetImageRespone getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
         ProductGetImageRespone result = new ProductGetImageRespone();
         CmsMtImageCreateFileModel modelFile = null;
@@ -68,11 +69,18 @@ public class CmsMtImageCreateFileService {
                 serviceLiquidFireImage.createImage(modelFile);
             }
             if (modelFile.getOssState() == 0) { //3.上传图片到阿里云OSS
-                serviceAliYunOSSFile.putOSS(modelFile);
+                serviceAliYunOSSFile.upload(modelFile);
+            }
+            if (modelFile.getChannelId().equals("001") && modelFile.getUscdnState() == 0) {//4.上传 uscdn
+                serviceUSCDNFile.upload(modelFile);
             }
         } catch (OpenApiException ex) {//4.处理业务异常
             result.setErrorCode(ex.getErrorCode());
             result.setErrorMsg(ex.getMsg());
+            if (ex.getSuppressed() != null) {
+                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+                LOG.error("getImage requestId:" + requestId, ex);
+            }
         } catch (Exception ex) { //5.未知异常
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
             LOG.error("getImage requestId:" + requestId, ex);
@@ -90,10 +98,10 @@ public class CmsMtImageCreateFileService {
         }
         return result;
     }
-
     private CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater, CmsMtImageCreateFileModel modelFile, long hashCode) {
         CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
         final String ossFilePath = "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
+        final String USCDNFilePath =ImageConfig.getUSCDNWorkingDirectory()+ "/products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
         modelFile = new CmsMtImageCreateFileModel();
         modelFile.setChannelId(channelId);
         modelFile.setVparam(vparam);
@@ -105,6 +113,7 @@ public class CmsMtImageCreateFileService {
         modelFile.setCreater(Creater);
         modelFile.setModifier(Creater);
         modelFile.setOssFilePath(ossFilePath);
+        modelFile.setUsCdnFilePath(USCDNFilePath);
         modelFile.setState(0);
         modelFile.setOssState(0);
         dao.insert(modelFile);

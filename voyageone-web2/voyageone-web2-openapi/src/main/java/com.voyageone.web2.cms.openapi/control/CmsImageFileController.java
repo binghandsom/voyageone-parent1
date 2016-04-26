@@ -29,4 +29,8 @@ public class CmsImageFileController extends OpenAipBaseController {
         String queryString = request.getQueryString();
         return service.getImage(cId, templateId, file, vparam, queryString, "SystemCreateImage");
     }
+    public Object addListCreateParameter()
+    {
+        return null;
+    }
 }
