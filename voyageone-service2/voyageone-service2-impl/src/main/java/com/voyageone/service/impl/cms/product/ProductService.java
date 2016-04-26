@@ -584,7 +584,7 @@ public class ProductService extends BaseService {
      * @param updateMap Map
      * @param modifier  String
      */
-    public int updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
+    public void updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
         // 先根据产品code找到其model
         CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{'fields.code':'" + prodCode + "'},{'fields.model':1,'_id':0}", channelId);
         String prodModel = prodObj.getFields().getModel();
@@ -593,7 +593,6 @@ public class ProductService extends BaseService {
         queryMap.put("fields.model", prodModel);
 
         cmsBtProductDao.update(channelId, queryMap, updateMap);
-        return 0;
     }
 
     /**
