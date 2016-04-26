@@ -41,7 +41,7 @@
 
     <bean id="annotationProcessorByIP" class="com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig">
         <!-- 是否本地环境 -->
-        <property name="local" value="true" />
+        <property name="local" value="false" />
     </bean>
 
     <!-- 异常处理器 -->
