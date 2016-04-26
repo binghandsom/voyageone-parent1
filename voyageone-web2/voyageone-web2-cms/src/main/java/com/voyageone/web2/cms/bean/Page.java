@@ -19,7 +19,7 @@ public class Page implements Serializable {
     private Page() {
     }
 
-    public static Page fromMap(Map<String, Object> params) {
+    public static Page fromMap(Map params) {
         Page page = new Page();
         int curr = params.containsKey("curr") ? Integer.valueOf(params.get("curr")+"") : 1;
         int size = params.containsKey("size") ? Integer.valueOf(params.get("size")+"") : 20;
