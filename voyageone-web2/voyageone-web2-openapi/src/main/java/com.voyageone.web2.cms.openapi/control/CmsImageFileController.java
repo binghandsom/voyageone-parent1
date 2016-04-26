@@ -27,6 +27,5 @@ public class CmsImageFileController extends OpenAipBaseController {
     @RequestMapping(value = "/product/image/addList", method = RequestMethod.GET)
     public AddListRespone addList(@RequestParam AddListParameter parameter) {
         return  service.addList(parameter);
-
     }
 }
