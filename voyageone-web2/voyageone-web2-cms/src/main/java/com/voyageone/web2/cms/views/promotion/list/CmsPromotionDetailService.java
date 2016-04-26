@@ -8,14 +8,16 @@ import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.promotion.*;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.impl.cms.promotion.PromotionModelService;
+import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -108,7 +110,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 request.setProductCode(item.getCode());
                 request.setPromotionId(promotionId);
                 request.setPromotionPrice(item.getPrice());
-                request.setTagId(tagId.getTagId());
+                request.setTagId(tagId.getId());
                 request.setTagPath(tagId.getTagPath());
 
                 promotionDetailService.addPromotionDetail(request);
@@ -143,7 +145,7 @@ public class CmsPromotionDetailService extends BaseAppService {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
                 CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
                 if (tag != null) {
-                    cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
+                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
                 }
             });
 
@@ -496,7 +498,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtTagModel searchTagById(List<CmsBtTagModel> tags, int tagId) {
 
         for (CmsBtTagModel tag : tags) {
-            if (tag.getTagId() == tagId) {
+            if (tag.getId() == tagId) {
                 return tag;
             }
         }

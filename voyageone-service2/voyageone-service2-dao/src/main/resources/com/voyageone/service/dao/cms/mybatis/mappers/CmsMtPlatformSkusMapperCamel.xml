@@ -163,10 +163,10 @@
               #{attrName},
               #{attrValue},
               #{active},
+        now(),
               #{creater},
-              #{created},
-              #{modifier},
-              #{modified}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

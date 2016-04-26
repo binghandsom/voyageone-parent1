@@ -131,10 +131,10 @@
               #{cfgType},
               #{cfgName},
               #{cfgVal},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

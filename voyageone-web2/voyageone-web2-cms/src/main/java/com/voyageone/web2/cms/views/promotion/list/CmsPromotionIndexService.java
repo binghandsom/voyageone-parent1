@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
@@ -61,7 +62,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         return promotionService.getByPromotionId(promotionId);
     }
 
-    public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
+    public List<CmsBtPromotionBean> queryByCondition(Map<String, Object> conditionParams) {
         if(Channels.isUsJoi(conditionParams.get("channelId").toString())){
             conditionParams.put("orgChannelId", conditionParams.get("channelId"));
             conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
@@ -69,9 +70,9 @@ public class CmsPromotionIndexService extends BaseAppService {
         return promotionService.getByCondition(conditionParams);
     }
 
-    public int addOrUpdate(CmsBtPromotionModel cmsBtPromotionModel) {
+    public int addOrUpdate(CmsBtPromotionBean cmsBtPromotionBean) {
         try {
-            return promotionService.saveOrUpdate(cmsBtPromotionModel);
+            return promotionService.saveOrUpdate(cmsBtPromotionBean);
         } catch (Exception e) {
             throw new BusinessException("addOrUpdate", e);
         }

@@ -171,10 +171,10 @@
               #{configValue2},
               #{configValue3},
               #{comment},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier},
+        now(),
+        #{creater}
               #{status},
               #{configType}
         )
