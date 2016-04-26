@@ -9,11 +9,11 @@ import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkuBean;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -88,7 +88,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
         CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionIdOrgChannelId(promotionId, channelId);
-        List<CmsBtPromotionCodeModel> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(promotionId, channelId);
+        List<CmsBtPromotionCodesBean> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(promotionId, channelId);
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
         $info("准备打开文档 [ %s ]", templatePath);
@@ -97,7 +97,7 @@ public class CmsPromotionIndexService extends BaseAppService {
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             int rowIndex = 1;
-            for (CmsBtPromotionCodeModel promotionCode : promotionCodes) {
+            for (CmsBtPromotionCodesBean promotionCode : promotionCodes) {
                 promotionCode.setCartId(cmsBtPromotionModel.getCartId());
 //                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
                 boolean isContinueOutput = writeRecordToFile(book, promotionCode, rowIndex);
@@ -138,7 +138,7 @@ public class CmsPromotionIndexService extends BaseAppService {
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodeModel item, int startRowIndex) {
+    private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodesBean item, int startRowIndex) {
         Sheet sheet = book.getSheetAt(0);
 
         Row styleRow = FileUtils.row(sheet, 1);
@@ -146,7 +146,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         CellStyle unlock = styleRow.getCell(0).getCellStyle();
 
         if(item.getSkus() != null && item.getSkus().size() > 0) {
-            for(CmsBtPromotionSkuModel sku:item.getSkus()){
+            for (CmsBtPromotionSkuBean sku : item.getSkus()) {
                 Row row = FileUtils.row(sheet, startRowIndex);
 
                 FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());

@@ -18,6 +18,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -27,7 +28,6 @@ import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -329,16 +329,16 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
 
         if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0 || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
-            CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
-            cmsBtPromotionCodeModel.setProductId(productId);
-            cmsBtPromotionCodeModel.setProductCode(oldProduct.getFields().getCode());
-            cmsBtPromotionCodeModel.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
-            cmsBtPromotionCodeModel.setPromotionId(0);
-            cmsBtPromotionCodeModel.setNumIid(oldProduct.getGroups().getNumIId());
-            cmsBtPromotionCodeModel.setChannelId(channelId);
-            cmsBtPromotionCodeModel.setCartId(23);
-            cmsBtPromotionCodeModel.setModifier(userName);
-            promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel);
+            CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+            cmsBtPromotionCodesBean.setProductId(productId);
+            cmsBtPromotionCodesBean.setProductCode(oldProduct.getFields().getCode());
+            cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
+            cmsBtPromotionCodesBean.setPromotionId(0);
+            cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
+            cmsBtPromotionCodesBean.setChannelId(channelId);
+            cmsBtPromotionCodesBean.setCartId(23);
+            cmsBtPromotionCodesBean.setModifier(userName);
+            promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
         }
 
         // Translation状态从完成-》未完成

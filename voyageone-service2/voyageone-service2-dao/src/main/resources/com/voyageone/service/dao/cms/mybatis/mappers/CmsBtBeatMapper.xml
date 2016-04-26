@@ -84,7 +84,7 @@
 
     <resultMap id="beatInfoWithPromotionCode" type="com.voyageone.service.model.cms.CmsBtBeatInfoModel" autoMapping="true">
         <id column="id" property="id"/>
-        <association property="promotion_code" javaType="com.voyageone.service.model.cms.CmsBtPromotionCodeModel">
+        <association property="promotion_code" javaType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
             <result column="promotion_price" property="promotionPrice"/>
         </association>
     </resultMap>
@@ -377,7 +377,7 @@
             <result property="modified" column="promotion_modified"/>
             <result property="modifier" column="promotion_modifier"/>
         </association>
-        <association property="promotion_code" javaType="com.voyageone.service.model.cms.CmsBtPromotionCodeModel">
+        <association property="promotion_code" javaType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
             <result property="seq" column="code_seq"/>
             <result property="promotionId" column="code_promotion_id"/>
             <result property="productId" column="code_product_id"/>

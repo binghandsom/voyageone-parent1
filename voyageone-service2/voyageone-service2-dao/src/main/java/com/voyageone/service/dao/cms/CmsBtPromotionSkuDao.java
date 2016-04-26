@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkuBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,32 +25,34 @@ public class CmsBtPromotionSkuDao extends ServiceBaseDao {
     public int selectPromotionSkuListCnt(Map<String, Object> params){
         return selectOne("select_cms_bt_promotion_sku_cnt", params);
     }
-    public int insertPromotionSku(CmsBtPromotionSkuModel params){
+
+    public int insertPromotionSku(CmsBtPromotionSkuBean params) {
         return insert("insert_cms_bt_promotion_sku", params);
     }
 
-    public int updatePromotionSku(CmsBtPromotionSkuModel params){
+    public int updatePromotionSku(CmsBtPromotionSkuBean params) {
         return update("update_cms_bt_promotion_sku", params);
     }
-    public int deletePromotionSku(CmsBtPromotionSkuModel params){
+
+    public int deletePromotionSku(CmsBtPromotionSkuBean params) {
         return delete("delete_cms_bt_promotion_sku", params);
     }
 
     public int deletePromotionSkuByModelId(Integer promotionId, String  productModel){
-        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        CmsBtPromotionSkuBean params = new CmsBtPromotionSkuBean();
         params.setPromotionId(promotionId);
         params.setProductModel(productModel);
         return delete("delete_cms_bt_promotion_sku", params);
     }
     public int deletePromotionSkuByProductId(Integer promotionId, Long productId){
-        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        CmsBtPromotionSkuBean params = new CmsBtPromotionSkuBean();
         params.setPromotionId(promotionId);
         params.setProductId(productId);
         return delete("delete_cms_bt_promotion_sku", params);
     }
 
     public int deletePromotionSkuByProductCode(Integer promotionId, String productCode){
-        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        CmsBtPromotionSkuBean params = new CmsBtPromotionSkuBean();
         params.setPromotionId(promotionId);
         params.setProductCode(productCode);
         return delete("delete_cms_bt_promotion_sku", params);

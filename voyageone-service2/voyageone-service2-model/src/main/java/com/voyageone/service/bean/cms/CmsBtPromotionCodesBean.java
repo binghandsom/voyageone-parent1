@@ -1,6 +1,7 @@
-package com.voyageone.service.model.cms;
+package com.voyageone.service.bean.cms;
 
 import com.taobao.api.internal.util.StringUtils;
+import com.voyageone.service.model.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author james.li on 2015/12/15.
  * @version 2.0.0
  */
-public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
+public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private Long productId;
 
@@ -56,20 +57,20 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private String time;
 
-    private List<CmsBtPromotionSkuModel> skus;
+    private List<CmsBtPromotionSkuBean> skus;
 
-    public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
+    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
-        this.setProductName(StringUtils.isEmpty(productInfo.getFields().getLongTitle())?productInfo.getFields().getProductNameEn():productInfo.getFields().getLongTitle());
+        this.setProductName(StringUtils.isEmpty(productInfo.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
 //        this.setProductName(productInfo.getFields().getProductNameEn());
         this.setSalePrice(productInfo.getFields().getPriceSaleEd());
         this.setRetailPrice(productInfo.getFields().getPriceRetailEd());
         this.setMsrp(productInfo.getFields().getPriceMsrpEd());
     }
 
-    public CmsBtPromotionCodeModel() {
+    public CmsBtPromotionCodesBean() {
     }
 
     public Long getProductId() {
@@ -248,14 +249,14 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         this.time = time;
     }
 
-    public List<CmsBtPromotionSkuModel> getSkus() {
-        if(skus == null) {
+    public List<CmsBtPromotionSkuBean> getSkus() {
+        if (skus == null) {
             skus = new ArrayList<>();
         }
         return skus;
     }
 
-    public void setSkus(List<CmsBtPromotionSkuModel> skus) {
+    public void setSkus(List<CmsBtPromotionSkuBean> skus) {
         this.skus = skus;
     }
 }

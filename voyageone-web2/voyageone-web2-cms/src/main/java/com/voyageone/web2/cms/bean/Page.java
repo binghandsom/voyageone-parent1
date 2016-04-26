@@ -19,10 +19,10 @@ public class Page implements Serializable {
     private Page() {
     }
 
-    public static Page fromMap(Map<String, String> params) {
+    public static Page fromMap(Map<String, Object> params) {
         Page page = new Page();
-        int curr = params.containsKey("curr") ? Integer.valueOf(params.get("curr")) : 1;
-        int size = params.containsKey("size") ? Integer.valueOf(params.get("size")) : 20;
+        int curr = params.containsKey("curr") ? Integer.valueOf(params.get("curr")+"") : 1;
+        int size = params.containsKey("size") ? Integer.valueOf(params.get("size")+"") : 20;
         page.setCurr(curr);
         page.setSize(size);
         return page;
