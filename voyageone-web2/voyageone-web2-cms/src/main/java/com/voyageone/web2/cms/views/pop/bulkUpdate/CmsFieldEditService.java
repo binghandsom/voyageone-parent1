@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -15,8 +15,8 @@ import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -24,9 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * @author gubuchun 15/12/9
@@ -92,15 +93,26 @@ public class CmsFieldEditService extends BaseAppService {
                 break;
 
             if ("platformActive".equals(prop_id)) {
-                Map platform = new HashMap();
-                if ("Onsale".equals(field[1].toString())) {
-                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Onsale.name());
-                } else if ("Instock".equals(field[1].toString())) {
-                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.Instock.name());
-                }
+                // edward 2016-04-23 修改了group更新的共通方法 start
+                CmsBtProductGroupModel CmsBtProductGroupModel = new CmsBtProductGroupModel();
+//                Map platform = new HashMap();
+//
+//                if ("Onsale".equals(field[1].toString())) {
+//                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToOnsale.name());
+//                } else if ("Instock".equals(field[1].toString())) {
+//                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToInstock.name());
+//                }
+//
+//                // 更新group
+//                productGroupService.saveGroups(userInfo.getSelChannelId(), productModel.getFields().getCode(), cartId, platform);
 
-                // 更新group
-                productGroupService.saveGroups(userInfo.getSelChannelId(), productModel.getFields().getCode(), cartId, platform);
+                if(com.voyageone.common.CmsConstants.PlatformActive.Onsale.name().equals(field[1].toString()))
+                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Onsale);
+                else if (com.voyageone.common.CmsConstants.PlatformActive.Instock.name().equals(field[1].toString()))
+                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Instock);
+
+                productGroupService.update(CmsBtProductGroupModel);
+                // edward 2016-04-23 修改了group更新的共通方法 end
             } else {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);
             }

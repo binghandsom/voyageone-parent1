@@ -3,15 +3,15 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Product PriceLog Service
@@ -24,7 +24,7 @@ import java.util.*;
 public class ProductPriceLogService extends BaseService {
 
     @Autowired
-    private CmsBtPriceLogDao cmsBtPriceLogDao;
+    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
 
 
     /**
@@ -70,7 +70,7 @@ public class ProductPriceLogService extends BaseService {
 
         // 插入log履历
         if (logList.size()>0) {
-            cmsBtPriceLogDao.insertCmsBtPriceLogList(logList);
+            cmsBtPriceLogDaoExt.insertCmsBtPriceLogList(logList);
         }
     }
 
@@ -212,7 +212,7 @@ public class ProductPriceLogService extends BaseService {
     private CmsBtPriceLogModel createPriceLogModel(String channelId, Long productId, String code , ProductSkuPriceBean skuBefore , ProductSkuPriceBean skuAfter, String comment, String modifier) {
         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
         cmsBtPriceLogModel.setChannelId(channelId);
-        cmsBtPriceLogModel.setProductId(productId);
+        cmsBtPriceLogModel.setProductId(productId.intValue());
         cmsBtPriceLogModel.setCode(code);
         cmsBtPriceLogModel.setSku(skuAfter.getSkuCode());
 
@@ -238,7 +238,7 @@ public class ProductPriceLogService extends BaseService {
         if (skuAfter.getClientMsrpPrice() != null) {
             clientMsrpPrice = skuAfter.getClientMsrpPrice();
         }
-        cmsBtPriceLogModel.serClientMsrpPrice(clientMsrpPrice.toString());
+        cmsBtPriceLogModel.setClientMsrpPrice(clientMsrpPrice.toString());
 
         Double clientRetailPrice = skuBefore.getClientRetailPrice();
         if (skuAfter.getClientRetailPrice() != null) {

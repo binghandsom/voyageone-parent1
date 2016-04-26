@@ -15,11 +15,11 @@ import java.util.Map;
  */
 public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
-    private long groupId = 0;
-    private int cartId = 0;
+    private Long groupId;
+    private Integer cartId;
     private String numIId;
     private String platformPid;
-    private int displayOrder = 0;
+    private Integer displayOrder;
     private String publishTime;
     private String onSaleTime;
     private String instockTime;
@@ -28,13 +28,13 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     private String mainProductCode;
     private List<String> productCodes;
-    private int qty = 0;
-    private double priceMsrpSt = 0;
-    private double priceMsrpEd = 0;
-    private double priceRetailSt = 0;
-    private double priceRetailEd = 0;
-    private double priceSaleSt = 0;
-    private double priceSaleEd = 0;
+    private Integer qty;
+    private Double priceMsrpSt;
+    private Double priceMsrpEd;
+    private Double priceRetailSt;
+    private Double priceRetailEd;
+    private Double priceSaleSt;
+    private Double priceSaleEd;
 
     public Long getGroupId() {
         return groupId;
@@ -164,11 +164,11 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         this.priceSaleSt = priceSaleSt;
     }
 
-    public double getPriceSaleEd() {
+    public Double getPriceSaleEd() {
         return priceSaleEd;
     }
 
-    public void setPriceSaleEd(double priceSaleEd) {
+    public void setPriceSaleEd(Double priceSaleEd) {
         this.priceSaleEd = priceSaleEd;
     }
 

@@ -1,10 +1,11 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.BulkWriteResult;
-import com.mongodb.util.JSON;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -41,22 +42,52 @@ public class ProductGroupService extends BaseService {
         return cmsBtProductGroupDao.select(queryObject, channelId);
     }
 
+//    /**
+//     * 新建一个group
+//     * @param channelId
+//     * @param prodCode
+//     * @param cartId
+//     * @param platform
+//     */
+//    public void saveGroups(String channelId, String prodCode, int cartId, Map platform) {
+//        Map queryParam = new HashMap();
+//        queryParam.put("cartId", cartId);
+//        Map codeParam = new HashMap();
+//        codeParam.put("$in", new String[]{prodCode});
+//        queryParam.put("productCodes", codeParam);
+//        Map updateObj = new HashMap();
+//        updateObj.put("$set", platform);
+//        cmsBtProductGroupDao.updateFirst(JSON.serialize(queryParam), JSON.serialize(updateObj), channelId);
+//    }
+
     /**
-     * save Groups
+     * 根据channelId和groupId取得单个group数据
      * @param channelId
-     * @param prodCode
-     * @param cartId
-     * @param platform
+     * @param groupId
+     * @return
      */
-    public void saveGroups(String channelId, String prodCode, int cartId, Map platform) {
-        Map queryParam = new HashMap();
-        queryParam.put("cartId", cartId);
-        Map codeParam = new HashMap();
-        codeParam.put("$in", new String[]{prodCode});
-        queryParam.put("productCodes", codeParam);
-        Map updateObj = new HashMap();
-        updateObj.put("$set", platform);
-        cmsBtProductGroupDao.updateFirst(JSON.serialize(queryParam), JSON.serialize(updateObj), channelId);
+    public CmsBtProductGroupModel getProductGroupByGroupId(String channelId, Long groupId) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(String.format("{\"groupId\": %d }", groupId));
+        return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
+     * 更新group数据
+     * @param model
+     * @return
+     */
+    public WriteResult update(CmsBtProductGroupModel model) {
+        return cmsBtProductGroupDao.update(model);
+    }
+
+    /**
+     * 插入新的group数据
+     * @param model
+     * @return
+     */
+    public WriteResult insert(CmsBtProductGroupModel model) {
+        return cmsBtProductGroupDao.insert(model);
     }
 
     /**
@@ -148,5 +179,73 @@ public class ProductGroupService extends BaseService {
         } else {
             return grpList.get(0);
         }
+    }
+
+    /**
+     * 更新该model对应的所有和上新有关的状态信息
+     * @param model(model中包含的productCodes,是这次平台上新处理的codes)
+     * @return
+     */
+    public CmsBtProductGroupModel updateGroupsPlatformStatus (CmsBtProductGroupModel model) {
+
+        // 更新cms_bt_product_groups表
+        this.update(model);
+
+        // 如果传入的groups包含code列表,则同时更新code的状态
+        if (model.getProductCodes().size() > 0) {
+
+            // 获取以前的产品carts信息,用于判断是否需要更新publishTime
+            JomgoQuery queryObject = new JomgoQuery();
+            StringBuffer sbQuery = new StringBuffer();
+            sbQuery.append(MongoUtils.splicingValue("carts.cartId", model.getCartId()));
+            sbQuery.append(",");
+            sbQuery.append(MongoUtils.splicingValue("fields.code", model.getProductCodes().toArray(new String[model.getProductCodes().size()]), "$in"));
+            queryObject.setQuery("{" + sbQuery.toString() + "}");
+
+            // 如果该产品已经上新过,则对应值为true,否则为false
+            queryObject.setProjection("{'fields.code': 1, 'carts.$': 1}");
+            List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, model.getChannelId());
+            Map<String, Boolean> isPublishedProducts = new HashMap<>();
+            for(CmsBtProductModel product : products) {
+                isPublishedProducts.put(product.getFields().getCode(),
+                        product.getCarts().size() >0 && !StringUtils.isEmpty(product.getCarts().get(0).getPublishTime())
+                                ? true : false);
+            }
+
+            // 批量更新产品的平台状态.
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            for (String code : model.getProductCodes()) {
+
+                // 设置批量更新条件
+                HashMap<String, Object> bulkQueryMap = new HashMap<>();
+                bulkQueryMap.put("fields.code", code);
+                bulkQueryMap.put("carts.cartId", model.getCartId());
+
+                // 设置更新值
+                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+                if (model.getPlatformStatus() != null) {
+                    bulkUpdateMap.put("carts.$.platformStatus", model.getPlatformStatus().name());
+                }
+                if (!isPublishedProducts.get(code)) {
+                    bulkUpdateMap.put("carts.$.publishTime", model.getPublishTime());
+                }
+
+                // 设定批量更新条件和值
+                if (bulkUpdateMap.size() > 0) {
+                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+                    bulkUpdateModel.setQueryMap(bulkQueryMap);
+                    bulkList.add(bulkUpdateModel);
+                }
+            }
+
+            // 批量更新product表
+            if (bulkList.size() > 0) {
+                // TODO: 16/4/23 需要确认该批量操作,如果该条数据不存在是否新规插入
+                cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", true);
+            }
+        }
+
+        return model;
     }
 }

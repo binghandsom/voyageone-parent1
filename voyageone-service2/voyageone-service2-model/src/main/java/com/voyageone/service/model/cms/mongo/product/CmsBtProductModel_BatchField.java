@@ -13,7 +13,12 @@ public class CmsBtProductModel_BatchField extends BaseMongoMap<String, Object> {
 
     //code 库存
     public Integer getCodeQty() {
-        return getAttribute("codeQty");
+        Object qty = getAttribute("codeQty");
+        if (qty == null) {
+            return 0;
+        } else {
+            return (Integer) qty;
+        }
     }
 
     public void setCodeQty(Integer codeQty) {

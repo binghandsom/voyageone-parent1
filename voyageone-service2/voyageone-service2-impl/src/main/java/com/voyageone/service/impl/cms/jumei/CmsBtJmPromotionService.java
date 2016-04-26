@@ -125,7 +125,7 @@ public class CmsBtJmPromotionService {
         List<CmsBtProductModel> orginProducts = productDao.selectProductByIds(productIds, channelId);
         JmProductImportAllInfo importInfo = new JmProductImportAllInfo();
         importInfo.setModelCmsBtJmPromotion(promotion);
-        orginProducts.parallelStream().forEach(product -> {
+        orginProducts.stream().forEach(product -> { //pal
             importInfo.getListProductModel().add(buildProductFrom(product));
             importInfo.getListSkuModel().addAll(buildSkusFrom(product, discount, priceType));
             importInfo.getListSpecialImageModel().add(buildImagesFrom(product));
@@ -180,9 +180,10 @@ public class CmsBtJmPromotionService {
         final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
-        return model.getSkus().parallelStream().map(oldSku -> {
+        return model.getSkus().stream().map(oldSku -> {
             CmsBtJmImportSku bean = new CmsBtJmImportSku();
             bean.setProductCode(model.getFields().getCode());
+            bean.setSkuCode(oldSku.getSkuCode());
             bean.setJmSkuNo(oldSku.getSkuCode());
             bean.setUpc(oldSku.getBarcode());
             bean.setCmsSize((oldSku.getSize()));
@@ -194,7 +195,7 @@ public class CmsBtJmPromotionService {
     }
 
     /**
-     * 对应mongo表中fields.images1数据
+     * 对应mongo表中fields.images1数据构建需要插入到聚美活动的图片
      * @param model
      * @return
      */
