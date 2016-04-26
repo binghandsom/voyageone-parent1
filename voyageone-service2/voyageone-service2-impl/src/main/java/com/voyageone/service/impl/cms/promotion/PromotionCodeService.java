@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms.promotion;
 
-import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,25 +19,25 @@ import java.util.Map;
 public class PromotionCodeService extends BaseService {
 
     @Autowired
-    private CmsBtPromotionCodeDao cmsBtPromotionCodeDao;
+    private CmsBtPromotionCodesDaoExt cmsBtPromotionCodesDaoExt;
 
-    public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> param) {
-        return cmsBtPromotionCodeDao.selectPromotionCodeList(param);
+    public List<CmsBtPromotionCodesBean> getPromotionCodeList(Map<String, Object> param) {
+        return cmsBtPromotionCodesDaoExt.selectPromotionCodeList(param);
     }
 
     public int getPromotionCodeListCnt(Map<String, Object> params) {
-        return cmsBtPromotionCodeDao.selectPromotionCodeListCnt(params);
+        return cmsBtPromotionCodesDaoExt.selectPromotionCodeListCnt(params);
     }
 
-    public List<CmsBtPromotionCodeModel> getPromotionCodeListByIdOrgChannelId(int promotionId, String orgChannelId) {
+    public List<CmsBtPromotionCodesBean> getPromotionCodeListByIdOrgChannelId(int promotionId, String orgChannelId) {
         Map<String, Object> params = new HashMap<>();
         params.put("promotionId", promotionId);
         params.put("orgChannelId", orgChannelId);
-        return cmsBtPromotionCodeDao.selectPromotionCodeSkuList(params);
+        return cmsBtPromotionCodesDaoExt.selectPromotionCodeSkuList(params);
     }
 
     public List<Map<String, Object>> getPromotionCodesByPromotionIds(List<String> promotionIdList) {
-        return cmsBtPromotionCodeDao.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
+        return cmsBtPromotionCodesDaoExt.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
     }
 
 }

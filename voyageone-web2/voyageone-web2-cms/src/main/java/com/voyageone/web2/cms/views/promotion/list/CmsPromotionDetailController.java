@@ -1,10 +1,10 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
-import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +53,7 @@ public class CmsPromotionDetailController extends CmsController {
 
 
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
-        List<CmsBtPromotionCodeModel> resultBean = cmsPromotionDetailService.getPromotionCode(params, cartId);
+        List<CmsBtPromotionCodesBean> resultBean = cmsPromotionDetailService.getPromotionCode(params, cartId);
         Map<String,Object> result = new HashMap<>();
         result.put("resultData",resultBean);
         result.put("total",cnt);
@@ -96,7 +96,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(null);
     }
     @RequestMapping(PROMOTION.LIST.DETAIL.UPDATE_PROMOTION_PRODUCT)
-    public AjaxResponse updatePromotionProduct(@RequestBody CmsBtPromotionCodeModel params) {
+    public AjaxResponse updatePromotionProduct(@RequestBody CmsBtPromotionCodesBean params) {
 
         cmsPromotionDetailService.updatePromotionProduct(params, getUser().getUserName());
         // 返回用户信息
@@ -104,7 +104,7 @@ public class CmsPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.DETAIL.DEL_PROMOTION_MODEL)
-    public AjaxResponse delPromotionModel(@RequestBody List<CmsBtPromotionGroupModel> params) {
+    public AjaxResponse delPromotionModel(@RequestBody List<CmsBtPromotionGroupsBean> params) {
 
         cmsPromotionDetailService.delPromotionModel(params, getUser().getSelChannelId(), getUser().getUserName());
         // 返回用户信息
@@ -112,7 +112,7 @@ public class CmsPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.DETAIL.DEL_PROMOTION_CODE)
-    public AjaxResponse delPromotionCode(@RequestBody List<CmsBtPromotionCodeModel> params) {
+    public AjaxResponse delPromotionCode(@RequestBody List<CmsBtPromotionCodesBean> params) {
 
         cmsPromotionDetailService.delPromotionCode(params, getUser().getSelChannelId(), getUser().getUserName());
         // 返回用户信息

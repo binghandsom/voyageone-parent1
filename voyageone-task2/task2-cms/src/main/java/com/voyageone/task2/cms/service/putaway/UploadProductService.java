@@ -1,42 +1,44 @@
 package com.voyageone.task2.cms.service.putaway;
 
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.ProductPublishBean;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.UpJobParamBean;
+import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.CmsBusinessLogDao;
 import com.voyageone.task2.cms.dao.ProductPublishDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.model.CmsBusinessLogModel;
-import com.voyageone.task2.cms.bean.WorkLoadBean;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by Leo on 2015/5/27.
  */
 @Repository
 public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
+    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -51,8 +53,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private PromotionDetailService promotionDetailService;
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
-    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
 
@@ -315,16 +315,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                         Double dblPrice = Double.parseDouble(sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
 
                         // 设置特价宝
-                        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
-                        cmsBtPromotionCodeModel.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
-                        cmsBtPromotionCodeModel.setChannelId(workLoadBean.getOrder_channel_id());
-                        cmsBtPromotionCodeModel.setCartId(workLoadBean.getCart_id());
-                        cmsBtPromotionCodeModel.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
-                        cmsBtPromotionCodeModel.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
-                        cmsBtPromotionCodeModel.setPromotionPrice(dblPrice); // 真实售价
-                        cmsBtPromotionCodeModel.setNumIid(workLoadBean.getNumId());
-                        cmsBtPromotionCodeModel.setModifier(getTaskName());
-                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+                        cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                        cmsBtPromotionCodesBean.setChannelId(workLoadBean.getOrder_channel_id());
+                        cmsBtPromotionCodesBean.setCartId(workLoadBean.getCart_id());
+                        cmsBtPromotionCodesBean.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
+                        cmsBtPromotionCodesBean.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
+                        cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
+                        cmsBtPromotionCodesBean.setNumIid(workLoadBean.getNumId());
+                        cmsBtPromotionCodesBean.setModifier(getTaskName());
+                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
                     }
                 }
 

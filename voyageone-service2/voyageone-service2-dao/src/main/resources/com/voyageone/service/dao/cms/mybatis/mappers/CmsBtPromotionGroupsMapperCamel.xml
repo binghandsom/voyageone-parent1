@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionGroupsDao">
+    <resultMap id="ResultMap" type="CmsBtPromotionGroupsModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`promotion_id`,`org_channel_id`,`model_id`,`product_model`,`cat_path`,`num_iid`,`syn_flg`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_promotion_groups
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="promotionId != null">
+                AND `promotion_id` = #{promotionId}
+            </if>
+            <if test="orgChannelId != null">
+                AND `org_channel_id` = #{orgChannelId}
+            </if>
+            <if test="modelId != null">
+                AND `model_id` = #{modelId}
+            </if>
+            <if test="productModel != null">
+                AND `product_model` = #{productModel}
+            </if>
+            <if test="catPath != null">
+                AND `cat_path` = #{catPath}
+            </if>
+            <if test="numIid != null">
+                AND `num_iid` = #{numIid}
+            </if>
+            <if test="synFlg != null">
+                AND `syn_flg` = #{synFlg}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`promotion_id`,`org_channel_id`,`model_id`,`product_model`,`cat_path`,`num_iid`,`syn_flg`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_promotion_groups
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="promotionId != null">
+                AND `promotion_id` = #{promotionId}
+            </if>
+
+            <if test="orgChannelId != null">
+                AND `org_channel_id` = #{orgChannelId}
+            </if>
+
+            <if test="modelId != null">
+                AND `model_id` = #{modelId}
+            </if>
+
+            <if test="productModel != null">
+                AND `product_model` = #{productModel}
+            </if>
+
+            <if test="catPath != null">
+                AND `cat_path` = #{catPath}
+            </if>
+
+            <if test="numIid != null">
+                AND `num_iid` = #{numIid}
+            </if>
+
+            <if test="synFlg != null">
+                AND `syn_flg` = #{synFlg}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`promotion_id`,`org_channel_id`,`model_id`,`product_model`,`cat_path`,`num_iid`,`syn_flg`,`created`,`creater`,`modified`,`modifier` from cms_bt_promotion_groups where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_promotion_groups
+        set
+
+            `promotion_id`=#{promotionId}
+            ,`org_channel_id`=#{orgChannelId}
+            ,`model_id`=#{modelId}
+            ,`product_model`=#{productModel}
+            ,`cat_path`=#{catPath}
+            ,`num_iid`=#{numIid}
+            ,`syn_flg`=#{synFlg}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_promotion_groups
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_promotion_groups
+        (
+              `promotion_id`,
+              `org_channel_id`,
+              `model_id`,
+              `product_model`,
+              `cat_path`,
+              `num_iid`,
+              `syn_flg`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{promotionId},
+              #{orgChannelId},
+              #{modelId},
+              #{productModel},
+              #{catPath},
+              #{numIid},
+              #{synFlg},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

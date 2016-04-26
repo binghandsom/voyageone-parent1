@@ -584,27 +584,15 @@ public class ProductService extends BaseService {
      * @param updateMap Map
      * @param modifier  String
      */
-    public int updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
+    public void updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
         // 先根据产品code找到其model
         CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{'fields.code':'" + prodCode + "'},{'fields.model':1,'_id':0}", channelId);
         String prodModel = prodObj.getFields().getModel();
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.model", prodModel);
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        bulkList.add(model);
-
-        // 批量更新product表
-        int result = 0;
-        if (bulkList.size() > 0) {
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
-            result = bulkWriteResult.getModifiedCount();
-        }
-        return result;
+        cmsBtProductDao.update(channelId, queryMap, updateMap);
     }
 
     /**

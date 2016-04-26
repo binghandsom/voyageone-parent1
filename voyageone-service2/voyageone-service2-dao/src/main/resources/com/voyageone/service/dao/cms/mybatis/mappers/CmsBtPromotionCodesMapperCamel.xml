@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionCodesDao">
+    <resultMap id="ResultMap" type="CmsBtPromotionCodesModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`promotion_id`,`org_channel_id`,`product_id`,`model_id`,`product_model`,`product_code`,`product_name`,`cat_path`,`retail_price`,`sale_price`,`msrp`,`msrpUS`,`tag_id`,`promotion_price`,`num_iid`,`image_url_1`,`image_url_2`,`image_url_3`,`property_1`,`property_2`,`property_3`,`property_4`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_promotion_codes
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="promotionId != null">
+                AND `promotion_id` = #{promotionId}
+            </if>
+            <if test="orgChannelId != null">
+                AND `org_channel_id` = #{orgChannelId}
+            </if>
+            <if test="productId != null">
+                AND `product_id` = #{productId}
+            </if>
+            <if test="modelId != null">
+                AND `model_id` = #{modelId}
+            </if>
+            <if test="productModel != null">
+                AND `product_model` = #{productModel}
+            </if>
+            <if test="productCode != null">
+                AND `product_code` = #{productCode}
+            </if>
+            <if test="productName != null">
+                AND `product_name` = #{productName}
+            </if>
+            <if test="catPath != null">
+                AND `cat_path` = #{catPath}
+            </if>
+            <if test="retailPrice != null">
+                AND `retail_price` = #{retailPrice}
+            </if>
+            <if test="salePrice != null">
+                AND `sale_price` = #{salePrice}
+            </if>
+            <if test="msrp != null">
+                AND `msrp` = #{msrp}
+            </if>
+            <if test="msrpUS != null">
+                AND `msrpUS` = #{msrpUS}
+            </if>
+            <if test="tagId != null">
+                AND `tag_id` = #{tagId}
+            </if>
+            <if test="promotionPrice != null">
+                AND `promotion_price` = #{promotionPrice}
+            </if>
+            <if test="numIid != null">
+                AND `num_iid` = #{numIid}
+            </if>
+            <if test="imageUrl1 != null">
+                AND `image_url_1` = #{imageUrl1}
+            </if>
+            <if test="imageUrl2 != null">
+                AND `image_url_2` = #{imageUrl2}
+            </if>
+            <if test="imageUrl3 != null">
+                AND `image_url_3` = #{imageUrl3}
+            </if>
+            <if test="property1 != null">
+                AND `property_1` = #{property1}
+            </if>
+            <if test="property2 != null">
+                AND `property_2` = #{property2}
+            </if>
+            <if test="property3 != null">
+                AND `property_3` = #{property3}
+            </if>
+            <if test="property4 != null">
+                AND `property_4` = #{property4}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`promotion_id`,`org_channel_id`,`product_id`,`model_id`,`product_model`,`product_code`,`product_name`,`cat_path`,`retail_price`,`sale_price`,`msrp`,`msrpUS`,`tag_id`,`promotion_price`,`num_iid`,`image_url_1`,`image_url_2`,`image_url_3`,`property_1`,`property_2`,`property_3`,`property_4`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_promotion_codes
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="promotionId != null">
+                AND `promotion_id` = #{promotionId}
+            </if>
+
+            <if test="orgChannelId != null">
+                AND `org_channel_id` = #{orgChannelId}
+            </if>
+
+            <if test="productId != null">
+                AND `product_id` = #{productId}
+            </if>
+
+            <if test="modelId != null">
+                AND `model_id` = #{modelId}
+            </if>
+
+            <if test="productModel != null">
+                AND `product_model` = #{productModel}
+            </if>
+
+            <if test="productCode != null">
+                AND `product_code` = #{productCode}
+            </if>
+
+            <if test="productName != null">
+                AND `product_name` = #{productName}
+            </if>
+
+            <if test="catPath != null">
+                AND `cat_path` = #{catPath}
+            </if>
+
+            <if test="retailPrice != null">
+                AND `retail_price` = #{retailPrice}
+            </if>
+
+            <if test="salePrice != null">
+                AND `sale_price` = #{salePrice}
+            </if>
+
+            <if test="msrp != null">
+                AND `msrp` = #{msrp}
+            </if>
+
+            <if test="msrpUS != null">
+                AND `msrpUS` = #{msrpUS}
+            </if>
+
+            <if test="tagId != null">
+                AND `tag_id` = #{tagId}
+            </if>
+
+            <if test="promotionPrice != null">
+                AND `promotion_price` = #{promotionPrice}
+            </if>
+
+            <if test="numIid != null">
+                AND `num_iid` = #{numIid}
+            </if>
+
+            <if test="imageUrl1 != null">
+                AND `image_url_1` = #{imageUrl1}
+            </if>
+
+            <if test="imageUrl2 != null">
+                AND `image_url_2` = #{imageUrl2}
+            </if>
+
+            <if test="imageUrl3 != null">
+                AND `image_url_3` = #{imageUrl3}
+            </if>
+
+            <if test="property1 != null">
+                AND `property_1` = #{property1}
+            </if>
+
+            <if test="property2 != null">
+                AND `property_2` = #{property2}
+            </if>
+
+            <if test="property3 != null">
+                AND `property_3` = #{property3}
+            </if>
+
+            <if test="property4 != null">
+                AND `property_4` = #{property4}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`promotion_id`,`org_channel_id`,`product_id`,`model_id`,`product_model`,`product_code`,`product_name`,`cat_path`,`retail_price`,`sale_price`,`msrp`,`msrpUS`,`tag_id`,`promotion_price`,`num_iid`,`image_url_1`,`image_url_2`,`image_url_3`,`property_1`,`property_2`,`property_3`,`property_4`,`created`,`creater`,`modified`,`modifier` from cms_bt_promotion_codes where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_promotion_codes
+        set
+
+            `promotion_id`=#{promotionId}
+            ,`org_channel_id`=#{orgChannelId}
+            ,`product_id`=#{productId}
+            ,`model_id`=#{modelId}
+            ,`product_model`=#{productModel}
+            ,`product_code`=#{productCode}
+            ,`product_name`=#{productName}
+            ,`cat_path`=#{catPath}
+            ,`retail_price`=#{retailPrice}
+            ,`sale_price`=#{salePrice}
+            ,`msrp`=#{msrp}
+            ,`msrpUS`=#{msrpUS}
+            ,`tag_id`=#{tagId}
+            ,`promotion_price`=#{promotionPrice}
+            ,`num_iid`=#{numIid}
+            ,`image_url_1`=#{imageUrl1}
+            ,`image_url_2`=#{imageUrl2}
+            ,`image_url_3`=#{imageUrl3}
+            ,`property_1`=#{property1}
+            ,`property_2`=#{property2}
+            ,`property_3`=#{property3}
+            ,`property_4`=#{property4}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_promotion_codes
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_promotion_codes
+        (
+              `promotion_id`,
+              `org_channel_id`,
+              `product_id`,
+              `model_id`,
+              `product_model`,
+              `product_code`,
+              `product_name`,
+              `cat_path`,
+              `retail_price`,
+              `sale_price`,
+              `msrp`,
+              `msrpUS`,
+              `tag_id`,
+              `promotion_price`,
+              `num_iid`,
+              `image_url_1`,
+              `image_url_2`,
+              `image_url_3`,
+              `property_1`,
+              `property_2`,
+              `property_3`,
+              `property_4`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{promotionId},
+              #{orgChannelId},
+              #{productId},
+              #{modelId},
+              #{productModel},
+              #{productCode},
+              #{productName},
+              #{catPath},
+              #{retailPrice},
+              #{salePrice},
+              #{msrp},
+              #{msrpUS},
+              #{tagId},
+              #{promotionPrice},
+              #{numIid},
+              #{imageUrl1},
+              #{imageUrl2},
+              #{imageUrl3},
+              #{property1},
+              #{property2},
+              #{property3},
+              #{property4},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>
