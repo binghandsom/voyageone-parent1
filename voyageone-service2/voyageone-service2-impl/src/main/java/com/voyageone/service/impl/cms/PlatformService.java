@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.configs.beans.PlatformBean;
 import com.voyageone.common.configs.dao.PlatformDao;
+import com.voyageone.service.impl.BaseService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -14,7 +15,7 @@ import java.util.List;
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
 @Service
-public class PlatformService {
+public class PlatformService extends BaseService {
     @Resource
     PlatformDao platformDao;
 

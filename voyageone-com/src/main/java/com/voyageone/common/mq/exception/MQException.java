@@ -1,5 +1,6 @@
 package com.voyageone.common.mq.exception;
 
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 
 /**
@@ -7,7 +8,7 @@ import org.springframework.amqp.core.Message;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class MQException extends RuntimeException {
+public class MQException extends AmqpException {
 
     private Message mqMessage;
 
@@ -15,24 +16,9 @@ public class MQException extends RuntimeException {
         return mqMessage;
     }
 
-    public void setMqMessage(Message mqMessage) {
-        this.mqMessage = mqMessage;
-    }
-
-    public MQException(String message) {
-        super(message);
-    }
-
-    public MQException(Throwable cause) {
-        super(cause);
-    }
-
     public MQException(Throwable cause, Message mqMessage) {
         super(cause);
         this.mqMessage = mqMessage;
     }
 
-    public MQException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

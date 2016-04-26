@@ -169,4 +169,9 @@ public class PromotionService extends BaseService {
 
         return cmsBtPromotionDao.deleteById(param);
     }
+
+    public Map<String,String>  getPromotionIDByCartId(String promotionId) {
+        return cmsBtPromotionDao.selectPromotionIDByCartId(promotionId);
+    }
+
 }
