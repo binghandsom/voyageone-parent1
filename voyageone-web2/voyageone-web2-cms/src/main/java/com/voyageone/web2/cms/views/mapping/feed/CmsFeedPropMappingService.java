@@ -2,6 +2,10 @@ package com.voyageone.web2.cms.views.mapping.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.common.configs.Types;
@@ -23,6 +27,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FieldBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
@@ -65,7 +70,7 @@ class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 返回主类目和相应的属性
      */
-    Map<String, Object> getMainCategoryInfo(String mainCategoryPath) {
+    Map<String, Object> getMainCategoryInfo(String mainCategoryPath, String channelId, String lang) {
 
         String categoryId = convertPathToId(mainCategoryPath);
 
@@ -92,6 +97,9 @@ class CmsFeedPropMappingService extends BaseAppService {
                 .collect(toList());
 
         List<Field> commonFields = getCommonSchema();
+
+        // 编辑SingleCheckField的Options项目
+        editOptions(commonFields, channelId, lang);
 
         // 对共通属性同样处理
         // 但如果普通属性里已经有的则需要忽略掉
@@ -357,4 +365,47 @@ class CmsFeedPropMappingService extends BaseAppService {
         List list = commonSchemaService.getAll();
         return SchemaJsonReader.readJsonForList(list);
     }
+
+    // jeff 2016/04 add start
+    /**
+     * 编辑SingleCheckField的Options项目
+     */
+    private void editOptions (List<Field> fields, String channelId, String language) {
+
+        for (Field field : fields) {
+            if (field instanceof SingleCheckField) {
+                if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                    List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
+
+                    // 替换成field需要的样式
+                    List<Option> options = new ArrayList<>();
+                    if (typeBeanList != null) {
+                        for (TypeBean typeBean : typeBeanList) {
+                            Option opt = new Option();
+                            opt.setDisplayName(typeBean.getName());
+                            opt.setValue(typeBean.getValue());
+                            options.add(opt);
+                        }
+                        ((SingleCheckField) field).setOptions(options);
+                    }
+                } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                    // 获取type channel bean
+                    List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+
+                    // 替换成field需要的样式
+                    List<Option> options = new ArrayList<>();
+                    if (typeChannelBeanList != null) {
+                        for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                            Option opt = new Option();
+                            opt.setDisplayName(typeChannelBean.getName());
+                            opt.setValue(typeChannelBean.getValue());
+                            options.add(opt);
+                        }
+                        ((SingleCheckField) field).setOptions(options);
+                    }
+                }
+            }
+        }
+    }
+    // jeff 2016/04 add end
 }

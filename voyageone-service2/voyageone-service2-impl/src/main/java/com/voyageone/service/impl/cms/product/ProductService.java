@@ -17,13 +17,13 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
-import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
@@ -48,13 +48,13 @@ import static java.util.stream.Collectors.toMap;
 public class ProductService extends BaseService {
 
     @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
     protected CmsBtProductLogDao cmsBtProductLogDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
-    private CmsBtPriceLogDao cmsBtPriceLogDao;
+    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
 
     @Autowired
     private ProductSkuService productSkuService;
@@ -90,10 +90,10 @@ public class ProductService extends BaseService {
     /**
      * 根据多个groupsIds获取产品列表
      *
-     * @param channelId
-     * @param groupId
+     * @param channelId String
+     * @param groupId Long
      * @param flag:     true:检索主商品以外的商品,false:检索所有的商品
-     * @return
+     * @return List<CmsBtProductModel>
      */
     public List<CmsBtProductModel> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -223,7 +223,7 @@ public class ProductService extends BaseService {
         if ("sku".equals(flag)) {
             params.put("sku", "0");
         }
-        return cmsBtPriceLogDao.selectPriceLogByCode(params);
+        return cmsBtPriceLogDaoExt.selectPriceLogByCode(params);
     }
 
     /**
@@ -235,7 +235,7 @@ public class ProductService extends BaseService {
         if ("sku".equals(flag)) {
             params.put("sku", "0");
         }
-        return cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
+        return cmsBtPriceLogDaoExt.selectPriceLogByCodeCnt(params);
     }
 
     public boolean checkProductDataIsReady(String channelId, Long productId) {
@@ -499,7 +499,7 @@ public class ProductService extends BaseService {
 
         // 根据商品code获取其所有group信息(所有平台)
         List<CmsBtProductGroupModel> platforms = cmsBtProductGroupDao.select("{\"productCodes\", \"" + cmsProduct.getFields().getCode() + "\"}", channelId);
-        Map<Integer, Long> platformsMap = platforms.stream().collect(toMap(platform -> platform.getCartId(), platform -> platform.getGroupId()));
+        Map<Integer, Long> platformsMap = platforms.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
         // 获取所有的可上新的平台group信息
         List<CmsBtSxWorkloadModel> models = new ArrayList<>();
@@ -584,27 +584,15 @@ public class ProductService extends BaseService {
      * @param updateMap Map
      * @param modifier  String
      */
-    public int updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
+    public void updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
         // 先根据产品code找到其model
         CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{'fields.code':'" + prodCode + "'},{'fields.model':1,'_id':0}", channelId);
         String prodModel = prodObj.getFields().getModel();
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.model", prodModel);
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        bulkList.add(model);
-
-        // 批量更新product表
-        int result = 0;
-        if (bulkList.size() > 0) {
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
-            result = bulkWriteResult.getModifiedCount();
-        }
-        return result;
+        cmsBtProductDao.update(channelId, queryMap, updateMap);
     }
 
     /**
@@ -775,11 +763,14 @@ public class ProductService extends BaseService {
 
                 // TODO 目前写死,以后再想办法修改
                 String numIid = "";
-                switch (CartEnums.Cart.getValueByID(cartId)) {
-                    case TG:
-                        numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getNumIId())
-                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + grpObj.getNumIId() : "";
-                        break;
+                CartEnums.Cart cartEnum = CartEnums.Cart.getValueByID(cartId);
+                if (cartEnum != null) {
+                    switch (cartEnum) {
+                        case TG:
+                            numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getNumIId())
+                                    ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + grpObj.getNumIId() : "";
+                            break;
+                    }
                 }
                 bean.setSkuTmallUrl(numIid);
 
@@ -856,6 +847,18 @@ public class ProductService extends BaseService {
         }
 
         return products;
+    }
+
+    public void updateTranslateStatus(String channelId, String prodCode, String translateStatus, String modifier) {
+        Map<String, String> paraMap = new HashMap<>(1);
+        paraMap.put("fields.code", prodCode);
+
+        Map<String, String> rsMap = new HashMap<>(3);
+        rsMap.put("fields.translateStatus", translateStatus);
+        rsMap.put("modifier", modifier);
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+
+        cmsBtProductDao.update(channelId, paraMap, rsMap);
     }
 
     /**
@@ -940,7 +943,7 @@ public class ProductService extends BaseService {
      *
      * @param channelId 渠道id
      * @param skuList   待取得逻辑库存的sku对象
-     * @return 逻辑库存Map<sku, logicQty>
+     * @return 逻辑库存Map sku:logicQty
      */
     public Map<String, Integer> getLogicQty(String channelId, List<String> skuList) {
         // 逻辑库存Map

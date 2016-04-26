@@ -121,10 +121,10 @@
               #{amountName},
               #{amountVal},
               #{comment},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

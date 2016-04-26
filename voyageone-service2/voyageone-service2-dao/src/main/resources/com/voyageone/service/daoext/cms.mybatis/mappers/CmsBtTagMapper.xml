@@ -3,118 +3,119 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- Tag信息追加 -->
-    <insert id="insert_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel"  useGeneratedKeys="true" keyProperty="tagId">
+    <insert id="insert_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" useGeneratedKeys="true"
+            keyProperty="id">
         insert into voyageone_cms2.cms_bt_tag
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="tagName != null" >
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagName != null">
                 tag_name,
             </if>
-            <if test="tagPath != null" >
+            <if test="tagPath != null">
                 tag_path,
             </if>
-            <if test="channelId != null" >
+            <if test="channelId != null">
                 channel_id,
             </if>
-            <if test="tagPathName != null" >
+            <if test="tagPathName != null">
                 tag_path_name,
             </if>
-            <if test="tagType != null" >
+            <if test="tagType != null">
                 tag_type,
             </if>
-            <if test="tagStatus != null" >
+            <if test="tagStatus != null">
                 tag_status,
             </if>
-            <if test="sortOrder != null" >
+            <if test="sortOrder != null">
                 sort_order,
             </if>
-            <if test="parentTagId != null" >
+            <if test="parentTagId != null">
                 parent_tag_id,
             </if>
-            <if test="isActive != null" >
+            <if test="isActive != null">
                 is_active,
             </if>
             created,
-            <if test="creater != null" >
+            <if test="creater != null">
                 creater,
             </if>
             modified,
-            <if test="creater != null" >
+            <if test="creater != null">
                 modifier,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="tagName != null" >
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagName != null">
                 #{tagName,jdbcType=VARCHAR},
             </if>
-            <if test="tagPath != null" >
+            <if test="tagPath != null">
                 #{tagPath,jdbcType=VARCHAR},
             </if>
-            <if test="channelId != null" >
+            <if test="channelId != null">
                 #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="tagPathName != null" >
+            <if test="tagPathName != null">
                 #{tagPathName,jdbcType=VARCHAR},
             </if>
-            <if test="tagType != null" >
+            <if test="tagType != null">
                 #{tagType,jdbcType=INTEGER},
             </if>
-            <if test="tagStatus != null" >
+            <if test="tagStatus != null">
                 #{tagStatus,jdbcType=INTEGER},
             </if>
-            <if test="sortOrder != null" >
+            <if test="sortOrder != null">
                 #{sortOrder,jdbcType=INTEGER},
             </if>
-            <if test="parentTagId != null" >
+            <if test="parentTagId != null">
                 #{parentTagId,jdbcType=INTEGER},
             </if>
-            <if test="isActive != null" >
+            <if test="isActive != null">
                 #{isActive,jdbcType=INTEGER},
             </if>
             now(),
-            <if test="creater != null" >
+            <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
             </if>
             now(),
-            <if test="creater != null" >
+            <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
 
     <!-- Tag信息更新 -->
-    <update id="update_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" >
+    <update id="update_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel">
         update voyageone_cms2.cms_bt_tag
-        <set >
-            <if test="tagName != null" >
+        <set>
+            <if test="tagName != null">
                 tag_name = #{tagName,jdbcType=VARCHAR},
             </if>
-            <if test="tagPath != null" >
+            <if test="tagPath != null">
                 tag_path = #{tagPath,jdbcType=VARCHAR},
             </if>
-            <if test="tagPathName != null" >
+            <if test="tagPathName != null">
                 tag_path_name = #{tagPathName,jdbcType=VARCHAR},
             </if>
-            <if test="tagType != null" >
+            <if test="tagType != null">
                 tag_type = #{tagType,jdbcType=INTEGER},
             </if>
-            <if test="tagStatus != null" >
+            <if test="tagStatus != null">
                 tag_status = #{tagStatus,jdbcType=INTEGER},
             </if>
-            <if test="sortOrder != null" >
+            <if test="sortOrder != null">
                 sort_order = #{sortOrder,jdbcType=INTEGER},
             </if>
-            <if test="parentTagId != null" >
+            <if test="parentTagId != null">
                 parent_tag_id = #{parentTagId,jdbcType=INTEGER},
             </if>
             <if test="isActive !=null">
                 is_active = #{isActive,jdbcType=INTEGER},
             </if>
             modified = now(),
-            <if test="modifier != null" >
+            <if test="modifier != null">
                 modifier = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
-        where tag_id = #{tagId,jdbcType=INTEGER}
+        where tag_id = #{id,jdbcType=INTEGER}
     </update>
 
     <!-- Tag信息删除（TagId 对应Tag删除） -->
@@ -149,7 +150,7 @@
     </resultMap>
     <select id="select_one_by_tag_id" resultMap="TagMap">
         select
-            tag.tag_id,
+            tag.id,
             tag.tag_name,
             tag.channel_id,
             tag.tag_path,
@@ -163,13 +164,13 @@
             tag.modified,
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
-        where tag_id = #{tagId}
+        where id = #{tagId}
     </select>
 
     <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
     <select id="select_one_by_parent_tag_id" resultMap="TagMap">
         select
-            tag.tag_id,
+            tag.id,
             tag.tag_name,
             tag.channel_id,
             tag.tag_path,
@@ -183,14 +184,14 @@
             tag.modified,
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
-        where tag_id = #{tagId}
+        where id = #{tagId}
           and parent_tag_id = 0
     </select>
 
     <!-- Tag信息检索 （根据channel_id，parent_tag_id, tag_name 取得对应子TagList）-->
     <select id="select_one_by_tag_name" resultMap="TagMap">
         select
-            tag.tag_id,
+            tag.id,
             tag.tag_name,
             tag.channel_id,
             tag.tag_path,
@@ -212,7 +213,7 @@
     <!-- Tag信息检索 （根据父tag_id，取得对应子TagList）-->
     <select id="select_list_by_parent_tag_id" resultMap="TagMap" parameterType="int">
         select
-            tag.tag_id,
+            tag.id,
             tag.tag_name,
             tag.channel_id,
             tag.tag_path,
@@ -228,13 +229,13 @@
         from voyageone_cms2.cms_bt_tag tag
         where
             parent_tag_id = #{parentTagId,jdbcType=INTEGER}
-        order by tag.tag_id
+        order by tag.id
     </select>
 
     <!-- Tag信息检索 （根据ChannelId，取得对应子TagList）-->
     <select id="select_list_by_channel_id" resultMap="TagMap" parameterType="String">
         select
-            tag.tag_id,
+            tag.id,
             tag.tag_name,
             tag.channel_id,
             tag.tag_path,
@@ -250,12 +251,12 @@
         from voyageone_cms2.cms_bt_tag tag
         where
             channel_id = #{channelId,jdbcType=VARCHAR}
-        order by tag.tag_id
+        order by tag.id
     </select>
     <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
     <select id="select_list_by_channel_id_and_tag_type" resultMap="TagMap" parameterType="String">
         select
-        tag.tag_id,
+        tag.id,
         tag.tag_name,
         tag.channel_id,
         tag.tag_path,
@@ -274,6 +275,6 @@
         channel_id = #{channelId}
         and tag_type = #{tagType}
         and tag.is_active=1
-        order by tag.tag_id
+        order by tag.id
     </select>
 </mapper>

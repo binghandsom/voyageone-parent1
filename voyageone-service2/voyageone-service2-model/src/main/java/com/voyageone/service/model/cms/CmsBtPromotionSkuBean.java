@@ -1,12 +1,13 @@
 package com.voyageone.service.model.cms;
 
+import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 /**
  * @author james.li on 2015/12/15.
  * @version 2.0.0
  */
-public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
+public class CmsBtPromotionSkuBean extends CmsBtPromotionGroupsBean {
 
     private Long productId;
 
@@ -16,13 +17,16 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
 
     private Integer qty;
 
-    public CmsBtPromotionSkuModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator, String productSku, Integer qty) {
+    public CmsBtPromotionSkuBean(CmsBtProductModel productInfo, int cartId, int promotionId, String operator, String productSku, Integer qty) {
 
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         this.setProductSku(productSku);
-        this.setQty(qty == null?0:qty);
+        this.setQty(qty == null ? 0 : qty);
+    }
+
+    public CmsBtPromotionSkuBean() {
     }
 
     public String getProductSku() {
@@ -41,16 +45,12 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
         this.qty = qty;
     }
 
-
     public Long getProductId() {
         return productId;
     }
 
     public void setProductId(Long productId) {
         this.productId = productId;
-    }
-
-    public CmsBtPromotionSkuModel() {
     }
 
     public String getProductCode() {

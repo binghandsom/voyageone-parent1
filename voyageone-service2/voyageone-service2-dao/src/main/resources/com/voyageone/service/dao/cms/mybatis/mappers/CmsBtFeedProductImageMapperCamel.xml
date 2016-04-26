@@ -143,10 +143,10 @@
               #{imageUrl},
               #{imageName},
               #{sentFlag},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

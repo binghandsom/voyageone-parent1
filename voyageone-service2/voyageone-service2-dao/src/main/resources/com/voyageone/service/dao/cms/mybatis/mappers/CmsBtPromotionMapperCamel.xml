@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionDao">
+    <resultMap id="ResultMap" type="CmsBtPromotionModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`cart_id`,`promotion_status`,`promotion_name`,`pre_sale_end`,`pre_sale_start`,`pre_period_start`,`pre_period_end`,`activity_start`,`activity_end`,`tejiabao_id`,`promotion_type`,`ref_tag_id`,`is_active`,`is_all_promotion`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_promotion
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+            <if test="promotionStatus != null">
+                AND `promotion_status` = #{promotionStatus}
+            </if>
+            <if test="promotionName != null">
+                AND `promotion_name` = #{promotionName}
+            </if>
+            <if test="preSaleEnd != null">
+                AND `pre_sale_end` = #{preSaleEnd}
+            </if>
+            <if test="preSaleStart != null">
+                AND `pre_sale_start` = #{preSaleStart}
+            </if>
+            <if test="prePeriodStart != null">
+                AND `pre_period_start` = #{prePeriodStart}
+            </if>
+            <if test="prePeriodEnd != null">
+                AND `pre_period_end` = #{prePeriodEnd}
+            </if>
+            <if test="activityStart != null">
+                AND `activity_start` = #{activityStart}
+            </if>
+            <if test="activityEnd != null">
+                AND `activity_end` = #{activityEnd}
+            </if>
+            <if test="tejiabaoId != null">
+                AND `tejiabao_id` = #{tejiabaoId}
+            </if>
+            <if test="promotionType != null">
+                AND `promotion_type` = #{promotionType}
+            </if>
+            <if test="refTagId != null">
+                AND `ref_tag_id` = #{refTagId}
+            </if>
+            <if test="isActive != null">
+                AND `is_active` = #{isActive}
+            </if>
+            <if test="isAllPromotion != null">
+                AND `is_all_promotion` = #{isAllPromotion}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`cart_id`,`promotion_status`,`promotion_name`,`pre_sale_end`,`pre_sale_start`,`pre_period_start`,`pre_period_end`,`activity_start`,`activity_end`,`tejiabao_id`,`promotion_type`,`ref_tag_id`,`is_active`,`is_all_promotion`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_promotion
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+
+            <if test="promotionStatus != null">
+                AND `promotion_status` = #{promotionStatus}
+            </if>
+
+            <if test="promotionName != null">
+                AND `promotion_name` = #{promotionName}
+            </if>
+
+            <if test="preSaleEnd != null">
+                AND `pre_sale_end` = #{preSaleEnd}
+            </if>
+
+            <if test="preSaleStart != null">
+                AND `pre_sale_start` = #{preSaleStart}
+            </if>
+
+            <if test="prePeriodStart != null">
+                AND `pre_period_start` = #{prePeriodStart}
+            </if>
+
+            <if test="prePeriodEnd != null">
+                AND `pre_period_end` = #{prePeriodEnd}
+            </if>
+
+            <if test="activityStart != null">
+                AND `activity_start` = #{activityStart}
+            </if>
+
+            <if test="activityEnd != null">
+                AND `activity_end` = #{activityEnd}
+            </if>
+
+            <if test="tejiabaoId != null">
+                AND `tejiabao_id` = #{tejiabaoId}
+            </if>
+
+            <if test="promotionType != null">
+                AND `promotion_type` = #{promotionType}
+            </if>
+
+            <if test="refTagId != null">
+                AND `ref_tag_id` = #{refTagId}
+            </if>
+
+            <if test="isActive != null">
+                AND `is_active` = #{isActive}
+            </if>
+
+            <if test="isAllPromotion != null">
+                AND `is_all_promotion` = #{isAllPromotion}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`cart_id`,`promotion_status`,`promotion_name`,`pre_sale_end`,`pre_sale_start`,`pre_period_start`,`pre_period_end`,`activity_start`,`activity_end`,`tejiabao_id`,`promotion_type`,`ref_tag_id`,`is_active`,`is_all_promotion`,`created`,`creater`,`modified`,`modifier` from cms_bt_promotion where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_promotion
+        set
+
+            `channel_id`=#{channelId}
+            ,`cart_id`=#{cartId}
+            ,`promotion_status`=#{promotionStatus}
+            ,`promotion_name`=#{promotionName}
+            ,`pre_sale_end`=#{preSaleEnd}
+            ,`pre_sale_start`=#{preSaleStart}
+            ,`pre_period_start`=#{prePeriodStart}
+            ,`pre_period_end`=#{prePeriodEnd}
+            ,`activity_start`=#{activityStart}
+            ,`activity_end`=#{activityEnd}
+            ,`tejiabao_id`=#{tejiabaoId}
+            ,`promotion_type`=#{promotionType}
+            ,`ref_tag_id`=#{refTagId}
+            ,`is_active`=#{isActive}
+            ,`is_all_promotion`=#{isAllPromotion}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_promotion
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_promotion
+        (
+              `channel_id`,
+              `cart_id`,
+              `promotion_status`,
+              `promotion_name`,
+              `pre_sale_end`,
+              `pre_sale_start`,
+              `pre_period_start`,
+              `pre_period_end`,
+              `activity_start`,
+              `activity_end`,
+              `tejiabao_id`,
+              `promotion_type`,
+              `ref_tag_id`,
+              `is_active`,
+              `is_all_promotion`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{cartId},
+              #{promotionStatus},
+              #{promotionName},
+              #{preSaleEnd},
+              #{preSaleStart},
+              #{prePeriodStart},
+              #{prePeriodEnd},
+              #{activityStart},
+              #{activityEnd},
+              #{tejiabaoId},
+              #{promotionType},
+              #{refTagId},
+              #{isActive},
+              #{isAllPromotion},
+              now(),
+              #{creater},
+              now(),
+              #{creater}
+        )
+    </insert>
+</mapper>

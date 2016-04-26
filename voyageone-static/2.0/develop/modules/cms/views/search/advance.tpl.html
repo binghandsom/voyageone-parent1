@@ -365,7 +365,7 @@
 									<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
 								</td>
 							</tr>
-							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.publishTime}" style="">
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.publishTime}">
 								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;">
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 									<div class="table_main pull-left" style="width:60%">
@@ -391,8 +391,8 @@
 								</td>
 								<td class="text-left" style="display:inline-block;width:150px;">{{groupInfo.fields.brand}}</td>
 								<td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">
-									<span ng-if="prop1.value.length > 100"><popover-text content="prop1.value" direct="left"></popover-text></span>
-									<span ng-if="prop1.value.length <= 100">{{prop1.value}}</span>
+									<span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+									<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 								</td>
 								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
 

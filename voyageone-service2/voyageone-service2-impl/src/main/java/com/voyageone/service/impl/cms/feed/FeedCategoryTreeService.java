@@ -77,8 +77,14 @@ public class FeedCategoryTreeService extends BaseService {
             categoryTree.setCatName(categorys.get(0));
             categoryTree.setCatId(MD5.getMD5(categorys.get(0)));
             categoryTree.setParentCatId("0");
-            categoryTree.setIsParent(categorys.size() > 0 ? 1 : 0);
+            categoryTree.setIsParent(categorys.size() > 1 ? 1 : 0);
             categoryTree.setChildren(new ArrayList<>());
+            if(categorys.size() == 1){
+                categoryTree.setModified(DateTimeUtil.getNow());
+                categoryTree.setModifier(modifier);
+                cmsMtFeedCategoryTreeDao.update(categoryTree);
+                return;
+            }
         }
 
 //        if (addCategory(categoryTree, category) != null) {
