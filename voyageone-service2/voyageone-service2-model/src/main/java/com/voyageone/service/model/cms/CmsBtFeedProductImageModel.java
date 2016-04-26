@@ -1,81 +1,131 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.common.Constants;
 
-import java.util.regex.Pattern;
-
-/**
- * Created by james.li on 2015/11/30.
- */
 public class CmsBtFeedProductImageModel extends BaseModel {
+
+    /**
+
+     */
     private String channelId;
+    /**
+
+     */
     private String code;
+    /**
+
+     */
+    private int imageTypeId;
+    /**
+
+     */
     private String imageUrl;
+    /**
+
+     */
     private String imageName;
-    private int imageTypeId = 1;
-    private Integer sentFlag = 0;
-    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
-    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
+    /**
 
-    public CmsBtFeedProductImageModel(String channelId,String code, String imageUrl,int index, String modifier){
-        this.channelId = channelId;
-        this.imageUrl = imageUrl;
-        if("010".equalsIgnoreCase(channelId)||"012".equalsIgnoreCase(channelId)) {
-            this.imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        }else{
-            if("015".equalsIgnoreCase(channelId)){
-                this.imageName = special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index;
-            }else{
-                this.imageName = channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index;
-            }
-//            this.imageName = channelId + "-" + code + "-" + imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+     */
+    private int sentFlag;
+
+
+    /**
+
+     */
+    public String getChannelId() {
+
+        return this.channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
         }
-        this.code = code;
-        this.setModifier(modifier);
-        this.setCreater(modifier);
+
     }
 
-    public CmsBtFeedProductImageModel(){
-        super();
-    }
-    public String getImageUrl() {
-        return imageUrl;
+
+    /**
+
+     */
+    public String getCode() {
+
+        return this.code;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setCode(String code) {
+        if (code != null) {
+            this.code = code;
+        } else {
+            this.code = "";
+        }
+
     }
 
-    public String getImageName() {
-        return imageName;
-    }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
+    /**
 
+     */
     public int getImageTypeId() {
-        return imageTypeId;
+
+        return this.imageTypeId;
     }
 
     public void setImageTypeId(int imageTypeId) {
         this.imageTypeId = imageTypeId;
     }
 
-    public Integer getSentFlag() {
-        return sentFlag;
+
+    /**
+
+     */
+    public String getImageUrl() {
+
+        return this.imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        } else {
+            this.imageUrl = "";
+        }
+
+    }
+
+
+    /**
+
+     */
+    public String getImageName() {
+
+        return this.imageName;
+    }
+
+    public void setImageName(String imageName) {
+        if (imageName != null) {
+            this.imageName = imageName;
+        } else {
+            this.imageName = "";
+        }
+
+    }
+
+
+    /**
+
+     */
+    public int getSentFlag() {
+
+        return this.sentFlag;
     }
 
     public void setSentFlag(int sentFlag) {
         this.sentFlag = sentFlag;
     }
 
-    public String getChannelId() {
-        return channelId;
-    }
 
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 }

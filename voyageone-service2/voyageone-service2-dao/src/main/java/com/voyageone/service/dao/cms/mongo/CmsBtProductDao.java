@@ -44,6 +44,24 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{prodId:{$in:[" + idsStr + "]}}";
         return select(query, channelId);
     }
+
+
+    /**
+     * 根据codes返回多条产品数据
+     * @param codes
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtProductModel> selectProductByCodes( List<String> codes,String channelId) {
+        if (codes == null || codes.size() == 0) {  // 对于list千万不要返回null
+            return Collections.emptyList();
+        }
+        String idsStr = Joiner.on(",").join(codes);
+
+        String query = "{prodId:{$in:[" + idsStr + "]}}";
+        return select(query, channelId);
+    }
+
     /**
      * 批量更新记录
      * @param channelId 渠道ID

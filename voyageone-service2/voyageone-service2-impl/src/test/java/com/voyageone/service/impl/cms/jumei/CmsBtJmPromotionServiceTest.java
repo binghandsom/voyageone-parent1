@@ -13,6 +13,10 @@ import com.voyageone.service.model.jumei.businessmodel.CmsBtJmProductImportSaveI
 import com.voyageone.service.model.jumei.businessmodel.JmProductImportAllInfo;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -36,6 +40,7 @@ import static org.junit.Assume.*;
  * @date: 2016/4/25 10:36
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
+
 public class CmsBtJmPromotionServiceTest extends BaseTest {
 
     @Resource
@@ -48,23 +53,45 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
             "\"activityStart\":\"2016-04-12 00:00:00\",\"modifier\":\"will\",\"shippingSystemId\":0," +
             "\"activityPcId\":\"5454\",\"cmsBtJmMasterBrandName\":\"\",\"prePeriodEnd\":\"2016-04-21 00:00:00\"," +
             "\"name\":\"ttrtrtr\",\"activityAppId\":\"5454\",\"creater\":\"will\",\"modified\":\"2016-04-20 19:25:08\"," +
-            "\"id\":1017,\"cmsBtJmMasterBrandId\":0,\"category\":\"\",\"brand\":\"54545\",\"channelId\":\"997\"," +
+            "\"id\":1017,\"cmsBtJmMasterBrandId\":0,\"category\":\"\",\"brand\":\"54545\",\"channelId\":\"010\"," +
             "\"activityEnd\":\"2016-04-28 00:00:00\",\"$$hashKey\":\"object:4483\"}";
 
 
+
+//    @Resource
+//    CmsBtTagDao dao;
+//
+//    @Test
+//    public void testInsert() throws Exception {
+//        CmsBtTagModel tag = new CmsBtTagModel();
+//        tag.setChannelId("010");
+//        tag.setParentTagId(0);
+//        tag.setTagName("zhaotianwu");
+//        tag.setTagPath("xxx/xxx");
+//        tag.setTagPathName("xxx/xxx");
+//        tag.setTagType(1);
+//        tag.setModifier("zhao");
+//        tag.setCreater("zhao");
+//        dao.insertCmsBtTag(tag);
+//
+//    }
+
+    /**
+     * 测试待生成的导入数据是否正确
+     * @throws Exception
+     */
     @Test
-    public void testAddProductionToPromotion() throws Exception {
+    public void testGenImportData() throws Exception {
 
-        List<Long> productIds = ImmutableList.of(5924L, 5925L, 5926L);
-        CmsBtJmPromotionModel promotion = new Gson().fromJson(promotionStr, CmsBtJmPromotionModel.class);
+        JmProductImportAllInfo importInfos = prepareData();
 
+        //1.image 空  模板未配置
+        //2.sku不对   没导完
 
-        String channelId = "010";
-        double discount = 1.0;
-        int priceType = 1;
-        JmProductImportAllInfo importInfos = jmPromotionService.buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
+        assertTrue("导入数据为空",importInfos.getListProductModel().size()>0);
 
         CmsBtJmImportSaveInfo realSaveInfos = jmPromotionImportTaskService.loadListSaveInfo(importInfos, "will");
+        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfos,"will");
         assertTrue(realSaveInfos != null);
         List<CmsBtJmProductImportSaveInfo> saveInfos = realSaveInfos.getListProductSaveInfo();
         assertTrue(saveInfos != null && saveInfos.size() > 0);
@@ -78,7 +105,6 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
             assertTrue(images.size() > 0); //error
         });
 
-
         //数据case
         Set<String> originProductCodes = importInfos.getListProductModel().stream().map(bean -> bean.getProductCode()).collect(toSet());
         Set<String> newProductCodes = saveInfos.stream().map(bean -> bean.getProductModel().getProductCode()).collect(toSet());
@@ -87,13 +113,34 @@ public class CmsBtJmPromotionServiceTest extends BaseTest {
         Set<String> skuProductCodes = saveInfos.stream().map(bean -> {
             return bean.getListSkuModel().stream().map(sku -> sku.getProductCode()).collect(toList());
         }).flatMap(l->l.stream()).collect(Collectors.toSet());
-
         assertEquals(originProductCodes,skuProductCodes); //所有的sku中的productCode 必须和原先选定的productCode相等
+    }
 
-        //images
-
+    @Test
+    @Transactional(readOnly = false)
+    public void testSaveImportInfos() throws Exception {
+        JmProductImportAllInfo importInfos = prepareData();
+        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfos,"will");
 
 
 
     }
+
+    /**
+     * 准备数据
+     * @return
+     */
+    private JmProductImportAllInfo prepareData() {
+        List<Long> productIds = ImmutableList.of(5924L, 5925L, 5926L);
+        CmsBtJmPromotionModel promotion = new Gson().fromJson(promotionStr, CmsBtJmPromotionModel.class);
+
+
+        String channelId = "010";
+        double discount = 1.0;
+        int priceType = 1;
+        return jmPromotionService.buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
+    }
+
+
+
 }

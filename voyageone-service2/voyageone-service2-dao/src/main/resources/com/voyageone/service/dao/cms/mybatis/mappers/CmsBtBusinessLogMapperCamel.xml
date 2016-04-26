@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtBusinessLogDao">
+    <resultMap id="ResultMap" type="CmsBtBusinessLogModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`cat_id`,`cart_id`,`group_id`,`group_name`,`product_id`,`product_name`,`promotion_id`,`promotion_name`,`model`,`code`,`sku`,`error_type_id`,`error_code`,`error_msg`,`status`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_business_log
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="catId != null">
+                AND `cat_id` = #{catId}
+            </if>
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+            <if test="groupId != null">
+                AND `group_id` = #{groupId}
+            </if>
+            <if test="groupName != null">
+                AND `group_name` = #{groupName}
+            </if>
+            <if test="productId != null">
+                AND `product_id` = #{productId}
+            </if>
+            <if test="productName != null">
+                AND `product_name` = #{productName}
+            </if>
+            <if test="promotionId != null">
+                AND `promotion_id` = #{promotionId}
+            </if>
+            <if test="promotionName != null">
+                AND `promotion_name` = #{promotionName}
+            </if>
+            <if test="model != null">
+                AND `model` = #{model}
+            </if>
+            <if test="code != null">
+                AND `code` = #{code}
+            </if>
+            <if test="sku != null">
+                AND `sku` = #{sku}
+            </if>
+            <if test="errorTypeId != null">
+                AND `error_type_id` = #{errorTypeId}
+            </if>
+            <if test="errorCode != null">
+                AND `error_code` = #{errorCode}
+            </if>
+            <if test="errorMsg != null">
+                AND `error_msg` = #{errorMsg}
+            </if>
+            <if test="status != null">
+                AND `status` = #{status}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`cat_id`,`cart_id`,`group_id`,`group_name`,`product_id`,`product_name`,`promotion_id`,`promotion_name`,`model`,`code`,`sku`,`error_type_id`,`error_code`,`error_msg`,`status`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_business_log
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="catId != null">
+                AND `cat_id` = #{catId}
+            </if>
+
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+
+            <if test="groupId != null">
+                AND `group_id` = #{groupId}
+            </if>
+
+            <if test="groupName != null">
+                AND `group_name` = #{groupName}
+            </if>
+
+            <if test="productId != null">
+                AND `product_id` = #{productId}
+            </if>
+
+            <if test="productName != null">
+                AND `product_name` = #{productName}
+            </if>
+
+            <if test="promotionId != null">
+                AND `promotion_id` = #{promotionId}
+            </if>
+
+            <if test="promotionName != null">
+                AND `promotion_name` = #{promotionName}
+            </if>
+
+            <if test="model != null">
+                AND `model` = #{model}
+            </if>
+
+            <if test="code != null">
+                AND `code` = #{code}
+            </if>
+
+            <if test="sku != null">
+                AND `sku` = #{sku}
+            </if>
+
+            <if test="errorTypeId != null">
+                AND `error_type_id` = #{errorTypeId}
+            </if>
+
+            <if test="errorCode != null">
+                AND `error_code` = #{errorCode}
+            </if>
+
+            <if test="errorMsg != null">
+                AND `error_msg` = #{errorMsg}
+            </if>
+
+            <if test="status != null">
+                AND `status` = #{status}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`cat_id`,`cart_id`,`group_id`,`group_name`,`product_id`,`product_name`,`promotion_id`,`promotion_name`,`model`,`code`,`sku`,`error_type_id`,`error_code`,`error_msg`,`status`,`created`,`creater`,`modified`,`modifier` from cms_bt_business_log where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_business_log
+        set
+
+            `channel_id`=#{channelId}
+            ,`cat_id`=#{catId}
+            ,`cart_id`=#{cartId}
+            ,`group_id`=#{groupId}
+            ,`group_name`=#{groupName}
+            ,`product_id`=#{productId}
+            ,`product_name`=#{productName}
+            ,`promotion_id`=#{promotionId}
+            ,`promotion_name`=#{promotionName}
+            ,`model`=#{model}
+            ,`code`=#{code}
+            ,`sku`=#{sku}
+            ,`error_type_id`=#{errorTypeId}
+            ,`error_code`=#{errorCode}
+            ,`error_msg`=#{errorMsg}
+            ,`status`=#{status}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_business_log
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_business_log
+        (
+              `channel_id`,
+              `cat_id`,
+              `cart_id`,
+              `group_id`,
+              `group_name`,
+              `product_id`,
+              `product_name`,
+              `promotion_id`,
+              `promotion_name`,
+              `model`,
+              `code`,
+              `sku`,
+              `error_type_id`,
+              `error_code`,
+              `error_msg`,
+              `status`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{catId},
+              #{cartId},
+              #{groupId},
+              #{groupName},
+              #{productId},
+              #{productName},
+              #{promotionId},
+              #{promotionName},
+              #{model},
+              #{code},
+              #{sku},
+              #{errorTypeId},
+              #{errorCode},
+              #{errorMsg},
+              #{status},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

@@ -227,6 +227,7 @@
             ,`activity_end`=#{activityEnd}
             ,`deal_end_time_state`=#{dealEndTimeState}
             ,`deal_end_time`=#{dealEndTime}
+            ,`modified`=now()
             ,`update_state`=#{updateState}
          where id=#{id}
    </update>

@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;

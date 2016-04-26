@@ -294,12 +294,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 查看属性是否匹配完成
                 if (mapping.getMatchOver() == 0) {
                     // 如果没有匹配完成的话, 那就看看是否有共通
-                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getScope().getMainCategoryPath());
+                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
                     if (mapping == null || mapping.getMatchOver() == 0) {
                         // 没有共通mapping, 或者没有匹配完成
                         // 记下log, 跳过当前记录
 //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getMainCategoryPath()));
 
                         return;
                     }
@@ -611,7 +611,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.setChannelId(feed.getChannelId());
 
             if (!skip_mapping_check) {
-                String catPath = mapping.getScope().getMainCategoryPath();
+                String catPath = mapping.getMainCategoryPath();
                 product.setCatId(MD5.getMD5(catPath)); // 主类目id
                 product.setCatPath(catPath); // 主类目path
             }
@@ -901,8 +901,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
             }
             // jeff 2016/04 add end
-            // ProductCarts
-            product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // SKU级属性列表
@@ -985,13 +983,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 根据code, 到group表中去查找所有的group信息
-            List<CmsBtProductGroupModel> groups = getGroupsByCode(feed.getChannelId(), feed.getCode());
+            List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
+
+            // 新追加的Group
+            List<CmsBtProductGroupModel> newGroups = new ArrayList<>();
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
                 // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
                 boolean blnFound = false;
-                for (CmsBtProductGroupModel group : groups) {
+                for (CmsBtProductGroupModel group : existGroups) {
                     if (group.getCartId() == Integer.parseInt(shop.getValue())) {
                         blnFound = true;
                     }
@@ -1060,9 +1061,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 group.setCreater(getTaskName());
                 group.setModifier(getTaskName());
-                groups.add(group);
+                newGroups.add(group);
             }
-            cmsBtProductGroupDao.insertWithList(groups);
+            if (newGroups.size() > 0) {
+                cmsBtProductGroupDao.insertWithList(newGroups);
+            }
         }
 
         /**
@@ -1143,17 +1146,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return  0.0;
             }
             // 根据公式计算价格
-            ExpressionParser parser = new SpelExpressionParser();
-            formula = formula.replaceAll("\\[price_client_msrp\\]", String.valueOf(priceClientMsrp))
-                    .replaceAll("\\[price_client_retail\\]", String.valueOf(priceClientRetail))
-                    .replaceAll("\\[price_net\\]", String.valueOf(priceNet))
-                    .replaceAll("\\[price_msrp\\]", String.valueOf(priceMsrp))
-                    .replaceAll("\\[price_current\\]", String.valueOf(priceCurrent))
-                    .replaceAll("\\[tax_rate\\]", String.valueOf(taxRate));
-            double valueDouble = parser.parseExpression(formula).getValue(Double.class);
-            // 四舍五入取整
-            BigDecimal valueBigDecimal =  new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
-            return valueBigDecimal.doubleValue();
+            try {
+                ExpressionParser parser = new SpelExpressionParser();
+                formula = formula.replaceAll("\\[price_client_msrp\\]", String.valueOf(priceClientMsrp))
+                        .replaceAll("\\[price_client_retail\\]", String.valueOf(priceClientRetail))
+                        .replaceAll("\\[price_net\\]", String.valueOf(priceNet))
+                        .replaceAll("\\[price_msrp\\]", String.valueOf(priceMsrp))
+                        .replaceAll("\\[price_current\\]", String.valueOf(priceCurrent))
+                        .replaceAll("\\[tax_rate\\]", String.valueOf(taxRate));
+                double valueDouble = parser.parseExpression(formula).getValue(Double.class);
+                // 四舍五入取整
+                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
+                return valueBigDecimal.doubleValue();
+
+            } catch (Exception ex) {
+                $error(ex);
+                throw new RuntimeException("Formula Calculate Fail!", ex);
+            }
         }
 
         /**

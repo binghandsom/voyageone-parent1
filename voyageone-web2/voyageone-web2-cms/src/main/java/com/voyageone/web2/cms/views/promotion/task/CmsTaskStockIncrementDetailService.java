@@ -1,20 +1,15 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.transaction.SimpleTransaction;
-import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -37,33 +32,28 @@ import java.util.*;
  */
 @Service
 public class CmsTaskStockIncrementDetailService extends BaseAppService {
-
     @Autowired
-    private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
-
-    @Autowired
-    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
-
-    @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+    private StockSeparateService stockSeparateService;
 
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
 
-    @Autowired
-    private SimpleTransaction simpleTransaction;
-
-    @Autowired
-    private TransactionRunner transactionRunner;
-
-    /** Excel重置方式导入 */
+    /**
+     * Excel重置方式导入
+     */
     private static final String EXCEL_IMPORT_DELETE_UPDATE = "3";
-    /** Excel变更方式导入 */
+    /**
+     * Excel变更方式导入
+     */
     private static final String EXCEL_IMPORT_UPDATE = "2";
 
-    /** 0：按动态值进行增量隔离 */
+    /**
+     * 0：按动态值进行增量隔离
+     */
     private static final String TYPE_DYNAMIC = "0";
-    /** 1：按固定值进行增量隔离 */
+    /**
+     * 1：按固定值进行增量隔离
+     */
     private static final String TYPE_FIX_VALUE = "1";
 
     /**
@@ -91,7 +81,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @return 增量库存隔离数据是否移到history表
      */
     public boolean isHistoryExist(String subTaskId) {
-        return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{
+        return (stockSeparateService.getStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{
             this.put("subTaskId", subTaskId);
         }}) != 0);
     }
@@ -101,16 +91,15 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      *
      * @param subTaskId 子任务id
      * @param channelId 渠道id
-     * @param lang 语言
-     *
+     * @param lang      语言
      * @return 任务信息
      */
-    public Map<String, Object> getTaskInfo(String subTaskId, String channelId, String lang){
-        Map<String,Object> sqlParam = new HashMap<>();
+    public Map<String, Object> getTaskInfo(String subTaskId, String channelId, String lang) {
+        Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("subTaskId", subTaskId);
         sqlParam.put("channelId", channelId);
         sqlParam.put("lang", lang);
-        List<Map<String, Object>> stockSeparateIncrementTask = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> stockSeparateIncrementTask = stockSeparateService.getStockSeparateIncrementTask(sqlParam);
         if (stockSeparateIncrementTask == null || stockSeparateIncrementTask.size() == 0) {
             return null;
         } else {
@@ -135,7 +124,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 //        sqlParam.put("cartId", cartId);
 //        sqlParam.put("channelId", channelId);
 //        sqlParam.put("lang", lang);
-//        List<Map<String, Object>> stockSeparatePlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+//        List<Map<String, Object>> stockSeparatePlatform = stockSeparateService.getPlatformStockSeparateList(sqlParam);
 //        // 没有渠道数据的情况下，一般情况下不可能
 //        if (stockSeparatePlatform == null || stockSeparatePlatform.size() == 0) {
 //            return false;
@@ -155,36 +144,35 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param param 客户端参数
      * @return 某种状态的数量
      */
-    public List<Map<String,Object>>  getStockStatusCount(Map<String, Object> param){
-        Map<String,Object> sqlParam = new HashMap<>();
+    public List<Map<String, Object>> getStockStatusCount(Map<String, Object> param) {
+        Map<String, Object> sqlParam = new HashMap<>();
         // 各种状态统计数量的Sql
         sqlParam.put("sql", getStockStatusCountSql(param));
-        return cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemBySql(sqlParam);
+        return stockSeparateService.getStockSeparateIncrementItemBySql(sqlParam);
     }
 
     /**
      * 取得增量库存隔离明细列表
      * 例：
-     *          {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false},
-     *          {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80", "incrementQty":"80", "status":"未进行", "fixFlg":false},
-     *          {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"20", "incrementQty":"20", "status":"增量成功", "fixFlg":false},
-     *                    ...
-     *
+     * {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false},
+     * {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80", "incrementQty":"80", "status":"未进行", "fixFlg":false},
+     * {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"20", "incrementQty":"20", "status":"增量成功", "fixFlg":false},
+     * ...
      *
      * @param param 客户端参数
      * @return 增量库存隔离明细列表
      */
-    public List<Map<String,Object>> getStockList(Map<String, Object> param){
+    public List<Map<String, Object>> getStockList(Map<String, Object> param) {
         // 增量库存隔离明细列表
-        List<Map<String,Object>> stockList = new ArrayList<>();
+        List<Map<String, Object>> stockList = new ArrayList<>();
 
         // 获取当页表示的库存隔离数据
-        Map<String,Object> sqlParam = new HashMap<>();
+        Map<String, Object> sqlParam = new HashMap<>();
         // 库存隔离明细一页表示的Sku的Sql
         sqlParam.put("sql", getStockPageSkuSql(param));
-        List<Map<String,Object>> stockAllList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemBySql(sqlParam);
+        List<Map<String, Object>> stockAllList = stockSeparateService.getStockSeparateIncrementItemBySql(sqlParam);
 
-        for (Map<String,Object> stockInfo : stockAllList) {
+        for (Map<String, Object> stockInfo : stockAllList) {
             String model = (String) stockInfo.get("product_model");
             String code = (String) stockInfo.get("product_code");
             String sku = (String) stockInfo.get("sku");
@@ -223,7 +211,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      *
      * @param param 客户端参数
      */
-    public void saveItem(Map<String, Object> param){
+    public void saveItem(Map<String, Object> param) {
         // 增量库存隔离明细
         Map<String, Object> stockInfo = (Map<String, Object>) param.get("stockInfo");
         // sku
@@ -245,7 +233,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         sqlParam.put("subTaskId", param.get("subTaskId"));
         sqlParam.put("sku", sku);
         sqlParam.put("tableNameSuffix", "");
-        List<Map<String, Object>> stockSeparateIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+        List<Map<String, Object>> stockSeparateIncrementList = stockSeparateService.getStockSeparateIncrement(sqlParam);
         // 数据不存在的情况
         if (stockSeparateIncrementList == null || stockSeparateIncrementList.size() == 0) {
             // 明细对象不存在
@@ -262,83 +250,71 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         // 增量库存隔离数据输入Check
         checksSparationIncrementInfo(stockInfo);
 
-        simpleTransaction.openTransaction();
-        try {
-            // 画面的增量库存值 != DB的增量库存值 或者 画面的固定值隔离标志位！=  DB的固定值隔离标志位进行更新
-            if (!incrementQty.equals(incrementQtyDB) || !(fixFlg ? TYPE_FIX_VALUE:TYPE_DYNAMIC).equals(fixFlgDB)) {
-                // 状态为"0:未进行"以外的数据不能进行编辑
-                if(!CmsTaskStockService.STATUS_READY.equals(statusDB)) {
-                    // 只有状态为未进行的明细才能进行编辑
-                    throw new BusinessException("7000059");
-                }
-                Map<String, Object> sqlParam1 = new HashMap<>();
-                sqlParam1.put("subTaskId", param.get("subTaskId"));
-                sqlParam1.put("sku", sku);
-                sqlParam1.put("incrementQty", incrementQty);
-                sqlParam1.put("fixFlg", fixFlg ? TYPE_FIX_VALUE:TYPE_DYNAMIC);
-                int updateCnt = cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
-                if (updateCnt != 1) {
-                    // 明细对象不存在
-                    throw new BusinessException("7000023");
-                }
+
+        // 画面的增量库存值 != DB的增量库存值 或者 画面的固定值隔离标志位！=  DB的固定值隔离标志位进行更新
+        if (!incrementQty.equals(incrementQtyDB) || !(fixFlg ? TYPE_FIX_VALUE : TYPE_DYNAMIC).equals(fixFlgDB)) {
+            // 状态为"0:未进行"以外的数据不能进行编辑
+            if (!CmsTaskStockService.STATUS_READY.equals(statusDB)) {
+                // 只有状态为未进行的明细才能进行编辑
+                throw new BusinessException("7000059");
             }
-        } catch (Exception e) {
-            simpleTransaction.rollback();
-            throw e;
+            Map<String, Object> sqlParam1 = new HashMap<>();
+            sqlParam1.put("subTaskId", param.get("subTaskId"));
+            sqlParam1.put("sku", sku);
+            sqlParam1.put("incrementQty", incrementQty);
+            sqlParam1.put("fixFlg", fixFlg ? TYPE_FIX_VALUE : TYPE_DYNAMIC);
+            int updateCnt = stockSeparateService.saveStockSeparateIncrementItem(sqlParam1);
+            if (updateCnt != 1) {
+                // 明细对象不存在
+                throw new BusinessException("7000023");
+            }
         }
-        simpleTransaction.commit();
     }
 
     /**
      * 删除增量隔离库存明细
      *
-     * @param taskId 任务id
+     * @param taskId    任务id
      * @param subTaskId 子任务id
-     * @param cartId 平台id
-     * @param sku Sku
+     * @param cartId    平台id
+     * @param sku       Sku
      */
-    public void delItem(String taskId, String subTaskId, String cartId, String sku){
+    public void delItem(String taskId, String subTaskId, String cartId, String sku) {
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring(taskId, cartId);
         if (!promotionDuringFlg) {
             // 活动未开始或者已经结束，不能删除数据
             throw new BusinessException("7000060");
         }
-        simpleTransaction.openTransaction();
-        try {
-            // 取得这条sku明细对应的库存隔离信息
-            Map<String, Object> sqlParam = new HashMap<>();
-            sqlParam.put("subTaskId", subTaskId);
-            sqlParam.put("sku", sku);
-            sqlParam.put("tableNameSuffix", "");
-            List<Map<String, Object>> stockSeparateIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
-            // 数据不存在的情况
-            if (stockSeparateIncrementList == null || stockSeparateIncrementList.size() == 0) {
-                // 明细对象不存在
-                throw new BusinessException("7000023");
-            }
 
-            // 状态（DB）
-            String statusDB = (String) stockSeparateIncrementList.get(0).get("status");
-            // 只有状态为 0：未进行的数据可以删除
-            if(!CmsTaskStockService.STATUS_READY.equals(statusDB)) {
-                // 只有状态为未进行的明细才能进行删除
-                throw new BusinessException("7000061");
-            }
-
-            //Map<String, Object> sqlParam1 = new HashMap<>();
-            sqlParam.put("subTaskId", subTaskId);
-            sqlParam.put("sku", sku);
-            int delCount = cmsBtStockSeparateIncrementItemDao.deleteStockSeparateIncrementItem(sqlParam);
-            if (delCount == 0) {
-                // 明细对象不存在
-                throw new BusinessException("7000023");
-            }
-        } catch (Exception e) {
-            simpleTransaction.rollback();
-            throw e;
+        // 取得这条sku明细对应的库存隔离信息
+        Map<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("subTaskId", subTaskId);
+        sqlParam.put("sku", sku);
+        sqlParam.put("tableNameSuffix", "");
+        List<Map<String, Object>> stockSeparateIncrementList = stockSeparateService.getStockSeparateIncrement(sqlParam);
+        // 数据不存在的情况
+        if (stockSeparateIncrementList == null || stockSeparateIncrementList.size() == 0) {
+            // 明细对象不存在
+            throw new BusinessException("7000023");
         }
-        simpleTransaction.commit();
+
+        // 状态（DB）
+        String statusDB = (String) stockSeparateIncrementList.get(0).get("status");
+        // 只有状态为 0：未进行的数据可以删除
+        if (!CmsTaskStockService.STATUS_READY.equals(statusDB)) {
+            // 只有状态为未进行的明细才能进行删除
+            throw new BusinessException("7000061");
+        }
+
+        //Map<String, Object> sqlParam1 = new HashMap<>();
+        sqlParam.put("subTaskId", subTaskId);
+        sqlParam.put("sku", sku);
+        int delCount = stockSeparateService.removeStockSeparateIncrementItem(sqlParam);
+        if (delCount == 0) {
+            // 明细对象不存在
+            throw new BusinessException("7000023");
+        }
     }
 
     /**
@@ -346,45 +322,39 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      *
      * @param param 客户端参数
      */
-    public void executeStockIncrementSeparation(Map<String, Object> param){
+    public void executeStockIncrementSeparation(Map<String, Object> param) {
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring((String) param.get("taskId"), (String) param.get("cartId"));
         if (!promotionDuringFlg) {
             // 活动未开始或者已经结束，不能进行库存增量操作
             throw new BusinessException("7000062");
         }
-        simpleTransaction.openTransaction();
-        try {
-            Map<String, Object> sqlParam = new HashMap<>();
-            // 更新状态为"1:等待增量"
-            sqlParam.put("status", CmsTaskStockService.STATUS_WAITING_INCREMENT);
-            sqlParam.put("modifier", param.get("userName"));
-            // 更新条件
-            sqlParam.put("subTaskId", param.get("subTaskId"));
-            // 只有状态为"0:未进行"，"4:增量失败"的数据可以进行库存增量操作
-            sqlParam.put("statusList", Arrays.asList(CmsTaskStockService.STATUS_READY, CmsTaskStockService.STATUS_INCREMENT_FAIL));
-            int updateCnt = cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam);
-            if (updateCnt == 0) {
-                // 没有可以进行库存增量的数据
-                throw new BusinessException("7000063");
-            }
-        } catch (Exception e) {
-            simpleTransaction.rollback();
-            throw e;
+
+        Map<String, Object> sqlParam = new HashMap<>();
+        // 更新状态为"1:等待增量"
+        sqlParam.put("status", CmsTaskStockService.STATUS_WAITING_INCREMENT);
+        sqlParam.put("modifier", param.get("userName"));
+        // 更新条件
+        sqlParam.put("subTaskId", param.get("subTaskId"));
+        // 只有状态为"0:未进行"，"4:增量失败"的数据可以进行库存增量操作
+        sqlParam.put("statusList", Arrays.asList(CmsTaskStockService.STATUS_READY, CmsTaskStockService.STATUS_INCREMENT_FAIL));
+        int updateCnt = stockSeparateService.updateStockSeparateIncrementItem(sqlParam);
+        if (updateCnt == 0) {
+            // 没有可以进行库存增量的数据
+            throw new BusinessException("7000063");
         }
-        simpleTransaction.commit();
     }
 
 
     /**
-     *  增量库存隔离数据输入Check
+     * 增量库存隔离数据输入Check
      *
      * @param stockInfo 增量库存隔离数据
      */
-    private void checksSparationIncrementInfo(Map<String,Object> stockInfo) throws BusinessException{
+    private void checksSparationIncrementInfo(Map<String, Object> stockInfo) throws BusinessException {
         // 增量库存值
         String incrementQty = (String) stockInfo.get("incrementQty");
-        if (StringUtils.isEmpty(incrementQty) || !StringUtils.isDigit(incrementQty) || incrementQty.getBytes().length > 9 ) {
+        if (StringUtils.isEmpty(incrementQty) || !StringUtils.isDigit(incrementQty) || incrementQty.getBytes().length > 9) {
             // 增量隔离库存必须输入小于10位的整数
             throw new BusinessException("7000064");
         }
@@ -397,7 +367,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param param 客户端参数
      * @return 各种状态统计数量的Sql
      */
-    private String getStockStatusCountSql(Map<String, Object> param){
+    private String getStockStatusCountSql(Map<String, Object> param) {
         String sql = "select status,count(*) as count from voyageone_cms2.cms_bt_stock_separate_increment_item" + param.get("tableNameSuffix");
         sql += cmsTaskStockService.getWhereSql(param, false);
         sql += " group by status";
@@ -410,17 +380,17 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param param 客户端参数
      * @return 库存增量隔离明细一页表示的Sku的Sql
      */
-    private String getStockPageSkuSql(Map<String, Object> param){
+    private String getStockPageSkuSql(Map<String, Object> param) {
         //List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
         String sql = "select t1.product_model, t1.product_code, t1.sku, t1.property1, t1.property2, t1.property3, t1.property4, ";
         sql += " t1.qty, t1.increment_qty, t1.fix_flg, t2.name as status_name from";
-        sql += " (select * from voyageone_cms2.cms_bt_stock_separate_increment_item" + param.get("tableNameSuffix") ;
+        sql += " (select * from voyageone_cms2.cms_bt_stock_separate_increment_item" + param.get("tableNameSuffix");
         sql += cmsTaskStockService.getWhereSql(param, true);
         sql += " order by sku";
         String start = String.valueOf(param.get("start"));
         String length = String.valueOf(param.get("length"));
         sql += " limit " + start + "," + length + ") t1 ";
-        sql +=" left join (select value,name from com_mt_value where type_id= '64' and lang_id = '" + param.get("lang") + "') t2 on t1.status = t2.value";
+        sql += " left join (select value,name from com_mt_value where type_id= '64' and lang_id = '" + param.get("lang") + "') t2 on t1.status = t2.value";
         return sql;
     }
 
@@ -431,14 +401,14 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param cartId 平台id
      * @return 是否在进行中
      */
-    public boolean isPromotionDuring(String taskId, String cartId){
+    public boolean isPromotionDuring(String taskId, String cartId) {
 
         // 取得任务下的平台平台信息
         Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
-        Map<String,Object> sqlParam = new HashMap<>();
+        Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("taskId", taskId);
         sqlParam.put("cartId", cartId);
-        List<Map<String, Object>> platformInfoList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> platformInfoList = stockSeparateService.getPlatformStockSeparateList(sqlParam);
         if (platformInfoList != null && platformInfoList.size() > 0) {
             Map<String, Object> platformInfo = platformInfoList.get(0);
             // Promotion开始时间
@@ -475,7 +445,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
 
         param.put("whereSql", cmsTaskStockService.getWhereSql(param, true));
-        List<StockIncrementExcelBean> resultData = cmsBtStockSeparateIncrementItemDao.selectExcelStockIncrementInfo(param);
+        List<StockIncrementExcelBean> resultData = stockSeparateService.getExcelStockIncrementInfo(param);
 
         $info("准备打开文档 [ %s ]", templatePath);
 
@@ -641,12 +611,12 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("subTaskId", subTaskId);
         // 状态为"0:未进行"以外
-        sqlParam.put("statusList", Arrays.asList( CmsTaskStockService.STATUS_WAITING_INCREMENT,
+        sqlParam.put("statusList", Arrays.asList(CmsTaskStockService.STATUS_WAITING_INCREMENT,
                 CmsTaskStockService.STATUS_INCREASING,
                 CmsTaskStockService.STATUS_INCREMENT_SUCCESS,
                 CmsTaskStockService.STATUS_INCREMENT_FAIL,
-                CmsTaskStockService. STATUS_REVERT));
-        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam) != null ) {
+                CmsTaskStockService.STATUS_REVERT));
+        if (stockSeparateService.getStockSeparateIncrementItemByStatus(sqlParam) != null) {
             // 此增量任务已经进行，不能修改数据
             throw new BusinessException("7000066");
         }
@@ -655,7 +625,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         Map<String, Object> searchParam = new HashMap<>();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
         searchParam.put("whereSql", " where sub_task_id= '" + subTaskId + "'");
-        List<StockIncrementExcelBean> resultData = cmsBtStockSeparateIncrementItemDao.selectExcelStockIncrementInfo(searchParam);
+        List<StockIncrementExcelBean> resultData = stockSeparateService.getExcelStockIncrementInfo(searchParam);
         Map<String, StockIncrementExcelBean> mapSkuInDB = new HashMap<>();
         for (StockIncrementExcelBean rowData : resultData) {
             mapSkuInDB.put(rowData.getSku(), rowData);
@@ -722,7 +692,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * Title行check
      *
-     * @param row 行
+     * @param row               行
      * @param paramPropertyList 属性list
      * @param paramPlatformInfo 平台信息
      * @return 平台对应列号
@@ -984,81 +954,17 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      */
     private void saveImportData(List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, String import_mode, String subTaskId, String creater, String channelId) {
         try {
-            transactionRunner.runWithTran(() -> {
-                if (EXCEL_IMPORT_DELETE_UPDATE.equals(import_mode)) {
-                    // 重置方式
-                    // 此任务所有数据删除
-                    cmsBtStockSeparateIncrementItemDao.deleteStockSeparateIncrementItem(new HashMap<String, Object>(){{this.put("subTaskId",subTaskId);}});
-                    // 插入数据
-                    insertImportData(insertData, subTaskId, creater, channelId);
-                } else {
-                    // 变更方式
-                    // 更新数据
-                    updateImportData(updateData, subTaskId, creater);
-                    // 插入数据
-                    insertImportData(insertData, subTaskId, creater, channelId);
-                }
-            });
+            if (EXCEL_IMPORT_DELETE_UPDATE.equals(import_mode)) {
+                // 重置方式
+                stockSeparateService.saveDeleteImportData(insertData, updateData, subTaskId, creater, channelId);
+            } else {
+                // 变更方式
+                stockSeparateService.saveUpdateImportData(insertData, updateData, subTaskId, creater, channelId);
+            }
         } catch (Exception e) {
             $error(e.getMessage());
             // 更新异常
             throw new BusinessException("7000054");
-        }
-    }
-
-    /**
-     * 导入文件数据插入更新
-     *
-     * @param insertData insert对象
-     * @param subTaskId  任务id
-     * @param creater    创建者/更新者
-     * @param channelId  渠道id
-     */
-    private void insertImportData(List<StockIncrementExcelBean> insertData, String subTaskId, String creater, String channelId) {
-        List<Map<String, Object>> listSaveData = new ArrayList<>();
-        for (StockIncrementExcelBean bean : insertData) {
-            Map<String, Object> mapSaveData;
-            try {
-                mapSaveData = PropertyUtils.describe(bean);
-            } catch (Exception e) {
-                // 导入文件有数据异常
-                throw new BusinessException("7000053");
-            }
-
-            mapSaveData.put("subTaskId", subTaskId);
-            mapSaveData.put("creater", creater);
-            mapSaveData.put("channelId", channelId);
-
-            listSaveData.add(mapSaveData);
-            if (listSaveData.size() == 200) {
-                cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemByList(listSaveData);
-                listSaveData.clear();
-            }
-        }
-
-        if (listSaveData.size() > 0) {
-            cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemByList(listSaveData);
-            listSaveData.clear();
-        }
-    }
-
-    /**
-     * 导入文件数据变更更新
-     *
-     * @param updateData update对象
-     * @param subTaskId  任务id
-     * @param creater    创建者/更新者
-     */
-    private void updateImportData(List<StockIncrementExcelBean> updateData, String subTaskId, String creater) {
-        for (StockIncrementExcelBean bean : updateData) {
-            Map<String, Object> mapSaveData =  new HashMap<String, Object>();
-            mapSaveData.put("subTaskId", subTaskId);
-            mapSaveData.put("sku", bean.getSku());
-            mapSaveData.put("incrementQty", bean.getIncrementQty());
-            mapSaveData.put("fixFlg", bean.getFixFlg());
-            mapSaveData.put("modifier", creater);
-
-            cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(mapSaveData);
         }
     }
 
