@@ -109,9 +109,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private FeedInfoService feedInfoService;
     @Autowired
     private CmsBtDataAmountDao cmsBtDataAmountDao;
-
-    public static final int FEED_UPDFLG_0 = 0;
-    public static final int FEED_UPDFLG_2 = 2;
     // jeff 2016/04 add end
 
     @Override
@@ -1337,22 +1334,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private void insertDataAmount() {
 
             // 新建的件数
-            CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
-            insertModel.setChannelId(channel.getOrder_channel_id());
-            insertModel.setAmountName("FEED_TO_MASTER_INSERT");
-            insertModel.setAmountVal(String.valueOf(insertCnt));
-            insertModel.setComment("Feed导入Master新建");
-            insertModel.setCreater(getTaskName());
-            cmsBtDataAmountDao.insert(insertModel);
+            if (insertCnt > 0) {
+                CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
+                insertModel.setChannelId(channel.getOrder_channel_id());
+                insertModel.setAmountName("FEED_TO_MASTER_INSERT");
+                insertModel.setAmountVal(String.valueOf(insertCnt));
+                insertModel.setComment("Feed导入Master新建");
+                insertModel.setCreater(getTaskName());
+                cmsBtDataAmountDao.insert(insertModel);
+            }
 
             // 新建的件数
-            CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
-            updateModel.setChannelId(channel.getOrder_channel_id());
-            updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
-            updateModel.setAmountVal(String.valueOf(updateCnt));
-            updateModel.setComment("Feed导入Master更新");
-            updateModel.setCreater(getTaskName());
-            cmsBtDataAmountDao.insert(updateModel);
+            if (updateCnt > 0) {
+                CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
+                updateModel.setChannelId(channel.getOrder_channel_id());
+                updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
+                updateModel.setAmountVal(String.valueOf(updateCnt));
+                updateModel.setComment("Feed导入Master更新");
+                updateModel.setCreater(getTaskName());
+                cmsBtDataAmountDao.insert(updateModel);
+            }
         }
         // jeff 2016/04 add end
 
@@ -1712,7 +1713,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                 skuPriceModel.setPriceChgFlg("X" + (newPriceSale - oldPriceSale));
                                 skuPriceModel.setPriceSale(newPriceSale);
                                 breakFlg = true;
+                            } else {
+                                // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
+                                skuPriceModel.setPriceSale(oldSku.getPriceSale());
                             }
+                        } else {
+                            // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
+                            skuPriceModel.setPriceSale(oldSku.getPriceSale());
                         }
                     }
 
