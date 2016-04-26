@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsMtMasterInfoDao">
     <resultMap id="ResultMap" type="CmsMtMasterInfoModel">
-        
+
     </resultMap>
-	
+
     <select id="selectList" resultMap="ResultMap">
 
         select `id`,`platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`,`value1`,`value2`,`syn_flg`,`error_message`,`created`,`creater`,`modified`,`modifier`,`active`        from cms_mt_master_info
@@ -63,76 +63,76 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`,`value1`,`value2`,`syn_flg`,`error_message`,`created`,`creater`,`modified`,`modifier`,`active` from cms_mt_master_info 
+        select `id`,`platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`,`value1`,`value2`,`syn_flg`,`error_message`,`created`,`creater`,`modified`,`modifier`,`active` from cms_mt_master_info
         <where>
-                
+
                     <if test="id != null">
                         AND id = #{id}
-                    </if> 
-                
+                    </if>
+
                     <if test="platformId != null">
                         AND platform_id = #{platformId}
-                    </if> 
-                
+                    </if>
+
                     <if test="channelId != null">
                         AND channel_id = #{channelId}
-                    </if> 
-                
+                    </if>
+
                     <if test="brandName != null">
                         AND brand_name = #{brandName}
-                    </if> 
-                
+                    </if>
+
                     <if test="productType != null">
                         AND product_type = #{productType}
-                    </if> 
-                
+                    </if>
+
                     <if test="sizeType != null">
                         AND size_type = #{sizeType}
-                    </if> 
-                
+                    </if>
+
                     <if test="dataType != null">
                         AND data_type = #{dataType}
-                    </if> 
-                
+                    </if>
+
                     <if test="imageIndex != null">
                         AND image_index = #{imageIndex}
-                    </if> 
-                
+                    </if>
+
                     <if test="value1 != null">
                         AND value1 = #{value1}
-                    </if> 
-                
+                    </if>
+
                     <if test="value2 != null">
                         AND value2 = #{value2}
-                    </if> 
-                
+                    </if>
+
                     <if test="synFlg != null">
                         AND syn_flg = #{synFlg}
-                    </if> 
-                
+                    </if>
+
                     <if test="errorMessage != null">
                         AND error_message = #{errorMessage}
-                    </if> 
-                
+                    </if>
+
                     <if test="created != null">
                         AND created = #{created}
-                    </if> 
-                
+                    </if>
+
                     <if test="creater != null">
                         AND creater = #{creater}
-                    </if> 
-                
+                    </if>
+
                     <if test="modified != null">
                         AND modified = #{modified}
-                    </if> 
-                
+                    </if>
+
                     <if test="modifier != null">
                         AND modifier = #{modifier}
-                    </if> 
-                
+                    </if>
+
                     <if test="active != null">
                         AND active = #{active}
-                    </if> 
+                    </if>
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
@@ -156,7 +156,8 @@
             ,`error_message`=#{errorMessage}
             ,`modifier`=#{modifier}
             ,`active`=#{active}
-         where id=#{id}   
+            ,`modified`=now()
+         where id=#{id}
    </update>
 
     <delete id="delete">

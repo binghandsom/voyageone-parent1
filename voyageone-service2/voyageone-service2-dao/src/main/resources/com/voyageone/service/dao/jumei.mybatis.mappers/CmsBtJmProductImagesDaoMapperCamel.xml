@@ -140,6 +140,7 @@
             ,`modifier`=#{modifier}
             ,`productImageUrlKey`=#{productImageUrlKey}
             ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
+            ,`modified`=now()
          where id=#{id}
    </update>
 
