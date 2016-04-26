@@ -1,13 +1,13 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.common.mq.config.AnnotationProcessorByIP;
+import com.voyageone.common.mq.config.MQConfigUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.mq.config.AnnotationProcessorByIP;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 

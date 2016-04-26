@@ -39,7 +39,7 @@
         <property name="errorHandler" ref="errorHandler" /><!-- error 处理 -->
     </bean>
 
-    <bean id="voRabbitMqLocalConfig" class="com.voyageone.common.mq.config.VoRabbitMqLocalConfig">
+    <bean id="voRabbitMqLocalConfig" class="com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig">
         <!-- 是否本地环境 -->
         <property name="local" value="true" />
     </bean>

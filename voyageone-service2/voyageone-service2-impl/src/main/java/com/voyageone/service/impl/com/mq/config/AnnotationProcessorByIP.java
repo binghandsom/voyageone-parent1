@@ -16,6 +16,7 @@
 
 package com.voyageone.service.impl.com.mq.config;
 
+import com.voyageone.common.mq.config.MQConfigUtils;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Queue;
