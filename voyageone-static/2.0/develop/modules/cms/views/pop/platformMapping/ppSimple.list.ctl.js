@@ -232,7 +232,7 @@ define([
                 var simpleMapping = self.simpleMapping;
 
                 simpleMapping.expression.ruleWordList = self.unWrapRuleList();
-                self.$modal.dismiss('cancel');
+                self.$modal.dismiss();
             }
         };
 

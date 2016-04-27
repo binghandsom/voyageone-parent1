@@ -1,6 +1,6 @@
 <div class="vo_modal" ng-init="initialize()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>
         <span translate="TXT_PROMOTION_DETAIL"></span>
@@ -120,7 +120,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
         <button class="btn btn-vo" ng-click="ok()" ng-disabled="isEdit"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->

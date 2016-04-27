@@ -96,7 +96,7 @@ define(['cms'], function (cms) {
                 this.$uibModalInstance.close(this.context);
             },
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.$uibModalInstance.dismiss();
             }
         };
 

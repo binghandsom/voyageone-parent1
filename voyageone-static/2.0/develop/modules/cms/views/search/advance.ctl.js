@@ -50,6 +50,7 @@ define([
          */
         function initialize () {
             // 如果来至category 或者 header的检索,将初始化检索条件
+
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
             } else if ($routeParams.type == "2") {

@@ -146,7 +146,7 @@ define([
             cancel: function () {
                 this.field.value = null;
                 this.field.values = null;
-                this.$uibModalInstance.dismiss('cancel');
+                this.$uibModalInstance.dismiss();
             }
         };
 

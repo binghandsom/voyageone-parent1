@@ -26,7 +26,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -58,97 +58,69 @@ import java.util.*;
 @Service
 public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
-    @Autowired
-    private PlatformProductUploadJdService jdProductUploadService;
-
-    @Autowired
-    private PlatformCategoryService platformCategoryService;
-
+    // 京东平台的操作类型(在售)
+    private final static String OptioinType_onsale = "onsale";
+    // 京东平台的操作类型(在库)
+    private final static String OptioinType_offsale = "offsale";
+    // 价格类型(市场价格)
+    private final static String PriceType_marketprice = "retail_price";
+    // 价格类型(京东价格)
+    private final static String PriceType_jdprice = "sale_price";
+    // 商品属性列表
+    private final static String Attrivutes = "attributes";
+    // 用户自行输入的类目属性ID串
+    private final static String Input_Pids = "input_pids";
+    // 用户自行输入的属性值串
+    private final static String Input_Strs = "input_strs";
+    // SKU属性类型(颜色)
+    private final static String AttrType_Color = "c";
+    // SKU属性类型(尺寸)
+    private final static String AttrType_Size = "s";
+    // SKU属性Active
+    private final static int AttrType_Active_1 = 1;
+    // 分隔符(tab)
+    private final static String Separtor_Tab = "\t";
+    // 分隔符(|)
+    private final static String Separtor_Vertical = "|";
+    // 分隔符(-)
+    private final static String Separtor_Hyphen = "-";
+    // 分隔符(:)
+    private final static String Separtor_Colon = ":";
+    // 分隔符(;)
+    private final static String Separtor_Semicolon = ";";
+    // 分隔符(,)
+    private final static String Separtor_Coma = ",";
+    // work_load表publish_status会(1:成功)
+    private final static int WorkLoad_status_1 = 1;
+    // work_load表publish_status会(2:失败)
+    private final static int WorkLoad_status_2 = 2;
+    // 商品主图颜色值Id(0000000000)
+    private final static String ColorId_MinPic = "0000000000";
     @Autowired
     PlatformMappingService platformMappingService;
-
     @Autowired
     DictService dictService;
-
+    @Autowired
+    private PlatformProductUploadJdService jdProductUploadService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
-
     @Autowired
     private JdShopService jdShopService;
-
     @Autowired
     private JdWareService jdWareService;
-
     @Autowired
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
-
     @Autowired
     private SxProductService sxProductService;
+    // workload对象列表
+    private Set<WorkLoadBean> workLoadBeans;
 
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
     }
-
-    // workload对象列表
-    private Set<WorkLoadBean> workLoadBeans;
-
-    // 京东平台的操作类型(在售)
-    private final static String OptioinType_onsale = "onsale";
-
-    // 京东平台的操作类型(在库)
-    private final static String OptioinType_offsale = "offsale";
-
-    // 价格类型(市场价格)
-    private final static String PriceType_marketprice = "retail_price";
-
-    // 价格类型(京东价格)
-    private final static String PriceType_jdprice = "sale_price";
-
-    // 商品属性列表
-    private final static String Attrivutes = "attributes";
-
-    // 用户自行输入的类目属性ID串
-    private final static String Input_Pids = "input_pids";
-
-    // 用户自行输入的属性值串
-    private final static String Input_Strs = "input_strs";
-
-    // SKU属性类型(颜色)
-    private final static String AttrType_Color = "c";
-
-    // SKU属性类型(尺寸)
-    private final static String AttrType_Size = "s";
-
-    // SKU属性Active
-    private final static int AttrType_Active_1 = 1;
-
-    // 分隔符(tab)
-    private final static String Separtor_Tab = "\t";
-
-    // 分隔符(|)
-    private final static String Separtor_Vertical = "|";
-
-    // 分隔符(-)
-    private final static String Separtor_Hyphen = "-";
-
-    // 分隔符(:)
-    private final static String Separtor_Colon = ":";
-
-    // 分隔符(;)
-    private final static String Separtor_Semicolon = ";";
-
-    // 分隔符(,)
-    private final static String Separtor_Coma = ",";
-
-    // work_load表publish_status会(1:成功)
-    private final static int WorkLoad_status_1 = 1;
-
-    // work_load表publish_status会(2:失败)
-    private final static int WorkLoad_status_2 = 2;
-
-    // 商品主图颜色值Id(0000000000)
-    private final static String ColorId_MinPic = "0000000000";
 
     @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
     protected void onMessage(Message message){
@@ -277,8 +249,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //                cmsBtSizeMapModelList = sxProductService.getSxProductDataByGroupId();
 
                 // 获取字典表(根据channel_id)上传图片的规格等信息
-                List<CmsMtDictModel> cmsMtDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
-                if (cmsMtDictModelList == null) {
+                List<CmsMtPlatFormDictModel> cmsMtPlatFormDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
+                if (cmsMtPlatFormDictModelList == null) {
                     String errMsg = "获取字典表数据失败！channelId:" + channelId + "cartId:" + cartId;
                     $error(errMsg);
                     throw new BusinessException(errMsg);
