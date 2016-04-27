@@ -39,8 +39,6 @@ public class StoreOperationCtrl extends CmsController {
     @Resource
     StoreOperationService storeOperationService;
 
-    @Resource
-    CmsChannelConfigs config;
 
     public int getConfigHours(String channelId) {
         CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(channelId, "STORE_OPERATION_INTERVAL_TIME", "default");
