@@ -2,12 +2,8 @@ package com.voyageone.service.impl.cms;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.jd.open.api.sdk.domain.trip.JosProductService.ProductPrice;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.components.sears.bean.PriceBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -21,20 +17,19 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import org.apache.avro.generic.GenericData;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 /**
  * 店面操作
+ *
  * @description
  * @author: holysky.zhao
  * @date: 2016/4/26 14:53
@@ -97,7 +92,7 @@ public class StoreOperationService extends BaseService {
             model.setChannelId(channelId);
             model.setCreater(creater);
             model.setCartId(groupModel.getCartId());
-            model.setGroup_id(groupModel.getGroupId());
+            model.setGroupId(groupModel.getGroupId().intValue());
             model.setModifier(creater);
             return model;
         }).collect(toList());

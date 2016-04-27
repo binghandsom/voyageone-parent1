@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.dao.CmsChannelConfigDao;
 import com.voyageone.service.impl.cms.StoreOperationService;
-import com.voyageone.service.model.cms.CmsBtChannelConfigModel;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +72,8 @@ public class StoreOperationCtrl extends CmsController {
         int interval = getConfigHours(channelId);
         boolean inRange = lastExecuteTime.plusHours(interval).isAfter(LocalDateTime.now());
         lastExecuteTime = LocalDateTime.now();
-        if(inRange){
-            throw new BusinessException("操作时间间隔必须在"+interval+"小时以上!");
+        if (inRange) {
+            throw new BusinessException("操作时间间隔必须在" + interval + "小时以上!");
         }
     }
 
@@ -125,7 +122,7 @@ public class StoreOperationCtrl extends CmsController {
         String userName = getUser().getUserName();
         String channelId = getUser().getSelChannelId();
         checkInInterval(channelId);
-        storeOperationService.rePublishPrice(channelId,userName);
+        storeOperationService.rePublishPrice(channelId, userName);
         throw new UnsupportedOperationException();
     }
 
