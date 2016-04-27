@@ -303,10 +303,10 @@
               #{property2},
               #{property3},
               #{property4},
-              #{created},
+        now(),
               #{creater},
-              #{modified},
-              #{modifier}
+        now(),
+        #{creater}
         )
     </insert>
 </mapper>

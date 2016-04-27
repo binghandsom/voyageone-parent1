@@ -1,6 +1,5 @@
-package com.voyageone.service.model.cms;
+package com.voyageone.service.bean.cms;
 
-import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 /**
