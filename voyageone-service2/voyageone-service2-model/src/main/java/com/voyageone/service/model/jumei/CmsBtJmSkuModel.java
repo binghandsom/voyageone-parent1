@@ -1,6 +1,8 @@
 package com.voyageone.service.model.jumei;
 
-import com.voyageone.common.help.DateHelp;
+
+
+import com.voyageone.common.util.DateTimeUtil;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -17,7 +19,7 @@ public class CmsBtJmSkuModel implements Serializable {
         setCmsSize("");
         setJmSize("");
         setCreater("");
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setModifier("");
 
     }
@@ -326,7 +328,7 @@ public class CmsBtJmSkuModel implements Serializable {
         if (created != null) {
             this.created = created;
         } else {
-            this.created = DateHelp.getDefaultDate();
+            this.created = DateTimeUtil.getCreatedDefaultDate();
         }
 
     }

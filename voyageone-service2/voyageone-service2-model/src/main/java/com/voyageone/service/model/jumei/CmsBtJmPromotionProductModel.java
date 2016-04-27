@@ -4,7 +4,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class CmsBtJmPromotionProductModel implements Serializable
 {
    public CmsBtJmPromotionProductModel()
@@ -15,15 +15,15 @@ public class CmsBtJmPromotionProductModel implements Serializable
         setMarketPrice(new BigDecimal(0));
         setDealPrice(new BigDecimal(0));
         setCreater(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setModifier(""); 
         setAppId(""); 
         setPcId(""); 
         setDiscount(new BigDecimal(0));
         setErrorMsg(""); 
-        setActivityStart(DateHelp.getDefaultDate());
-        setActivityEnd(DateHelp.getDefaultDate());
-        setDealEndTime(DateHelp.getDefaultDate());
+        setActivityStart(DateTimeUtil.getCreatedDefaultDate());
+        setActivityEnd(DateTimeUtil.getCreatedDefaultDate());
+        setDealEndTime(DateTimeUtil.getCreatedDefaultDate());
 
     }
  
@@ -381,7 +381,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -556,7 +556,7 @@ this.activityStart=activityStart;
  }
 else
 {
-this.activityStart=DateHelp.getDefaultDate();
+this.activityStart=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -577,7 +577,7 @@ this.activityEnd=activityEnd;
  }
 else
 {
-this.activityEnd=DateHelp.getDefaultDate();
+this.activityEnd=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -612,7 +612,7 @@ this.dealEndTime=dealEndTime;
  }
 else
 {
-this.dealEndTime=DateHelp.getDefaultDate();
+this.dealEndTime=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
