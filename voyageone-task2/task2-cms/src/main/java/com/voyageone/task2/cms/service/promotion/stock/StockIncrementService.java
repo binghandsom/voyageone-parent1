@@ -1,14 +1,15 @@
 package com.voyageone.task2.cms.service.promotion.stock;
+
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
+import com.voyageone.service.daoext.cms.CmsBtStockSalesQuantityDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtStockSeparateIncrementItemDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtTaskKucungeliDaoExt;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +30,16 @@ public class StockIncrementService extends BaseTaskService {
     private StockInfoService stockInfoService;
 
     @Autowired
-    private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
+    private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
 
     @Autowired
-    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
+    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
 
     @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
+    private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
 
     @Autowired
-    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
+    private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
 
     @Autowired
     private SimpleTransaction simpleTransaction;
@@ -257,7 +258,7 @@ public class StockIncrementService extends BaseTaskService {
     private List<Map<String, Object>> getStockSeparateIncrementData() {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("status", StockInfoService.STATUS_WAITING_SEPARATE);
-        List<Map<String, Object>> stockIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+        List<Map<String, Object>> stockIncrementList = cmsBtStockSeparateIncrementItemDaoExt.selectStockSeparateIncrement(sqlParam);
         return  stockIncrementList;
     }
 
@@ -274,7 +275,7 @@ public class StockIncrementService extends BaseTaskService {
         // 取得增量任务id对应的任务id
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("subTaskIdList", subTaskIdList);
-        List<Map<String, Object>> stockTaskList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> stockTaskList = cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(sqlParam);
         for (Map<String, Object>stockTask : stockTaskList) {
             taskIdList.add((Integer)stockTask.get("task_id"));
         }
@@ -283,7 +284,7 @@ public class StockIncrementService extends BaseTaskService {
         Map<String, Object> sqlParam1 = new HashMap<>();
         sqlParam1.put("taskIdList", taskIdList);
         sqlParam1.put("status", StockInfoService.STATUS_SEPARATE_SUCCESS);
-        List<Map<String, Object>> stockList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam1);
+        List<Map<String, Object>> stockList = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(sqlParam1);
         return  stockList;
     }
 
@@ -298,7 +299,7 @@ public class StockIncrementService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelId", channelId);
         sqlParam.put("status", StockInfoService.STATUS_INCREMENT_SUCCESS);
-        List<Map<String, Object>> stockIncreasedList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+        List<Map<String, Object>> stockIncreasedList = cmsBtStockSeparateIncrementItemDaoExt.selectStockSeparateIncrement(sqlParam);
         return  stockIncreasedList;
     }
 
@@ -314,7 +315,7 @@ public class StockIncrementService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelId", channelId);
         sqlParam.put("endFlg", StockInfoService.NOT_END);
-        List<Map<String, Object>> salesList = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam);
+        List<Map<String, Object>> salesList = cmsBtStockSalesQuantityDaoExt.selectStockSalesQuantity(sqlParam);
         return  salesList;
     }
 
@@ -408,7 +409,7 @@ public class StockIncrementService extends BaseTaskService {
         sqlParam.put("sku", sku);
         // 状态为"1：等待增量"
         sqlParam.put("statusWhere", StockInfoService.STATUS_WAITING_INCREMENT);
-        Integer updateCnt = cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam);
+        Integer updateCnt = cmsBtStockSeparateIncrementItemDaoExt.updateStockSeparateIncrementItem(sqlParam);
         return  updateCnt;
     }
 

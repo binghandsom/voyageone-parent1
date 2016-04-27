@@ -152,7 +152,7 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 根据modelCode, cartId获取商品的group id
+     * 根据modelCode, cartId获取商品的group的Model
      */
     public CmsBtProductGroupModel selectProductGroupByModelCodeAndCartId(String channelId, String modelCode, String cartId) {
         // jeff 2016/04 change start
@@ -170,8 +170,8 @@ public class ProductGroupService extends BaseService {
         // String[] codeArr = new String[codeList.size()];
         // codeArr = codeList.toArray(codeArr);
         // queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
-        queryObject.setQuery("{\"productCodes\":" + prodList.get(0).getFields().getCode() + ",\"cartId\":" + cartId + "}");
-        queryObject.setProjection("{'groupId':1,'_id':0}");
+        queryObject.setQuery("{\"productCodes\":\"" + prodList.get(0).getFields().getCode() + "\",\"cartId\":" + cartId + "}");
+        // queryObject.setProjection("{'groupId':1,'_id':0}");
         // jeff 2016/04 change end
         List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);
         if (grpList == null || grpList.isEmpty()) {

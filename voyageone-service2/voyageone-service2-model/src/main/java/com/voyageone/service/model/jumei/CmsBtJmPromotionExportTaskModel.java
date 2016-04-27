@@ -4,7 +4,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class CmsBtJmPromotionExportTaskModel implements Serializable
 {
    public CmsBtJmPromotionExportTaskModel()
@@ -12,10 +12,10 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
         setFileName(""); 
         setFilePath(""); 
         setErrorMsg(""); 
-        setBeginTime(DateHelp.getDefaultDate());
-        setEndTime(DateHelp.getDefaultDate());
+        setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+        setEndTime(DateTimeUtil.getCreatedDefaultDate());
         setCreater(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
 
     }
  
@@ -232,7 +232,7 @@ this.beginTime=beginTime;
  }
 else
 {
-this.beginTime=DateHelp.getDefaultDate();
+this.beginTime=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -253,7 +253,7 @@ this.endTime=endTime;
  }
 else
 {
-this.endTime=DateHelp.getDefaultDate();
+this.endTime=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -295,7 +295,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }

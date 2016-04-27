@@ -1,10 +1,10 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -38,7 +38,7 @@ public class StoreOperationService extends BaseService{
     CmsBtProductGroupDao productGroupDao;
 
     @Resource
-    CmsBtSxWorkloadDao workloadDao;
+    CmsBtSxWorkloadDaoExt workloadDao;
 
     @Resource
     CmsBtStoreOperationHistoryDao historyDao;
@@ -64,7 +64,7 @@ public class StoreOperationService extends BaseService{
             model.setChannelId(channelId);
             model.setCreater(creater);
             model.setCartId(model.getCartId());
-            model.setGroup_id(model.getGroupId());
+            model.setGroupId(model.getGroupId());
             model.setModifier(creater);
             return model;
         }).collect(toList());

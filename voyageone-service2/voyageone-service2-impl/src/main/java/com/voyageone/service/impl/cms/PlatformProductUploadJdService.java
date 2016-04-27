@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.MD5;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -22,7 +22,7 @@ import java.util.List;
 public class PlatformProductUploadJdService extends BaseService {
 
     @Autowired
-    private CmsBtSxWorkloadDao sxWorkloadDao;
+    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;

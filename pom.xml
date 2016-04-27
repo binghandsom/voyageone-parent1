@@ -451,10 +451,15 @@
                 <artifactId>poi-ooxml-schemas</artifactId>
                 <version>3.12</version>
             </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.voyageone</groupId>-->
+                <!--<artifactId>jd-open-api-sdk</artifactId>-->
+                <!--<version>2.0</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>com.voyageone</groupId>
-                <artifactId>jd-open-api-sdk</artifactId>
-                <version>2.0</version>
+                <artifactId>jd-open-api-sdk-20160408</artifactId>
+                <version>20160408</version>
             </dependency>
 
             <!--<dependency>-->

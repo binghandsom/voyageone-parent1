@@ -2,15 +2,15 @@ package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.service.bean.com.ChannelPermissionBean;
+import com.voyageone.service.bean.com.PermissionBean;
+import com.voyageone.service.bean.com.UserBean;
+import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.core.dao.UserConfigDao;
-import com.voyageone.web2.core.dao.UserDao;
-import com.voyageone.web2.core.model.ChannelPermissionModel;
-import com.voyageone.web2.core.model.PermissionModel;
-import com.voyageone.web2.core.model.UserConfigModel;
-import com.voyageone.web2.core.model.UserModel;
+import com.voyageone.service.daoext.com.UserConfigDao;
+import com.voyageone.service.daoext.com.UserDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class UserService extends BaseAppService {
 
     public UserSessionBean login(String username, String password, int timezone) {
 
-        UserModel userBean = new UserModel();
+        UserBean userBean = new UserBean();
         userBean.setUsername(username);
 
         userBean = userDao.selectUser(userBean);
@@ -64,7 +64,7 @@ public class UserService extends BaseAppService {
         return userSessionBean;
     }
 
-    public List<ChannelPermissionModel> getPermissionCompany(UserSessionBean userSessionBean) {
+    public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
         return userDao.selectPermissionChannel(userSessionBean.getUserName());
     }
 
@@ -100,24 +100,24 @@ public class UserService extends BaseAppService {
     }
 
     public String getUserLanguage (UserSessionBean user) {
-        List<UserConfigModel> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
+        List<UserConfigBean> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
 
         return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "en";
     }
 
-    private Map<String , List<UserConfigModel>> getUserConfig(int userId) {
-        List<UserConfigModel> ret = userConfigDao.select(userId);
-        return ret.stream().collect(groupingBy(UserConfigModel::getCfg_name, toList()));
+    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
+        List<UserConfigBean> ret = userConfigDao.select(userId);
+        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
     }
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
 
-        List<PermissionModel> rolePermissions = userDao.getRolePermissions(channelId, userSessionBean.getUserName());
+        List<PermissionBean> rolePermissions = userDao.getRolePermissions(channelId, userSessionBean.getUserName());
 
-        List<PermissionModel> userPermissions = userDao.getUserPermissions(channelId, userSessionBean.getUserName());
+        List<PermissionBean> userPermissions = userDao.getUserPermissions(channelId, userSessionBean.getUserName());
 
         return Stream.concat(rolePermissions.stream(), userPermissions.stream())
-                .filter(PermissionModel::isEnabled)
+                .filter(PermissionBean::isEnabled)
                 .map(permissionBean -> String.format("/%s/%s/%s/%s",
                         permissionBean.getApplication(),
                         permissionBean.getModule(),

@@ -153,10 +153,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                     // jeff 2016/04 change start
                     // 获取前一次的价格强制击穿时间
-                    String priceBreakIime =  TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
+                    String priceBreakTime =  TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
                     // 主逻辑
                     // new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
-                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakIime).doRun();
+                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime).doRun();
                     // jeff 2016/04 change end
                 }
             });
@@ -174,13 +174,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         // jeff 2016/04 change start
         // 前一次的价格强制击穿时间
-        private String priceBreakIime;
+        private String priceBreakTime;
 
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
-        public setMainProp(String orderChannelId, boolean skip_mapping_check ,String priceBreakIime) {
+        public setMainProp(String orderChannelId, boolean skip_mapping_check ,String priceBreakTime) {
             this.channel = Channels.getChannel(orderChannelId);
             this.skip_mapping_check = skip_mapping_check;
-            this.priceBreakIime = priceBreakIime;
+            this.priceBreakTime = priceBreakTime;
         }
 
         int insertCnt = 0;
@@ -444,7 +444,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
 
                         // 递归设置属性
-                        field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
+                        // jeff 2016/04 change start
+                        // field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
+                        Object propValue = getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel);
+                        if (propValue != null) {
+                            field.put(prop.getProp(), propValue);
+                        }
+                        // jeff 2016/04 change end
                     }
                 }
             }
@@ -1048,9 +1054,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 根据code, 到group表中去查找所有的group信息
             List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
 
-            // 新追加的Group
-            List<CmsBtProductGroupModel> newGroups = new ArrayList<>();
-
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
                 // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
@@ -1094,21 +1097,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), "PLATFORM_ACTIVE", String.valueOf(group.getCartId()));
                     if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-                        if (CmsConstants.PlatformActive.Onsale.toString().equals(cmsChannelConfigBean.getConfigValue1())) {
-                            group.setPlatformActive(CmsConstants.PlatformActive.Onsale);
+                        if (CmsConstants.PlatformActive.ToOnsale.toString().equals(cmsChannelConfigBean.getConfigValue1())) {
+                            group.setPlatformActive(CmsConstants.PlatformActive.ToOnsale);
                         } else {
                             // platform active:上新的动作: 暂时默认是放到:仓库中
-                            group.setPlatformActive(CmsConstants.PlatformActive.Instock);
+                            group.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
                         }
                     } else {
                         // platform active:上新的动作: 暂时默认是放到:仓库中
-                        group.setPlatformActive(CmsConstants.PlatformActive.Instock);
+                        group.setPlatformActive(CmsConstants.PlatformActive.ToInstock);
                     }
 
                     // ProductCodes
                     List<String> codes = new ArrayList<>();
                     codes.add(feed.getCode());
                     group.setProductCodes(codes);
+                    group.setCreater(getTaskName());
+                    group.setModifier(getTaskName());
+                    cmsBtProductGroupDao.insert(group);
                 } else {
                     // ProductCodes
                     List<String> oldCodes = group.getProductCodes();
@@ -1120,14 +1126,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         oldCodes.add(feed.getCode());
                         group.setProductCodes(oldCodes);
                     }
+                    group.setModifier(getTaskName());
+
+                    cmsBtProductGroupDao.update(group);
                 }
 
-                group.setCreater(getTaskName());
-                group.setModifier(getTaskName());
-                newGroups.add(group);
-            }
-            if (newGroups.size() > 0) {
-                cmsBtProductGroupDao.insertWithList(newGroups);
+
             }
         }
 
@@ -1251,7 +1255,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 不存在则插入
                 if (findImages.size() == 0) {
-                    cmsBtImageDao.insertImages(new CmsBtImagesModel(channelId, code, image, index, getTaskName()));
+                    cmsBtImageDao.insertImages(new CmsBtImagesModel(channelId, code, image, index++, getTaskName()));
                 }
             }
         }
@@ -1416,7 +1420,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 处理子属性
                 if (FieldTypeEnum.COMPLEX.equals(fieldCurrent.getType())) {
                     for (Prop p : prop.getChildren()) {
-                        complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                        // jeff 2016/04 change start
+                        // complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                        Object propValue = getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel);
+                        if (propValue != null) {
+                            complexChildren.put(p.getProp(), propValue);
+                        }
+                        // jeff 2016/04 change end
                     }
 
                     // 处理完所有的子属性之后就可以返回了
@@ -1429,7 +1439,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     while (m_mulitComplex_run) {
                         complexChildren = new HashMap<>();
                         for (Prop p : prop.getChildren()) {
-                            complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                            // jeff 2016/04 change start
+                            // complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                            Object propValue = getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel);
+                            if (propValue != null) {
+                                complexChildren.put(p.getProp(), propValue);
+                            }
+                            // jeff 2016/04 change end
                         }
                         multiComplexChildren.add(complexChildren);
                         m_mulitComplex_index++;
@@ -1638,8 +1654,30 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 priceRetailFormula = priceRetailCalcFormula;
             }
 
-            // 强制击穿标志位
-            boolean breakFlg = false;
+            // 价格自动同步间隔天数
+            String day = "0";
+            cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, "AUTO_SYN_DAY", "auto_syn_day");
+            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                // 如果没有设定则相当于间隔天数为0
+                day = cmsChannelConfigBean.getConfigValue1();
+            }
+
+            // 强制击穿阈值
+            String threshold = "";
+            cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, "MANDATORY_BREAK_THRESHOLD", "mandatory_break_threshold");
+            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                threshold = cmsChannelConfigBean.getConfigValue1();
+            }
+            // 如果强制击穿阈值没有设定的话，那么只要指导价高于原来最终售价就击穿
+            if (StringUtils.isEmpty(threshold)) {
+                threshold = "0";
+            }
+            // 是否同步
+            boolean synFlg = true;
+            try {
+                synFlg = DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakTime), Integer.parseInt(day)).before(DateTimeUtil.getDate());
+            } catch (Exception ex) {
+            }
             // jeff 2016/04 add end
 
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
@@ -1688,35 +1726,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     } else {
 
-                        // 价格自动同步间隔天数
-                        String day = "0";
-                        cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, "AUTO_SYN_DAY", "auto_syn_day");
-                        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-                            // 如果没有设定则相当于间隔天数为0
-                            day = cmsChannelConfigBean.getConfigValue1();
-                        }
-
-                        // 强制击穿阈值
-                        String threshold = "";
-                        cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, "MANDATORY_BREAK_THRESHOLD", "mandatory_break_threshold");
-                        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-                            threshold = cmsChannelConfigBean.getConfigValue1();
-                        }
-
-                        // 是否同步
-                        boolean synFlg = true;
-                        try {
-                            synFlg = DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakIime), Integer.parseInt(day)).before(DateTimeUtil.getDate());
-                        } catch (Exception ex) {
-                        }
-
                         // 同步的场合
-                        if (synFlg && !StringUtils.isEmpty(threshold) && StringUtils.isDigit(threshold)) {
+                        if (synFlg && StringUtils.isDigit(threshold)) {
                             // 指导价高于原来最终售价的阈值(例：10%)时，强制击穿
                             if (newPriceSale > oldPriceSale * (1.0 + Double.parseDouble(threshold) / 100.0)) {
                                 skuPriceModel.setPriceChgFlg("X" + (newPriceSale - oldPriceSale));
                                 skuPriceModel.setPriceSale(newPriceSale);
-                                breakFlg = true;
                             } else {
                                 // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
                                 skuPriceModel.setPriceSale(oldSku.getPriceSale());
@@ -1761,14 +1776,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             productSkuService.updatePrices(channelId, productPrices, getTaskName());
             // jeff 2016/04 add start
             // 如果发生价格强制击穿的话，更新价格强制击穿时间
-            if (breakFlg) {
+            if (synFlg) {
                 TaskControlBean param = new TaskControlBean();
                 param.setTask_id(getTaskName());
                 param.setCfg_name(TaskControlEnums.Name.order_channel_id.toString());
                 param.setCfg_val1(channelId);
 
                 // 价格强制击穿时间
-                param.setEnd_time(DateTimeUtil.getNow());
+                if (StringUtils.isEmpty(this.priceBreakTime)) {
+                    param.setEnd_time(DateTimeUtil.getNow());
+                } else {
+                    param.setEnd_time(DateTimeUtil.format(DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakTime), Integer.parseInt(day)), null));
+                }
                 taskDao.updateTaskControl(param);
             }
 

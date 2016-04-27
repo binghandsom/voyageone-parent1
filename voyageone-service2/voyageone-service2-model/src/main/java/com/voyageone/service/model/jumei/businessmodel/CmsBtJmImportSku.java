@@ -1,6 +1,6 @@
 package com.voyageone.service.model.jumei.businessmodel;
 
-import com.voyageone.common.help.DateHelp;
+
 import com.voyageone.service.model.jumei.CmsBtJmSkuModel;
 
 import java.io.Serializable;

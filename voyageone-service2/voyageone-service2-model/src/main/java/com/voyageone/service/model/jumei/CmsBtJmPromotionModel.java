@@ -1,10 +1,10 @@
 package com.voyageone.service.model.jumei;
+
+import com.voyageone.common.util.DateTimeUtil;
+
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.math.BigDecimal;
-import java.io.Serializable;
-import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
 public class CmsBtJmPromotionModel implements Serializable
 {
    public CmsBtJmPromotionModel()
@@ -16,11 +16,11 @@ public class CmsBtJmPromotionModel implements Serializable
         setCmsBtJmMasterBrandName(""); 
         setBrand(""); 
         setCategory(""); 
-        setActivityStart(DateHelp.getDefaultDate());
-        setActivityEnd(DateHelp.getDefaultDate());
-        setPrePeriodStart(DateHelp.getDefaultDate());
-        setPrePeriodEnd(DateHelp.getDefaultDate());
-        setCreated(DateHelp.getDefaultDate());
+        setActivityStart(DateTimeUtil.getCreatedDefaultDate());
+        setActivityEnd(DateTimeUtil.getCreatedDefaultDate());
+        setPrePeriodStart(DateTimeUtil.getCreatedDefaultDate());
+        setPrePeriodEnd(DateTimeUtil.getCreatedDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -331,7 +331,7 @@ this.activityStart=activityStart;
  }
 else
 {
-this.activityStart=DateHelp.getDefaultDate();
+this.activityStart=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -352,7 +352,7 @@ this.activityEnd=activityEnd;
  }
 else
 {
-this.activityEnd=DateHelp.getDefaultDate();
+this.activityEnd=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -373,7 +373,7 @@ this.prePeriodStart=prePeriodStart;
  }
 else
 {
-this.prePeriodStart=DateHelp.getDefaultDate();
+this.prePeriodStart=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -394,7 +394,7 @@ this.prePeriodEnd=prePeriodEnd;
  }
 else
 {
-this.prePeriodEnd=DateHelp.getDefaultDate();
+this.prePeriodEnd=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -429,7 +429,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
