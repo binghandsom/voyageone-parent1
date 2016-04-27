@@ -9,11 +9,11 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
-import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtSizeMapDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
@@ -55,9 +55,9 @@ public class SxProductService extends BaseService {
     @Autowired
     private ImsBtProductDao imsBtProductDao;
     @Autowired
-    private CmsBtSizeMapDao cmsBtSizeMapDao;
+    private CmsBtSizeMapDaoExt cmsBtSizeMapDaoExt;
     @Autowired
-    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
+    private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
@@ -209,7 +209,7 @@ public class SxProductService extends BaseService {
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
-        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDao.selectPlatformImagesList(channelId, cartId, groupId);
+        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImagesList(channelId, cartId, groupId);
 
         Map<String,CmsBtPlatformImagesModel> mapImageUrl = new HashMap<>();
         for (CmsBtPlatformImagesModel model : imageUrlModel) {
@@ -245,7 +245,7 @@ public class SxProductService extends BaseService {
                     model.setPlatformImgId(pictureId);
                     model.setUpdFlg(UPD_FLG_UPLOADED);
 
-                    cmsBtPlatformImagesDao.updatePlatformImagesById(model, user);
+                    cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
                 } else if (UPD_FLG_UPLOADED.equals(updFlg)) {
                     // upd_flg=1,已经上传
                     retUrls.put(srcUrl, model.getPlatformImgUrl());
@@ -284,7 +284,7 @@ public class SxProductService extends BaseService {
 
         if (imageUrlSaveModels.size() > 0) {
             // insert image url
-            cmsBtPlatformImagesDao.insertPlatformImagesByList(imageUrlSaveModels);
+            cmsBtPlatformImagesDaoExt.insertPlatformImagesByList(imageUrlSaveModels);
         }
 
         return retUrls;
