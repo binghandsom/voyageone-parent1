@@ -1,7 +1,7 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,10 +13,10 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtPromotionTaskDao extends ServiceBaseDao {
+public class CmsBtTaskTejiabaoDaoExt extends ServiceBaseDao {
 
-    public List<CmsBtPromotionTaskModel> getPromotionTaskList(Map<String,Object> params){
-        List<CmsBtPromotionTaskModel> ret = selectList("select_cms_bt_promotion_task",params);
+    public List<CmsBtTaskTejiabaoModel> getPromotionTaskList(Map<String, Object> params) {
+        List<CmsBtTaskTejiabaoModel> ret = selectList("select_cms_bt_promotion_task", params);
         if (ret == null){
             ret = new ArrayList<>();
         }
@@ -31,16 +31,16 @@ public class CmsBtPromotionTaskDao extends ServiceBaseDao {
         return selectList("select_cms_bt_promotion_task_price", params);
     }
 
-    public int insertPromotionTask(CmsBtPromotionTaskModel params){
+    public int insertPromotionTask(CmsBtTaskTejiabaoModel params) {
         return insert("insert_cms_bt_promotion_task", params);
     }
 
-    public int updatePromotionTask(CmsBtPromotionTaskModel params){
+    public int updatePromotionTask(CmsBtTaskTejiabaoModel params) {
         return update("update_cms_bt_promotion_task", params);
     }
 
 
-    public List<CmsBtPromotionTaskModel> getPromotionByCodeNotInAllPromotion(Map<String,Object> params){
+    public List<CmsBtTaskTejiabaoModel> getPromotionByCodeNotInAllPromotion(Map<String, Object> params) {
         return selectList("select_cms_bt_promotion_by_code_in_no_all_promotion",params);
     }
 }
