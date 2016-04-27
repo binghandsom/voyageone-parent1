@@ -52,6 +52,7 @@
             GROUP BY
                 promotion_id,
                 num_iid
+            LIMIT 0,200
         ) t1
     LEFT JOIN (
         SELECT
@@ -59,10 +60,10 @@
             sku.promotion_id,
             sku.product_code,
             sku.product_sku,
-            sku.num_iid,
+            `code`.num_iid,
             `code`.promotion_price
         FROM
-            voyageone_cms2.cms_bt_promotion_sku sku
+        voyageone_cms2.cms_bt_promotion_skus sku
         LEFT JOIN voyageone_cms2.cms_bt_promotion_code `code` ON sku.promotion_id = `code`.promotion_id
         AND sku.product_code = `code`.product_code
         LEFT JOIN voyageone_cms2.cms_bt_promotion prom ON sku.promotion_id = prom.promotion_id

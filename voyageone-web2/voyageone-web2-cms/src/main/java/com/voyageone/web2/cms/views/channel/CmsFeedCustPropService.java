@@ -1,12 +1,12 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang.math.NumberUtils;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author jiang, 2016/2/26
@@ -28,7 +29,10 @@ public class CmsFeedCustPropService extends BaseAppService {
     @Autowired
     private FeedCustomPropService feedCustomPropService;
 
-    private Map<String, List<String>> attrMap = null;
+    @Autowired
+    private FeedCategoryAttributeService feedCategoryAttributeService;
+
+//    private Map<String, List<String>> attrMap = null;
 
     public Map<String, Object> getFeedCustProp(Map<String, String> params, UserSessionBean userInfo) {
         Map<String, Object> result = new HashMap<>();
@@ -53,22 +57,34 @@ public class CmsFeedCustPropService extends BaseAppService {
                 if (!"0".equals(catPath)) {
                     List<Map<String, Object>> initAttrList = null;
                     // 查询指定类目(从mongo来的原始数据)
-                    CmsMtFeedCategoryTreeModelx catgAttrList = this.selectCatAttr(userInfo.getSelChannelId(), catPath);
-                    if (catgAttrList != null && catgAttrList.getCategoryTree().size() > 0) {
-                        List<CmsMtFeedCategoryModel> childList = catgAttrList.getCategoryTree();
-                        if (childList != null && childList.size() > 0) {
-                            attrMap = null;
-                            getSubCatTree(childList, catPath);
-                            if (attrMap != null) {
-                                initAttrList = new ArrayList<>(attrMap.size());
-                                for (String o : attrMap.keySet()) {
-                                    Map<String, Object> objMap = new HashMap<>();
-                                    objMap.put("prop_id", "");
-                                    objMap.put("prop_original", o);
-                                    objMap.put("cat_path", catPath);
-                                    initAttrList.add(objMap);
-                                }
-                            }
+//                    CmsMtFeedCategoryTreeModelx catgAttrList = this.selectCatAttr(userInfo.getSelChannelId(), catPath);
+//                    if (catgAttrList != null && catgAttrList.getCategoryTree().size() > 0) {
+//                        List<CmsMtFeedCategoryModel> childList = catgAttrList.getCategoryTree();
+//                        if (childList != null && childList.size() > 0) {
+//                            attrMap = null;
+//                            getSubCatTree(childList, catPath);
+//                            if (attrMap != null) {
+//                                initAttrList = new ArrayList<>(attrMap.size());
+//                                for (String o : attrMap.keySet()) {
+//                                    Map<String, Object> objMap = new HashMap<>();
+//                                    objMap.put("prop_id", "");
+//                                    objMap.put("prop_original", o);
+//                                    objMap.put("cat_path", catPath);
+//                                    initAttrList.add(objMap);
+//                                }
+//                            }
+//                        }
+//                    }
+
+                    CmsMtFeedAttributesModel attr = feedCategoryAttributeService.getCategoryAttributeByCategory(userInfo.getSelChannelId(), catPath);
+                    if(attr != null){
+                        initAttrList = new ArrayList<>();
+                        for (String o : attr.getAttribute().keySet()) {
+                            Map<String, Object> objMap = new HashMap<>();
+                            objMap.put("prop_id", "");
+                            objMap.put("prop_original", o);
+                            objMap.put("cat_path", catPath);
+                            initAttrList.add(objMap);
                         }
                     }
                     // 过滤已翻译的属性
@@ -192,11 +208,7 @@ public class CmsFeedCustPropService extends BaseAppService {
     public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
 //        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
         List<CmsMtFeedCategoryTreeModel> feedBeanList = feedCategoryTreeService.getFeedAllCategoryTree(user.getSelChannelId());
-        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
-        for(CmsMtFeedCategoryTreeModel feedCategory : feedBeanList) {
-            result.add(buildFeedCategoryBean(feedCategory));
-        }
-        return result;
+        return feedBeanList.stream().map(this::buildFeedCategoryBean).collect(Collectors.toList());
     }
 
     public List<CmsMtFeedCategoryTreeModel> getCategoryList (UserSessionBean userInfo) {
@@ -287,14 +299,14 @@ public class CmsFeedCustPropService extends BaseAppService {
         return new HashMap<>();
     }
 
-    private void getSubCatTree2List(List<CmsMtFeedCategoryModel> childList, List<CmsMtFeedCategoryModel> rsltList) {
-        for (CmsMtFeedCategoryModel catItem : childList) {
-            rsltList.add(catItem);
-            if (catItem.getIsChild() == 0) {
-                getSubCatTree2List(catItem.getChild(), rsltList);
-            }
-        }
-    }
+//    private void getSubCatTree2List(List<CmsMtFeedCategoryModel> childList, List<CmsMtFeedCategoryModel> rsltList) {
+//        for (CmsMtFeedCategoryModel catItem : childList) {
+//            rsltList.add(catItem);
+//            if (catItem.getIsChild() == 0) {
+//                getSubCatTree2List(catItem.getChild(), rsltList);
+//            }
+//        }
+//    }
 
     private List<Map<String, Object>> convertList(List<Map<String, Object>> inputList, boolean hasValue, boolean isComm) {
         List<Map<String, Object>> rslt = new ArrayList<>();
@@ -318,29 +330,29 @@ public class CmsFeedCustPropService extends BaseAppService {
         return rslt;
     }
 
-    // 根据类目路径查询自定义未翻译属性信息(不包含共通属性)
-    private CmsMtFeedCategoryTreeModelx selectCatAttr(String channelId, String categoryId) {
-//        Query query = new Query();
-//        Criteria criteria = Criteria.where("channelId").is(channelId);
-//        query.addCriteria(criteria);
+//    // 根据类目路径查询自定义未翻译属性信息(不包含共通属性)
+//    private CmsMtFeedCategoryTreeModelx selectCatAttr(String channelId, String categoryId) {
+////        Query query = new Query();
+////        Criteria criteria = Criteria.where("channelId").is(channelId);
+////        query.addCriteria(criteria);
+//
+//        return feedCategoryTreeService.getFeedCategory(channelId);
+////        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
+//        //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
+//    }
 
-        return feedCategoryTreeService.getFeedCategory(channelId);
-//        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
-        //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
-    }
-
-    private void getSubCatTree(List<CmsMtFeedCategoryModel> childList, String catPath) {
-        for (CmsMtFeedCategoryModel catItem : childList) {
-            if (catItem.getIsChild() == 1) {
-                if (catPath.equals(catItem.getCid())) {
-                    attrMap = catItem.getAttribute();
-                    break;
-                }
-            } else {
-                getSubCatTree(catItem.getChild(), catPath);
-            }
-        }
-    }
+//    private void getSubCatTree(List<CmsMtFeedCategoryModel> childList, String catPath) {
+//        for (CmsMtFeedCategoryModel catItem : childList) {
+//            if (catItem.getIsChild() == 1) {
+//                if (catPath.equals(catItem.getCid())) {
+//                    attrMap = catItem.getAttribute();
+//                    break;
+//                }
+//            } else {
+//                getSubCatTree(catItem.getChild(), catPath);
+//            }
+//        }
+//    }
 
     private void filterList(List<Map<String, Object>> list1, List<Map<String, Object>> list2) {
         if (list1 == null || list1.size() == 0) {

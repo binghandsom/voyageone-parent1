@@ -1,5 +1,6 @@
 package com.voyageone.web2.sdk.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import org.springframework.http.HttpHeaders;
@@ -71,12 +72,14 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	 *
 	 * @return API名称
 	 */
+	@JsonIgnore
 	public abstract String getApiURLPath();
 
 	/**
 	 * get Response Class type
 	 * @return class Type
 	 */
+	@JsonIgnore
 	@SuppressWarnings("unchecked")
 	public Class<T> getResponseClass() {
 		Type sooper = getClass().getGenericSuperclass();

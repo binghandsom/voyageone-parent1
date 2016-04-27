@@ -1,21 +1,21 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.impl.cms.BeatInfoService;
-import com.voyageone.service.impl.cms.TaskService;
-import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.impl.cms.BeatInfoService;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
-import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -75,7 +75,7 @@ class CmsTaskPictureService extends BaseAppService {
             throw new BusinessException("7000002");
 
         // 尝试检查任务的名称, 是否已经存在
-        List<CmsBtTasksModel> taskModels = taskService.getTasks(
+        List<CmsBtTasksBean> taskModels = taskService.getTasks(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 user.getSelChannelId(),
@@ -120,7 +120,7 @@ class CmsTaskPictureService extends BaseAppService {
      * @param size    分页数
      * @return 数据集合
      */
-    List<CmsBtBeatInfoModel> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
+    List<CmsBtBeatInfoBean> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
 
         return beatInfoService.getBeatInfoListByTaskId(task_id, flag, offset, size);
     }
@@ -150,7 +150,7 @@ class CmsTaskPictureService extends BaseAppService {
         return result;
     }
 
-    List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
+    List<CmsBtBeatInfoBean> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
 
         // 如果存在以下标识数据, 就不能重新导入
         int count = beatInfoService.getCountInFlags(task_id, BeatFlag.BEATING, BeatFlag.RE_FAIL, BeatFlag.REVERT, BeatFlag.SUCCESS);
@@ -168,7 +168,7 @@ class CmsTaskPictureService extends BaseAppService {
 
         Sheet sheet = wb.getSheetAt(0);
 
-        List<CmsBtBeatInfoModel> models = new ArrayList<>();
+        List<CmsBtBeatInfoBean> models = new ArrayList<>();
 
         for (Row row : sheet) {
 
@@ -180,7 +180,7 @@ class CmsTaskPictureService extends BaseAppService {
             if (!StringUtils.isNumeric(value))
                 throw new BusinessException("7000006", row.getRowNum());
 
-            CmsBtBeatInfoModel model = new CmsBtBeatInfoModel();
+            CmsBtBeatInfoBean model = new CmsBtBeatInfoBean();
 
             model.setNum_iid(Long.valueOf(value));
             model.setProduct_code(getString(row, 1));
@@ -202,7 +202,7 @@ class CmsTaskPictureService extends BaseAppService {
 
     byte[] downloadBeatInfo(int task_id) {
 
-        List<CmsBtBeatInfoModel> beatInfoModels = beatInfoService.getBeatInfByTaskId(task_id);
+        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getBeatInfByTaskId(task_id);
 
         // 注意: HSSFWorkbook 为 2003 的 xls 格式
         try (Workbook book = new HSSFWorkbook()) {
@@ -222,7 +222,7 @@ class CmsTaskPictureService extends BaseAppService {
             // 设置查询类型
             for (int i = 0; i < beatInfoModels.size(); i++) {
 
-                CmsBtBeatInfoModel model = beatInfoModels.get(i);
+                CmsBtBeatInfoBean model = beatInfoModels.get(i);
 
                 row = row(sheet, i + 1);
 
@@ -257,31 +257,31 @@ class CmsTaskPictureService extends BaseAppService {
 
     List<Map<String, Object>> getNewNumiid(Integer task_id) {
         if (task_id == null) return null;
-        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", taskModel.getPromotion_id());
         return promotionModelService.getPromotionModelDetailList(map);
     }
 
-    List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
+    List<CmsBtPromotionCodesBean> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);
         return promotionCodeService.getPromotionCodeList(map);
     }
 
-    List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
-        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
+    List<CmsBtBeatInfoBean> addCheck(int task_id, String num_iid) {
+        CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
         return beatInfoService.getBeatInfByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
-        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
-        CmsBtBeatInfoModel model = beatInfoService.getBeatInfByNumiid(task_id, num_iid);
+        CmsBtBeatInfoBean model = beatInfoService.getBeatInfByNumiid(task_id, num_iid);
         if (model != null) {
             if (model.getProduct_code().equals(code))
                 return 0;
@@ -289,7 +289,7 @@ class CmsTaskPictureService extends BaseAppService {
             model.setModifier(user.getUserName());
             return beatInfoService.updateCode(model);
         }
-        model = new CmsBtBeatInfoModel();
+        model = new CmsBtBeatInfoBean();
         model.setNum_iid(Long.valueOf(num_iid));
         model.setProduct_code(code);
         model.setBeatFlag(BeatFlag.STOP);
@@ -299,7 +299,7 @@ class CmsTaskPictureService extends BaseAppService {
         String now = DateTimeUtil.getNow();
         model.setCreated(now);
         model.setModified(now);
-        List<CmsBtBeatInfoModel> list = new ArrayList<>();
+        List<CmsBtBeatInfoBean> list = new ArrayList<>();
         list.add(model);
         return beatInfoService.addTasks(list);
     }
@@ -333,7 +333,7 @@ class CmsTaskPictureService extends BaseAppService {
         if (flag == null)
             throw new BusinessException("7000002");
 
-        CmsBtBeatInfoModel beatInfoModel = beatInfoService.getBeatInfById(beat_id);
+        CmsBtBeatInfoBean beatInfoModel = beatInfoService.getBeatInfById(beat_id);
 
         if (beatInfoModel == null)
             return 0;

@@ -1,6 +1,5 @@
 package com.voyageone.web2.sdk.api.request;
 
-
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
@@ -21,6 +20,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  */
 public class ProductForWmsGetRequest extends VoApiRequest<ProductForWmsGetResponse> {
 
+	@Override
 	public String getApiURLPath() {
 		return "/product/getWmsProductsInfo";
 	}

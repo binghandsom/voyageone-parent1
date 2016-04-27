@@ -2,117 +2,245 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-/**
- * @author gubuchun 15/12/18
- * @version 2.0.0
- */
 public class CmsBtPriceLogModel extends BaseModel {
-    //    private Long id;
+
+    /**
+
+     */
     private String channelId;
-    private Long productId;
+    /**
+
+     */
+    private int productId;
+    /**
+
+     */
     private String code;
+    /**
+
+     */
     private String sku;
+    /**
+
+     */
     private String msrpPrice;
+    /**
+
+     */
     private String retailPrice;
+    /**
+
+     */
     private String salePrice;
+    /**
+
+     */
     private String clientMsrpPrice;
+    /**
+
+     */
     private String clientRetailPrice;
+    /**
+
+     */
     private String clientNetPrice;
+    /**
+
+     */
     private String comment;
 
-//    public long getId() {
-//        return id;
-//    }
-//
-//    public void setId(long id) {
-//        this.id = id;
-//    }
 
+    /**
+
+     */
     public String getChannelId() {
-        return channelId;
+
+        return this.channelId;
     }
 
     public void setChannelId(String channelId) {
-        this.channelId = channelId;
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
+        }
+
     }
 
-    public Long getProductId() {
-        return productId;
+
+    /**
+
+     */
+    public int getProductId() {
+
+        return this.productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 
+
+    /**
+
+     */
     public String getCode() {
-        return code;
+
+        return this.code;
     }
 
     public void setCode(String code) {
-        this.code = code;
+        if (code != null) {
+            this.code = code;
+        } else {
+            this.code = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getSku() {
-        return sku;
+
+        return this.sku;
     }
 
     public void setSku(String sku) {
-        this.sku = sku;
+        if (sku != null) {
+            this.sku = sku;
+        } else {
+            this.sku = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getMsrpPrice() {
-        return msrpPrice;
+
+        return this.msrpPrice;
     }
 
     public void setMsrpPrice(String msrpPrice) {
-        this.msrpPrice = msrpPrice;
+        if (msrpPrice != null) {
+            this.msrpPrice = msrpPrice;
+        } else {
+            this.msrpPrice = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getRetailPrice() {
-        return retailPrice;
+
+        return this.retailPrice;
     }
 
     public void setRetailPrice(String retailPrice) {
-        this.retailPrice = retailPrice;
+        if (retailPrice != null) {
+            this.retailPrice = retailPrice;
+        } else {
+            this.retailPrice = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getSalePrice() {
-        return salePrice;
+
+        return this.salePrice;
     }
 
     public void setSalePrice(String salePrice) {
-        this.salePrice = salePrice;
+        if (salePrice != null) {
+            this.salePrice = salePrice;
+        } else {
+            this.salePrice = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getClientMsrpPrice() {
-        return clientMsrpPrice;
+
+        return this.clientMsrpPrice;
     }
 
-    public void serClientMsrpPrice(String clientMsrpPrice) {
-        this.clientMsrpPrice = clientMsrpPrice;
+    public void setClientMsrpPrice(String clientMsrpPrice) {
+        if (clientMsrpPrice != null) {
+            this.clientMsrpPrice = clientMsrpPrice;
+        } else {
+            this.clientMsrpPrice = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getClientRetailPrice() {
-        return clientRetailPrice;
+
+        return this.clientRetailPrice;
     }
 
     public void setClientRetailPrice(String clientRetailPrice) {
-        this.clientRetailPrice = clientRetailPrice;
+        if (clientRetailPrice != null) {
+            this.clientRetailPrice = clientRetailPrice;
+        } else {
+            this.clientRetailPrice = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getClientNetPrice() {
-        return clientNetPrice;
+
+        return this.clientNetPrice;
     }
 
     public void setClientNetPrice(String clientNetPrice) {
-        this.clientNetPrice = clientNetPrice;
+        if (clientNetPrice != null) {
+            this.clientNetPrice = clientNetPrice;
+        } else {
+            this.clientNetPrice = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getComment() {
-        return comment;
+
+        return this.comment;
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
+        if (comment != null) {
+            this.comment = comment;
+        } else {
+            this.comment = "";
+        }
+
     }
+
+
 }

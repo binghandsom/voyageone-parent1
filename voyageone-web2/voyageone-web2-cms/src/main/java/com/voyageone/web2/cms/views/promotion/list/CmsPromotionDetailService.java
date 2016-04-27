@@ -5,17 +5,21 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.promotion.*;
-import com.voyageone.service.model.cms.*;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.impl.cms.promotion.PromotionModelService;
+import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -108,7 +112,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 request.setProductCode(item.getCode());
                 request.setPromotionId(promotionId);
                 request.setPromotionPrice(item.getPrice());
-                request.setTagId(tagId.getTagId());
+                request.setTagId(tagId.getId());
                 request.setTagPath(tagId.getTagPath());
 
                 promotionDetailService.addPromotionDetail(request);
@@ -124,7 +128,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         return response;
     }
 
-    public Map<String, List<String>> insertPromotionProduct2(List<CmsBtPromotionGroupModel> productModels, int promotionId, String operator) {
+    public Map<String, List<String>> insertPromotionProduct2(List<CmsBtPromotionGroupsBean> productModels, int promotionId, String operator) {
 
         Map<String, List<String>> response = new HashMap<>();
         response.put("succeed", new ArrayList<>());
@@ -139,11 +143,11 @@ public class CmsPromotionDetailService extends BaseAppService {
         // 获取Tag列表
         List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
 
-        for (CmsBtPromotionGroupModel productModel : productModels) {
+        for (CmsBtPromotionGroupsBean productModel : productModels) {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
                 CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
                 if (tag != null) {
-                    cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
+                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
                 }
             });
 
@@ -174,6 +178,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param, int cartId) {
         List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);
+        JomgoQuery queryObject = new JomgoQuery();
 
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
@@ -181,11 +186,10 @@ public class CmsPromotionDetailService extends BaseAppService {
                     String channelId = (String) param.get("channelId");
                     long productId = Long.parseLong(map.get("productId").toString());
 
-                    JomgoQuery queryObject = new JomgoQuery();
                     queryObject.setQuery("{'prodId':" + productId + "}");
-                    queryObject.setProjection("{'productCarts':{'$elemMatch':{'cartId':" + cartId + "}}}");
+                    queryObject.setProjection("{'fields.code':1,'carts':{'$elemMatch':{'cartId':" + cartId + "}}}");
 
-                    List<CmsBtProductModel> modelList = productService.getList(channelId, queryObject);
+                    List<CmsBtProductModel> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
                     if (modelList != null && modelList.size() > 0) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                         map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
@@ -203,21 +207,28 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param param 参数hashmap  属性有PromotionId channelId
      * @return 以code为单位的数据
      */
-    public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param) {
+    public List<CmsBtPromotionCodesBean> getPromotionCode(Map<String, Object> param, int cartId) {
+        List<CmsBtPromotionCodesBean> promList = promotionCodeService.getPromotionCodeList(param);
 
-        //        if (!CollectionUtils.isEmpty(promotionCodes)) {
-//            promotionCodes.forEach(map -> {
-//                //SDK取得Product 数据
-//                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
-//                if (cmsBtProductModel != null) {
-////                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-////                    map.setSkuCount(cmsBtProductModel.getSkus().size());
-//                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-//                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
-//                }
-//            });
-//        }
-        return promotionCodeService.getPromotionCodeList(param);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("{'batchField':1,'fields.code':1,'_id':0}");
+
+        if (!CollectionUtils.isEmpty(promList)) {
+            promList.forEach(map -> {
+                // 取得Product 数据
+                queryObject.setQuery("{\"prodId\":" + map.getProductId() + "}");
+
+                List<CmsBtProductModel> prodList = productService.getListWithGroup((String) param.get("channelId"), cartId, queryObject);
+                if (prodList != null && prodList.size() > 0) {
+//                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+//                    map.setSkuCount(cmsBtProductModel.getSkus().size());
+                    CmsBtProductModel cmsBtProductModel = prodList.get(0);
+                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatformStatus());
+                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty());
+                }
+            });
+        }
+        return promList;
     }
 
     /**
@@ -303,9 +314,9 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @return CmsBtPromotionGroupModel
      * @throws Exception
      */
-    private List<CmsBtPromotionGroupModel> resolvePromotionXls2(InputStream xls) throws Exception {
-        List<CmsBtPromotionGroupModel> models = new ArrayList<>();
-        Map<String, CmsBtPromotionGroupModel> hsModel = new HashMap<>();
+    private List<CmsBtPromotionGroupsBean> resolvePromotionXls2(InputStream xls) throws Exception {
+        List<CmsBtPromotionGroupsBean> models = new ArrayList<>();
+        Map<String, CmsBtPromotionGroupsBean> hsModel = new HashMap<>();
         Workbook wb = new XSSFWorkbook(xls);
         Sheet sheet1 = wb.getSheetAt(0);
         int rowNum = 0;
@@ -317,19 +328,19 @@ public class CmsPromotionDetailService extends BaseAppService {
                     continue;
                 }
 
-                if (row.getCell(CmsConstants.CellNum.catPathCellNum) == null || StringUtil.isEmpty(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue())) {
+                if (row.getCell(CmsConstants.CellNum.channelIdCellNum) == null || StringUtil.isEmpty(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue())) {
                     break;
                 }
-                String groupName = row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue();
+                String groupName = ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum);
                 if (!StringUtil.isEmpty(groupName)) {
-                    CmsBtPromotionGroupModel model = hsModel.get(groupName);
+                    CmsBtPromotionGroupsBean model = hsModel.get(groupName);
                     if (model == null) {
                         model = getMode(row);
                         models.add(model);
                         hsModel.put(groupName, model);
                     } else {
                         String code = row.getCell(CmsConstants.CellNum.productCodeCellNum).getStringCellValue();
-                        CmsBtPromotionCodeModel product = model.getProductByCode(code);
+                        CmsBtPromotionCodesBean product = model.getProductByCode(code);
                         if (product == null) {
                             model.getCodes().add(getCode(row));
                         } else {
@@ -344,17 +355,18 @@ public class CmsPromotionDetailService extends BaseAppService {
         return models;
     }
 
-    private CmsBtPromotionGroupModel getMode(Row row) {
+    private CmsBtPromotionGroupsBean getMode(Row row) {
 
-        CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
-        model.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
-        model.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
-        model.setProductModel(row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue());
-        if (row.getCell(CmsConstants.CellNum.numberIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getNumericCellValue() + "");
-        } else {
-            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getStringCellValue());
-        }
+        CmsBtPromotionGroupsBean model = new CmsBtPromotionGroupsBean();
+        model.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
+        model.setCatPath(ExcelUtils.getString(row, CmsConstants.CellNum.catPathCellNum));
+        model.setProductModel(ExcelUtils.getString(row, CmsConstants.CellNum.groupNameCellNum));
+//        if (row.getCell(CmsConstants.CellNum.numberIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+//            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getNumericCellValue() + "");
+//        } else {
+//            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getStringCellValue());
+//        }
+        model.setNumIid(ExcelUtils.getString(row,CmsConstants.CellNum.numberIdCellNum));
 
         String modelId;
         if (row.getCell(CmsConstants.CellNum.groupIdCellNum) != null) {
@@ -364,7 +376,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
             if (!StringUtil.isEmpty(modelId)) {
-                model.setModelId(Long.parseLong(modelId));
+                model.setModelId(Integer.parseInt(modelId));
             }
         }
 
@@ -372,26 +384,26 @@ public class CmsPromotionDetailService extends BaseAppService {
         return model;
     }
 
-    private CmsBtPromotionCodeModel getCode(Row row) {
+    private CmsBtPromotionCodesBean getCode(Row row) {
 
-        CmsBtPromotionCodeModel code = new CmsBtPromotionCodeModel();
+        CmsBtPromotionCodesBean code = new CmsBtPromotionCodesBean();
 
-        code.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
+        code.setOrgChannelId(ExcelUtils.getString(row,CmsConstants.CellNum.channelIdCellNum));
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
             code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
         }
         code.setProductModel(ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum));
 
-        code.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
+        code.setCatPath(ExcelUtils.getString(row, CmsConstants.CellNum.catPathCellNum));
 
-        code.setProductCode(row.getCell(CmsConstants.CellNum.productCodeCellNum).getStringCellValue());
+        code.setProductCode(ExcelUtils.getString(row, CmsConstants.CellNum.productCodeCellNum));
 
-        code.setImage_url_1(row.getCell(CmsConstants.CellNum.image1CellNum).getStringCellValue());
+        code.setImage_url_1(ExcelUtils.getString(row, CmsConstants.CellNum.image1CellNum));
 
-        code.setImage_url_2(row.getCell(CmsConstants.CellNum.image2CellNum).getStringCellValue());
+        code.setImage_url_2(ExcelUtils.getString(row, CmsConstants.CellNum.image2CellNum));
 
-        code.setImage_url_3(row.getCell(CmsConstants.CellNum.image3CellNum).getStringCellValue());
+        code.setImage_url_3(ExcelUtils.getString(row, CmsConstants.CellNum.image3CellNum));
 
         code.setMsrp(getNumericCellValue(row.getCell(CmsConstants.CellNum.msrpRMBCellNum)));
 
@@ -403,7 +415,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         code.setSalePrice(getNumericCellValue(row.getCell(CmsConstants.CellNum.salePriceCellNum)));
 
-        code.setProductName(row.getCell(CmsConstants.CellNum.productNameCellNum).getStringCellValue());
+        code.setProductName(ExcelUtils.getString(row, CmsConstants.CellNum.productNameCellNum));
 
         code.setTag(ExcelUtils.getString(row,CmsConstants.CellNum.tagCellNum));
 
@@ -427,21 +439,21 @@ public class CmsPromotionDetailService extends BaseAppService {
             code.setProperty4(row.getCell(CmsConstants.CellNum.property4CellNum).getStringCellValue());
         }
 
-        CmsBtPromotionSkuModel sku = getSku(row);
+        CmsBtPromotionSkuBean sku = getSku(row);
         sku.setProductCode(code.getProductCode());
         sku.setProductId(code.getProductId());
         code.getSkus().add(sku);
         return code;
     }
 
-    private CmsBtPromotionSkuModel getSku(Row row) {
+    private CmsBtPromotionSkuBean getSku(Row row) {
 
-        CmsBtPromotionSkuModel sku = new CmsBtPromotionSkuModel();
-        sku.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
+        CmsBtPromotionSkuBean sku = new CmsBtPromotionSkuBean();
+        sku.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
         if (row.getCell(CmsConstants.CellNum.inventoryCellNum) != null) {
             sku.setQty(getNumericCellValue(row.getCell(CmsConstants.CellNum.inventoryCellNum)).intValue());
         }
-        sku.setProductSku(row.getCell(CmsConstants.CellNum.skuCellNum).getStringCellValue());
+        sku.setProductSku(ExcelUtils.getString(row, CmsConstants.CellNum.skuCellNum));
         return sku;
     }
 
@@ -472,7 +484,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 //    }
     public Map<String, List<String>> uploadPromotion(InputStream xls, int promotionId, String operator) throws Exception {
 
-        List<CmsBtPromotionGroupModel> uploadPromotionList = resolvePromotionXls2(xls);
+        List<CmsBtPromotionGroupsBean> uploadPromotionList = resolvePromotionXls2(xls);
         return insertPromotionProduct2(uploadPromotionList, promotionId, operator);
     }
 
@@ -489,7 +501,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtTagModel searchTagById(List<CmsBtTagModel> tags, int tagId) {
 
         for (CmsBtTagModel tag : tags) {
-            if (tag.getTagId() == tagId) {
+            if (tag.getId() == tagId) {
                 return tag;
             }
         }
@@ -503,12 +515,12 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param operator    操作者
      */
     public void teJiaBaoInit(Integer promotionId, String channelId, String operator) {
-        List<CmsBtTasksModel> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+        List<CmsBtTasksBean> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
 
-        List<CmsBtTasksModel> addTaskList = new ArrayList<>();
+        List<CmsBtTasksBean> addTaskList = new ArrayList<>();
         if (tasks.size() == 0) {
             CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-            CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
+            CmsBtTasksBean cmsBtTaskModel = new CmsBtTasksBean();
             cmsBtTaskModel.setModifier(operator);
             cmsBtTaskModel.setCreater(operator);
             cmsBtTaskModel.setPromotion_id(promotionId);
@@ -522,7 +534,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         Map<String, Object> param = new HashMap<>();
         param.put("promotionId", promotionId);
-        List<CmsBtPromotionCodeModel> codeList = promotionCodeService.getPromotionCodeList(param);
+        List<CmsBtPromotionCodesBean> codeList = promotionCodeService.getPromotionCodeList(param);
 
         List<CmsBtPromotionTaskModel> addPromotionTaskList = new ArrayList<>();
         codeList.forEach(code -> {
@@ -539,7 +551,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param promotionCodeModel romotionCode
      * @param operator           操作者
      */
-    public void updatePromotionProduct(CmsBtPromotionCodeModel promotionCodeModel, String operator) {
+    public void updatePromotionProduct(CmsBtPromotionCodesBean promotionCodeModel, String operator) {
         promotionDetailService.update(promotionCodeModel, operator);
     }
 
@@ -550,11 +562,11 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param channelId      channelId
      * @param operator       operator
      */
-    public void delPromotionModel(List<CmsBtPromotionGroupModel> promotionModes, String channelId, String operator) {
+    public void delPromotionModel(List<CmsBtPromotionGroupsBean> promotionModes, String channelId, String operator) {
         promotionDetailService.remove(channelId, promotionModes, operator);
     }
 
-    public void delPromotionCode(List<CmsBtPromotionCodeModel> promotionModes, String channelId, String operator) {
+    public void delPromotionCode(List<CmsBtPromotionCodesBean> promotionModes, String channelId, String operator) {
         promotionDetailService.delPromotionCode(promotionModes, channelId, operator);
     }
 }

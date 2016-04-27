@@ -30,7 +30,7 @@
 
                 <div class="col-sm-6">
                     <select class="form-control" ng-model="vm.promotionInfo.tagId"
-                            ng-options="subPromotion.tagId as subPromotion.tagName for subPromotion in vm.subPromotionList" required>
+                            ng-options="subPromotion.id as subPromotion.tagName for subPromotion in vm.subPromotionList" required>
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>

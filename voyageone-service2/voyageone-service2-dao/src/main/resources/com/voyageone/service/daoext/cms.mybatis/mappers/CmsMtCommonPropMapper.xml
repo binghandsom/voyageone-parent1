@@ -6,7 +6,7 @@
         <result column="prop_id" property="propId" jdbcType="VARCHAR" />
         <result column="prop_name" property="propName" jdbcType="VARCHAR" />
         <result column="prop_type" property="propType" jdbcType="VARCHAR" />
-        <result column="prop_level" property="propLevel" jdbcType="VARCHAR" />
+        <!--<result column="prop_level" property="propLevel" jdbcType="VARCHAR" />-->
         <result column="action_type" property="actionType" jdbcType="VARCHAR" />
         <result column="platform_prop_ref_id" property="platformPropRefId" jdbcType="VARCHAR" />
         <result column="rules" property="rules" jdbcType="VARCHAR" />

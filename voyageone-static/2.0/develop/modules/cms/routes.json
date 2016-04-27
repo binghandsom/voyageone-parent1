@@ -189,6 +189,11 @@
     "templateUrl": "views/system/cache/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
   },
+  "system_store_operation": {
+    "hash": "/system/storeoperation",
+    "templateUrl": "views/system/storeoperation/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl"
+  },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list/:parentId",
     "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",

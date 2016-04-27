@@ -1,12 +1,12 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +41,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.PAGE)
     public AjaxResponse page(@RequestBody ReqParam param) {
-        List<CmsBtBeatInfoModel> beatInfoModels =
+        List<CmsBtBeatInfoBean> beatInfoModels =
                 taskPictureService.getAllBeat(param.getTask_id(), param.getFlag(), param.getOffset(), param.getSize());
         int total = taskPictureService.getAllBeatCount(param.getTask_id(), param.getFlag());
         List<Map> summary = taskPictureService.getBeatSummary(param.getTask_id());
@@ -54,7 +54,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.IMPORT)
     public AjaxResponse importBeat(@RequestParam int task_id, @RequestParam int size, @RequestParam MultipartFile file) {
-        List<CmsBtBeatInfoModel> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
+        List<CmsBtBeatInfoBean> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
         int total = taskPictureService.getAllBeatCount(task_id, null);
         Map<String, Object> map = new HashMap<>();
         map.put("list", beatInfoModels);
@@ -64,7 +64,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.DOWNLOAD)
     public ResponseEntity<byte[]> downloadBeat(@RequestParam int task_id) {
-        CmsBtTasksModel task = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksBean task = taskService.getTaskWithPromotion(task_id);
         String filename = String.format("%s-%s.xls", task.getPromotion().getPromotionName(), task.getTask_name());
         return genResponseEntityFromBytes(filename,
                 taskPictureService.downloadBeatInfo(task_id));

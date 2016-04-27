@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +21,11 @@ public class CmsTaskService extends BaseAppService {
     @Autowired
     private TaskService taskService;
 
-    public List<CmsBtTasksModel> getAllTasks(Map<String,Object>searchInfo) {
+    public List<CmsBtTasksBean> getAllTasks(Map<String, Object> searchInfo) {
         return taskService.getTasksWithPromotionByCondition(searchInfo);
     }
 
-    public CmsBtTasksModel getTaskWithPromotion(int task_id) {
+    public CmsBtTasksBean getTaskWithPromotion(int task_id) {
         return taskService.getTaskWithPromotion(task_id);
     }
 }

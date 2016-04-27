@@ -35,7 +35,7 @@ public class CmsGroupDetailController extends CmsController {
         Map<String, Object> resultBean = getProductInfoList(params);
 
         // 获取master数据
-        resultBean.put("masterData", cmsGroupListService.getMasterData(getUser(), getLang()));
+        resultBean.put("masterData", cmsGroupListService.getMasterData(getUser()));
         return success(resultBean);
     }
 

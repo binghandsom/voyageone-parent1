@@ -24,7 +24,8 @@ define(function() {
         "TXT_CONFIGURATION_SETTING": "Configurations",
         "TXT_TRANSLATION_MANAGER": "Translations",
         "TXT_TRANSLATION_INDEX": "Translation List",
-        "TXT_SYSTEM_SETTING": "System Setting",
+        "TXT_SYSTEM_SETTING_MARKETING": "System Setting(Marketing)",
+        "TXT_SYSTEM_SETTING_IT": "System Setting(Maintain)",
         "TXT_CATEGORY_INDEX": "Master Category List",
         "TXT_ERROR_MANAGER_MARKETING": "Error List(Marketing)",
         "TXT_ERROR_MANAGER_MAINTENANCE": "Error List(Maintenance)",
@@ -276,6 +277,15 @@ define(function() {
         "TXT_INCREMENT_TYPE": "Increment Type",
         "TXT_INCREMENT_PERCENTAGE":"Increment percentage",
         "TXT_INCREMENT_CNT":"Increment count",
+        "TXT_TAG_STORE_CLASSIFY":"Store classify tag",
+        "TXT_TAG_PROMOTION":"Promotion tag",
+        "TXT_TAG_GOODS":"Goods tag",
+        "TXT_TAG_FREE":"Free tag",
+        "TXT_TAG_MANAGEMENT":"Tag Management",
+        "TXT_TAG_TYPE":"Tag type",
+        "TXT_TAG_ONE":"Tag one",
+        "TXT_TAG_TWO":"Tag two",
+        "TXT_TAG_THREE":"Tag Three",
         "TXT_TRANSSTS_ATTRIBUTE": "Translation status",
         "TXT_IMAGE_MANAGER" : "Image Manage",
         "TXT_WAITING_UPLOAD": "Waiting Upload",
@@ -306,8 +316,6 @@ define(function() {
         "TXT_SHORT_NAME": "short name",
         "TXT_COMPANY": "Company",
         "TXT_IMAGE_URL": "Image URL",
-
-
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_INVALID_FEILD": "Please check these fields [ <h4>{{fields}}</h4> ], then try SAVE. (。・`ω´・)",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
@@ -373,6 +381,10 @@ define(function() {
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "Image upload/refresh success.",
         "TXT_MSG_ACTIVITIES": "Please select the corresponding promotion!",
+        "TXT_MSG_TAG": "Please select and fill in the label!",
+        "TXT_MSG_TAG_EDITOR": "Tag Editor",
+        "TXT_MSG_TAG_PATH": "Tag Path",
+        "TXT_MSG_TAG_IMAGE": "Tag name is less than 50 bytes!",
         "TXT_MSG_IMPORT_MODE": "Import Mode",
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
         "TXT_MSG_IMPORT_ADD": "Add Mode",
@@ -400,6 +412,7 @@ define(function() {
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
         "BTN_ADD_TO_JM_PROMOTION": "Join JM's Promotion",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "Bulk Update",
+        "BTN_UPDATE_COMMON_ATTRIBUTE": "Update Common Attribute",
         "BTN_CHANGE_MASTER_CATEGORY": "Change Master Category",
         "BTN_CANCEL": "Cancel",
         "BTN_EXPORT": "Export",
@@ -457,6 +470,9 @@ define(function() {
         "REVERT": "Reverting",
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
-        "CANT_BEAT": "Info Error"
+        "CANT_BEAT": "Info Error",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "page-size"
     };
 });

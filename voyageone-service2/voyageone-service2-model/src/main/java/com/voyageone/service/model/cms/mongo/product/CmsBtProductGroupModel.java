@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品Model Group Channel
@@ -14,40 +15,40 @@ import java.util.List;
  */
 public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
-    private long groupId = 0;
-    protected int cartId = 0;
-    private String numIId = null;
-    private String platformPid = null;
-    private int displayOrder = 0;
-    private String publishTime = null;
-    private String onSaleTime = null;
-    private String instockTime = null;
-    private String platformStatus = null;
-    private String platformActive = null;
+    private Long groupId;
+    private Integer cartId;
+    private String numIId;
+    private String platformPid;
+    private Integer displayOrder;
+    private String publishTime;
+    private String onSaleTime;
+    private String instockTime;
+    private String platformStatus;
+    private String platformActive;
 
-    private String mainProductCode = null;
-    private List<String> productCodes = null;
-    private int qty = 0;
-    private double priceMsrpSt = 0;
-    private double priceMsrpEd = 0;
-    private double priceRetailSt = 0;
-    private double priceRetailEd = 0;
-    private double priceSaleSt = 0;
-    private double priceSaleEd = 0;
+    private String mainProductCode;
+    private List<String> productCodes;
+    private Integer qty;
+    private Double priceMsrpSt;
+    private Double priceMsrpEd;
+    private Double priceRetailSt;
+    private Double priceRetailEd;
+    private Double priceSaleSt;
+    private Double priceSaleEd;
 
-    public long getGroupId() {
+    public Long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(long groupId) {
+    public void setGroupId(Long groupId) {
         this.groupId = groupId;
     }
 
-    public int getCartId() {
+    public Integer getCartId() {
         return cartId;
     }
 
-    public void setCartId(int cartId) {
+    public void setCartId(Integer cartId) {
         this.cartId = cartId;
     }
 
@@ -67,11 +68,11 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         this.platformPid = platformPid;
     }
 
-    public int getDisplayOrder() {
+    public Integer getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(int displayOrder) {
+    public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
 
@@ -115,59 +116,59 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         this.productCodes = productCodes;
     }
 
-    public int getQty() {
+    public Integer getQty() {
         return qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(Integer qty) {
         this.qty = qty;
     }
 
-    public double getPriceMsrpSt() {
+    public Double getPriceMsrpSt() {
         return priceMsrpSt;
     }
 
-    public void setPriceMsrpSt(double priceMsrpSt) {
+    public void setPriceMsrpSt(Double priceMsrpSt) {
         this.priceMsrpSt = priceMsrpSt;
     }
 
-    public double getPriceMsrpEd() {
+    public Double getPriceMsrpEd() {
         return priceMsrpEd;
     }
 
-    public void setPriceMsrpEd(double priceMsrpEd) {
+    public void setPriceMsrpEd(Double priceMsrpEd) {
         this.priceMsrpEd = priceMsrpEd;
     }
 
-    public double getPriceRetailSt() {
+    public Double getPriceRetailSt() {
         return priceRetailSt;
     }
 
-    public void setPriceRetailSt(double priceRetailSt) {
+    public void setPriceRetailSt(Double priceRetailSt) {
         this.priceRetailSt = priceRetailSt;
     }
 
-    public double getPriceRetailEd() {
+    public Double getPriceRetailEd() {
         return priceRetailEd;
     }
 
-    public void setPriceRetailEd(double priceRetailEd) {
+    public void setPriceRetailEd(Double priceRetailEd) {
         this.priceRetailEd = priceRetailEd;
     }
 
-    public double getPriceSaleSt() {
+    public Double getPriceSaleSt() {
         return priceSaleSt;
     }
 
-    public void setPriceSaleSt(double priceSaleSt) {
+    public void setPriceSaleSt(Double priceSaleSt) {
         this.priceSaleSt = priceSaleSt;
     }
 
-    public double getPriceSaleEd() {
+    public Double getPriceSaleEd() {
         return priceSaleEd;
     }
 
-    public void setPriceSaleEd(double priceSaleEd) {
+    public void setPriceSaleEd(Double priceSaleEd) {
         this.priceSaleEd = priceSaleEd;
     }
 

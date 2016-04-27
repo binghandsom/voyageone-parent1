@@ -30,6 +30,10 @@ public class TaskControlEnums {
          */
         thread_count,
         /**
+         * MQ消息并发执行线程数
+         */
+        mq_thread_count,
+        /**
          * 抽出件数
          */
         row_count,

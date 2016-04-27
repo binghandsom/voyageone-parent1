@@ -6,25 +6,25 @@ import com.taobao.api.response.PictureGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
-import com.voyageone.service.model.cms.enums.BeatFlag;
-import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbPictureService;
-import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +50,15 @@ import static java.lang.String.format;
 @Service
 public class BeatJobService extends BaseTaskService {
 
+    @Autowired
+    private CmsBeatInfoService beatInfoService;
+    @Autowired
+    private TbItemService tbItemService;
+    @Autowired
+    private ImageCategoryService imageCategoryService;
+    @Autowired
+    private TbPictureService tbPictureService;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -59,18 +68,6 @@ public class BeatJobService extends BaseTaskService {
     public String getTaskName() {
         return "CmsBeatJob2";
     }
-
-    @Autowired
-    private CmsBeatInfoService beatInfoService;
-
-    @Autowired
-    private TbItemService tbItemService;
-
-    @Autowired
-    private ImageCategoryService imageCategoryService;
-
-    @Autowired
-    private TbPictureService tbPictureService;
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
@@ -85,7 +82,7 @@ public class BeatJobService extends BaseTaskService {
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
-        List<CmsBtBeatInfoModel> beatInfoModels = beatInfoService.getNeedBeatData(limit);
+        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(limit);
 
         $info("预定抽取数量：%s，实际抽取数量：%s", limit, beatInfoModels.size());
 
@@ -100,10 +97,10 @@ public class BeatJobService extends BaseTaskService {
 
             if (end > total) end = total;
 
-            List<CmsBtBeatInfoModel> subList = beatInfoModels.subList(i, end);
+            List<CmsBtBeatInfoBean> subList = beatInfoModels.subList(i, end);
 
             runnableList.add(() -> {
-                for (CmsBtBeatInfoModel bean : subList) {
+                for (CmsBtBeatInfoBean bean : subList) {
                     bean.clearMessage();
                     Context context = null;
                     try {
@@ -156,7 +153,7 @@ public class BeatJobService extends BaseTaskService {
         runWithThreadPool(runnableList, taskControlList);
     }
 
-    private void setSuccess(CmsBtBeatInfoModel beatInfoModel) {
+    private void setSuccess(CmsBtBeatInfoBean beatInfoModel) {
         switch (beatInfoModel.getBeatFlag()) {
             case BEATING:
                 beatInfoModel.setBeatFlag(BeatFlag.SUCCESS);
@@ -167,7 +164,7 @@ public class BeatJobService extends BaseTaskService {
         }
     }
 
-    private void setFail(CmsBtBeatInfoModel beatInfoModel) {
+    private void setFail(CmsBtBeatInfoBean beatInfoModel) {
         switch (beatInfoModel.getBeatFlag()) {
             case BEATING:
                 beatInfoModel.setBeatFlag(BeatFlag.FAIL);
@@ -186,7 +183,7 @@ public class BeatJobService extends BaseTaskService {
 
         private CmsMtImageCategoryModel downCategory;
 
-        private CmsBtBeatInfoModel beatInfoModel;
+        private CmsBtBeatInfoBean beatInfoModel;
 
         private TaskBean taskBean;
 
@@ -196,7 +193,7 @@ public class BeatJobService extends BaseTaskService {
 
         private TbItemSchema tbItemSchema;
 
-        private Context(CmsBtBeatInfoModel beatInfoModel) throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
+        private Context(CmsBtBeatInfoBean beatInfoModel) throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
             this.beatInfoModel = beatInfoModel;
             this.promotion = beatInfoModel.getPromotion();
             this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
@@ -282,7 +279,7 @@ public class BeatJobService extends BaseTaskService {
         }
 
         private String getTaobaoVerticalImageUrl() throws IOException, ApiException {
-            CmsBtPromotionCodeModel code = beatInfoModel.getPromotion_code();
+            CmsBtPromotionCodesBean code = beatInfoModel.getPromotion_code();
             String imageUrl, imageName, image_url_key = code.getImage_url_3();
             CmsMtImageCategoryModel categoryModel;
             switch (beatInfoModel.getBeatFlag()) {

@@ -44,6 +44,24 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{prodId:{$in:[" + idsStr + "]}}";
         return select(query, channelId);
     }
+
+
+    /**
+     * 根据codes返回多条产品数据
+     * @param codes
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtProductModel> selectProductByCodes( List<String> codes,String channelId) {
+        if (codes == null || codes.size() == 0) {  // 对于list千万不要返回null
+            return Collections.emptyList();
+        }
+        String idsStr = Joiner.on(",").join(codes);
+
+        String query = "{prodId:{$in:[" + idsStr + "]}}";
+        return select(query, channelId);
+    }
+
     /**
      * 批量更新记录
      * @param channelId 渠道ID
@@ -88,5 +106,33 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         return result.size() <= 0;
     }
+     //执行大小写不敏感的匹配
+    public static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
 
+    public long countByFieldStatusEqualApproved(String channelId) {
+        return countByQuery(FieldStatusEqArrpoved,channelId);
+    }
+
+    public List<CmsBtProductModel> selectByFieldStatusEqualApproved(String channelId) {
+
+        return select(FieldStatusEqArrpoved, channelId);
+    }
+
+    private static final String PriceNotEqualQuery="{ $where : \"function(){\n" +
+            "            var i=0;\n" +
+            "            if(!this.skus) return false;    \n" +
+            "            for(i=0;i<this.skus.length;i++){\n" +
+            "                    if(this.skus[i].priceSale!=this.skus[i].priceRetail) return true;\n" +
+            "            }\n" +
+            "            return false;\n" +
+            "        }\"}";
+
+
+    /**
+     * 查询priceSale和priceRetail不相等的products
+     * @return
+     */
+    public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
+        return select(PriceNotEqualQuery, channelId);
+    }
 }

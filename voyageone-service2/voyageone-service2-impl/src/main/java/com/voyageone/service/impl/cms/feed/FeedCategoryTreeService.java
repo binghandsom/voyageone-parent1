@@ -24,10 +24,10 @@ public class FeedCategoryTreeService extends BaseService {
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
 
-    // 取得Top类目路径数据
-    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId) {
-        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
-    }
+//    // 取得Top类目路径数据
+//    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId) {
+//        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
+//    }
 
     public List<CmsMtFeedCategoryTreeModel> getOnlyTopFeedCategories(String channelId) {
         return cmsMtFeedCategoryTreeDao.selectTopCategories(channelId);
@@ -77,8 +77,14 @@ public class FeedCategoryTreeService extends BaseService {
             categoryTree.setCatName(categorys.get(0));
             categoryTree.setCatId(MD5.getMD5(categorys.get(0)));
             categoryTree.setParentCatId("0");
-            categoryTree.setIsParent(categorys.size() > 0 ? 1 : 0);
+            categoryTree.setIsParent(categorys.size() > 1 ? 1 : 0);
             categoryTree.setChildren(new ArrayList<>());
+            if(categorys.size() == 1){
+                categoryTree.setModified(DateTimeUtil.getNow());
+                categoryTree.setModifier(modifier);
+                cmsMtFeedCategoryTreeDao.update(categoryTree);
+                return;
+            }
         }
 
 //        if (addCategory(categoryTree, category) != null) {

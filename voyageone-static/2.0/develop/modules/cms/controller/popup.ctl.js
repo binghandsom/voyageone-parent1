@@ -76,7 +76,9 @@ define([
                 "addToPromotion": {
                     "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/addToPromotion.ctl",
-                    "controller": 'popAddToPromotionCtl'
+                    "controller": 'popAddToPromotionCtl',
+                    "backdrop": 'static',
+                    "size": 'md'
                 },
                 "fieldEdit": {
                     "templateUrl": "views/pop/bulkUpdate/fieldEdit.tpl.html",
@@ -124,6 +126,16 @@ define([
                     "templateUrl": "views/pop/custom/addtaglist.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/custom/addtaglist.ctl",
                     "controller": 'popAddTagListCtl'
+                },
+                "storeoperation": {
+                    "templateUrl": "views/pop/custom/storeoperation.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/storeoperation.ctl",
+                    "controller": 'popStoreOperationCtl'
+                },
+                "confirmstoreopp": {
+                    "templateUrl": "views/pop/custom/confirmstoreopp.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/confirmstoreopp.ctl",
+                    "controller": 'popConfirmStoreOppCtl'
                 },
 
             },
@@ -490,37 +502,46 @@ define([
          * pop出promotion选择页面,用于设置
          * @type {openAddToPromotion}
          */
-        $scope.openAddToPromotion = openAddToPromotion;
-        function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
-            require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
-                if (selList && selList.length) {
-                    var modalInstance = $uibModal.open({
-                        templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
-                        controller: popActions.bulkUpdate.addToPromotion.controller,
-                        size: viewSize,
-                        resolve: {
-                            promotion: function () {
-                                //var productIds = [];
-                                //_.forEach(selList, function (object) {
-                                //    productIds.push(object);
-                                //});
-                                var productIds = [];
-                                _.forEach(selList, function (object) {
-                                    productIds.push(object.id);
-                                });
-                                return {"promotion": promotion, "productIds": productIds, "products": selList};
-                            }
-                        }
-                    });
+        $scope.openAddToPromotion = function (promotion, selList) {
+            if (selList && selList.length) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.id);
+                });
+                return openModel(popActions.bulkUpdate.addToPromotion, {"promotion": promotion, "productIds": productIds, "products": selList});
+            } else {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
 
-                    // 回调主页面的刷新操作
-                    modalInstance.result.then(function () {
-                        fnInitial();
-                    })
-                } else {
-                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                }
-            });
+            //require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
+            //    if (selList && selList.length) {
+            //        var modalInstance = $uibModal.open({
+            //            templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
+            //            controller: popActions.bulkUpdate.addToPromotion.controller,
+            //            size: viewSize,
+            //            resolve: {
+            //                promotion: function () {
+            //                    //var productIds = [];
+            //                    //_.forEach(selList, function (object) {
+            //                    //    productIds.push(object);
+            //                    //});
+            //                    var productIds = [];
+            //                    _.forEach(selList, function (object) {
+            //                        productIds.push(object.id);
+            //                    });
+            //                    return {"promotion": promotion, "productIds": productIds, "products": selList};
+            //                }
+            //            }
+            //        });
+            //
+            //        // 回调主页面的刷新操作
+            //        modalInstance.result.then(function () {
+            //            fnInitial();
+            //        })
+            //    } else {
+            //        alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            //    }
+            //});
         }
 
         /**
@@ -528,13 +549,13 @@ define([
          * @type {openupdateProperties}
          */
         $scope.openBulkUpdate = openBulkUpdate;
-        function openBulkUpdate(viewSize, selList, fnInitial) {
+        function openBulkUpdate(selList, fnInitial) {
             require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
                 if (selList && selList.length) {
                     var modalInstance = $uibModal.open({
                         templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
                         controller: popActions.bulkUpdate.fieldEdit.controller,
-                        size: viewSize,
+                        size: 'md',
                         resolve: {
                             productIds: function () {
                                 var productIds = [];
@@ -838,7 +859,14 @@ define([
                 });
             });
         }
-
+        //全店操作页面中，操作按钮弹出
+        $scope.openNewOpp = function (context) {
+            return openModel(popActions.custom.storeoperation,context);
+        };
+        //全店操作页面中，确认操作按钮弹出
+        $scope.openConfirmOpp = function (context) {
+            return openModel(popActions.custom.confirmstoreopp,context);
+        };
         /**
          * 打开price历史页面
          * @type {openHistoryPrice}

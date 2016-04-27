@@ -19,13 +19,14 @@
             replace : true,
             scope: {
                 content: "=content",
-                direct:"@direct"
+                direct:"@direct",
+                size: "@size"
             },
             link: function(scope, element) {
                 var li = $(element).find("li");
                 li.html(scope.content);
-                if(li.html().length >= 100)
-                    li.html(li.html().substr(0,100) + '...').css({cursor:'pointer'});
+                if(li.html().length >= scope.size)
+                    li.html(li.html().substr(0,scope.size) + '...').css({cursor:'pointer'});
                 else
                     li.html(li.html());
             }

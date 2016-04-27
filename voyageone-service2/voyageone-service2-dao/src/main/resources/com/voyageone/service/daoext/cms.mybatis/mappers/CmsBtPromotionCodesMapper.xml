@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="bt_promotion_code_map" autoMapping="true" extends="bt_promotion_model_map"
+               type="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+        <result column="sale_price" property="salePrice" jdbcType="DOUBLE"/>
+        <result column="retail_price" property="retailPrice" jdbcType="DOUBLE"/>
+        <result column="msrp" property="msrp" jdbcType="DOUBLE"/>
+        <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="product_code" property="productCode" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="tag_id" property="tagId" jdbcType="INTEGER"/>
+        <result column="tag_path" property="tagPath" jdbcType="VARCHAR"/>
+        <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR"/>
+        <result column="tag_name" property="tag" jdbcType="VARCHAR"/>
+        <result column="property_1" property="property1" jdbcType="VARCHAR"/>
+        <result column="property_2" property="property2" jdbcType="VARCHAR"/>
+        <result column="property_3" property="property3" jdbcType="VARCHAR"/>
+        <result column="property_4" property="property4" jdbcType="VARCHAR"/>
+        <result column="skuCount" property="skuCount" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap">
+        SELECT
+        t1.*, count(1) AS skuCount
+        FROM
+        (
+        SELECT
+        a.id,
+        a.promotion_id,
+        a.org_channel_id,
+        d.full_name,
+        a.product_id,
+        a.model_id,
+        a.product_model,
+        a.product_code,
+        a.product_name,
+        a.cat_path,
+        a.retail_price,
+        a.sale_price,
+        a.msrp,
+        a.tag_id,
+        a.promotion_price,
+        a.num_iid,
+        a.image_url_1,
+        a.image_url_2,
+        a.image_url_3,
+        a.property_1,
+        a.property_2,
+        a.property_3,
+        a.property_4,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier,
+        a.image_url_1 as image,
+        b.tag_path,
+        b.tag_name,
+        b.tag_path_name
+        FROM
+        voyageone_cms2.cms_bt_promotion_codes a
+        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN tm_order_channel d on a.org_channel_id = d.order_channel_id
+
+        <where>
+            <if test="promotionId != null">
+                a.promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null and channelId != '' and channelId != '997'">
+                and a.org_channel_id = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="modelId != null">
+                and a.model_id = #{modelId,jdbcType=INTEGER}
+            </if>
+            <if test="productModel != null and productModel != ''">
+                and a.product_model = #{productModel}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+                a.product_model like '%${key}%'
+                or a.product_code like '%${key}%'
+                or a.product_name like '%${key}%'
+                )
+            </if>
+        </where>
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+        ) t1
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_skus t2 ON t1.promotion_id = t2.promotion_id
+        AND t1.product_code = t2.product_code
+        GROUP BY t1.promotion_id,t1.product_code
+    </select>
+    <select id="select_cms_bt_promotion_code_cnt" resultType="int" parameterType="HashMap">
+        SELECT
+        count(1)
+        FROM
+        voyageone_cms2.cms_bt_promotion_codes
+        <where>
+            <if test="promotionId != null">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null and channelId != '' and channelId != '997'">
+                and org_channel_id = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="modelId != null and modelId != ''">
+                and model_id = #{modelId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+
+                product_model like '%${key}%'
+                or product_code like '%${key}%'
+                or product_name like '%${key}%'
+                )
+            </if>
+        </where>
+    </select>
+    <resultMap id="bt_promotion_code_sku_map" autoMapping="true" extends="bt_promotion_code_map"
+               type="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
+            <result column="product_sku" property="productSku"/>
+        </collection>
+    </resultMap>
+    <select id="select_cms_bt_promotion_code_sku" resultMap="bt_promotion_code_sku_map" parameterType="HashMap">
+        SELECT
+        a.id,
+        a.promotion_id,
+        a.org_channel_id,
+        a.product_id,
+        a.model_id,
+        a.product_model,
+        a.product_code,
+        a.product_name,
+        a.cat_path,
+        a.retail_price,
+        a.sale_price,
+        a.msrp,
+        a.tag_id,
+        a.promotion_price,
+        a.num_iid,
+        a.image_url_1,
+        a.image_url_2,
+        a.image_url_3,
+        a.property_1,
+        a.property_2,
+        a.property_3,
+        a.property_4,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier,
+        a.image_url_1 as image,
+        b.tag_path,
+        b.tag_name,
+        b.tag_path_name,
+        c.product_sku
+        FROM
+        voyageone_cms2.cms_bt_promotion_codes a
+        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_skus c on a.promotion_id = c.promotion_id and a.product_code =
+        c.product_code
+
+        <where>
+            <if test="promotionId != null">
+                a.promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '997'">
+                and a.org_channel_id= #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+    <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+        insert into voyageone_cms2.cms_bt_promotion_codes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="promotionId != null">
+                promotion_id,
+            </if>
+            <if test="orgChannelId != null">
+                org_channel_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="modelId != null">
+                model_id,
+            </if>
+            <if test="productModel != null">
+                product_model,
+            </if>
+            <if test="productCode != null">
+                product_code,
+            </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="catPath != null">
+                cat_path,
+            </if>
+            <if test="retailPrice != null">
+                retail_price,
+            </if>
+            <if test="salePrice != null">
+                sale_price,
+            </if>
+            <if test="msrp != null">
+                msrp,
+            </if>
+            <if test="msrpUS != null">
+                msrpUS,
+            </if>
+            <if test="promotionPrice != null">
+                promotion_price,
+            </if>
+            <if test="numIid != null">
+                num_iid,
+            </if>
+            <if test="image_url_1 != null">
+                image_url_1,
+            </if>
+            <if test="image_url_2 != null">
+                image_url_2,
+            </if>
+            <if test="image_url_3 != null">
+                image_url_3,
+            </if>
+            <if test="property1 != null">
+                property_1,
+            </if>
+            <if test="property2 != null">
+                property_2,
+            </if>
+            <if test="property3 != null">
+                property_3,
+            </if>
+            <if test="property4 != null">
+                property_4,
+            </if>
+            <if test="tagId != null">
+                tag_id,
+            </if>
+            created,
+            <if test="creater != null">
+                creater,
+            </if>
+            modified,
+            <if test="modifier != null">
+                modifier,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="promotionId != null">
+                #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null">
+                #{orgChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="modelId != null">
+                #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="productModel != null">
+                #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null">
+                #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="catPath != null">
+                #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="retailPrice != null">
+                #{retailPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="salePrice != null">
+                #{salePrice,jdbcType=DOUBLE},
+            </if>
+            <if test="msrp != null">
+                #{msrp,jdbcType=DOUBLE},
+            </if>
+            <if test="msrpUS != null">
+                #{msrpUS,jdbcType=DOUBLE},
+            </if>
+            <if test="promotionPrice != null">
+                #{promotionPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="numIid != null">
+                #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_1 != null">
+                #{image_url_1,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_2 != null">
+                #{image_url_2,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_3 != null">
+                #{image_url_3,jdbcType=VARCHAR},
+            </if>
+            <if test="property1 != null">
+                #{property1,jdbcType=VARCHAR},
+            </if>
+            <if test="property2 != null">
+                #{property2,jdbcType=VARCHAR},
+            </if>
+            <if test="property3 != null">
+                #{property3,jdbcType=VARCHAR},
+            </if>
+            <if test="property4 != null">
+                #{property4,jdbcType=VARCHAR},
+            </if>
+            <if test="tagId != null">
+                #{tagId,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="creater != null">
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="modifier != null">
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="update_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+        update voyageone_cms2.cms_bt_promotion_codes
+        <set>
+            <if test="promotionId != null">
+                promotion_id = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null">
+                org_channel_id = #{orgChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="modelId != null">
+                model_id = #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="productModel != null">
+                product_model = #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null">
+                product_code = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="catPath != null">
+                cat_path = #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="retailPrice != null">
+                retail_price = #{retailPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="salePrice != null">
+                sale_price = #{salePrice,jdbcType=DOUBLE},
+            </if>
+            <if test="msrp != null">
+                msrp = #{msrp,jdbcType=DOUBLE},
+            </if>
+            <if test="msrpUS != null">
+                msrpUS = #{msrpUS,jdbcType=DOUBLE},
+            </if>
+            <if test="promotionPrice != null">
+                promotion_price = #{promotionPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="numIid != null">
+                num_iid = #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_1 != null">
+                image_url_1 = #{image_url_1,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_2 != null">
+                image_url_2 = #{image_url_2,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_3 != null">
+                image_url_3 = #{image_url_3,jdbcType=VARCHAR},
+            </if>
+            <if test="property1 != null">
+                property_1 = #{property1,jdbcType=VARCHAR},
+            </if>
+            <if test="property2 != null">
+                property_2 = #{property2,jdbcType=VARCHAR},
+            </if>
+            <if test="property3 != null">
+                property_3 = #{property3,jdbcType=VARCHAR},
+            </if>
+            <if test="property4 != null">
+                property_4 = #{property4,jdbcType=VARCHAR},
+            </if>
+            <if test="tagId != null">
+                tag_id = #{tagId,jdbcType=INTEGER},
+            </if>
+            modified = now(),
+            <if test="modifier != null">
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            <if test="promotionId != null">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="productCode != null">
+                and product_code = #{productCode,jdbcType=INTEGER}
+            </if>
+        </where>
+    </update>
+    <delete id="delete_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+        delete
+        from voyageone_cms2.cms_bt_promotion_codes
+        where
+        promotion_id = #{promotionId,jdbcType=INTEGER}
+        <if test="productId != null">
+            and product_id = #{productId,jdbcType=INTEGER}
+        </if>
+        <if test="productModel != null">
+            and product_model = #{productModel,jdbcType=VARCHAR}
+        </if>
+        <if test="productCode != null and productCode != ''">
+            and product_code = #{productCode,jdbcType=VARCHAR}
+        </if>
+    </delete>
+    <select id="select_cms_bt_promotion_code_pro_promotionIds" parameterType="List" resultType="HashMap">
+        select distinct product_code,product_model,property_1,property_2,property_3,property_4
+        from voyageone_cms2.cms_bt_promotion_codes
+        where promotion_id in
+        <foreach collection="list" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+    </select>
+</mapper>

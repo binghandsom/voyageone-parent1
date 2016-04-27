@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.promotion.beat;
 
-import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +17,18 @@ import java.util.List;
 public class CmsBeatInfoService {
 
     @Autowired
-    private CmsBtBeatInfoDao beatInfoDao;
+    private CmsBtBeatInfoDaoExt beatInfoDao;
 
     /**
      * 获取需要处理的价格披露数据
      *
      * @return CmsBtBeatInfoModel 集合
      */
-    public List<CmsBtBeatInfoModel> getNeedBeatData(int limit) {
+    public List<CmsBtBeatInfoBean> getNeedBeatData(int limit) {
         return beatInfoDao.selectListNeedBeatFullData(limit);
     }
 
-    public int saveFlagAndMessage(CmsBtBeatInfoModel beatInfoModel) {
+    public int saveFlagAndMessage(CmsBtBeatInfoBean beatInfoModel) {
         return beatInfoDao.updateFlagAndMessage(beatInfoModel);
     }
 }

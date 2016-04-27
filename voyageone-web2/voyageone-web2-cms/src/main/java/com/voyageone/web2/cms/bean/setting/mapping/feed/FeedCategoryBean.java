@@ -85,8 +85,8 @@ public class FeedCategoryBean {
             this.defaultMapping = mapping.getDefaultMapping();
             this.defaultMain = mapping.getDefaultMain();
             this.matchOver = mapping.getMatchOver();
-            this.feedPath = mapping.getScope().getFeedCategoryPath();
-            this.mainPath = mapping.getScope().getMainCategoryPath();
+            this.feedPath = mapping.getFeedCategoryPath();
+            this.mainPath = mapping.getMainCategoryPath();
             if (mainMapping != null)
                 this.mainMapping = new MappingBean(mainMapping, null);
         }

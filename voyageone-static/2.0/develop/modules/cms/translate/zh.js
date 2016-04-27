@@ -24,7 +24,8 @@ define(function(){
         "TXT_CONFIGURATION_SETTING": "配置设置",
         "TXT_TRANSLATION_MANAGER": "翻译管理",
         "TXT_TRANSLATION_INDEX": "翻译一览",
-        "TXT_SYSTEM_SETTING": "系统管理",
+        "TXT_SYSTEM_SETTING_MARKETING": "系统管理（运营）",
+        "TXT_SYSTEM_SETTING_IT": "系统管理（维护）",
         "TXT_CATEGORY_INDEX": "主类目一览",
         "TXT_ERROR_MANAGER_MARKETING": "异常一览（运营）",
         "TXT_ERROR_MANAGER_MAINTENANCE": "异常一览（维护）",
@@ -263,6 +264,15 @@ define(function(){
         "TXT_INCREMENT_TYPE":"增量类型",
         "TXT_INCREMENT_PERCENTAGE":"增量百分比",
         "TXT_INCREMENT_CNT":"增量数量",
+        "TXT_TAG_STORE_CLASSIFY":"店铺内分类",
+        "TXT_TAG_PROMOTION":"活动标签",
+        "TXT_TAG_GOODS":"货位标签",
+        "TXT_TAG_FREE":"自由标签",
+        "TXT_TAG_MANAGEMENT":"标签管理",
+        "TXT_TAG_TYPE":"标签类型",
+        "TXT_TAG_ONE":"一级标签",
+        "TXT_TAG_TWO":"二级标签",
+        "TXT_TAG_THREE":"三级标签",
 
         "TXT_SEPARATE_PROPORTION":"隔离比例",
         "TXT_REVERT_TIME":"还原时间",
@@ -317,8 +327,6 @@ define(function(){
         "TXT_SHORT_NAME": "短名称",
         "TXT_COMPANY": "公司",
         "TXT_IMAGE_URL": "图片地址",
-
-
         "TXT_MSG_SEARCH": "检索...",
         "TXT_MSG_INVALID_FEILD": "请检查这些属性 [ <h4>{{fields}}</h4> ], 然后重新尝试保存. (。・`ω´・)",
         "TXT_MSG_PAGE_IS_BUILDING": "该页面正在建设中...",
@@ -388,6 +396,10 @@ define(function(){
         "TXT_MSG_IMPORT_STATUS_ERROR": "存在正在处理中的数据，这些没有被更新",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_ACTIVITIES": "请选择对应的活动!",
+        "TXT_MSG_TAG": "请正确选择和填写标签!",
+        "TXT_MSG_TAG_EDITOR": "标签编辑页!",
+        "TXT_MSG_TAG_PATH": "标签路径!",
+        "TXT_MSG_TAG_IMAGE": "标签名称小于50字节!",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功.",
         "TXT_ACTIVITY_NAME": "活动名称",
         "TXT_PC_MODULE_ID": "PC端模块ID",
@@ -407,6 +419,7 @@ define(function(){
         "BTN_ADD_TO_PROMOTION": "参加活动",
         "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
+        "BTN_UPDATE_COMMON_ATTRIBUTE": "更新共通属性",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
         "BTN_OK": "确定",
         "BTN_CLEAR": "清空",
@@ -459,6 +472,9 @@ define(function(){
         "REVERT": "正在还原",
         "RE_SUCCESS": "还原成功",
         "RE_FAIL": "还原失败",
-        "CANT_BEAT": "信息错误"
+        "CANT_BEAT": "信息错误",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "每页显示"
     };
 });

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtTagDao">
+    <resultMap id="ResultMap" type="CmsBtTagModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`tag_name`,`tag_path`,`tag_path_name`,`tag_type`,`tag_status`,`sort_order`,`parent_tag_id`,`active`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_tag
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="tagName != null">
+                AND `tag_name` = #{tagName}
+            </if>
+            <if test="tagPath != null">
+                AND `tag_path` = #{tagPath}
+            </if>
+            <if test="tagPathName != null">
+                AND `tag_path_name` = #{tagPathName}
+            </if>
+            <if test="tagType != null">
+                AND `tag_type` = #{tagType}
+            </if>
+            <if test="tagStatus != null">
+                AND `tag_status` = #{tagStatus}
+            </if>
+            <if test="sortOrder != null">
+                AND `sort_order` = #{sortOrder}
+            </if>
+            <if test="parentTagId != null">
+                AND `parent_tag_id` = #{parentTagId}
+            </if>
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`tag_name`,`tag_path`,`tag_path_name`,`tag_type`,`tag_status`,`sort_order`,`parent_tag_id`,`active`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_tag
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="tagName != null">
+                AND `tag_name` = #{tagName}
+            </if>
+
+            <if test="tagPath != null">
+                AND `tag_path` = #{tagPath}
+            </if>
+
+            <if test="tagPathName != null">
+                AND `tag_path_name` = #{tagPathName}
+            </if>
+
+            <if test="tagType != null">
+                AND `tag_type` = #{tagType}
+            </if>
+
+            <if test="tagStatus != null">
+                AND `tag_status` = #{tagStatus}
+            </if>
+
+            <if test="sortOrder != null">
+                AND `sort_order` = #{sortOrder}
+            </if>
+
+            <if test="parentTagId != null">
+                AND `parent_tag_id` = #{parentTagId}
+            </if>
+
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`tag_name`,`tag_path`,`tag_path_name`,`tag_type`,`tag_status`,`sort_order`,`parent_tag_id`,`active`,`created`,`creater`,`modified`,`modifier` from cms_bt_tag where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_tag
+        set
+
+            `channel_id`=#{channelId}
+            ,`tag_name`=#{tagName}
+            ,`tag_path`=#{tagPath}
+            ,`tag_path_name`=#{tagPathName}
+            ,`tag_type`=#{tagType}
+            ,`tag_status`=#{tagStatus}
+            ,`sort_order`=#{sortOrder}
+            ,`parent_tag_id`=#{parentTagId}
+            ,`active`=#{active}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_tag
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_tag
+        (
+              `channel_id`,
+              `tag_name`,
+              `tag_path`,
+              `tag_path_name`,
+              `tag_type`,
+              `tag_status`,
+              `sort_order`,
+              `parent_tag_id`,
+              `active`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{tagName},
+              #{tagPath},
+              #{tagPathName},
+              #{tagType},
+              #{tagStatus},
+              #{sortOrder},
+              #{parentTagId},
+              #{active},
+              now(),
+              #{creater},
+              now(),
+              #{creater}
+        )
+    </insert>
+</mapper>
