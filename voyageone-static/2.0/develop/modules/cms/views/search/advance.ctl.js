@@ -295,7 +295,7 @@ define([
          * @param popupNewCategory
          */
         function openCategoryMapping (popupNewCategory) {
-            var selList = $scope.vm.currTab === 'group' ? $scope.vm.groupSelList.selList : $scope.vm.productSelList.selList;
+            var selList = getSelProductList();
             if (selList && selList.length) {
                 feedMappingService.getMainCategories()
                     .then(function (res) {
@@ -316,8 +316,7 @@ define([
             confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                 .then(function () {
                     var productIds = [];
-                    _.forEach($scope.vm.currTab === 'group' ? $scope.vm.groupSelList.selList : $scope.vm.productSelList.selList
-                        , function (object) {
+                    _.forEach(getSelProductList(), function (object) {
                         productIds.push(object.id);
                     });
                     var data = {
