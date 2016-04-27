@@ -5,7 +5,7 @@
     <!-- 批量插入授权类目表查询若干条任务-->
     <select id="cms_select_sx_workload" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
         SELECT
-            seq as seq,
+        id as id,
             channel_id as channelId,
             group_id as groupId,
             cart_id as cartId,
@@ -35,7 +35,7 @@
         SET
             publish_status=#{publish_status}
         WHERE
-            seq=#{seq}
+        id=#{seq}
     </update>
 
     <update id="cms_update_sx_workload_with_modifier" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
@@ -46,7 +46,7 @@
         modifier=#{modifier},
         modified=now()
         WHERE
-        seq=#{seq}
+        seq=#{id}
     </update>
 
     <insert id="cms_insert_sx_workload" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
