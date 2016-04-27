@@ -48,7 +48,6 @@ public class USCDNFileService extends BaseService {
         {
             long requestId= FactoryIdWorker.nextId();
             $error("jobUpload",ex);
-
         }
     }
 }
