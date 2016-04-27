@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel" useGeneratedKeys="true" keyProperty="task_id">
+    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.bean.cms.CmsBtTasksBean"
+            useGeneratedKeys="true" keyProperty="task_id">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
             task_name, task_type, promotion_id, channel_id, activity_start, activity_end,
             <if test="config != null">
@@ -25,13 +26,13 @@
     </update>
 
 
-    <resultMap id="taskWithPromotion" type="com.voyageone.service.model.cms.CmsBtTasksModel" autoMapping="true">
+    <resultMap id="taskWithPromotion" type="com.voyageone.service.bean.cms.CmsBtTasksBean" autoMapping="true">
         <id property="task_id" column="task_id"/>
         <result property="activity_start" column="t_start"/>
         <result property="activity_end" column="t_end"/>
         <result property="status" column="status"/>
         <association property="promotion" autoMapping="true" javaType="com.voyageone.service.model.cms.CmsBtPromotionModel">
-            <id property="promotionId" column="promotion_id"/>
+            <id property="id" column="promotion_id"/>
             <result property="channelId" column="channel_id"/>
             <result property="cartId" column="cart_id"/>
             <result property="promotionStatus" column="promotion_status"/>
@@ -45,7 +46,7 @@
             <result property="tejiabaoId" column="tejiabao_id"/>
             <result property="promotionType" column="promotion_type"/>
             <result property="refTagId" column="ref_tag_id"/>
-            <result property="isActive" column="is_active"/>
+            <result property="active" column="is_active"/>
             <result property="isAllPromotion" column="is_all_promotion"/>
             <result property="created" column="p_created"/>
             <result property="creater" column="p_creater"/>
@@ -118,7 +119,7 @@
         </where>
     </select>
 
-    <delete id="cms_bt_tasks_delete" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
+    <delete id="cms_bt_tasks_delete" parameterType="com.voyageone.service.bean.cms.CmsBtTasksBean">
         delete
         from voyageone_cms2.cms_bt_tasks
         where

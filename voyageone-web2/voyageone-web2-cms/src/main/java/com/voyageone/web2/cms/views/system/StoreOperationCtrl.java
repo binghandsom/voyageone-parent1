@@ -78,6 +78,7 @@ public class StoreOperationCtrl extends CmsController {
      */
     @RequestMapping("rePublishPrice")
     public AjaxResponse rePublishPrice() {
+        storeOperationService.rePublishPrice(getUser().getSelChannelId(),getUser().getUserName());
         throw new UnsupportedOperationException();
     }
 

@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <insert id="cms_bt_beat_info_insertList">
-        INSERT INTO voyageone_cms2.cms_bt_beat_info (
+        INSERT INTO voyageone_cms2.cms_bt_task_jiagepilu (
         task_id, num_iid, product_code, syn_flag, message, created, creater, modified, modifier
         ) VALUES
         <foreach collection="modelList" item="i" separator=",">
@@ -15,10 +15,10 @@
     </insert>
 
     <update id="cms_bt_beat_info_updateNoCodeMessage">
-        UPDATE voyageone_cms2.cms_bt_beat_info b
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t
                 ON b.task_id = t.task_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_code pc
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
                 ON pc.promotion_id = t.promotion_id
                    AND pc.product_code = b.product_code
         SET b.message = #{message},
@@ -28,7 +28,7 @@
     </update>
 
     <update id="cms_bt_beat_info_updateNoNumiidMessage">
-        UPDATE voyageone_cms2.cms_bt_beat_info b
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t
                 ON b.task_id = t.task_id
             LEFT JOIN voyageone_cms2.cms_bt_promotion_model pm
@@ -40,7 +40,7 @@
               AND pm.seq IS NULL;
     </update>
 
-    <select id="cms_bt_beat_info_selectListByTask" resultType="com.voyageone.service.model.cms.CmsBtBeatInfoModel">
+    <select id="cms_bt_beat_info_selectListByTask" resultType="com.voyageone.service.bean.cms.CmsBtBeatInfoBean">
         SELECT
             id,
             task_id,
@@ -52,7 +52,7 @@
             creater,
             modified,
             modifier
-        FROM voyageone_cms2.cms_bt_beat_info
+        FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE task_id = #{task_id}
     </select>
 
@@ -69,10 +69,10 @@
         b.modified,
         b.modifier,
         pc.promotion_price
-        FROM voyageone_cms2.cms_bt_beat_info b
+        FROM voyageone_cms2.cms_bt_task_jiagepilu b
         JOIN voyageone_cms2.cms_bt_tasks t
         ON b.task_id = t.task_id
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_code pc
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
         ON t.promotion_id = pc.promotion_id
         AND b.product_code = pc.product_code
         WHERE t.task_id = #{task_id}
@@ -82,7 +82,8 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <resultMap id="beatInfoWithPromotionCode" type="com.voyageone.service.model.cms.CmsBtBeatInfoModel" autoMapping="true">
+    <resultMap id="beatInfoWithPromotionCode" type="com.voyageone.service.bean.cms.CmsBtBeatInfoBean"
+               autoMapping="true">
         <id column="id" property="id"/>
         <association property="promotion_code" javaType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
             <result column="promotion_price" property="promotionPrice"/>
@@ -91,7 +92,7 @@
 
     <select id="cms_bt_beat_info_selectListByTask_count" resultType="int">
         SELECT COUNT(1)
-        FROM voyageone_cms2.cms_bt_beat_info
+        FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE task_id = #{task_id}
         <if test="flag != null">
             AND syn_flag = #{flag.flag}
@@ -99,13 +100,13 @@
     </select>
 
     <delete id="cms_bt_beat_info_deleteByTask">
-        DELETE FROM voyageone_cms2.cms_bt_beat_info
+        DELETE FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE task_id = #{task_id}
     </delete>
 
     <select id="cms_bt_beat_info_selectCountInFlags" resultType="int">
         SELECT COUNT(1)
-        FROM voyageone_cms2.cms_bt_beat_info
+        FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE task_id = #{task_id}
         AND syn_flag IN (
         <foreach collection="flags" item="i" separator=",">
@@ -114,7 +115,7 @@
         )
     </select>
 
-    <select id="cms_bt_beat_info_selectOneById" resultType="com.voyageone.service.model.cms.CmsBtBeatInfoModel">
+    <select id="cms_bt_beat_info_selectOneById" resultType="com.voyageone.service.bean.cms.CmsBtBeatInfoBean">
         SELECT
             id,
             task_id,
@@ -126,12 +127,12 @@
             creater,
             modified,
             modifier
-        FROM voyageone_cms2.cms_bt_beat_info
+        FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE id = #{beat_id}
     </select>
 
     <update id="cms_bt_beat_info_updateFlag">
-        UPDATE voyageone_cms2.cms_bt_beat_info
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu
         SET syn_flag = #{syn_flag},
         modifier = #{modifier},
         modified = NOW()
@@ -140,7 +141,7 @@
     </update>
 
     <update id="cms_bt_beat_info_updateFlags">
-        UPDATE voyageone_cms2.cms_bt_beat_info
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu
         SET syn_flag = #{syn_flag},
         modifier = #{modifier},
         modified = NOW()
@@ -152,7 +153,7 @@
         SELECT
             syn_flag flag,
             count(1) count
-        FROM voyageone_cms2.cms_bt_beat_info
+        FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE task_id = #{task_id}
         GROUP BY syn_flag
     </select>
@@ -163,7 +164,7 @@
         AND b.num_iid = #{num_iid}
     </select>
 
-    <select id="cms_bt_beat_info_selectOneByNumiid" resultType="com.voyageone.service.model.cms.CmsBtBeatInfoModel">
+    <select id="cms_bt_beat_info_selectOneByNumiid" resultType="com.voyageone.service.bean.cms.CmsBtBeatInfoBean">
         SELECT
             id,
             task_id,
@@ -175,7 +176,7 @@
             creater,
             modified,
             modifier
-        FROM voyageone_cms2.cms_bt_beat_info
+        FROM voyageone_cms2.cms_bt_task_jiagepilu
         WHERE task_id = #{task_id}
               AND num_iid = #{num_iid}
     </select>
@@ -222,11 +223,11 @@
         FROM voyageone_cms2.cms_bt_promotion p
             JOIN voyageone_cms2.cms_bt_tasks t
                 ON p.promotion_id = t.promotion_id
-            JOIN voyageone_cms2.cms_bt_beat_info b
+        JOIN voyageone_cms2.cms_bt_task_jiagepilu b
                 ON t.task_id = b.task_id
     </sql>
 
-    <resultMap id="beatInfoWithPromotion" type="com.voyageone.service.model.cms.CmsBtBeatInfoModel" autoMapping="true">
+    <resultMap id="beatInfoWithPromotion" type="com.voyageone.service.bean.cms.CmsBtBeatInfoBean" autoMapping="true">
         <association property="promotion" javaType="com.voyageone.service.model.cms.CmsBtPromotionModel"
                      autoMapping="true">
             <result column="p_created" property="created"/>
@@ -237,7 +238,7 @@
     </resultMap>
 
     <update id="cms_bt_beat_info_updateCode">
-        UPDATE voyageone_cms2.cms_bt_beat_info
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu
         SET product_code = #{product_code},
         modified = NOW(),
         modifier = #{modifier}
@@ -292,7 +293,7 @@
             p.modified promotion_modified,
             p.modifier promotion_modifier,
 
-            c.seq code_seq,
+        c.id code_seq,
             c.promotion_id   code_promotion_id,
             product_id       code_product_id,
             c.model_id       code_model_id,
@@ -314,11 +315,12 @@
             c.modified       code_modified,
             c.modifier       code_modifier
 
-        FROM voyageone_cms2.cms_bt_beat_info b
+        FROM voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t ON t.task_id = b.task_id
             JOIN voyageone_cms2.cms_bt_promotion p ON p.promotion_id = t.promotion_id
             LEFT JOIN voyageone_cms2.cms_bt_promotion_model m ON m.promotion_id = p.promotion_id AND b.num_iid = m.num_iid
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_code c ON c.promotion_id = p.promotion_id AND c.product_code = b.product_code
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes c ON c.promotion_id = p.promotion_id AND c.product_code =
+        b.product_code
         WHERE (
                   p.is_active = 1
                   AND #{now} > t.activity_start
@@ -334,14 +336,14 @@
     </select>
 
     <resultMap id="beatInfo_With_Code_Task"
-               type="com.voyageone.service.model.cms.CmsBtBeatInfoModel">
+               type="com.voyageone.service.bean.cms.CmsBtBeatInfoBean">
         <result property="num_iid" column="num_iid"/>
         <result property="task_id" column="task_id"/>
         <result property="product_code" column="product_code"/>
         <result property="syn_flag" column="syn_flag"/>
         <result property="modified" column="modified"/>
         <result property="id" column="id"/>
-        <association property="task" javaType="com.voyageone.service.model.cms.CmsBtTasksModel">
+        <association property="task" javaType="com.voyageone.service.bean.cms.CmsBtTasksBean">
             <result property="task_id" column="task_task_id"/>
             <result property="task_name" column="task_task_name"/>
             <result property="task_type" column="task_task_type"/>
@@ -356,7 +358,7 @@
             <result property="modifier" column="task_modifier"/>
         </association>
         <association property="promotion" javaType="com.voyageone.service.model.cms.CmsBtPromotionModel">
-            <result property="promotionId" column="promotion_promotion_id"/>
+            <result property="id" column="promotion_promotion_id"/>
             <result property="channelId" column="promotion_channel_id"/>
             <result property="cartId" column="promotion_cart_id"/>
             <result property="promotionStatus" column="promotion_promotion_status"/>
@@ -370,7 +372,7 @@
             <result property="tejiabaoId" column="promotion_tejiabao_id"/>
             <result property="promotionType" column="promotion_promotion_type"/>
             <result property="refTagId" column="promotion_ref_tag_id"/>
-            <result property="isActive" column="promotion_is_active"/>
+            <result property="active" column="promotion_is_active"/>
             <result property="isAllPromotion" column="promotion_is_all_promotion"/>
             <result property="created" column="promotion_created"/>
             <result property="creater" column="promotion_creater"/>
@@ -378,7 +380,7 @@
             <result property="modifier" column="promotion_modifier"/>
         </association>
         <association property="promotion_code" javaType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
-            <result property="seq" column="code_seq"/>
+            <result property="id" column="code_seq"/>
             <result property="promotionId" column="code_promotion_id"/>
             <result property="productId" column="code_product_id"/>
             <result property="modelId" column="code_model_id"/>
@@ -403,7 +405,7 @@
     </resultMap>
 
     <update id="cms_bt_beat_info_updateFlagAndMessage">
-        UPDATE voyageone_cms2.cms_bt_beat_info
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu
                 SET syn_flag = #{syn_flag},
         message = #{message},
         modified = NOW(),

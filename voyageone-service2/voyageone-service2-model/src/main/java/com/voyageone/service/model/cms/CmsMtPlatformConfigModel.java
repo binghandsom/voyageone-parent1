@@ -1,13 +1,9 @@
 package com.voyageone.service.model.cms;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
+import com.voyageone.base.dao.mysql.BaseModel;
 
-public class CmsMtPlatformConfigModel implements Serializable {
-    /**
+public class CmsMtPlatformConfigModel extends BaseModel {
 
-     */
-    private int id;
     /**
 
      */
@@ -31,41 +27,7 @@ public class CmsMtPlatformConfigModel implements Serializable {
     /**
 
      */
-    private Timestamp created;
-    /**
 
-     */
-    private String creater;
-    /**
-
-     */
-    private Timestamp modified;
-    /**
-
-     */
-    private String modifier;
-
-
-    public CmsMtPlatformConfigModel() {
-        setChannelId("");
-        setCfgName("");
-        setCfgVal("");
-        setCreater("");
-        setModifier("");
-
-    }
-
-    /**
-
-     */
-    public int getId() {
-
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
 
     /**
@@ -147,66 +109,5 @@ public class CmsMtPlatformConfigModel implements Serializable {
 
     }
 
-
-    /**
-
-     */
-    public Timestamp getCreated() {
-
-        return this.created;
-    }
-
-    public void setCreated(Timestamp created) {
-        this.created = created;
-    }
-
-
-    /**
-
-     */
-    public String getCreater() {
-
-        return this.creater;
-    }
-
-    public void setCreater(String creater) {
-        if (creater != null) {
-            this.creater = creater;
-        } else {
-            this.creater = "";
-        }
-
-    }
-
-
-    /**
-
-     */
-    public Timestamp getModified() {
-
-        return this.modified;
-    }
-
-    public void setModified(Timestamp modified) {
-        this.modified = modified;
-    }
-
-
-    /**
-
-     */
-    public String getModifier() {
-
-        return this.modifier;
-    }
-
-    public void setModifier(String modifier) {
-        if (modifier != null) {
-            this.modifier = modifier;
-        } else {
-            this.modifier = "";
-        }
-
-    }
 
 }
