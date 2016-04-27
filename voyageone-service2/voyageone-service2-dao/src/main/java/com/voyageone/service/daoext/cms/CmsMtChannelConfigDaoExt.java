@@ -1,7 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtChannelConfigModel;
 import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +27,7 @@ public class CmsMtChannelConfigDaoExt extends ServiceBaseDao {
      * 更具configKey返回制定的数据
      */
     public List<CmsMtChannelConfigModel> selectByConfigKey(String channelId, String configKey) {
-        CmsBtChannelConfigModel model = new CmsBtChannelConfigModel();
+        CmsMtChannelConfigModel model = new CmsMtChannelConfigModel();
         model.setChannelId(channelId);
         model.setConfigKey(configKey);
         return selectList("cms_mt_channel_config_selectByConfigKey", model);
