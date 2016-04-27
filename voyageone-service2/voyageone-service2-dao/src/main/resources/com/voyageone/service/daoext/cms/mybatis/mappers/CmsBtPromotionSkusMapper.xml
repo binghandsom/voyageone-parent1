@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <resultMap id="bt_promotion_sku_map" extends="bt_promotion_model_map" type="HashMap" >
-        <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
-        <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
+    <resultMap id="bt_promotion_sku_map" extends="bt_promotion_model_map" type="HashMap">
+        <result column="sale_price" property="salePrice" jdbcType="DOUBLE"/>
+        <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE"/>
         <result column="product_id" property="productId" jdbcType="INTEGER" javaType="long"/>
-        <result column="product_code" property="productCode" jdbcType="VARCHAR" />
-        <result column="product_name" property="productName" jdbcType="VARCHAR" />
-        <result column="product_sku" property="productSku" jdbcType="VARCHAR" />
-        <result column="qty" property="qty" jdbcType="INTEGER" />
+        <result column="product_code" property="productCode" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="product_sku" property="productSku" jdbcType="VARCHAR"/>
+        <result column="qty" property="qty" jdbcType="INTEGER"/>
     </resultMap>
-    <select id="select_cms_bt_promotion_sku" resultMap="bt_promotion_sku_map" parameterType="HashMap" >
+    <select id="select_cms_bt_promotion_sku" resultMap="bt_promotion_sku_map" parameterType="HashMap">
         SELECT
-          a.*,
-          b.sale_price,
-          b.promotion_price
-            FROM
-            (
-                SELECT
-                    promotion_id,
-                    org_channel_id,
-                    model_id,
-                    product_id,
-                    num_iid,
-                    product_model,
-                    product_code,
-                    product_sku,
-                    cat_path,
-                    qty,
-                    syn_flg,
-                    created,
-                    creater,
-                    modified,
-                    modifier
-                FROM
-        voyageone_cms2.cms_bt_promotion_skus
-                <where>
-                    <if test="promotionId != null">
-                        promotion_id =  #{promotionId,jdbcType=INTEGER}
-                    </if>
-                    <if test="key !=null and key != ''">
-                        and (
-                        product_model like '%${key}%'
-                        or product_code like '%${key}%'
-                        or product_sku like '%${key}%'
-                        )
-                    </if>
-                </where>
-                <if test="start != null and length != null">
-                    LIMIT #{start}, #{length}
-                </if>
-            ) a
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes b ON a.promotion_id = b.promotion_id
-        AND a.product_id = b.product_id
-    </select>
-    <select id="select_cms_bt_promotion_sku_cnt" resultType="int" parameterType="HashMap" >
+        a.*,
+        b.sale_price,
+        b.promotion_price
+        FROM
+        (
         SELECT
-          count(1)
+        promotion_id,
+        org_channel_id,
+        model_id,
+        product_id,
+        num_iid,
+        product_model,
+        product_code,
+        product_sku,
+        cat_path,
+        qty,
+        syn_flg,
+        created,
+        creater,
+        modified,
+        modifier
         FROM
         voyageone_cms2.cms_bt_promotion_skus
         <where>
             <if test="promotionId != null">
-                promotion_id =  #{promotionId,jdbcType=INTEGER}
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+                product_model like '%${key}%'
+                or product_code like '%${key}%'
+                or product_sku like '%${key}%'
+                )
+            </if>
+        </where>
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+        ) a
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes b ON a.promotion_id = b.promotion_id
+        AND a.product_id = b.product_id
+    </select>
+    <select id="select_cms_bt_promotion_sku_cnt" resultType="int" parameterType="HashMap">
+        SELECT
+        count(1)
+        FROM
+        voyageone_cms2.cms_bt_promotion_skus
+        <where>
+            <if test="promotionId != null">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
             <if test="key !=null and key != ''">
                 and (
@@ -74,150 +74,150 @@
     </select>
     <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
         insert into voyageone_cms2.cms_bt_promotion_skus
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="promotionId != null" >
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="promotionId != null">
                 promotion_id,
             </if>
-            <if test="orgChannelId != null" >
+            <if test="orgChannelId != null">
                 org_channel_id,
             </if>
-            <if test="modelId != null" >
+            <if test="modelId != null">
                 model_id,
             </if>
-            <if test="productId != null" >
+            <if test="productId != null">
                 product_id,
             </if>
-            <if test="numIid != null" >
+            <if test="numIid != null">
                 num_iid,
             </if>
-            <if test="productModel != null" >
+            <if test="productModel != null">
                 product_model,
             </if>
-            <if test="productCode != null" >
+            <if test="productCode != null">
                 product_code,
             </if>
-            <if test="productSku != null" >
+            <if test="productSku != null">
                 product_sku,
             </if>
-            <if test="catPath != null" >
+            <if test="catPath != null">
                 cat_path,
             </if>
-            <if test="qty != null" >
+            <if test="qty != null">
                 qty,
             </if>
-            <if test="synFlg != null" >
+            <if test="synFlg != null">
                 syn_flg,
             </if>
-                created,
-            <if test="creater != null" >
+            created,
+            <if test="creater != null">
                 creater,
             </if>
-                modified,
-            <if test="modifier != null" >
+            modified,
+            <if test="modifier != null">
                 modifier,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="promotionId != null" >
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="promotionId != null">
                 #{promotionId,jdbcType=INTEGER},
             </if>
-            <if test="orgChannelId != null" >
+            <if test="orgChannelId != null">
                 #{orgChannelId,jdbcType=VARCHAR},
             </if>
-            <if test="modelId != null" >
+            <if test="modelId != null">
                 #{modelId,jdbcType=INTEGER},
             </if>
-            <if test="productId != null" >
+            <if test="productId != null">
                 #{productId,jdbcType=INTEGER},
             </if>
-            <if test="numIid != null" >
+            <if test="numIid != null">
                 #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="productModel != null" >
+            <if test="productModel != null">
                 #{productModel,jdbcType=VARCHAR},
             </if>
-            <if test="productCode != null" >
+            <if test="productCode != null">
                 #{productCode,jdbcType=VARCHAR},
             </if>
-            <if test="productSku != null" >
+            <if test="productSku != null">
                 #{productSku,jdbcType=VARCHAR},
             </if>
-            <if test="catPath != null" >
+            <if test="catPath != null">
                 #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="qty != null" >
+            <if test="qty != null">
                 #{qty,jdbcType=INTEGER},
             </if>
-            <if test="synFlg != null" >
+            <if test="synFlg != null">
                 #{synFlg,jdbcType=VARCHAR},
             </if>
-                now(),
-            <if test="creater != null" >
+            now(),
+            <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
             </if>
-                now(),
-            <if test="modifier != null" >
+            now(),
+            <if test="modifier != null">
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
     <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
         update voyageone_cms2.cms_bt_promotion_skus
-        <set >
-            <if test="promotionId != null" >
+        <set>
+            <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER},
             </if>
-            <if test="orgChannelId != null" >
+            <if test="orgChannelId != null">
                 org_channel_id = #{orgChannelId,jdbcType=VARCHAR},
             </if>
-            <if test="modelId != null" >
+            <if test="modelId != null">
                 model_id = #{modelId,jdbcType=INTEGER},
             </if>
-            <if test="productId != null" >
+            <if test="productId != null">
                 product_id = #{productId,jdbcType=INTEGER},
             </if>
-            <if test="numIid != null" >
+            <if test="numIid != null">
                 num_iid = #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="productModel != null" >
+            <if test="productModel != null">
                 product_model = #{productModel,jdbcType=VARCHAR},
             </if>
-            <if test="productCode != null" >
+            <if test="productCode != null">
                 product_code = #{productCode,jdbcType=VARCHAR},
             </if>
-            <if test="productSku != null" >
+            <if test="productSku != null">
                 product_sku = #{productSku,jdbcType=VARCHAR},
             </if>
-            <if test="catPath != null" >
+            <if test="catPath != null">
                 cat_path = #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="qty != null" >
+            <if test="qty != null">
                 qty = #{qty,jdbcType=INTEGER},
             </if>
-            <if test="synFlg != null" >
+            <if test="synFlg != null">
                 syn_flg = #{synFlg,jdbcType=VARCHAR},
             </if>
-            <if test="created != null" >
+            <if test="created != null">
                 created = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null" >
+            <if test="creater != null">
                 creater = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null" >
+            <if test="modified != null">
                 modified = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modifier != null" >
+            <if test="modifier != null">
                 modifier = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         <where>
-            <if test="promotionId != null" >
+            <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="productId != null" >
+            <if test="productId != null">
                 and product_id = #{productId,jdbcType=INTEGER}
             </if>
-            <if test="productSku != null" >
+            <if test="productSku != null">
                 and product_sku = #{productSku,jdbcType=VARCHAR}
             </if>
         </where>
@@ -228,7 +228,7 @@
         where
         promotion_id = #{promotionId,jdbcType=INTEGER}
         <if test="productSku != null and productSku != ''">
-          and product_sku = #{productSku,jdbcType=VARCHAR}
+            and product_sku = #{productSku,jdbcType=VARCHAR}
         </if>
         <if test="productModel != null">
             and product_model = #{productModel,jdbcType=VARCHAR}
