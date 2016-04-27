@@ -5,13 +5,15 @@
     <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.bean.cms.CmsBtTasksBean"
             useGeneratedKeys="true" keyProperty="task_id">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
-            task_name, task_type, promotion_id, channel_id, activity_start, activity_end,
-            <if test="config != null">
-              config,
-            </if>
-            created, creater, modified, modifier
+        task_name, task_type, promotion_id, channel_id, activity_start, activity_end,
+        <if test="config != null">
+            config,
+        </if>
+        created, creater, modified, modifier
         ) VALUES (
-            #{task_name}, #{task_type}, #{promotion_id},#{channelId}, #{activity_start}, #{activity_end}, <if test="config != null">#{config},</if> now(), #{creater}, now(), #{modifier}
+        #{task_name}, #{task_type}, #{promotion_id},#{channelId}, #{activity_start}, #{activity_end},
+        <if test="config != null">#{config},</if>
+        now(), #{creater}, now(), #{modifier}
         )
     </insert>
 
@@ -31,7 +33,8 @@
         <result property="activity_start" column="t_start"/>
         <result property="activity_end" column="t_end"/>
         <result property="status" column="status"/>
-        <association property="promotion" autoMapping="true" javaType="com.voyageone.service.model.cms.CmsBtPromotionModel">
+        <association property="promotion" autoMapping="true"
+                     javaType="com.voyageone.service.model.cms.CmsBtPromotionModel">
             <id property="id" column="promotion_id"/>
             <result property="channelId" column="channel_id"/>
             <result property="cartId" column="cart_id"/>
@@ -57,40 +60,40 @@
 
     <select id="cms_bt_tasks_select" resultMap="taskWithPromotion">
         SELECT
-            task_id,
-            task_name,
-            task_type,
-            t.promotion_id,
-            t.activity_start t_start,
-            t.activity_end t_end,
-            config,
-            t.status,
-            t.created,
-            t.creater,
-            t.modified,
-            t.modifier,
-            t.channel_id,
-            cart_id,
-            promotion_status,
-            promotion_name,
-            pre_sale_end,
-            pre_sale_start,
-            pre_period_start,
-            pre_period_end,
-            p.activity_start,
-            p.activity_end,
-            tejiabao_id,
-            promotion_type,
-            ref_tag_id,
-            is_active,
-            is_all_promotion,
-            p.created p_created,
-            p.creater p_creater,
-            p.modified p_modified,
-            p.modifier p_modifier
+        task_id,
+        task_name,
+        task_type,
+        t.promotion_id,
+        t.activity_start t_start,
+        t.activity_end t_end,
+        config,
+        t.status,
+        t.created,
+        t.creater,
+        t.modified,
+        t.modifier,
+        t.channel_id,
+        cart_id,
+        promotion_status,
+        promotion_name,
+        pre_sale_end,
+        pre_sale_start,
+        pre_period_start,
+        pre_period_end,
+        p.activity_start,
+        p.activity_end,
+        tejiabao_id,
+        promotion_type,
+        ref_tag_id,
+        is_active,
+        is_all_promotion,
+        p.created p_created,
+        p.creater p_creater,
+        p.modified p_modified,
+        p.modifier p_modifier
         FROM voyageone_cms2.cms_bt_tasks t
-            LEFT JOIN voyageone_cms2.cms_bt_promotion p
-                ON t.promotion_id = p.promotion_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion p
+        ON t.promotion_id = p.promotion_id
         <where>
             <if test="task_id != null">
                 task_id = #{task_id}
@@ -99,22 +102,22 @@
                 and t.channel_id = #{channelId}
             </if>
             <if test="promotion_id != null">
-              and t.promotion_id = #{promotion_id}
+                and t.promotion_id = #{promotion_id}
             </if>
             <if test="task_name != null and task_name != ''">
                 AND task_name = #{task_name}
             </if>
             <if test="task_type != null and task_type != ''">
-            AND task_type = #{task_type,jdbcType=INTEGER}
+                AND task_type = #{task_type,jdbcType=INTEGER}
             </if>
             <if test="searchKey != null and searchKey != ''">
                 AND task_name LIKE '%${searchKey}%'
             </if>
             <if test="activity_start != null and activity_start != ''">
-                and t.activity_start >=   #{activity_start,jdbcType=VARCHAR}
+                and t.activity_start >= #{activity_start,jdbcType=VARCHAR}
             </if>
             <if test="activity_end != null and activity_end != ''">
-                and  #{activity_end,jdbcType=VARCHAR} >=  t.activity_end
+                and #{activity_end,jdbcType=VARCHAR} >= t.activity_end
             </if>
         </where>
     </select>

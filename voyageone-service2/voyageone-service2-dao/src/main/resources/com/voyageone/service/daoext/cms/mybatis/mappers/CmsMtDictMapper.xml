@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.service.model.cms.CmsMtDictModel" parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
+    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.service.model.cms.CmsMtDictModel"
+            parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
         SELECT DISTINCT
         a.id,
         a.order_channel_id as orderChannelId,
@@ -29,7 +30,8 @@
         </if>
     </select>
 
-    <select id="cms_mt_dict_selectAllCount" resultType="int" parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
+    <select id="cms_mt_dict_selectAllCount" resultType="int"
+            parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
         SELECT count(DISTINCT a.id)
         FROM voyageone_cms2.cms_mt_dict a
         INNER JOIN Synship.com_mt_value_channel b
@@ -59,7 +61,8 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.service.model.cms.CmsMtDictModel" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
+    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.service.model.cms.CmsMtDictModel"
+            resultType="com.voyageone.service.model.cms.CmsMtDictModel">
         SELECT
             id,
         order_channel_id as orderChannelId,
@@ -74,7 +77,8 @@
         WHERE order_channel_id = #{orderChannelId} AND name = #{name}
     </select>
 
-    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtDictModel" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
+    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtDictModel"
+            resultType="com.voyageone.service.model.cms.CmsMtDictModel">
         SELECT
             id,
         order_channel_id as orderChannelId,
@@ -103,7 +107,8 @@
         VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
     </insert>
 
-    <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
+    <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map"
+            resultType="com.voyageone.service.model.cms.CmsMtDictModel">
         SELECT
         id,
         order_channel_id as orderChannelId,
