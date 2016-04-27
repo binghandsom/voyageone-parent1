@@ -4,9 +4,9 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.ims.ImsBtLogSynInventoryDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,27 +21,6 @@ import java.util.*;
  */
 @Service
 public class StockInfoService {
-
-    @Autowired
-    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
-
-    @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
-
-    @Autowired
-    private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
-
-    @Autowired
-    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
-
-    @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
-
-    @Autowired
-    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
-
-    @Autowired
-    private ImsBtLogSynInventoryDao imsBtLogSynInventoryDao;
 
     /** 增量/库存隔离状态 0：未进行 */
     public static final String STATUS_READY = "0";
@@ -63,7 +42,6 @@ public class StockInfoService {
     public static final String STATUS_REVERT_FAIL = "8";
     /** 库存隔离状态 9：再修正 */
     public static final String STATUS_CHANGED = "9";
-
     /** 增量库存隔离状态 1：等待增量 */
     public static final String STATUS_WAITING_INCREMENT = "1";
     /** 增量库存隔离状态 2：增量中 */
@@ -74,31 +52,40 @@ public class StockInfoService {
     public static final String STATUS_INCREMENT_FAIL = "4";
     /** 增量库存隔离状态 5：还原 */
     public static final String STATUS_REVERT = "5";
-
     /** 结束状态  0: 未结束 */
     public static final String NOT_END = "0";
     /** 结束状态  1: 结束 */
     public static final String END = "1";
-
     /** 自动还原标志  0: 未执行自动还原 */
     public static final String AUTO_REVERTED  = "1";
     /** 自动还原标志  1: 已经执行自动还原 */
     public static final String NOT_REVERT = "0";
-
     /** syn_type 0: 全量 */
     public static final String SYN_TYPE_ALL  = "0";
     /** syn_type 2: 增量 */
     public static final String SYN_TYPE_ADD = "2";
-
     /** 1：按比例增量隔离 */
     public static final String TYPE_INCREMENT_BY_RATION = "1";
     /** 2：按数量增量隔离 */
     public static final String TYPE_INCREMENT_BY_QUANTITY = "2";
-
     /** 0：按动态值进行增量隔离 */
     public static final String TYPE_DYNAMIC = "0";
     /** 1：按固定值进行增量隔离 */
     public static final String TYPE_FIX_VALUE = "1";
+    @Autowired
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+    @Autowired
+    private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
+    @Autowired
+    private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
+    @Autowired
+    private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
+    @Autowired
+    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
+    @Autowired
+    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
+    @Autowired
+    private ImsBtLogSynInventoryDao imsBtLogSynInventoryDao;
 
     /**
      * 取得可用库存
@@ -135,7 +122,7 @@ public class StockInfoService {
         sqlParam.clear();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
-        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
         listPlatform.forEach(data -> {
             Integer taskId = (Integer) data.get("task_id");
             if (!listSeparateTaskId.contains(taskId)) {
@@ -150,7 +137,7 @@ public class StockInfoService {
             // 状态 = 3：隔离成功
             sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
             sqlParam.put("taskIdList", listSeparateTaskId);
-            List<Map<String, Object>> listStockSeparate = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+            List<Map<String, Object>> listStockSeparate = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(sqlParam);
             // sku库存隔离信息（所有任务所有平台的数据）
             if (listStockSeparate != null && listStockSeparate.size() > 0) {
                 for (Map<String, Object> stockInfo : listStockSeparate) {
@@ -171,7 +158,7 @@ public class StockInfoService {
         List<Integer> listIncrementTaskId = new ArrayList<>();
         sqlParam.clear();
         sqlParam.put("taskIdList", listSeparateTaskId);
-        List<Map<String, Object>> listIncTask = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> listIncTask = cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(sqlParam);
         listIncTask.forEach(data -> {
             Integer subTaskId = (Integer) data.get("sub_task_id");
             if (!listIncrementTaskId.contains(subTaskId)) {
@@ -186,7 +173,7 @@ public class StockInfoService {
             // 状态 = 3：增量成功
             sqlParam.put("status", STATUS_INCREMENT_SUCCESS);
             sqlParam.put("subTaskIdList", listIncrementTaskId);
-            List<Map<String, Object>> listStockIncrement = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam);
+            List<Map<String, Object>> listStockIncrement = cmsBtStockSeparateIncrementItemDaoExt.selectStockSeparateIncrement(sqlParam);
             if (listStockIncrement != null && listStockIncrement.size() > 0) {
                 for (Map<String, Object> stockIncrementInfo : listStockIncrement) {
                     String sku = (String) stockIncrementInfo.get("sku");
@@ -207,7 +194,7 @@ public class StockInfoService {
         sqlParam.clear();
         sqlParam.put("channelId", channelId);
         sqlParam.put("endFlg", NOT_END);
-        List<Map<String, Object>> listStockSalesQuantity = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam);
+        List<Map<String, Object>> listStockSalesQuantity = cmsBtStockSalesQuantityDaoExt.selectStockSalesQuantity(sqlParam);
         if (listStockSalesQuantity != null && listStockSalesQuantity.size() > 0) {
             for (Map<String, Object> stockSaleInfo : listStockSalesQuantity) {
                 String sku = (String) stockSaleInfo.get("sku");
@@ -255,7 +242,7 @@ public class StockInfoService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
-        List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
         resultData.forEach(data -> {
             Integer cartId = (Integer) data.get("cart_id");
             if (!listSeparateCartId.contains(cartId)) {
