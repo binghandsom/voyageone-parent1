@@ -43,7 +43,7 @@ define([
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
         $scope.openJMActivity = openJMActivity;
-        //$scope.openBulkUpdate = openBulkUpdate;
+        $scope.openBulkUpdate = openBulkUpdate;
 
         /**
          * 初始化数据.
@@ -264,7 +264,7 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
-            openAddToPromotion(promotion, getSelProductList()).then(function (res) {
+            openAddToPromotion(promotion, getSelProductList()).then(function () {
                 search ()
             })
         }
@@ -275,7 +275,17 @@ define([
          * @param openJMActivity
          */
         function openJMActivity (promotion, openJMActivity) {
-            openJMActivity(promotion, getSelProductList()).then(function (res) {
+            openJMActivity(promotion, getSelProductList()).then(function () {
+                search ()
+            })
+        }
+
+        /**
+         * popup出批量修改产品的field属性
+         * @param openFieldEdit
+         */
+        function openBulkUpdate (openFieldEdit) {
+            openFieldEdit(getSelProductList()).then(function () {
                 search ()
             })
         }
