@@ -1,11 +1,13 @@
-package com.voyageone.web2.base.message;
+package com.voyageone.service.bean.com;
+
+import com.voyageone.common.message.enums.DisplayType;
 
 /**
  * 预定义的提示信息
  * @author Jonas
  * @version 2.0.0, 12/4/15
  */
-public class MessageModel {
+public class MessageBean {
 
     private String code;
 
@@ -18,7 +20,7 @@ public class MessageModel {
     /**
      * 不对外开放的信息模型构造函数
      */
-    protected MessageModel() {
+    protected MessageBean() {
     }
 
     public String getCode() {

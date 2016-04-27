@@ -1,4 +1,4 @@
-package com.voyageone.web2.core.model;
+package com.voyageone.service.bean.com;
 
 /**
  * 用户的渠道权限信息
@@ -7,7 +7,7 @@ package com.voyageone.web2.core.model;
  * @author Jonas
  * @version 2.0.0
  */
-public class PermissionModel {
+public class PermissionBean {
 
     private String role;
 

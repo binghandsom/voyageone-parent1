@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.web2.core.sql">
-    <resultMap type="com.voyageone.web2.core.model.ChannelPermissionModel" id="ctUserChannelPermissionMap">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap type="com.voyageone.service.bean.com.ChannelPermissionBean" id="ctUserChannelPermissionMap">
         <result column="property_id" property="channelId"/>
         <result column="full_name" property="channelName"/>
         <result column="img_url" property="channelImgUrl"/>
@@ -13,7 +13,7 @@
         </collection>
     </resultMap>
 
-    <select id="ct_user_selectUser" resultType="com.voyageone.web2.core.model.UserModel">
+    <select id="ct_user_selectUser" resultType="com.voyageone.service.bean.com.UserBean">
         SELECT
             id,
             username,
@@ -73,7 +73,7 @@
         ORDER BY t.company_id, t.property_id, t.application
     </select>
 
-    <select id="ct_role_permission_getPermissionByRole" resultType="com.voyageone.web2.core.model.PermissionModel">
+    <select id="ct_role_permission_getPermissionByRole" resultType="com.voyageone.service.bean.com.PermissionBean">
         SELECT
             c.role,
             k.application,
@@ -112,7 +112,7 @@
               AND l.active = 1
     </select>
 
-    <select id="ct_user_permission_getPermissionByUser" resultType="com.voyageone.web2.core.model.PermissionModel">
+    <select id="ct_user_permission_getPermissionByUser" resultType="com.voyageone.service.bean.com.PermissionBean">
         SELECT
             'USER'  AS role,
             k.application,

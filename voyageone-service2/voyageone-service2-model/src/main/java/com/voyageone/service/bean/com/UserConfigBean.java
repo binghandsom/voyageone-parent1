@@ -1,4 +1,4 @@
-package com.voyageone.web2.core.model;
+package com.voyageone.service.bean.com;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Jonas
  * @version 2.0.0
  */
-public class UserConfigModel implements Serializable {
+public class UserConfigBean implements Serializable {
     private int user_id;
 
     private String cfg_name;
