@@ -18,7 +18,7 @@
     <select id="cms_bt_stock_separate_increment_item_selectStockSeparateIncrement" resultType="HashMap"
             parameterType="HashMap">
         select
-        t1.seq,
+        t1.id,
         t1.sub_task_id,
         t1.channel_id,
         t1.sku,
@@ -79,7 +79,7 @@
 
     <select id="cms_bt_stock_separate_increment_item_selectStockSeparateIncrementItemByStatus" resultType="Integer"
             parameterType="HashMap">
-        select seq
+        select id
         from voyageone_cms2.cms_bt_stock_separate_increment_item
         where sub_task_id = #{subTaskId}
         <if test="statusList != null and statusList.size() > 0">
@@ -139,7 +139,7 @@
         <where>
             1 = 1
             <if test="seq != null">
-                and seq = #{seq}
+                and id = #{seq}
             </if>
             <if test="subTaskId != null">
                 and sub_task_id = #{subTaskId}

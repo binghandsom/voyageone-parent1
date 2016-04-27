@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service.promotion.stock;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +24,19 @@ import java.util.Map;
 public class StockWaitingRevertService extends BaseTaskService {
 
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
 
     @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
+    private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
 
     @Autowired
-    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
+    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
 
     @Autowired
-    private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
+    private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
 
     @Autowired
-    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
+    private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
 
     @Autowired
     private SimpleTransaction simpleTransaction;
@@ -135,7 +135,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("revertTimeWhere", sysTime);
         // 0: 未执行自动还原
         sqlParam.put("revertFlgWhere", StockInfoService.NOT_REVERT);
-        return cmsBtStockSeparatePlatformInfoDao.updateStockSeparatePlatform(sqlParam);
+        return cmsBtStockSeparatePlatformInfoDaoExt.updateStockSeparatePlatform(sqlParam);
     }
 
     /**
@@ -155,7 +155,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("cartId", cartId);
         // 状态为"3：隔离成功"
         sqlParam.put("statusWhere", StockInfoService.STATUS_SEPARATE_SUCCESS);
-        return cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam);
+        return cmsBtStockSeparateItemDaoExt.updateStockSeparateItem(sqlParam);
     }
 
     /**
@@ -173,7 +173,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("subTaskId", subTaskId);
         // 状态为"3：增量成功"
         sqlParam.put("statusWhere", StockInfoService.STATUS_INCREMENT_SUCCESS);
-        return cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam);
+        return cmsBtStockSeparateIncrementItemDaoExt.updateStockSeparateIncrementItem(sqlParam);
     }
 
     /**
@@ -202,7 +202,7 @@ public class StockWaitingRevertService extends BaseTaskService {
             sqlParam.put("channelId", channelId);
             sqlParam.put("cartId", cartId);
             sqlParam.put("skuList", newList);
-            int cnt = cmsBtStockSalesQuantityDao.updateStockSalesQuantity(sqlParam);
+            int cnt = cmsBtStockSalesQuantityDaoExt.updateStockSalesQuantity(sqlParam);
             updateCnt += cnt;
         }
         return updateCnt;
@@ -219,7 +219,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("revertTime", sysTime);
         // 0: 未执行自动还原
         sqlParam.put("revertFlg", StockInfoService.NOT_REVERT);
-        List<Map<String, Object>> tasksList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> tasksList = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
         return  tasksList;
     }
 
@@ -235,7 +235,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("taskId", taskId);
         sqlParam.put("cartId", cartId);
         sqlParam.put("statusNotEmpty", true);
-        List<Map<String, Object>> stockList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+        List<Map<String, Object>> stockList = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(sqlParam);
         List<String> skuList = new ArrayList<String>();
         for (Map<String, Object>  stock : stockList) {
             skuList.add((String) stock.get("sku"));
@@ -255,7 +255,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("taskId", taskId);
         sqlParam.put("cartId", cartId);
-        List<Map<String, Object>> stockIncrementList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> stockIncrementList = cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(sqlParam);
         return stockIncrementList;
     }
 
