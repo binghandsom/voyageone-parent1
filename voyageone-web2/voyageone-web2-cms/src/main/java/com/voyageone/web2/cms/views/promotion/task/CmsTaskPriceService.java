@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.service.impl.cms.promotion.PromotionTaskService;
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class CmsTaskPriceService extends BaseAppService {
         return promotionTaskService.getPromotionTaskPriceListCnt(param);
     }
 
-    public int updateTaskStatus(CmsBtPromotionTaskModel param){
+    public int updateTaskStatus(CmsBtTaskTejiabaoModel param) {
         return promotionTaskService.updatePromotionTask(param);
     }
 }
