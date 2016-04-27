@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.core.model.UserConfigModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CmsSearchIndexServiceTest {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("001");
 
-        UserConfigModel userConfigModel = new UserConfigModel();
+        UserConfigBean userConfigModel = new UserConfigBean();
         userConfigModel.setUser_id(3);
         userConfigModel.setCfg_name("language_id");
         userConfigModel.setCfg_val1("en");

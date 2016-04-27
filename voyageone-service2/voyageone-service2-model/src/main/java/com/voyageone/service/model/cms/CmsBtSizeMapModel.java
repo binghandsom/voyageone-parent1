@@ -6,19 +6,19 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * Created by morse.lu on 16/4/20.
  */
 public class CmsBtSizeMapModel extends BaseModel {
-    private int id;
+    //    private int id;
     private String sizeMapGroupId;
     private String originalSize;
     private String adjustSize;
     private int active;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
 
     public String getSizeMapGroupId() {
         return sizeMapGroupId;

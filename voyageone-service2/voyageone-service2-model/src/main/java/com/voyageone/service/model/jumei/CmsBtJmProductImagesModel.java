@@ -4,7 +4,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class CmsBtJmProductImagesModel implements Serializable
 {
    public CmsBtJmProductImagesModel()
@@ -14,7 +14,7 @@ public class CmsBtJmProductImagesModel implements Serializable
         setImageTypeName(""); 
         setOriginUrl(""); 
         setJmUrl(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setCreater(""); 
         setModifier(""); 
         setProductImageUrlKey(""); 
@@ -288,7 +288,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }

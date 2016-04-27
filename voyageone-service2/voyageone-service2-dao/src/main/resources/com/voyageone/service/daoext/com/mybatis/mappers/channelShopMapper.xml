@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="tm_channel_shop_selectCartListByChannelId" resultType="HashMap">
+        SELECT DISTINCT
+            b.short_name as cTypeId,
+            b.name,
+            b.cart_id as cartId
+        FROM Synship.tm_channel_shop a
+        INNER JOIN Synship.ct_cart b on a.cart_id = b.cart_id
+        WHERE a.order_channel_id = #{channelId}#
+    </select>
+</mapper>

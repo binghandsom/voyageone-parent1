@@ -13,8 +13,8 @@ import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
@@ -536,9 +536,17 @@ public class CmsPromotionDetailService extends BaseAppService {
         param.put("promotionId", promotionId);
         List<CmsBtPromotionCodesBean> codeList = promotionCodeService.getPromotionCodeList(param);
 
-        List<CmsBtPromotionTaskModel> addPromotionTaskList = new ArrayList<>();
+        List<CmsBtTaskTejiabaoModel> addPromotionTaskList = new ArrayList<>();
         codeList.forEach(code -> {
-            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+//            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+            CmsBtTaskTejiabaoModel cmsBtPromotionTask = new CmsBtTaskTejiabaoModel();
+            cmsBtPromotionTask.setPromotionId(promotionId);
+            cmsBtPromotionTask.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            cmsBtPromotionTask.setKey(code.getProductCode());
+            cmsBtPromotionTask.setNumIid(code.getNumIid());
+            cmsBtPromotionTask.setCreater(operator);
+            cmsBtPromotionTask.setModifier(operator);
+
             addPromotionTaskList.add(cmsBtPromotionTask);
         });
 

@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms.product;
 
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -15,6 +16,7 @@ public class SxData {
 	private Long groupId;
 
 	private CmsBtProductModel mainProduct; // 主商品
+	private CmsBtFeedInfoModel cmsBtFeedInfoModel; // 主商品的feed信息
 	private CmsBtProductGroupModel platform; // 平台信息(也是当前group信息)
 	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表(product下所有sku都没有当前cartId，则去除)
 	private List<CmsBtProductModel_Sku> skuList;	// 只包含当前group，cart中, 允许使用的sku信息
@@ -49,6 +51,14 @@ public class SxData {
 
 	public void setMainProduct(CmsBtProductModel mainProduct) {
 		this.mainProduct = mainProduct;
+	}
+
+	public CmsBtFeedInfoModel getCmsBtFeedInfoModel() {
+		return cmsBtFeedInfoModel;
+	}
+
+	public void setCmsBtFeedInfoModel(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
+		this.cmsBtFeedInfoModel = cmsBtFeedInfoModel;
 	}
 
 	public CmsBtProductGroupModel getPlatform() {

@@ -4,7 +4,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class CmsBtJmProductModel implements Serializable
 {
    public CmsBtJmProductModel()
@@ -42,13 +42,13 @@ public class CmsBtJmProductModel implements Serializable
         setHsCode(""); 
         setHsName(""); 
         setHsUnit(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setCreater(""); 
         setModifier(""); 
         setSpecialNote(""); 
         setLastJmHashId(""); 
-        setLastJmDealBegin(DateHelp.getDefaultDate());
-        setLastJmDealEnd(DateHelp.getDefaultDate());
+        setLastJmDealBegin(DateTimeUtil.getCreatedDefaultDate());
+        setLastJmDealEnd(DateTimeUtil.getCreatedDefaultDate());
 
     }
  
@@ -1112,7 +1112,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -1259,7 +1259,7 @@ this.lastJmDealBegin=lastJmDealBegin;
  }
 else
 {
-this.lastJmDealBegin=DateHelp.getDefaultDate();
+this.lastJmDealBegin=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
@@ -1280,7 +1280,7 @@ this.lastJmDealEnd=lastJmDealEnd;
  }
 else
 {
-this.lastJmDealEnd=DateHelp.getDefaultDate();
+this.lastJmDealEnd=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }

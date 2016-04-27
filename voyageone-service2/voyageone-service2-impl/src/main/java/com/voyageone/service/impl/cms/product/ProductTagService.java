@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtTagProductLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagProductLogModel;
@@ -24,8 +23,8 @@ import java.util.Map;
 @Service
 public class ProductTagService extends BaseService {
 
-    @Autowired
-    private CmsBtTagProductLogDao tagProductLogDao;
+//    @Autowired
+//    private CmsBtTagProductLogDao tagProductLogDao;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -87,9 +86,9 @@ public class ProductTagService extends BaseService {
             }
         }
 
-        if (cmsBtTagLogModelList.size() > 0) {
-            tagProductLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
-        }
+//        if (cmsBtTagLogModelList.size() > 0) {
+//            tagProductLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
+//        }
 
         if (bulkProductList.size() > 0) {
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, modifier, "$addToSet");
@@ -199,9 +198,9 @@ public class ProductTagService extends BaseService {
             }
         }
 
-        if (cmsBtTagLogModelList.size() > 0) {
-            tagProductLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
-        }
+//        if (cmsBtTagLogModelList.size() > 0) {
+//            tagProductLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
+//        }
 
         if (bulkProductList.size() > 0) {
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, modifier, "$pull");
