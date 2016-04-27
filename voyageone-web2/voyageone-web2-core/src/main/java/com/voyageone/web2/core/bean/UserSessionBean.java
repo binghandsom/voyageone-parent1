@@ -1,7 +1,7 @@
 package com.voyageone.web2.core.bean;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.web2.core.model.UserConfigModel;
+import com.voyageone.service.bean.com.UserConfigBean;
 
 import java.io.Serializable;
 import java.util.List;
@@ -44,7 +44,7 @@ public class UserSessionBean implements Serializable {
     /**
      * 用户配置
      */
-    private Map<String, List<UserConfigModel>> userConfig;
+    private Map<String, List<UserConfigBean>> userConfig;
 
     /**
      * 当前选择的 Channel (渠道)
@@ -95,11 +95,11 @@ public class UserSessionBean implements Serializable {
         this.timeZone = timeZone;
     }
 
-    public Map<String, List<UserConfigModel>> getUserConfig() {
+    public Map<String, List<UserConfigBean>> getUserConfig() {
         return userConfig;
     }
 
-    public void setUserConfig(Map<String, List<UserConfigModel>> userConfig) {
+    public void setUserConfig(Map<String, List<UserConfigBean>> userConfig) {
         this.userConfig = userConfig;
     }
 

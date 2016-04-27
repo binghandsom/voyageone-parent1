@@ -39,7 +39,6 @@ import java.util.Map;
  * 京东平台类目schema信息取得
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob)
 public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService {
 
     @Autowired
@@ -59,6 +58,11 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
     // 京东类目属性的输入属性类型(3:inputfield 可输入)
     private final static int Input_Type_3 = 3;
+
+    @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob)
+    protected void onMessage(Message message){
+        super.onMessage(message);
+    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {

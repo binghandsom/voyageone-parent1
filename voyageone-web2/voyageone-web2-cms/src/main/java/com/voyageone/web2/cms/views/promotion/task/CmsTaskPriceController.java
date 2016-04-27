@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +40,7 @@ public class CmsTaskPriceController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.PRICE.UPDATE_TASK_STATUS)
-    public AjaxResponse updateTaskStatus(@RequestBody CmsBtPromotionTaskModel param) {
+    public AjaxResponse updateTaskStatus(@RequestBody CmsBtTaskTejiabaoModel param) {
 
         param.setModifier(getUser().getUserName());
         cmsTaskPriceService.updateTaskStatus(param);

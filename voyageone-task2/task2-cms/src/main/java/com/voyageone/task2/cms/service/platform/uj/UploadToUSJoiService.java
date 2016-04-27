@@ -13,8 +13,8 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -44,9 +44,9 @@ import static java.util.stream.Collectors.toList;
 public class UploadToUSJoiService extends BaseTaskService{
 
     @Autowired
-    private ProductService productService;
-    @Autowired
     ProductGroupService productGroupService;
+    @Autowired
+    private ProductService productService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
@@ -57,7 +57,7 @@ public class UploadToUSJoiService extends BaseTaskService{
     private MongoSequenceService commSequenceMongoService;
 
     @Autowired
-    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
+    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
 
     @Override
     public SubSystem getSubSystem() {
@@ -71,14 +71,14 @@ public class UploadToUSJoiService extends BaseTaskService{
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDao.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TI.getId()));
+        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TI.getId()));
         cmsBtSxWorkloadModels.forEach(this::upload);
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
         try {
             $info(String.format("channelId:%s  groupId:%d  复制到US JOI 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
-            List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), false);
+            List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
 
             //从group中过滤出需要上的usjoi的产品
             productModels = getUSjoiProductModel(productModels);
@@ -160,11 +160,11 @@ public class UploadToUSJoiService extends BaseTaskService{
                 }
             }
             sxWorkLoadBean.setPublishStatus(1);
-            cmsBtSxWorkloadDao.updateSxWorkloadModel(sxWorkLoadBean);
+            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
             $info(String.format("channelId:%s  groupId:%d  复制到US JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
         }catch (Exception e){
             sxWorkLoadBean.setPublishStatus(2);
-            cmsBtSxWorkloadDao.updateSxWorkloadModel(sxWorkLoadBean);
+            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
             $info(String.format("channelId:%s  groupId:%d  复制到US JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
             throw e;
         }
