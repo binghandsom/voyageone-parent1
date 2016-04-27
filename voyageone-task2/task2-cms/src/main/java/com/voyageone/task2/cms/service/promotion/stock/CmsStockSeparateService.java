@@ -4,9 +4,9 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.daoext.cms.CmsBtStockSalesQuantityDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtStockSeparatePlatformInfoDaoExt;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,23 +25,17 @@ import static java.util.stream.Collectors.groupingBy;
 @Service
 public class CmsStockSeparateService extends BaseTaskService {
 
+    private static final String ERROR_MSG = "此sku在别的隔离平台有暂时不能隔离的数据";
     @Autowired
     private StockInfoService stockInfoService;
-
     @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
-
+    private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
-
+    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
     @Autowired
-    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
-
+    private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
     @Autowired
     private TransactionRunner transactionRunner;
-
-    private static final String ERROR_MSG = "此sku在别的隔离平台有暂时不能隔离的数据";
-
     /** 等待隔离状态隔离失败件数 */
     private int cntError;
     /** 隔离成功状态重新隔离件数 */
@@ -85,7 +79,7 @@ public class CmsStockSeparateService extends BaseTaskService {
 //        param.put("channelId", "066");
 
         $info("开始取得等待隔离数据");
-        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
+        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(param);
         $info("等待隔离数据取得完毕. %d件", resultData.size());
 
         // 按渠道,sku整理Map<channelId, Map<taskId, Map<sku,resultData>>>
@@ -188,7 +182,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                 // taskId对应所有隔离平台
                 sqlParamItem.put("taskId", taskId);
                 sqlParamTask.put("taskId", taskId);
-                List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParamTask);
+                List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParamTask);
 
                 Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
                 for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
@@ -197,7 +191,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                     if (listData.size() != listTaskInfo.size()) {
                         //  该sku等待隔离状态的数量 <> taskId对应所有隔离平台数量
                         sqlParamItem.put("sku", sku);
-                        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParamItem);
+                        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(sqlParamItem);
                         boolean isErr = false;
                         listAddData.clear();
                         for (Map<String, Object> data : resultData) {
@@ -250,7 +244,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                         } else {
                             updateParam.put("skuList", listErrorSku.subList(index, listErrorSku.size()));
                         }
-                        cntError += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                        cntError += cmsBtStockSeparateItemDaoExt.updateStockSeparateItem(updateParam);
                     }
                 }
 
@@ -268,7 +262,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                         } else {
                             updateParam.put("skuList", listSuccessStatusSku.subList(index, listSuccessStatusSku.size()));
                         }
-                        cntSuccess += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                        cntSuccess += cmsBtStockSeparateItemDaoExt.updateStockSeparateItem(updateParam);
                     }
                 }
 
@@ -288,7 +282,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                             } else {
                                 updateParam.put("skuList", lisSku.subList(index, lisSku.size()));
                             }
-                            cmsBtStockSalesQuantityDao.updateStockSalesQuantity(updateParam);
+                            cmsBtStockSalesQuantityDaoExt.updateStockSalesQuantity(updateParam);
                         }
                     }
                 }
@@ -322,7 +316,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                     Map<String, Object> param = new HashMap<>();
                     param.put("taskId", taskId);
                     param.put("commonPlatform", true);
-                    List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+                    List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(param);
                     Map<Integer, Integer> mapPlatAdd = new TreeMap<>(); // 增顺
                     Map<Integer, Integer> mapPlatSub = new TreeMap<>(); // 减顺
                     for (Map<String, Object> platformInfo : listTaskInfo) {
@@ -371,7 +365,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                                 if (separateQty == null) {
                                     // 动态
                                     separateQty = cartDisplayQty.get(-1);
-                                    cntSeparate += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                                    cntSeparate += cmsBtStockSeparateItemDaoExt.updateStockSeparateItem(updateParam);
 
                                     // 更新ims_bt_log_syn_inventory
                                     listImsBtLogSynInventory.add(
@@ -387,7 +381,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                                 } else {
                                     updateParam.put("status", stockInfoService.STATUS_SEPARATING);
                                     updateParam.put("separateQty", separateQty);
-                                    cntSeparate += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                                    cntSeparate += cmsBtStockSeparateItemDaoExt.updateStockSeparateItem(updateParam);
 
                                     // 更新ims_bt_log_syn_inventory
                                     listImsBtLogSynInventory.add(

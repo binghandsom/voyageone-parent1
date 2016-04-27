@@ -2,90 +2,92 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <select id="cms_bt_stock_separate_platform_info_selectStockSeparatePlatform" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_stock_separate_platform_info_selectStockSeparatePlatform" resultType="HashMap"
+            parameterType="HashMap">
         select
-            t1.task_id,
-            t1.cart_id,
-            t1.separate_percent,
-            t2.activity_start,
-            t2.activity_end,
-            t2.channel_id,
-            t1.revert_time,
-            t1.revert_flg,
-            t1.add_priority,
-            t1.subtract_priority
-            <if test="channelId !=null and lang != null" >
-              ,t3.name
-            </if>
+        t1.task_id,
+        t1.cart_id,
+        t1.separate_percent,
+        t2.activity_start,
+        t2.activity_end,
+        t2.channel_id,
+        t1.revert_time,
+        t1.revert_flg,
+        t1.add_priority,
+        t1.subtract_priority
+        <if test="channelId !=null and lang != null">
+            ,t3.name
+        </if>
         from voyageone_cms2.cms_bt_stock_separate_platform_info t1
         left outer join voyageone_cms2.cms_bt_promotion t2 on t1.promotion_id = t2.promotion_id
-        <if test="channelId !=null and lang != null" >
-          left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id = #{channelId} and lang_id = #{lang}) t3
-          on t1.cart_id = t3.value
+        <if test="channelId !=null and lang != null">
+            left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id =
+            #{channelId} and lang_id = #{lang}) t3
+            on t1.cart_id = t3.value
         </if>
         where 1 = 1
-        <if test="commonPlatform == null" >
-        and t1.cart_id != -1
+        <if test="commonPlatform == null">
+            and t1.cart_id != -1
         </if>
-        <if test="channelIdWhere != null" >
+        <if test="channelIdWhere != null">
             and t2.channel_id = #{channelIdWhere}
         </if>
-        <if test="taskId != null" >
-        and t1.task_id = #{taskId}
+        <if test="taskId != null">
+            and t1.task_id = #{taskId}
         </if>
-        <if test="cartId != null" >
+        <if test="cartId != null">
             and t1.cart_id = #{cartId}
         </if>
-        <if test="revertTime != null" >
+        <if test="revertTime != null">
             <![CDATA[ and t1.revert_time <= #{revertTime} ]]>
         </if>
-        <if test="revertTimeGt != null" >
+        <if test="revertTimeGt != null">
             <![CDATA[ and t1.revert_time > #{revertTimeGt} ]]>
         </if>
-        <if test="revertFlg != null" >
+        <if test="revertFlg != null">
             and t1.revert_flg = #{revertFlg}
         </if>
         order by t1.cart_id
     </select>
 
-    <update id="cms_bt_stock_separate_platform_info_updateStockSeparatePlatform" parameterType="HashMap" >
+    <update id="cms_bt_stock_separate_platform_info_updateStockSeparatePlatform" parameterType="HashMap">
         update voyageone_cms2.cms_bt_stock_separate_platform_info
-        <set >
-            <if test="separatePercent != null" >
+        <set>
+            <if test="separatePercent != null">
                 separate_percent = #{separatePercent},
             </if>
-            <if test="revertTime != null" >
+            <if test="revertTime != null">
                 revert_time = #{revertTime},
             </if>
-            <if test="revertFlg != null" >
+            <if test="revertFlg != null">
                 revert_flg = #{revertFlg},
             </if>
-            <if test="addPriority != null" >
+            <if test="addPriority != null">
                 add_priority = #{addPriority},
             </if>
-            <if test="subtractPriority != null" >
+            <if test="subtractPriority != null">
                 subtract_priority = #{subtractPriority},
             </if>
             modified = now(),
-            <if test="modifier != null" >
+            <if test="modifier != null">
                 modifier = #{modifier},
             </if>
         </set>
         <where>
             1 = 1
-            <if test="commonPlatform == null" >
+            <if test="commonPlatform == null">
                 and cart_id != -1
             </if>
-            <if test="taskId != null" >
+            <if test="taskId != null">
                 and task_id = #{taskId}
             </if>
-            <if test="cartId != null" >
+            <if test="cartId != null">
                 and cart_id = #{cartId}
             </if>
-            <if test="revertFlgWhere != null" >
+            <if test="revertFlgWhere != null">
                 and revert_flg = #{revertFlgWhere}
             </if>
-            <if test="revertTimeWhere != null" >
+            <if test="revertTimeWhere != null">
                 <![CDATA[ and revert_time <= #{revertTimeWhere} ]]>
             </if>
         </where>
@@ -97,7 +99,7 @@
         where
         task_id = #{taskId}
     </delete>
-    <select id="cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById" resultType="HashMap" >
+    <select id="cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById" resultType="HashMap">
         select
         a.channel_id,
         a.promotion_id,
@@ -141,7 +143,8 @@
             #{modifier}
         )
     </insert>
-    <select id="cms_bt_stock_separate_platform_info_stockSeparatePlatFormInfoMapByTaskID" parameterType="String" resultType="Map" >
+    <select id="cms_bt_stock_separate_platform_info_stockSeparatePlatFormInfoMapByTaskID" parameterType="String"
+            resultType="Map">
         select	cart_id cart_id,
                 type type,
                 separate_percent value,

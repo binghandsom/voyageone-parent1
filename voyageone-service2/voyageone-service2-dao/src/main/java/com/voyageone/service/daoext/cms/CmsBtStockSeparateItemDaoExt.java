@@ -1,4 +1,4 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.daoext.cms;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
@@ -9,10 +9,11 @@ import java.util.Map;
 
 /**
  * Created by jeff.duan on 2016/03/07.
+ *
  * @version 2.0.0
  */
 @Repository
-public class CmsBtStockSeparateItemDao extends BaseDao {
+public class CmsBtStockSeparateItemDaoExt extends BaseDao {
     public List<Map<String, Object>> selectStockSeparateItem(Map<String, Object> param) {
         return selectList("cms_bt_stock_separate_item_selectStockSeparateItem", param);
     }
