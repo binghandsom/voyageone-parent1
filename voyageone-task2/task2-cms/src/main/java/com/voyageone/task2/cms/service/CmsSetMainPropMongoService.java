@@ -1054,9 +1054,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 根据code, 到group表中去查找所有的group信息
             List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
 
-            // 新追加的Group
-            List<CmsBtProductGroupModel> newGroups = new ArrayList<>();
-
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanList) {
                 // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
@@ -1115,6 +1112,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     List<String> codes = new ArrayList<>();
                     codes.add(feed.getCode());
                     group.setProductCodes(codes);
+                    group.setCreater(getTaskName());
+                    group.setModifier(getTaskName());
+                    cmsBtProductGroupDao.insert(group);
                 } else {
                     // ProductCodes
                     List<String> oldCodes = group.getProductCodes();
@@ -1126,14 +1126,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         oldCodes.add(feed.getCode());
                         group.setProductCodes(oldCodes);
                     }
+                    group.setModifier(getTaskName());
+
+                    cmsBtProductGroupDao.update(group);
                 }
 
-                group.setCreater(getTaskName());
-                group.setModifier(getTaskName());
-                newGroups.add(group);
-            }
-            if (newGroups.size() > 0) {
-                cmsBtProductGroupDao.insertWithList(newGroups);
+
             }
         }
 
@@ -1257,7 +1255,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 不存在则插入
                 if (findImages.size() == 0) {
-                    cmsBtImageDao.insertImages(new CmsBtImagesModel(channelId, code, image, index, getTaskName()));
+                    cmsBtImageDao.insertImages(new CmsBtImagesModel(channelId, code, image, index++, getTaskName()));
                 }
             }
         }
