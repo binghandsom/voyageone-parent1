@@ -2061,12 +2061,13 @@ a.text-vo:focus {
 }
 .vo_prodGallery .imageWrapper {
   display: block;
-  width: 100%;
+  /*width: 100%;*/
   height: 250px;
   background-size: contain;
   background-position: center;
   background-repeat:no-repeat;
   transition: all 1s;
+  text-align:-webkit-center;
 }
 .vo_prodGallery .thumbnailWrapper {
   display: inline-block;

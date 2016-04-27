@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.mapping.dictionary;
 
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.service.model.cms.CmsMtDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -50,7 +50,7 @@ public class CmsDictManageController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.GET_DICT)
-    public AjaxResponse getDict(@RequestBody CmsMtDictModel request) {
+    public AjaxResponse getDict(@RequestBody CmsMtPlatFormDictModel request) {
         return success(dictManageService.getDict(request, getUser()));
     }
 
@@ -61,7 +61,7 @@ public class CmsDictManageController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.DEL_DICT)
-    public AjaxResponse delDict(@RequestBody CmsMtDictModel request) {
+    public AjaxResponse delDict(@RequestBody CmsMtPlatFormDictModel request) {
         return success(dictManageService.delDict(request, getUser()));
     }
 
@@ -71,7 +71,7 @@ public class CmsDictManageController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.ADD_DICT)
-    public AjaxResponse addDict(@RequestBody CmsMtDictModel request) {
+    public AjaxResponse addDict(@RequestBody CmsMtPlatFormDictModel request) {
         dictManageService.addDict(request, getUser());
         return new AjaxResponse();
     }
@@ -96,11 +96,11 @@ public class CmsDictManageController extends CmsController {
 
     /**
      * 修改字典页面list页面的某个字典数据
-     * @param cmsMtDictModel
+     * @param cmsMtPlatFormDictModel
      * @return
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.SET_DICT)
-    public AjaxResponse setDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
-        return success(dictManageService.setDict(cmsMtDictModel, getUser()));
+    public AjaxResponse setDict(@RequestBody CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
+        return success(dictManageService.setDict(cmsMtPlatFormDictModel, getUser()));
     }
 }

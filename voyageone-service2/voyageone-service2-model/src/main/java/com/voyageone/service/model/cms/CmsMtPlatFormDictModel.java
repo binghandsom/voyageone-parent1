@@ -2,7 +2,7 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-public class CmsMtDictModel extends BaseModel {
+public class CmsMtPlatFormDictModel extends BaseModel {
 
 
     /**
