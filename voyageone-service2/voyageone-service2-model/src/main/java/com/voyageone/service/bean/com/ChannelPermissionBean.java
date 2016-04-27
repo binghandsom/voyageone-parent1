@@ -1,4 +1,4 @@
-package com.voyageone.web2.core.model;
+package com.voyageone.service.bean.com;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Jonas
  * @version 2.0.0
  */
-public class ChannelPermissionModel {
+public class ChannelPermissionBean {
 
     private int companyId;
 

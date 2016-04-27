@@ -1,4 +1,4 @@
-package com.voyageone.web2.core.model;
+package com.voyageone.service.bean.com;
 
 /**
  * 映射 ct_user 表
@@ -7,7 +7,7 @@ package com.voyageone.web2.core.model;
  * @author Jonas
  * @version 2.0.0
  */
-public class UserModel {
+public class UserBean {
     private int id;
 
     private String username;

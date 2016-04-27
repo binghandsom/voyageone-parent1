@@ -1,5 +1,6 @@
 package com.voyageone.web2.base.message;
 
+import com.voyageone.common.message.enums.DisplayType;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

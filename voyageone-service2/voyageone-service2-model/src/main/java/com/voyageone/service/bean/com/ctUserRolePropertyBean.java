@@ -1,6 +1,7 @@
-package com.voyageone.web2.core.model;
+package com.voyageone.service.bean.com;
 
-import com.voyageone.web2.base.model.BaseModel;
+
+import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
  * 渠道下应用系统的权限
@@ -9,9 +10,7 @@ import com.voyageone.web2.base.model.BaseModel;
  * @author Jonas
  * @version 2.0.0
  */
-public class ctUserRoleProperty extends BaseModel{
-
-    private Integer id;
+public class ctUserRolePropertyBean extends BaseModel {
 
     private Integer user_id;
 
@@ -22,14 +21,6 @@ public class ctUserRoleProperty extends BaseModel{
     private String description;
 
     private int active;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getUser_id() {
         return user_id;

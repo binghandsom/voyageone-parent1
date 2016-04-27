@@ -1,4 +1,4 @@
-package com.voyageone.web2.base.message;
+package com.voyageone.common.message.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

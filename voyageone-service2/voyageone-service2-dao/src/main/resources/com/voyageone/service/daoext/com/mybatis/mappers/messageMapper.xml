@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.web2.core.sql">
-    <resultMap id="mapMessageModel" type="com.voyageone.web2.base.message.MessageModel" autoMapping="true">
-        <result property="displayType" column="displayType" javaType="com.voyageone.web2.base.message.DisplayType" jdbcType="INTEGER"
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="mapMessageModel" type="com.voyageone.service.bean.com.MessageBean" autoMapping="true">
+        <result property="displayType" column="displayType" javaType="com.voyageone.common.message.enums.DisplayType" jdbcType="INTEGER"
                 typeHandler="com.voyageone.web2.base.message.DisplayTypeHandler"/>
     </resultMap>
     <select id="ct_message_info_selectMessage" resultMap="mapMessageModel">
