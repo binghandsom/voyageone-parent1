@@ -1,4 +1,4 @@
-package com.voyageone.service.model.openapi;
+package com.voyageone.service.bean.openapi;
 
 /**
  * Created by dell on 2016/4/26.

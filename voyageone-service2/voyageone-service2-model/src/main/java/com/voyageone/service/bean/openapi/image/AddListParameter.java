@@ -1,4 +1,4 @@
-package com.voyageone.service.model.openapi.image;
+package com.voyageone.service.bean.openapi.image;
 
 import java.util.List;
 

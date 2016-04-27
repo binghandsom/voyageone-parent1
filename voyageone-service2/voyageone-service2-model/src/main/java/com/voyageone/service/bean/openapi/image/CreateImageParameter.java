@@ -1,5 +1,5 @@
-package com.voyageone.service.model.openapi.image;
-import org.springframework.web.bind.annotation.RequestParam;
+package com.voyageone.service.bean.openapi.image;
+
 /**
  * Created by dell on 2016/4/26.
  */

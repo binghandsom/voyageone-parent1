@@ -1,6 +1,6 @@
-package com.voyageone.service.model.openapi.image;
+package com.voyageone.service.bean.openapi.image;
 
-import com.voyageone.service.model.openapi.ErrorEnumInterface;
+import com.voyageone.service.bean.openapi.ErrorEnumInterface;
 
 public enum ImageErrorEnum implements ErrorEnumInterface {
     ImageTemplateNotNull(10101, "Image template must not be null"),

@@ -1,6 +1,5 @@
-package com.voyageone.service.impl.cms.imagecreate;
+package com.voyageone.web2.cms.openapi.service;
 
-import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsMtImageCreateFileServiceTest {
 
     @Autowired
-    CmsMtImageCreateFileService service;
+    CmsImageFileService service;
     @Test
     public  void test() throws Exception {
        // String url = "http://image.voyageone.net/product/getImage?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";

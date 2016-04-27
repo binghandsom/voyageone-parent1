@@ -1,4 +1,4 @@
-package com.voyageone.service.model.openapi.image;
+package com.voyageone.service.bean.openapi.image;
 
 /**
  * Created by dell on 2016/4/25.

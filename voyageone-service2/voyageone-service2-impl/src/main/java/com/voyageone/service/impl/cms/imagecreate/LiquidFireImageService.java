@@ -3,8 +3,8 @@ import com.voyageone.components.liquifire.service.LiquidFireClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
-import com.voyageone.service.model.openapi.OpenApiException;
-import com.voyageone.service.model.openapi.image.ImageErrorEnum;
+import com.voyageone.service.bean.openapi.OpenApiException;
+import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

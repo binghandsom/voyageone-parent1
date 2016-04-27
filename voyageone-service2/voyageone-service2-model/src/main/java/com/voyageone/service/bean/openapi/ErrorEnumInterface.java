@@ -1,4 +1,4 @@
-package com.voyageone.service.model.openapi;
+package com.voyageone.service.bean.openapi;
 
 public interface ErrorEnumInterface {
     public int getCode();

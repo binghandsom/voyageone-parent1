@@ -5,10 +5,8 @@ import com.voyageone.components.uscdn.service.USCDNClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
-import com.voyageone.service.model.openapi.OpenApiException;
-import com.voyageone.service.model.openapi.image.ImageErrorEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.voyageone.service.bean.openapi.OpenApiException;
+import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

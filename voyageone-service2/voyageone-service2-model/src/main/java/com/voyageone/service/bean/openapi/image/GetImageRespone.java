@@ -1,5 +1,6 @@
-package com.voyageone.service.model.openapi.image;
-import com.voyageone.service.model.openapi.OpenApiRespone;
+package com.voyageone.service.bean.openapi.image;
+import com.voyageone.service.bean.openapi.OpenApiRespone;
+
 public class GetImageRespone extends OpenApiRespone {
     GetImageResultData resultData;
     public GetImageRespone() {
