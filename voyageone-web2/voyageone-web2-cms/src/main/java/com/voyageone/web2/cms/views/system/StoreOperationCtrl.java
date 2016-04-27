@@ -73,7 +73,9 @@ public class StoreOperationCtrl extends CmsController {
             return;
         }
         int interval = getConfigHours(channelId);
-        if(lastExecuteTime.plusHours(interval).isAfter(LocalDateTime.now())){
+        boolean inRange = lastExecuteTime.plusHours(interval).isAfter(LocalDateTime.now());
+        lastExecuteTime = LocalDateTime.now();
+        if(inRange){
             throw new BusinessException("操作时间间隔必须在"+interval+"小时以上!");
         }
     }
