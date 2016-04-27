@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -22,6 +23,8 @@ public class TagService extends BaseService {
     @Autowired
     // mysql
     private CmsBtTagDaoExt cmsBtTagDaoExt;
+    @Autowired
+    private CmsBtTagDao cmsBtTagDao;
 
     /**
      * Tag追加
@@ -31,7 +34,7 @@ public class TagService extends BaseService {
     @VOTransactional
     public int addTag(CmsTagInfoBean request) {
         // 返回值Tag设定
-        CmsBtTagModel tag = null;
+//        CmsBtTagModel tag = null;
         // 执行结果
         boolean ret = true;
 
@@ -40,17 +43,17 @@ public class TagService extends BaseService {
 
         // tag 新追加
         // 新追加TagId
-        int tagId = insertTag(request);
-        if (tagId == 0) {
+        CmsBtTagModel tag = insertTag(request);
+        if (tag == null) {
             ret = false;
         }
 
         // tagPath 更新
         if (ret) {
-            updateTagPathName(request.getParentTagId(), tagId);
+            updateTagPathName(tag);
         }
 
-        return tagId;
+        return tag.getId();
     }
 
     /**
@@ -86,9 +89,7 @@ public class TagService extends BaseService {
      * @param request TagAddRequest
      * @return 新追加TagID
      */
-    private int insertTag(CmsTagInfoBean request) {
-        int tagId = 0;
-
+    private CmsBtTagModel insertTag(CmsTagInfoBean request) {
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         cmsBtTagModel.setChannelId(request.getChannelId());
         cmsBtTagModel.setTagName(request.getTagName());
@@ -102,39 +103,38 @@ public class TagService extends BaseService {
         cmsBtTagModel.setCreater(request.getModifier());
         cmsBtTagModel.setModifier(request.getModifier());
 
-        int recordCount = cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
+        int recordCount = cmsBtTagDao.insert(cmsBtTagModel);
 
         if (recordCount > 0) {
-            tagId = cmsBtTagModel.getId();
+            return cmsBtTagModel;
         }
 
-        return tagId;
+        return null;
     }
 
     /**
      * 更新TagPath
-     * @param parentTagId 父TagId
-     * @param tagId 子TagId
+     * @param cmsBtTagModel
      * @return 更新结果
      */
-    private boolean updateTagPathName(Integer parentTagId, Integer tagId) {
+    private boolean updateTagPathName(CmsBtTagModel cmsBtTagModel) {
         boolean ret = false;
 
         String tagPath = "";
 
         // 父Tag的场合
         String tagPathSeparator = "-";
-        if (parentTagId == 0) {
-            tagPath = tagPathSeparator + tagId + tagPathSeparator;
+        if (cmsBtTagModel.getParentTagId() == 0) {
+            tagPath = tagPathSeparator + cmsBtTagModel.getId() + tagPathSeparator;
         } else {
-            tagPath = tagPathSeparator + parentTagId + tagPathSeparator + tagId + tagPathSeparator;
+            tagPath = tagPathSeparator + cmsBtTagModel.getParentTagId() + tagPathSeparator + cmsBtTagModel.getId() + tagPathSeparator;
         }
 
-        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setId(tagId);
+//        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+//        cmsBtTagModel.setId(tagId);
         cmsBtTagModel.setTagPath(tagPath);
 
-        int updateRecCount = cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+        int updateRecCount = cmsBtTagDao.update(cmsBtTagModel);
 
         if (updateRecCount > 0) {
             ret = true;

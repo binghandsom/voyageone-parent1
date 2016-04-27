@@ -1,7 +1,7 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.daoext.cms;
 
+import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtPromotionSkuBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtPromotionSkuDao extends ServiceBaseDao {
+public class CmsBtPromotionSkusDaoExt extends ServiceBaseDao {
 
     public List<Map<String,Object>> selectPromotionSkuList(Map<String, Object> params){
         List<Map<String,Object>> ret = selectList("select_cms_bt_promotion_sku",params);

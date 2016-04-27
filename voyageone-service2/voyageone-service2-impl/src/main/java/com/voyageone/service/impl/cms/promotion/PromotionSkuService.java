@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.service.dao.cms.CmsBtPromotionSkuDao;
+import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class PromotionSkuService extends BaseService {
 
     @Autowired
-    private CmsBtPromotionSkuDao cmsPromotionSkuDao;
+    private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
 
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
         return cmsPromotionSkuDao.selectPromotionSkuList(params);

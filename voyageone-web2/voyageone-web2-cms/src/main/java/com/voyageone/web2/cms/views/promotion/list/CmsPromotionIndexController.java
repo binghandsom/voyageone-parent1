@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -27,6 +28,8 @@ public class CmsPromotionIndexController extends CmsController {
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
+    @Autowired
+    private PromotionService promotionService;
 
     @RequestMapping(PROMOTION.LIST.INDEX.INIT)
     public AjaxResponse init() {
@@ -35,9 +38,7 @@ public class CmsPromotionIndexController extends CmsController {
 
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
-        String channelId = getUser().getSelChannelId();
-        params.put("channelId", channelId);
-        return success(cmsPromotionService.queryByCondition(params));
+        return success(promotionService.getPromotionsByChannelId(getUser().getSelChannelId()));
     }
 
     @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION, PROMOTION.LIST.INDEX.UPDATE_PROMOTION})

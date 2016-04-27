@@ -13,7 +13,7 @@ define([
             masterData: null,
             productList: [],
             productIds: [],
-            productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
+            productPageOption: {curr: 1, total: 0, fetch: getProductList},
             mainProduct: null
         };
 

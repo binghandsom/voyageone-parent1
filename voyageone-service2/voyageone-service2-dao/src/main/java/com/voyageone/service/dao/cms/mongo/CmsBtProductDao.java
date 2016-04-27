@@ -106,14 +106,33 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         return result.size() <= 0;
     }
+     //执行大小写不敏感的匹配
+    public static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
 
     public long countByFieldStatusEqualApproved(String channelId) {
-        String query="{fields.status:/^approved$/i}"; //执行大小写不敏感的匹配
-        return countByQuery(query,channelId);
+        return countByQuery(FieldStatusEqArrpoved,channelId);
     }
 
     public List<CmsBtProductModel> selectByFieldStatusEqualApproved(String channelId) {
-        String query="{fields.status:/^approved$/i}"; //执行大小写不敏感的匹配
-        return select(query, channelId);
+
+        return select(FieldStatusEqArrpoved, channelId);
+    }
+
+    private static final String PriceNotEqualQuery="{ $where : \"function(){\n" +
+            "            var i=0;\n" +
+            "            if(!this.skus) return false;    \n" +
+            "            for(i=0;i<this.skus.length;i++){\n" +
+            "                    if(this.skus[i].priceSale!=this.skus[i].priceRetail) return true;\n" +
+            "            }\n" +
+            "            return false;\n" +
+            "        }\"}";
+
+
+    /**
+     * 查询priceSale和priceRetail不相等的products
+     * @return
+     */
+    public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
+        return select(PriceNotEqualQuery, channelId);
     }
 }

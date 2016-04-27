@@ -419,6 +419,7 @@ define(function(){
         "BTN_ADD_TO_PROMOTION": "参加活动",
         "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
+        "BTN_UPDATE_COMMON_ATTRIBUTE": "更新共通属性",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
         "BTN_OK": "确定",
         "BTN_CLEAR": "清空",
@@ -471,6 +472,9 @@ define(function(){
         "REVERT": "正在还原",
         "RE_SUCCESS": "还原成功",
         "RE_FAIL": "还原失败",
-        "CANT_BEAT": "信息错误"
+        "CANT_BEAT": "信息错误",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "每页显示"
     };
 });

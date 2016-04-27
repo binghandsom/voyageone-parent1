@@ -6,12 +6,11 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,14 +29,13 @@ import java.util.Map;
 public class CmsGroupDetailService extends BaseAppService {
 
     @Autowired
-    private CmsPromotionIndexService cmsPromotionService;
-
-    @Autowired
     protected ProductGroupService productGroupService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private PromotionService promotionService;
 
     private final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;skus";
@@ -47,14 +45,12 @@ public class CmsGroupDetailService extends BaseAppService {
     /**
      * 获取检索页面初始化的master data数据
      */
-    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException {
+    public Map<String, Object> getMasterData(UserSessionBean userInfo) throws IOException {
 
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取promotion list
-        Map<String, Object> params = new HashMap<>();
-        params.put("channelId", userInfo.getSelChannelId());
-        masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
+        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId()));
 
         return masterData;
     }

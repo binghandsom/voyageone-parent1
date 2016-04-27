@@ -78,7 +78,7 @@ var publish = {
         }
     },
     libs: {
-        src: ['develop/libs/**/*min.js', 'develop/libs/**/*min.css', 'develop/libs/**/*.png']
+        src: ['develop/libs/**/*.js', 'develop/libs/**/*.css', 'develop/libs/**/*.png']
     },
     loginAndChannel: {
         js: 'develop/*.js',

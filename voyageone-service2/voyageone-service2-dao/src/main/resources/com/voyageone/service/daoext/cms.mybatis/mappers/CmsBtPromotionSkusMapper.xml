@@ -34,7 +34,7 @@
                     modified,
                     modifier
                 FROM
-                  voyageone_cms2.cms_bt_promotion_sku
+        voyageone_cms2.cms_bt_promotion_skus
                 <where>
                     <if test="promotionId != null">
                         promotion_id =  #{promotionId,jdbcType=INTEGER}
@@ -51,14 +51,14 @@
                     LIMIT #{start}, #{length}
                 </if>
             ) a
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_code b ON a.promotion_id = b.promotion_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes b ON a.promotion_id = b.promotion_id
         AND a.product_id = b.product_id
     </select>
     <select id="select_cms_bt_promotion_sku_cnt" resultType="int" parameterType="HashMap" >
         SELECT
           count(1)
         FROM
-        voyageone_cms2.cms_bt_promotion_sku
+        voyageone_cms2.cms_bt_promotion_skus
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
@@ -72,8 +72,8 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
-        insert into voyageone_cms2.cms_bt_promotion_sku
+    <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
+        insert into voyageone_cms2.cms_bt_promotion_skus
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 promotion_id,
@@ -161,8 +161,8 @@
             </if>
         </trim>
     </insert>
-    <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
-        update voyageone_cms2.cms_bt_promotion_sku
+    <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
+        update voyageone_cms2.cms_bt_promotion_skus
         <set >
             <if test="promotionId != null" >
                 promotion_id = #{promotionId,jdbcType=INTEGER},
@@ -222,9 +222,9 @@
             </if>
         </where>
     </update>
-    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
+    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
         delete
-        from voyageone_cms2.cms_bt_promotion_sku
+        from voyageone_cms2.cms_bt_promotion_skus
         where
         promotion_id = #{promotionId,jdbcType=INTEGER}
         <if test="productSku != null and productSku != ''">
@@ -242,7 +242,7 @@
     </delete>
     <select id="select_cms_bt_promotion_sku_bt_promotionIds" parameterType="List" resultType="HashMap">
         select product_sku,promotion_id,product_code,product_model
-        from voyageone_cms2.cms_bt_promotion_sku
+        from voyageone_cms2.cms_bt_promotion_skus
         where promotion_id in
         <foreach collection="list" item="skuItem" open="(" separator="," close=")">
             #{skuItem}

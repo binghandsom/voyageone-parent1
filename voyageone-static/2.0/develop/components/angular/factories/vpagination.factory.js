@@ -9,7 +9,7 @@
          * @param {{ curr: number, size: number, total: number, fetch: function }} config 配置
          */
         return function(config) {
-            var _pages, _lastTotal = 0, _showPages = [];
+            var _pages, _lastTotal = 0, _showPages = [],defaultPage = config.size;/**默认page为20，当改变时触发分页，add by pwj*/
             /**
              * 返回总件数
              * @returns {*}
@@ -39,6 +39,7 @@
             this.getPageCount = getPages;
             // 是否是当前页
             this.isCurr = isCurr;
+
             /**
              * 跳转到指定页
              * @param {number} page 页号
@@ -46,8 +47,10 @@
             function load(page) {
                 page = page || config.curr;
                 if (page < 1 || page > getPages() || isCurr(page)) return;
-                config.curr = page;
-                config.fetch(page, config.size);
+                    config.curr = page;
+                //保留上次每页条数
+                defaultPage = config.size;
+                config.fetch();
             }
             /**
              * 初始化page列表
@@ -77,7 +80,7 @@
              * @returns {number}
              */
             function getPages() {
-                if (_lastTotal != config.total) {
+                if (_lastTotal != config.total || config.size !== defaultPage) {
                     _pages = parseInt(config.total / config.size) + (config.total % config.size > 0 ? 1 : 0);
                     _lastTotal = config.total;
                 }
@@ -118,7 +121,7 @@
              * @returns {boolean}
              */
             function isCurr(page) {
-                return config.curr == page;
+                return config.curr == page && config.size === defaultPage;
             }
             function curr() {
                 return config.curr;

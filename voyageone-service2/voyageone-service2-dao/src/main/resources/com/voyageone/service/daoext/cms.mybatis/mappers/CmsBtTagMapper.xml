@@ -208,6 +208,7 @@
         where
               parent_tag_id = #{parentTagId}
           and tag_name = #{tagName}
+          and channel_id = #{channelId}
     </select>
 
     <!-- Tag信息检索 （根据父tag_id，取得对应子TagList）-->

@@ -6,6 +6,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.AssertTrue;
 
 import java.util.List;
 
@@ -22,15 +23,17 @@ public class StoreOperationServiceTest extends BaseTest{
 
     @Resource
     StoreOperationService storeOperationService;
+    private static final String channelId="010";
 
     @Test
     public void testCountProductsThatCanUploaded() throws Exception {
-
+        long count = storeOperationService.countProductsThatCanUploaded(channelId);
+        assertTrue(count > 0);
     }
 
     @Test
     public void testRePublish() throws Exception {
-
+        storeOperationService.rePublish(channelId,"will");
     }
 
     @Test

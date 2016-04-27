@@ -1,5 +1,6 @@
 package com.voyageone.task2.base;
 
+import com.rabbitmq.client.impl.VariableLinkedBlockingQueue;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
@@ -8,14 +9,19 @@ import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * @author aooer 2016/4/18.
@@ -26,6 +32,8 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     //taskControlList job配置
     protected List<TaskControlBean> taskControlList = null;
+
+    private ExecutorService threadPool = null;
 
     /**
      * @deprecated
@@ -44,6 +52,13 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
      * @throws Exception
      */
     public abstract void onStartup(Map<String, Object> messageMap) throws Exception;
+
+    @RabbitHandler
+    private void onMessage(byte[] message,@Headers Map headers) throws Exception {
+        MessageProperties messageProperties = new MessageProperties();
+        BeanUtils.populate(messageProperties, headers);
+        onMessage(new Message(message, messageProperties));
+    }
 
     /**
      * 监听通知消息，执行任务
@@ -64,46 +79,67 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             return;
         }
 
-        // 是否可以运行的判断
-        if (!TaskControlUtils.isRunnable(taskControlList)) {
-            return;
+//        // 是否可以运行的判断
+//        if (!TaskControlUtils.isRunnable(taskControlList)) {
+//            return;
+//        }
+
+//        String taskID = TaskControlUtils.getTaskId(taskControlList);
+
+
+
+//        // 任务监控历史记录添加:启动
+//        taskDao.insertTaskHistory(taskID, status.getIs());
+
+        if(ObjectUtils.isEmpty(threadPool)){
+            String threadCount= TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+            int nThreads = StringUtils.isEmpty(threadCount)?1:Integer.parseInt(threadCount);
+            threadPool = new ThreadPoolExecutor(nThreads, nThreads,
+                    0L, TimeUnit.MILLISECONDS,
+                    new VariableLinkedBlockingQueue<Runnable>());
         }
+        Future<TaskControlEnums.Status> result = threadPool.submit(()->process(message));
+        try {
+            result.get();
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+        //threadPool.execute(()->process(message,status,taskID));
+    }
 
-        String taskID = TaskControlUtils.getTaskId(taskControlList);
-
+    private TaskControlEnums.Status process(Message message){
         TaskControlEnums.Status status = TaskControlEnums.Status.START;
-
-        // 任务监控历史记录添加:启动
-        taskDao.insertTaskHistory(taskID, status.getIs());
-
         try {
             String messageStr = new String(message.getBody(), "UTF-8");
             Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
-
             onStartup(messageMap);
             status = TaskControlEnums.Status.SUCCESS;
-
         } catch (BusinessException be) {
-            logIssue(be, be.getInfo());
             status = TaskControlEnums.Status.ERROR;
+            logIssue(be, be.getInfo());
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
         }  catch (MQIgnoreException me) {
-            logIssue(me, me.getMessage());
             status = TaskControlEnums.Status.ERROR;
+            logIssue(me, me.getMessage());
             $error("MQIgnoreException，任务退出", me);
             throw new MQIgnoreException(me);
         }  catch (Exception ex) {
+            status = TaskControlEnums.Status.ERROR;
             if (isOutRetryTimes(message)) {
                 logIssue(ex, ex.getMessage());
             }
-            status = TaskControlEnums.Status.ERROR;
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
         } finally {
             // 任务监控历史记录添加:结束
-            taskDao.insertTaskHistory(taskID, status.getIs());
+//            taskDao.insertTaskHistory(taskID, status.getIs());
         }
+        return status;
     }
 
     private boolean isOutRetryTimes(Message message) {

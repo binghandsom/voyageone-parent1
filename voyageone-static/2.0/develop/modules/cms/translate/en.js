@@ -412,6 +412,7 @@ define(function() {
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
         "BTN_ADD_TO_JM_PROMOTION": "Join JM's Promotion",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "Bulk Update",
+        "BTN_UPDATE_COMMON_ATTRIBUTE": "Update Common Attribute",
         "BTN_CHANGE_MASTER_CATEGORY": "Change Master Category",
         "BTN_CANCEL": "Cancel",
         "BTN_EXPORT": "Export",
@@ -469,6 +470,9 @@ define(function() {
         "REVERT": "Reverting",
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
-        "CANT_BEAT": "Info Error"
+        "CANT_BEAT": "Info Error",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "page-size"
     };
 });

@@ -13,10 +13,10 @@ import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
@@ -82,7 +82,7 @@ public class BeatJobService extends BaseTaskService {
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
-        List<CmsBtBeatInfoModel> beatInfoModels = beatInfoService.getNeedBeatData(limit);
+        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(limit);
 
         $info("预定抽取数量：%s，实际抽取数量：%s", limit, beatInfoModels.size());
 
@@ -97,10 +97,10 @@ public class BeatJobService extends BaseTaskService {
 
             if (end > total) end = total;
 
-            List<CmsBtBeatInfoModel> subList = beatInfoModels.subList(i, end);
+            List<CmsBtBeatInfoBean> subList = beatInfoModels.subList(i, end);
 
             runnableList.add(() -> {
-                for (CmsBtBeatInfoModel bean : subList) {
+                for (CmsBtBeatInfoBean bean : subList) {
                     bean.clearMessage();
                     Context context = null;
                     try {
@@ -153,7 +153,7 @@ public class BeatJobService extends BaseTaskService {
         runWithThreadPool(runnableList, taskControlList);
     }
 
-    private void setSuccess(CmsBtBeatInfoModel beatInfoModel) {
+    private void setSuccess(CmsBtBeatInfoBean beatInfoModel) {
         switch (beatInfoModel.getBeatFlag()) {
             case BEATING:
                 beatInfoModel.setBeatFlag(BeatFlag.SUCCESS);
@@ -164,7 +164,7 @@ public class BeatJobService extends BaseTaskService {
         }
     }
 
-    private void setFail(CmsBtBeatInfoModel beatInfoModel) {
+    private void setFail(CmsBtBeatInfoBean beatInfoModel) {
         switch (beatInfoModel.getBeatFlag()) {
             case BEATING:
                 beatInfoModel.setBeatFlag(BeatFlag.FAIL);
@@ -183,7 +183,7 @@ public class BeatJobService extends BaseTaskService {
 
         private CmsMtImageCategoryModel downCategory;
 
-        private CmsBtBeatInfoModel beatInfoModel;
+        private CmsBtBeatInfoBean beatInfoModel;
 
         private TaskBean taskBean;
 
@@ -193,7 +193,7 @@ public class BeatJobService extends BaseTaskService {
 
         private TbItemSchema tbItemSchema;
 
-        private Context(CmsBtBeatInfoModel beatInfoModel) throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
+        private Context(CmsBtBeatInfoBean beatInfoModel) throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
             this.beatInfoModel = beatInfoModel;
             this.promotion = beatInfoModel.getPromotion();
             this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
