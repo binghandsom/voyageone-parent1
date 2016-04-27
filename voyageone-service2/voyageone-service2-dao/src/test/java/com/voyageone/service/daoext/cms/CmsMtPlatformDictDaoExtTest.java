@@ -1,6 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.model.cms.CmsMtDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +13,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class CmsMtDictDaoExtTest {
+public class CmsMtPlatformDictDaoExtTest {
 
     @Autowired
-    private CmsMtDictDaoExt cmsMtDictDaoExt;
+    private CmsMtPlatformDictDaoExt cmsMtPlatformDictDaoExt;
 
     @Test
     public void testSelectById() throws Exception {
 
-        CmsMtDictModel cmsMtDictModel = new CmsMtDictModel();
+        CmsMtPlatFormDictModel cmsMtPlatFormDictModel = new CmsMtPlatFormDictModel();
 
-        cmsMtDictModel.setOrderChannelId("11");
+        cmsMtPlatFormDictModel.setOrderChannelId("11");
 
 
-        cmsMtDictDaoExt.selectById(cmsMtDictModel);
+        cmsMtPlatformDictDaoExt.selectById(cmsMtPlatFormDictModel);
 
     }
 }
