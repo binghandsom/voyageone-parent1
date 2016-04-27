@@ -9,81 +9,80 @@
 
         select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_template
         <where>
-                <if test="id != null">
-                        AND `id` = #{id}
-                    </if>
-                                <if test="channelId != null">
-                        AND `channel_id` = #{channelId}
-                    </if>
-                                <if test="name != null">
-                        AND `name` = #{name}
-                    </if>
-                                <if test="content != null">
-                        AND `content` = #{content}
-                    </if>
-                                <if test="height != null">
-                        AND `height` = #{height}
-                    </if>
-                                <if test="width != null">
-                        AND `width` = #{width}
-                    </if>
-                                <if test="created != null">
-                        AND `created` = #{created}
-                    </if>
-                                <if test="creater != null">
-                        AND `creater` = #{creater}
-                    </if>
-                                <if test="modified != null">
-                        AND `modified` = #{modified}
-                    </if>
-                                <if test="modifier != null">
-                        AND `modifier` = #{modifier}
-                    </if>
-                        </where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="name != null">
+                AND `name` = #{name}
+            </if>
+            <if test="content != null">
+                AND `content` = #{content}
+            </if>
+            <if test="height != null">
+                AND `height` = #{height}
+            </if>
+            <if test="width != null">
+                AND `width` = #{width}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+      </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
         select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template 
         <where>
-                
-                    <if test="id != null">
-                        AND `id` = #{id}
-                    </if> 
-                
-                    <if test="channelId != null">
-                        AND `channel_id` = #{channelId}
-                    </if> 
-                
-                    <if test="name != null">
-                        AND `name` = #{name}
-                    </if> 
-                
-                    <if test="content != null">
-                        AND `content` = #{content}
-                    </if> 
-                
-                    <if test="height != null">
-                        AND `height` = #{height}
-                    </if> 
-                
-                    <if test="width != null">
-                        AND `width` = #{width}
-                    </if> 
-                
-                    <if test="created != null">
-                        AND `created` = #{created}
-                    </if> 
-                
-                    <if test="creater != null">
-                        AND `creater` = #{creater}
-                    </if> 
-                
-                    <if test="modified != null">
-                        AND `modified` = #{modified}
-                    </if> 
-                
-                    <if test="modifier != null">
-                        AND `modifier` = #{modifier}
-                    </if> 
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="name != null">
+                AND `name` = #{name}
+            </if>
+
+            <if test="content != null">
+                AND `content` = #{content}
+            </if>
+
+            <if test="height != null">
+                AND `height` = #{height}
+            </if>
+
+            <if test="width != null">
+                AND `width` = #{width}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
@@ -128,9 +127,9 @@
               #{content},
               #{height},
               #{width},
-              #{created},
+              now(),
               #{creater},
-              #{modified},
+              now(),
               #{modifier}
         )
     </insert>

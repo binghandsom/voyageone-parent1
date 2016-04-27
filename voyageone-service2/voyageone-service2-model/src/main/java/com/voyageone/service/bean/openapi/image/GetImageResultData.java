@@ -4,18 +4,13 @@ package com.voyageone.service.bean.openapi.image;
  * Created by dell on 2016/4/25.
  */
 public class GetImageResultData {
-    String oSSFilePath;
-    String usCDNFilePath;
-    public String getOSSFilePath() {
-        return oSSFilePath;
+    private String filePath;
+
+    public String getFilePath() {
+        return filePath;
     }
-    public void setOSSFilePath(String oSSFilePath) {
-        this.oSSFilePath = oSSFilePath;
-    }
-    public String getUsCDNFilePath() {
-        return usCDNFilePath;
-    }
-    public void setUsCDNFilePath(String usCDNFilePath) {
-        this.usCDNFilePath = usCDNFilePath;
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

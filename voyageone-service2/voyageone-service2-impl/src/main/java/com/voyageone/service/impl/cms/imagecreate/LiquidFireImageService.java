@@ -1,9 +1,11 @@
 package com.voyageone.service.impl.cms.imagecreate;
+
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.liquifire.service.LiquidFireClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
+import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
@@ -17,10 +19,11 @@ public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
     @Autowired
-    CmsMtImageCreateTemplateService serviceCmsMtImageCreateTemplate;
+    CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
+
     public void createImage(CmsMtImageCreateFileModel modelFile) throws Exception {
 
-        CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(modelFile.getTemplateId());//获取模板
+        CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(modelFile.getTemplateId());//获取模板
         if (modelTemplate == null) {
             throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
         }
@@ -33,6 +36,7 @@ public class LiquidFireImageService extends BaseService {
             throw new OpenApiException(ImageErrorEnum.LiquidCreateImageError, ex);
         }
     }
+
     public void createImage(int CmsMtImageCreateFileId) throws Exception {
         CmsMtImageCreateFileModel modelFile = null;
         try {
@@ -49,7 +53,7 @@ public class LiquidFireImageService extends BaseService {
         {
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
             $error("createImage requestId:" + requestId, ex);
-            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM,"createImage requestId:"+requestId);
+            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM, "createImage requestId:" + requestId);
             if (modelFile != null) {
                 modelFile.setErrorCode(ImageErrorEnum.SystemError.getCode());
                 modelFile.setErrorMsg("requestId:" + requestId + ex.getMessage());
@@ -57,20 +61,12 @@ public class LiquidFireImageService extends BaseService {
             }
         }
     }
+
     //调用Liquid接口创建图片
     private String createImage(String templateContent, String vparam, String fileName) throws Exception {
-        try {
-            LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
-            String[] vparamList = vparam.split(",");
-            String source = String.format(templateContent, vparamList);
-            String fullName = client.getImage(source, fileName);
-            return fullName;
-        } catch (java.net.ConnectException ex) {
-            ex.printStackTrace();
-            throw ex;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw ex;
-        }
+        LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
+        String[] vparamList = vparam.split(",");
+        String source = String.format(templateContent, vparamList);
+        return client.getImage(source, fileName);
     }
 }

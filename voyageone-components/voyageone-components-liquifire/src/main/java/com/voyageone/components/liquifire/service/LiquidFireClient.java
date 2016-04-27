@@ -1,4 +1,5 @@
 package com.voyageone.components.liquifire.service;
+
 import com.voyageone.common.util.HashCodeUtil;
 
 import java.io.FileOutputStream;
@@ -11,22 +12,30 @@ import java.net.URL;
  * Created by dell on 2016/4/21.
  */
 public class LiquidFireClient {
-    String url; //LiquidFire url  "http://voyageone.ma.liquifire.com/voyageone"
-    String savePath;//生成的图片保存路径  /usr/images
-    int connectTimeout = 30 * 1000;
-    int readTimeout = 30 * 1000;
-    public  LiquidFireClient(String LiquidFireUrl,String savePath) {
+    //LiquidFire url  "http://voyageone.ma.liquifire.com/voyageone"
+    private String url;
+
+    //生成的图片保存路径  /usr/images
+    private String savePath;
+
+    private int connectTimeout = 30 * 1000;
+    private int readTimeout = 30 * 1000;
+
+    public LiquidFireClient(String LiquidFireUrl, String savePath) {
         this.setUrl(LiquidFireUrl);
         this.setSavePath(savePath);
     }
-    public  LiquidFireClient(String LiquidFireUrl,String savePath,int connectTimeout,int readTimeout) {
+
+    public LiquidFireClient(String LiquidFireUrl, String savePath, int connectTimeout, int readTimeout) {
         this(LiquidFireUrl, savePath);
         this.setConnectTimeout(connectTimeout);
         this.setReadTimeout(readTimeout);
     }
+
     public int getReadTimeout() {
         return readTimeout;
     }
+
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }
@@ -38,25 +47,31 @@ public class LiquidFireClient {
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
+
     public String getUrl() {
         return url;
     }
+
     public void setUrl(String url) {
         this.url = url;
     }
+
     public String getSavePath() {
         return savePath;
     }
+
     public void setSavePath(String savePath) {
         this.savePath = savePath;
     }
-    public String getImage(String param,String fileName) throws Exception {
-        String outFilefullName = this.getSavePath() + "/" + fileName + ".jpg";
+
+    public String getImage(String param, String fileName) throws Exception {
+        String outFileFullName = this.getSavePath() + "/" + fileName + ".jpg";
         String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
-        download(this.getUrl() + "?" + urlParameter, outFilefullName);
-        return outFilefullName;
+        download(this.getUrl() + "?" + urlParameter, outFileFullName);
+        return outFileFullName;
     }
-    void download(String urlString, String filename) throws Exception {
+
+    private void download(String urlString, String filename) throws Exception {
         InputStream is = null;
         OutputStream os = null;
         try {
@@ -80,7 +95,6 @@ public class LiquidFireClient {
                 os.write(bs, 0, len);
             }
         } finally {
-
             if (os != null) {
                 os.close();
             }

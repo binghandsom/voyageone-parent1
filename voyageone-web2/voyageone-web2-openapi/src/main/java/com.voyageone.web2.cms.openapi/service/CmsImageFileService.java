@@ -2,21 +2,15 @@ package com.voyageone.web2.cms.openapi.service;
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HashCodeUtil;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
-import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.*;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -24,132 +18,86 @@ import java.util.*;
 @Service
 public class CmsImageFileService extends BaseService {
     @Autowired
-    CmsMtImageCreateFileDao dao;
-
+    private ImageCreateFileService imageCreateFileService;
     @Autowired
-    TransactionRunner transactionRunner;
-
+    private AliYunOSSFileService serviceAliYunOSSFile;
     @Autowired
-    CmsMtImageCreateTemplateService serviceCmsMtImageCreateTemplate;
+    private USCDNFileService serviceUSCDNFile;
     @Autowired
-    AliYunOSSFileService serviceAliYunOSSFile;
-    @Autowired
-    USCDNFileService serviceUSCDNFile;
-    @Autowired
-    LiquidFireImageService serviceLiquidFireImage;
-
-    public CmsMtImageCreateFileModel select(int id) {
-        return dao.select(id);
-    }
-
-    public int update(CmsMtImageCreateFileModel entity) {
-        return dao.update(entity);
-    }
-
-    public int create(CmsMtImageCreateFileModel entity) {
-        return dao.insert(entity);
-    }
-
-    public CmsMtImageCreateFileModel getByHashCode(long hashCode) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("hashCode", hashCode);
-        return dao.selectOne(map);
-    }
+    private LiquidFireImageService serviceLiquidFireImage;
 
     public GetImageResultBean getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
         GetImageResultBean result = new GetImageResultBean();
         CmsMtImageCreateFileModel modelFile = null;
         try {
-            long hashCode = getHashCode(channelId, templateId, file, vparam);// HashCodeUtil.getHashCode(requesttQueryString);//hashCode做缓存key
-            modelFile = getByHashCode(hashCode);
-            if (modelFile == null) {//1.创建记录信息
-                modelFile = createCmsMtImageCreateFile(channelId, templateId, file, vparam, Creater, hashCode);
+            //hashCode做缓存key
+            long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam);
+            //getModel
+            modelFile = imageCreateFileService.getModelByHashCode(hashCode);
+            if (modelFile == null) {
+                //1.创建记录信息
+                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, Creater, hashCode);
             }
-            if (modelFile.getState() == 0) { //2.生成图片
+            if (modelFile.getState() == 0) {
+                //2.生成图片 from LiquidFire
                 serviceLiquidFireImage.createImage(modelFile);
             }
-            if (modelFile.getOssState() == 0) { //3.上传图片到阿里云OSS
+            if (modelFile.getOssState() == 0) {
+                //3.上传图片到阿里云OSS
                 serviceAliYunOSSFile.upload(modelFile);
             }
-            if (modelFile.getChannelId().equals("001") && modelFile.getUscdnState() == 0) {//4.上传 uscdn
+            if ("001".equals(modelFile.getChannelId()) && modelFile.getUscdnState() == 0) {
+                //4.上传 uscdn
                 serviceUSCDNFile.upload(modelFile);
             }
-        } catch (OpenApiException ex) {//4.处理业务异常
+        } catch (OpenApiException ex) {
+            //4.处理业务异常
             result.setErrorCode(ex.getErrorCode());
             result.setErrorMsg(ex.getMsg());
             if (ex.getSuppressed() != null) {
                 long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
                 $error("getImage requestId:" + requestId, ex);
             }
-        } catch (Exception ex) { //5.未知异常
-            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-            $error("getImage requestId:" + requestId, ex);
+        } catch (Exception ex) {
+            //5.未知异常
+            //生成错误请求唯一id
             issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM);
 
+            long requestId = FactoryIdWorker.nextId();
+            $error("getImage requestId:" + requestId, ex);
             result.setRequestId(requestId);
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());//成功清理
+        } finally {
+            if (modelFile != null && modelFile.getFilePath() != null) {
+                FileUtils.delFile(modelFile.getFilePath());
+            }
         }
+
         if (result.getErrorCode() > 0) {//6.保存报错错误信息
-            modelFile.setErrorMsg(result.getRequestId() + ":" + result.getErrorMsg());
-            modelFile.setErrorCode(result.getErrorCode());
-            dao.update(modelFile);
+            if (modelFile != null) {
+                modelFile.setErrorMsg(result.getRequestId() + ":" + result.getErrorMsg());
+                modelFile.setErrorCode(result.getErrorCode());
+                imageCreateFileService.changeModel(modelFile);
+            }
         } else {
-            result.getResultData().setOSSFilePath(modelFile.getOssFilePath());
-            result.getResultData().setUsCDNFilePath(modelFile.getUsCdnFilePath());
+            if (modelFile != null) {
+                result.getResultData().setFilePath(modelFile.getOssFilePath());
+            }
         }
         return result;
     }
 
-    private CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String Creater, long hashCode) throws OpenApiException {
-        CmsMtImageCreateTemplateModel modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
-        if (modelTemplate == null) {
-            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + templateId);
-        }
-        final String ossFilePath = "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
-        final String USCDNFilePath = ImageConfig.getUSCDNWorkingDirectory() + "/products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + Integer.toString(templateId) + "/" + file + ".jpg";
-        CmsMtImageCreateFileModel modelFile = new CmsMtImageCreateFileModel();
-        modelFile.setChannelId(channelId);
-        modelFile.setVparam(vparam);
-        modelFile.setTemplateId(templateId);
-        modelFile.setFile(file);//文件名字
-        modelFile.setHashCode(hashCode);
-        modelFile.setOssFilePath(ossFilePath);
-        modelFile.setUsCdnFilePath(USCDNFilePath);
-        modelFile.setState(0);
-        modelFile.setOssState(0);
-        modelFile.setCreated(DateTimeUtil.getNow());
-        modelFile.setCreater(Creater);
-        modelFile.setModified(DateTimeUtil.getNow());
-        modelFile.setModifier(Creater);
-        dao.insert(modelFile);
-        return modelFile;
-    }
-
-    //获取模板
-    private CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(CmsMtImageCreateTemplateModel modelTemplate, int templateId) {
-        if (modelTemplate == null) {
-            modelTemplate = serviceCmsMtImageCreateTemplate.select(templateId);
-        }
-        return modelTemplate;
-    }
-
-    public long getHashCode(String channelId, int templateId, String file, String vparam) {
-        String parameter = channelId + templateId + file + vparam;
-        return HashCodeUtil.getHashCode(parameter);
-    }
 
     public AddListResultBean addList(AddListParameter parameter) {
         AddListResultBean result = new AddListResultBean();
         try {
             checkAddListParameter(parameter);
-//            transactionRunner.runWithTran(() -> {
-//
-//            });
+
             for (CreateImageParameter imageInfo : parameter.getData()) {
-                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
-                if (!existsHashCode(hashCode)) {//1.创建记录信息
-                    createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
+                long hashCode = imageCreateFileService.getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
+                if (!imageCreateFileService.existsHashCode(hashCode)) {//1.创建记录信息
+                    imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
                 }
             }
         } catch (OpenApiException ex) {
@@ -188,9 +136,6 @@ public class CmsImageFileService extends BaseService {
                 throw new OpenApiException(ImageErrorEnum.VParamNotNull);
             }
         }
-    }
-    public boolean existsHashCode(long hashCode) {
-        return getByHashCode(hashCode) != null; //加缓存判断
     }
 }
 
