@@ -11,10 +11,10 @@ import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
@@ -40,71 +40,28 @@ import java.util.*;
 @Service
 public class SxProductService extends BaseService {
 
+    /**
+     * upd_flg=0,需要上传(重新上传)
+     */
+    private static final String UPD_FLG_ADD = "0";
+    /**
+     * upd_flg=1,已经上传
+     */
+    private static final String UPD_FLG_UPLOADED = "1";
     @Autowired
     private TbPictureService tbPictureService;
-
     @Autowired
-    private CmsBtSxWorkloadDao sxWorkloadDao;
-
+    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private ImsBtProductDao imsBtProductDao;
-
     @Autowired
     private CmsBtSizeMapDao cmsBtSizeMapDao;
-
     @Autowired
     private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
-
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
-    /** upd_flg=0,需要上传(重新上传) */
-    private static final String UPD_FLG_ADD ="0";
-    /** upd_flg=1,已经上传 */
-    private static final String UPD_FLG_UPLOADED ="1";
-
-    private enum SkuSort {
-        DIGIT("digit", 1), // 纯数字系列
-        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
-        XXX("XXX", 3), // XXX
-        XXS("XXS", 4), // XXS
-        XS("XS", 5), // XS
-        XS_S("XS/S", 6), // XS/S
-        XSS("XSS", 7), // XSS
-        S("S", 8), // S
-        S_M("S/M", 9), // S/M
-        M("M", 10), // M
-
-        M_L("M/L", 11), // M/L
-        L("L", 12), // L
-        XL("XL", 13), // XL
-        XXL("XXL", 14), // XXL
-        N_S("N/S", 15), // N/S
-        O_S("O/S", 16), // O/S
-        ONE_SIZE("OneSize", 17), // OneSize
-
-        OTHER("Other", 18), // 以外
-        ;
-
-        private final String size;
-        private final int sort;
-
-        private SkuSort(String size, int sort) {
-            this.size = size;
-            this.sort = sort;
-        }
-
-        private String getSize() {
-            return this.size;
-        }
-
-        private int getSort() {
-            return this.sort;
-        }
-    }
 
     /**
      * sku根据size排序<br>
@@ -481,5 +438,45 @@ public class SxProductService extends BaseService {
         sxData.setSkuList(skuList);
 
         return sxData;
+    }
+
+    private enum SkuSort {
+        DIGIT("digit", 1), // 纯数字系列
+        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
+        XXX("XXX", 3), // XXX
+        XXS("XXS", 4), // XXS
+        XS("XS", 5), // XS
+        XS_S("XS/S", 6), // XS/S
+        XSS("XSS", 7), // XSS
+        S("S", 8), // S
+        S_M("S/M", 9), // S/M
+        M("M", 10), // M
+
+        M_L("M/L", 11), // M/L
+        L("L", 12), // L
+        XL("XL", 13), // XL
+        XXL("XXL", 14), // XXL
+        N_S("N/S", 15), // N/S
+        O_S("O/S", 16), // O/S
+        ONE_SIZE("OneSize", 17), // OneSize
+
+        OTHER("Other", 18), // 以外
+        ;
+
+        private final String size;
+        private final int sort;
+
+        private SkuSort(String size, int sort) {
+            this.size = size;
+            this.sort = sort;
+        }
+
+        private String getSize() {
+            return this.size;
+        }
+
+        private int getSort() {
+            return this.sort;
+        }
     }
 }

@@ -334,7 +334,7 @@ public class CmsChannelTagService extends BaseAppService {
         cmsBtTagModel.setActive(0);
         simpleTransaction.openTransaction();
         try {
-            cmsBtTagDao.update(cmsBtTagModel);
+            cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
         } catch (Exception e) {
             simpleTransaction.rollback();
             throw e;

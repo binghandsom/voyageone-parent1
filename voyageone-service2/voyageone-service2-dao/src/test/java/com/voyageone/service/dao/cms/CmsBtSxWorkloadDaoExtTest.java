@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,25 +15,25 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class CmsBtSxWorkloadDaoTest {
+public class CmsBtSxWorkloadDaoExtTest {
 
     @Autowired
-    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
+    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
 
     @Test
     public void testInsert() throws Exception {
         CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
         model.setChannelId("001");
-        model.setGroupId(123L);
+        model.setGroupId(123);
         model.setPublishStatus(0);
         model.setCreater("liang");
         model.setModifier("liang");
-        cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
+        cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(model);
     }
 
     @Test
     public void testSelect() throws Exception {
-        List<CmsBtSxWorkloadModel> list = cmsBtSxWorkloadDao.selectSxWorkloadModel(10);
+        List<CmsBtSxWorkloadModel> list = cmsBtSxWorkloadDaoExt.selectSxWorkloadModel(10);
         for (CmsBtSxWorkloadModel model : list) {
             System.out.println(model.getChannelId() + "," + model.getGroupId() + "," + model.getPublishStatus());
         }

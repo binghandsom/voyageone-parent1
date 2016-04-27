@@ -17,13 +17,13 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
@@ -60,7 +60,7 @@ public class ProductService extends BaseService {
     private ProductSkuService productSkuService;
 
     @Autowired
-    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
+    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
@@ -528,7 +528,7 @@ public class ProductService extends BaseService {
         for(CmsBtProductModel_Carts cartInfo : carts) {
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
             model.setChannelId(channelId);
-            model.setGroupId(platformsMap.get(cartInfo.getCartId()));
+            model.setGroupId(platformsMap.get(cartInfo.getCartId()).intValue());
             model.setCartId(cartInfo.getCartId());
             model.setPublishStatus(0);
             model.setCreater(modifier);
@@ -537,7 +537,7 @@ public class ProductService extends BaseService {
         }
 
         if (models.size() > 0) {
-            cmsBtSxWorkloadDao.insertSxWorkloadModels(models);
+            cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
         }
 //        }
     }
