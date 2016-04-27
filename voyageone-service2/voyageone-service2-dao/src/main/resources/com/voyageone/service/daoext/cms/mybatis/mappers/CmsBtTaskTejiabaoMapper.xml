@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="cms_bt_promotion_task_map" type="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+        <id column="task_type" property="taskType" jdbcType="INTEGER" />
+        <id column="key" property="key" jdbcType="VARCHAR" />
+        <result column="num_iid" property="numIid" jdbcType="VARCHAR" />
+        <result column="syn_flg" property="synFlg" jdbcType="INTEGER" />
+        <result column="err_msg" property="errMsg" jdbcType="VARCHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+        <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="select_cms_bt_promotion_task" resultMap="cms_bt_promotion_task_map" parameterType="HashMap" >
+        select
+        id,
+          promotion_id,
+          task_type,
+          `key`,
+          num_iid,
+          syn_flg,
+          err_msg,
+          created,
+          creater,
+          modified,
+          modifier
+        from voyageone_cms2.cms_bt_task_tejiabao
+        <where>
+            <if test="promotionId != null and promotionId != ''">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null">
+                and task_type = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null and key != ''">
+                and key = #{key,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="cms_bt_promotion_task_price_map" extends="cms_bt_promotion_task_map" type="HashMap" >
+        <id column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
+    </resultMap>
+    <select id="select_cms_bt_promotion_task_price" resultMap="cms_bt_promotion_task_price_map" parameterType="HashMap" >
+        select
+        a.id,
+        a.promotion_id,
+        a.task_type,
+        a.`key`,
+        b.promotion_price,
+        b.num_iid,
+        a.syn_flg,
+        a.err_msg,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        from
+        voyageone_cms2.cms_bt_task_tejiabao a,
+        voyageone_cms2.cms_bt_promotion_codes b
+        where
+            a.promotion_id = b.promotion_id
+            and a.key = b.product_code
+            <if test="promotionId != null and promotionId != ''">
+                and a.promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null">
+                and a.task_type = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null and key != ''">
+                and a.`key` = #{key,jdbcType=VARCHAR}
+            </if>
+        ORDER BY a.syn_flg desc,a.key
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+    </select>
+    <select id="select_cms_bt_promotion_task_price_cnt" resultType="int" parameterType="HashMap" >
+        select
+          count(1)
+        from
+        voyageone_cms2.cms_bt_task_tejiabao a,
+        voyageone_cms2.cms_bt_promotion_codes b
+        where
+        a.promotion_id = b.promotion_id
+        and a.key = b.product_code
+        <if test="promotionId != null and promotionId != ''">
+            and a.promotion_id = #{promotionId,jdbcType=INTEGER}
+        </if>
+        <if test="taskType != null">
+            and a.task_type = #{taskType,jdbcType=INTEGER}
+        </if>
+        <if test="key != null and key != ''">
+            and a.`key` = #{key,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <insert id="insert_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
+        insert IGNORE into voyageone_cms2.cms_bt_task_tejiabao
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                promotion_id,
+            </if>
+            <if test="taskType != null" >
+                task_type,
+            </if>
+            <if test="key != null" >
+                `key`,
+            </if>
+            <if test="numIid != null" >
+                num_iid,
+            </if>
+            <if test="synFlg != null" >
+                syn_flg,
+            </if>
+            <if test="errMsg != null" >
+                err_msg,
+            </if>
+                created,
+            <if test="creater != null" >
+                creater,
+            </if>
+                modified,
+            <if test="modifier != null" >
+                modifier,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="taskType != null" >
+                #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="key != null" >
+                #{key,jdbcType=VARCHAR},
+            </if>
+            <if test="numIid != null" >
+                #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null" >
+                #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errMsg != null" >
+                #{errMsg,jdbcType=VARCHAR},
+            </if>
+                now(),
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+                now(),
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="update_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
+        update voyageone_cms2.cms_bt_task_tejiabao
+        <set >
+            <if test="synFlg != null" >
+                syn_flg = #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errMsg != null" >
+                err_msg = #{errMsg,jdbcType=VARCHAR},
+            </if>
+                modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            <if test="promotionId != null and promotionId != ''">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null ">
+                and task_type = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null and key != ''">
+                and `key` = #{key,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
+
+    <select id="select_cms_bt_promotion_by_code_in_no_all_promotion" resultMap="cms_bt_promotion_task_map" parameterType="HashMap" >
+        select
+        a.promotion_id,
+        task_type,
+        a.`key`,
+        a.num_iid,
+        a.syn_flg,
+        a.err_msg,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        from voyageone_cms2.cms_bt_task_tejiabao a,
+              voyageone_cms2.cms_bt_promotion b
+        where
+            a.promotion_id = b.promotion_id
+            and b.promotion_status = 0
+            and b.is_all_promotion = 0
+            and task_type = 0
+            and b.channel_id = #{channelId}
+            and b.cart_id = #{cartId}
+            and `key` = #{code,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

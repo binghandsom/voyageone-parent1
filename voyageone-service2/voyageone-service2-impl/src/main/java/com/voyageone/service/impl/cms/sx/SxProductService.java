@@ -5,20 +5,30 @@ import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.MultiCheckField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.service.bean.cms.MappingBean;
+import com.voyageone.service.bean.cms.SimpleMappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -40,70 +50,36 @@ import java.util.*;
 @Service
 public class SxProductService extends BaseService {
 
+    /**
+     * upd_flg=0,需要上传(重新上传)
+     */
+    private static final String UPD_FLG_ADD = "0";
+    /**
+     * upd_flg=1,已经上传
+     */
+    private static final String UPD_FLG_UPLOADED = "1";
     @Autowired
     private TbPictureService tbPictureService;
-
     @Autowired
-    private CmsBtSxWorkloadDao sxWorkloadDao;
-
+    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private ImsBtProductDao imsBtProductDao;
-
     @Autowired
     private CmsBtSizeMapDao cmsBtSizeMapDao;
-
     @Autowired
-    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
-
+    private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
-    /** upd_flg=0,需要上传(重新上传) */
-    private static final String UPD_FLG_ADD ="0";
-    /** upd_flg=1,已经上传 */
-    private static final String UPD_FLG_UPLOADED ="1";
-
-    private enum SkuSort {
-        DIGIT("digit", 1), // 纯数字系列
-        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
-        XXX("XXX", 3), // XXX
-        XXS("XXS", 4), // XXS
-        XS("XS", 5), // XS
-        XS_S("XS/S", 6), // XS/S
-        XSS("XSS", 7), // XSS
-        S("S", 8), // S
-        S_M("S/M", 9), // S/M
-        M("M", 10), // M
-
-        M_L("M/L", 11), // M/L
-        L("L", 12), // L
-        XL("XL", 13), // XL
-        XXL("XXL", 14), // XXL
-        N_S("N/S", 15), // N/S
-        O_S("O/S", 16), // O/S
-        ONE_SIZE("OneSize", 17), // OneSize
-
-        OTHER("Other", 18), // 以外
-        ;
-
-        private final String size;
-        private final int sort;
-
-        private SkuSort(String size, int sort) {
-            this.size = size;
-            this.sort = sort;
-        }
-
-        private String getSize() {
-            return this.size;
-        }
-
-        private int getSort() {
-            return this.sort;
-        }
+    public static String encodeImageUrl(String plainValue) {
+        String endStr = "%&";
+        if (!plainValue.endsWith(endStr))
+            return plainValue + endStr;
+        return plainValue;
     }
 
     /**
@@ -252,7 +228,7 @@ public class SxProductService extends BaseService {
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
-        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDao.selectPlatformImagesList(channelId, cartId, groupId);
+        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImagesList(channelId, cartId, groupId);
 
         Map<String,CmsBtPlatformImagesModel> mapImageUrl = new HashMap<>();
         for (CmsBtPlatformImagesModel model : imageUrlModel) {
@@ -288,7 +264,7 @@ public class SxProductService extends BaseService {
                     model.setPlatformImgId(pictureId);
                     model.setUpdFlg(UPD_FLG_UPLOADED);
 
-                    cmsBtPlatformImagesDao.updatePlatformImagesById(model, user);
+                    cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
                 } else if (UPD_FLG_UPLOADED.equals(updFlg)) {
                     // upd_flg=1,已经上传
                     retUrls.put(srcUrl, model.getPlatformImgUrl());
@@ -327,7 +303,7 @@ public class SxProductService extends BaseService {
 
         if (imageUrlSaveModels.size() > 0) {
             // insert image url
-            cmsBtPlatformImagesDao.insertPlatformImagesByList(imageUrlSaveModels);
+            cmsBtPlatformImagesDaoExt.insertPlatformImagesByList(imageUrlSaveModels);
         }
 
         return retUrls;
@@ -413,7 +389,7 @@ public class SxProductService extends BaseService {
         return picture;
     }
 
-    private String decodeImageUrl(String encodedValue) {
+    public String decodeImageUrl(String encodedValue) {
         return encodedValue.substring(0, encodedValue.length() - 2);
     }
 
@@ -421,7 +397,7 @@ public class SxProductService extends BaseService {
      * 上新用的商品数据取得
      *
      * @param channelId channelId
-     * @param groupId groupId
+     * @param groupId   groupId
      * @return SxData
      */
     public SxData getSxProductDataByGroupId(String channelId, Long groupId) {
@@ -452,10 +428,12 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
-        for (CmsBtProductModel productModel: productModelList) {
+        for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getFields().getCode())) {
                 // 主商品
                 sxData.setMainProduct(productModel);
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, productModel.getFields().getCode());
+                sxData.setCmsBtFeedInfoModel(feedInfo);
             }
 
             List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
@@ -482,4 +460,144 @@ public class SxProductService extends BaseService {
 
         return sxData;
     }
+
+    /**
+     * mapping
+     *
+     * @param fields List<Field>
+     * @param cmsMtPlatformMappingModel
+     * @param shopBean
+     * @param expressionParser
+     * @param user 上传图片用
+     * @return Map<field_id, mt里转换后的值>
+     * @throws Exception
+     */
+    public Map<String, Object> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Object> retMap = null;
+
+        // TODO:特殊字段处理
+        // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
+        Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
+
+//        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
+        Map<String, Object> mapSp = new HashMap<>();
+
+        Map<String, MappingBean> mapProp = new HashMap<>();
+        List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
+        for (MappingBean mappingBean : propMapings) {
+            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
+        }
+
+        for(Field field : fields) {
+            if (mapSp.containsKey(field.getId())) {
+                // TODO:特殊字段处理
+            } else {
+                MappingBean mappingBean = mapProp.get(field.getId());
+                if (mappingBean == null) {
+                    continue;
+                }
+                Map<String, Object> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
+                }
+            }
+        }
+
+        return retMap;
+    }
+
+    public Map<String, Object> resolveMapping(MappingBean mappingBean, Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Object> retMap = null;
+
+        if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
+            retMap = new HashMap();
+            SimpleMappingBean simpleMappingBean = (SimpleMappingBean) mappingBean;
+            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user);
+            if (null == expressionValue) {
+                return null;
+            }
+
+            switch (field.getType()) {
+                case INPUT: {
+                    retMap.put(field.getId(), expressionValue);
+                    ((InputField) field).setValue(expressionValue);
+                    break;
+                }
+                case SINGLECHECK: {
+                    retMap.put(field.getId(), expressionValue);
+                    ((SingleCheckField) field).setValue(expressionValue);
+                    break;
+                }
+                case MULTIINPUT:
+                    break;
+                case MULTICHECK: {
+                    String[] valueArrays = ExpressionParser.decodeString(expressionValue);
+                    retMap.put(field.getId(), Arrays.asList(valueArrays));
+                    for (String value : valueArrays) {
+                        ((MultiCheckField) field).addValue(value);
+                    }
+                    break;
+                }
+                case COMPLEX:
+                    break;
+                case MULTICOMPLEX:
+                    break;
+                case LABEL:
+                    break;
+                default:
+                    $error("复杂类型的属性:" + field.getType() + "不能使用MAPPING_SINGLE来作为匹配类型");
+                    return null;
+            }
+        } else if (MappingBean.MAPPING_COMPLEX.equals(mappingBean.getMappingType())) {
+            // TODO
+        } else if (MappingBean.MAPPING_MULTICOMPLEX_CUSTOM.equals(mappingBean.getMappingType())) {
+            // TODO
+        }
+
+        return retMap;
+    }
+
+    private enum SkuSort {
+        DIGIT("digit", 1), // 纯数字系列
+        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
+        XXX("XXX", 3), // XXX
+        XXS("XXS", 4), // XXS
+        XS("XS", 5), // XS
+        XS_S("XS/S", 6), // XS/S
+        XSS("XSS", 7), // XSS
+        S("S", 8), // S
+        S_M("S/M", 9), // S/M
+        M("M", 10), // M
+
+        M_L("M/L", 11), // M/L
+        L("L", 12), // L
+        XL("XL", 13), // XL
+        XXL("XXL", 14), // XXL
+        N_S("N/S", 15), // N/S
+        O_S("O/S", 16), // O/S
+        ONE_SIZE("OneSize", 17), // OneSize
+
+        OTHER("Other", 18), // 以外
+        ;
+
+        private final String size;
+        private final int sort;
+
+        private SkuSort(String size, int sort) {
+            this.size = size;
+            this.sort = sort;
+        }
+
+        private String getSize() {
+            return this.size;
+        }
+
+        private int getSort() {
+            return this.sort;
+        }
+    }
+
 }

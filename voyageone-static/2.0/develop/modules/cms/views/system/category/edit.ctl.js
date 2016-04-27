@@ -15,7 +15,7 @@ define([
         };
 
         $scope.getCategoryDetail = function(){
-            systemCategoryService.getCategoryDetail($routeParams.catId).then(function (res) {
+            systemCategoryService.getCategoryDetail({"id":$routeParams.catId}).then(function (res) {
                 $scope.vm.category = res.data;
                 $scope.vm.category.fields.push($scope.vm.category.sku);
                 $scope.vm.isEditFlg = false;

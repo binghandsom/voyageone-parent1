@@ -1417,4 +1417,13 @@ public final class DateTimeUtil {
         return System.currentTimeMillis();
     }
 
+
+    private static Date createdDefaultDate;
+    public static Date getCreatedDefaultDate() {
+        if (createdDefaultDate == null) {
+            createdDefaultDate = parse("2000-01-01 00:00:00");
+        }
+        return createdDefaultDate;
+    }
+
 }

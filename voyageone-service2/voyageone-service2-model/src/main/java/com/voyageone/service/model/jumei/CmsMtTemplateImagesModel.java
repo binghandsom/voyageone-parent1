@@ -4,14 +4,14 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class CmsMtTemplateImagesModel implements Serializable
 {
    public CmsMtTemplateImagesModel()
     {
         setChannelId(""); 
         setImageTemplateUrl(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -191,7 +191,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
