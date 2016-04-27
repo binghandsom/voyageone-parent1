@@ -1,9 +1,9 @@
 package com.voyageone.service.bean.openapi.image;
-import com.voyageone.service.bean.openapi.OpenApiRespone;
+import com.voyageone.service.bean.openapi.OpenApiResultBean;
 
-public class GetImageRespone extends OpenApiRespone {
+public class GetImageResultBean extends OpenApiResultBean {
     GetImageResultData resultData;
-    public GetImageRespone() {
+    public GetImageResultBean() {
         this.setResultData(new GetImageResultData());
     }
     public GetImageResultData getResultData() {

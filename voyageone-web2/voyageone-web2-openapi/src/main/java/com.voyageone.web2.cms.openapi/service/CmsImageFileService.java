@@ -56,8 +56,8 @@ public class CmsImageFileService extends BaseService {
         return dao.selectOne(map);
     }
 
-    public GetImageRespone getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
-        GetImageRespone result = new GetImageRespone();
+    public GetImageResultBean getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
+        GetImageResultBean result = new GetImageResultBean();
         CmsMtImageCreateFileModel modelFile = null;
         try {
             long hashCode = getHashCode(channelId, templateId, file, vparam);// HashCodeUtil.getHashCode(requesttQueryString);//hashCode做缓存key
@@ -139,8 +139,8 @@ public class CmsImageFileService extends BaseService {
         return HashCodeUtil.getHashCode(parameter);
     }
 
-    public AddListRespone addList(AddListParameter parameter) {
-        AddListRespone result = new AddListRespone();
+    public AddListResultBean addList(AddListParameter parameter) {
+        AddListResultBean result = new AddListResultBean();
         try {
             checkAddListParameter(parameter);
 //            transactionRunner.runWithTran(() -> {

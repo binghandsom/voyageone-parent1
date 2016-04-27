@@ -3,7 +3,7 @@ package com.voyageone.service.bean.openapi;
 /**
  * Created by dell on 2016/4/26.
  */
-public abstract class OpenApiRespone {
+public abstract class OpenApiResultBean {
     long requestId;
     int errorCode;
     String errorMsg;
@@ -16,7 +16,7 @@ public abstract class OpenApiRespone {
         this.requestId = requestId;
     }
 
-    public OpenApiRespone() {
+    public OpenApiResultBean() {
     }
 
     public int getErrorCode() {
