@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtTaskJiagepiluDao">
+    <resultMap id="ResultMap" type="CmsBtTaskJiagepiluModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`task_id`,`num_iid`,`product_code`,`syn_flag`,`message`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_task_jiagepilu
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="taskId != null">
+                AND `task_id` = #{taskId}
+            </if>
+            <if test="numIid != null">
+                AND `num_iid` = #{numIid}
+            </if>
+            <if test="productCode != null">
+                AND `product_code` = #{productCode}
+            </if>
+            <if test="synFlag != null">
+                AND `syn_flag` = #{synFlag}
+            </if>
+            <if test="message != null">
+                AND `message` = #{message}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`task_id`,`num_iid`,`product_code`,`syn_flag`,`message`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_task_jiagepilu
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="taskId != null">
+                AND `task_id` = #{taskId}
+            </if>
+
+            <if test="numIid != null">
+                AND `num_iid` = #{numIid}
+            </if>
+
+            <if test="productCode != null">
+                AND `product_code` = #{productCode}
+            </if>
+
+            <if test="synFlag != null">
+                AND `syn_flag` = #{synFlag}
+            </if>
+
+            <if test="message != null">
+                AND `message` = #{message}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`task_id`,`num_iid`,`product_code`,`syn_flag`,`message`,`created`,`creater`,`modified`,`modifier` from cms_bt_task_jiagepilu where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_task_jiagepilu
+        set
+
+            `task_id`=#{taskId}
+            ,`num_iid`=#{numIid}
+            ,`product_code`=#{productCode}
+            ,`syn_flag`=#{synFlag}
+            ,`message`=#{message}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_task_jiagepilu
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_task_jiagepilu
+        (
+              `task_id`,
+              `num_iid`,
+              `product_code`,
+              `syn_flag`,
+              `message`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{taskId},
+              #{numIid},
+              #{productCode},
+              #{synFlag},
+              #{message},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

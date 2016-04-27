@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
@@ -41,7 +41,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.PAGE)
     public AjaxResponse page(@RequestBody ReqParam param) {
-        List<CmsBtBeatInfoModel> beatInfoModels =
+        List<CmsBtBeatInfoBean> beatInfoModels =
                 taskPictureService.getAllBeat(param.getTask_id(), param.getFlag(), param.getOffset(), param.getSize());
         int total = taskPictureService.getAllBeatCount(param.getTask_id(), param.getFlag());
         List<Map> summary = taskPictureService.getBeatSummary(param.getTask_id());
@@ -54,7 +54,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.IMPORT)
     public AjaxResponse importBeat(@RequestParam int task_id, @RequestParam int size, @RequestParam MultipartFile file) {
-        List<CmsBtBeatInfoModel> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
+        List<CmsBtBeatInfoBean> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
         int total = taskPictureService.getAllBeatCount(task_id, null);
         Map<String, Object> map = new HashMap<>();
         map.put("list", beatInfoModels);
