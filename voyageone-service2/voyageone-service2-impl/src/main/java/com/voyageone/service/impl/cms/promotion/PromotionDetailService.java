@@ -7,10 +7,7 @@ import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
-import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.dao.cms.CmsBtPromotionTaskDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
@@ -20,7 +17,6 @@ import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -214,7 +210,7 @@ public class PromotionDetailService extends BaseService {
      * 特价宝商品初期化
      */
     @VOTransactional
-    public void addTeJiaBaoInit(List<CmsBtTasksModel> addTaskList, List<CmsBtPromotionTaskModel> addPromotionTaskList) {
+    public void addTeJiaBaoInit(List<CmsBtTasksBean> addTaskList, List<CmsBtPromotionTaskModel> addPromotionTaskList) {
         addTaskList.forEach(taskService::addTask);
         addPromotionTaskList.forEach(cmsPromotionTaskDao::insertPromotionTask);
     }

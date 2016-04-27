@@ -3,6 +3,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 import com.voyageone.common.Constants;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.model.cms.enums.BeatFlag;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +31,7 @@ public class CmsBtBeatInfoModel extends BaseModel {
 
     private CmsBtPromotionModel promotion;
 
-    private CmsBtTasksModel task;
+    private CmsBtTasksBean task;
 
     public int getId() {
         return id;
@@ -111,11 +112,11 @@ public class CmsBtBeatInfoModel extends BaseModel {
         this.promotion = promotion;
     }
 
-    public CmsBtTasksModel getTask() {
+    public CmsBtTasksBean getTask() {
         return task;
     }
 
-    public void setTask(CmsBtTasksModel task) {
+    public void setTask(CmsBtTasksBean task) {
         this.task = task;
     }
 }

@@ -2,13 +2,13 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.CmsBtTasksDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.Map;
 @Service
 public class StockSeparateService extends BaseService {
     @Autowired
-    private CmsBtTasksDao cmsBtTasksDao;
+    private CmsBtTasksDaoExt cmsBtTasksDaoExt;
 
     @Autowired
     private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
@@ -74,9 +74,9 @@ public class StockSeparateService extends BaseService {
         cmsBtStockSeparatePlatformInfoDao.deleteStockSeparatePlatform(sqlParam2);
 
         // 删除任务表中的数据
-        CmsBtTasksModel cmsBtTasksModel = new CmsBtTasksModel();
-        cmsBtTasksModel.setTask_id(taskId);
-        cmsBtTasksDao.delete(cmsBtTasksModel);
+        CmsBtTasksBean cmsBtTasksBean = new CmsBtTasksBean();
+        cmsBtTasksBean.setTask_id(taskId);
+        cmsBtTasksDaoExt.delete(cmsBtTasksBean);
     }
 
     // TODO 因为梁兄帮promotion stock修改了将dao和service的访问,不知道这个方法对应的原始方法是哪个,我暂时注释掉-edward
@@ -344,13 +344,13 @@ public class StockSeparateService extends BaseService {
      * 根据SKU取得库存隔离数将隔离数据插入表中
      */
     @VOTransactional
-    public void saveStockSeparateItem(Map<String, Object> separateHashMaps, Map<String, Object> allSkuProHash, Boolean onlySku, CmsBtTasksModel cmsBtTasksModel, List<Map<String, String>> separatePlatformMapList) {
+    public void saveStockSeparateItem(Map<String, Object> separateHashMaps, Map<String, Object> allSkuProHash, Boolean onlySku, CmsBtTasksBean cmsBtTasksBean, List<Map<String, String>> separatePlatformMapList) {
 
         /**
          * insert cmsBtTasks
          */
-        cmsBtTasksDao.insert(cmsBtTasksModel);
-        String taskID = String.valueOf(cmsBtTasksModel.getTask_id());
+        cmsBtTasksDaoExt.insert(cmsBtTasksBean);
+        String taskID = String.valueOf(cmsBtTasksBean.getTask_id());
 
         /**
          * insert cmsBtStockSeparatePlatformInfo

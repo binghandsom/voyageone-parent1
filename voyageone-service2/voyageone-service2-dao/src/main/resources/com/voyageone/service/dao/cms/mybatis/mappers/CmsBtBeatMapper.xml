@@ -342,7 +342,7 @@
         <result property="syn_flag" column="syn_flag"/>
         <result property="modified" column="modified"/>
         <result property="id" column="id"/>
-        <association property="task" javaType="com.voyageone.service.model.cms.CmsBtTasksModel">
+        <association property="task" javaType="com.voyageone.service.bean.cms.CmsBtTasksBean">
             <result property="task_id" column="task_task_id"/>
             <result property="task_name" column="task_task_name"/>
             <result property="task_type" column="task_task_type"/>

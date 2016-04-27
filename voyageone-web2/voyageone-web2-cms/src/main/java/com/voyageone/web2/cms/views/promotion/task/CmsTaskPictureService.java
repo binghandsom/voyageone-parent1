@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.service.impl.cms.BeatInfoService;
 import com.voyageone.service.impl.cms.TaskService;
@@ -12,7 +13,6 @@ import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.enums.BeatFlag;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -75,7 +75,7 @@ class CmsTaskPictureService extends BaseAppService {
             throw new BusinessException("7000002");
 
         // 尝试检查任务的名称, 是否已经存在
-        List<CmsBtTasksModel> taskModels = taskService.getTasks(
+        List<CmsBtTasksBean> taskModels = taskService.getTasks(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 user.getSelChannelId(),
@@ -257,7 +257,7 @@ class CmsTaskPictureService extends BaseAppService {
 
     List<Map<String, Object>> getNewNumiid(Integer task_id) {
         if (task_id == null) return null;
-        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", taskModel.getPromotion_id());
@@ -272,14 +272,14 @@ class CmsTaskPictureService extends BaseAppService {
     }
 
     List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
-        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
         return beatInfoService.getBeatInfByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
-        CmsBtTasksModel taskModel = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
         CmsBtBeatInfoModel model = beatInfoService.getBeatInfByNumiid(task_id, num_iid);
         if (model != null) {
