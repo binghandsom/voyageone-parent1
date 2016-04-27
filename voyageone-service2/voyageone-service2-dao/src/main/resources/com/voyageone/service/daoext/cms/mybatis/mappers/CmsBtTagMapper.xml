@@ -253,7 +253,6 @@
         where
             channel_id = #{channelId,jdbcType=VARCHAR}
         order by tag.id
-        order by tag.id
     </select>
     <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
     <select id="select_list_by_channel_id_and_tag_type" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="String">
