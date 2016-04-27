@@ -72,7 +72,7 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
+    <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
         insert into voyageone_cms2.cms_bt_promotion_sku
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
@@ -161,7 +161,7 @@
             </if>
         </trim>
     </insert>
-    <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
+    <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
         update voyageone_cms2.cms_bt_promotion_sku
         <set >
             <if test="promotionId != null" >
@@ -222,7 +222,7 @@
             </if>
         </where>
     </update>
-    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
+    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
         delete
         from voyageone_cms2.cms_bt_promotion_sku
         where

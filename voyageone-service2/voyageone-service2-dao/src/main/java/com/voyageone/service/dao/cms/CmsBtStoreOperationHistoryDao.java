@@ -2,22 +2,21 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import org.springframework.stereotype.Repository;
-import com.voyageone.service.model.jumei.*;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface CmsBtStoreOperationHistoryDao {
-    public List<CmsBtStoreOperationHistoryModel> selectList(Map<String, Object> map);
+    List<CmsBtStoreOperationHistoryModel> selectList(Map<String, Object> map);
 
-    public CmsBtStoreOperationHistoryModel selectOne(Map<String, Object> map);
+    CmsBtStoreOperationHistoryModel selectOne(Map<String, Object> map);
 
-    public CmsBtStoreOperationHistoryModel select(long id);
+    CmsBtStoreOperationHistoryModel select(long id);
 
-    public int insert(CmsBtStoreOperationHistoryModel entity);
+    int insert(CmsBtStoreOperationHistoryModel entity);
 
-    public int update(CmsBtStoreOperationHistoryModel entity);
+    int update(CmsBtStoreOperationHistoryModel entity);
 
-    public int delete(long id);
+    int delete(long id);
 }

@@ -88,6 +88,16 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 根据query
+     * @param channelId
+     * @param query
+     * @return
+     */
+    public CmsBtProductModel getProductByCondition(String channelId, JomgoQuery query) {
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
      * 根据多个groupsIds获取产品列表
      *
      * @param channelId String

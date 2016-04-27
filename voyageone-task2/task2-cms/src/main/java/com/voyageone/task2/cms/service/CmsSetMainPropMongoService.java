@@ -1205,7 +1205,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             Double priceMsrp = feedSkuInfo.getPriceMsrp();
             Double priceCurrent = feedSkuInfo.getPriceCurrent();
 
-            if (taxRate == null || StringUtils.isEmpty(formula)) {
+            if (StringUtils.isEmpty(formula)) {
+                return  0.0;
+            }
+
+            if (formula.indexOf("[tax_rate]") != -1 && taxRate == null) {
                 return  0.0;
             }
             // 根据公式计算价格

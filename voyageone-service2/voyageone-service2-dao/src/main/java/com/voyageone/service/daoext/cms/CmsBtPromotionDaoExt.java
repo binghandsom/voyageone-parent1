@@ -54,11 +54,11 @@ public class CmsBtPromotionDaoExt extends ServiceBaseDao {
     /**
      * 插入
      *
-     * @param cmsBtPromotionModel CmsBtPromotionModel
+     * @param cmsBtPromotionBean CmsBtPromotionBean
      * @return int
      */
-    public int insert(CmsBtPromotionModel cmsBtPromotionModel) {
-        return insert("insert_cms_bt_promotion", cmsBtPromotionModel);
+    public int insert(CmsBtPromotionBean cmsBtPromotionBean) {
+        return insert("insert_cms_bt_promotion", cmsBtPromotionBean);
     }
 
     /**

@@ -334,7 +334,13 @@
     </select>
 
     <resultMap id="beatInfo_With_Code_Task"
-               type="com.voyageone.service.model.cms.CmsBtBeatInfoModel" autoMapping="true">
+               type="com.voyageone.service.model.cms.CmsBtBeatInfoModel">
+        <result property="num_iid" column="num_iid"/>
+        <result property="task_id" column="task_id"/>
+        <result property="product_code" column="product_code"/>
+        <result property="syn_flag" column="syn_flag"/>
+        <result property="modified" column="modified"/>
+        <result property="id" column="id"/>
         <association property="task" javaType="com.voyageone.service.model.cms.CmsBtTasksModel">
             <result property="task_id" column="task_task_id"/>
             <result property="task_name" column="task_task_name"/>

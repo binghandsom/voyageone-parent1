@@ -26,7 +26,7 @@
             </if>
         </where>
     </select>
-    <select id="selectOne" resultType="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao">
+    <select id="selectOne" resultType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel">
         select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history
         <where>
 
@@ -56,7 +56,7 @@
         </where>
         limit 1
     </select>
-    <select id="select" resultType="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao">
+    <select id="select" resultType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel">
         select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history where id=#{id}
     </select>
 
@@ -85,9 +85,9 @@
         )
         VALUES(
               #{operationType},
-              #{modified},
-              #{modifier},
-              #{created},
+        now(),
+        #{creater},
+        now(),
               #{creater}
         )
     </insert>

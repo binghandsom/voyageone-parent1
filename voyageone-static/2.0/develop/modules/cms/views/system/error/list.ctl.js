@@ -14,7 +14,7 @@ define([
                 errType: null
             },
             type: $routeParams.type, // TODO 暂时无法区分权限,所以这个字段以后备用
-            errorPageOption: {curr: 1, total: 0, size: 20, fetch: search},
+            errorPageOption: {curr: 1, total: 0, fetch: search},
             errorList: []
         };
 

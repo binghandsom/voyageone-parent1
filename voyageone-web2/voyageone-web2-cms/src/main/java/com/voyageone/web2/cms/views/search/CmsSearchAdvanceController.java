@@ -8,7 +8,6 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
-import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +30,8 @@ public class CmsSearchAdvanceController extends CmsController {
 
     @Autowired
     private CmsSearchAdvanceService searchIndexService;
-    @Autowired
-    private CmsFeedCustPropService cmsFeedCustPropService;
+//    @Autowired
+//    private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
      * 初始化,获取master数据
@@ -70,13 +69,14 @@ public class CmsSearchAdvanceController extends CmsController {
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
+
         // 查询该商品是否有价格变动
         List[] infoArr = searchIndexService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
         resultBean.put("prodOrgChaNameList", infoArr[1]);
 
         // 获取group列表
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, params, userInfo, cmsSession);
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession);
         endIdx = params.getGroupPageSize();
         int groupListTotal = groupCodeList.size();
         if (endIdx > groupListTotal) {
@@ -93,6 +93,9 @@ public class CmsSearchAdvanceController extends CmsController {
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
         resultBean.put("grpProdChgInfoList", infoArr[0]);
+        // 获取该组商品的prodId
+        resultBean.put("grpProdIdList", infoArr[2]);
+
 
         // 获取该用户自定义显示列设置
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
@@ -116,7 +119,7 @@ public class CmsSearchAdvanceController extends CmsController {
         List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
 
         // 获取group列表
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, params, userInfo, cmsSession);
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession);
         int staIdx = (params.getGroupPageNum() - 1) * params.getGroupPageSize();
         int endIdx = staIdx + params.getGroupPageSize();
         int groupListTotal = groupCodeList.size();
@@ -134,6 +137,8 @@ public class CmsSearchAdvanceController extends CmsController {
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
         resultBean.put("grpProdChgInfoList", infoArr[0]);
+        // 获取该组商品的prodId
+        resultBean.put("grpProdIdList", infoArr[2]);
 
         // 返回用户信息
         return success(resultBean);

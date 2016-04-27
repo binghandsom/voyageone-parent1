@@ -17,7 +17,7 @@ define([
             path:"",
             categoryList:[],
             resultData: [],
-            valuesPageOption: {curr: 1, total: 0, size: 20, fetch: search}
+            valuesPageOption: {curr: 1, total: 0, fetch: search}
         };
 
         $scope.initialize = initialize;
