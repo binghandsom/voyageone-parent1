@@ -77,6 +77,21 @@ public class StoreOperationService extends BaseService{
 
     }
 
+     /**
+     * 重新发布价格
+      * @param channelId
+      * @param channelId
+      */
+    public void rePublishPrice(String channelId, String creater) {
+        //查询priceRetail和priceSale不相等的product
+        List<CmsBtProductModel> products = productDao.selectByRetailSalePriceNonEqual(channelId);
+        List<String> productCodes = products.stream().map(p -> p.getFields().getCode()).collect(toList());
+        List<CmsBtProductGroupModel> groupModels = productGroupDao.selectGroupIdsByProductCode(channelId, productCodes);
+        //TODO 取得商品调用product和group的价格区间重新计算 和上面的publish有重复需要考虑设计方式
+
+    }
+
+
     /**
      * 重新导入所有feed商品 这里仅仅只是更新标志位,其他逻辑由重新导入job进行
      *
@@ -97,4 +112,6 @@ public class StoreOperationService extends BaseService{
     public List<CmsBtStoreOperationHistoryModel> getHistoryBy(Map<String, Object> params) {
         return historyDao.selectList(params);
     }
+
+
 }
