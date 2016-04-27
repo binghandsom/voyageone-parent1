@@ -1,10 +1,13 @@
 package com.voyageone.service.impl.cms.imagecreate;
 import com.voyageone.common.Snowflake.FactoryIdWorker;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.HashCodeUtil;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import com.voyageone.service.model.openapi.*;
@@ -22,7 +25,7 @@ import java.util.*;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsMtImageCreateFileService {
+public class CmsMtImageCreateFileService extends BaseService {
     @Autowired
     CmsMtImageCreateFileDao dao;
 
@@ -37,7 +40,6 @@ public class CmsMtImageCreateFileService {
     USCDNFileService serviceUSCDNFile;
     @Autowired
     LiquidFireImageService serviceLiquidFireImage;
-    private static final Logger LOG = LoggerFactory.getLogger(CmsMtImageCreateFileService.class);
 
     public CmsMtImageCreateFileModel select(int id) {
         return dao.select(id);
@@ -80,14 +82,16 @@ public class CmsMtImageCreateFileService {
             result.setErrorMsg(ex.getMsg());
             if (ex.getSuppressed() != null) {
                 long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-                LOG.error("getImage requestId:" + requestId, ex);
+                $error("getImage requestId:" + requestId, ex);
             }
         } catch (Exception ex) { //5.未知异常
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-            LOG.error("getImage requestId:" + requestId, ex);
+            $error("getImage requestId:" + requestId, ex);
+            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM);
+
             result.setRequestId(requestId);
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
-            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
+            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());//成功清理
         }
         if (result.getErrorCode() > 0) {//6.保存报错错误信息
             modelFile.setErrorMsg(result.getRequestId() + ":" + result.getErrorMsg());
@@ -155,17 +159,20 @@ public class CmsMtImageCreateFileService {
             result.setErrorMsg(ex.getMsg());
             if (ex.getSuppressed() != null) {
                 long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-                LOG.error("AddList requestId:" + requestId, ex);
+                $error("AddList requestId:" + requestId, ex);
             }
         } catch (Exception ex) {
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-            LOG.error("AddList requestId:" + requestId, ex);
+            $error("AddList requestId:" + requestId, ex);
             result.setRequestId(requestId);
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         }
         return result;
     }
+    //001写到配置
+    //最大记录写到配置
+    //error清空
     public  void  checkAddListParameter(AddListParameter parameter) throws OpenApiException {
         if(parameter.getData().size()>100)
         {

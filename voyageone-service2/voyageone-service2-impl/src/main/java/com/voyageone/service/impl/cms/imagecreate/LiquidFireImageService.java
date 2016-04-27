@@ -27,10 +27,12 @@ public class LiquidFireImageService {
             daoCmsMtImageCreateFile.update(modelFile);
         } catch (Exception ex) {
             throw new OpenApiException(ImageErrorEnum.LiquidCreateImageError,ex);
-//            throw new BusinessException("100101", "生成图片错误", ex);
         }
     }
-
+    public void createImage(int CmsMtImageCreateFileId) throws Exception {
+        CmsMtImageCreateFileModel modelFile = daoCmsMtImageCreateFile.select(CmsMtImageCreateFileId);
+        createImage(modelFile);
+    }
     //调用Liquid接口创建图片
     private String createImage(String templateContent, String vparam, String fileName) throws Exception {
         try {
