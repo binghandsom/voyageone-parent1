@@ -2,129 +2,177 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-import java.util.List;
-
-/**
- * @author jerry 15/12/30
- * @version 2.0.0
- */
 public class CmsBtTagModel extends BaseModel {
+    /**
 
-    private Integer tagId;
+     */
     private String channelId;
+    /**
+
+     */
     private String tagName;
+    /**
+
+     */
     private String tagPath;
+    /**
+
+     */
     private String tagPathName;
-    private Integer tagType;
-    private Integer tagStatus;
-    private Integer sortOrder;
-    private Integer parentTagId;
-    private List<CmsBtTagModel> children;
-    private Boolean isLeaf;
-    private Integer isActive;
-    private String tagChildrenName;
+    /**
+     * 1:店铺内分类 2:活动标签 3:货位标签
+     */
+    private int tagType;
+    /**
+     * 0:Open  1:Close
+     */
+    private int tagStatus;
+    /**
 
-    public String getTagName() {
-        return tagName;
-    }
+     */
+    private int sortOrder;
+    /**
+     * 父类目编号，值等于0：表示此类目为店铺下的一级类目，值不等于0：表示此类目有父类目
+     */
+    private int parentTagId;
+    /**
 
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
-    }
+     */
+    private int active;
 
-    public String getTagPath() {
-        return tagPath;
-    }
+    /**
 
-    public void setTagPath(String tagPath) {
-        this.tagPath = tagPath;
-    }
-
-    public String getTagPathName() {
-        return tagPathName;
-    }
-
-    public void setTagPathName(String tagPathName) {
-        this.tagPathName = tagPathName;
-    }
-
+     */
     public String getChannelId() {
-        return channelId;
+
+        return this.channelId;
     }
 
     public void setChannelId(String channelId) {
-        this.channelId = channelId;
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
+        }
+
     }
 
-    public Integer getTagId() {
-        return tagId;
+
+    /**
+
+     */
+    public String getTagName() {
+
+        return this.tagName;
     }
 
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId;
+    public void setTagName(String tagName) {
+        if (tagName != null) {
+            this.tagName = tagName;
+        } else {
+            this.tagName = "";
+        }
+
     }
 
-    public Integer getTagType() {
-        return tagType;
+
+    /**
+
+     */
+    public String getTagPath() {
+
+        return this.tagPath;
     }
 
-    public void setTagType(Integer tagType) {
+    public void setTagPath(String tagPath) {
+        if (tagPath != null) {
+            this.tagPath = tagPath;
+        } else {
+            this.tagPath = "";
+        }
+
+    }
+
+
+    /**
+
+     */
+    public String getTagPathName() {
+
+        return this.tagPathName;
+    }
+
+    public void setTagPathName(String tagPathName) {
+        if (tagPathName != null) {
+            this.tagPathName = tagPathName;
+        } else {
+            this.tagPathName = "";
+        }
+
+    }
+
+
+    /**
+     * 1:店铺内分类 2:活动标签 3:货位标签
+     */
+    public int getTagType() {
+
+        return this.tagType;
+    }
+
+    public void setTagType(int tagType) {
         this.tagType = tagType;
     }
 
-    public Integer getTagStatus() {
-        return tagStatus;
+
+    /**
+     * 0:Open  1:Close
+     */
+    public int getTagStatus() {
+
+        return this.tagStatus;
     }
 
-    public void setTagStatus(Integer tagStatus) {
+    public void setTagStatus(int tagStatus) {
         this.tagStatus = tagStatus;
     }
 
-    public Integer getSortOrder() {
-        return sortOrder;
+
+    /**
+
+     */
+    public int getSortOrder() {
+
+        return this.sortOrder;
     }
 
-    public void setSortOrder(Integer sortOrder) {
+    public void setSortOrder(int sortOrder) {
         this.sortOrder = sortOrder;
     }
 
-    public Integer getParentTagId() {
-        return parentTagId;
+
+    /**
+     * 父类目编号，值等于0：表示此类目为店铺下的一级类目，值不等于0：表示此类目有父类目
+     */
+    public int getParentTagId() {
+
+        return this.parentTagId;
     }
 
-    public void setParentTagId(Integer parentTagId) {
+    public void setParentTagId(int parentTagId) {
         this.parentTagId = parentTagId;
     }
 
-    public List<CmsBtTagModel> getChildren() {
-        return children;
+
+    /**
+
+     */
+    public int getActive() {
+
+        return this.active;
     }
 
-    public void setChildren(List<CmsBtTagModel> children) {
-        this.children = children;
-    }
-
-    public Boolean getIsLeaf() {
-        return isLeaf;
-    }
-
-    public void setIsLeaf(Boolean isLeaf) {
-        this.isLeaf = isLeaf;
-    }
-
-    public Integer getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Integer isActive) {
-        this.isActive = isActive;
-    }
-
-    public String getTagChildrenName() {
-        return tagChildrenName;
-    }
-
-    public void setTagChildrenName(String tagChildrenName) {
-        this.tagChildrenName = tagChildrenName;
+    public void setActive(int active) {
+        this.active = active;
     }
 }

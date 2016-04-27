@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.stereotype.Repository;
@@ -58,5 +59,8 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
         paraIn.put("tagName", tagName);
 
         return selectList("select_one_by_tag_name", paraIn);
+    }
+    public List<CmsBtTagBean> selectListByChannelIdAndTagType(String channelId,String tagType) {
+        return selectList("select_list_by_channel_id_and_tag_type", parameters("channelId", channelId, "tagType", tagType));
     }
 }

@@ -3,7 +3,9 @@ package com.voyageone.web2.cms.views.channel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class CmsChannelTagService extends BaseAppService {
     @Autowired
     private CmsBtTagDao cmsBtTagDao;
     @Autowired
+    private CmsBtTagDaoExt cmsBtTagDaoExt;
+    @Autowired
     private SimpleTransaction simpleTransaction;
 
     /**
@@ -50,26 +54,27 @@ public class CmsChannelTagService extends BaseAppService {
      * @param param
      * @return ret
      */
-    public List<CmsBtTagModel> getTagInfoByChannelId(Map param) {
+    public List<CmsBtTagBean> getTagInfoByChannelId(Map param) {
         //公司平台销售渠道
         String channelId = (String) param.get("channel_id");
         //标签类型
         String tagTypeSelectValue = (String) param.get("tagTypeSelectValue");
         //取得所有的标签类型
-        List<CmsBtTagModel> categoryList = cmsBtTagDao.selectListByChannelIdAndTagType(channelId, tagTypeSelectValue);
+        List<CmsBtTagBean> categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId, tagTypeSelectValue);
         //循环取得标签并对其进行分类
-        List<CmsBtTagModel> ret = new ArrayList<>();
-        for (CmsBtTagModel each : categoryList) {
+        List<CmsBtTagBean> ret = new ArrayList<>();
+        for (CmsBtTagBean each : categoryList) {
             //取得一级标签
             if (each.getParentTagId() == 0) {
                 ret.add(each);
+
             }
-            for (CmsBtTagModel inner : categoryList) {
+            for (CmsBtTagBean inner : categoryList) {
                 //取得子标签
-                if (each.getTagId().intValue() == inner.getParentTagId().intValue()) {
+                if (each.getId() == inner.getParentTagId()) {
                     if (each.getChildren() == null) {
                         //添加一个子标签
-                        each.setChildren(new ArrayList<CmsBtTagModel>());
+                        each.setChildren(new ArrayList<CmsBtTagBean>());
                     }
                     each.getChildren().add(inner);
                     //取得子标签的名称
@@ -83,7 +88,7 @@ public class CmsChannelTagService extends BaseAppService {
             if (each.getChildren() == null) {
                 //子标签
                 each.setIsLeaf(true);
-                each.setChildren(new ArrayList<CmsBtTagModel>());
+                each.setChildren(new ArrayList<CmsBtTagBean>());
             } else {
                 //非子标签
                 each.setIsLeaf(false);
@@ -137,19 +142,19 @@ public class CmsChannelTagService extends BaseAppService {
             cmsBtTagModel.setTagStatus(0);
             cmsBtTagModel.setSortOrder(0);
             cmsBtTagModel.setParentTagId(0);
-            cmsBtTagModel.setIsActive(1);
+            cmsBtTagModel.setActive(1);
             cmsBtTagModel.setCreater(userName);
             cmsBtTagModel.setModifier(userName);
             simpleTransaction.openTransaction();
             try {
                 //将取得的数据插入到数据库
-                cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
+                cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
                 //取得标签名称
-                String id = String.valueOf(cmsBtTagModel.getTagId());
+                String id = String.valueOf(cmsBtTagModel.getId());
                 //对tagPath进行二次组装
                 cmsBtTagModel.setTagPath("-" + id + "-");
                 //更新数据cms_bt_tag
-                cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+                cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
             } catch (Exception e) {
                 simpleTransaction.rollback();
                 throw e;
@@ -164,20 +169,20 @@ public class CmsChannelTagService extends BaseAppService {
             cmsBtTagModel.setTagType(Integer.valueOf(tagSelectObject.get("tagType").toString()));
             cmsBtTagModel.setTagStatus(Integer.valueOf(String.valueOf(tagSelectObject.get("tagStatus"))));
             cmsBtTagModel.setSortOrder(0);
-            cmsBtTagModel.setIsActive(1);
+            cmsBtTagModel.setActive(1);
             cmsBtTagModel.setParentTagId(Integer.valueOf(String.valueOf(tagSelectObject.get("id"))));
             cmsBtTagModel.setCreater(String.valueOf(tagSelectObject.get("creater")));
             cmsBtTagModel.setModifier(String.valueOf(tagSelectObject.get("modifier")));
             simpleTransaction.openTransaction();
             try {
                 //将取得的数据插入到数据库
-                cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
+                cmsBtTagDao.insert(cmsBtTagModel);
                 //取得标签名称
-                String id = String.valueOf(cmsBtTagModel.getTagId());
+                String id = String.valueOf(cmsBtTagModel.getId());
                 //对tagPath进行二次组装
                 cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + id + "-");
                 //更新数据cms_bt_tag
-                cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+                cmsBtTagDao.update(cmsBtTagModel);
             } catch (Exception e) {
                 simpleTransaction.rollback();
                 throw e;
@@ -187,7 +192,7 @@ public class CmsChannelTagService extends BaseAppService {
         }
         //记住插入的记录处理之后再返回画面
         HashMap<String, Object> tagTypeSelectValue = new HashMap<>();
-        tagTypeSelectValue.put("id", cmsBtTagModel.getTagId());
+        tagTypeSelectValue.put("id", cmsBtTagModel.getId());
         tagTypeSelectValue.put("channelId", cmsBtTagModel.getChannelId());
         tagTypeSelectValue.put("tagName", cmsBtTagModel.getTagName());
         tagTypeSelectValue.put("tagPath", cmsBtTagModel.getTagPath());
@@ -198,7 +203,7 @@ public class CmsChannelTagService extends BaseAppService {
         tagTypeSelectValue.put("parentTagId", cmsBtTagModel.getParentTagId());
         tagTypeSelectValue.put("children", new ArrayList<CmsBtTagModel>());
         tagTypeSelectValue.put("isLeaf", true);
-        tagTypeSelectValue.put("isActive", cmsBtTagModel.getIsActive());
+        tagTypeSelectValue.put("isActive", cmsBtTagModel.getActive());
         tagTypeSelectValue.put("tagChildrenName", (String) param.get("tagPathName"));
         tagTypeSelectValue.put("created", cmsBtTagModel.getCreated());
         tagTypeSelectValue.put("creater", cmsBtTagModel.getCreater());
@@ -325,11 +330,11 @@ public class CmsChannelTagService extends BaseAppService {
         }
         //插入数据的数值
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setTagId(Integer.valueOf(id));
-        cmsBtTagModel.setIsActive(0);
+        cmsBtTagModel.setId(Integer.valueOf(id));
+        cmsBtTagModel.setActive(0);
         simpleTransaction.openTransaction();
         try {
-            cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+            cmsBtTagDao.update(cmsBtTagModel);
         } catch (Exception e) {
             simpleTransaction.rollback();
             throw e;
