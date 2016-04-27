@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.system;
 
 import com.google.common.collect.ImmutableMap;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.service.impl.cms.StoreOperationService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +31,25 @@ import java.util.Map;
 @RequestMapping(value = "/cms/system/store_operation", method = RequestMethod.POST)
 public class StoreOperationCtrl extends CmsController {
 
+    public static LocalDateTime lastExecuteTime = null;//用于检查倒计时的
+
+    public static final int INTERVAL_DEFAULT = 2; //默认值为2
+
+
     @Resource
     StoreOperationService storeOperationService;
 
+    @Resource
+    CmsChannelConfigs config;
+
+    public int getConfigHours(String channelId) {
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(channelId, "STORE_OPERATION_INTERVAL_TIME", "default");
+
+        if (config == null || config.getConfigValue1() == null) {
+            return INTERVAL_DEFAULT;
+        }
+        return Integer.valueOf(config.getConfigValue1());
+    }
 
     /**
      * @return uploadCnt (可供上新商品总数),feedImportCng(可重新feed导入商品总数这里暂不实现)
@@ -42,12 +62,31 @@ public class StoreOperationCtrl extends CmsController {
     }
 
     /**
+     * 如果上次执行时间距离现在执行时间超过指定阈值,则抛异常
+     */
+    public synchronized void checkInInterval(String channelId) {
+        if (lastExecuteTime == null) {
+            lastExecuteTime = LocalDateTime.now();
+            return;
+        }
+        int interval = getConfigHours(channelId);
+        boolean inRange = lastExecuteTime.plusHours(interval).isAfter(LocalDateTime.now());
+        lastExecuteTime = LocalDateTime.now();
+        if (inRange) {
+            throw new BusinessException("操作时间间隔必须在" + interval + "小时以上!");
+        }
+    }
+
+
+    /**
      * 重新上新所有商品
      */
     @RequestMapping("rePublish")
     public AjaxResponse rePublish() {
-
-        storeOperationService.rePublish(getUser().getSelChannelId(),getUser().getUserName());
+        String channelId = getUser().getSelChannelId();
+        checkInInterval(channelId);
+        String userName = getUser().getUserName();
+        storeOperationService.rePublish(channelId, userName);
         return success(true);
     }
 
@@ -55,12 +94,14 @@ public class StoreOperationCtrl extends CmsController {
     /**
      * 重新导入所有feed商品（清空共通属性）
      *
-     * @param cleanCommonProperties  清空共通属性标志
+     * @param cleanCommonProperties 清空共通属性标志
      */
     @RequestMapping("reUpload")
     public AjaxResponse reUpload(@RequestBody Boolean cleanCommonProperties) {
-
-        boolean result = storeOperationService.reUpload(getUser().getSelChannelId(),cleanCommonProperties);
+        String userName = getUser().getUserName();
+        String channelId = getUser().getSelChannelId();
+        checkInInterval(channelId);
+        boolean result = storeOperationService.reUpload(channelId, cleanCommonProperties, userName);
         return success(result);
     }
 
@@ -78,7 +119,10 @@ public class StoreOperationCtrl extends CmsController {
      */
     @RequestMapping("rePublishPrice")
     public AjaxResponse rePublishPrice() {
-        storeOperationService.rePublishPrice(getUser().getSelChannelId(),getUser().getUserName());
+        String userName = getUser().getUserName();
+        String channelId = getUser().getSelChannelId();
+        checkInInterval(channelId);
+        storeOperationService.rePublishPrice(channelId, userName);
         throw new UnsupportedOperationException();
     }
 

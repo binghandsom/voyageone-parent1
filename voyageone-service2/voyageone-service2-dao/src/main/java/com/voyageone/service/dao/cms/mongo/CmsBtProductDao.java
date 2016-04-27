@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
@@ -118,15 +121,8 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return select(FieldStatusEqArrpoved, channelId);
     }
 
-    private static final String PriceNotEqualQuery="{ $where : \"function(){\n" +
-            "            var i=0;\n" +
-            "            if(!this.skus) return false;    \n" +
-            "            for(i=0;i<this.skus.length;i++){\n" +
-            "                    if(this.skus[i].priceSale!=this.skus[i].priceRetail) return true;\n" +
-            "            }\n" +
-            "            return false;\n" +
-            "        }\"}";
-
+    private static final String PriceNotEqualQuery=
+            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
 
     /**
      * 查询priceSale和priceRetail不相等的products
@@ -135,4 +131,5 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
         return select(PriceNotEqualQuery, channelId);
     }
+
 }
