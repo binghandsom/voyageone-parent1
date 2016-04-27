@@ -9,7 +9,7 @@ define([
     function searchIndex($scope, $routeParams, $feedSearchService, $translate) {
         $scope.vm = {
             searchInfo: {},
-            feedPageOption: {curr: 1, total: 0, size: 20, fetch: search},
+            feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: []
         };
 

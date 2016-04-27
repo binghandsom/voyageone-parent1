@@ -69,9 +69,9 @@ public class CmsFeedMappingController extends CmsController {
     @RequestMapping(FEED.GET_MAPPING_INFO)
     public AjaxResponse getMappingInfo(@RequestBody SetMappingBean params) {
 
-        Map<String, Object> map = feedPropMappingService.getMainCategoryInfo(params.getTo());
+        Map<String, Object> map = feedPropMappingService.getMainCategoryInfo(params.getTo(), getUser().getSelChannelId(), getLang());
 
-        Map<MappingPropType, List<String>> matched = feedPropMappingService.getMatched(params);
+        Map<MappingPropType, List<String>> matched = feedPropMappingService.getMatched(params, getUser());
 
         map.put("matched", matched);
 
@@ -80,7 +80,7 @@ public class CmsFeedMappingController extends CmsController {
 
     @RequestMapping(FEED.GET_FIELD_MAPPING)
     public AjaxResponse getFieldMapping(@RequestBody GetFieldMappingBean params) {
-        return success(feedPropMappingService.getFieldMapping(params));
+        return success(feedPropMappingService.getFieldMapping(params, getUser()));
     }
 
     @RequestMapping(FEED.GET_FEED_ATTRS)
@@ -93,12 +93,12 @@ public class CmsFeedMappingController extends CmsController {
 
     @RequestMapping(FEED.SAVE_FIELD_MAPPING)
     public AjaxResponse saveFieldMapping(@RequestBody SaveFieldMappingBean params) {
-        return success(feedPropMappingService.saveFeedMapping(params));
+        return success(feedPropMappingService.saveFeedMapping(params, getUser()));
     }
 
     @RequestMapping(FEED.DIRECT_MATCH_OVER)
     public AjaxResponse switchMatchOver(@RequestBody SetMappingBean params) {
-        return success(feedMappingService.switchMatchOver(params.getMappingId()));
+        return success(feedMappingService.switchMatchOver(params.getMappingId(), getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_MAPPING)

@@ -24,7 +24,8 @@ define(function() {
         "TXT_CONFIGURATION_SETTING": "Configurations",
         "TXT_TRANSLATION_MANAGER": "Translations",
         "TXT_TRANSLATION_INDEX": "Translation List",
-        "TXT_SYSTEM_SETTING": "System Setting",
+        "TXT_SYSTEM_SETTING_MARKETING": "System Setting(Marketing)",
+        "TXT_SYSTEM_SETTING_IT": "System Setting(Maintain)",
         "TXT_CATEGORY_INDEX": "Master Category List",
         "TXT_ERROR_MANAGER_MARKETING": "Error List(Marketing)",
         "TXT_ERROR_MANAGER_MAINTENANCE": "Error List(Maintenance)",
@@ -367,8 +368,6 @@ define(function() {
         "TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX": "When choosing reset mode, old data will be all deleted. Go on ?",
         "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
         "TXT_MSG_INPUT_WORD_LENCHK2": "words",
-        "TXT_MSG_INPUT_WORD_LENCHK": "you can input ",
-        "TXT_MSG_INPUT_WORD_LENCHK2": " words",
         "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
@@ -402,6 +401,7 @@ define(function() {
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
         "BTN_ADD_TO_JM_PROMOTION": "Join JM's Promotion",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "Bulk Update",
+        "BTN_UPDATE_COMMON_ATTRIBUTE": "Update Common Attribute",
         "BTN_CHANGE_MASTER_CATEGORY": "Change Master Category",
         "BTN_CANCEL": "Cancel",
         "BTN_EXPORT": "Export",
@@ -459,6 +459,9 @@ define(function() {
         "REVERT": "Reverting",
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
-        "CANT_BEAT": "Info Error"
+        "CANT_BEAT": "Info Error",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "page-size"
     };
 });

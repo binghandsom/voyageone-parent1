@@ -10,11 +10,14 @@ import com.voyageone.components.jd.JdConstants;
 import com.voyageone.components.jd.bean.JdCategroyBean;
 import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.task2.base.BaseMQTaskService;
+import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +31,8 @@ import java.util.Map;
  * 京东平台类目信息取得
  */
 @Service
-public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
-
-    private final static String JOB_NAME = "CmsBuildPlatformCategoryTreeJdJob";
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategoryTreeJdJob)
+public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQCmsService {
 
     @Autowired
     JdCategoryService jdCategoryService;
@@ -44,12 +46,7 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQTaskService {
     }
 
     @Override
-    public String getTaskName() {
-        return JOB_NAME;
-    }
-
-    @Override
-    protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Object> message) throws Exception {
+    public void onStartup(Map<String, Object> messageMap) throws Exception {
         setJdCategoryInfo(taskControlList);
     }
 

@@ -13,7 +13,7 @@ define([
             masterData: null,
             productList: [],
             productIds: [],
-            productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
+            productPageOption: {curr: 1, total: 0, fetch: getProductList},
             mainProduct: null
         };
 
@@ -58,7 +58,7 @@ define([
 
             confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT')).result
                 .then(function () {
-                    groupDetailService.setMainProduct({groupId: product.groups.platforms[0].groupId, prodId: product.prodId}).then(function () {
+                    groupDetailService.setMainProduct({groupId: product.groups.groupId, prodId: product.prodId}).then(function () {
                         notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     });
                 }, function () {

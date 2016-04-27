@@ -130,9 +130,16 @@
         "insert": "insert",
         "update": "update"
       },
+      "jmPromotionProductAddService": {
+        "root": "/cms/jm/promotion/product/",
+        "add": "add"
+      },
+
+
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
+        "getPromotionProductInfoCountByWhere":"getPromotionProductInfoCountByWhere",
         "delete": "delete",
         "updateDealPrice": "updateDealPrice",
         "deleteByPromotionId": "deleteByPromotionId",
@@ -146,8 +153,8 @@
         "updatePromotionProductDetail": "updatePromotionProductDetail",
         "updateSkuDetail": "updateSkuDetail",
         "deletePromotionSku": "deletePromotionSku",
-        "getProductMasterData": "getProductMasterData"
-
+        "getProductMasterData": "getProductMasterData",
+         "updateJM":"updateJM"
       }
     },
     "cmsBtJmPromotionImportTask":{
@@ -273,6 +280,10 @@
         }
       }
     },
+
+
+
+
     "pop": {
       "$addToPromotionService": {
         "root": "/cms/pop/add_to_promotion",

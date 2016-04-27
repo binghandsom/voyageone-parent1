@@ -5,13 +5,13 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-     http://www.springframework.org/schema/tx  
+     http://www.springframework.org/schema/tx
      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
     <bean id="dataSourceJuMei" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl"
-                  value="jdbc:mysql://10.0.0.24:3306/voyageone_cms2?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+                  value="jdbc:mysql://10.0.0.24:3306/jumei2?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
         <property name="user" value="root"/>
         <property name="password" value="sneakerhead"/>
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
@@ -36,7 +36,7 @@
     <bean id="sqlSessionFactoryMasterCamel"
           class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSourceJuMei"
-          p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.cms,com.voyageone.service.model.util"
+          p:typeAliasesPackage="com.voyageone.service.model.jumei,com.voyageone.service.model.util,com.voyageone.service.model.cms"
           p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"
           p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>
 
@@ -48,7 +48,7 @@
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCamel"/>
         <!--property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAdmin"/ -->
         <property name="basePackage" value="com.voyageone.service.dao.jumei,com.voyageone.service.dao.cms,
-                                          com.voyageone.service.daoext.jumei"/>
+                                          com.voyageone.service.daoext"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
 
@@ -61,5 +61,8 @@
 
     <bean id="transactionRunnerJuMei" class="com.voyageone.common.components.transaction.TransactionRunner"
           p:simpleTransaction-ref="simpleTransactionJuMei"/>
+
     <tx:annotation-driven transaction-manager="transactionManagerJuMei"/>
+
+
 </beans>

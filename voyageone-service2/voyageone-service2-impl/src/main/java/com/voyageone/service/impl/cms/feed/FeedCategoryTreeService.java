@@ -24,26 +24,14 @@ public class FeedCategoryTreeService extends BaseService {
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
 
-    // 取得Top类目路径数据
-    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId) {
-        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
-    }
+//    // 取得Top类目路径数据
+//    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId) {
+//        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
+//    }
 
-    // 取得Top类目路径数据
-    public List<CmsMtFeedCategoryModel> getTopFeedCategories(String channelId) {
-        CmsMtFeedCategoryTreeModelx treeModelx = getFeedCategory(channelId);
-        return treeModelx.getCategoryTree();
+    public List<CmsMtFeedCategoryTreeModel> getOnlyTopFeedCategories(String channelId) {
+        return cmsMtFeedCategoryTreeDao.selectTopCategories(channelId);
     }
-
-    public List<CmsMtFeedCategoryModel> getOnlyTopFeedCategories(String channelId) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectTopCategories(channelId);
-        return treeModelx.getCategoryTree();
-    }
-
-    public CmsMtFeedCategoryTreeModelx getFeedCategory(String channelId, String categoryId) {
-        return cmsMtFeedCategoryTreeDao.selectTopCategory(channelId, categoryId);
-    }
-
 
     /**
      * 获取channel下所有的类目树
@@ -89,8 +77,14 @@ public class FeedCategoryTreeService extends BaseService {
             categoryTree.setCatName(categorys.get(0));
             categoryTree.setCatId(MD5.getMD5(categorys.get(0)));
             categoryTree.setParentCatId("0");
-            categoryTree.setIsParent(categorys.size() > 0 ? 1 : 0);
+            categoryTree.setIsParent(categorys.size() > 1 ? 1 : 0);
             categoryTree.setChildren(new ArrayList<>());
+            if(categorys.size() == 1){
+                categoryTree.setModified(DateTimeUtil.getNow());
+                categoryTree.setModifier(modifier);
+                cmsMtFeedCategoryTreeDao.update(categoryTree);
+                return;
+            }
         }
 
 //        if (addCategory(categoryTree, category) != null) {
@@ -150,6 +144,15 @@ public class FeedCategoryTreeService extends BaseService {
     }
 
     /**
+     * 根据一级类目获取一级类目下所有的类目树
+     *
+     * @param channelId 渠道ID
+     * @return CmsMtFeedCategoryTreeModel
+     */
+    public CmsMtFeedCategoryTreeModel getFeedCategoryByCategoryId(String channelId, String topCategoryId) {
+        return cmsMtFeedCategoryTreeDao.selectFeedCategoryByCategoryId(channelId, topCategoryId);
+    }
+    /**
      * 根据category从tree中找到节点
      */
     public CmsMtFeedCategoryTreeModel findCategory(CmsMtFeedCategoryTreeModel tree, String catPath) {
@@ -179,6 +182,19 @@ public class FeedCategoryTreeService extends BaseService {
         });
         cmsMtFeedCategoryTree.setChildren(null);
         return result;
+    }
+
+    /**
+     * 根据类目路径返回改路径的类目节点
+     * @param channelId channelId
+     * @param catPath 类目路径
+     */
+    public CmsMtFeedCategoryTreeModel getCategoryNote(String channelId, String catPath){
+        List<String> categorys = Arrays.asList(catPath.split("-"));
+        if(categorys.size() == 0) return null;
+        CmsMtFeedCategoryTreeModel tree = getFeedCategoryByCategory(channelId, categorys.get(0));
+        if(categorys.size() == 1) return tree;
+        return findCategory(tree,catPath);
     }
 
 }

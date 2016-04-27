@@ -1338,7 +1338,7 @@ public class TmallProductService {
                     }
                     SingleCheckField priceField = (SingleCheckField) processFields.get(0);
                     List<PriceSectionBuilder.PriceOption> priceOptions = PriceSectionBuilder.transferFromTmall(priceField.getOptions());
-                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getSalePriceStart();
+                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getPriceSaleSt();
 
                     String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
                     priceField.setValue(priceSectionValue);

@@ -1,6 +1,5 @@
 package com.voyageone.web2.sdk.api.request;
 
-
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductForOmsGetResponse;
@@ -23,6 +22,7 @@ import java.util.List;
  */
 public class ProductForOmsGetRequest extends VoApiRequest<ProductForOmsGetResponse> {
 
+	@Override
 	public String getApiURLPath() {
 		return "/product/getOmsProductsInfo";
 	}

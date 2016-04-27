@@ -12,13 +12,13 @@ import com.voyageone.common.masterdate.schema.label.Label;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.bean.cms.CommonPropActionDefBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
+import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.impl.cms.CategoryTreeService;
-import com.voyageone.service.bean.cms.CommonPropActionDefBean;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -38,26 +38,46 @@ import java.util.*;
 public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implements MasterCategorySchemaBuildService{
 
     private final static String JOB_NAME = "buildMasterSchemaFromPlatformTask";
-
+    Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
-
     @Autowired
-    private CmsMtCommonPropDao cmsMtCommonPropDao;
-
+    private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
-
     @Autowired
     private CmsMtPlatformFieldsRemoveHistoryDao cmsMtPlatformFieldsRemoveHistoryDao;
-
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
-
     @Autowired
     private CategoryTreeService categoryTreeService;
 
-    Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
+    //Field字段排序方法
+    private static void fieldsSort(List<Field> masterFields){
+        Collections.sort(masterFields,(a, b) ->{
+                //1.b为true, B前置
+                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
+                    return 1;
+                return -1;
+        });
+    }
+
+    //Sku Field字段排序方法
+    private static void skusSort(List<Field> masterFields){
+        Map<String,Integer> sortIndex=new HashMap<>();
+        //排序
+        Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
+           sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
+        });
+        Collections.sort(masterFields, (a,b) -> {
+                //1.a为空b非空 b前置 2.a>b b前置
+                Integer aIndex=sortIndex.get(a.getId());
+                Integer bIndex=sortIndex.get(b.getId());
+                if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
+                    return 1;
+                return -1;
+        });
+    }
 
     @Override
     public SubSystem getSubSystem() {
@@ -80,16 +100,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     }
 
-    //Field字段排序方法
-    private static void fieldsSort(List<Field> masterFields){
-        Collections.sort(masterFields,(a, b) ->{
-                //1.b为true, B前置
-                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
-                    return 1;
-                return -1;
-        });
-    }
-
     public void buildMasterCatSchema() throws TopSchemaException {
 
         int index = 0;
@@ -102,7 +112,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(CartEnums.Cart.TG.getId()));
 
-        List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDao.selectActionModelList();
+        List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDaoExt.selectActionModelList();
 
         List<CommonPropActionDefBean> removelist =new ArrayList<>();
 
@@ -329,23 +339,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             }
 
         }
-    }
-
-    //Sku Field字段排序方法
-    private static void skusSort(List<Field> masterFields){
-        Map<String,Integer> sortIndex=new HashMap<>();
-        //排序
-        Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
-           sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
-        });
-        Collections.sort(masterFields, (a,b) -> {
-                //1.a为空b非空 b前置 2.a>b b前置
-                Integer aIndex=sortIndex.get(a.getId());
-                Integer bIndex=sortIndex.get(b.getId());
-                if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
-                    return 1;
-                return -1;
-        });
     }
 
     private void setValueType(CommonPropActionDefBean actionDefModel, Field updField) {

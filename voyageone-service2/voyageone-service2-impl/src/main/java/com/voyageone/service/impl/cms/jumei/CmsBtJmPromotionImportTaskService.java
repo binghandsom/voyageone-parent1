@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.cms.jumei;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.BigDecimalUtil;
@@ -208,7 +209,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         }
     }
 
-    private CmsBtJmImportSaveInfo loadListSaveInfo(JmProductImportAllInfo info,String creater) {
+    public CmsBtJmImportSaveInfo loadListSaveInfo(JmProductImportAllInfo info,String creater) {
         CmsBtJmPromotionModel modelCmsBtJmPromotion=info.getModelCmsBtJmPromotion();
          List<CmsBtJmImportProduct> listProductModel=info.getListProductModel();
          List<CmsBtJmImportSku> listSkuModel=info.getListSkuModel();
@@ -244,16 +245,11 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             //2.  cms_bt_jm_promotion_sku  cms_bt_jm_sku
             List<CmsBtJmImportSku> productCmsBtJmImportSkuList = getListCmsBtJmImportSkuByProductCode(listSkuModel, importProductModel.getProductCode());
             loadSaveSkuInfoByImportModel(creater, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
-            try {
                 if (productCmsBtJmImportSkuList.size() > 0) {
                     saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
                     saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
                     saveInfo.getPromotionProductModel().setDiscount(BigDecimalUtil.divide(saveInfo.getPromotionProductModel().getDealPrice(), saveInfo.getPromotionProductModel().getMarketPrice(), 2));
                 }
-            }catch (Exception ex)
-            {
-                String aa="";
-            }
             //3.cms_mt_master_info
             loadCmsMtMasterInfoModel(importProductModel, modelCmsBtJmPromotion, saveImportInfo);
 
@@ -449,6 +445,10 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         templateTypeList.add(2);//详情图
         templateTypeList.add(7);//移动端宝贝图（竖图）
         List<CmsMtTemplateImagesModel> listCmsMtTemplateImages = daoExtCmsMtTemplateImages.getListByPlatformChannelTemplateType(PlatformId, modelCmsBtJmPromotion.getChannelId(), templateTypeList);
+        if(listCmsMtTemplateImages.size()==0)
+        {
+            throw new BusinessException("CmsMtTemplateImages请设置该channel的图片模板");
+        }
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey1(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 1);
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey2(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 2);
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey3(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 3);

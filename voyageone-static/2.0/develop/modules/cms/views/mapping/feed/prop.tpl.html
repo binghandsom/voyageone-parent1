@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="$ctrl.init()">
+<div class="wrapper-md" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -9,11 +9,11 @@
                 <div class="container-fluid m-t-sm m-b-xs m-l-xs m-r-xs">
                     <div class="col-sm-12">
                         <div class="col-sm-12 m-t-xs m-b-xs" style="border-bottom:1px solid #efefef;padding-bottom:4px">
-                            <span>&nbsp;<span>{{::$ctrl.mapping.scope.feedCategoryPath}}</span><sup>{{'TXT_FEED_CATEGORY'
+                            <span>&nbsp;<span>{{::ctrl.mapping.feedCategoryPath}}</span><sup>{{'TXT_FEED_CATEGORY'
                                 | translate}}</sup>&nbsp;<i class="fa fa-exchange"></i>&nbsp;</span>
-                            <select ng-model="$ctrl.mapping" ng-change="$ctrl.changeMapping()" ng-options="m as m.scope.mainCategoryPath for m in $ctrl.mappings" title="当前进行属性匹配的主类目"></select>
+                            <select ng-model="ctrl.mapping" ng-change="ctrl.changeMapping()" ng-options="m as m.mainCategoryPath for m in ctrl.mappings" title="当前进行属性匹配的主类目"></select>
                             <sup class="font-bold text-vo">{{'TXT_MASTER_CATEGORY' | translate}}</sup><sup
-                                class="font-bold text-vo" ng-if="$ctrl.isCommon"><strong><span>(</span><span>{{'TXT_MASTER_CATEGORY_COMMON_FLG'
+                                class="font-bold text-vo" ng-if="ctrl.isCommon"><strong><span>(</span><span>{{'TXT_MASTER_CATEGORY_COMMON_FLG'
                             | translate}}</span><span>)</span></strong></sup>
                         </div>
                         <div class="form-inline pull-left m-r-lg">
@@ -21,7 +21,7 @@
                             <div class="col-sm-3 text-left">
                                 <div class="onoffswitch">
                                     <input type="checkbox" class="onoffswitch-checkbox" id="feed-m-ckb-1"
-                                           ng-change="$ctrl.switchMatchOver()" ng-model="$ctrl.matchOver">
+                                           ng-change="ctrl.switchMatchOver()" ng-model="ctrl.matchOver">
                                     <label class="onoffswitch-label" for="feed-m-ckb-1">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
@@ -31,14 +31,14 @@
                         </div>
                         <div class="form-inline">
                             <select class="form-control m-r-xxs"
-                                    ng-model="$ctrl.show.hasRequired"
-                                    ng-options="v as k for (k,v) in $ctrl.options.hasRequired"></select>
+                                    ng-model="ctrl.show.hasRequired"
+                                    ng-options="v as k for (k,v) in ctrl.options.hasRequired"></select>
                             <select class="form-control m-r-xxs"
-                                    ng-model="$ctrl.show.matched"
-                                    ng-options="v as k for (k,v) in $ctrl.options.matched"></select>
-                            <input type="text" ng-model="$ctrl.show.keyWord"
+                                    ng-model="ctrl.show.matched"
+                                    ng-options="v as k for (k,v) in ctrl.options.matched"></select>
+                            <input type="text" ng-model="ctrl.show.keyWord"
                                    placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
-                            <button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                            <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
                                 | translate}}
                             </button>
                         </div>
@@ -55,8 +55,8 @@
                 </div>
                 <form class="form-horizontal clearfix">
                     <div class="col-sm-12 platform_mapping_bg_list"
-                         ng-repeat="bean in $ctrl.dataSources.fields track by bean.seq"
-                         ng-if="$ctrl.shown(bean)" field-bean>
+                         ng-repeat="bean in ctrl.dataSources.fields track by bean.seq"
+                         ng-if="ctrl.shown(bean)" field-bean>
                     </div>
                 </form>
             </div>
@@ -68,8 +68,8 @@
                 </div>
                 <form class="form-horizontal clearfix">
                     <div class="col-sm-12 platform_mapping_bg_list"
-                         ng-repeat="bean in $ctrl.dataSources.common track by bean.seq"
-                         ng-if="$ctrl.shown(bean)" field-bean></div>
+                         ng-repeat="bean in ctrl.dataSources.common track by bean.seq"
+                         ng-if="ctrl.shown(bean)" field-bean></div>
                 </form>
             </div>
         </div>
@@ -80,9 +80,9 @@
                 </div>
                 <form class="form-horizontal clearfix">
                     <div class="col-sm-12 platform_mapping_bg_list"
-                         ng-repeat="bean in $ctrl.dataSources.sku track by bean.seq"
+                         ng-repeat="bean in ctrl.dataSources.sku track by bean.seq"
                          ng-include="'feedMapping.fieldBean.html'"
-                         ng-if="$ctrl.shown(bean)" field-bean></div>
+                         ng-if="ctrl.shown(bean)" field-bean></div>
                 </form>
             </div>
         </div>
@@ -94,7 +94,7 @@
         </div>
         <div class="col-sm-1 pull-center" ng-if="bean.isSimple">
             <button class="btn btn-default btn-xs"
-                    ng-click="popupFeed($ctrl.popupContext(bean)).then($ctrl.saveMapping)"><i class="fa fa-pencil"></i>&nbsp;<span>{{::'TXT_MAPPING_VALUE'|translate}}</span>
+                    ng-click="popupFeed(ctrl.popupContext(bean)).then(ctrl.saveMapping)"><i class="fa fa-pencil"></i>&nbsp;<span>{{::'TXT_MAPPING_VALUE'|translate}}</span>
             </button>
         </div>
         <div class="col-sm-1 pull-right m-r-sm">

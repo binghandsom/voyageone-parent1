@@ -10,7 +10,7 @@ define([
 
         $scope.vm = {
             searchInfo: { cartId: null },
-            dictionaryPageOption: {curr: 1, total: 0, size: 20, fetch: search},
+            dictionaryPageOption: {curr: 1, total: 0, fetch: search},
             dictionaryList: []
         };
 

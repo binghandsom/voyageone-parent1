@@ -19,6 +19,7 @@ define([
         // init
         $scope.initialize = function () {
             var self = this;
+            self.refreshTable();
         }
 
         $scope.clear = function () {
@@ -90,7 +91,7 @@ define([
             });
         };
         $scope.page = {
-            curr: 1, total: 0, size: 20, fetch: function () {
+            curr: 1, total: 0, fetch: function () {
                 $scope.refreshTable();
             }
         };

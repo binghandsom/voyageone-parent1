@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.enums.BeatFlag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,10 @@ import java.util.Map;
 public class BeatInfoService extends BaseService {
 
     @Autowired
-    private CmsBtBeatInfoDao beatInfoDao;
+    private CmsBtBeatInfoDaoExt beatInfoDao;
 
 
-    public List<CmsBtBeatInfoModel> getBeatInfoListByTaskId(int taskId, BeatFlag flag, int offset, int size) {
+    public List<CmsBtBeatInfoBean> getBeatInfoListByTaskId(int taskId, BeatFlag flag, int offset, int size) {
         return beatInfoDao.selectListByTask(taskId, flag, offset, size);
     }
 
@@ -32,11 +32,11 @@ public class BeatInfoService extends BaseService {
         return beatInfoDao.selectListByTaskCount(taskId, flag);
     }
 
-    public CmsBtBeatInfoModel getBeatInfById(int beatId) {
+    public CmsBtBeatInfoBean getBeatInfById(int beatId) {
         return beatInfoDao.selectOneById(beatId);
     }
 
-    public List<CmsBtBeatInfoModel> getBeatInfByTaskId(int taskId) {
+    public List<CmsBtBeatInfoBean> getBeatInfByTaskId(int taskId) {
         return beatInfoDao.selectListByTask(taskId);
     }
 
@@ -48,21 +48,21 @@ public class BeatInfoService extends BaseService {
         return beatInfoDao.selectCountInFlags(taskId, flags);
     }
 
-    public CmsBtBeatInfoModel getBeatInfByNumiid(int taskId, String numIid) {
+    public CmsBtBeatInfoBean getBeatInfByNumiid(int taskId, String numIid) {
         return beatInfoDao.selectOneByNumiid(taskId, numIid);
     }
 
-    public List<CmsBtBeatInfoModel> getBeatInfByNumiidInOtherTask(int promotion_id, int taskId, String numIid) {
+    public List<CmsBtBeatInfoBean> getBeatInfByNumiidInOtherTask(int promotion_id, int taskId, String numIid) {
         return beatInfoDao.selectListByNumiidInOtherTask(promotion_id, taskId, numIid);
     }
 
     @VOTransactional
-    public int addTasks(List<CmsBtBeatInfoModel> models) {
+    public int addTasks(List<CmsBtBeatInfoBean> models) {
         return beatInfoDao.insertList(models);
     }
 
     @VOTransactional
-    public int updateCode(CmsBtBeatInfoModel model) {
+    public int updateCode(CmsBtBeatInfoBean model) {
         return beatInfoDao.updateCode(model);
     }
 
@@ -77,7 +77,8 @@ public class BeatInfoService extends BaseService {
     }
 
     @VOTransactional
-    public void importBeatInfo(int taskId, List<CmsBtBeatInfoModel> models) {
+    public void importBeatInfo(int taskId, List<CmsBtBeatInfoBean> models) {
+
         beatInfoDao.deleteByTask(taskId);
 
         beatInfoDao.insertList(models);
@@ -86,7 +87,7 @@ public class BeatInfoService extends BaseService {
     }
 
     @VOTransactional
-    public int updateBeatInfoFlag(CmsBtBeatInfoModel beatInfoModel) {
+    public int updateBeatInfoFlag(CmsBtBeatInfoBean beatInfoModel) {
         return beatInfoDao.updateFlag(beatInfoModel);
     }
 

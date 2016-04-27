@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.jm;
 
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.enums.MqRoutingKey;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.cms.jumei.*;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.jumei.CmsBtJmProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.jumei.CmsBtJmPromotionSkuModel;
@@ -50,13 +50,19 @@ public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     private CmsBtJmCategoryService cmsBtJmCategoryService;
     @Autowired
+    private CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
+    @Autowired
     private MqSender sender;
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
     }
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetPromotionProductInfoCountByWhere)
+    public AjaxResponse getPromotionProductInfoCountByWhere(@RequestBody Map<String, Object> map)
+    {
+        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoCountByWhere(map));
+    }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATE)
     public AjaxResponse update(@RequestBody CmsBtJmPromotionProductModel params) {
         String channelId = getUser().getSelChannelId();
@@ -225,8 +231,14 @@ public class CmsJmPromotionDetailController extends CmsController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("categoryList", cmsBtJmCategoryService.selectAll());
-        result.put("brandList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.BRND));
+        result.put("brandList", cmsBtJmMasterBrandService.selectAll());
         result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.PRICE_UNIT));
         return success(result);
+    }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
+    public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
+//        CallResult result = serviceCmsBtJmPromotionProduct.updateJM(promotionProductId);
+//        return success(result);
+        return null;
     }
 }

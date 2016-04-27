@@ -2,316 +2,313 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-import java.util.List;
-
-/**
- *
- * @author gbb Jan 13, 2016
- */
 public class CmsBtPromotionModel extends BaseModel {
 
-	/** promotionId */
-	private Integer promotionId;
+    /**
 
-	/** channelId */
-	private String channelId;
+     */
+    private String channelId;
+    /**
 
-	/** cartId */
-	private Integer cartId;
+     */
+    private int cartId;
+    /**
+     * 0:Open 1:Close
+     */
+    private int promotionStatus;
+    /**
 
-	/** promotionStatus */
-	private Boolean promotionStatus;
+     */
+    private String promotionName;
+    /**
 
-	/** promotionName */
-	private String promotionName;
+     */
+    private String preSaleEnd;
+    /**
 
-	/** prePeriodStart */
-	private String prePeriodStart;
+     */
+    private String preSaleStart;
+    /**
+     * 预热开始时间
+     */
+    private String prePeriodStart;
+    /**
+     * 预热结束时间
+     */
+    private String prePeriodEnd;
+    /**
+     * 活动开始
+     */
+    private String activityStart;
+    /**
+     * 活动结束
+     */
+    private String activityEnd;
+    /**
+     * 0代表不适用特价宝
+     */
+    private String tejiabaoId;
+    /**
+     * 1:促销  2:批量刷价格 3:价格披露 4:库存隔离
+     */
+    private String promotionType;
+    /**
 
-	/** prePeriodEnd */
-	private String prePeriodEnd;
+     */
+    private int refTagId;
+    /**
 
-	/** preSaleStart */
-	private String preSaleStart;
+     */
+    private int active;
+    /**
+     * 是否是全店特价宝的活动
+     */
+    private int isAllPromotion;
 
-	/** preSaleEnd */
-	private String preSaleEnd;
 
-	/** activityStart */
-	private String activityStart;
+    /**
 
-	/** activityEnd */
-	private String activityEnd;
+     */
+    public String getChannelId() {
 
-	/** tejiabaoId */
-	private String tejiabaoId;
+        return this.channelId;
+    }
 
-	/** promotionType */
-	private String promotionType;
+    public void setChannelId(String channelId) {
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
+        }
 
-	/** cartName */
-	private String cartName;
+    }
 
-	/** isActive */
-	private Boolean isActive;
 
-	/** refTagId */
-	private int refTagId;
+    /**
 
-	/** isAllPromotion */
-	private Boolean isAllPromotion;
+     */
+    public int getCartId() {
 
-	private List<CmsBtTagModel> tagList;
+        return this.cartId;
+    }
 
-	/**
-	 * @return the promotionId
-	 */
-	public Integer getPromotionId() {
-		return promotionId;
-	}
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
 
-	/**
-	 * @param promotionId
-	 *            the promotionId to set
-	 */
-	public void setPromotionId(Integer promotionId) {
-		this.promotionId = promotionId;
-	}
 
-	/**
-	 * @return the cartId
-	 */
-	public Integer getCartId() {
-		return cartId;
-	}
+    /**
+     * 0:Open 1:Close
+     */
+    public int getPromotionStatus() {
 
-	/**
-	 * @param cartId
-	 *            the cartId to set
-	 */
-	public void setCartId(Integer cartId) {
-		this.cartId = cartId;
-	}
+        return this.promotionStatus;
+    }
 
-	/**
-	 * @return the promotionStatus
-	 */
-	public Boolean getPromotionStatus() {
-		return promotionStatus;
-	}
+    public void setPromotionStatus(int promotionStatus) {
+        this.promotionStatus = promotionStatus;
+    }
 
-	/**
-	 * @param promotionStatus
-	 *            the promotionStatus to set
-	 */
-	public void setPromotionStatus(Boolean promotionStatus) {
-		this.promotionStatus = promotionStatus;
-	}
 
-	/**
-	 * @return the preSaleStart
-	 */
-	public String getPreSaleStart() {
-		return preSaleStart;
-	}
+    /**
 
-	/**
-	 * @param preSaleStart
-	 *            the preSaleStart to set
-	 */
-	public void setPreSaleStart(String preSaleStart) {
-		this.preSaleStart = preSaleStart;
-	}
+     */
+    public String getPromotionName() {
 
-	/**
-	 * @return the preSaleEnd
-	 */
-	public String getPreSaleEnd() {
-		return preSaleEnd;
-	}
+        return this.promotionName;
+    }
 
-	/**
-	 * @param preSaleEnd
-	 *            the preSaleEnd to set
-	 */
-	public void setPreSaleEnd(String preSaleEnd) {
-		this.preSaleEnd = preSaleEnd;
-	}
+    public void setPromotionName(String promotionName) {
+        if (promotionName != null) {
+            this.promotionName = promotionName;
+        } else {
+            this.promotionName = "";
+        }
 
-	/**
-	 * @return the cartName
-	 */
-	public String getCartName() {
-		return cartName;
-	}
+    }
 
-	/**
-	 * @param cartName
-	 *            the cartName to set
-	 */
-	public void setCartName(String cartName) {
-		this.cartName = cartName;
-	}
 
-	/**
-	 * @return the isActive
-	 */
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    /**
 
-	/**
-	 * @param isActive
-	 *            the isActive to set
-	 */
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+     */
+    public String getPreSaleEnd() {
 
-	/**
-	 * @return the refTagId
-	 */
-	public int getRefTagId() {
-		return refTagId;
-	}
+        return this.preSaleEnd;
+    }
 
-	/**
-	 * @param refTagId
-	 *            the refTagId to set
-	 */
-	public void setRefTagId(int refTagId) {
-		this.refTagId = refTagId;
-	}
+    public void setPreSaleEnd(String preSaleEnd) {
+        if (preSaleEnd != null) {
+            this.preSaleEnd = preSaleEnd;
+        } else {
+            this.preSaleEnd = "";
+        }
 
-	/**
-	 * @return the channelId
-	 */
-	public String getChannelId() {
-		return channelId;
-	}
+    }
 
-	/**
-	 * @return the promotionName
-	 */
-	public String getPromotionName() {
-		return promotionName;
-	}
 
-	/**
-	 * @return the prePeriodStart
-	 */
-	public String getPrePeriodStart() {
-		return prePeriodStart;
-	}
+    /**
 
-	/**
-	 * @return the prePeriodEnd
-	 */
-	public String getPrePeriodEnd() {
-		return prePeriodEnd;
-	}
+     */
+    public String getPreSaleStart() {
 
-	/**
-	 * @return the activityStart
-	 */
-	public String getActivityStart() {
-		return activityStart;
-	}
+        return this.preSaleStart;
+    }
 
-	/**
-	 * @return the activityEnd
-	 */
-	public String getActivityEnd() {
-		return activityEnd;
-	}
+    public void setPreSaleStart(String preSaleStart) {
+        if (preSaleStart != null) {
+            this.preSaleStart = preSaleStart;
+        } else {
+            this.preSaleStart = "";
+        }
 
-	/**
-	 * @return the tejiabaoId
-	 */
-	public String getTejiabaoId() {
-		return tejiabaoId;
-	}
+    }
 
-	/**
-	 * @return the promotionType
-	 */
-	public String getPromotionType() {
-		return promotionType;
-	}
 
-	/**
-	 * @param channelId
-	 */
-	public void setChannelId(String channelId) {
-		this.channelId = channelId == null ? null : channelId.trim();
-	}
+    /**
+     * 预热开始时间
+     */
+    public String getPrePeriodStart() {
 
-	/**
-	 * @param promotionName
-	 */
-	public void setPromotionName(String promotionName) {
-		this.promotionName = promotionName == null ? null : promotionName
-				.trim();
-	}
+        return this.prePeriodStart;
+    }
 
-	/**
-	 * @param prePeriodStart
-	 */
-	public void setPrePeriodStart(String prePeriodStart) {
-		this.prePeriodStart = prePeriodStart == null ? null : prePeriodStart
-				.trim();
-	}
+    public void setPrePeriodStart(String prePeriodStart) {
+        if (prePeriodStart != null) {
+            this.prePeriodStart = prePeriodStart;
+        } else {
+            this.prePeriodStart = "";
+        }
 
-	/**
-	 * @param prePeriodEnd
-	 */
-	public void setPrePeriodEnd(String prePeriodEnd) {
-		this.prePeriodEnd = prePeriodEnd == null ? null : prePeriodEnd.trim();
-	}
+    }
 
-	/**
-	 * @param activityStart
-	 */
-	public void setActivityStart(String activityStart) {
-		this.activityStart = activityStart == null ? null : activityStart
-				.trim();
-	}
 
-	/**
-	 * @param activityEnd
-	 */
-	public void setActivityEnd(String activityEnd) {
-		this.activityEnd = activityEnd == null ? null : activityEnd.trim();
-	}
+    /**
+     * 预热结束时间
+     */
+    public String getPrePeriodEnd() {
 
-	/**
-	 * @param tejiabaoId
-	 */
-	public void setTejiabaoId(String tejiabaoId) {
-		this.tejiabaoId = tejiabaoId == null ? null : tejiabaoId.trim();
-	}
+        return this.prePeriodEnd;
+    }
 
-	/**
-	 * @param promotionType
-	 */
-	public void setPromotionType(String promotionType) {
-		this.promotionType = promotionType == null ? null : promotionType
-				.trim();
-	}
+    public void setPrePeriodEnd(String prePeriodEnd) {
+        if (prePeriodEnd != null) {
+            this.prePeriodEnd = prePeriodEnd;
+        } else {
+            this.prePeriodEnd = "";
+        }
 
-	public Boolean getIsAllPromotion() {
-		return isAllPromotion;
-	}
+    }
 
-	public void setIsAllPromotion(Boolean isAllPromotion) {
-		this.isAllPromotion = isAllPromotion;
-	}
 
-	public List<CmsBtTagModel> getTagList() {
-		return tagList;
-	}
+    /**
+     * 活动开始
+     */
+    public String getActivityStart() {
 
-	public void setTagList(List<CmsBtTagModel> tagList) {
-		this.tagList = tagList;
-	}
+        return this.activityStart;
+    }
+
+    public void setActivityStart(String activityStart) {
+        if (activityStart != null) {
+            this.activityStart = activityStart;
+        } else {
+            this.activityStart = "";
+        }
+
+    }
+
+
+    /**
+     * 活动结束
+     */
+    public String getActivityEnd() {
+
+        return this.activityEnd;
+    }
+
+    public void setActivityEnd(String activityEnd) {
+        if (activityEnd != null) {
+            this.activityEnd = activityEnd;
+        } else {
+            this.activityEnd = "";
+        }
+
+    }
+
+
+    /**
+     * 0代表不适用特价宝
+     */
+    public String getTejiabaoId() {
+
+        return this.tejiabaoId;
+    }
+
+    public void setTejiabaoId(String tejiabaoId) {
+        if (tejiabaoId != null) {
+            this.tejiabaoId = tejiabaoId;
+        } else {
+            this.tejiabaoId = "";
+        }
+
+    }
+
+
+    /**
+     * 1:促销  2:批量刷价格 3:价格披露 4:库存隔离
+     */
+    public String getPromotionType() {
+
+        return this.promotionType;
+    }
+
+    public void setPromotionType(String promotionType) {
+        if (promotionType != null) {
+            this.promotionType = promotionType;
+        } else {
+            this.promotionType = "";
+        }
+
+    }
+
+
+    /**
+
+     */
+    public int getRefTagId() {
+
+        return this.refTagId;
+    }
+
+    public void setRefTagId(int refTagId) {
+        this.refTagId = refTagId;
+    }
+
+
+    /**
+
+     */
+    public int geActive() {
+
+        return this.active;
+    }
+
+    public void setActive(int isActive) {
+        this.active = isActive;
+    }
+
+
+    /**
+     * 是否是全店特价宝的活动
+     */
+    public int getIsAllPromotion() {
+
+        return this.isAllPromotion;
+    }
+
+    public void setIsAllPromotion(int isAllPromotion) {
+        this.isAllPromotion = isAllPromotion;
+    }
+
+
 }

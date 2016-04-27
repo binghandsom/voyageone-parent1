@@ -8,6 +8,7 @@ public class TaskControlBean {
     private String cfg_name;
     private String cfg_val1;
     private String cfg_val2;
+    private String end_time;
 
     public String getTask_id() {
         return task_id;
@@ -63,5 +64,13 @@ public class TaskControlBean {
 
     public void setCfg_val2(String cfg_val2) {
         this.cfg_val2 = cfg_val2;
+    }
+
+    public String getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
     }
 }

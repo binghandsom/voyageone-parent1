@@ -7704,3 +7704,10 @@ input[datepicker-popup][readonly] {
 
 ul[uib-datepicker-popup-wrap] table { border: 0; }
 ul[uib-datepicker-popup-wrap] button { border: 0; }
+
+/**对bootstrap css的一些修改*/
+.popover-content {
+  padding: 9px 14px;
+  max-height: 330px;
+  overflow: auto;
+}

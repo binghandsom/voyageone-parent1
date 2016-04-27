@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.feed;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -43,9 +44,15 @@ class SEAnalysisContext {
             sku.setSize(feedBean.getSize());
         sku.setBarcode(feedBean.getUpc());
         sku.setClientSku(feedBean.getClientSku());
-        sku.setPrice_net(feedBean.getCost().doubleValue());
+        sku.setPriceNet(feedBean.getCost().doubleValue());
         BigDecimal price = new BigDecimal(getPriceCurrent(feedBean));
-        sku.setPrice_current(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+        sku.setPriceCurrent(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+        sku.setPriceMsrp(CommonUtil.getRoundUp2Digits(sku.getPriceCurrent() / 0.7));
+
+        sku.setPriceClientMsrp(CommonUtil.getRoundUp2Digits(sku.getPriceMsrp() / 6.5));
+
+        sku.setPriceClientRetail(CommonUtil.getRoundUp2Digits(sku.getPriceCurrent() / 6.5));
 
         CmsBtFeedInfoModel code = getProduct(feedBean);
 
@@ -78,8 +85,8 @@ class SEAnalysisContext {
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
-        product.setShort_description("");
-        product.setLong_description("");
+        product.setShortDescription("");
+        product.setLongDescription("");
         product.setSkus(new ArrayList<>());
         product.setAttribute(new HashMap<>());
         product.setUpdFlg(0);

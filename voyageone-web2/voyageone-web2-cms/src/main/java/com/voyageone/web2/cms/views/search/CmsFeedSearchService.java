@@ -9,6 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
@@ -53,13 +54,13 @@ public class CmsFeedSearchService extends BaseAppService {
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
         // 获取category list
-        List<CmsMtFeedCategoryModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
+        List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
         if (!feedCatList.isEmpty()) {
             feedCatList.remove(0);
         }
         List<Integer> delFlgList = new ArrayList<Integer>();
         for (int i = 0, leng = feedCatList.size(); i < leng; i ++) {
-            if (feedCatList.get(i).getIsChild() == 0) {
+            if (feedCatList.get(i).getIsParent() == 1) {
                 // 非子节点
                 delFlgList.add(i);
             }

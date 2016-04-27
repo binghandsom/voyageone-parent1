@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtPlatformConfigDao">
+    <resultMap id="ResultMap" type="CmsMtPlatformConfigModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`channel_id`,`cart_id`,`cfg_type`,`cfg_name`,`cfg_val`,`created`,`creater`,`modified`,`modifier`
+        from cms_mt_platform_config
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+            <if test="cfgType != null">
+                AND `cfg_type` = #{cfgType}
+            </if>
+            <if test="cfgName != null">
+                AND `cfg_name` = #{cfgName}
+            </if>
+            <if test="cfgVal != null">
+                AND `cfg_val` = #{cfgVal}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`channel_id`,`cart_id`,`cfg_type`,`cfg_name`,`cfg_val`,`created`,`creater`,`modified`,`modifier`
+        from cms_mt_platform_config
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+
+            <if test="cfgType != null">
+                AND `cfg_type` = #{cfgType}
+            </if>
+
+            <if test="cfgName != null">
+                AND `cfg_name` = #{cfgName}
+            </if>
+
+            <if test="cfgVal != null">
+                AND `cfg_val` = #{cfgVal}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`cart_id`,`cfg_type`,`cfg_name`,`cfg_val`,`created`,`creater`,`modified`,`modifier` from cms_mt_platform_config where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_mt_platform_config
+        set
+
+            `channel_id`=#{channelId}
+            ,`cart_id`=#{cartId}
+            ,`cfg_type`=#{cfgType}
+            ,`cfg_name`=#{cfgName}
+            ,`cfg_val`=#{cfgVal}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_platform_config
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_mt_platform_config
+        (
+              `channel_id`,
+              `cart_id`,
+              `cfg_type`,
+              `cfg_name`,
+              `cfg_val`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{cartId},
+              #{cfgType},
+              #{cfgName},
+              #{cfgVal},
+        now(),
+              #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+</mapper>

@@ -6,6 +6,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CartService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
+import com.voyageone.web2.cms.bean.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description
@@ -29,10 +31,15 @@ public class CmsCartController extends CmsController {
 
 
     @RequestMapping("list")
-    public AjaxResponse doList(@RequestBody CartBean con) {
+    public AjaxResponse doList(@RequestBody Map<String,String> params) {
 
-        List<CartBean> data = cartService.getAll(con);
-        return success(data);
+        CartBean bean = new CartBean();
+        bean.setCart_id(params.get("cart_id"));
+        bean.setName(params.get("name"));
+        bean.setCart_type(params.get("cart_type"));
+        bean.setActive(params.get("active"));
+        List<CartBean> data = cartService.getAll(bean);
+        return success(Page.fromMap(params).withData(data));
 
     }
 

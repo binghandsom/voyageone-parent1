@@ -440,4 +440,20 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return super.put(key, value);
     }
 
+    // 主数据平台是否为主商品
+    public int getIsMasterMain() {
+        return getAttribute("isMasterMain");
+    }
+
+    public void setIsMasterMain(int isMasterMain) {
+        setAttribute("isMasterMain", isMasterMain);
+    }
+
+    public int getMasterGroupQuantity() {
+        return getAttribute("masterGroupQuantity") != null ? Integer.parseInt(getAttribute("masterGroupQuantity").toString()) : 0;
+    }
+
+    public void setMasterGroupQuantity(int qty) {
+        setAttribute("masterGroupQuantity", qty);
+    }
 }

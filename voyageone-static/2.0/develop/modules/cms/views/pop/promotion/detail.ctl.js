@@ -22,15 +22,15 @@ define([
                     $scope.tejiabao=true;
                 }
             }else{
-                $scope.promotion.tagList=[{"tagId":"","channelId":"","tagName":""}];
+                $scope.promotion.tagList=[{"id":"","channelId":"","tagName":""}];
             }
         };
         $scope.addTag = function(){
             if($scope.promotion.tagList)
             {
-                $scope.promotion.tagList.push({"tagId":"","channelId":"","tagName":""});
+                $scope.promotion.tagList.push({"id":"","channelId":"","tagName":""});
             }else{
-                $scope.promotion.tagList=[{"tagId":"","channelId":"","tagName":""}];
+                $scope.promotion.tagList=[{"id":"","channelId":"","tagName":""}];
             }
 
         };

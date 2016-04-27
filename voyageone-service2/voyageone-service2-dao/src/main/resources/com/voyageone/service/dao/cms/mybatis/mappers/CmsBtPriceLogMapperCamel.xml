@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPriceLogDao">
+    <resultMap id="ResultMap" type="CmsBtPriceLogModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`product_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_price_log
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="productId != null">
+                AND `product_id` = #{productId}
+            </if>
+            <if test="code != null">
+                AND `code` = #{code}
+            </if>
+            <if test="sku != null">
+                AND `sku` = #{sku}
+            </if>
+            <if test="msrpPrice != null">
+                AND `msrp_price` = #{msrpPrice}
+            </if>
+            <if test="retailPrice != null">
+                AND `retail_price` = #{retailPrice}
+            </if>
+            <if test="salePrice != null">
+                AND `sale_price` = #{salePrice}
+            </if>
+            <if test="clientMsrpPrice != null">
+                AND `client_msrp_price` = #{clientMsrpPrice}
+            </if>
+            <if test="clientRetailPrice != null">
+                AND `client_retail_price` = #{clientRetailPrice}
+            </if>
+            <if test="clientNetPrice != null">
+                AND `client_net_price` = #{clientNetPrice}
+            </if>
+            <if test="comment != null">
+                AND `comment` = #{comment}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`product_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier`
+        from cms_bt_price_log
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="productId != null">
+                AND `product_id` = #{productId}
+            </if>
+
+            <if test="code != null">
+                AND `code` = #{code}
+            </if>
+
+            <if test="sku != null">
+                AND `sku` = #{sku}
+            </if>
+
+            <if test="msrpPrice != null">
+                AND `msrp_price` = #{msrpPrice}
+            </if>
+
+            <if test="retailPrice != null">
+                AND `retail_price` = #{retailPrice}
+            </if>
+
+            <if test="salePrice != null">
+                AND `sale_price` = #{salePrice}
+            </if>
+
+            <if test="clientMsrpPrice != null">
+                AND `client_msrp_price` = #{clientMsrpPrice}
+            </if>
+
+            <if test="clientRetailPrice != null">
+                AND `client_retail_price` = #{clientRetailPrice}
+            </if>
+
+            <if test="clientNetPrice != null">
+                AND `client_net_price` = #{clientNetPrice}
+            </if>
+
+            <if test="comment != null">
+                AND `comment` = #{comment}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`product_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier` from cms_bt_price_log where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_price_log
+        set
+
+            `channel_id`=#{channelId}
+            ,`product_id`=#{productId}
+            ,`code`=#{code}
+            ,`sku`=#{sku}
+            ,`msrp_price`=#{msrpPrice}
+            ,`retail_price`=#{retailPrice}
+            ,`sale_price`=#{salePrice}
+            ,`client_msrp_price`=#{clientMsrpPrice}
+            ,`client_retail_price`=#{clientRetailPrice}
+            ,`client_net_price`=#{clientNetPrice}
+            ,`comment`=#{comment}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_price_log
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_price_log
+        (
+              `channel_id`,
+              `product_id`,
+              `code`,
+              `sku`,
+              `msrp_price`,
+              `retail_price`,
+              `sale_price`,
+              `client_msrp_price`,
+              `client_retail_price`,
+              `client_net_price`,
+              `comment`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{productId},
+              #{code},
+              #{sku},
+              #{msrpPrice},
+              #{retailPrice},
+              #{salePrice},
+              #{clientMsrpPrice},
+              #{clientRetailPrice},
+              #{clientNetPrice},
+              #{comment},
+        now(),
+              #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+</mapper>

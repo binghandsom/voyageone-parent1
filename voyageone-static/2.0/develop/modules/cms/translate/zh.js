@@ -24,7 +24,8 @@ define(function(){
         "TXT_CONFIGURATION_SETTING": "配置设置",
         "TXT_TRANSLATION_MANAGER": "翻译管理",
         "TXT_TRANSLATION_INDEX": "翻译一览",
-        "TXT_SYSTEM_SETTING": "系统管理",
+        "TXT_SYSTEM_SETTING_MARKETING": "系统管理（运营）",
+        "TXT_SYSTEM_SETTING_IT": "系统管理（维护）",
         "TXT_CATEGORY_INDEX": "主类目一览",
         "TXT_ERROR_MANAGER_MARKETING": "异常一览（运营）",
         "TXT_ERROR_MANAGER_MAINTENANCE": "异常一览（维护）",
@@ -378,8 +379,6 @@ define(function(){
         "TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX": "重置方式导入时,原数据会全部被删除.你确定要继续?",
         "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
         "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
-        "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入 ",
-        "TXT_MSG_INPUT_WORD_LENCHK2": " 个文字",
         "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入 ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
@@ -409,6 +408,7 @@ define(function(){
         "BTN_ADD_TO_PROMOTION": "参加活动",
         "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
+        "BTN_UPDATE_COMMON_ATTRIBUTE": "更新共通属性",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
         "BTN_OK": "确定",
         "BTN_CLEAR": "清空",
@@ -461,6 +461,9 @@ define(function(){
         "REVERT": "正在还原",
         "RE_SUCCESS": "还原成功",
         "RE_FAIL": "还原失败",
-        "CANT_BEAT": "信息错误"
+        "CANT_BEAT": "信息错误",
+
+        /**分页显示*/
+        "TXT_PAGER_SIZE": "每页显示"
     };
 });

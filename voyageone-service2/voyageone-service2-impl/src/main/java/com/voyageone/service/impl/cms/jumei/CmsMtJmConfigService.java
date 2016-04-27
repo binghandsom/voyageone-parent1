@@ -1,14 +1,13 @@
 package com.voyageone.service.impl.cms.jumei;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.jumei.*;
+import com.voyageone.service.dao.jumei.CmsMtJmConfigDao;
 import com.voyageone.service.daoext.jumei.CmsMtJmConfigDaoExt;
-import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.model.jumei.CmsMtJmConfigModel;
 import com.voyageone.service.model.jumei.businessmodel.JMDefaultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +44,11 @@ public class CmsMtJmConfigService {
         JMDefaultSet jmDefaultSet = JacksonUtil.ToObjectFromJson(model.getValue(), JMDefaultSet.class);
 
         return  jmDefaultSet;
+    }
+    public int getShippingSystemId(String ChannelId) throws Exception {
+        JMDefaultSet defaultSet = getJMDefaultSet(ChannelId);
+        return defaultSet.getJmShippingStock();
+        //  return 2813;
     }
 }
 

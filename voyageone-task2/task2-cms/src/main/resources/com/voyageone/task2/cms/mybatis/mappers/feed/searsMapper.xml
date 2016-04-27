@@ -138,8 +138,8 @@
                 <result column="i_size" property="size" />
                 <result column="i_barcode" property="barcode" />
                 <result column="i_client_sku" property="clientSku" />
-                <result column="p_msrp" property="price_msrp" />
-                <result column="cps_cn_price_rmb" property="price_current" />
+                <result column="p_msrp" property="priceMsrp" />
+                <result column="cps_cn_price_rmb" property="priceCurrent" />
             </collection>
             <collection property="image" javaType="ArrayList" ofType="String" >
                 <result column="image" property="image" />

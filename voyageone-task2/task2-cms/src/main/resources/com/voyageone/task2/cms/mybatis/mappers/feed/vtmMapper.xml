@@ -9,8 +9,8 @@
         <result column="m_brand" property="brand" />
         <result column="m_model" property="model" />
         <result column="p_name" property="name" />
-        <result column="pe_short_description" property="short_description" />
-        <result column="pe_long_description" property="long_description" />
+        <result column="pe_short_description" property="shortDescription" />
+        <result column="pe_long_description" property="longDescription" />
         <result column="m_size_type" property="sizeType" />
         <result column="m_weight" property="weight" />
         <result column="p_code" property="code" />
@@ -20,6 +20,7 @@
         <result column="Dosage Size" property="DosageSize"/>
         <result column="Dosage Units" property="DosageUnits"/>
         <result column="Suggested Use" property="SuggestedUse"/>
+        <result column="Secondary Categories" property="secondaryCategories"/>
         <result column="Warnings" property="Warnings"/>
         <result column="clientProductURL" property="clientProductURL"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
@@ -27,11 +28,11 @@
             <result column="i_size" property="size" />
             <result column="i_barcode" property="barcode" />
             <result column="i_client_sku" property="clientSku" />
-            <result column="price_msrp" property="price_msrp" />
-            <result column="price_current" property="price_current" />
-            <result column="price_net" property="price_net" />
-            <result column="price_client_retail" property="price_client_retail" />
-            <result column="price_client_msrp" property="price_client_msrp" />
+            <result column="price_msrp" property="priceMsrp" />
+            <result column="price_current" property="priceCurrent" />
+            <result column="price_net" property="priceNet" />
+            <result column="price_client_retail" property="priceClientRetail" />
+            <result column="price_client_msrp" property="priceClientMsrp" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -77,6 +78,7 @@
         ,`Suggested Use`
         ,`Dosage Size`
         ,`Dosage Units`
+        ,`Secondary Categories`
         from
         ${tableName}
         ${keyword}

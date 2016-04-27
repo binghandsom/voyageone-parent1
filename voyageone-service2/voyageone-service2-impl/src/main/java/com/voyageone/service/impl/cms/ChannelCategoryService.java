@@ -4,10 +4,10 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.cms.CmsBtChannelCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
+import com.voyageone.service.daoext.cms.CmsMtChannelCategoryConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtChannelCategoryModel;
+import com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ChannelCategoryService extends BaseService {
 
     @Autowired
-    private CmsBtChannelCategoryDao cmsBtChannelCategoryDao;
+    private CmsMtChannelCategoryConfigDaoExt cmsMtChannelCategoryConfigDaoExt;
 
     @Autowired
     private CmsMtCategoryTreeDao cmsMtCategoryTreeDao;
@@ -31,9 +31,9 @@ public class ChannelCategoryService extends BaseService {
     public List<CmsMtCategoryTreeModel> getCategoriesByChannelId(String channelId) {
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
 
-        List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
-        for (CmsBtChannelCategoryModel mapping : mappings) {
-            String catId = mapping.getCatId();
+        List<CmsMtChannelCategoryConfigModel> mappings = getByChannelId(channelId);
+        for (CmsMtChannelCategoryConfigModel mapping : mappings) {
+            String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel model = cmsMtCategoryTreeDao.selectByCatId(catId);
             if (model != null) {
                 result.add(model);
@@ -51,11 +51,10 @@ public class ChannelCategoryService extends BaseService {
     public List<CmsMtCategoryTreeModel> getAllCategoriesByChannelId(String channelId) throws IOException{
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
 
-        List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
-        for (CmsBtChannelCategoryModel mapping : mappings) {
-            String catId = mapping.getCatId();
+        List<CmsMtChannelCategoryConfigModel> mappings = getByChannelId(channelId);
+        for (CmsMtChannelCategoryConfigModel mapping : mappings) {
+            String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
-
             if (category.getIsParent() == 1) {
 
                 // 将父类添加到result结果集
@@ -87,9 +86,9 @@ public class ChannelCategoryService extends BaseService {
     public List<CmsMtCategoryTreeModel> getFinallyCategoriesByChannelId(String channelId) throws IOException{
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
 
-        List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
-        for (CmsBtChannelCategoryModel mapping : mappings) {
-            String catId = mapping.getCatId();
+        List<CmsMtChannelCategoryConfigModel> mappings = getByChannelId(channelId);
+        for (CmsMtChannelCategoryConfigModel mapping : mappings) {
+            String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
 
             if (category.getIsParent() == 1) {
@@ -109,23 +108,23 @@ public class ChannelCategoryService extends BaseService {
     /**
      * 取得Mapping定义 根据channelId
      */
-    public List<CmsBtChannelCategoryModel> getByChannelId(String channelId) {
-        return cmsBtChannelCategoryDao.selectbyChannelId(channelId);
+    public List<CmsMtChannelCategoryConfigModel> getByChannelId(String channelId) {
+        return cmsMtChannelCategoryConfigDaoExt.selectbyChannelId(channelId);
     }
 
     /**
      * 保存Mapping定义
      */
     @VOTransactional
-    public void save(CmsBtChannelCategoryModel model) {
-        cmsBtChannelCategoryDao.insert(model);
+    public void save(CmsMtChannelCategoryConfigModel model) {
+        cmsMtChannelCategoryConfigDaoExt.insert(model);
     }
 
     /**
      * 保存Mapping List定义
      */
     @VOTransactional
-    public void saveWithList(List<CmsBtChannelCategoryModel> models) {
-        cmsBtChannelCategoryDao.insertWithList(models);
+    public void saveWithList(List<CmsMtChannelCategoryConfigModel> models) {
+        cmsMtChannelCategoryConfigDaoExt.insertWithList(models);
     }
 }

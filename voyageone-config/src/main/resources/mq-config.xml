@@ -32,5 +32,25 @@
     <!-- spring template声明-->
     <rabbit:template id="amqpTemplate" connection-factory="rabbitConnFactory" />
 
+    <!-- mq 监听器工厂 -->
+    <bean id="rabbitListenerContainerFactory" class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
+        <property name="connectionFactory" ref="rabbitConnFactory" />
+        <property name="missingQueuesFatal" value="false" />
+        <property name="errorHandler" ref="errorHandler" /><!-- error 处理 -->
+    </bean>
+
+    <bean id="voRabbitMqLocalConfig" class="com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig">
+        <!-- 是否本地环境 -->
+        <property name="local" value="true" />
+    </bean>
+
+    <!-- 异常处理器 -->
+    <bean id="errorHandler" class="org.springframework.amqp.rabbit.listener.ConditionalRejectingErrorHandler">
+        <constructor-arg name="exceptionStrategy" ref="voExceptionStrategy" />
+    </bean>
+
+    <!-- 致命异常判定策略 -->
+    <bean id="voExceptionStrategy" class="com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy" />
+
 
 </beans>

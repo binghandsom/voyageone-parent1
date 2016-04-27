@@ -32,21 +32,10 @@ public class CmsGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.GROUP.DETAIL.INIT)
     public AjaxResponse init(@RequestBody Map<String, Object> params) throws Exception {
-
-        Map<String, Object> resultBean = new HashMap<>();
+        Map<String, Object> resultBean = getProductInfoList(params);
 
         // 获取master数据
-        resultBean.put("masterData", cmsGroupListService.getMasterData(getUser(), getLang()));
-
-        // 返回product数据
-        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList);
-        long totalCount = cmsGroupListService.getProductCnt(params, getUser(), getCmsSession());
-        resultBean.put("productListTotal", totalCount);
-
-        List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
-        resultBean.put("productIds", productIds);
-
+        resultBean.put("masterData", cmsGroupListService.getMasterData(getUser()));
         return success(resultBean);
     }
 
@@ -57,19 +46,31 @@ public class CmsGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.GROUP.DETAIL.GET_PRODUCT_LIST)
     public AjaxResponse getProductList(@RequestBody Map<String, Object> params) {
+        // 返回信息
+        return success(getProductInfoList(params));
+    }
+
+    private Map<String, Object> getProductInfoList(Map<String, Object> params) {
+        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
+
+        int pageNum = Integer.valueOf(params.get("pageNum").toString());
+        int pageSize = Integer.valueOf(params.get("pageSize").toString());
+        int staIdx = (pageNum - 1) * pageSize;
+        int endIdx = staIdx + pageSize;
+        int listTotal = productList.size();
+        if (endIdx > listTotal) {
+            endIdx = listTotal;
+        }
 
         Map<String, Object> resultBean = new HashMap<>();
-
-        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList);
-        long totalCount = cmsGroupListService.getProductCnt(params, getUser(), getCmsSession());
-        resultBean.put("productListTotal", totalCount);
+        resultBean.put("productList", productList.subList(staIdx, endIdx));
+        resultBean.put("productListTotal", listTotal);
 
         List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
         resultBean.put("productIds", productIds);
 
-        // 返回用户信息
-        return success(resultBean);
+        // 返回信息
+        return resultBean;
     }
 
     /**

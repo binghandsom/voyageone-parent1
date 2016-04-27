@@ -2,7 +2,6 @@ package com.voyageone.service.model.cms.mongo.feed;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
-import com.voyageone.service.model.cms.mongo.feed.mapping.Scope;
 
 import java.util.List;
 
@@ -23,7 +22,9 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
         super(channelId);
     }
 
-    private Scope scope;
+    private String feedCategoryPath;
+
+    private String mainCategoryPath;
 
     private int defaultMapping;
 
@@ -33,12 +34,20 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
 
     private List<Prop> props;
 
-    public Scope getScope() {
-        return scope;
+    public String getFeedCategoryPath() {
+        return feedCategoryPath;
     }
 
-    public void setScope(Scope scope) {
-        this.scope = scope;
+    public void setFeedCategoryPath(String feedCategoryPath) {
+        this.feedCategoryPath = feedCategoryPath;
+    }
+
+    public String getMainCategoryPath() {
+        return mainCategoryPath;
+    }
+
+    public void setMainCategoryPath(String mainCategoryPath) {
+        this.mainCategoryPath = mainCategoryPath;
     }
 
     public int getDefaultMapping() {

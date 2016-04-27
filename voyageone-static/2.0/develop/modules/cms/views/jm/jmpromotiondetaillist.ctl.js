@@ -12,6 +12,7 @@ define([
         $scope.parentModel={};
         $scope.modelUpdateDealEndTime={};
         $scope.modelAllUpdateDealEndTime={};
+        $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
         $scope.initialize = function () {
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                     $scope.parentModel = res.data;
@@ -26,16 +27,26 @@ define([
             $scope.searchInfo = {};
         };
         $scope.search = function () {
-           // console.log("searchInfo");
-           // console.log($scope.searchInfo);
+            // console.log("searchInfo");
+            // console.log($scope.searchInfo);
             loadSearchInfo();
-            jmPromotionDetailService.getPromotionProductInfoListByWhere($scope.searchInfo).then(function (res) {
-                //console.log(res);
+            var data = angular.copy($scope.searchInfo);
+             goPage(1,10)
+            jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
+                $scope.dataPageOption.total = res.data;
+            }, function (res) {
+            });
+        };
+        function  goPage(pageIndex,size) {
+            loadSearchInfo();
+            var data = angular.copy($scope.searchInfo);
+            data.start = (pageIndex - 1) * size;
+            data.length = size;
+            jmPromotionDetailService.getPromotionProductInfoListByWhere(data).then(function (res) {
                 $scope.vm.modelList = res.data;
-                // $scope.groupPageOption.total = $scope.vm.modelList.size;
             }, function (res) {
             })
-        };
+        }
          var getSelectedProductIdList=function()
          {
              var productIdList = [];
@@ -119,6 +130,19 @@ define([
                     $scope.vm.modelList.splice(index, 1);
                 }, function (res) {
                 })
+            })
+        };
+        $scope.updateJM = function(promotionProductId)
+        {
+            jmPromotionDetailService.updateJM(promotionProductId).then(function (res) {
+                if (res.data.result) {
+                    alert("更新成功");
+                }
+                else {
+                    alert("更新失败");
+                }
+            }, function (res) {
+                alert("更新失败");
             })
         };
         $scope.updateDealPrice = function (data) {

@@ -1,12 +1,6 @@
 package com.voyageone.service.model.ims;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.common.Constants;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
-import com.voyageone.service.model.cms.enums.BeatFlag;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by morse.lu on 16/4/20.

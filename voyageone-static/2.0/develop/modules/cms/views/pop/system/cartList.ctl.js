@@ -16,34 +16,6 @@ define([
                 ['3', 'MiniMall']
             ];
 
-            //$scope.PLATFORMS = [
-            //    {
-            //        "platform_id": 1,
-            //        "platform": "TB",
-            //        "comment": "淘宝平台"
-            //    },
-            //    {
-            //        "platform_id": 2,
-            //        "platform": "JD",
-            //        "comment": "京东平台"
-            //    },
-            //    {
-            //        "platform_id": 3,
-            //        "platform": "CN",
-            //        "comment": "独立域名"
-            //    },
-            //    {
-            //        "platform_id": 4,
-            //        "platform": "JM",
-            //        "comment": "聚美优品"
-            //    },
-            //    {
-            //        "platform_id": 5,
-            //        "platform": "OF",
-            //        "comment": "线下平台"
-            //    }
-            //];
-
             $scope.PLATFORM_DICT=context.PLATFORM_DICT;
 
 

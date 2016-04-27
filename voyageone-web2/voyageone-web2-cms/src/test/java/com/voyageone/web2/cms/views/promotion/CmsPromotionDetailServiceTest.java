@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.promotion;
 
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionDetailService;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class CmsPromotionDetailServiceTest {
         param.put("promotionId", 1);
         param.put("start", 1);
         param.put("length", 10);
-        cmsPromotionDetailService.getPromotionGroup(param);
+        cmsPromotionDetailService.getPromotionGroup(param, 0);
     }
 
     @Test
@@ -80,16 +80,16 @@ public class CmsPromotionDetailServiceTest {
 
     @Test
     public void testTeJiaBaoPromotionInsert() throws Exception {
-        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
-        cmsBtPromotionCodeModel.setProductId(22151L);
-        cmsBtPromotionCodeModel.setProductCode("BF00003YGK");
-        cmsBtPromotionCodeModel.setPromotionPrice(100.0);
-        cmsBtPromotionCodeModel.setPromotionId(0);
-        cmsBtPromotionCodeModel.setNumIid("523128668920");
-        cmsBtPromotionCodeModel.setChannelId("010");
-        cmsBtPromotionCodeModel.setCartId(23);
-        cmsBtPromotionCodeModel.setModifier("james");
-        promotionDetailService.teJiaBaoPromotionInsert(cmsBtPromotionCodeModel);
+        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+        cmsBtPromotionCodesBean.setProductId(22151L);
+        cmsBtPromotionCodesBean.setProductCode("BF00003YGK");
+        cmsBtPromotionCodesBean.setPromotionPrice(100.0);
+        cmsBtPromotionCodesBean.setPromotionId(0);
+        cmsBtPromotionCodesBean.setNumIid("523128668920");
+        cmsBtPromotionCodesBean.setChannelId("010");
+        cmsBtPromotionCodesBean.setCartId(23);
+        cmsBtPromotionCodesBean.setModifier("james");
+        promotionDetailService.teJiaBaoPromotionInsert(cmsBtPromotionCodesBean);
     }
 
     @Test

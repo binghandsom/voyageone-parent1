@@ -44,7 +44,7 @@
             a.creater,
             a.modified,
             a.modifier
-        FROM voyageone_cms2.cms_bt_promotion_code a
+        FROM voyageone_cms2.cms_bt_promotion_codes a
         INNER JOIN (
             SELECT
                 p.promotion_id,
@@ -69,7 +69,7 @@
 
     <select id="select_promotion_log_cnt" resultType="int" parameterType="HashMap">
         SELECT COUNT(1)
-        FROM voyageone_cms2.cms_bt_promotion_code a
+        FROM voyageone_cms2.cms_bt_promotion_codes a
         INNER JOIN (
             SELECT
                 p.promotion_id,

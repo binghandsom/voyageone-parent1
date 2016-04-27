@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmProductDao">
     <resultMap id="ResultMap" type="CmsBtJmProductModel">
-        
+
     </resultMap>
-	
+
     <select id="selectList" resultMap="ResultMap">
 
         select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id`,`area_code`,`last_jm_deal_begin`,`last_jm_deal_end`        from cms_bt_jm_product
@@ -156,207 +156,207 @@
                         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id`,`area_code`,`last_jm_deal_begin`,`last_jm_deal_end` from cms_bt_jm_product 
+        select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id`,`area_code`,`last_jm_deal_begin`,`last_jm_deal_end` from cms_bt_jm_product
         <where>
-                
+
                     <if test="id != null">
                         AND id = #{id}
-                    </if> 
-                
+                    </if>
+
                     <if test="channelId != null">
                         AND channel_id = #{channelId}
-                    </if> 
-                
+                    </if>
+
                     <if test="jumeiProductId != null">
                         AND jumei_product_id = #{jumeiProductId}
-                    </if> 
-                
+                    </if>
+
                     <if test="productCode != null">
                         AND product_code = #{productCode}
-                    </if> 
-                
+                    </if>
+
                     <if test="foreignLanguageName != null">
                         AND foreign_language_name = #{foreignLanguageName}
-                    </if> 
-                
+                    </if>
+
                     <if test="productNameCn != null">
                         AND product_name_cn = #{productNameCn}
-                    </if> 
-                
+                    </if>
+
                     <if test="productLongName != null">
                         AND product_long_name = #{productLongName}
-                    </if> 
-                
+                    </if>
+
                     <if test="productMediumName != null">
                         AND product_medium_name = #{productMediumName}
-                    </if> 
-                
+                    </if>
+
                     <if test="productShortName != null">
                         AND product_short_name = #{productShortName}
-                    </if> 
-                
+                    </if>
+
                     <if test="voCategoryName != null">
                         AND vo_category_name = #{voCategoryName}
-                    </if> 
-                
+                    </if>
+
                     <if test="categoryLv1Name != null">
                         AND category_lv1_name = #{categoryLv1Name}
-                    </if> 
-                
+                    </if>
+
                     <if test="categoryLv2Name != null">
                         AND category_lv2_name = #{categoryLv2Name}
-                    </if> 
-                
+                    </if>
+
                     <if test="categoryLv3Name != null">
                         AND category_lv3_name = #{categoryLv3Name}
-                    </if> 
-                
+                    </if>
+
                     <if test="categoryLv4Name != null">
                         AND category_lv4_name = #{categoryLv4Name}
-                    </if> 
-                
+                    </if>
+
                     <if test="categoryLv4Id != null">
                         AND category_lv4_id = #{categoryLv4Id}
-                    </if> 
-                
+                    </if>
+
                     <if test="voBrandName != null">
                         AND vo_brand_name = #{voBrandName}
-                    </if> 
-                
+                    </if>
+
                     <if test="brandName != null">
                         AND brand_name = #{brandName}
-                    </if> 
-                
+                    </if>
+
                     <if test="brandId != null">
                         AND brand_id = #{brandId}
-                    </if> 
-                
+                    </if>
+
                     <if test="productType != null">
                         AND product_type = #{productType}
-                    </if> 
-                
+                    </if>
+
                     <if test="sizeType != null">
                         AND size_type = #{sizeType}
-                    </if> 
-                
+                    </if>
+
                     <if test="colorEn != null">
                         AND color_en = #{colorEn}
-                    </if> 
-                
+                    </if>
+
                     <if test="attribute != null">
                         AND attribute = #{attribute}
-                    </if> 
-                
+                    </if>
+
                     <if test="origin != null">
                         AND origin = #{origin}
-                    </if> 
-                
+                    </if>
+
                     <if test="addressOfProduce != null">
                         AND address_of_produce = #{addressOfProduce}
-                    </if> 
-                
+                    </if>
+
                     <if test="materialEn != null">
                         AND material_en = #{materialEn}
-                    </if> 
-                
+                    </if>
+
                     <if test="materialCn != null">
                         AND material_cn = #{materialCn}
-                    </if> 
-                
+                    </if>
+
                     <if test="productDesEn != null">
                         AND product_des_en = #{productDesEn}
-                    </if> 
-                
+                    </if>
+
                     <if test="productDesCn != null">
                         AND product_des_cn = #{productDesCn}
-                    </if> 
-                
+                    </if>
+
                     <if test="availablePeriod != null">
                         AND available_period = #{availablePeriod}
-                    </if> 
-                
+                    </if>
+
                     <if test="applicableCrowd != null">
                         AND applicable_crowd = #{applicableCrowd}
-                    </if> 
-                
+                    </if>
+
                     <if test="searchMetaTextCustom != null">
                         AND search_meta_text_custom = #{searchMetaTextCustom}
-                    </if> 
-                
+                    </if>
+
                     <if test="functionIds != null">
                         AND function_ids = #{functionIds}
-                    </if> 
-                
+                    </if>
+
                     <if test="msrp != null">
                         AND msrp = #{msrp}
-                    </if> 
-                
+                    </if>
+
                     <if test="hsCode != null">
                         AND hs_code = #{hsCode}
-                    </if> 
-                
+                    </if>
+
                     <if test="hsName != null">
                         AND hs_name = #{hsName}
-                    </if> 
-                
+                    </if>
+
                     <if test="hsUnit != null">
                         AND hs_unit = #{hsUnit}
-                    </if> 
-                
+                    </if>
+
                     <if test="sendFlg != null">
                         AND send_flg = #{sendFlg}
-                    </if> 
-                
+                    </if>
+
                     <if test="state != null">
                         AND state = #{state}
-                    </if> 
-                
+                    </if>
+
                     <if test="created != null">
                         AND created = #{created}
-                    </if> 
-                
+                    </if>
+
                     <if test="creater != null">
                         AND creater = #{creater}
-                    </if> 
-                
+                    </if>
+
                     <if test="modified != null">
                         AND modified = #{modified}
-                    </if> 
-                
+                    </if>
+
                     <if test="modifier != null">
                         AND modifier = #{modifier}
-                    </if> 
-                
+                    </if>
+
                     <if test="synFlg != null">
                         AND syn_flg = #{synFlg}
-                    </if> 
-                
+                    </if>
+
                     <if test="specialNote != null">
                         AND specialNote = #{specialNote}
-                    </if> 
-                
+                    </if>
+
                     <if test="lastJmHashId != null">
                         AND last_jm_hash_id = #{lastJmHashId}
-                    </if> 
-                
+                    </if>
+
                     <if test="areaCode != null">
                         AND area_code = #{areaCode}
-                    </if> 
-                
+                    </if>
+
                     <if test="lastJmDealBegin != null">
                         AND last_jm_deal_begin = #{lastJmDealBegin}
-                    </if> 
-                
+                    </if>
+
                     <if test="lastJmDealEnd != null">
                         AND last_jm_deal_end = #{lastJmDealEnd}
-                    </if> 
+                    </if>
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select `id`,`channel_id`,`jumei_product_id`,`product_code`,`foreign_language_name`,`product_name_cn`,`product_long_name`,`product_medium_name`,`product_short_name`,`vo_category_name`,`category_lv1_name`,`category_lv2_name`,`category_lv3_name`,`category_lv4_name`,`category_lv4_id`,`vo_brand_name`,`brand_name`,`brand_id`,`product_type`,`size_type`,`color_en`,`attribute`,`origin`,`address_of_produce`,`material_en`,`material_cn`,`product_des_en`,`product_des_cn`,`available_period`,`applicable_crowd`,`search_meta_text_custom`,`function_ids`,`msrp`,`hs_code`,`hs_name`,`hs_unit`,`send_flg`,`state`,`created`,`creater`,`modified`,`modifier`,`syn_flg`,`specialNote`,`last_jm_hash_id`,`area_code`,`last_jm_deal_begin`,`last_jm_deal_end` from cms_bt_jm_product where id=#{id}
     </select>
 
-     <update id="update">f
+     <update id="update">
         update cms_bt_jm_product
         set
 
@@ -398,13 +398,14 @@
             ,`send_flg`=#{sendFlg}
             ,`state`=#{state}
             ,`modifier`=#{modifier}
+            ,`modified`=now()
             ,`syn_flg`=#{synFlg}
             ,`specialNote`=#{specialNote}
             ,`last_jm_hash_id`=#{lastJmHashId}
             ,`area_code`=#{areaCode}
             ,`last_jm_deal_begin`=#{lastJmDealBegin}
             ,`last_jm_deal_end`=#{lastJmDealEnd}
-         where id=#{id}   
+         where id=#{id}
    </update>
 
     <delete id="delete">
