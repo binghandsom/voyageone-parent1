@@ -94,6 +94,7 @@ public class LiquidFireClient {
             while ((len = is.read(bs)) != -1) {
                 os.write(bs, 0, len);
             }
+            os.flush();
         } finally {
             if (os != null) {
                 os.close();

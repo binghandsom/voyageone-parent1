@@ -64,6 +64,8 @@ public class ImageCreateFileService extends BaseService {
         modelFile.setUsCdnFilePath(usCDNFilePath);
         modelFile.setState(0);
         modelFile.setOssState(0);
+        modelFile.setErrorCode(0);
+        modelFile.setErrorMsg("");
         modelFile.setCreater(Creater);
         modelFile.setModifier(Creater);
         cmsMtImageCreateFileDao.insert(modelFile);

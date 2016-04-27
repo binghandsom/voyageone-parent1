@@ -29,6 +29,7 @@ public class CmsImageFileService extends BaseService {
     public GetImageResultBean getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
         GetImageResultBean result = new GetImageResultBean();
         CmsMtImageCreateFileModel modelFile = null;
+        boolean isCreateNewFile = false;
         try {
             //hashCode做缓存key
             long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam);
@@ -41,6 +42,7 @@ public class CmsImageFileService extends BaseService {
             if (modelFile.getState() == 0) {
                 //2.生成图片 from LiquidFire
                 serviceLiquidFireImage.createImage(modelFile);
+                isCreateNewFile = true;
             }
             if (modelFile.getOssState() == 0) {
                 //3.上传图片到阿里云OSS
@@ -69,8 +71,11 @@ public class CmsImageFileService extends BaseService {
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         } finally {
-            if (modelFile != null && modelFile.getFilePath() != null) {
-                FileUtils.delFile(modelFile.getFilePath());
+            if (modelFile != null && modelFile.getFilePath() != null && isCreateNewFile) {
+                try {
+                    FileUtils.delFile(modelFile.getFilePath());
+                } catch (Exception ignored) {
+                }
             }
         }
 

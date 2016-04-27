@@ -45,15 +45,15 @@ public class LiquidFireImageService extends BaseService {
         try {
             modelFile = daoCmsMtImageCreateFile.select(CmsMtImageCreateFileId);
             createImage(modelFile);
-        } catch (OpenApiException ex)//业务异常
-        {
+        } catch (OpenApiException ex) {
+            //业务异常
             if (modelFile != null) {
                 modelFile.setErrorCode(ex.getErrorCode());
                 modelFile.setErrorMsg(ex.getMsg());
                 daoCmsMtImageCreateFile.update(modelFile);
             }
-        } catch (Exception ex)//未知异常
-        {
+        } catch (Exception ex) {
+            //未知异常
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
             $error("createImage requestId:" + requestId, ex);
             issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM, "createImage requestId:" + requestId);

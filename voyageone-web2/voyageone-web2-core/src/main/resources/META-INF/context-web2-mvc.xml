@@ -51,7 +51,7 @@
     <mvc:interceptors>
         <!-- 共通检查及处理拦截器 -->
         <mvc:interceptor>
-            <mvc:mapping path="/**"/>
+            <mvc:mapping path="/"/>
             <!-- 例外 -->
             <mvc:exclude-mapping path="/core/access/user/login"/>
             <mvc:exclude-mapping path="/rest/**"/>
