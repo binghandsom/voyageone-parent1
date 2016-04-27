@@ -67,7 +67,7 @@ public class CmsMtImageCreateFileModel extends BaseModel {
     /**
      * 错误码
      */
-    private int errorCode;
+    private int errorCode = 0;
 
     /**
      * 请求参数生成的hashcode

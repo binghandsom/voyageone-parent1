@@ -17,6 +17,7 @@ public class USCDNFileService extends BaseService {
 
     @Autowired
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
+
     private void upload(String UsCdnFilePath, String localFilePath) throws OpenApiException {
         try {
             USCDNClient client = new USCDNClient(ImageConfig.getUSCDNUrl(), ImageConfig.getUSCDNUserName(), ImageConfig.getUSCDNPassword(), ImageConfig.getUSCDNWorkingDirectory());
@@ -25,33 +26,39 @@ public class USCDNFileService extends BaseService {
             throw new OpenApiException(ImageErrorEnum.USCDNUploadError, "上传USCDN错误", ex);
         }
     }
+
     public void upload(CmsMtImageCreateFileModel modelFile) throws OpenApiException {
-        if (modelFile.getUscdnState() == 0) {//上传USCDN
+        //上传USCDN
+        if (modelFile.getUscdnState() == 0) {
             upload(modelFile.getUsCdnFilePath(), modelFile.getFilePath());
             modelFile.setUscdnState(1);
+            //清楚报错信息
+            modelFile.setErrorCode(0);
+            modelFile.setErrorMsg("");
             daoCmsMtImageCreateFile.update(modelFile);
         }
     }
+
     public void jobUpload(int CmsMtImageCreateFileRowId) {
         CmsMtImageCreateFileModel modelFile = null;
         try {
             modelFile = daoCmsMtImageCreateFile.select(CmsMtImageCreateFileRowId);
             upload(modelFile);
-        } catch (OpenApiException ex)//业务异常
-        {
+        } catch (OpenApiException ex) {
+            //业务异常
             if (modelFile != null) {
                 modelFile.setErrorCode(ex.getErrorCode());
                 modelFile.setErrorMsg(ex.getMsg());
                 daoCmsMtImageCreateFile.update(modelFile);
             }
-        } catch (Exception ex)//未知异常
-        {
+        } catch (Exception ex) {
+            //未知异常
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
             $error("jobUpload requestId:" + requestId, ex);
-            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM,"jobUpload requestId:"+requestId);
+            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM, "jobUpload requestId:" + requestId);
             if (modelFile != null) {
                 modelFile.setErrorCode(ImageErrorEnum.SystemError.getCode());
-                modelFile.setErrorMsg("requestId:"+requestId+ex.getMessage());
+                modelFile.setErrorMsg("requestId:" + requestId + ex.getMessage());
                 daoCmsMtImageCreateFile.update(modelFile);
             }
         }

@@ -31,6 +31,9 @@ public class LiquidFireImageService extends BaseService {
             String filePath = createImage(modelTemplate.getContent(), modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
             modelFile.setFilePath(filePath);
             modelFile.setState(1);
+            //清楚报错信息
+            modelFile.setErrorCode(0);
+            modelFile.setErrorMsg("");
             daoCmsMtImageCreateFile.update(modelFile);
         } catch (Exception ex) {
             throw new OpenApiException(ImageErrorEnum.LiquidCreateImageError, ex);

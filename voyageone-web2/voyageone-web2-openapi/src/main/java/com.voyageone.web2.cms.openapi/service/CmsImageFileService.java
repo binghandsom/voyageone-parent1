@@ -67,7 +67,7 @@ public class CmsImageFileService extends BaseService {
             $error("getImage requestId:" + requestId, ex);
             result.setRequestId(requestId);
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
-            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());//成功清理
+            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         } finally {
             if (modelFile != null && modelFile.getFilePath() != null) {
                 FileUtils.delFile(modelFile.getFilePath());

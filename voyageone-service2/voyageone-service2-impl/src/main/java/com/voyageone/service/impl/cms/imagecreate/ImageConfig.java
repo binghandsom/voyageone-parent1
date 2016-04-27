@@ -11,9 +11,12 @@ public class ImageConfig {
     public static String getAliYunAccessKeySecret() {
         return getValue("AliYun_OSS_Confige", "accessKeySecret");
     }
+    public static String getAliYunBucketName() {
+        return getValue("AliYun_OSS_Confige", "bucketName");
+    }
+
     public static String getValue(String id, String code) {
-        String value = Codes.getCodeName(id,code);
-        return value;
+        return Codes.getCodeName(id,code);
     }
     public static String getLiquidFireUrl() {
         return getValue("LiquidFire_Confige", "url");
@@ -56,6 +59,8 @@ public class ImageConfig {
 //    VALUE('AliYun_OSS_Confige','accessKeyId','v5l02zcFVl6rBKXg','','阿里云oss accessKeyId',NOW(),'system','system',1);
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
 //    VALUE('AliYun_OSS_Confige','accessKeySecret','c6VxvbVsDLZI4vAePHn6PxsEAuQGuq','','阿里云oss accessKeySecret',NOW(),'system','system',1);
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('AliYun_OSS_Confige','bucketName','shenzhen-vo','','阿里云bucketName',NOW(),'system','system',1);
 //
 //    -- LiquidFire 生成图片配置
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
