@@ -19,12 +19,16 @@ define([
          */
         function doStore(){
             if($scope.pop.command !== 'EXECUTE')
+            {
                 alert("该操作为不可恢复操作，请输入大写EXECUTE以确认！");
+                return;
+            }
+
           switch(context.upLoadFlag)
             {
                 case 1:
                     $storeOpService.rePublist().then(function(resp){
-                        notify("success");
+                        console.log(resp);
                     });
                     break;
                 case 3:

@@ -72,7 +72,7 @@ define(['cms'], function (cms) {
             },
             
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.$uibModalInstance.dismiss();
             }
         };
 

@@ -362,7 +362,7 @@ define([
                 // 这里同 getTextWord 函数底部的作用相同
                 var prop = this.property;
                 prop.value = prop.values = null;
-                this.$modal.dismiss('cancel');
+                this.$modal.dismiss();
             }
         };
 

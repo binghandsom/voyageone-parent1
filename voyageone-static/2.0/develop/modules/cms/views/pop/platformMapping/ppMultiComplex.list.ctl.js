@@ -74,7 +74,7 @@ define([
                 this.cancel();
             },
             cancel: function () {
-                this.$modal.dismiss('cancel');
+                this.$modal.dismiss();
             }
         };
 

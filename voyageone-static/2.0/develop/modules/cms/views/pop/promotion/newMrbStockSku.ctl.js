@@ -67,7 +67,7 @@ define([
                 });
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                this.$uibModalInstance.dismiss();
             }
         };
 
