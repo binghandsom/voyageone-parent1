@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -35,6 +36,8 @@ public class CmsGroupDetailService extends BaseAppService {
     private ProductService productService;
     @Autowired
     private PromotionService promotionService;
+    @Autowired
+    private CmsBtJmPromotionService cmsBtJmPromotionService;
 
     private final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;skus";
@@ -48,6 +51,9 @@ public class CmsGroupDetailService extends BaseAppService {
 
         // 获取promotion list
         masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
+
+        //add by holysky  新增一些页的聚美促销活动预加载
+        masterData.put("jmPromotionList", cmsBtJmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
 
         return masterData;
     }
