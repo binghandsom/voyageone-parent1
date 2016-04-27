@@ -1,10 +1,12 @@
 package com.voyageone.service.impl.cms.imagecreate;
+import com.aliyun.oss.common.utils.DateUtil;
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.HashCodeUtil;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
@@ -117,13 +119,14 @@ public class CmsMtImageCreateFileService extends BaseService {
         modelFile.setTemplateId(templateId);
         modelFile.setFile(file);//文件名字
         modelFile.setHashCode(hashCode);
-        modelFile.setCreated(new Date());
-        modelFile.setCreater(Creater);
-        modelFile.setModifier(Creater);
         modelFile.setOssFilePath(ossFilePath);
         modelFile.setUsCdnFilePath(USCDNFilePath);
         modelFile.setState(0);
         modelFile.setOssState(0);
+        modelFile.setCreated(DateTimeUtil.getNow());
+        modelFile.setCreater(Creater);
+        modelFile.setModified(DateTimeUtil.getNow());
+        modelFile.setModifier(Creater);
         dao.insert(modelFile);
         return modelFile;
     }
@@ -141,35 +144,35 @@ public class CmsMtImageCreateFileService extends BaseService {
         return HashCodeUtil.getHashCode(parameter);
     }
 
-    public AddListRespone addList(AddListParameter parameter) {
-        AddListRespone result = new AddListRespone();
-        try {
-            checkAddListParameter(parameter);
-//            transactionRunner.runWithTran(() -> {
-//
-//            });
-            for (CreateImageParameter imageInfo : parameter.getData()) {
-                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
-                if (!existsHashCode(hashCode)) {//1.创建记录信息
-                    createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
-                }
-            }
-        } catch (OpenApiException ex) {
-            result.setErrorCode(ex.getErrorCode());
-            result.setErrorMsg(ex.getMsg());
-            if (ex.getSuppressed() != null) {
-                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-                $error("AddList requestId:" + requestId, ex);
-            }
-        } catch (Exception ex) {
-            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-            $error("AddList requestId:" + requestId, ex);
-            result.setRequestId(requestId);
-            result.setErrorCode(ImageErrorEnum.SystemError.getCode());
-            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
-        }
-        return result;
-    }
+//    public AddListRespone addList(AddListParameter parameter) {
+//        AddListRespone result = new AddListRespone();
+//        try {
+//            checkAddListParameter(parameter);
+////            transactionRunner.runWithTran(() -> {
+////
+////            });
+//            for (CreateImageParameter imageInfo : parameter.getData()) {
+//                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
+//                if (!existsHashCode(hashCode)) {//1.创建记录信息
+//                    createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
+//                }
+//            }
+//        } catch (OpenApiException ex) {
+//            result.setErrorCode(ex.getErrorCode());
+//            result.setErrorMsg(ex.getMsg());
+//            if (ex.getSuppressed() != null) {
+//                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+//                $error("AddList requestId:" + requestId, ex);
+//            }
+//        } catch (Exception ex) {
+//            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+//            $error("AddList requestId:" + requestId, ex);
+//            result.setRequestId(requestId);
+//            result.setErrorCode(ImageErrorEnum.SystemError.getCode());
+//            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
+//        }
+//        return result;
+//    }
     //001写到配置
     //最大记录写到配置
     //error清空
