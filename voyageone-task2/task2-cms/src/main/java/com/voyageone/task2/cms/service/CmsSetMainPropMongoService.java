@@ -153,10 +153,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                     // jeff 2016/04 change start
                     // 获取前一次的价格强制击穿时间
-                    String priceBreakIime =  TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
+                    String priceBreakTime =  TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
                     // 主逻辑
                     // new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
-                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakIime).doRun();
+                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime).doRun();
                     // jeff 2016/04 change end
                 }
             });
@@ -174,13 +174,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         // jeff 2016/04 change start
         // 前一次的价格强制击穿时间
-        private String priceBreakIime;
+        private String priceBreakTime;
 
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
-        public setMainProp(String orderChannelId, boolean skip_mapping_check ,String priceBreakIime) {
+        public setMainProp(String orderChannelId, boolean skip_mapping_check ,String priceBreakTime) {
             this.channel = Channels.getChannel(orderChannelId);
             this.skip_mapping_check = skip_mapping_check;
-            this.priceBreakIime = priceBreakIime;
+            this.priceBreakTime = priceBreakTime;
         }
 
         int insertCnt = 0;
@@ -1675,7 +1675,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 是否同步
             boolean synFlg = true;
             try {
-                synFlg = DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakIime), Integer.parseInt(day)).before(DateTimeUtil.getDate());
+                synFlg = DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakTime), Integer.parseInt(day)).before(DateTimeUtil.getDate());
             } catch (Exception ex) {
             }
             // jeff 2016/04 add end
@@ -1783,10 +1783,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 param.setCfg_val1(channelId);
 
                 // 价格强制击穿时间
-                if (StringUtils.isEmpty(this.priceBreakIime)) {
+                if (StringUtils.isEmpty(this.priceBreakTime)) {
                     param.setEnd_time(DateTimeUtil.getNow());
                 } else {
-                    param.setEnd_time(DateTimeUtil.format(DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakIime), Integer.parseInt(day)), null));
+                    param.setEnd_time(DateTimeUtil.format(DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakTime), Integer.parseInt(day)), null));
                 }
                 taskDao.updateTaskControl(param);
             }
