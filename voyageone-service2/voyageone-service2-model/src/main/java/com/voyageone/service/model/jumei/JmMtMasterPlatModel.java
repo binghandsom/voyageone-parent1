@@ -4,7 +4,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class JmMtMasterPlatModel implements Serializable
 {
    public JmMtMasterPlatModel()
@@ -15,7 +15,7 @@ public class JmMtMasterPlatModel implements Serializable
         setName2(""); 
         setName3(""); 
         setName4(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -243,7 +243,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }

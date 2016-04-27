@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPlatformImagesDao">
+    <resultMap id="ResultMap" type="CmsBtPlatformImagesModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`channel_id`,`cart_id`,`search_id`,`img_name`,`original_img_url`,`platform_img_url`,`platform_img_id`,`upd_flg`,`active`,`creater`,`created`,`modifier`,`modified`
+        from cms_bt_platform_images
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+            <if test="searchId != null">
+                AND `search_id` = #{searchId}
+            </if>
+            <if test="imgName != null">
+                AND `img_name` = #{imgName}
+            </if>
+            <if test="originalImgUrl != null">
+                AND `original_img_url` = #{originalImgUrl}
+            </if>
+            <if test="platformImgUrl != null">
+                AND `platform_img_url` = #{platformImgUrl}
+            </if>
+            <if test="platformImgId != null">
+                AND `platform_img_id` = #{platformImgId}
+            </if>
+            <if test="updFlg != null">
+                AND `upd_flg` = #{updFlg}
+            </if>
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`channel_id`,`cart_id`,`search_id`,`img_name`,`original_img_url`,`platform_img_url`,`platform_img_id`,`upd_flg`,`active`,`creater`,`created`,`modifier`,`modified`
+        from cms_bt_platform_images
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="cartId != null">
+                AND `cart_id` = #{cartId}
+            </if>
+
+            <if test="searchId != null">
+                AND `search_id` = #{searchId}
+            </if>
+
+            <if test="imgName != null">
+                AND `img_name` = #{imgName}
+            </if>
+
+            <if test="originalImgUrl != null">
+                AND `original_img_url` = #{originalImgUrl}
+            </if>
+
+            <if test="platformImgUrl != null">
+                AND `platform_img_url` = #{platformImgUrl}
+            </if>
+
+            <if test="platformImgId != null">
+                AND `platform_img_id` = #{platformImgId}
+            </if>
+
+            <if test="updFlg != null">
+                AND `upd_flg` = #{updFlg}
+            </if>
+
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`cart_id`,`search_id`,`img_name`,`original_img_url`,`platform_img_url`,`platform_img_id`,`upd_flg`,`active`,`creater`,`created`,`modifier`,`modified` from cms_bt_platform_images where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_platform_images
+        set
+
+            `channel_id`=#{channelId}
+            ,`cart_id`=#{cartId}
+            ,`search_id`=#{searchId}
+            ,`img_name`=#{imgName}
+            ,`original_img_url`=#{originalImgUrl}
+            ,`platform_img_url`=#{platformImgUrl}
+            ,`platform_img_id`=#{platformImgId}
+            ,`upd_flg`=#{updFlg}
+            ,`active`=#{active}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_platform_images
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_platform_images
+        (
+              `channel_id`,
+              `cart_id`,
+              `search_id`,
+              `img_name`,
+              `original_img_url`,
+              `platform_img_url`,
+              `platform_img_id`,
+              `upd_flg`,
+              `active`,
+              `creater`,
+              `created`,
+              `modifier`,
+              `modified`
+        )
+        VALUES(
+              #{channelId},
+              #{cartId},
+              #{searchId},
+              #{imgName},
+              #{originalImgUrl},
+              #{platformImgUrl},
+              #{platformImgId},
+              #{updFlg},
+              #{active},
+              #{creater},
+              #{created},
+              #{modifier},
+              #{modified}
+        )
+    </insert>
+</mapper>
