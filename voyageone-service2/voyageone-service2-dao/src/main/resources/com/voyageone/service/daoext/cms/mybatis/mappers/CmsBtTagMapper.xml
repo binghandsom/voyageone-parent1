@@ -31,7 +31,7 @@
             <if test="parentTagId != null">
                 parent_tag_id,
             </if>
-            <if test="isActive != null">
+            <if test="active != null">
                 active,
             </if>
             created,
@@ -68,8 +68,8 @@
             <if test="parentTagId != null">
                 #{parentTagId,jdbcType=INTEGER},
             </if>
-            <if test="isActive != null">
-                #{isActive,jdbcType=INTEGER},
+            <if test="active != null">
+                #{active,jdbcType=INTEGER},
             </if>
             now(),
             <if test="creater != null">
@@ -107,8 +107,8 @@
             <if test="parentTagId != null">
                 parent_tag_id = #{parentTagId,jdbcType=INTEGER},
             </if>
-            <if test="isActive !=null">
-                active = #{isActive,jdbcType=INTEGER},
+            <if test="active !=null">
+                active = #{active,jdbcType=INTEGER},
             </if>
             modified = now(),
             <if test="modifier != null">
@@ -137,12 +137,11 @@
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
-        <!--<result column="tag_path_name" property="tagChildrenName" jdbcType="VARCHAR" />-->
         <result column="tag_type" property="tagType" jdbcType="INTEGER" />
         <result column="tag_status" property="tagStatus" jdbcType="INTEGER" />
         <result column="sort_order" property="sortOrder" jdbcType="INTEGER" />
         <result column="parent_tag_id" property="parentTagId" jdbcType="INTEGER" />
-        <result column="active" property="isActive" jdbcType="INTEGER" />
+        <result column="active" property="active" jdbcType="INTEGER" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
@@ -252,7 +251,6 @@
         from voyageone_cms2.cms_bt_tag tag
         where
             channel_id = #{channelId,jdbcType=VARCHAR}
-        order by tag.id
         order by tag.id
     </select>
     <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
