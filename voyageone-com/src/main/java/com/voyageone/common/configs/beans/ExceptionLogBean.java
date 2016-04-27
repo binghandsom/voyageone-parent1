@@ -1,4 +1,4 @@
-package com.voyageone.web2.base.log;
+package com.voyageone.common.configs.beans;
 
 /**
  * 映射 ct_exception_log 表
