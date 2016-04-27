@@ -309,7 +309,7 @@
 					<!--</button>-->
 					<ul uib-dropdown-menu ng-if="vm.masterData.jmPromotionList.length">
 						<li ng-repeat="promotion in vm.masterData.jmPromotionList">
-							<a href ng-click="$parent.openJMActivity(promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.name}}|{{promotion.cartName}}</a>
+							<a href ng-click="$parent.openJMActivity(promotion, openAddJMActivity)">{{promotion.name}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
 				</div>&nbsp;

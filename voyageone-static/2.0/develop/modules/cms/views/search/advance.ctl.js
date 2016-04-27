@@ -42,7 +42,7 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
-        //$scope.openJMActivity = openJMActivity;
+        $scope.openJMActivity = openJMActivity;
         //$scope.openBulkUpdate = openBulkUpdate;
 
         /**
@@ -263,7 +263,18 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
-            openAddToPromotion(promotion, selList).then(function (res) {
+            openAddToPromotion(promotion, getSelProductList()).then(function (res) {
+                search ()
+            })
+        }
+
+        /**
+         * popup出添加到聚美Promotion的功能
+         * @param promotion
+         * @param openJMActivity
+         */
+        function openJMActivity (promotion, openJMActivity) {
+            openJMActivity(promotion, getSelProductList()).then(function (res) {
                 search ()
             })
         }
@@ -332,6 +343,25 @@ define([
             } else {
                 alert("最少保留一项")
             }
+        }
+
+        /**
+         * 返回选中的数据,如果选中的是groups则返回的group下面所有的product,如果选择的是product,则只返回选中的product
+         * @returns {Array}
+         */
+        function getSelProductList () {
+            var selList = [];
+            if ($scope.vm.currTab === 'group') {
+                _.forEach($scope.vm.groupSelList.selList, function (info) {
+                    selList.push({"id": info.id, "code": info.code});
+                    _.forEach(info.prodIds, function (prodInfo) {
+                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
+                    })
+                });
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            return selList;
         }
 
     };

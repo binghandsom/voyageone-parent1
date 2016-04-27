@@ -512,36 +512,6 @@ define([
             } else {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
-
-            //require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
-            //    if (selList && selList.length) {
-            //        var modalInstance = $uibModal.open({
-            //            templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
-            //            controller: popActions.bulkUpdate.addToPromotion.controller,
-            //            size: viewSize,
-            //            resolve: {
-            //                promotion: function () {
-            //                    //var productIds = [];
-            //                    //_.forEach(selList, function (object) {
-            //                    //    productIds.push(object);
-            //                    //});
-            //                    var productIds = [];
-            //                    _.forEach(selList, function (object) {
-            //                        productIds.push(object.id);
-            //                    });
-            //                    return {"promotion": promotion, "productIds": productIds, "products": selList};
-            //                }
-            //            }
-            //        });
-            //
-            //        // 回调主页面的刷新操作
-            //        modalInstance.result.then(function () {
-            //            fnInitial();
-            //        })
-            //    } else {
-            //        alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-            //    }
-            //});
         }
 
         /**
@@ -642,7 +612,7 @@ define([
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
-        $scope.openJMActivity = function (promotion, selList, fnInitial) {
+        $scope.openAddJMActivity = function (promotion, selList) {
             if(selList && selList.length) {
                 return openModel(popActions.search.joinJM, {promotion:promotion,products:selList});
             }else{
