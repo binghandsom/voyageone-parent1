@@ -4,7 +4,7 @@
 
     <!-- Tag信息追加 -->
     <insert id="insert_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" useGeneratedKeys="true"
-            keyProperty="tagId">
+            keyProperty="id">
         insert into voyageone_cms2.cms_bt_tag
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="tagName != null">
@@ -118,10 +118,10 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
-    <!-- Tag信息删除（TagId 对应Tag删除） -->
+    <!-- Tag信息删除（id 对应Tag删除） -->
     <delete id="delete_cms_bt_tag_by_tag_id">
         delete from voyageone_cms2.cms_bt_tag
-        where Id = #{tagId,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
     </delete>
 
     <!-- Tag信息删除（根据parent_tag_id 删除子 tag） -->
@@ -132,12 +132,12 @@
 
     <!-- Tag信息检索 （根据 tag_id，取得对应Tag）-->
     <resultMap id="TagMap" type="com.voyageone.service.model.cms.CmsBtTagModel" >
-        <id column="id" property="tagId" jdbcType="INTEGER" />
+        <id column="id" property="id" jdbcType="INTEGER" />
         <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
-        <result column="tag_path_name" property="tagChildrenName" jdbcType="VARCHAR" />
+        <!--<result column="tag_path_name" property="tagChildrenName" jdbcType="VARCHAR" />-->
         <result column="tag_type" property="tagType" jdbcType="INTEGER" />
         <result column="tag_status" property="tagStatus" jdbcType="INTEGER" />
         <result column="sort_order" property="sortOrder" jdbcType="INTEGER" />
@@ -253,19 +253,21 @@
         where
             channel_id = #{channelId,jdbcType=VARCHAR}
         order by tag.id
+        order by tag.id
     </select>
     <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
-    <select id="select_list_by_channel_id_and_tag_type" resultMap="TagMap" parameterType="String">
+    <select id="select_list_by_channel_id_and_tag_type" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="String">
         select
         tag.id,
-        tag.tag_name,
-        tag.channel_id,
-        tag.tag_path,
-        tag.tag_path_name,
-        tag.tag_type,
-        tag.tag_status,
-        tag.sort_order,
-        tag.parent_tag_id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid,
         tag.active,
         tag.created,
         tag.creater,
