@@ -145,9 +145,9 @@ public class CmsChannelTagService extends BaseAppService {
                 //将取得的数据插入到数据库
                 cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
                 //取得标签名称
-                String TagId = String.valueOf(cmsBtTagModel.getTagId());
+                String id = String.valueOf(cmsBtTagModel.getTagId());
                 //对tagPath进行二次组装
-                cmsBtTagModel.setTagPath("-" + TagId + "-");
+                cmsBtTagModel.setTagPath("-" + id + "-");
                 //更新数据cms_bt_tag
                 cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
             } catch (Exception e) {
@@ -164,8 +164,8 @@ public class CmsChannelTagService extends BaseAppService {
             cmsBtTagModel.setTagType(Integer.valueOf(tagSelectObject.get("tagType").toString()));
             cmsBtTagModel.setTagStatus(Integer.valueOf(String.valueOf(tagSelectObject.get("tagStatus"))));
             cmsBtTagModel.setSortOrder(0);
-            cmsBtTagModel.setParentTagId(Integer.valueOf(String.valueOf(tagSelectObject.get("tagId"))));
             cmsBtTagModel.setIsActive(1);
+            cmsBtTagModel.setParentTagId(Integer.valueOf(String.valueOf(tagSelectObject.get("id"))));
             cmsBtTagModel.setCreater(String.valueOf(tagSelectObject.get("creater")));
             cmsBtTagModel.setModifier(String.valueOf(tagSelectObject.get("modifier")));
             simpleTransaction.openTransaction();
@@ -173,9 +173,9 @@ public class CmsChannelTagService extends BaseAppService {
                 //将取得的数据插入到数据库
                 cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
                 //取得标签名称
-                String TagId = String.valueOf(cmsBtTagModel.getTagId());
+                String id = String.valueOf(cmsBtTagModel.getTagId());
                 //对tagPath进行二次组装
-                cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + TagId + "-");
+                cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + id + "-");
                 //更新数据cms_bt_tag
                 cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
             } catch (Exception e) {
@@ -187,7 +187,7 @@ public class CmsChannelTagService extends BaseAppService {
         }
         //记住插入的记录处理之后再返回画面
         HashMap<String, Object> tagTypeSelectValue = new HashMap<>();
-        tagTypeSelectValue.put("tagId", cmsBtTagModel.getTagId());
+        tagTypeSelectValue.put("id", cmsBtTagModel.getTagId());
         tagTypeSelectValue.put("channelId", cmsBtTagModel.getChannelId());
         tagTypeSelectValue.put("tagName", cmsBtTagModel.getTagName());
         tagTypeSelectValue.put("tagPath", cmsBtTagModel.getTagPath());
@@ -230,11 +230,10 @@ public class CmsChannelTagService extends BaseAppService {
                 if (tagTree.get(i).get("children") != null) {
                     List<HashMap<String, Object>> children = (List<HashMap<String, Object>>) tagTree.get(i).get("children");
                     for (int j = 0; j < children.size(); j++) {
-                        System.out.println(tagTree.get(i).get("tagId") + tagTree.get(i).get("tagPathName").toString());
                         if (children.get(j).get("children") != null) {
                             List<HashMap<String, Object>> leaf = (List<HashMap<String, Object>>) children.get(j).get("children");
                             //如果二级标签有儿子,添加三级标签
-                            if (parentTagId == (int) children.get(j).get("tagId") && !isTagOne) {
+                            if (parentTagId == (int) children.get(j).get("id") && !isTagOne) {
                                 HashMap<String, Object> tagTwoValue = children.get(j);
                                 tagTwoValue.put("isLeaf", false);
                                 leaf.add(tagTypeSelectValue);
@@ -243,7 +242,7 @@ public class CmsChannelTagService extends BaseAppService {
                             }
                         }
                         //如果二级标签没有儿子,添加三级标签
-                        if (parentTagId == (Integer) children.get(j).get("tagId") && children.get(j).get("children") == null && !isTagOne) {
+                        if (parentTagId == (Integer) children.get(j).get("id") && children.get(j).get("children") == null && !isTagOne) {
                             HashMap<String, Object> leaf = children.get(j);
                             leaf.put("children", tagTypeSelectValue);
                             leaf.put("isLeaf", false);
@@ -252,16 +251,15 @@ public class CmsChannelTagService extends BaseAppService {
                         }
                     }
                     //如果一级标签有儿子,添加二级标签
-                    if (parentTagId == (int) tagTree.get(i).get("tagId") && !isTagOne) {
+                    if (parentTagId == (int) tagTree.get(i).get("id") && !isTagOne) {
                         HashMap<String, Object> tagOneValue = tagTree.get(i);
                         children.add(tagTypeSelectValue);
                         tagOneValue.put("isLeaf", false);
-                        isTagOne = true;
                         break;
                     }
                 }
                 //如果一级标签没有儿子,添加二级标签
-                if (parentTagId == (Integer) tagTree.get(i).get("tagId") && tagTree.get(i).get("children") == null && !isTagOne) {
+                if (parentTagId == (Integer) tagTree.get(i).get("id") && tagTree.get(i).get("children") == null && !isTagOne) {
                     HashMap<String, Object> children = tagTree.get(i);
                     children.put("children", tagTypeSelectValue);
                     children.put("isLeaf", false);
@@ -278,7 +276,7 @@ public class CmsChannelTagService extends BaseAppService {
      */
     public void DelTagInfo(Map param) {
         //子类标签
-        int tagId = (Integer) param.get("tagId");
+        int id = (Integer) param.get("id");
         //父类标签
         int parentTagId = (Integer) param.get("parentTagId");
         //子标签标志位
@@ -286,8 +284,8 @@ public class CmsChannelTagService extends BaseAppService {
         //取得标签树
         List<HashMap<String, Object>> tagTree = (List<HashMap<String, Object>>) param.get("tagTree");
         for (int i = 0; i < tagTree.size(); i++) {
-            int tagOneTagId = (Integer) tagTree.get(i).get("tagId");
-            if (tagId == tagOneTagId && !isTagOne) {
+            int tagOneTagId = (Integer) tagTree.get(i).get("id");
+            if (id == tagOneTagId && !isTagOne) {
                 tagTree.remove(i);
                 param.put("tagTree", tagTree);
                 break;
@@ -295,12 +293,12 @@ public class CmsChannelTagService extends BaseAppService {
             if (tagTree.get(i).get("children") != null) {
                 List<HashMap<String, Object>> children = (List<HashMap<String, Object>>) tagTree.get(i).get("children");
                 //如果只有一个子节点将父节点的删除按钮显示
-                if (children.size() == 1 && parentTagId == (int) tagTree.get(i).get("tagId")) {
+                if (children.size() == 1 && parentTagId == (int) tagTree.get(i).get("id")) {
                     tagTree.get(i).put("isLeaf", true);
                 }
                 for (int j = 0; j < children.size(); j++) {
-                    int childrenTagId = (Integer) children.get(j).get("tagId");
-                    if ((tagId == childrenTagId) && !isTagOne) {
+                    int childrenTagId = (Integer) children.get(j).get("id");
+                    if ((id == childrenTagId) && !isTagOne) {
                         children.remove(j);
                         param.put("tagTree", tagTree);
                         isTagOne = true;
@@ -309,12 +307,12 @@ public class CmsChannelTagService extends BaseAppService {
                     if (children.get(j).get("children") != null) {
                         List<HashMap<String, Object>> leaf = (List<HashMap<String, Object>>) children.get(j).get("children");
                         //如果只有一个子节点将父节点的删除按钮显示
-                        if (leaf.size() == 1 && parentTagId == (int) children.get(j).get("tagId")) {
+                        if (leaf.size() == 1 && parentTagId == (int) children.get(j).get("id")) {
                             children.get(j).put("isLeaf", true);
                         }
                         for (int k = 0; k < leaf.size(); k++) {
-                            int leafTagId = (Integer) leaf.get(k).get("tagId");
-                            if (tagId == leafTagId && !isTagOne) {
+                            int leafTagId = (Integer) leaf.get(k).get("id");
+                            if (id == leafTagId && !isTagOne) {
                                 leaf.remove(k);
                                 param.put("tagTree", tagTree);
                                 isTagOne = true;
@@ -327,7 +325,7 @@ public class CmsChannelTagService extends BaseAppService {
         }
         //插入数据的数值
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setTagId(Integer.valueOf(tagId));
+        cmsBtTagModel.setTagId(Integer.valueOf(id));
         cmsBtTagModel.setIsActive(0);
         simpleTransaction.openTransaction();
         try {

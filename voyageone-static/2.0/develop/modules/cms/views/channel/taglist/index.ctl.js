@@ -10,7 +10,7 @@ define([
             tagTypeSelectValue:"1",
             tagTree: null,
             tagSelectObject: null,
-            tagId: "",
+            id: "",
             parentTagId: "",
             indexThree:0,
             indexTwo: 0,
@@ -31,7 +31,7 @@ define([
          */
         $scope.delTag = delTag;
         function delTag(tag) {
-            $scope.vm.tagId = tag.tagId;
+            $scope.vm.id = tag.id;
             $scope.vm.parentTagId = tag.parentTagId;
             channelTagService.del($scope.vm).then(function (res) {
                 $scope.vm = res.data;
