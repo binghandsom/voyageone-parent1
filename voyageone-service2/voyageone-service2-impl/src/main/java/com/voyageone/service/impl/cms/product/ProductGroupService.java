@@ -73,6 +73,16 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 根据条件获取group数据
+     * @param channelId
+     * @param query
+     * @return
+     */
+    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JomgoQuery query) {
+        return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
      * 更新group数据
      * @param model
      * @return

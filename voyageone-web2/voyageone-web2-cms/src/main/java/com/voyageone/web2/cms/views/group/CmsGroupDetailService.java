@@ -50,7 +50,7 @@ public class CmsGroupDetailService extends BaseAppService {
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取promotion list
-        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId()));
+        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
 
         return masterData;
     }

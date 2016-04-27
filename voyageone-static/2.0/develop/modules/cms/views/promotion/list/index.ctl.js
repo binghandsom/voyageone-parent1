@@ -30,8 +30,8 @@ define([
 
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function (res) {
-                $scope.vm.promotionList = _.where(res.data, {isAllPromotion: false});
-                $scope.groupPageOption.total = $scope.vm.promotionList.size;
+                $scope.vm.promotionList = _.where(res.data, {isAllPromotion: 0});
+                $scope.groupPageOption.total = $scope.vm.promotionList.length;
             }, function (res) {
             })
         };
