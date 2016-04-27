@@ -168,9 +168,7 @@ public class CmsImageFileService extends BaseService {
         }
         return result;
     }
-    //001写到配置
-    //最大记录写到配置
-    //error清空
+
     public  void  checkAddListParameter(AddListParameter parameter) throws OpenApiException {
         if(parameter.getData().size()>100)
         {

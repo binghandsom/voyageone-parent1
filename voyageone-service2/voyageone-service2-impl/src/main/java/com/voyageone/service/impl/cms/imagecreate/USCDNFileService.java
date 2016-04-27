@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
 import com.voyageone.common.Snowflake.FactoryIdWorker;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.uscdn.service.USCDNClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
@@ -44,8 +46,14 @@ public class USCDNFileService extends BaseService {
             }
         } catch (Exception ex)//未知异常
         {
-            long requestId= FactoryIdWorker.nextId();
-            $error("jobUpload",ex);
+            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+            $error("jobUpload requestId:" + requestId, ex);
+            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM,"jobUpload requestId:"+requestId);
+            if (modelFile != null) {
+                modelFile.setErrorCode(ImageErrorEnum.SystemError.getCode());
+                modelFile.setErrorMsg("requestId:"+requestId+ex.getMessage());
+                daoCmsMtImageCreateFile.update(modelFile);
+            }
         }
     }
 }
