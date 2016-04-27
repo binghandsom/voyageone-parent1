@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.INDEX;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ public class CmsTaskController extends BaseController {
     @RequestMapping(INDEX.PAGE)
     public AjaxResponse page(@RequestBody Map<String,Object> searchInfo) {
         searchInfo.put("channelId",getUser().getSelChannelId());
-        List<CmsBtTasksModel> models = taskService.getAllTasks(searchInfo);
+        List<CmsBtTasksBean> models = taskService.getAllTasks(searchInfo);
         return success(models);
     }
 }

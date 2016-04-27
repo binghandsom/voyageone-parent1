@@ -9,10 +9,10 @@ import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
@@ -35,7 +35,6 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * 店面操作
- *
  * @description
  * @author: holysky.zhao
  * @date: 2016/4/26 14:53
@@ -62,7 +61,7 @@ public class StoreOperationService extends BaseService {
     CmsBtProductGroupDao productGroupDao;
 
     @Resource
-    CmsBtSxWorkloadDao workloadDao;
+    CmsBtSxWorkloadDaoExt workloadDao;
 
     @Resource
     CmsBtStoreOperationHistoryDao historyDao;

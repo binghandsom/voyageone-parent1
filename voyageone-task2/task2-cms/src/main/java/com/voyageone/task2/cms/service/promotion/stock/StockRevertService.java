@@ -6,8 +6,8 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
-import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtStockSeparatePlatformInfoDaoExt;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +30,10 @@ public class StockRevertService extends BaseTaskService {
     private StockInfoService stockInfoService;
 
     @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
+    private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
 
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
 
     @Autowired
     private TransactionRunner transactionRunner;
@@ -75,7 +75,7 @@ public class StockRevertService extends BaseTaskService {
 //        param.put("channelId", "066");
 
         $info("开始取得等待还原数据");
-        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
+        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(param);
         $info("等待还原数据取得完毕. %d件", resultData.size());
 
         // 按渠道,sku整理Map<channelId, Map<sku,resultData>>
@@ -172,7 +172,7 @@ public class StockRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
-        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
         listPlatform.forEach(data -> {
             Integer taskId = (Integer) data.get("task_id");
             if (!listSeparateTaskId.contains(taskId)) {
@@ -185,7 +185,7 @@ public class StockRevertService extends BaseTaskService {
         Map<String, Object> param = new HashMap<>();
         param.put("status", "");
         param.put("taskIdList", listSeparateTaskId);
-        List<Map<String, Object>> listSkuDynamic = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
+        List<Map<String, Object>> listSkuDynamic = cmsBtStockSeparateItemDaoExt.selectStockSeparateItem(param);
         listSkuDynamic.forEach(data -> {
             String sku = (String) data.get("sku");
             Integer cartId = (Integer) data.get("cart_id");
@@ -213,7 +213,7 @@ public class StockRevertService extends BaseTaskService {
                 updateParam.put("modifier", getTaskName());
                 updateParam.put("taskList", listTaskId);
                 updateParam.put("statusWhere", stockInfoService.STATUS_WAITING_REVERT);
-                cntRevert += cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                cntRevert += cmsBtStockSeparateItemDaoExt.updateStockSeparateItem(updateParam);
 
                 Map<Integer, Map<String, Object>> mapDataByCart = new HashMap<>(); // Map<平台, data>
                 for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {

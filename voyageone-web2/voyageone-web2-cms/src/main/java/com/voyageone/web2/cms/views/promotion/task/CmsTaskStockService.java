@@ -10,13 +10,13 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.impl.wms.InventoryCenterService;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
@@ -46,24 +46,6 @@ import java.util.*;
  */
 @Service
 public class CmsTaskStockService extends BaseAppService {
-
-    @Autowired
-    private StockSeparateService stockSeparateService;
-
-    @Autowired
-    private InventoryCenterService inventoryCenterService;
-
-    @Autowired
-    private PromotionService promotionService;
-
-    @Autowired
-    private PromotionSkuService promotionSkuService;
-
-    @Autowired
-    private PromotionCodeService promotionCodeService;
-
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private final NumberFormat numberFormatter = new DecimalFormat("#");
 
     /**
      * 增量/库存隔离状态 0：未进行
@@ -105,7 +87,6 @@ public class CmsTaskStockService extends BaseAppService {
      * 库存隔离状态 9：再修正
      */
     public static final String STATUS_CHANGED = "9";
-
     /**
      * 增量库存隔离状态 1：等待增量
      */
@@ -126,7 +107,22 @@ public class CmsTaskStockService extends BaseAppService {
      * 增量库存隔离状态 5：还原
      */
     public static final String STATUS_REVERT = "5";
-
+    /**
+     * 结束状态  0: 未结束
+     */
+    public static final String NOT_END = "0";
+    /**
+     * com_mt_value表 type_id
+     **/
+    public static final int com_mt_value_type_id = 59;
+    /**
+     * com_mt_value表 lang_id
+     **/
+    public static final String com_mt_value_lang_id = "en";
+    /**
+     * com_mt_value表 name
+     **/
+    public static final String com_mt_value_name = "60";
     /**
      * 结束状态  0: 未结束
      */
@@ -135,7 +131,6 @@ public class CmsTaskStockService extends BaseAppService {
      * 结束状态  1: 结束
      */
     private static final String END_FLG = "1";
-
     /**
      * Excel增量方式导入
      */
@@ -144,7 +139,6 @@ public class CmsTaskStockService extends BaseAppService {
      * Excel变更方式导入
      */
     private static final String EXCEL_IMPORT_UPDATE = "2";
-
     /**
      * Excel的Title部可用库存显示文字
      */
@@ -157,7 +151,6 @@ public class CmsTaskStockService extends BaseAppService {
      * Excel动态时显示文字
      */
     private static final String DYNAMIC = "Dynamic";
-
     /**
      * Excel的Title部平台显示文字
      */
@@ -174,7 +167,6 @@ public class CmsTaskStockService extends BaseAppService {
      * Excel的Title部发生时间显示文字
      */
     private static final String ERRORTIME = "Error Time";
-
     /**
      * Excel一般隔离类型显示文字
      */
@@ -183,7 +175,6 @@ public class CmsTaskStockService extends BaseAppService {
      * Excel增量隔离类型显示文字
      */
     private static final String TYPE_INCREMENT = "增量";
-
     /**
      * 判断隔离任务:1新规的场合
      */
@@ -204,22 +195,18 @@ public class CmsTaskStockService extends BaseAppService {
      * 活动类型 1：价格披露 2：隔离库存 3：特价宝
      */
     private static final String TASK_TYPE = "2";
-    /**
-     * 结束状态  0: 未结束
-     */
-    public static final String NOT_END = "0";
-    /**
-     * com_mt_value表 type_id
-     **/
-    public static final int com_mt_value_type_id = 59;
-    /**
-     * com_mt_value表 lang_id
-     **/
-    public static final String com_mt_value_lang_id = "en";
-    /**
-     * com_mt_value表 name
-     **/
-    public static final String com_mt_value_name = "60";
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final NumberFormat numberFormatter = new DecimalFormat("#");
+    @Autowired
+    private StockSeparateService stockSeparateService;
+    @Autowired
+    private InventoryCenterService inventoryCenterService;
+    @Autowired
+    private PromotionService promotionService;
+    @Autowired
+    private PromotionSkuService promotionSkuService;
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     /**
      * 新建库存隔离任务前初始化数据取得
@@ -687,12 +674,12 @@ public class CmsTaskStockService extends BaseAppService {
         //判断隔离任务:新规的场
         if (promotionType.equals(TYPE_PROMOTION_INSERT)) {
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
-            CmsBtTasksModel cmsBtTasksModel = createTasksByPromotionInfo(param);
+            CmsBtTasksBean cmsBtTasksBean = createTasksByPromotionInfo(param);
             //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info
             List<Map<String, String>> separatePlatformMapList = getInsertStockSeparatePlatFormByPromotionInfo(param, onlySku);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-            importSkuByPromotionInfo(param, onlySku, channelID, cmsBtTasksModel, separatePlatformMapList);
-            String taskID = String.valueOf(cmsBtTasksModel.getTask_id());
+            importSkuByPromotionInfo(param, onlySku, channelID, cmsBtTasksBean, separatePlatformMapList);
+            String taskID = String.valueOf(cmsBtTasksBean.getTask_id());
             //将取得的taskId放入param
             param.put("taskId", taskID);
         }
@@ -706,26 +693,26 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * 将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
      */
-    private CmsBtTasksModel createTasksByPromotionInfo(Map<String, Object> param) {
-        CmsBtTasksModel cmsBtTasksModel = new CmsBtTasksModel();
+    private CmsBtTasksBean createTasksByPromotionInfo(Map<String, Object> param) {
+        CmsBtTasksBean cmsBtTasksBean = new CmsBtTasksBean();
         //任务名
-        cmsBtTasksModel.setTask_name((String) param.get("taskName"));
+        cmsBtTasksBean.setTask_name((String) param.get("taskName"));
         //活动类型
-        cmsBtTasksModel.setTask_type(Integer.parseInt(TASK_TYPE));
+        cmsBtTasksBean.setTask_type(Integer.parseInt(TASK_TYPE));
         //活动ID
-        cmsBtTasksModel.setPromotion_id(-1);
+        cmsBtTasksBean.setPromotion_id(-1);
         //活动开始时间
-        cmsBtTasksModel.setActivity_start("");
+        cmsBtTasksBean.setActivity_start("");
         //活动结束时间
-        cmsBtTasksModel.setActivity_end("");
+        cmsBtTasksBean.setActivity_end("");
         //channelId
-        cmsBtTasksModel.setChannelId((String) param.get("channel_id"));
+        cmsBtTasksBean.setChannelId((String) param.get("channel_id"));
         //创建者
-        cmsBtTasksModel.setCreater((String) param.get("userName"));
+        cmsBtTasksBean.setCreater((String) param.get("userName"));
         //更改者
-        cmsBtTasksModel.setModifier((String) param.get("userName"));
-		
-        return cmsBtTasksModel;
+        cmsBtTasksBean.setModifier((String) param.get("userName"));
+
+        return cmsBtTasksBean;
     }
 
     /**
@@ -923,7 +910,7 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * 将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
      */
-    private void importSkuByPromotionInfo(Map<String, Object> param, Boolean onlySku, String channelID, CmsBtTasksModel cmsBtTasksModel, List<Map<String, String>> separatePlatformMapList) {
+    private void importSkuByPromotionInfo(Map<String, Object> param, Boolean onlySku, String channelID, CmsBtTasksBean cmsBtTasksBean, List<Map<String, String>> separatePlatformMapList) {
         //取得所有的隔离promotionIds
         List<String> promotionIdList = getSeparatePlatformInfoByPromotionInfo(param);
         //根据promotionIds取得隔离平台的SKU
@@ -942,7 +929,7 @@ public class CmsTaskStockService extends BaseAppService {
         //根据platformList绑定所有的SKU
         Map<String, Object> allSkuProHash = getAllSkuInfoByPlatFormList(param, allSkuHash, skuStockUsableAll, onlySku);
         //根据allSkuProHash和SeparateHashMaps将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
-        stockSeparateService.saveStockSeparateItem(separateHashMaps, allSkuProHash, onlySku, cmsBtTasksModel, separatePlatformMapList);
+        stockSeparateService.saveStockSeparateItem(separateHashMaps, allSkuProHash, onlySku, cmsBtTasksBean, separatePlatformMapList);
     }
 
     /**

@@ -27,6 +27,6 @@ public @interface VOTransactional {
 
     int timeout() default -1;
 
-    boolean readOnly() default true;
+    boolean readOnly() default false;
 
 }

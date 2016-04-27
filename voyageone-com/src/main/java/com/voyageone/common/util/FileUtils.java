@@ -2,7 +2,6 @@ package com.voyageone.common.util;
 
 
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.help.DateHelp;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -30,9 +29,9 @@ public final class FileUtils {
 
     /**
      * @param preFileName 源文件名
-     * @param filePath 文件所在目录
+     * @param filePath    文件所在目录
      * @return 以【XXXX_】开头的文件组
-     *          文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
+     * 文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
      */
     public static List getFileGroup(String preFileName, String filePath) {
         ArrayList<String> fileNameList = new ArrayList<>();
@@ -54,7 +53,7 @@ public final class FileUtils {
     /**
      * @param filePath 文件所在目录
      * @return 该目录下的文件组
-     *                 filePath下的文件组返回
+     * filePath下的文件组返回
      */
     public static List getFileGroup2(String filePath, String postfix) {
         ArrayList<String> fileNameList = new ArrayList<>();
@@ -70,7 +69,8 @@ public final class FileUtils {
 
     /**
      * 复制文件
-     * @param srcFile 源文件
+     *
+     * @param srcFile    源文件
      * @param targetFile 目标文件
      */
     public static void copyFile(String srcFile, String targetFile) {
@@ -96,6 +96,7 @@ public final class FileUtils {
 
     /**
      * 删除文件
+     *
      * @param filePathAndName 要删除的文件的路径
      */
     public static void delFile(String filePathAndName) {
@@ -112,7 +113,7 @@ public final class FileUtils {
     /**
      * 文件移动
      *
-     * @param srcFile 源文件
+     * @param srcFile    源文件
      * @param targetFile 目标文件
      */
     public static void moveFile(String srcFile, String targetFile) {
@@ -128,9 +129,9 @@ public final class FileUtils {
      */
     public static boolean fileIsInUse(File file) {
         boolean useFlg = file.renameTo(file);
-        if(useFlg) {
+        if (useFlg) {
             logger.info("===============文件未被其他程序使用!===============");
-        }else{
+        } else {
             logger.info("===============文件正在被其他程序使用!===============");
         }
         return !useFlg;
@@ -138,14 +139,14 @@ public final class FileUtils {
 
     /**
      * @param filePath 文件所在目录
-     * description 在指定目录下获取全部文件组
+     *                 description 在指定目录下获取全部文件组
      */
-    public static ArrayList <String[]> getFileGroup(String filePath) {
+    public static ArrayList<String[]> getFileGroup(String filePath) {
         ArrayList<String[]> fileNameList = new ArrayList<>();
         File file = new File(filePath);
         for (String fileName : file.list()) {
             File file2 = new File(filePath + "/" + fileName);
-            if (file2.isFile() && file2.exists()){
+            if (file2.isFile() && file2.exists()) {
                 String[] fileUpload = new String[2];
                 fileUpload[0] = fileName;
                 //是否上传标志位，默认上传
@@ -158,8 +159,9 @@ public final class FileUtils {
 
     /**
      * 文件是否存在
-     * @param chkFileName 被检查文件
-     * @param chkFilePath 被检查路径
+     *
+     * @param chkFileName  被检查文件
+     * @param chkFilePath  被检查路径
      * @param suffixLength 后缀长度
      * @return boolean
      */
@@ -181,13 +183,14 @@ public final class FileUtils {
 
     /**
      * 复制文件
-     * @param srcFile 源文件
+     *
+     * @param srcFile    源文件
      * @param targetFile 目标文件
      */
     public static void copyFileByBcbg(String srcFile, String targetFile) throws IOException {
 
         try (FileInputStream inStream = new FileInputStream(srcFile);
-            FileOutputStream fs = new FileOutputStream(targetFile)){
+             FileOutputStream fs = new FileOutputStream(targetFile)) {
             int byteRead;
             File oldFile = new File(srcFile);
             if (oldFile.exists()) {
@@ -210,10 +213,10 @@ public final class FileUtils {
     /**
      * 文件移动
      *
-     * @param srcFile 源文件
+     * @param srcFile    源文件
      * @param targetFile 目标文件
      */
-    public static void moveFileByBcbg(String srcFile, String targetFile)throws IOException {
+    public static void moveFileByBcbg(String srcFile, String targetFile) throws IOException {
         copyFileByBcbg(srcFile, targetFile);
         delFile(srcFile);
     }
@@ -337,7 +340,7 @@ public final class FileUtils {
     /**
      * Excel 行对象取得
      *
-     * @param sheet Excel Sheet对象
+     * @param sheet    Excel Sheet对象
      * @param rowIndex Excel RowIndex
      * @return Row Excel Row对象
      */
@@ -353,8 +356,8 @@ public final class FileUtils {
     /**
      * Excel Cell对象取得
      *
-     * @param row Excel Row对象
-     * @param index Excel CellIndex
+     * @param row       Excel Row对象
+     * @param index     Excel CellIndex
      * @param cellStyle Excel Cell样式
      * @return Row Excel Cell对象
      */
@@ -368,6 +371,7 @@ public final class FileUtils {
 
         return cell;
     }
+
     public static void downloadFile(HttpServletResponse response, String fileName, String filePath) throws IOException {
         OutputStream os = null;
         InputStream inputStream = null;
@@ -375,7 +379,7 @@ public final class FileUtils {
             File excelFile = new File(filePath);
             os = response.getOutputStream();
             response.reset();
-            response.setHeader("Content-Disposition", "attachment; filename=" +fileName);
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
             response.setContentType("application/octet-stream; charset=utf-8");
             //os.write(FileUtils.readFileToByteArray(excelFile));
             // os.flush();
@@ -396,7 +400,8 @@ public final class FileUtils {
             }
         }
     }
-    public static  void  mkdirPath(String path) {
+
+    public static void mkdirPath(String path) {
         String[] paths = path.split("/");
         StringBuffer fullPath = new StringBuffer();
         for (int i = 0; i < paths.length; i++) {
@@ -408,30 +413,31 @@ public final class FileUtils {
             }
         }
     }
-    public  static   List<String> uploadFile(HttpServletRequest request, String path) throws IOException {
-        List<String> listFileName=new ArrayList<>();
+
+    public static List<String> uploadFile(HttpServletRequest request, String path) throws IOException {
+        List<String> listFileName = new ArrayList<>();
         //创建一个通用的多部分解析器
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         //判断 request 是否有文件上传,即多部分请求
-        if(multipartResolver.isMultipart(request)){
+        if (multipartResolver.isMultipart(request)) {
             //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             //取得request中的所有文件名
             Iterator<String> iter = multiRequest.getFileNames();
-            while(iter.hasNext()){
+            while (iter.hasNext()) {
                 //记录上传过程起始时的时间，用来计算上传时间
                 int pre = (int) System.currentTimeMillis();
                 //取得上传文件
                 MultipartFile file = multiRequest.getFile(iter.next());
-                if(file != null) {
+                if (file != null) {
                     //取得当前上传文件的文件名称
                     String myFileName = file.getOriginalFilename();
                     //如果名称不为“”,说明该文件存在，否则说明该文件不存在
                     if (myFileName.trim() != "") {
                         System.out.println(myFileName);
                         //重命名上传后的文件名
-                        String fileName =file.getOriginalFilename();
-                        String timerstr = DateHelp.DateToString(new Date(), "yyyyMMddHHmmssSSS");
+                        String fileName = file.getOriginalFilename();
+                        String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");
                         //定义上传路径
                         String filepath = path + "/" + timerstr + fileName;
                         File localFile = new File(filepath);

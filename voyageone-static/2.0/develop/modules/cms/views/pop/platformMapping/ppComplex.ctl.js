@@ -179,7 +179,7 @@ define([
                     });
             },
             cancel: function () {
-                this.$modal.dismiss('cancel');
+                this.$modal.dismiss();
             }
         };
 

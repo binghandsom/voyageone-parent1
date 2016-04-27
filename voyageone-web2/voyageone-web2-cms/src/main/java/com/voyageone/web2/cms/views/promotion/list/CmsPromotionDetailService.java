@@ -5,10 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
-import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -16,9 +13,8 @@ import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
@@ -519,12 +515,12 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param operator    操作者
      */
     public void teJiaBaoInit(Integer promotionId, String channelId, String operator) {
-        List<CmsBtTasksModel> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+        List<CmsBtTasksBean> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
 
-        List<CmsBtTasksModel> addTaskList = new ArrayList<>();
+        List<CmsBtTasksBean> addTaskList = new ArrayList<>();
         if (tasks.size() == 0) {
             CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-            CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
+            CmsBtTasksBean cmsBtTaskModel = new CmsBtTasksBean();
             cmsBtTaskModel.setModifier(operator);
             cmsBtTaskModel.setCreater(operator);
             cmsBtTaskModel.setPromotion_id(promotionId);
@@ -540,9 +536,17 @@ public class CmsPromotionDetailService extends BaseAppService {
         param.put("promotionId", promotionId);
         List<CmsBtPromotionCodesBean> codeList = promotionCodeService.getPromotionCodeList(param);
 
-        List<CmsBtPromotionTaskModel> addPromotionTaskList = new ArrayList<>();
+        List<CmsBtTaskTejiabaoModel> addPromotionTaskList = new ArrayList<>();
         codeList.forEach(code -> {
-            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+//            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+            CmsBtTaskTejiabaoModel cmsBtPromotionTask = new CmsBtTaskTejiabaoModel();
+            cmsBtPromotionTask.setPromotionId(promotionId);
+            cmsBtPromotionTask.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            cmsBtPromotionTask.setKey(code.getProductCode());
+            cmsBtPromotionTask.setNumIid(code.getNumIid());
+            cmsBtPromotionTask.setCreater(operator);
+            cmsBtPromotionTask.setModifier(operator);
+
             addPromotionTaskList.add(cmsBtPromotionTask);
         });
 

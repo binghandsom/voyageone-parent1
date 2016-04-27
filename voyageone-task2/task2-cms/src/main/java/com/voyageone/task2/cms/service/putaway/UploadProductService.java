@@ -7,8 +7,8 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -44,7 +44,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
-    private CmsBtSxWorkloadDao sxWorkloadDao;
+    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private CmsBusinessLogDao cmsBusinessLogDao;
     @Autowired
@@ -90,7 +90,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             workload.setSxWorkloadModel(sxWorkloadModel);
 
-            Long groupId = sxWorkloadModel.getGroupId();
+            Long groupId = new Long(sxWorkloadModel.getGroupId());
             String channelId = sxWorkloadModel.getChannelId();
 
             workload.setOrder_channel_id(channelId);

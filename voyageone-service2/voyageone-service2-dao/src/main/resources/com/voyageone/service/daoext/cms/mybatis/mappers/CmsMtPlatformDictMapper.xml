@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel"
+            parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
+        SELECT DISTINCT
+        a.id,
+        a.order_channel_id as orderChannelId,
+        a.cart_id as catId,
+        b.name as cartName,
+        a.name,
+        a.`value`,
+        a.comment,
+        a.creater,
+        a.created,
+        a.modifier,
+        a.modified
+        FROM voyageone_cms2.cms_mt_platform_dict a
+        INNER JOIN Synship.com_mt_value_channel b
+        ON a.cart_id = b.value and b.type_id = '53' and b.lang_id = #{lang}
+        WHERE a.order_channel_id = #{order_channel_id}
+        <if test="name != null and name != ''">
+            AND a.name like CONCAT('%',#{name},'%' )
+        </if>
+        <if test="cart_id != null and cart_id != ''">
+            AND a.cart_id in (#{cart_id}, 0)
+        </if>
+        <if test="offset != null and rows != null and rows != 0">
+            LIMIT #{offset}, #{rows};
+        </if>
+    </select>
+
+    <select id="cms_mt_dict_selectAllCount" resultType="int"
+            parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
+        SELECT count(DISTINCT a.id)
+        FROM voyageone_cms2.cms_mt_platform_dict a
+        INNER JOIN Synship.com_mt_value_channel b
+        ON a.cart_id = b.value and b.type_id = '53' and b.lang_id = #{lang}
+        WHERE order_channel_id = #{order_channel_id}
+        <if test="name != null and name != ''">
+            AND a.name like CONCAT('%',#{name},'%' )
+        </if>
+        <if test="cart_id != null and cart_id != ''">
+            AND a.cart_id in (#{cart_id}, 0)
+        </if>
+    </select>
+
+    <insert id="cms_mt_dict_insertDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        INSERT INTO voyageone_cms2.cms_mt_platform_dict (order_channel_id, cart_id, name, value, created, creater,
+        modified, modifier)
+        VALUES (#{orderChannelId}, #{cartId}, #{name}, #{value}, NOW(), #{creater}, NOW(), #{modifier})
+    </insert>
+
+    <update id="cms_mt_dict_updateDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        UPDATE voyageone_cms2.cms_mt_platform_dict
+        SET name = #{name}, value = #{value}, modified = NOW(), modifier = #{modifier}
+        WHERE id = #{id} AND modified = #{modified}
+    </update>
+
+    <delete id="cms_mt_dict_deleteDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        DELETE FROM voyageone_cms2.cms_mt_platform_dict
+        WHERE id = #{id}
+    </delete>
+
+    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel"
+            resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        SELECT
+            id,
+        order_channel_id as orderChannelId,
+        cart_id as cartId,
+            name,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_cms2.cms_mt_platform_dict
+        WHERE order_channel_id = #{orderChannelId} AND name = #{name}
+    </select>
+
+    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel"
+            resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        SELECT
+            id,
+        order_channel_id as orderChannelId,
+        cart_id as cartId,
+            name,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_cms2.cms_mt_platform_dict
+        WHERE order_channel_id = #{orderChannelId} AND id = #{id}
+    </select>
+
+    <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        SELECT
+        id,
+        order_channel_id as orderChannelId,
+        name
+        FROM voyageone_cms2.cms_mt_platform_dict
+        WHERE order_channel_id = #{channelId}
+    </select>
+
+    <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)
+        VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
+    </insert>
+
+    <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map"
+            resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+        SELECT
+        id,
+        order_channel_id as orderChannelId,
+        cart_id as cartId,
+        name,
+        value,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_mt_platform_dict
+        WHERE order_channel_id = #{orderChannelId}
+        AND cart_id = #{cartId}
+    </select>
+</mapper>
