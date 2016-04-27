@@ -11,10 +11,10 @@ import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
-import com.voyageone.service.dao.cms.CmsBtPromotionSkuDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionTaskDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -43,7 +43,7 @@ public class PromotionDetailService extends BaseService {
     @Autowired
     private CmsBtPromotionCodesDaoExt cmsPromotionCodeDao;
     @Autowired
-    private CmsBtPromotionSkuDao cmsPromotionSkuDao;
+    private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
     @Autowired
     private CmsBtPromotionTaskDao cmsPromotionTaskDao;
 

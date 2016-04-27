@@ -18,7 +18,7 @@
         UPDATE voyageone_cms2.cms_bt_beat_info b
             JOIN voyageone_cms2.cms_bt_tasks t
                 ON b.task_id = t.task_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_code pc
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
                 ON pc.promotion_id = t.promotion_id
                    AND pc.product_code = b.product_code
         SET b.message = #{message},
@@ -72,7 +72,7 @@
         FROM voyageone_cms2.cms_bt_beat_info b
         JOIN voyageone_cms2.cms_bt_tasks t
         ON b.task_id = t.task_id
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_code pc
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
         ON t.promotion_id = pc.promotion_id
         AND b.product_code = pc.product_code
         WHERE t.task_id = #{task_id}
@@ -318,7 +318,8 @@
             JOIN voyageone_cms2.cms_bt_tasks t ON t.task_id = b.task_id
             JOIN voyageone_cms2.cms_bt_promotion p ON p.promotion_id = t.promotion_id
             LEFT JOIN voyageone_cms2.cms_bt_promotion_model m ON m.promotion_id = p.promotion_id AND b.num_iid = m.num_iid
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_code c ON c.promotion_id = p.promotion_id AND c.product_code = b.product_code
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes c ON c.promotion_id = p.promotion_id AND c.product_code =
+        b.product_code
         WHERE (
                   p.is_active = 1
                   AND #{now} > t.activity_start

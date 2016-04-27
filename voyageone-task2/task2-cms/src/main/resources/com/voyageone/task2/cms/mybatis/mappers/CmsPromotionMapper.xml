@@ -63,7 +63,7 @@
             `code`.num_iid,
             `code`.promotion_price
         FROM
-            voyageone_cms2.cms_bt_promotion_sku sku
+        voyageone_cms2.cms_bt_promotion_skus sku
         LEFT JOIN voyageone_cms2.cms_bt_promotion_code `code` ON sku.promotion_id = `code`.promotion_id
         AND sku.product_code = `code`.product_code
         LEFT JOIN voyageone_cms2.cms_bt_promotion prom ON sku.promotion_id = prom.promotion_id
