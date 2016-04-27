@@ -27,8 +27,12 @@ public class CmsConstants {
      * platformActive
      */
     public enum PlatformActive {
+        // 变更前 DB相关内容变更后请删除Onsale/Instock
         Onsale, 		// 在售
-        Instock  		// 在库
+        Instock,  		// 在库
+        // 变更后
+        ToOnsale,		// 在售
+        ToInstock 		// 在库
     }
 
 	/**
