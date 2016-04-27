@@ -23,7 +23,7 @@ public class StoreOperationServiceTest extends BaseTest{
 
     @Resource
     StoreOperationService storeOperationService;
-    private static final String channelId="010";
+    private static final String channelId="018";
 
     @Test
     public void testCountProductsThatCanUploaded() throws Exception {
@@ -32,20 +32,27 @@ public class StoreOperationServiceTest extends BaseTest{
     }
 
     @Test
+    public void testRePublishPrice() throws Exception {
+        storeOperationService.rePublishPrice(channelId,"will");
+
+    }
+
+    @Test
     public void testRePublish() throws Exception {
         storeOperationService.rePublish(channelId,"will");
+
     }
 
     @Test
     public void testReUpload() throws Exception {
-
+        storeOperationService.reUpload("018", true, "will");
     }
 
     @Test
     public void testGetHistoryBy() throws Exception {
         CmsBtStoreOperationHistoryModel model = new CmsBtStoreOperationHistoryModel();
         model.setCreater("will"+System.currentTimeMillis());
-        model.setOperationType(1+RandomUtils.nextInt(2));
+        model.setOperationType(1+"1");
 
         List<CmsBtStoreOperationHistoryModel> result = storeOperationService.getHistoryBy(null);
         assertTrue(result.size()>0);

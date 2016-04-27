@@ -1,5 +1,10 @@
 package com.voyageone.service.bean.cms.product;
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import org.apache.commons.beanutils.BeanUtils;
+
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * SKU Price Model
  *
@@ -94,5 +99,24 @@ public class ProductSkuPriceBean {
 
     public void setPriceChgFlg(String priceChgFlg) {
         this.priceChgFlg = priceChgFlg;
+    }
+
+    /**
+     * 添加一个新的静态工厂方法,简化调用
+     * @param sku
+     * @return
+     */
+    public static ProductSkuPriceBean from(CmsBtProductModel_Sku sku) {
+
+
+        ProductSkuPriceBean bean = new ProductSkuPriceBean();
+        try {
+            BeanUtils.copyProperties(bean,sku);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return bean;
     }
 }

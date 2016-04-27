@@ -41,6 +41,9 @@ public class CmsBtSxWorkloadDao extends ServiceBaseDao {
     }
 
     public void insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
+        if (models.size() == 0) {
+            return;
+        }
         insert("cms_insert_sx_workloads", models);
     }
 
