@@ -85,9 +85,9 @@
         )
         VALUES(
               #{operationType},
-              #{modified},
-              #{modifier},
-              #{created},
+        now(),
+        #{creater},
+        now(),
               #{creater}
         )
     </insert>

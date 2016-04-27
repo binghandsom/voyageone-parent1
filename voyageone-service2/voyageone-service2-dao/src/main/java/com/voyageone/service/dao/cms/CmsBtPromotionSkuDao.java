@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtPromotionSkuBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

@@ -118,7 +118,7 @@
     </select>
     <resultMap id="bt_promotion_code_sku_map" autoMapping="true" extends="bt_promotion_code_map"
                type="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
-        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtPromotionSkuBean">
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
             <result column="product_sku" property="productSku"/>
         </collection>
     </resultMap>

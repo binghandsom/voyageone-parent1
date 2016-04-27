@@ -1,7 +1,6 @@
 package com.voyageone.service.bean.cms;
 
 import com.taobao.api.internal.util.StringUtils;
-import com.voyageone.service.model.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
