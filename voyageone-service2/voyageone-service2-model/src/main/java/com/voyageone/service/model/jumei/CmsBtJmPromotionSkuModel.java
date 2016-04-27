@@ -4,7 +4,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-import com.voyageone.common.help.DateHelp;
+
 public class CmsBtJmPromotionSkuModel implements Serializable
 {
    public CmsBtJmPromotionSkuModel()
@@ -16,7 +16,7 @@ public class CmsBtJmPromotionSkuModel implements Serializable
         setDealPrice(new BigDecimal(0));
         setErrorMsg(""); 
         setCreater(""); 
-        setCreated(DateHelp.getDefaultDate());
+        setCreated(DateTimeUtil.getCreatedDefaultDate());
         setModifier(""); 
         setChannelId(""); 
 
@@ -342,7 +342,7 @@ this.created=created;
  }
 else
 {
-this.created=DateHelp.getDefaultDate();
+this.created=DateTimeUtil.getCreatedDefaultDate();
 }
 
         }
