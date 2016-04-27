@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +39,6 @@ public class CmsGroupDetailService extends BaseAppService {
     private final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;skus";
 
-    private final static String searchProductIds = "channelId;prodId;fields.code";
-
     /**
      * 获取检索页面初始化的master data数据
      */
@@ -58,20 +55,25 @@ public class CmsGroupDetailService extends BaseAppService {
     /**
      * 获取当前页的product列表
      */
-    public List<CmsBtProductModel> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public Map<String, Object> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+
+
+        Map<String, Object> result = new HashMap<>();
+
         // 先取得group信息，
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchValue(params, cmsSessionBean));
         List<CmsBtProductGroupModel> rstList = cmsBtProductGroupDao.select(queryObject, userInfo.getSelChannelId());
         if (rstList == null || rstList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList 没有group数据 " + params.toString());
-            return new ArrayList<>(0);
+            throw new BusinessException("该group不存在");
         }
+
         CmsBtProductGroupModel grpObj = rstList.get(0);
         List<String> codeList = grpObj.getProductCodes();
         if (codeList == null || codeList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList group下没有product数据 " + params.toString());
-            return new ArrayList<>(0);
+            throw new BusinessException("该group下没有product数据");
         }
         String[] codeArr = new String[codeList.size()];
         codeArr = codeList.toArray(codeArr);
@@ -83,38 +85,29 @@ public class CmsGroupDetailService extends BaseAppService {
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);
         if (prodList == null || codeList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList 没有product数据 " + params.toString());
-            return new ArrayList<>(0);
+            throw new BusinessException("该group下没有product数据");
         }
-        for (CmsBtProductModel prodObj : prodList) {
-            // 从group表合并platforms信息
-            prodObj.setGroups(grpObj);
-        }
-        return prodList;
+
+        result.put("groupInfo", grpObj);
+        result.put("productList", prodList);
+        return result;
     }
 
     /**
-     * 获取该Group下面所有Id列表
+     * update main product.
      */
-    public List<CmsBtProductModel> getProductIdList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(String.format("{ \"groupId\":%d}", Long.valueOf((String) params.get("id"))));
-        CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery(queryObject, userInfo.getSelChannelId());
-        if (grpObj == null) {
-            $warn("CmsGroupDetailService.getProductIdList 没有group信息 " + params.toString());
-            return new ArrayList<>(0);
+    public void updateMainProduct(Map<String, Object> params, UserSessionBean userSession) {
+
+        Object groupIdObj = params.get("groupId");
+        Object prodCodeObj = params.get("mainProductCode");
+
+        if (groupIdObj == null){
+            throw new BusinessException("group id is null !");
+        } else if (prodCodeObj == null){
+            throw new BusinessException("product code is null !");
         }
 
-        List<String> codeList = grpObj.getProductCodes();
-        if (codeList == null || codeList.isEmpty()) {
-            $warn("CmsGroupDetailService.getProductIdList 没有product code list信息 " + params.toString());
-            return new ArrayList<>(0);
-        }
-
-        String[] codeArr = new String[codeList.size()];
-        codeArr = codeList.toArray(codeArr);
-        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
-        queryObject.setProjection(searchProductIds.split(";"));
-        return productService.getList(userInfo.getSelChannelId(), queryObject);
+        productGroupService.updateMainProduct(userSession.getSelChannelId(), String.valueOf(prodCodeObj), Long.parseLong(String.valueOf(groupIdObj)), userSession.getUserName());
     }
 
     /**
@@ -131,40 +124,6 @@ public class CmsGroupDetailService extends BaseAppService {
         result.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
 
         return "{" + result.toString() + "}";
-    }
-
-    /**
-     * update main product.
-     */
-    public Map<String, Object> updateMainProduct(Map<String, Object> params, UserSessionBean userSession) {
-
-        //参数验证.
-        String errMsg =null;
-
-        Object groupIdObj = params.get("groupId");
-
-        Object prodIdObj = params.get("prodId");
-
-        if (groupIdObj == null){
-            errMsg = "group id is null !";
-        }else if (prodIdObj == null){
-            errMsg = "product id is null !";
-        }
-
-        if (errMsg != null){
-            throw new BusinessException(errMsg);
-        }
-
-        Long groupId = Long.parseLong(String.valueOf(groupIdObj));
-        String channelId = userSession.getSelChannelId();
-        Long productId = Long.parseLong(String.valueOf(prodIdObj));
-
-        int modifiedCount = productGroupService.updateMainProduct(channelId, productId, groupId, userSession.getUserName());
-
-        Map<String,Object> updateResult = new HashMap<>();
-        updateResult.put("result", modifiedCount);
-
-        return updateResult;
     }
 
 }

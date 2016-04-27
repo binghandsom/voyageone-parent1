@@ -20,14 +20,9 @@ define([
 		this.init = init;
 		this.setMainProduct = setMainProduct;
 
-		function init(id, pagination) {
+		function init(id) {
 			var defer = $q.defer();
-			var data = {
-				pageNum : pagination.curr,
-				pageSize :pagination.size,
-				id : id
-			};
-			$groupDetailService.init(data).then(function (res) {
+			$groupDetailService.init({id : id}).then(function (res) {
 				_resetProductList(res.data);
 				defer.resolve (res);
 			});
@@ -39,14 +34,9 @@ define([
 		 * @param data
 		 * @returns {*}
 		 */
-		function getProductList(id, pagination) {
+		function getProductList(id) {
 			var defer = $q.defer();
-			var data = {
-				pageNum : pagination.curr,
-				pageSize :pagination.size,
-				id : id
-			};
-			$groupDetailService.getProductList(data).then(function (res) {
+			$groupDetailService.getProductList({id : id}).then(function (res) {
 				_resetProductList(res.data);
 				defer.resolve (res);
 			});
@@ -87,7 +77,7 @@ define([
 			});
 
 			var tempProductIds = [];
-			_.forEach(data.productIds, function (productInfo) {
+			_.forEach(data.productList, function (productInfo) {
 				tempProductIds.push({id: productInfo.prodId, code: productInfo.fields.code});
 			});
 			data.productIds = tempProductIds;
