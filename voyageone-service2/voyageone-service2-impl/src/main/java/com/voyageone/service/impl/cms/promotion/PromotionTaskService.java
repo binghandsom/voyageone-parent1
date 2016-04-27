@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.service.dao.cms.CmsBtPromotionTaskDao;
+import com.voyageone.service.daoext.cms.CmsBtTaskTejiabaoDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 public class PromotionTaskService extends BaseService {
 
     @Autowired
-    private CmsBtPromotionTaskDao cmsPromotionTaskDao;
+    private CmsBtTaskTejiabaoDaoExt cmsPromotionTaskDao;
 
     public int getPromotionTaskPriceListCnt(Map<String,Object> params){
         return cmsPromotionTaskDao.getPromotionTaskPriceListCnt(params);
@@ -30,12 +30,12 @@ public class PromotionTaskService extends BaseService {
     }
 
     @VOTransactional
-    public int addPromotionTask(CmsBtPromotionTaskModel model){
+    public int addPromotionTask(CmsBtTaskTejiabaoModel model) {
         return cmsPromotionTaskDao.insertPromotionTask(model);
     }
 
     @VOTransactional
-    public int updatePromotionTask(CmsBtPromotionTaskModel model){
+    public int updatePromotionTask(CmsBtTaskTejiabaoModel model) {
         return cmsPromotionTaskDao.updatePromotionTask(model);
     }
 }

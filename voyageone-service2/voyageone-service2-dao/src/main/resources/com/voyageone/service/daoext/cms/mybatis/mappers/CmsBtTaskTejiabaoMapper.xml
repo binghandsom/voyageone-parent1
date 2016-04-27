@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <resultMap id="cms_bt_promotion_task_map" type="com.voyageone.service.model.cms.CmsBtPromotionTaskModel" >
-        <id column="seq" property="seq" jdbcType="INTEGER" />
+    <resultMap id="cms_bt_promotion_task_map" type="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
+        <id column="id" property="id" jdbcType="INTEGER"/>
         <id column="promotion_id" property="promotionId" jdbcType="INTEGER" />
         <id column="task_type" property="taskType" jdbcType="INTEGER" />
         <id column="key" property="key" jdbcType="VARCHAR" />
@@ -16,7 +16,7 @@
     </resultMap>
     <select id="select_cms_bt_promotion_task" resultMap="cms_bt_promotion_task_map" parameterType="HashMap" >
         select
-          seq,
+        id,
           promotion_id,
           task_type,
           `key`,
@@ -27,7 +27,7 @@
           creater,
           modified,
           modifier
-        from voyageone_cms2.cms_bt_promotion_task
+        from voyageone_cms2.cms_bt_task_tejiabao
         <where>
             <if test="promotionId != null and promotionId != ''">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
@@ -46,7 +46,7 @@
     </resultMap>
     <select id="select_cms_bt_promotion_task_price" resultMap="cms_bt_promotion_task_price_map" parameterType="HashMap" >
         select
-        a.seq,
+        a.id,
         a.promotion_id,
         a.task_type,
         a.`key`,
@@ -59,7 +59,7 @@
         a.modified,
         a.modifier
         from
-          voyageone_cms2.cms_bt_promotion_task a,
+        voyageone_cms2.cms_bt_task_tejiabao a,
         voyageone_cms2.cms_bt_promotion_codes b
         where
             a.promotion_id = b.promotion_id
@@ -82,7 +82,7 @@
         select
           count(1)
         from
-        voyageone_cms2.cms_bt_promotion_task a,
+        voyageone_cms2.cms_bt_task_tejiabao a,
         voyageone_cms2.cms_bt_promotion_codes b
         where
         a.promotion_id = b.promotion_id
@@ -97,8 +97,8 @@
             and a.`key` = #{key,jdbcType=VARCHAR}
         </if>
     </select>
-    <insert id="insert_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtPromotionTaskModel" >
-        insert IGNORE into voyageone_cms2.cms_bt_promotion_task
+    <insert id="insert_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
+        insert IGNORE into voyageone_cms2.cms_bt_task_tejiabao
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 promotion_id,
@@ -156,8 +156,8 @@
             </if>
         </trim>
     </insert>
-    <update id="update_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtPromotionTaskModel" >
-        update voyageone_cms2.cms_bt_promotion_task
+    <update id="update_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
+        update voyageone_cms2.cms_bt_task_tejiabao
         <set >
             <if test="synFlg != null" >
                 syn_flg = #{synFlg,jdbcType=INTEGER},
@@ -195,7 +195,7 @@
         a.creater,
         a.modified,
         a.modifier
-        from voyageone_cms2.cms_bt_promotion_task a,
+        from voyageone_cms2.cms_bt_task_tejiabao a,
               voyageone_cms2.cms_bt_promotion b
         where
             a.promotion_id = b.promotion_id
