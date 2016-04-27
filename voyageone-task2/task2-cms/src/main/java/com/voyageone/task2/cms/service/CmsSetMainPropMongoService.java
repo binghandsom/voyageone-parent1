@@ -833,6 +833,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 for (CmsBtProductModel_Sku sku : product.getSkus()) {
                     if (feedSku.getSku().equals(sku.getSkuCode())) {
                         blnFound = true;
+
+                        // 20160427 如果找到了, 还是修改一下吧, 据说尺寸有可能会变的 tom START
+                        sku.setSize(feedSku.getSize());
+                        // 20160427 如果找到了, 还是修改一下吧, 据说尺寸有可能会变的 tom END
+
                         break;
                     }
                 }
