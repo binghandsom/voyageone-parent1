@@ -15,7 +15,7 @@ public class BaseModel {
 
     private String creater;
 
-    private Date modified;
+    private String modified;
 
     private String modifier;
 
@@ -35,11 +35,11 @@ public class BaseModel {
         this.creater = creater;
     }
 
-    public Date getModified() {
+    public String getModified() {
         return modified;
     }
 
-    public void setModified(Date modified) {
+    public void setModified(String modified) {
         this.modified = modified;
     }
 

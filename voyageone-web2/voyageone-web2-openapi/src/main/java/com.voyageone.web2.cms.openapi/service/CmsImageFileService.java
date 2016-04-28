@@ -43,7 +43,6 @@ public class CmsImageFileService extends BaseService {
     CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
     @Autowired
     CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
-    public GetImageResultBean getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
 
     public GetImageResultBean getImage(String channelId, int templateId, String file, boolean isUploadUSCDN, String vparam, String creater) throws Exception {
         GetImageResultBean result = new GetImageResultBean();
