@@ -30,7 +30,7 @@
         t2.task_id,
         t2.type
         from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
-        inner join voyageone_cms2.cms_bt_tasks_increment_stock t2 on t1.sub_task_id = t2.sub_task_id
+        inner join voyageone_cms2.cms_bt_tasks_increment_stock t2 on t1.sub_task_id = t2.id
         where 1=1
         <if test="subTaskId != null">
             and t1.sub_task_id = #{subTaskId}

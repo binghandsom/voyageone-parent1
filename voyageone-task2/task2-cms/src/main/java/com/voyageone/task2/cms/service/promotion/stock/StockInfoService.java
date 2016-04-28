@@ -160,7 +160,7 @@ public class StockInfoService {
         sqlParam.put("taskIdList", listSeparateTaskId);
         List<Map<String, Object>> listIncTask = cmsBtTasksIncrementStockDaoExt.selectStockSeparateIncrementTask(sqlParam);
         listIncTask.forEach(data -> {
-            Integer subTaskId = (Integer) data.get("sub_task_id");
+            Integer subTaskId = (Integer) data.get("id");
             if (!listIncrementTaskId.contains(subTaskId)) {
                 listIncrementTaskId.add(subTaskId);
             }

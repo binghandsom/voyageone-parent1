@@ -1127,7 +1127,7 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("taskIdList", listSeparateTaskId);
         List<Map<String, Object>> listIncTask = stockSeparateService.getStockSeparateIncrementTask(sqlParam);
         listIncTask.forEach(data -> {
-            Integer subTaskId = (Integer) data.get("sub_task_id");
+            Integer subTaskId = (Integer) data.get("id");
             if (!listIncrementTaskId.contains(subTaskId)) {
                 listIncrementTaskId.add(subTaskId);
             }
@@ -2715,16 +2715,16 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException("7000039");
         }
 
-        String task_id = (String) param.get("task_id");
-        String import_mode = (String) param.get("import_mode");
+        String taskId = (String) param.get("task_id");
+        String importMode = (String) param.get("import_mode");
         List<Map> paramPropertyList = JacksonUtil.json2Bean((String) param.get("propertyList"), List.class);
         List<Map> paramPlatformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), List.class);
 
         // 库存隔离数据取得
-        $info("库存隔离数据取得开始, task_id=" + task_id);
+        $info("库存隔离数据取得开始, task_id=" + taskId);
         Map<String, Object> searchParam = new HashMap<>();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
-        searchParam.put("whereSql", " where task_id= '" + task_id + "'");
+        searchParam.put("whereSql", " where task_id= '" + taskId + "'");
         List<StockExcelBean> resultData = stockSeparateService.getExcelStockInfo(searchParam);
         // Map<sku, Map<cart_id, StockExcelBean>>
         Map<String, Map<String, StockExcelBean>> mapSkuInDB = new HashMap<>();
@@ -2741,12 +2741,12 @@ public class CmsTaskStockService extends BaseAppService {
 
         $info("导入Excel取得并check的处理开始");
         Map<String, List<String>> mapSku = new HashMap<>();
-        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
+        List<StockExcelBean> saveData = readExcel(file, importMode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
         $info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
             $info("更新开始");
-            saveImportData(saveData, mapSku, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
+            saveImportData(saveData, mapSku, importMode, taskId, (String) param.get("userName"), (String) param.get("channelId"));
             $info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
             $info("没有更新对象");
@@ -3140,19 +3140,19 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @param saveData    保存对象
      * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
-     * @param import_mode 导入方式
-     * @param task_id     任务id
+     * @param importMode 导入方式
+     * @param taskId     任务id
      * @param creater     创建者/更新者
      * @param channelId   渠道id
      */
-    private void saveImportData(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String import_mode, String task_id, String creater, String channelId) {
+    private void saveImportData(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String importMode, String taskId, String creater, String channelId) {
         try {
-            if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
+            if (EXCEL_IMPORT_UPDATE.equals(importMode)) {
                 // 变更方式
-                stockSeparateService.importExcelFileStockUpdate(saveData, mapSku, import_mode, task_id, creater, channelId);
+                stockSeparateService.importExcelFileStockUpdate(saveData, mapSku,taskId, creater, channelId);
             } else {
                 // 增量方式
-                stockSeparateService.importExcelFileStockAdd(saveData, mapSku, import_mode, task_id, creater, channelId);
+                stockSeparateService.importExcelFileStockAdd(saveData, taskId, creater, channelId);
             }
         } catch (Exception e) {
             $error(e.getMessage());

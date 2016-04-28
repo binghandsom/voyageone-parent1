@@ -102,7 +102,7 @@ public class StockWaitingRevertService extends BaseTaskService {
                 List<Map<String, Object>> stockIncrementList = getSubTaskInfo(taskId, cartId);
                 for (Map<String, Object> stockIncrement : stockIncrementList) {
                     // 更新增量库存隔离数据表（cms_bt_stock_separate_increment_item）中 状态为"3：增量成功"的状态为"5：还原"
-                    cntStockIncrement += updateStockSeparateIncrementItem(String.valueOf(stockIncrement.get("sub_task_id")));
+                    cntStockIncrement += updateStockSeparateIncrementItem(String.valueOf(stockIncrement.get("id")));
                 }
                 $info("增量库存隔离数据表 更新件数：" + cntStockIncrement);
 

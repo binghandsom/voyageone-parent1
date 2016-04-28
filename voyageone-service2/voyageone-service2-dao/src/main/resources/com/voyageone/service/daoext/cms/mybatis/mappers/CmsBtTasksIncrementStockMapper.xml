@@ -63,7 +63,6 @@
     <insert id="insert_cms_bt_stock_separate_increment_task_by_taskId" parameterType="HashMap" useGeneratedKeys="true"
             keyProperty="id">
         insert into voyageone_cms2.cms_bt_tasks_increment_stock (
-        id,
         task_id,
         sub_task_name,
         cart_id,
@@ -74,7 +73,6 @@
         modified,
         modifier
         )value(
-        #{id},
         #{task_id},
         #{sub_task_name},
         #{cart_id},

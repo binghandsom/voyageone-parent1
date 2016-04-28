@@ -213,7 +213,7 @@
     </delete>
 
     <insert id="cms_bt_stock_separate_insertStockSeparateItem" parameterType="HashMap" useGeneratedKeys="true"
-            keyProperty="seq">
+            keyProperty="id">
         insert into voyageone_cms2.cms_bt_stock_separate_item (
         task_id,
         channel_id,
@@ -296,7 +296,7 @@
         t2.sub_task_Name as taskName,
         t1.increment_qty as qty
         from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
-        inner join voyageone_cms2.cms_bt_tasks_increment_stock t2 on t1.sub_task_id = t2.sub_task_id
+        inner join voyageone_cms2.cms_bt_tasks_increment_stock t2 on t1.sub_task_id = t2.id
         where
         t2.task_id = #{taskId}
         and t2.cart_id = #{cartId}
@@ -420,7 +420,7 @@
         from
             voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
         left join voyageone_cms2.cms_bt_tasks_increment_stock t2
-        on t1.sub_task_id = t2.sub_task_id
+        on t1.sub_task_id = t2.id
         where
             t2.task_id = #{taskId} and
             t1.error_msg is not null and t1.error_msg != ''

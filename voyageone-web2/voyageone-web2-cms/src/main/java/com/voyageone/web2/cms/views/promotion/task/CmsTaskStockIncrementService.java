@@ -62,7 +62,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         List<Map<String, Object>> taskList = new ArrayList<>();
         for (Map<String, Object> taskDB : taskListDB) {
             Map<String, Object> task = new HashMap<>();
-            task.put("subTaskId", String.valueOf(taskDB.get("sub_task_id")));
+            task.put("subTaskId", String.valueOf(taskDB.get("id")));
             task.put("subTaskName", taskDB.get("sub_task_name"));
             task.put("cartName", taskDB.get("name"));
             taskList.add(task);

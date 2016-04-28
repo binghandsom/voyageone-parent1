@@ -193,7 +193,7 @@ public class StockIncrementService extends BaseTaskService {
         List<Map<String, Object>> imsBtLogSynInventoryList = new ArrayList<>();
 
         for (Map<String, Object> stockIncrement : stockIncrementList) {
-            Integer seq = (Integer) stockIncrement.get("seq");
+            Integer seq = (Integer) stockIncrement.get("id");
             Integer subTaskId = (Integer) stockIncrement.get("sub_task_id");
             String sku = (String) stockIncrement.get("sku");
             Integer cartId = (Integer) stockIncrement.get("cart_id");
