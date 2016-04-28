@@ -5,10 +5,10 @@
     <!-- 检查检查检查检查检查@Lewis -->
     <select id="getPlatformImageUrlMap" parameterType="Map" resultType="com.voyageone.task2.cms.model.ImageUrlMappingModel">
        SELECT
-            org_image_url AS orgImageUrl,
-            platform_image_url AS platformImageUrl
+            original_img_url AS orgImageUrl,
+            platform_img_url AS platformImageUrl
         FROM
-            voyageone_cms2.cms_mt_platform_imageUrl_mapping
+            voyageone_cms2.cms_bt_platform_images
         WHERE
             cart_id = #{cartId}
             AND channel_id = #{channelId}
@@ -17,12 +17,12 @@
 
     <!-- insert the image url -->
     <insert id="cms_insertPlatformImageUrl">
-        insert into voyageone_cms2.cms_mt_platform_imageUrl_mapping
+        insert into voyageone_cms2.cms_bt_platform_images
         (
             cart_id,
             channel_id,
-            group_id,
-            org_image_url,
+            search_id,
+            original_img_url,
             platform_image_url,
             created,
             creater,

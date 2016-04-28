@@ -4,12 +4,12 @@
 
     <!-- 清空gilt商品临时表 -->
     <delete id="cms2_zz_worktable_gilt_superfeed_clear">
-        DELETE FROM voyageone_cms2.cms_zz_worktable_gilt_superfeed;
+        DELETE FROM voyageone_cms2.cms_zz_feed_gilt_product_temp;
     </delete>
 
     <!-- 插入数据到gilt商品临时表 -->
     <insert id="cms2_zz_worktable_gilt_superfeed_insertList">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
         attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
@@ -33,13 +33,13 @@
     <select id="cms2_zz_worktable_gilt_superfeed_full_select4exist"
             resultType="HashMap">
         SELECT id
-        FROM voyageone_cms2.cms_zz_worktable_gilt_superfeed_full
+        FROM voyageone_cms2.cms_zz_feed_gilt_product_full
         WHERE id = #{id};
     </select>
 
     <!-- 插入数据到gilt商品一览总表 -->
     <insert id="cms2_zz_worktable_gilt_superfeed_full_insert">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
         attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
@@ -61,7 +61,7 @@
 
     <!-- 更新数据到gilt商品一览总表 -->
     <update id="cms2_zz_worktable_gilt_superfeed_full_update">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
         attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,

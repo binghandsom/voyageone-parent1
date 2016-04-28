@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
     <insert id="cms_zz_worktable_gilt_superfeed_insertList">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
         attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
@@ -23,7 +23,7 @@
     </insert>
 
     <insert id="cms_zz_worktable_gilt_superfeed_insert">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_temp
         (id, product_id, product_look_id, locale, name,
          description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
          attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
@@ -115,11 +115,11 @@
     </select>
 
     <delete id="cms_zz_worktable_gilt_superfeed_clear">
-        DELETE FROM voyageone_cms2.cms_zz_worktable_gilt_superfeed;
+        DELETE FROM voyageone_cms2.cms_zz_feed_gilt_product_temp;
     </delete>
 
     <update id="cms_zz_worktable_gilt_superfeed_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms2.cms_zz_worktable_gilt_superfeed set UpdateFlag = 3 where UpdateFlag = 1 and `id` in (
+        UPDATE voyageone_cms2.cms_zz_feed_gilt_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `id` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
         </foreach>
@@ -127,8 +127,8 @@
     </update>
 
     <insert id="cms_zz_worktable_gilt_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed_full SELECT * from
-        voyageone_cms2.cms_zz_worktable_gilt_superfeed where `id` in
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_gilt_product_temp where `id` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -139,7 +139,7 @@
     <delete id="cms_zz_worktable_gilt_superfeed_full_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms2.cms_zz_worktable_gilt_superfeed_full
+        voyageone_cms2.cms_zz_feed_gilt_product_full
         where `id` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}

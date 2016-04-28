@@ -6,7 +6,7 @@
 		SELECT
 		*
 		FROM
-		voyageone_cms2.cms_bt_condition_prop_value
+		voyageone_cms2.cms_mt_channel_condition_config
 	</select>
 
 </mapper>

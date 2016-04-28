@@ -461,7 +461,7 @@
 
 
     <update id="cms_zz_worktable_je_superfeed_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms2.cms_zz_worktable_je_superfeed set UpdateFlag = 3 where `Inventory Number` in (
+        UPDATE voyageone_cms2.cms_zz_feed_je_product_temp set UpdateFlag = 3 where `Inventory Number` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
         </foreach>
@@ -469,8 +469,8 @@
     </update>
 
     <insert id="cms_zz_worktable_je_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_je_superfeed_full SELECT * from
-        voyageone_cms2.cms_zz_worktable_je_superfeed where `Inventory Number` in
+        INSERT INTO voyageone_cms2.cms_zz_feed_je_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_je_product_temp where `Inventory Number` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -481,7 +481,7 @@
     <delete id="cms_zz_worktable_je_superfeed_full_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms2.cms_zz_worktable_je_superfeed_full
+        voyageone_cms2.cms_zz_feed_je_product_full
         where `Inventory Number` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
