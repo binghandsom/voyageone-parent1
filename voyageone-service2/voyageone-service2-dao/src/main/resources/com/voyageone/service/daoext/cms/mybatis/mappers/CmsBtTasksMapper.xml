@@ -29,7 +29,7 @@
 
 
     <resultMap id="taskWithPromotion" type="com.voyageone.service.bean.cms.CmsBtTasksBean" autoMapping="true">
-        <id property="id" column="task_id"/>
+        <id property="task_id" column="id"/>
         <result property="activity_start" column="t_start"/>
         <result property="activity_end" column="t_end"/>
         <result property="status" column="status"/>
