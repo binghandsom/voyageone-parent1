@@ -57,31 +57,11 @@ public class CmsImageFileService extends BaseService {
             $info("CmsImageFileService:getImage get db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model=[%s]", channelId, templateId, file, vparam, hashCode, modelFile);
             if (modelFile == null) {
                 //1.创建记录信息
-                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode);
+                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode,isUploadUSCDN);
                 $info("CmsImageFileService:getImage create db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
             }
-            if (modelFile.getState() == 0) {
-
-                CmsMtImageCreateTemplateModel modelTemplate = imageCreateFileService.getCmsMtImageCreateTemplate(modelFile.getTemplateId());//获取模板
-                if (modelTemplate == null) {
-                    throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
-                }
-                $info("CmsImageFileService:getImage get template end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
-                //2.生成图片 from LiquidFire
-                serviceLiquidFireImage.createImage(modelFile, modelTemplate);
-                $info("CmsImageFileService:getImage create image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
-                isCreateNewFile = true;
-            }
-            if (modelFile.getOssState() == 0) {
-                //3.上传图片到阿里云OSS
-                serviceAliYunOSSFile.upload(modelFile);
-                $info("CmsImageFileService:getImage upload oss image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
-            }
-            if (isUploadUSCDN && modelFile.getUscdnState() == 0) {
-                //4.上传 uscdn
-                serviceUSCDNFile.upload(modelFile);
-                $info("CmsImageFileService:getImage upload uscnd image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
-            }
+                //.创建并上传图片
+            isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile);
         } catch (OpenApiException ex) {
             //4.处理业务异常
             result.setErrorCode(ex.getErrorCode());
@@ -124,6 +104,9 @@ public class CmsImageFileService extends BaseService {
         }
         return result;
     }
+
+
+
     public AddListResultBean addList(AddListParameter parameter) {
         AddListResultBean result = new AddListResultBean();
         try {
@@ -136,7 +119,7 @@ public class CmsImageFileService extends BaseService {
                 long hashCode = imageCreateFileService.getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
                 modelCmsMtImageCreateFile = imageCreateFileService.getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile==null) {//1.创建记录信息
-                    modelCmsMtImageCreateFile= modelCmsMtImageCreateFile = imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
+                    modelCmsMtImageCreateFile= modelCmsMtImageCreateFile = imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode,imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());

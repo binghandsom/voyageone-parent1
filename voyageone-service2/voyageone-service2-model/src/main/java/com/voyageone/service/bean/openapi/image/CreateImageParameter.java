@@ -8,6 +8,16 @@ public class CreateImageParameter {
     int templateId;
     String file;
     String vParam;
+    boolean isUploadUsCdn;
+
+    public boolean isUploadUsCdn() {
+        return isUploadUsCdn;
+    }
+
+    public void setUploadUsCdn(boolean uploadUsCdn) {
+        isUploadUsCdn = uploadUsCdn;
+    }
+
     public String getChannelId() {
         return channelId;
     }

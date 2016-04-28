@@ -7,7 +7,7 @@
 
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_file
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`,is_upload_us_cdn        from cms_mt_image_create_file
         <where>
             <if test="id != null">
                 AND `id` = #{id}
@@ -69,7 +69,7 @@
         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`,is_upload_us_cdn from cms_mt_image_create_file
         <where>
 
             <if test="id != null">
@@ -150,7 +150,7 @@
         </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file where id=#{id}
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`,is_upload_us_cdn from cms_mt_image_create_file where id=#{id}
     </select>
 
     <update id="update">
@@ -169,6 +169,7 @@
         ,`uscdn_state`=#{uscdnState}
         ,`error_msg`=#{errorMsg}
         ,`error_code`=#{errorCode}
+        ,`is_upload_us_cdn`=#{is_upload_us_cdn}
         ,`modifier`=#{modifier}
         where id=#{id}
     </update>
@@ -195,6 +196,7 @@
         `uscdn_state`,
         `error_msg`,
         `error_code`,
+        `is_upload_us_cdn`,
         `created`,
         `creater`,
         `modified`,
@@ -214,6 +216,7 @@
         #{uscdnState},
         #{errorMsg},
         #{errorCode},
+        #{isUploadUsCdn}
         now(),
         #{creater},
         now(),

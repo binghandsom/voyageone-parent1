@@ -64,6 +64,15 @@ public class CmsMtImageCreateFileModel extends BaseModel {
 
     private  int errorCode;
 
+    public boolean isUploadUsCdn() {
+        return isUploadUsCdn;
+    }
+
+    public void setUploadUsCdn(boolean uploadUsCdn) {
+        isUploadUsCdn = uploadUsCdn;
+    }
+
+    private  boolean isUploadUsCdn;
     /**
      * 请求参数生成的hashcode
      */
