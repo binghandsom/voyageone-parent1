@@ -33,7 +33,7 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
-        model.setInstockTime("2016-04-25 11:11:13");
+        model.setInStockTime("2016-04-25 11:11:13");
         model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
 
         List<String> productCodes = new ArrayList<>();
@@ -69,7 +69,7 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("1987654321");
         model.setPublishTime("2016-04-25 21:11:11");
         model.setOnSaleTime("2016-04-25 21:11:12");
-        model.setInstockTime("2016-04-25 21:11:13");
+        model.setInStockTime("2016-04-25 21:11:13");
         model.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
         model.setPlatformActive(CmsConstants.PlatformActive.Instock);
 
@@ -104,7 +104,7 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
-        model.setInstockTime("2016-04-25 11:11:13");
+        model.setInStockTime("2016-04-25 11:11:13");
         model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
 
         List<String> productCodes = new ArrayList<>();
@@ -141,7 +141,7 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
-        model.setInstockTime("2016-04-25 11:11:13");
+        model.setInStockTime("2016-04-25 11:11:13");
         model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
 
         List<String> productCodes = new ArrayList<>();
