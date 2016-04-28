@@ -82,6 +82,7 @@ define(function() {
         "TXT_MASTER_CATEGORY_WITH_COLON": "Master Category:",
         "TXT_FEED_CATEGORY": "Feed Category",
         "TXT_ON_SALE_TIME": "On Sale Time",
+        "TXT_IN_STOCK_TIME": "In Stock Time",
         "TXT_MSRP_WITH_COLON": "MSRP:",
         "TXT_RETAIL_PRICE_WITH_COLON": "Retail Price:",
         "TXT_CREATE_TIME_WITH_COLON": "Create Time:",

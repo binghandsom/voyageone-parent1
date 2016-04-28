@@ -18,9 +18,10 @@ define([
         };
 
         $scope.initialize = initialize;
-        $scope.getProductList = getProductList;
+        //$scope.getProductList = getProductList;
         $scope.setMainProduct = setMainProduct;
         $scope.openCategoryMapping = openCategoryMapping;
+        $scope.openBulkUpdate = openBulkUpdate;
         $scope.bindCategory = bindCategory;
 
         /**
@@ -38,20 +39,20 @@ define([
                 });
         }
 
-        /**
-         * 获取该group下的productList数据,主要用于翻页
-         */
-        function getProductList () {
-
-            groupDetailService.getProductList($routeParams.id)
-                .then(function (res) {
-                    $scope.vm.productList = res.data.productList;
-                    $scope.vm.productListCopy = angular.copy($scope.vm.productList);
-                    //$scope.vm.productPageOption.total = res.data.productListTotal;
-                    $scope.vm.productIds = res.data.productIds;
-                    $scope.vm.groupInfo = res.data.groupInfo;
-                });
-        }
+        ///**
+        // * 获取该group下的productList数据,主要用于翻页
+        // */
+        //function getProductList () {
+        //
+        //    groupDetailService.getProductList($routeParams.id)
+        //        .then(function (res) {
+        //            $scope.vm.productList = res.data.productList;
+        //            $scope.vm.productListCopy = angular.copy($scope.vm.productList);
+        //            //$scope.vm.productPageOption.total = res.data.productListTotal;
+        //            $scope.vm.productIds = res.data.productIds;
+        //            $scope.vm.groupInfo = res.data.groupInfo;
+        //        });
+        //}
 
         /**
          * 设置group的主商品
@@ -66,6 +67,16 @@ define([
                 }, function () {
                     $scope.vm.productList = angular.copy($scope.vm.productListCopy);
                 })
+        }
+
+        /**
+         * popup出批量修改产品的field属性
+         * @param openFieldEdit
+         */
+        function openBulkUpdate (openFieldEdit) {
+            openFieldEdit($scope.vm.productIds).then(function () {
+                initialize ()
+            })
         }
 
         function openCategoryMapping (popupNewCategory) {
