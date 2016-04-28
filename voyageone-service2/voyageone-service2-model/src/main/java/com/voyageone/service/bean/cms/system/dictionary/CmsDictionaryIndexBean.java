@@ -13,7 +13,7 @@ public class CmsDictionaryIndexBean {
 
     private String order_channel_id;
 
-    private String cart_id;
+    private String cartId;
 
     private String name;
 
@@ -43,12 +43,12 @@ public class CmsDictionaryIndexBean {
         this.order_channel_id = order_channel_id;
     }
 
-    public String getCart_id() {
-        return cart_id;
+    public String getCartId() {
+        return cartId;
     }
 
-    public void setCart_id(String cart_id) {
-        this.cart_id = cart_id;
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
     }
 
     public String getName() {

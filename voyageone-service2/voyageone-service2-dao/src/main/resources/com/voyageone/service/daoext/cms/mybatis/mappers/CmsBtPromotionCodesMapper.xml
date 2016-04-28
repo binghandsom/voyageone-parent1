@@ -59,7 +59,7 @@
         b.tag_path_name
         FROM
         voyageone_cms2.cms_bt_promotion_codes a
-        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.id
         LEFT JOIN tm_order_channel d on a.org_channel_id = d.order_channel_id
 
         <where>
@@ -157,7 +157,7 @@
         c.product_sku
         FROM
         voyageone_cms2.cms_bt_promotion_codes a
-        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.id
         LEFT JOIN voyageone_cms2.cms_bt_promotion_skus c on a.promotion_id = c.promotion_id and a.product_code =
         c.product_code
 

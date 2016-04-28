@@ -135,7 +135,7 @@ public class CmsDictManageService extends BaseAppService {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(userInfo.getSelChannelId());
         params.setLang(language);
-        params.setCart_id(cmsSessionBean.getPlatformType().get("cartId").toString());
+        params.setCartId(cmsSessionBean.getPlatformType().get("cartId").toString());
         resultInfo.put("dictionaryProps", dictService.getModesByChannel(params));
 
         return resultInfo;

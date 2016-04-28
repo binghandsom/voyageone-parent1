@@ -183,15 +183,15 @@ public class PromotionService extends BaseService {
      * 删除
      */
     @VOTransactional
-    public int delete(CmsBtPromotionModel cmsBtPromotionModel) {
+    public int delete(CmsBtPromotionBean cmsBtPromotionBean) {
         Map<String, Object> param = new HashMap<>();
-        param.put("promotionId", cmsBtPromotionModel.getId());
-        param.put("modifier", cmsBtPromotionModel.getModifier());
+        param.put("promotionId", cmsBtPromotionBean.getId());
+        param.put("modifier", cmsBtPromotionBean.getModifier());
 
         // 删除对应的tag
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setParentTagId(cmsBtPromotionModel.getRefTagId());
-        cmsBtTagModel.setId(cmsBtPromotionModel.getRefTagId());
+        cmsBtTagModel.setParentTagId(cmsBtPromotionBean.getRefTagId());
+        cmsBtTagModel.setId(cmsBtPromotionBean.getRefTagId());
         cmsBtTagDaoExt.deleteCmsBtTagByParentTagId(cmsBtTagModel);
         cmsBtTagDaoExt.deleteCmsBtTagByTagId(cmsBtTagModel);
 
