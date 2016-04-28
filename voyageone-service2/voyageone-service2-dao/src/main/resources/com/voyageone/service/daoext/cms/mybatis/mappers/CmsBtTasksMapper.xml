@@ -126,7 +126,7 @@
         delete
         from voyageone_cms2.cms_bt_tasks
         where
-        id = #{task_id}
+        id = #{id}
     </delete>
     <select id="select_cms_bt_tasks_task_id" parameterType="String" resultType="String">
       select id

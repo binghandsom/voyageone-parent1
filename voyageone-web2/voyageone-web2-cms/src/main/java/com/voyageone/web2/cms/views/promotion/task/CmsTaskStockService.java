@@ -679,7 +679,7 @@ public class CmsTaskStockService extends BaseAppService {
             List<Map<String, String>> separatePlatformMapList = getInsertStockSeparatePlatFormByPromotionInfo(param, onlySku);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
             importSkuByPromotionInfo(param, onlySku, channelID, cmsBtTasksBean, separatePlatformMapList);
-            String taskID = String.valueOf(cmsBtTasksBean.getTask_id());
+            String taskID = String.valueOf(cmsBtTasksBean.getId());
             //将取得的taskId放入param
             param.put("taskId", taskID);
         }

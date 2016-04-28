@@ -74,7 +74,7 @@ public class StockSeparateService extends BaseService {
 
         // 删除任务表中的数据
         CmsBtTasksBean cmsBtTasksBean = new CmsBtTasksBean();
-        cmsBtTasksBean.setTask_id(taskId);
+        cmsBtTasksBean.setId(taskId);
         cmsBtTasksDaoExt.delete(cmsBtTasksBean);
     }
 
@@ -346,7 +346,7 @@ public class StockSeparateService extends BaseService {
          * insert cmsBtTasks
          */
         cmsBtTasksDaoExt.insert(cmsBtTasksBean);
-        String taskID = String.valueOf(cmsBtTasksBean.getTask_id());
+        String taskID = String.valueOf(cmsBtTasksBean.getId());
 
         /**
          * insert cmsBtStockSeparatePlatformInfo
