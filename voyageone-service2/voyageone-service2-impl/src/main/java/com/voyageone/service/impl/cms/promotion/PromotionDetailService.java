@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -14,8 +15,10 @@ import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTaskTejiabaoDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TaskService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,8 @@ public class PromotionDetailService extends BaseService {
     @Autowired
     private ProductService productService;
     @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
     private ProductTagService productTagService;
 
     /**
@@ -67,14 +72,24 @@ public class PromotionDetailService extends BaseService {
 
         // 获取Product信息
         CmsBtProductModel productInfo;
-        if (!StringUtils.isEmpty(productCode))
+        CmsBtProductGroupModel groupModel;
+        JomgoQuery query = new JomgoQuery();
+        if (!StringUtils.isEmpty(productCode)) {
             productInfo = productService.getProductByCode(channelId, productCode);
-        else
+            query.setQuery("{\"productCodes\":\"" + productCode + "\",\"cartId\":" + cartId + "}");
+            groupModel = productGroupService.getProductGroupByQuery(channelId, query);
+        }
+        else {
             productInfo = productService.getProductById(channelId, productId);
+            query.setQuery("{\"productCodes\":\"" + productInfo.getFields().getCode() + "\",\"cartId\":" + cartId + "}");
+            groupModel = productGroupService.getProductGroupByQuery(channelId, query);
+        }
 
         if(productInfo == null) {
             throw new BusinessException("productCode:"+productCode+"不存在");
         }
+
+
 
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean = new CmsBtPromotionGroupsBean(productInfo, cartId, promotionId, modifier);
@@ -82,6 +97,7 @@ public class PromotionDetailService extends BaseService {
 
         // 插入cms_bt_promotion_code表
         CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, cartId, promotionId, modifier);
+        cmsBtPromotionCodesBean.setNumIid(groupModel.getNumIId());
         cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
         if(productInfo.getFields().getImages1().size() > 0){
@@ -93,6 +109,7 @@ public class PromotionDetailService extends BaseService {
 
         productInfo.getSkus().forEach(sku -> {
             CmsBtPromotionSkuBean cmsBtPromotionSkuModel = new CmsBtPromotionSkuBean(productInfo, cartId, promotionId, modifier, sku.getSkuCode(), 0);
+            cmsBtPromotionSkuModel.setNumIid(groupModel.getNumIId());
             if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModel) == 0) {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             }

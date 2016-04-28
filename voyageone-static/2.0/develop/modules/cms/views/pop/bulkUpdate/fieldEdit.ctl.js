@@ -7,12 +7,12 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popFieldEditCtl', function ($scope, $fieldEditService, $translate, $modalInstance, notify, productIds) {
+    angularAMD.controller('popFieldEditCtl', function ($scope, $fieldEditService, $translate, $modalInstance, notify, context) {
 
         $scope.vm = {
             propertyInfo: {
                 property: {},
-                productIds: productIds
+                productIds: context.productIds
             },
             properties: []
         };

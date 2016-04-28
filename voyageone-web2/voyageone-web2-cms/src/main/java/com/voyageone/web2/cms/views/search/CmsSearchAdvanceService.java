@@ -195,7 +195,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 获取promotion list
-        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId()));
+        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
 
         //add by holysky  新增一些页的聚美促销活动预加载
         masterData.put("jmPromotionList", jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));

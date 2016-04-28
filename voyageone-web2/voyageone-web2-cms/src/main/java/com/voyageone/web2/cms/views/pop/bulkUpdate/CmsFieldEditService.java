@@ -9,7 +9,6 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
-import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -74,45 +73,44 @@ public class CmsFieldEditService extends BaseAppService {
     public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = prop.get("id").toString();
-        List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
+//        List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
+        List<String> productCodes = (ArrayList<String>)params.get("productIds");
 
-        for(Long productId : prodIdList) {
+        // 获取更新数据
+        Object[] field = getPropValue(params);
 
-            Object[] field = getPropValue(params);
+        // TODO: 16/4/27 以后改成一个语句批量更新,目前没时间改 
+        for(String code : productCodes) {
+
             // 获取产品的信息
-            CmsBtProductModel productModel = productService.getProductById(userInfo.getSelChannelId(), productId);
-
-            // TODO 批量更新操作重置approved->ready这步暂时不执行,因为运营如果批量操作再批量approved,工作量比较大,以后有需要时再放开
-            // 更新状态以外的属性时,check产品状态如果为Approved,则将产品状态设置成Ready
-//            if (!"status".equals(prop_id) && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
-//                productModel.getFields().setStatus(CmsConstants.productStatus.READY);
+            CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
 
             // 处理如果是批量更新status,如果该产品以前就是approved,则不做处理
             if ("status".equals(prop_id)
-                    && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
+                    && CmsConstants.productStatus.APPROVED.equals(
+
+                    productModel.getFields().getStatus()))
                 break;
 
-            if ("platformActive".equals(prop_id)) {
-                // edward 2016-04-23 修改了group更新的共通方法 start
-                CmsBtProductGroupModel CmsBtProductGroupModel = new CmsBtProductGroupModel();
-//                Map platform = new HashMap();
-//
-//                if ("Onsale".equals(field[1].toString())) {
-//                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToOnsale.name());
-//                } else if ("Instock".equals(field[1].toString())) {
-//                    platform.put("platformActive", com.voyageone.common.CmsConstants.PlatformActive.ToInstock.name());
-//                }
-//
-//                // 更新group
-//                productGroupService.saveGroups(userInfo.getSelChannelId(), productModel.getFields().getCode(), cartId, platform);
 
+            // 如果更新的是platformActive,则更新cms_bt_product_groups表
+            if ("platformActive".equals(prop_id)) {
+                CmsBtProductGroupModel CmsBtProductGroupModel = new CmsBtProductGroupModel();
+                if (0 != cartId && 1 != cartId) CmsBtProductGroupModel.setCartId(cartId);
+                CmsBtProductGroupModel.setChannelId(userInfo.getSelChannelId());
+
+                // 只要找到对应的
+                CmsBtProductGroupModel.setMainProductCode(code);
+
+                // 设置platformActive的状态
                 if(com.voyageone.common.CmsConstants.PlatformActive.Onsale.name().equals(field[1].toString()))
                     CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Onsale);
                 else if (com.voyageone.common.CmsConstants.PlatformActive.Instock.name().equals(field[1].toString()))
                     CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Instock);
 
-                productGroupService.update(CmsBtProductGroupModel);
-                // edward 2016-04-23 修改了group更新的共通方法 end
+                CmsBtProductGroupModel.setModifier(userInfo.getUserName());
+
+                productGroupService.updateGroupsPlatformActiveBympCode(CmsBtProductGroupModel);
             } else {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);
             }
