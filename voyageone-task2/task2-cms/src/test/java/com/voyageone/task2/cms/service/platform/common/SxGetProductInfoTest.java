@@ -86,14 +86,14 @@ public class SxGetProductInfoTest {
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
 
         SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
-        ExpressionParser exp = new ExpressionParser(sxData);
+        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
 
         ShopBean shopBean = new ShopBean();
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
-        Map<String, Object> res = sxProductService.constructMappingPlatformProps(fields,cmsMtPlatformMappingModel,shopBean,exp,"morse");
-//        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse");
+//        Map<String, Object> res = sxProductService.constructMappingPlatformProps(fields,cmsMtPlatformMappingModel,shopBean,exp,"morse");
+        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse");
         System.out.println(res);
         // constructMappingPlatformProps end
 
@@ -140,42 +140,6 @@ public class SxGetProductInfoTest {
 
 
         System.out.println("end");
-//        Integer[] arr = new Integer[]{1,2,6};
-//        List<Integer> intList = new ArrayList<>(Arrays.asList(arr));
-//        List<Integer> intList = new ArrayList<>();
-//        Collections.addAll(intList, arr);
-//        List<Integer> intList = Lists.newArrayList(arr);
-//        intList.add(5);
-
-//        List<Integer> intLiList = new LinkedList<>();
-////        intLiList
-//        intList.sort(Comparator.<Integer, Double>comparing(a -> a.doubleValue()).thenComparing(a -> a));
-//        intList.sort(Comparator.comparing((Integer a) -> a).thenComparing(b -> b));
-//        Comparator<Integer> c = ((a,b)->a.compareTo(b));
-//        intList.sort(((a,b)->a.compareTo(b)));
-//        int sum = 0;
-//        for (Iterator<Integer> iter = intList.iterator(); iter.hasNext(); ) {
-//            int v = iter.next().intValue();
-//            sum += v;
-//        }
-//        System.out.println(sum);
-//        getInstance();
-
-
-//        String ss1 = "5.5cm";
-//        String ss2 = "15.5cm";
-//        String ss3 = "25.5cm1";
-//        String ss4 = "25.5cm12";
-//        String ss5 = "25525cm";
-//        System.out.println(ss1.lastIndexOf("cm")==ss1.length()-2);
-//        System.out.println(ss2.lastIndexOf("cm")==ss2.length()-2);
-//        System.out.println(ss3.lastIndexOf("cm")==ss3.length()-2);
-//        System.out.println(ss4.lastIndexOf("cm")==ss4.length()-2);
-//        System.out.println(ss5.lastIndexOf("cm")==ss5.length()-2);
-//
-//        System.out.println(ss1.substring(0, ss1.length()-2));
-//        System.out.println(ss2.substring(0, ss2.length()-2));
-//        System.out.println(ss5.substring(0, ss5.length()-2));
 
 //        List<CmsBtProductModel_Sku> skuSourceList = new ArrayList<>();
 //

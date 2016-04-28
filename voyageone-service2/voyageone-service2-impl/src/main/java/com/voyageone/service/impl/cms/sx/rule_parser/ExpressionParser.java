@@ -22,7 +22,6 @@ import java.util.Set;
  */
 public class ExpressionParser extends VOAbsLoggable {
 
-    @Autowired
     private SxProductService sxProductService;
 
     private SxData sxData;
@@ -34,9 +33,10 @@ public class ExpressionParser extends VOAbsLoggable {
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
 
-    public ExpressionParser(SxData sxData) {
+    public ExpressionParser(SxProductService sxProductService, SxData sxData) {
+        this.sxProductService = sxProductService;
         this.sxData = sxData;
-        this.dictWordParser = new DictWordParser(sxData.getChannelId());
+        this.dictWordParser = new DictWordParser(sxProductService, sxData.getChannelId());
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxData);
 
