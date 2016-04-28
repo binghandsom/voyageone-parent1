@@ -675,39 +675,45 @@ public class CmsSearchAdvanceService extends BaseAppService {
         StringBuilder resultPlatforms = new StringBuilder();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
-        resultPlatforms.append(",");
+        Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
 
-        // 获取platform status
-        if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().length > 0) {
-            // 获取platform status
-            resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
+        // 只有选中具体的某个平台的时候,和platform相关的检索才有效
+        if (cartId != 0 && cartId != 1) {
+
+            resultPlatforms.append(MongoUtils.splicingValue("cartId", cartId));
             resultPlatforms.append(",");
-        }
 
-        if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append("\"publishTime\":{" );
-            // 获取publishTime start
-            if (searchValue.getPublishTimeStart() != null) {
-                resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+            // 获取platform status
+            if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().length > 0) {
+                // 获取platform status
+                resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
+                resultPlatforms.append(",");
             }
-            // 获取publishTime End
-            if (searchValue.getPublishTimeTo() != null) {
+
+            if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
+                resultPlatforms.append("\"publishTime\":{" );
+                // 获取publishTime start
                 if (searchValue.getPublishTimeStart() != null) {
-                    resultPlatforms.append(",");
+                    resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
                 }
-                resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+                // 获取publishTime End
+                if (searchValue.getPublishTimeTo() != null) {
+                    if (searchValue.getPublishTimeStart() != null) {
+                        resultPlatforms.append(",");
+                    }
+                    resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+                }
+                resultPlatforms.append("},");
             }
-            resultPlatforms.append("},");
+
+            result.append(MongoUtils.splicingValue("carts"
+                    , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
+                    , "$elemMatch"));
+            result.append(",");
+
+            // 获取其他检索条件
+            result.append(getSearchValueForMongo(searchValue));
         }
-
-        result.append(MongoUtils.splicingValue("carts"
-                , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
-                , "$elemMatch"));
-        result.append(",");
-
-        // 获取其他检索条件
-        result.append(getSearchValueForMongo(searchValue));
 
         if (!StringUtils.isEmpty(result.toString())) {
             return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
