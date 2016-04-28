@@ -26,7 +26,9 @@
             cart_id=#{cartId}
         </if>
             order by modified desc
+        <if test="record_count != null">
             limit 0,#{record_count}
+        </if>
     </select>
 
     <update id="cms_update_sx_workload">

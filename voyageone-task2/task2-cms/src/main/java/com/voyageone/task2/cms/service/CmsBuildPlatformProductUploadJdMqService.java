@@ -22,6 +22,7 @@ import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.*;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
@@ -50,7 +51,7 @@ import java.util.*;
 
 /**
  * 京东平台产品上新服务
- * Product表中产品复存在就向京东平台新增商品，否则就更新商品
+ * Product表中产品不存在就向京东平台新增商品，否则就更新商品
  *
  * @author desmond on 2016/4/12.
  * @version 2.0.0
@@ -114,6 +115,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private ProductService productService;
     // workload对象列表
     private Set<WorkLoadBean> workLoadBeans;
 
@@ -194,6 +197,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 CmsBtProductModel mainProduct = sxData.getMainProduct();
                 List<CmsBtProductModel> productList = sxData.getProductList();
                 List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+
+                // 构造该产品所有SKUCODE的字符串列表
+                List<String> strSkuList = new ArrayList<>();
+                skuList.forEach(sku -> strSkuList.add(sku.getSkuCode()));
+                // 取得每个SKU的逻辑库存信息
+                Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+                skuLogicQtyMap = productService.getLogicQty(channelId, strSkuList);
+
                 String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
 
                 // 属性值准备
@@ -217,22 +228,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 获取cms_mt_platform_skus表里渠道指定类目对应的所有颜色和尺寸信息列表
                 List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = new ArrayList<>();
                 cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
-//                // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
-//                List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
-//                for (CmsMtPlatformSkusModel skuModel : cmsMtPlatformSkusList) {
-//                    // 颜色
-//                    if (AttrType_Color.equals(skuModel.getAttrType())) {
-//                        cmsColorList.add(skuModel);
-//                    }
-//                }
-//                // 取得cms_mt_platform_skus表里平台类目id对应的尺寸信息列表
-//                List<CmsMtPlatformSkusModel> cmsSizeList = new ArrayList<>();
-//                for (CmsMtPlatformSkusModel skuModel : cmsMtPlatformSkusList) {
-//                    // 尺寸
-//                    if (AttrType_Size.equals(skuModel.getAttrType())) {
-//                        cmsSizeList.add(skuModel);
-//                    }
-//                }
 
                 // 获取预设属性设定表
                 // 未设计
@@ -259,7 +254,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 编辑京东共通属性
                 JdProductBean jdProductBean = new JdProductBean();
                 jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
-                        cmsMtPlatformMappingModel, cmsMtPlatformCategorySchemaModel);
+                        cmsMtPlatformMappingModel, cmsMtPlatformCategorySchemaModel, skuLogicQtyMap);
 
                 // 产品和颜色值的Mapping关系表(设置SKU属性时填入值，上传SKU图片时也会用到)
                 Map<String, Object> productColorMap = new HashMap<String, Object>();
@@ -277,6 +272,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     if (!StringUtils.isEmpty(mainProduct.getGroups().getNumIId())) {
                         // 更新商品
                         updateWare = true;
+                        break;
                     }
                 }
 
@@ -319,7 +315,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     updateProductBean.setWareId(String.valueOf(jdWareId));
                     // 构造更新用商品bean，主要设置SKU相关属性
                     updateProductBean = setJdProductSkuInfo(updateProductBean, sxData, cmsMtPlatformSkusList,
-                            cmsBtSizeMapModelList, shopProp, productColorMap);
+                            cmsBtSizeMapModelList, shopProp, productColorMap, skuLogicQtyMap);
 
                     // 新增之后调用京东商品更新API
                     // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
@@ -360,7 +356,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                     // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
                     jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, cmsMtPlatformSkusList,
-                            cmsBtSizeMapModelList, shopProp, productColorMap);
+                            cmsBtSizeMapModelList, shopProp, productColorMap, skuLogicQtyMap);
 
                     // 京东商品更新API返回的更新时间
                     String retModified = "";
@@ -405,14 +401,15 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * @param shop    ShopBean              店铺信息
      * @param platformMappingData CmsMtPlatformMappingModel  主产品对应的平台Mapping数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
+     * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private JdProductBean setJdProductCommonInfo(SxData sxData, String platformCategoryId,
                                                  long groupId, ShopBean shop,
                                                  CmsMtPlatformMappingModel platformMappingData,
-                                                 CmsMtPlatformCategorySchemaModel platformSchemaData
-                                                 ) throws BusinessException {
+                                                 CmsMtPlatformCategorySchemaModel platformSchemaData,
+                                                 Map<String, Integer> skuLogicQtyMap) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
@@ -440,9 +437,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         jdProductBean.setOptionType(this.getOptionType(mainProduct, groupId));
         // 外部商品编号，对应商家后台货号(非必须)
 //        jdProductBean.setItemNum(mainProduct.getFields().getCode());    // 不使用
-        // 库存(必须)    --------------------- 共通函数（根据sku列表获取库存列表，制作中）-------------- //TODO  每个SKU的库存之和
-        // TODO: No.4 这里要改的， 这个库存不准的。要调用共通函数（根据skuList获取库存列表）， 然后加起来就是这个字段的值。
-        jdProductBean.setStockNum(String.valueOf(mainProduct.getFields().getQuantity()));
+        // 库存(必须)
+        // 计算该产品所有SKU的逻辑库存之和
+        int skuTotalLogicQty = 0;
+        for(String skuCode : skuLogicQtyMap.keySet()) {
+            skuTotalLogicQty += skuLogicQtyMap.get(skuCode);
+        }
+        jdProductBean.setStockNum(String.valueOf(skuTotalLogicQty));
         // 生产厂商(非必须)
 //        jdProductBean.setProducter(mainProduct.getXXX());                // 不使用
         // 包装规格 (非必须)
@@ -533,7 +534,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         }
 
         // 取得平台mapping数据中的props
-        List<MappingBean> mappingBeanList = platformMappingData.getProps();
+        List<MappingBean> mappingBeanList = platformMappingData.getProps(); // TODO 看共通函数需要传入什么
 //        List<Map<String, Object>> testList = JacksonUtil.jsonToMapList(JacksonUtil.bean2JsonNotNull(mappingBeanList));
 
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1（需要从类目服务接口获取）
@@ -633,11 +634,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * @param cmsBtSizeMapModelList List<CmsBtSizeMapModel> 尺码对照表
      * @param shop ShopBean 店铺信息
      * @param productColorMap Map<String, Object> 产品和颜色值Mapping关系表
+     * @param skuLogicQtyMap Map<String, Integer> 所有SKU的逻辑库存列表
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private JdProductBean setJdProductSkuInfo(JdProductBean targetProductBean, SxData sxData, List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList,
-                                              List<CmsBtSizeMapModel> cmsBtSizeMapModelList, ShopBean shop, Map<String, Object> productColorMap) throws BusinessException {
+                                              List<CmsBtSizeMapModel> cmsBtSizeMapModelList, ShopBean shop, Map<String, Object> productColorMap,
+                                              Map<String, Integer> skuLogicQtyMap) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
@@ -659,8 +662,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
         }
 
-        // 产品和颜色的Mapping表  // FIXME: 产品颜色MAP后面上传图片的时候还要用，所以放在外面
-//        Map<String, Object> productColorMap = new HashMap<String, Object>();
+        // 产品和颜色的Mapping表(因为后面上传SKU图片的时候也要用到，所以从外面传进来)
         // SKU尺寸和尺寸值的Mapping表
         Map<String, Object> skuSizeMap = new HashMap<String, Object>();
 
@@ -730,11 +732,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 sbSkuPrice.append(Separtor_Vertical);        // "|"
 
                 // sku 库存(100.0|150.0|100.0|100.0)
-                // TODO 怎么取得每种颜色和尺寸对应的库存信息
-                // TODO 颜色1尺码1的库存|颜色1尺码2的库存|颜色2尺码1的库存|颜色2尺码2的库存
-                // TODO 取得该颜色该尺寸对应的库存数量
-                // sku价格(100.0|150.0|100.0|100.0)       // FIXME: No.7 如何取得每个SKU对应的库存数量
-                sbSkuStocks.append("该SKU的库存值");
+                sbSkuStocks.append(skuLogicQtyMap.get(objSku.getSkuCode()));
                 sbSkuStocks.append(Separtor_Vertical);   // "|"
 
                 // SKU外部ID(200001-001-41|200001-001-42)
@@ -812,7 +810,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
-        // TODO 颜色的值要提前设置到puduct列表中去----前面做的产品和颜色值的MAP---------------------
         // 检索     调用API【根据商品Id，检索商品图片】
         // 删除图片  调用API【删除商品图片】
         // 增加图片  调用API【根据商品Id，销售属性值Id增加图片】

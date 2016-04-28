@@ -1,19 +1,27 @@
 package com.voyageone.web2.cms.views.system;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.service.impl.cms.StoreOperationService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.bean.Page;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 全店页面操作
@@ -27,9 +35,26 @@ import java.util.Map;
 @RequestMapping(value = "/cms/system/store_operation", method = RequestMethod.POST)
 public class StoreOperationCtrl extends CmsController {
 
+//    public static LocalDateTime lastExecuteTime = null;
+
+    //channelId->lastExecuteTime
+    public static final ConcurrentHashMap<String, LocalDateTime> lastExecuteTimes = new ConcurrentHashMap<>();
+
+    public static final int INTERVAL_DEFAULT = 2; //默认值为2
+
+
     @Resource
     StoreOperationService storeOperationService;
 
+
+    public int getConfigHours(String channelId) {
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(channelId, "STORE_OPERATION_INTERVAL_TIME", "default");
+
+        if (config == null || config.getConfigValue1() == null) {
+            return INTERVAL_DEFAULT;
+        }
+        return Integer.valueOf(config.getConfigValue1());
+    }
 
     /**
      * @return uploadCnt (可供上新商品总数),feedImportCng(可重新feed导入商品总数这里暂不实现)
@@ -42,12 +67,36 @@ public class StoreOperationCtrl extends CmsController {
     }
 
     /**
+     * 如果上次执行时间距离现在执行时间超过指定阈值,则抛异常
+     */
+    public void checkInInterval(String channelId) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(channelId), "channelId不能为空!");
+
+        LocalDateTime lastExecuteTime = lastExecuteTimes.get(channelId);
+        if (lastExecuteTime == null) {
+            lastExecuteTimes.put(channelId, LocalDateTime.now()); //ok
+            return;
+        }
+
+        int interval = getConfigHours(channelId);
+        boolean inRange = lastExecuteTime.plusHours(interval).isAfter(LocalDateTime.now());
+        if (inRange) {
+            throw new BusinessException("操作时间间隔必须在" + interval + "小时以上!");
+        } else {
+            lastExecuteTimes.put(channelId, LocalDateTime.now()); //更新上次操作时间
+        }
+    }
+
+
+    /**
      * 重新上新所有商品
      */
     @RequestMapping("rePublish")
     public AjaxResponse rePublish() {
-
-        storeOperationService.rePublish(getUser().getSelChannelId(),getUser().getUserName());
+        String channelId = getUser().getSelChannelId();
+        checkInInterval(channelId);
+        String userName = getUser().getUserName();
+        storeOperationService.rePublish(channelId, userName);
         return success(true);
     }
 
@@ -55,12 +104,14 @@ public class StoreOperationCtrl extends CmsController {
     /**
      * 重新导入所有feed商品（清空共通属性）
      *
-     * @param cleanCommonProperties  清空共通属性标志
+     * @param cleanCommonProperties 清空共通属性标志
      */
     @RequestMapping("reUpload")
     public AjaxResponse reUpload(@RequestBody Boolean cleanCommonProperties) {
-
-        boolean result = storeOperationService.reUpload(getUser().getSelChannelId(),cleanCommonProperties);
+        String userName = getUser().getUserName();
+        String channelId = getUser().getSelChannelId();
+        checkInInterval(channelId);
+        boolean result = storeOperationService.reUpload(channelId, cleanCommonProperties, userName);
         return success(result);
     }
 
@@ -78,7 +129,10 @@ public class StoreOperationCtrl extends CmsController {
      */
     @RequestMapping("rePublishPrice")
     public AjaxResponse rePublishPrice() {
-        storeOperationService.rePublishPrice(getUser().getSelChannelId(),getUser().getUserName());
+        String userName = getUser().getUserName();
+        String channelId = getUser().getSelChannelId();
+        checkInInterval(channelId);
+        storeOperationService.rePublishPrice(channelId, userName);
         throw new UnsupportedOperationException();
     }
 
@@ -92,4 +146,9 @@ public class StoreOperationCtrl extends CmsController {
         return success(Page.fromMap(params).withData(historys));
     }
 
+    public static void main(String[] args) {
+        ConcurrentHashMap<String, LocalDateTime> tests = new ConcurrentHashMap<>();
+        LocalDateTime old = tests.putIfAbsent("a", LocalDateTime.now());
+        System.out.println(old);
+    }
 }

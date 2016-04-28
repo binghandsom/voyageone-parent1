@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
     <resultMap id="mapMessageModel" type="com.voyageone.service.bean.com.MessageBean" autoMapping="true">
         <result property="displayType" column="displayType" javaType="com.voyageone.common.message.enums.DisplayType" jdbcType="INTEGER"
-                typeHandler="com.voyageone.web2.base.message.DisplayTypeHandler"/>
+                typeHandler="com.voyageone.service.dao.DisplayTypeHandler"/>
     </resultMap>
     <select id="ct_message_info_selectMessage" resultMap="mapMessageModel">
         SELECT
