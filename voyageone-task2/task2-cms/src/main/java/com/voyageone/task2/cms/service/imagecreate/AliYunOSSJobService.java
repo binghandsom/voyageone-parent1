@@ -17,8 +17,8 @@ import java.util.Map;
 /**
  * Created by dell on 2016/4/26.
  */
-@Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_AliYunOSSJob)
+//@Service
+//@RabbitListener(queues = MqRoutingKey.CMS_BATCH_AliYunOSSJob)
 public class AliYunOSSJobService extends BaseMQCmsService {
 
     @Autowired

@@ -17,8 +17,8 @@ import java.util.Map;
 /**
  * Created by dell on 2016/4/26.
  */
-@Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_LiquidFireJob)
+//@Service
+//@RabbitListener(queues = MqRoutingKey.CMS_BATCH_LiquidFireJob)
 public class LiquidFireJobService extends BaseMQCmsService {
     private static final Logger LOG = LoggerFactory.getLogger(LiquidFireJobService.class);
     @Autowired

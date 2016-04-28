@@ -21,7 +21,6 @@ import java.util.Map;
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob)
 public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
-
     @Autowired
     ImageCreateFileService serviceImageCreateFile;
     @Autowired

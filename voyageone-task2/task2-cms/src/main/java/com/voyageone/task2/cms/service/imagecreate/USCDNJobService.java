@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 /**
  * Created by dell on 2016/4/26.
- */
-@Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_USCDNJob)
+// */
+//@Service
+//@RabbitListener(queues = MqRoutingKey.CMS_BATCH_USCDNJob)
 public class USCDNJobService extends BaseMQCmsService {
     @Autowired
     USCDNFileService service;
