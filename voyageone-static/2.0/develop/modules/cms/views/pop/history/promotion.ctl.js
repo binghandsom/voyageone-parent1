@@ -10,7 +10,7 @@ define([
 
         $scope.vm = {
             code: data,
-            pageOption: {curr: 1, total: 0, fetch: getPromotionList},
+            pageOption: {curr: 1, total: 0, size: 10, fetch: getPromotionList},
             promotionList: [],
             cartId: '',
             cartList: []

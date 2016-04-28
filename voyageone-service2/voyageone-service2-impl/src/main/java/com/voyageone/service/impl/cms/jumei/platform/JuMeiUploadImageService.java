@@ -6,8 +6,8 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.enums.JumeiImageType;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
-import com.voyageone.service.model.jumei.CmsBtJmProductImagesModel;
-import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
+import com.voyageone.service.model.cms.CmsBtJmProductImagesModel;
+import com.voyageone.service.model.cms.CmsMtMasterInfoModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

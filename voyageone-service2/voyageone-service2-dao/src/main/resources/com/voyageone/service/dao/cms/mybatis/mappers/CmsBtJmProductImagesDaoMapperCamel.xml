@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmProductImagesDao">
+    <resultMap id="ResultMap" type="CmsBtJmProductImagesModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`channel_id`,`product_code`,`image_type_name`,`image_type`,`image_index`,`origin_url`,`jm_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`,`productImageUrlKey`,`cms_bt_jm_product_id`        from cms_bt_jm_product_images
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
+                    </if>
+                                <if test="productCode != null">
+                        AND product_code = #{productCode}
+                    </if>
+                                <if test="imageTypeName != null">
+                        AND image_type_name = #{imageTypeName}
+                    </if>
+                                <if test="imageType != null">
+                        AND image_type = #{imageType}
+                    </if>
+                                <if test="imageIndex != null">
+                        AND image_index = #{imageIndex}
+                    </if>
+                                <if test="originUrl != null">
+                        AND origin_url = #{originUrl}
+                    </if>
+                                <if test="jmUrl != null">
+                        AND jm_url = #{jmUrl}
+                    </if>
+                                <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
+                    </if>
+                                <if test="created != null">
+                        AND created = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND creater = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND modified = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if>
+                                <if test="productImageUrlKey != null">
+                        AND productImageUrlKey = #{productImageUrlKey}
+                    </if>
+                                <if test="cmsBtJmProductId != null">
+                        AND cms_bt_jm_product_id = #{cmsBtJmProductId}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`channel_id`,`product_code`,`image_type_name`,`image_type`,`image_index`,`origin_url`,`jm_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`,`productImageUrlKey`,`cms_bt_jm_product_id` from cms_bt_jm_product_images
+        <where>
+
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if>
+
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
+                    </if>
+
+                    <if test="productCode != null">
+                        AND product_code = #{productCode}
+                    </if>
+
+                    <if test="imageTypeName != null">
+                        AND image_type_name = #{imageTypeName}
+                    </if>
+
+                    <if test="imageType != null">
+                        AND image_type = #{imageType}
+                    </if>
+
+                    <if test="imageIndex != null">
+                        AND image_index = #{imageIndex}
+                    </if>
+
+                    <if test="originUrl != null">
+                        AND origin_url = #{originUrl}
+                    </if>
+
+                    <if test="jmUrl != null">
+                        AND jm_url = #{jmUrl}
+                    </if>
+
+                    <if test="synFlg != null">
+                        AND syn_flg = #{synFlg}
+                    </if>
+
+                    <if test="created != null">
+                        AND created = #{created}
+                    </if>
+
+                    <if test="creater != null">
+                        AND creater = #{creater}
+                    </if>
+
+                    <if test="modified != null">
+                        AND modified = #{modified}
+                    </if>
+
+                    <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if>
+
+                    <if test="productImageUrlKey != null">
+                        AND productImageUrlKey = #{productImageUrlKey}
+                    </if>
+
+                    <if test="cmsBtJmProductId != null">
+                        AND cms_bt_jm_product_id = #{cmsBtJmProductId}
+                    </if>
+        </where> limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`product_code`,`image_type_name`,`image_type`,`image_index`,`origin_url`,`jm_url`,`syn_flg`,`created`,`creater`,`modified`,`modifier`,`productImageUrlKey`,`cms_bt_jm_product_id` from cms_bt_jm_product_images where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_bt_jm_product_images
+        set
+
+            `channel_id`=#{channelId}
+            ,`product_code`=#{productCode}
+            ,`image_type_name`=#{imageTypeName}
+            ,`image_type`=#{imageType}
+            ,`image_index`=#{imageIndex}
+            ,`origin_url`=#{originUrl}
+            ,`jm_url`=#{jmUrl}
+            ,`syn_flg`=#{synFlg}
+            ,`modifier`=#{modifier}
+            ,`productImageUrlKey`=#{productImageUrlKey}
+            ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
+            ,`modified`=now()
+         where id=#{id}
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_jm_product_images
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_bt_jm_product_images
+        (
+              `channel_id`,
+              `product_code`,
+              `image_type_name`,
+              `image_type`,
+              `image_index`,
+              `origin_url`,
+              `jm_url`,
+              `syn_flg`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`,
+              `productImageUrlKey`,
+              `cms_bt_jm_product_id`
+        )
+        VALUES(
+              #{channelId},
+              #{productCode},
+              #{imageTypeName},
+              #{imageType},
+              #{imageIndex},
+              #{originUrl},
+              #{jmUrl},
+              #{synFlg},
+              now(),
+              #{creater},
+              #{modified},
+              #{modifier},
+              #{productImageUrlKey},
+              #{cmsBtJmProductId}
+        )
+    </insert>
+</mapper>
