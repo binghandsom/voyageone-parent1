@@ -31,6 +31,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -110,6 +111,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     private CmsBtDataAmountDao cmsBtDataAmountDao;
     // jeff 2016/04 add end
+    @Autowired
+    private ImagesService imagesService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -1243,7 +1246,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             param.setChannelId(channelId);
             param.setCode(code);
             param.setOriginalUrl(originalUrl);
-            List<CmsBtImagesModel> findImage = cmsBtImageDao.selectImages(param);
+            List<CmsBtImagesModel> findImage = imagesService.getImageList(param);
 
             // 不存在则插入
             if (findImage.size() == 0) {
@@ -1254,7 +1257,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
-                List<CmsBtImagesModel> oldImages = cmsBtImageDao.selectImages(param);
+                List<CmsBtImagesModel> oldImages = imagesService.getImageList(param);
                 if (oldImages.size() > 0) {
                     // 取得图片名最后一部分中的索引的最大值 + 1
                     try {
@@ -1266,7 +1269,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 CmsBtImagesModel newModel = new CmsBtImagesModel(channelId, code, originalUrl, index++, getTaskName());
-                cmsBtImageDao.insertImages(newModel);
+                cmsBtImageDao.insert(newModel);
 
                 return newModel.getImgName();
             } else {
