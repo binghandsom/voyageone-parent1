@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtJmSkuDaoExt">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsBtJmSkuModel">
+        
+    </resultMap>
+
+    <select id="getBySkuCodeChannelId"  resultMap="ResultMap">
+        select  *   from cms_bt_jm_sku where channel_id=#{channelId} and sku_code=#{skuCode} limit 1
+    </select>
+</mapper>

@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -73,6 +72,16 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 根据条件获取group数据
+     * @param channelId
+     * @param query
+     * @return
+     */
+    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JomgoQuery query) {
+        return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
      * 更新group数据
      * @param model
      * @return
@@ -93,62 +102,16 @@ public class ProductGroupService extends BaseService {
     /**
      * change main product.
      */
-    public int updateMainProduct(String channelId, Long productId, Long groupId, String modifier){
+    public WriteResult updateMainProduct(String channelId, String productCode, Long groupId, String modifier){
 
-        int updateCount = 0;
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("groupId", groupId);
 
-        updateCount = updateCount + resetMainProduct(groupId, channelId, modifier);
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("mainProductCode", productCode);
+        updateMap.put("modifier", modifier);
 
-        updateCount = updateCount + setMainProduct(groupId, channelId, productId, modifier);
-
-        return updateCount;
-    }
-
-    /**
-     * 将主商品设置为非主商品.
-     */
-    private int resetMainProduct(Long groupId, String channelId, String modifier) {
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("groups.platforms.$.isMain", 0);
-
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("groups.platforms.isMain", 1);
-        queryMap.put("groups.platforms.groupId", groupId);
-
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
-        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
-
-        return result.getModifiedCount();
-    }
-
-    /**
-     * 设置主产品.
-     */
-    private int setMainProduct(Long groupId, String channelId, Long productId, String modifier) {
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("groups.platforms.$.isMain", 1);
-
-        HashMap<String, Object> queryMap = new HashMap<>();
-
-        queryMap.put("prodId", productId);
-
-        queryMap.put("groups.platforms.groupId", groupId);
-
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
-
-        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
-
-        return result.getModifiedCount();
+        return cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
     }
 
     /**
@@ -241,11 +204,30 @@ public class ProductGroupService extends BaseService {
 
             // 批量更新product表
             if (bulkList.size() > 0) {
-                // TODO: 16/4/23 需要确认该批量操作,如果该条数据不存在是否新规插入
                 cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", true);
             }
         }
 
         return model;
+    }
+
+    /**
+     * 更新group的platformActive
+     * @param model
+     * @return
+     */
+    public WriteResult updateGroupsPlatformActiveBympCode (CmsBtProductGroupModel model) {
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("mainProductCode", model.getMainProductCode());
+
+        if(model.getCartId() != null)
+            queryMap.put("cartId", model.getCartId());
+
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platformActive", model.getPlatformActive().name());
+        updateMap.put("modifier", model.getModifier());
+
+        return cmsBtProductGroupDao.update(model.getChannelId(), queryMap, updateMap);
     }
 }

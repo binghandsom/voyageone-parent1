@@ -29,15 +29,15 @@ public class CustomWordModuleIf extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamIf customModuleUserParamIf = ((CustomWordValueIf) customWord.getValue()).getUserParam();
 
         RuleExpression conditionExpression = customModuleUserParamIf.getCondition();
         RuleExpression propValueExpression = customModuleUserParamIf.getPropValue();
 
-        String condition = expressionParser.parse(conditionExpression, shopBean, user);
-        String propValue = expressionParser.parse(propValueExpression, shopBean, user);
+        String condition = expressionParser.parse(conditionExpression, shopBean, user, extParameter);
+        String propValue = expressionParser.parse(propValueExpression, shopBean, user, extParameter);
 
         Boolean conditionResult = Boolean.valueOf(condition);
         if (conditionResult == null) {

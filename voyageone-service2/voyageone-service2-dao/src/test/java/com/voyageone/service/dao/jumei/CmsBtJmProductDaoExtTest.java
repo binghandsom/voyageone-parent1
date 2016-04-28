@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.jumei;
 
-import com.voyageone.service.daoext.jumei.CmsBtJmProductDaoExt;
-import com.voyageone.service.model.jumei.CmsBtJmProductModel;
+import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
+import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

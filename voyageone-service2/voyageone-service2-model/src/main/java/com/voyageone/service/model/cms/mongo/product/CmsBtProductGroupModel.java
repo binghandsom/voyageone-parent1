@@ -5,7 +5,6 @@ import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 商品Model Group Channel
@@ -22,7 +21,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Integer displayOrder;
     private String publishTime;
     private String onSaleTime;
-    private String instockTime;
+    private String inStockTime;
     private String platformStatus;
     private String platformActive;
 
@@ -92,12 +91,12 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         this.onSaleTime = onSaleTime;
     }
 
-    public String getInstockTime() {
-        return instockTime;
+    public String getInStockTime() {
+        return inStockTime;
     }
 
-    public void setInstockTime(String instockTime) {
-        this.instockTime = instockTime;
+    public void setInStockTime(String inStockTime) {
+        this.inStockTime = inStockTime;
     }
 
     public String getMainProductCode() {

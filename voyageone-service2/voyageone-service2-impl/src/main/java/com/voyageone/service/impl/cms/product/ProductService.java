@@ -205,7 +205,7 @@ public class ProductService extends BaseService {
                 platformModel.setCartId(cartId);
                 platformModel.setGroupId(grpId);
                 platformModel.setNumIId(groupModelMap.getNumIId());
-                platformModel.setInstockTime(groupModelMap.getInstockTime());
+                platformModel.setInStockTime(groupModelMap.getInStockTime());
                 platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
                 platformModel.setPublishTime(groupModelMap.getPublishTime());
                 platformModel.setQty(groupModelMap.getQty());
@@ -227,24 +227,18 @@ public class ProductService extends BaseService {
     /**
      * get prices log list
      */
-    public List<CmsBtPriceLogModel> getPriceLog(String channelId, Map<String, Object> params) {
+    public List<CmsBtPriceLogModel> getPriceLog(String sku,String channelId, Map<String, Object> params) {
         params.put("channelId", channelId);
-        String flag = (String) params.get("flag");
-        if ("sku".equals(flag)) {
-            params.put("sku", "0");
-        }
+        params.put("sku", sku);
         return cmsBtPriceLogDaoExt.selectPriceLogByCode(params);
     }
 
     /**
      * get prices log list
      */
-    public int getPriceLogCnt(String channelId, Map<String, Object> params) {
+    public int getPriceLogCnt(String sku,String channelId, Map<String, Object> params) {
         params.put("channelId", channelId);
-        String flag = (String) params.get("flag");
-        if ("sku".equals(flag)) {
-            params.put("sku", "0");
-        }
+        params.put("sku", sku);
         return cmsBtPriceLogDaoExt.selectPriceLogByCodeCnt(params);
     }
 

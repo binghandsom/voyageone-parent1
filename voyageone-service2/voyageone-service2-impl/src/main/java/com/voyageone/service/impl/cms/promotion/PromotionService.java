@@ -8,15 +8,13 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionLogDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
-import com.voyageone.service.model.cms.CmsBtPromotionLogModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +36,6 @@ public class PromotionService extends BaseService {
     private CmsBtPromotionDaoExt cmsBtPromotionDaoExt;
 
     @Autowired
-    private CmsBtPromotionDao cmsBtPromotionDao;
-
-    @Autowired
     private CmsBtTagDaoExt cmsBtTagDaoExt;
 
     @Autowired
@@ -48,9 +43,6 @@ public class PromotionService extends BaseService {
 
     @Autowired
     private CmsBtTagDao cmsBtTagDao;
-
-    @Autowired
-    private CmsBtPromotionLogDao cmsBtPromotionLogDao;
 
     /**
      * 根据PromotionId查询
@@ -92,10 +84,11 @@ public class PromotionService extends BaseService {
      * @param channelId
      * @return
      */
-    public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId) {
-        Map<String, Object> params = new HashMap<>();
+    public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId, Map<String, Object> params) {
+//        Map<String, Object> params = new HashMap<>();
+        params = params == null ? new HashMap<>() : params;
         if(Channels.isUsJoi(channelId)){
-            params.put("orgChannelId", params.get("channelId"));
+            params.put("orgChannelId", channelId);
             params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
         } else {
             params.put("channelId", channelId);
@@ -106,10 +99,10 @@ public class PromotionService extends BaseService {
     /**
      * getPromotionLogMap
      */
-    public Map<String, Object> getPromotionLogMap(Map<String, Object> params) {
+    public Map<String, Object> getPromotionHistory(Map<String, Object> params) {
         Map<String, Object> result = new HashMap<>();
-        List<CmsBtPromotionLogModel> promotionList = cmsBtPromotionLogDao.selectPromotionLog(params);
-        int count = cmsBtPromotionLogDao.selectPromotionLogCnt(params);
+        List<CmsBtPromotionHistoryBean> promotionList = cmsBtPromotionDaoExt.selectPromotionHistory(params);
+        int count = cmsBtPromotionDaoExt.selectPromotionHistoryCnt(params);
         result.put("list", promotionList);
         result.put("total", count);
         return result;
@@ -124,7 +117,8 @@ public class PromotionService extends BaseService {
         if (cmsBtPromotionBean.getId() != 0) {
             result = cmsBtPromotionDaoExt.update(cmsBtPromotionBean);
             cmsBtPromotionBean.getTagList().forEach(cmsBtTagModel -> {
-                if (cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel) == 0) {
+                cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
+                if (cmsBtTagDao.update(cmsBtTagModel) == 0) {
                     cmsBtTagModel.setChannelId(cmsBtPromotionBean.getChannelId());
                     cmsBtTagModel.setParentTagId(cmsBtPromotionBean.getRefTagId());
                     cmsBtTagModel.setTagType(2);
@@ -132,10 +126,10 @@ public class PromotionService extends BaseService {
                     cmsBtTagModel.setTagPathName(String.format("-%s-%s-", cmsBtPromotionBean.getPromotionName(), cmsBtTagModel.getTagName()));
                     cmsBtTagModel.setTagPath("");
                     cmsBtTagModel.setCreater(cmsBtPromotionBean.getModifier());
-                    cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
-                    cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
+//                    cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
+                    cmsBtTagDao.insert(cmsBtTagModel);
                     cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getId()));
-                    cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+                    cmsBtTagDao.update(cmsBtTagModel);
                 }
             });
         } else {

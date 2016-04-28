@@ -6,7 +6,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.daoext.cms.CmsBtStockSalesQuantityDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtStockSeparatePlatformInfoDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtTasksStockDaoExt;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class CmsStockSeparateService extends BaseTaskService {
     @Autowired
     private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
+    private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;
     @Autowired
     private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
     @Autowired
@@ -182,7 +182,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                 // taskId对应所有隔离平台
                 sqlParamItem.put("taskId", taskId);
                 sqlParamTask.put("taskId", taskId);
-                List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParamTask);
+                List<Map<String, Object>> listTaskInfo = cmsBtTasksStockDaoExt.selectStockSeparatePlatform(sqlParamTask);
 
                 Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
                 for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
@@ -316,7 +316,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                     Map<String, Object> param = new HashMap<>();
                     param.put("taskId", taskId);
                     param.put("commonPlatform", true);
-                    List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(param);
+                    List<Map<String, Object>> listTaskInfo = cmsBtTasksStockDaoExt.selectStockSeparatePlatform(param);
                     Map<Integer, Integer> mapPlatAdd = new TreeMap<>(); // 增顺
                     Map<Integer, Integer> mapPlatSub = new TreeMap<>(); // 减顺
                     for (Map<String, Object> platformInfo : listTaskInfo) {

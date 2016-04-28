@@ -2,34 +2,26 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
-import com.jd.open.api.sdk.request.order.OrderGetRequest;
-import com.voyageone.service.model.jumei.CmsBtJmProductImagesModel;
-import com.voyageone.service.model.jumei.CmsBtJmProductModel;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
-import com.voyageone.service.model.jumei.CmsBtJmSkuModel;
-import com.voyageone.service.model.jumei.businessmodel.CmsBtJmImportSaveInfo;
-import com.voyageone.service.model.jumei.businessmodel.CmsBtJmProductImportSaveInfo;
-import com.voyageone.service.model.jumei.businessmodel.JmProductImportAllInfo;
-import org.junit.Assert;
+import com.voyageone.service.model.cms.CmsBtJmProductImagesModel;
+import com.voyageone.service.model.cms.CmsBtJmProductModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmSkuModel;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportSaveInfo;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtJmProductImportSaveInfo;
+import com.voyageone.service.bean.cms.businessmodel.JmProductImportAllInfo;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 
 /**
  * 添加聚美活动的集成测试

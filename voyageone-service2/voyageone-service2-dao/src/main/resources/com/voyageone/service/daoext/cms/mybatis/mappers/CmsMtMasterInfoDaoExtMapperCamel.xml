@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtMasterInfoDaoExt">
+    <resultMap id="ResultMap" type="CmsMtMasterInfoModel">
+        
+    </resultMap>
+    <select id="getByKey" parameterType="HashMap" resultMap="ResultMap">
+        select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
+        and  `product_type`=#{productType} and `data_type`=#{dataType} limit 1
+
+    </select>
+    <select id="getByKeySizeType" parameterType="HashMap" resultMap="ResultMap">
+        select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
+        and  `product_type`=#{productType} and `data_type`=#{dataType}     and size_type=#{sizeType} limit 1
+    </select>
+    <select id="getListByWhere" parameterType="HashMap" resultMap="ResultMap">
+        select *
+        from cms_mt_master_info
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="platformId != null and platformId != ''">
+                AND platform_id = #{platformId}
+            </if>
+            <if test="channelId != null and channelId != ''">
+                AND channel_id = #{channelId}
+            </if>
+            <if test="brandName != null and brandName != ''">
+                AND brand_name = #{brandName}
+            </if>
+            <if test="productType != null and productType != ''">
+                AND product_type = #{productType}
+            </if>
+            <if test="sizeType != null and sizeType != ''">
+                AND size_type = #{sizeType}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                AND data_type = #{dataType}
+            </if>
+            <if test="imageIndex != null and imageIndex != ''">
+                AND image_index = #{imageIndex}
+            </if>
+            <if test="value1 != null and value1 != ''">
+                AND value1 = #{value1}
+            </if>
+            <if test="value2 != null and value2 != ''">
+                AND value2 = #{value2}
+            </if>
+            <if test="synFlgList != null and synFlgList.size()!=0">
+                and  syn_flg in
+                <foreach item="item" index="i" collection="synFlgList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="beginModified != null and beginModified != ''">
+                AND modified >= #{beginModified}
+            </if>
+            <if test="endModified != null and endModified != ''">
+                AND modified &lt;= #{endModified}
+            </if>
+            <if test="active != null and active != ''">
+                AND active = #{active}
+            </if>
+        </where>
+         order by  `platform_id`,`channel_id`,`brand_name`,`product_type`,`size_type`,`data_type`,`image_index`
+        <if test="start != null and length != null">
+             LIMIT #{start}, #{length}
+        </if>
+    </select>
+
+    <select id="getCountByWhere" parameterType="HashMap" resultType="Integer">
+        select count(1)
+        from cms_mt_master_info
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="platformId != null and platformId != ''">
+                AND platform_id = #{platformId}
+            </if>
+            <if test="channelId != null and channelId != ''">
+                AND channel_id = #{channelId}
+            </if>
+            <if test="brandName != null and brandName != ''">
+                AND brand_name = #{brandName}
+            </if>
+            <if test="productType != null and productType != ''">
+                AND product_type = #{productType}
+            </if>
+            <if test="sizeType != null and sizeType != ''">
+                AND size_type = #{sizeType}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                AND data_type = #{dataType}
+            </if>
+            <if test="imageIndex != null and imageIndex != ''">
+                AND image_index = #{imageIndex}
+            </if>
+            <if test="value1 != null and value1 != ''">
+                AND value1 = #{value1}
+            </if>
+            <if test="value2 != null and value2 != ''">
+                AND value2 = #{value2}
+            </if>
+            <if test="synFlgList != null and synFlgList.size()!=0">
+                and  syn_flg in
+                <foreach item="item" index="i" collection="synFlgList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="beginModified != null and beginModified != ''">
+                AND modified >= #{beginModified}
+            </if>
+            <if test="endModified != null and endModified != ''">
+                AND modified &lt;= #{endModified}
+            </if>
+            <if test="active != null and active != ''">
+                AND active = #{active}
+            </if>
+        </where>
+    </select>
+   <select id="getListJMNewImageInfo" resultMap="ResultMap">
+         select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
+        and  `product_type`=#{productType}
+       and `data_type`  in  <foreach item="item" index="i" collection="dataTypeList"
+                                                                           open="(" separator="," close=")">
+       #{item}
+   </foreach>
+   </select>
+    <!--parameterCmsMtMasterInfo.put("platformId", 27);-->
+    <!--parameterCmsMtMasterInfo.put("channelId", promotionProductModel.getChannelId());-->
+    <!--parameterCmsMtMasterInfo.put("brandName", productModel.getBrandName());-->
+    <!--parameterCmsMtMasterInfo.put("productType", productModel.getProductType());-->
+</mapper>

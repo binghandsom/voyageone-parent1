@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtTemplateImagesDaoExt">
+    <resultMap id="ResultMap" type="CmsMtTemplateImagesModel">
+        
+    </resultMap>
+	
+    <select id="getListByPlatformChannelTemplateType" resultMap="ResultMap">
+        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier
+             from cms_mt_template_images where platform_id=#{platformId} and channel_id=#{channelId} and template_type in
+        <foreach item="item" index="i" collection="templateTypeList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

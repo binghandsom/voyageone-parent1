@@ -22,7 +22,6 @@ import java.util.Set;
  */
 public class ExpressionParser extends VOAbsLoggable {
 
-    @Autowired
     private SxProductService sxProductService;
 
     private SxData sxData;
@@ -34,9 +33,10 @@ public class ExpressionParser extends VOAbsLoggable {
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
 
-    public ExpressionParser(SxData sxData) {
+    public ExpressionParser(SxProductService sxProductService, SxData sxData) {
+        this.sxProductService = sxProductService;
         this.sxData = sxData;
-        this.dictWordParser = new DictWordParser(sxData.getChannelId());
+        this.dictWordParser = new DictWordParser(sxProductService, sxData.getChannelId());
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxData);
 
@@ -46,7 +46,7 @@ public class ExpressionParser extends VOAbsLoggable {
         this.skuWordParser = new SkuWordParser();
     }
 
-    public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user) throws Exception {
+    public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         StringBuilder resultStr = new StringBuilder();
 
         if (ruleExpression != null) {
@@ -85,7 +85,7 @@ public class ExpressionParser extends VOAbsLoggable {
                             return null;
                         }
 
-                        plainValue = parse(dictWordDefine.getExpression(), shopBean, user);
+                        plainValue = parse(dictWordDefine.getExpression(), shopBean, user, extParameter);
 
                         if (plainValue != null && dictWordDefine.getIsUrl()) {
                             if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
@@ -100,7 +100,7 @@ public class ExpressionParser extends VOAbsLoggable {
                         break;
                     }
                     case CUSTOM: {
-                        plainValue = customWordParser.parse(ruleWord, shopBean, user);
+                        plainValue = customWordParser.parse(ruleWord, shopBean, user, extParameter);
                         break;
                     }
                     case SKU: {

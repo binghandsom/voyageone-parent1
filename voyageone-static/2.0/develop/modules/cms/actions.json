@@ -347,6 +347,14 @@
             "updateCartIds":"updateCartIds",
             "genKey":"genKey"
           }
+      },
+      "tag": {
+        "channelTagService": {
+          "root": "/cms/channel/tag",
+          "init": "init",
+          "save": "saveTag",
+          "del": "delTag"
+        }
       }
     }
   }

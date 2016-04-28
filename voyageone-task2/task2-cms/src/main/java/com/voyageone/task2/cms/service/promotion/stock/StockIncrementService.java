@@ -9,7 +9,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.daoext.cms.CmsBtStockSalesQuantityDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateIncrementItemDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtTaskKucungeliDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtTasksIncrementStockDaoExt;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class StockIncrementService extends BaseTaskService {
     private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
 
     @Autowired
-    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
+    private CmsBtTasksIncrementStockDaoExt cmsBtTasksIncrementStockDaoExt;
 
     @Autowired
     private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
@@ -275,7 +275,7 @@ public class StockIncrementService extends BaseTaskService {
         // 取得增量任务id对应的任务id
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("subTaskIdList", subTaskIdList);
-        List<Map<String, Object>> stockTaskList = cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> stockTaskList = cmsBtTasksIncrementStockDaoExt.selectStockSeparateIncrementTask(sqlParam);
         for (Map<String, Object>stockTask : stockTaskList) {
             taskIdList.add((Integer)stockTask.get("task_id"));
         }

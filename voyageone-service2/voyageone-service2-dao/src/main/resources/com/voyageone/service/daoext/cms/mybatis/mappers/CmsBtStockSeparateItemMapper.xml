@@ -296,7 +296,7 @@
         t2.sub_task_Name as taskName,
         t1.increment_qty as qty
         from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
-        inner join voyageone_cms2.cms_bt_task_kucungeli t2 on t1.sub_task_id = t2.sub_task_id
+        inner join voyageone_cms2.cms_bt_tasks_increment_stock t2 on t1.sub_task_id = t2.sub_task_id
         where
         t2.task_id = #{taskId}
         and t2.cart_id = #{cartId}
@@ -419,7 +419,7 @@
             t1.`error_time` as errorTime
         from
             voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
-        left join voyageone_cms2.cms_bt_task_kucungeli t2
+        left join voyageone_cms2.cms_bt_tasks_increment_stock t2
         on t1.sub_task_id = t2.sub_task_id
         where
             t2.task_id = #{taskId} and

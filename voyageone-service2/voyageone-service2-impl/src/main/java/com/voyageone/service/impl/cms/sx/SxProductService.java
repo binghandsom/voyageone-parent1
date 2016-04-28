@@ -12,10 +12,13 @@ import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.ims.rule_expression.DictWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.SimpleMappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
+import com.voyageone.service.dao.cms.CmsMtDictPlatformDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -27,6 +30,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -74,6 +78,8 @@ public class SxProductService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    @Autowired
+    private CmsMtDictPlatformDao cmsMtDictPlatformDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -515,7 +521,7 @@ public class SxProductService extends BaseService {
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
             retMap = new HashMap();
             SimpleMappingBean simpleMappingBean = (SimpleMappingBean) mappingBean;
-            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user);
+            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user, null);
             if (null == expressionValue) {
                 return null;
             }
@@ -558,6 +564,19 @@ public class SxProductService extends BaseService {
         }
 
         return retMap;
+    }
+
+    /**
+     * 根据字典名字解析
+     */
+    public String resolveDict(String dictName, ExpressionParser expressionParser, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+        RuleExpression ruleExpression = new RuleExpression();
+        ruleExpression.addRuleWord(new DictWord(dictName));
+        return expressionParser.parse(ruleExpression, shopBean, user, extParameter);
+    }
+
+    public List<CmsMtPlatFormDictModel> searchDictList(Map<String, Object> map) {
+        return cmsMtDictPlatformDao.selectList(map);
     }
 
     private enum SkuSort {

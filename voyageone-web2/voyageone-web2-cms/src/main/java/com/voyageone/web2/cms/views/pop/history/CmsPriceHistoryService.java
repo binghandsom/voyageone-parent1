@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.pop.history;
 
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,30 @@ public class CmsPriceHistoryService extends BaseAppService {
      */
     public Map<String, Object> getPriceHistory(Map<String, Object> params, UserSessionBean userInfo, String language) {
         Map<String, Object> result = new HashMap<>();
-
-        List<CmsBtPriceLogModel> list = productService.getPriceLog(userInfo.getSelChannelId(), params);
+        //页面channelId
+        String channelId=userInfo.getSelChannelId();
+        //页面code
+        String code=(String) params.get("code");
+        //Sku
+        String skuCode="";
+        //判断是否是初始化的Sku
+        Boolean isFirstSku= (Boolean) params.get("isFirstSku");
+        //取得数据库默认的第一个Sku
+        if(isFirstSku){
+            //根据页面Code取得对应的SkuList
+            CmsBtProductModel cmsBtProductModel=productService.getProductByCode(channelId,code);
+            skuCode=cmsBtProductModel.getSkus().get(0).getSkuCode();
+            //获取SkuList
+            result.put("skuList",cmsBtProductModel.getSkus());
+        }else{
+            skuCode=(String) params.get("sku");
+        }
+        //根据Sku取得Sku级别的价格履历
+        List<CmsBtPriceLogModel> list = productService.getPriceLog(skuCode, channelId, params);
         result.put("list", list);
-        int total = productService.getPriceLogCnt(userInfo.getSelChannelId(), params);
+        //根据取得sku取得Sku履历的件数
+        int total = productService.getPriceLogCnt(skuCode,channelId, params);
         result.put("total", total);
-
-        // 获取PriceType
-        result.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
         return result;
     }
 }

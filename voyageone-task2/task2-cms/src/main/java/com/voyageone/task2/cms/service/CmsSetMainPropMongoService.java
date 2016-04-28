@@ -31,6 +31,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -110,6 +111,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     private CmsBtDataAmountDao cmsBtDataAmountDao;
     // jeff 2016/04 add end
+    @Autowired
+    private ImagesService imagesService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -384,9 +387,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 更新价格履历
             productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Master价格更新", getTaskName());
 
-            // 更新图片
-            doUpdateImage(channelId, feed.getCode(), feed.getImage());
-
             // 自动上新
             // 是否自动上新标志
             String sxFlg = "0";
@@ -596,7 +596,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (lstImageOrg != null && lstImageOrg.size() > 0) {
                     for (String imgOrg : lstImageOrg) {
                         Map<String, Object> multiComplexChildren = new HashMap<>();
-                        multiComplexChildren.put("image1", imgOrg);
+                        // jeff 2016/04 change start
+                        // multiComplexChildren.put("image1", imgOrg);
+                        multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                        // jeff 2016/04 add end
                         multiComplex.add(multiComplexChildren);
                     }
                 }
@@ -1206,18 +1209,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return  0.0;
             }
 
-            if (formula.indexOf("[tax_rate]") != -1 && taxRate == null) {
+            if (formula.indexOf("[taxRate]") != -1 && taxRate == null) {
                 return  0.0;
             }
             // 根据公式计算价格
             try {
                 ExpressionParser parser = new SpelExpressionParser();
-                formula = formula.replaceAll("\\[price_client_msrp\\]", String.valueOf(priceClientMsrp))
-                        .replaceAll("\\[price_client_retail\\]", String.valueOf(priceClientRetail))
-                        .replaceAll("\\[price_net\\]", String.valueOf(priceNet))
-                        .replaceAll("\\[price_msrp\\]", String.valueOf(priceMsrp))
-                        .replaceAll("\\[price_current\\]", String.valueOf(priceCurrent))
-                        .replaceAll("\\[tax_rate\\]", String.valueOf(taxRate));
+                formula = formula.replaceAll("\\[priceClientMsrp\\]", String.valueOf(priceClientMsrp))
+                        .replaceAll("\\[priceClientRetail\\]", String.valueOf(priceClientRetail))
+                        .replaceAll("\\[priceNet\\]", String.valueOf(priceNet))
+                        .replaceAll("\\[priceMsrp\\]", String.valueOf(priceMsrp))
+                        .replaceAll("\\[priceCurrent\\]", String.valueOf(priceCurrent))
+                        .replaceAll("\\[taxRate\\]", String.valueOf(taxRate));
                 double valueDouble = parser.parseExpression(formula).getValue(Double.class);
                 // 四舍五入取整
                 BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -1233,39 +1236,44 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * doUpdateImage 更新图片
          * @param channelId 渠道id
          * @param code 品牌方给的Code
-         * @param images Feed的图片信息
+         * @param originalUrl 原始URL
+         * @return 图片名
          */
-        private void doUpdateImage(String channelId, String code, List<String> images) {
-            // 图片名最后一部分的值（索引）
-            int index = 1;
+        private String doUpdateImage(String channelId, String code, String originalUrl) {
 
-            // 检查该code是否存在该Image（为了取得图片名最后一部分中的索引的最大值）
+            // 检查是否存在该Image
             CmsBtImagesModel param = new CmsBtImagesModel();
             param.setChannelId(channelId);
             param.setCode(code);
-            List<CmsBtImagesModel> oldImages = cmsBtImageDao.selectImages(param);
-            if (oldImages.size() > 0) {
-                // 取得图片名最后一部分中的索引的最大值 + 1
-                try {
-                    index = oldImages.stream().map((imagesModel) -> Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))).max(Integer::compare).get() + 1;
-                } catch (Exception ex) {
-                    $error(ex);
-                    throw new RuntimeException("ImageName Parse Fail!", ex);
-                }
-            }
+            param.setOriginalUrl(originalUrl);
+            List<CmsBtImagesModel> findImage = imagesService.getImageList(param);
 
-            for (String image : images) {
-                // 检查是否存在该Image
+            // 不存在则插入
+            if (findImage.size() == 0) {
+                // 图片名最后一部分的值（索引）
+                int index = 1;
+
+                // 检查该code是否存在该Image（为了取得图片名最后一部分中的索引的最大值）
                 param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
-                param.setOriginalUrl(image);
-                List<CmsBtImagesModel> findImages = cmsBtImageDao.selectImages(param);
-
-                // 不存在则插入
-                if (findImages.size() == 0) {
-                    cmsBtImageDao.insertImages(new CmsBtImagesModel(channelId, code, image, index++, getTaskName()));
+                List<CmsBtImagesModel> oldImages = imagesService.getImageList(param);
+                if (oldImages.size() > 0) {
+                    // 取得图片名最后一部分中的索引的最大值 + 1
+                    try {
+                        index = oldImages.stream().map((imagesModel) -> Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))).max(Integer::compare).get() + 1;
+                    } catch (Exception ex) {
+                        $error(ex);
+                        throw new RuntimeException("ImageName Parse Fail!", ex);
+                    }
                 }
+
+                CmsBtImagesModel newModel = new CmsBtImagesModel(channelId, code, originalUrl, index++, getTaskName());
+                cmsBtImageDao.insert(newModel);
+
+                return newModel.getImgName();
+            } else {
+                return findImage.get(0).getImgName();
             }
         }
 
