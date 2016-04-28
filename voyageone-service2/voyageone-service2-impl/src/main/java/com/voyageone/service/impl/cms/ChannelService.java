@@ -4,14 +4,12 @@ import com.google.common.base.Strings;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.OrderChannelDao;
 import com.voyageone.common.configs.dao.ShopDao;
-import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.service.dao.cms.CmsMtChangeHistoryDao;
-import com.voyageone.service.model.cms.mongo.CmsMtChangeHistoryModel;
+import com.voyageone.service.dao.cms.CmsBtConfigHistoryDao;
+import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,7 +28,7 @@ public class ChannelService {
     ShopDao cartDao;
 
     @Resource
-    CmsMtChangeHistoryDao historyDao;
+    CmsBtConfigHistoryDao historyDao;
 
     /**
      * @param channelId
@@ -69,7 +67,7 @@ public class ChannelService {
         channelDao.updateById(bean);
         Channels.invalidate();
 
-        CmsMtChangeHistoryModel<OrderChannelBean> history = CmsMtChangeHistoryModel.build(originalBean, bean, "CHANNEL MODIFY", bean.getModifier());
+        CmsBtConfigHistory<OrderChannelBean> history = CmsBtConfigHistory.build(originalBean, bean, "CHANNEL MODIFY", bean.getModifier());
         historyDao.insert(history);
     }
 
@@ -86,7 +84,7 @@ public class ChannelService {
         try {
             channelDao.insertChannel(bean);
             Channels.invalidate();
-            CmsMtChangeHistoryModel<OrderChannelBean> history = CmsMtChangeHistoryModel.build(null, bean, "CHANNEL ADD", bean.getModifier());
+            CmsBtConfigHistory<OrderChannelBean> history = CmsBtConfigHistory.build(null, bean, "CHANNEL ADD", bean.getModifier());
             historyDao.insert(history);
         } catch (Exception e) {
             if (e.getMessage().contains("Duplicate entry")) {

@@ -7,8 +7,8 @@ import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.dao.ShopDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.service.dao.cms.CmsMtChangeHistoryDao;
-import com.voyageone.service.model.cms.mongo.CmsMtChangeHistoryModel;
+import com.voyageone.service.dao.cms.CmsBtConfigHistoryDao;
+import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,7 +29,7 @@ public class CartService {
     @Resource
     ShopDao cartDao;
     @Resource
-    CmsMtChangeHistoryDao historyDao;
+    CmsBtConfigHistoryDao historyDao;
 
     public List<CartBean> getAll(CartBean con) {
         List<CartBean> carts = cartDao.getAllCarts();
@@ -61,11 +61,11 @@ public class CartService {
     public int saveOrUpdate(CartBean bean) {
 
         boolean isAdd = StringUtils.isEmptyOrWhitespaceOnly(bean.getCart_id());
-        CmsMtChangeHistoryModel<CartBean> history = null;
+        CmsBtConfigHistory<CartBean> history = null;
         if (isAdd) {
-            history = CmsMtChangeHistoryModel.build(null, bean, "CART Add", bean.getCreater());
+            history = CmsBtConfigHistory.build(null, bean, "CART Add", bean.getCreater());
         }else{
-            history = CmsMtChangeHistoryModel.build(Carts.getCart(bean.getCart_id()), bean, "CART MODIFY", bean.getModifier());
+            history = CmsBtConfigHistory.build(Carts.getCart(bean.getCart_id()), bean, "CART MODIFY", bean.getModifier());
         }
 
         int result=cartDao.insertOrUpdate(bean);
@@ -86,7 +86,7 @@ public class CartService {
         int result = cartDao.deleteLogic(bean.getCart_id(), bean.getModifier());
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString());
 
-        CmsMtChangeHistoryModel<CartBean> history = CmsMtChangeHistoryModel.build(bean, null, "CART DELETE LOGIC", bean.getModifier());
+        CmsBtConfigHistory<CartBean> history = CmsBtConfigHistory.build(bean, null, "CART DELETE LOGIC", bean.getModifier());
         historyDao.insert(history);
 
         return result;
@@ -107,7 +107,7 @@ public class CartService {
             CartBean originCart = Carts.getCart(bean.getCart_id());
             cartDao.insert(bean);
             CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString());
-            CmsMtChangeHistoryModel<CartBean> history = CmsMtChangeHistoryModel.build(originCart, bean, "CART ADD", bean.getCreater());
+            CmsBtConfigHistory<CartBean> history = CmsBtConfigHistory.build(originCart, bean, "CART ADD", bean.getCreater());
             historyDao.insert(history);
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Duplicate entry")) {

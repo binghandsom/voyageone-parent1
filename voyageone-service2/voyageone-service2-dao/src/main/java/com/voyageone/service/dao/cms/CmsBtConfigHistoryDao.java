@@ -2,7 +2,7 @@ package com.voyageone.service.dao.cms;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.service.model.cms.mongo.CmsMtChangeHistoryModel;
+import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
 @Repository
-public class CmsMtChangeHistoryDao extends BaseMongoChannelDao<CmsMtChangeHistoryModel> {
+public class CmsBtConfigHistoryDao extends BaseMongoChannelDao<CmsBtConfigHistory> {
 
-    public WriteResult insert(CmsMtChangeHistoryModel model) {
+    public WriteResult insert(CmsBtConfigHistory model) {
         return super.insert(model);
     }
 }

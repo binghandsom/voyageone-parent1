@@ -1,7 +1,5 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.model.cms.mongo.CmsMtChangeHistoryModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,7 +18,7 @@ import javax.annotation.Resource;
 public class CmsMtChangeHistoryDaoTest {
 
     @Resource
-    CmsMtChangeHistoryDao historyDao;
+    CmsBtConfigHistoryDao historyDao;
 
     @Test
     public void testSave() throws Exception {

@@ -10,7 +10,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
  * @date: 2016/4/28 11:08
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
-public class CmsMtChangeHistoryModel<T> extends BaseMongoModel {
+public class CmsBtConfigHistory<T> extends BaseMongoModel {
 
     private String operation;
 
@@ -25,7 +25,7 @@ public class CmsMtChangeHistoryModel<T> extends BaseMongoModel {
 //    }
 
 
-    private CmsMtChangeHistoryModel() {
+    private CmsBtConfigHistory() {
     }
 
     public String getTypeName() {
@@ -75,10 +75,10 @@ public class CmsMtChangeHistoryModel<T> extends BaseMongoModel {
      * @param <T>
      * @return
      */
-    public static <T> CmsMtChangeHistoryModel<T> build(T orginBean, T newBean,
-                                                       String operation,
-                                                       String modifier){
-        CmsMtChangeHistoryModel historyModel = new CmsMtChangeHistoryModel();
+    public static <T> CmsBtConfigHistory<T> build(T orginBean, T newBean,
+                                                  String operation,
+                                                  String modifier){
+        CmsBtConfigHistory historyModel = new CmsBtConfigHistory();
         historyModel.setOperation(operation);
         historyModel.setCreated(modifier);
         historyModel.setModifier(modifier);
