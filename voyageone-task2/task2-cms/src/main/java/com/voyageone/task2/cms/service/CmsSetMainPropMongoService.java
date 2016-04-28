@@ -1743,11 +1743,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                 skuPriceModel.setPriceSale(newPriceSale);
                             } else {
                                 // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
-                                skuPriceModel.setPriceSale(oldSku.getPriceSale());
+                                // skuPriceModel.setPriceSale(oldSku.getPriceSale());
                             }
                         } else {
                             // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
-                            skuPriceModel.setPriceSale(oldSku.getPriceSale());
+                            // skuPriceModel.setPriceSale(oldSku.getPriceSale());
                         }
                     }
 
