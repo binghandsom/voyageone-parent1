@@ -49,6 +49,6 @@ public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
     }
     @Override
     public String getTaskName() {
-        return "AliYunOSSJobService";
+        return "CmsMtImageCreateTaskJobService";
     }
 }

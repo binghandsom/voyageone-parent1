@@ -3,6 +3,7 @@ import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
@@ -19,10 +20,7 @@ import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -123,8 +121,21 @@ public class CmsImageFileService extends BaseService {
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
+                detailModel.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+                detailModel.setEndTime(DateTimeUtil.getCreatedDefaultDate());
+                detailModel.setCreater("");
+                detailModel.setModifier("");
+                detailModel.setCreated(new Date().toString());
+                detailModel.setModified(new Date().toString());
                 listTaskDetail.add(detailModel);
             }
+            modelTask.setName(new Date().toString());
+            modelTask.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+            modelTask.setEndTime(DateTimeUtil.getCreatedDefaultDate());
+            modelTask.setCreater("");
+            modelTask.setModifier("");
+            modelTask.setCreated(new Date().toString());
+            modelTask.setModified(new Date().toString());
             daoCmsMtImageCreateTask.insert(modelTask);
             for (CmsMtImageCreateTaskDetailModel detailModel:listTaskDetail)
             {
@@ -133,7 +144,7 @@ public class CmsImageFileService extends BaseService {
             }
             Map<String, Object> map = new HashMap<>();
             map.put("id",modelTask.getId());
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_LiquidFireJob,map);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob,map);
         } catch (OpenApiException ex) {
             result.setErrorCode(ex.getErrorCode());
             result.setErrorMsg(ex.getMsg());
@@ -160,7 +171,7 @@ public class CmsImageFileService extends BaseService {
             if (StringUtil.isEmpty(imageInfo.getChannelId())) {
                 throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);
             }
-            if (imageInfo.getTemplateId() != 0) {
+            if (imageInfo.getTemplateId() == 0) {
                 throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull);
             }
             if (StringUtil.isEmpty(imageInfo.getFile())) {

@@ -7,21 +7,20 @@
      http://www.springframework.org/schema/context
      http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <!-- 类扫描路径配置 -->
-    <context:component-scan base-package="com.voyageone"/>
+    <import resource="classpath*:common-config.xml" />
     <!--<import resource="classpath*:datasource-jumei-config.xml" />-->
     <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
     <import resource="classpath*:datasource-config-mongo-cms2.xml" />
-    <!-- MQ Config -->
+    <import resource="classpath*:sdk-client-config.xml" />
     <import resource="classpath*:mq-config.xml" />
-    <!-- redis Config -->
     <import resource="classpath*:redis-config.xml" />
 
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
     <!-- <bean id="initial" class="com.voyageone.batch.bi.configs.Initializer" init-method="init"/>-->
 
-
+    <!-- 自动扫描 -->
+    <context:component-scan base-package="com.voyageone" />
 
 </beans>

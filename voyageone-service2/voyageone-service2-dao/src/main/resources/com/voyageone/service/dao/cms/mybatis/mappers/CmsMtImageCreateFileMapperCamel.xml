@@ -169,7 +169,7 @@
         ,`uscdn_state`=#{uscdnState}
         ,`error_msg`=#{errorMsg}
         ,`error_code`=#{errorCode}
-        ,`is_upload_us_cdn`=#{is_upload_us_cdn}
+        ,`is_upload_us_cdn`=#{isUploadUsCdn}
         ,`modifier`=#{modifier}
         where id=#{id}
     </update>
@@ -216,7 +216,7 @@
         #{uscdnState},
         #{errorMsg},
         #{errorCode},
-        #{isUploadUsCdn}
+        #{isUploadUsCdn},
         now(),
         #{creater},
         now(),

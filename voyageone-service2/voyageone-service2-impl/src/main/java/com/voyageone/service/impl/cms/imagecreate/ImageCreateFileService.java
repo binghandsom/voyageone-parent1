@@ -74,6 +74,7 @@ public class ImageCreateFileService extends BaseService {
         modelFile.setHashCode(hashCode);
         modelFile.setOssFilePath(ossFilePath);
         modelFile.setUsCdnFilePath(usCDNFilePath);
+        modelFile.setFilePath("");
         modelFile.setState(0);
         modelFile.setOssState(0);
         modelFile.setErrorCode(0);
