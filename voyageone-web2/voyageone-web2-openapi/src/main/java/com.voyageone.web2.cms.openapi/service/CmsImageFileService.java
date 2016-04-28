@@ -10,13 +10,12 @@ import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.imagecreate.*;
+import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTaskModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +28,6 @@ import java.util.*;
 public class CmsImageFileService extends BaseService {
     @Autowired
     private ImageCreateFileService imageCreateFileService;
-    @Autowired
-    private AliYunOSSFileService serviceAliYunOSSFile;
-    @Autowired
-    private USCDNFileService serviceUSCDNFile;
-    @Autowired
-    private LiquidFireImageService serviceLiquidFireImage;
     @Autowired
     private MqSender sender;
     @Autowired
@@ -70,14 +63,13 @@ public class CmsImageFileService extends BaseService {
             }
         } catch (Exception ex) {
             //5.未知异常
-            //生成错误请求唯一id
-            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM);
-
             long requestId = FactoryIdWorker.nextId();
             $error("getImage requestId:" + requestId, ex);
             result.setRequestId(requestId);
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
+            //生成错误请求唯一id
+            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM);
         } finally {
             if (modelFile != null && modelFile.getFilePath() != null && isCreateNewFile) {
                 try {

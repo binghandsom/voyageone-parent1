@@ -2,21 +2,20 @@ package com.voyageone.components.uscdn.service;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Created by dell on 2016/4/21.
- */
+
 public class USCDNClient {
-    private String url;// "ftp.vny.FB70.omicroncdn.net";
-    private String userName;//"admin@voyageone.com";
-    private String password;//"Voyage1#";
+    private String url;
+    private String userName;
+    private String password;
 
-    int connectTimeout = 30 * 1000;
-    int dataTimeout = 30 * 10000;
+    private Lock lock = new ReentrantLock();// 锁
+    private static FtpClientConnectionPool ftpClientConnectionPool;
 
     public USCDNClient(String url, String userName, String password, String workingDirectory) {
         this.setUrl(url);
@@ -48,22 +47,6 @@ public class USCDNClient {
         this.password = password;
     }
 
-    public int getConnectTimeout() {
-        return this.connectTimeout;
-    }
-
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
-    }
-
-    public int getDataTimeout() {
-        return dataTimeout;
-    }
-
-    public void setDataTimeout(int dataTimeout) {
-        this.dataTimeout = dataTimeout;
-    }
-
     public void uploadFile(String usCdnFilePath, String localFilePath) throws IOException {
         int lastIndex = usCdnFilePath.lastIndexOf("/");
         String WorkingDirectory = usCdnFilePath.substring(0, lastIndex);//文件目录
@@ -71,7 +54,7 @@ public class USCDNClient {
         FTPClient ftpClient = null;
         InputStream in = null;
         try {
-            ftpClient = createftp(this.getUrl(), this.getUserName(), this.getPassword(), this.connectTimeout, this.dataTimeout);
+            ftpClient = createftp(this.getUrl(), this.getUserName(), this.getPassword());
             boolean change = ftpClient.changeWorkingDirectory(WorkingDirectory);
             if (!change) {
                 mkdirPath(WorkingDirectory, ftpClient);
@@ -85,11 +68,11 @@ public class USCDNClient {
             in = new FileInputStream(f);
             ftpClient.storeFile(fileName, in);
         } finally {
-            if (ftpClient != null) {
-                ftpClient.disconnect();
-            }
             if (in != null) {
                 in.close();
+            }
+            if (ftpClient != null) {
+                ftpClientConnectionPool.checkIn(ftpClient);
             }
         }
     }
@@ -111,28 +94,12 @@ public class USCDNClient {
         }
     }
 
-    private FTPClient createftp(String url, String userName, String Password, int connectTimeout, int dataTimeout) throws IOException {
-        FTPClient ftpClient = new FTPClient();
-        try {
-            ftpClient.setControlEncoding("utf-8");
-            ftpClient.setConnectTimeout(connectTimeout);
-            ftpClient.setDataTimeout(dataTimeout);
-            ftpClient.connect(url);
-            ftpClient.login(userName, Password);// 登录
-
-            // 设置文件传输类型为二进制
-            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            // 获取ftp登录应答代码
-            int reply = ftpClient.getReplyCode();
-            // 验证是否登陆成功
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                throw new RuntimeException("FTPReply.isPositiveCompletion error");
-            }
-            return ftpClient;
-        } catch (IOException e) {
-            //disconnect(ftpClient);
-            ftpClient.disconnect();
-            throw e;
+    private FTPClient createftp(String url, String userName, String password) throws IOException {
+        lock.lock();// 取得锁
+        if (ftpClientConnectionPool == null) {
+            ftpClientConnectionPool = new FtpClientConnectionPool(url, userName, password, "utf-8");
         }
+        lock.unlock();// 释放锁
+        return ftpClientConnectionPool.checkOut();
     }
 }

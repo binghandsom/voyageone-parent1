@@ -44,6 +44,7 @@ public class ImageCreateFileService extends BaseService {
     TransactionRunner transactionRunner;
     @Autowired
     CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
+
     public CmsMtImageCreateFileModel getModel(int id) {
         return cmsMtImageCreateFileDao.select(id);
     }
@@ -105,54 +106,58 @@ public class ImageCreateFileService extends BaseService {
     public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(int templateId) {
         return cmsMtImageCreateTemplateDao.select(templateId);
     }
+
     //CmsMtImageCreateTaskDetailModel
-   public void createAndUploadImage(CmsMtImageCreateTaskDetailModel modelTaskDetail) {
-       boolean isCreateNewFile = false;
-       CmsMtImageCreateFileModel modelFile = null;
-       int errorCode = 0;
-       String errorMsg = "";
-       modelTaskDetail.setBeginTime(new Date());
-       try {
-           int CmsMtImageCreateFileId = modelTaskDetail.getCmsMtImageCreateFileId();//isUploadUSCDN
-           modelFile = cmsMtImageCreateFileDao.select(CmsMtImageCreateFileId);
-           //.创建并上传图片
-           isCreateNewFile = createAndUploadImage(modelFile);
-       } catch (OpenApiException ex) {
-           //4.处理业务异常
-           errorCode = ex.getErrorCode();
-           errorMsg = ex.getMsg();
-           if (ex.getSuppressed() != null) {
-               long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-               errorMsg = "requestId:" + requestId + " " + errorMsg;
-               $error("getImage requestId:" + requestId, ex);
-           }
-       } catch (Exception ex) {
-           //5.未知异常
-           //生成错误请求唯一id
-           issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM);
-           long requestId = FactoryIdWorker.nextId();
-           $error("getImage requestId:" + requestId, ex);
-           errorCode = ImageErrorEnum.SystemError.getCode();
-           errorMsg = errorMsg = "requestId:" + requestId + ex.getMessage();
-       } finally {
-           if (modelFile != null && modelFile.getFilePath() != null && isCreateNewFile) {
-               try {
-                   FileUtils.delFile(modelFile.getFilePath());
-               } catch (Exception ignored) {
-               }
-           }
-       }
-       if (errorCode > 0) {
-           modelFile.setErrorCode(errorCode);
-           modelFile.setErrorMsg(errorMsg);
-           this.changeModel(modelFile);
-           modelTaskDetail.setStatus(2);
-       } else {
-           modelTaskDetail.setStatus(1);
-       }
-       modelTaskDetail.setEndTime(new Date());
-       daoCmsMtImageCreateTaskDetail.update(modelTaskDetail);
-   }
+    public void createAndUploadImage(CmsMtImageCreateTaskDetailModel modelTaskDetail) {
+        boolean isCreateNewFile = false;
+        CmsMtImageCreateFileModel modelFile = null;
+        int errorCode = 0;
+        String errorMsg = "";
+        modelTaskDetail.setBeginTime(new Date());
+        try {
+            int CmsMtImageCreateFileId = modelTaskDetail.getCmsMtImageCreateFileId();//isUploadUSCDN
+            modelFile = cmsMtImageCreateFileDao.select(CmsMtImageCreateFileId);
+            //.创建并上传图片
+            isCreateNewFile = createAndUploadImage(modelFile);
+        } catch (OpenApiException ex) {
+            //4.处理业务异常
+            errorCode = ex.getErrorCode();
+            errorMsg = ex.getMsg();
+            if (ex.getSuppressed() != null) {
+                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+                errorMsg = "requestId:" + requestId + " " + errorMsg;
+                $error("getImage requestId:" + requestId, ex);
+            }
+        } catch (Exception ex) {
+            //5.未知异常
+            //生成错误请求唯一id
+            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM);
+            long requestId = FactoryIdWorker.nextId();
+            $error("getImage requestId:" + requestId, ex);
+            errorCode = ImageErrorEnum.SystemError.getCode();
+            errorMsg = "requestId:" + requestId + ex.getMessage();
+        } finally {
+            if (modelFile != null && modelFile.getFilePath() != null && isCreateNewFile) {
+                try {
+                    FileUtils.delFile(modelFile.getFilePath());
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        if (errorCode > 0) {
+            if (modelFile != null) {
+                modelFile.setErrorCode(errorCode);
+                modelFile.setErrorMsg(errorMsg);
+                this.changeModel(modelFile);
+            }
+            modelTaskDetail.setStatus(2);
+        } else {
+            modelTaskDetail.setStatus(1);
+        }
+        modelTaskDetail.setEndTime(new Date());
+        daoCmsMtImageCreateTaskDetail.update(modelTaskDetail);
+    }
+
     public boolean createAndUploadImage(CmsMtImageCreateFileModel modelFile) throws Exception {
         boolean isCreateNewFile = false;
         if (modelFile.getState() == 0) {
