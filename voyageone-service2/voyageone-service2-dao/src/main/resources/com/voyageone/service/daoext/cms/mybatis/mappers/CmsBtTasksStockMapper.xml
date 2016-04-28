@@ -18,7 +18,7 @@
         <if test="channelId !=null and lang != null">
             ,t3.name
         </if>
-        from voyageone_cms2.cms_bt_stock_separate_platform_info t1
+        from voyageone_cms2.cms_bt_tasks_stock t1
         left outer join voyageone_cms2.cms_bt_promotion t2 on t1.promotion_id = t2.promotion_id
         <if test="channelId !=null and lang != null">
             left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id =
@@ -51,7 +51,7 @@
     </select>
 
     <update id="cms_bt_stock_separate_platform_info_updateStockSeparatePlatform" parameterType="HashMap">
-        update voyageone_cms2.cms_bt_stock_separate_platform_info
+        update voyageone_cms2.cms_bt_tasks_stock
         <set>
             <if test="separatePercent != null">
                 separate_percent = #{separatePercent},
@@ -95,7 +95,7 @@
 
     <delete id="cms_bt_stock_separate_platform_info_deleteStockSeparatePlatform" parameterType="HashMap">
         delete
-        from voyageone_cms2.cms_bt_stock_separate_platform_info
+        from voyageone_cms2.cms_bt_tasks_stock
         where
         task_id = #{taskId}
     </delete>
@@ -106,14 +106,14 @@
         a.cart_id,
         b.revert_time
         from voyageone_cms2.cms_bt_promotion a
-        INNER JOIN voyageone_cms2.cms_bt_stock_separate_platform_info b
+        INNER JOIN voyageone_cms2.cms_bt_tasks_stock b
         on a.cart_id=b.cart_id and a.promotion_id = b.promotion_id
         where a.cart_id = #{cartId}
         and a.channel_id=#{channelId}
         and b.revert_time >#{revertTime}
     </select>
     <insert id="cms_bt_stock_separate_platform_info_insert" parameterType="Map">
-        INSERT INTO voyageone_cms2.cms_bt_stock_separate_platform_info (
+        INSERT INTO voyageone_cms2.cms_bt_tasks_stock (
             task_id,
             cart_id,
             promotion_id,
@@ -152,7 +152,7 @@
                 revert_flg revert_flg,
                 add_priority addPriority,
                 subtract_priority subtractPriority
-        from voyageone_cms2.cms_bt_stock_separate_platform_info
+        from voyageone_cms2.cms_bt_tasks_stock
         where task_id =#{task_id}
     </select>
 </mapper>

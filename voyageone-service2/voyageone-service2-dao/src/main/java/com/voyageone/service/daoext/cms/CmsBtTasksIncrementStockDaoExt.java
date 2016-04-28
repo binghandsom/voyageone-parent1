@@ -12,7 +12,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtTaskKucungeliDaoExt extends BaseDao {
+public class CmsBtTasksIncrementStockDaoExt extends BaseDao {
 
     public List<Map<String, Object>> selectStockSeparateIncrementTask(Map<String, Object> param) {
         return selectList("cms_bt_stock_separate_increment_task_selectStockSeparateIncrementTask", param);

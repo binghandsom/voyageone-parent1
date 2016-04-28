@@ -13,7 +13,7 @@
         <if test="channelId !=null and lang != null">
             ,t2.name
         </if>
-        from voyageone_cms2.cms_bt_task_kucungeli t1
+        from voyageone_cms2.cms_bt_tasks_increment_stock t1
         <if test="channelId !=null and lang != null">
             left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id =
             #{channelId} and lang_id = #{lang}) t2
@@ -50,7 +50,7 @@
 
     <delete id="cms_bt_stock_separate_increment_task_deleteStockSeparateIncrementTask" parameterType="HashMap">
         delete
-        from voyageone_cms2.cms_bt_task_kucungeli
+        from voyageone_cms2.cms_bt_tasks_increment_stock
         where 1=1
         <if test="subTaskId != null">
             and id = #{subTaskId}
@@ -62,7 +62,7 @@
 
     <insert id="insert_cms_bt_stock_separate_increment_task_by_taskId" parameterType="HashMap" useGeneratedKeys="true"
             keyProperty="id">
-        insert into voyageone_cms2.cms_bt_task_kucungeli (
+        insert into voyageone_cms2.cms_bt_tasks_increment_stock (
         id,
         task_id,
         sub_task_name,
@@ -86,7 +86,7 @@
         #{creater})
     </insert>
     <update id="update_cms_bt_stock_separate_increment_task_by_subTaskId">
-        update voyageone_cms2.cms_bt_task_kucungeli
+        update voyageone_cms2.cms_bt_tasks_increment_stock
         <set>
             <if test="taskId != null">
                 task_id = #{taskId},

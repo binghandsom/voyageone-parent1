@@ -7,7 +7,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtStockSeparatePlatformInfoDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtTasksStockDaoExt;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class StockRevertService extends BaseTaskService {
     private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
 
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
+    private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;
 
     @Autowired
     private TransactionRunner transactionRunner;
@@ -172,7 +172,7 @@ public class StockRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
-        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> listPlatform = cmsBtTasksStockDaoExt.selectStockSeparatePlatform(sqlParam);
         listPlatform.forEach(data -> {
             Integer taskId = (Integer) data.get("task_id");
             if (!listSeparateTaskId.contains(taskId)) {

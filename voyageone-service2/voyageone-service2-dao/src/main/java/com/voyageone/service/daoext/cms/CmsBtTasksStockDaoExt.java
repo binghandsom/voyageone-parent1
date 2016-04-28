@@ -12,7 +12,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtStockSeparatePlatformInfoDaoExt extends BaseDao {
+public class CmsBtTasksStockDaoExt extends BaseDao {
 
 //    public List<Map<String, Object>> selectStockSeparatePlatform(Map param) {
 //        return selectList("select_stock_separate_platform", param);

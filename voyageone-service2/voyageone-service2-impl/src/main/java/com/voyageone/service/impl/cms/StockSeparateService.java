@@ -29,11 +29,11 @@ public class StockSeparateService extends BaseService {
     private CmsBtTasksDaoExt cmsBtTasksDaoExt;
 
     @Autowired
-    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
+    private CmsBtTasksIncrementStockDaoExt cmsBtTasksIncrementStockDaoExt;
     @Autowired
     private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
+    private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;
     @Autowired
     private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
     @Autowired
@@ -41,19 +41,19 @@ public class StockSeparateService extends BaseService {
 
 
     public List<Map<String, Object>> getStockSeparateIncrementTask(Map<String, Object> param) {
-        return cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(param);
+        return cmsBtTasksIncrementStockDaoExt.selectStockSeparateIncrementTask(param);
     }
 
     public List<Map<String, Object>> getStockSeparatePlatFormInfoById(int cartId, String revertTime, String channelId) {
-        return cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatFormInfoById(cartId, revertTime, channelId);
+        return cmsBtTasksStockDaoExt.selectStockSeparatePlatFormInfoById(cartId, revertTime, channelId);
     }
 
     public List<Map<String, Object>> getPlatformStockSeparateList(Map<String, Object> param) {
-        return cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(param);
+        return cmsBtTasksStockDaoExt.selectStockSeparatePlatform(param);
     }
 
     public List<Map<String, Object>> getStockSeparatePlatFormInfoMapByTaskID(String task_id) {
-        return cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatFormInfoMapByTaskID(task_id);
+        return cmsBtTasksStockDaoExt.selectStockSeparatePlatFormInfoMapByTaskID(task_id);
     }
 
     public List<Map<String, Object>> getStockSeparateItem(Map<String, Object> sqlParam) {
@@ -70,7 +70,7 @@ public class StockSeparateService extends BaseService {
         // 删除隔离任务/平台基本信息表中的数据
         Map<String, Object> sqlParam2 = new HashMap<>();
         sqlParam2.put("taskId", taskId);
-        cmsBtStockSeparatePlatformInfoDaoExt.deleteStockSeparatePlatform(sqlParam2);
+        cmsBtTasksStockDaoExt.deleteStockSeparatePlatform(sqlParam2);
 
         // 删除任务表中的数据
         CmsBtTasksBean cmsBtTasksBean = new CmsBtTasksBean();
@@ -356,7 +356,7 @@ public class StockSeparateService extends BaseService {
          */
         for (Map<String, String> separatePlatformMap : separatePlatformMapList) {
             separatePlatformMap.put("task_id", taskID);
-            cmsBtStockSeparatePlatformInfoDaoExt.insert(separatePlatformMap);
+            cmsBtTasksStockDaoExt.insert(separatePlatformMap);
         }
 
         /**
@@ -459,7 +459,7 @@ public class StockSeparateService extends BaseService {
     @VOTransactional
     public void updateStockSeparatePlatformList(List<Map<String, Object>> updateStockSeparatePlatformList) {
         for (Map<String, Object> separatePlatformMap : updateStockSeparatePlatformList) {
-            cmsBtStockSeparatePlatformInfoDaoExt.updateStockSeparatePlatform(separatePlatformMap);
+            cmsBtTasksStockDaoExt.updateStockSeparatePlatform(separatePlatformMap);
         }
     }
 
@@ -471,7 +471,7 @@ public class StockSeparateService extends BaseService {
     public void saveStockSeparateIncrementTaskAndItemList(Map<String, Object> stockSeparateIncrementTaskMap, Map<String, Object> allSkuHash) {
 
         //将增量任务信息插入到cms_bt_stock_separate_increment_task表
-        cmsBtTaskKucungeliDaoExt.insertStockSeparateIncrementTask(stockSeparateIncrementTaskMap);
+        cmsBtTasksIncrementStockDaoExt.insertStockSeparateIncrementTask(stockSeparateIncrementTaskMap);
         //任务ID
         String subTaskId = String.valueOf(stockSeparateIncrementTaskMap.get("sub_task_id"));
 
@@ -538,7 +538,7 @@ public class StockSeparateService extends BaseService {
         mapSaveData.put("created", param.get("userName"));
         //更新者
         mapSaveData.put("modified", param.get("userName"));
-        cmsBtTaskKucungeliDaoExt.updateStockSeparateIncrementTask(mapSaveData);
+        cmsBtTasksIncrementStockDaoExt.updateStockSeparateIncrementTask(mapSaveData);
     }
 
     /**
@@ -556,7 +556,7 @@ public class StockSeparateService extends BaseService {
         // 删除增量库存隔离任务表中的数据
         Map<String, Object> sqlParam2 = new HashMap<>();
         sqlParam2.put("subTaskId", subTaskId);
-        cmsBtTaskKucungeliDaoExt.deleteStockSeparateIncrementTask(sqlParam2);
+        cmsBtTasksIncrementStockDaoExt.deleteStockSeparateIncrementTask(sqlParam2);
     }
 
     public List<Map<String, Object>> getStockSalesQuantity(Map<String, Object> param) {
