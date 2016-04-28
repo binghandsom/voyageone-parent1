@@ -121,9 +121,9 @@
               #{status},
               #{beginTime},
               #{endTime},
-              #{created},
+              now(),
               #{creater},
-              #{modified},
+              now(),
               #{modifier}
         )
     </insert>

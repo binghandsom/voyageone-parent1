@@ -133,9 +133,9 @@
               #{beginTime},
               #{endTime},
               #{status},
-              #{created},
+              now(),
               #{creater},
-              #{modified},
+              now(),
               #{modifier}
         )
     </insert>

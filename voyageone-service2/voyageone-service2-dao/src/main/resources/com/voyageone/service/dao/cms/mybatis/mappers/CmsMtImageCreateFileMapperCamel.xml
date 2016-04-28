@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateFileDao">
-    <resultMap id="ResultMap" type="CmsMtImageCreateFileModel">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateFileModel">
 
     </resultMap>
 
     <select id="selectList" resultMap="ResultMap">
 
-        select
-        `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`
-        from cms_mt_image_create_file
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_file
         <where>
             <if test="id != null">
                 AND `id` = #{id}
             </if>
             <if test="hashCode != null">
                 AND `hash_code` = #{hashCode}
+            </if>
+            <if test="requestQueryString != null">
+                AND `request_query_string` = #{requestQueryString}
             </if>
             <if test="channelId != null">
                 AND `channel_id` = #{channelId}
@@ -68,9 +69,7 @@
         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`
-        from cms_mt_image_create_file
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file
         <where>
 
             <if test="id != null">
@@ -79,6 +78,10 @@
 
             <if test="hashCode != null">
                 AND `hash_code` = #{hashCode}
+            </if>
+
+            <if test="requestQueryString != null">
+                AND `request_query_string` = #{requestQueryString}
             </if>
 
             <if test="channelId != null">
@@ -144,8 +147,7 @@
             <if test="modifier != null">
                 AND `modifier` = #{modifier}
             </if>
-        </where>
-        limit 1
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file where id=#{id}
@@ -154,23 +156,22 @@
     <update id="update">
         update cms_mt_image_create_file
         set
-
-            `hash_code`=#{hashCode}
-            ,`channel_id`=#{channelId}
-            ,`template_id`=#{templateId}
-            ,`file`=#{file}
-            ,`file_path`=#{filePath}
-            ,`vparam`=#{vparam}
-            ,`oss_file_path`=#{ossFilePath}
-            ,`us_cdn_file_path`=#{usCdnFilePath}
-            ,`state`=#{state}
-            ,`oss_state`=#{ossState}
-            ,`uscdn_state`=#{uscdnState}
-            ,`error_msg`=#{errorMsg}
-            ,`error_code`=#{errorCode}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
+        `hash_code`=#{hashCode}
+        ,`channel_id`=#{channelId}
+        ,`template_id`=#{templateId}
+        ,`file`=#{file}
+        ,`file_path`=#{filePath}
+        ,`vparam`=#{vparam}
+        ,`oss_file_path`=#{ossFilePath}
+        ,`us_cdn_file_path`=#{usCdnFilePath}
+        ,`state`=#{state}
+        ,`oss_state`=#{ossState}
+        ,`uscdn_state`=#{uscdnState}
+        ,`error_msg`=#{errorMsg}
+        ,`error_code`=#{errorCode}
+        ,`modifier`=#{modifier}
+        where id=#{id}
+    </update>
 
     <delete id="delete">
         delete from  cms_mt_image_create_file
@@ -178,45 +179,45 @@
 
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_mt_image_create_file
         (
-              `hash_code`,
-              `channel_id`,
-              `template_id`,
-              `file`,
-              `file_path`,
-              `vparam`,
-              `oss_file_path`,
-              `us_cdn_file_path`,
-              `state`,
-              `oss_state`,
-              `uscdn_state`,
-              `error_msg`,
-              `error_code`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
+        `hash_code`,
+        `channel_id`,
+        `template_id`,
+        `file`,
+        `file_path`,
+        `vparam`,
+        `oss_file_path`,
+        `us_cdn_file_path`,
+        `state`,
+        `oss_state`,
+        `uscdn_state`,
+        `error_msg`,
+        `error_code`,
+        `created`,
+        `creater`,
+        `modified`,
+        `modifier`
         )
         VALUES(
-              #{hashCode},
-              #{channelId},
-              #{templateId},
-              #{file},
-              #{filePath},
-              #{vparam},
-              #{ossFilePath},
-              #{usCdnFilePath},
-              #{state},
-              #{ossState},
-              #{uscdnState},
-              #{errorMsg},
-              #{errorCode},
-              #{created},
-              #{creater},
-              #{modified},
-              #{modifier}
+        #{hashCode},
+        #{channelId},
+        #{templateId},
+        #{file},
+        #{filePath},
+        #{vparam},
+        #{ossFilePath},
+        #{usCdnFilePath},
+        #{state},
+        #{ossState},
+        #{uscdnState},
+        #{errorMsg},
+        #{errorCode},
+        now(),
+        #{creater},
+        now(),
+        #{modifier}
         )
     </insert>
 </mapper>

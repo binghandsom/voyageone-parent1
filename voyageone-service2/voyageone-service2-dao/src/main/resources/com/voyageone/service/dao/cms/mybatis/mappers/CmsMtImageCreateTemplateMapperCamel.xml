@@ -2,13 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao">
     <resultMap id="ResultMap" type="CmsMtImageCreateTemplateModel">
-
+        
     </resultMap>
-
+	
     <select id="selectList" resultMap="ResultMap">
 
-        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from
-        cms_mt_image_create_template
+        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_template
         <where>
             <if test="id != null">
                 AND `id` = #{id}
@@ -40,13 +39,11 @@
             <if test="modifier != null">
                 AND `modifier` = #{modifier}
             </if>
-        </where>
+      </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from
-        cms_mt_image_create_template
+        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template 
         <where>
-
             <if test="id != null">
                 AND `id` = #{id}
             </if>
@@ -86,14 +83,13 @@
             <if test="modifier != null">
                 AND `modifier` = #{modifier}
             </if>
-        </where>
-        limit 1
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template where id=#{id}
     </select>
 
-    <update id="update">
+     <update id="update">
         update cms_mt_image_create_template
         set
 
@@ -112,7 +108,7 @@
 
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_mt_image_create_template
         (
               `channel_id`,
@@ -131,9 +127,9 @@
               #{content},
               #{height},
               #{width},
-              #{created},
+              now(),
               #{creater},
-              #{modified},
+              now(),
               #{modifier}
         )
     </insert>
