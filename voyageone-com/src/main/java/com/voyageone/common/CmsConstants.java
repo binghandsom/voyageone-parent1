@@ -89,6 +89,11 @@ public class CmsConstants {
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
     }
 
+    public interface DataAmount {
+        String FEED_TO_MASTER_INSERT = "FEED_TO_MASTER_INSERT";
+        String FEED_TO_MASTER_UPDATE = "FEED_TO_MASTER_UPDATE";
+    }
+
     public interface JmMasterPlatCode {
         String BRND = "0";
         String PRICE_UNIT = "1";

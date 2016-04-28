@@ -31,6 +31,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.impl.cms.DataAmountService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -39,7 +40,6 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
@@ -113,6 +113,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     // jeff 2016/04 add end
     @Autowired
     private ImagesService imagesService;
+
+    @Autowired
+    private DataAmountService dataAmountService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -1378,24 +1381,35 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 新建的件数
             if (insertCnt > 0) {
-                CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
-                insertModel.setChannelId(channel.getOrder_channel_id());
-                insertModel.setAmountName("FEED_TO_MASTER_INSERT");
-                insertModel.setAmountVal(String.valueOf(insertCnt));
-                insertModel.setComment("Feed导入Master新建");
-                insertModel.setCreater(getTaskName());
-                cmsBtDataAmountDao.insert(insertModel);
+//                CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
+//                insertModel.setChannelId(channel.getOrder_channel_id());
+//                insertModel.setAmountName("FEED_TO_MASTER_INSERT");
+//                insertModel.setAmountVal(String.valueOf(insertCnt));
+//                insertModel.setComment("Feed导入Master新建");
+//                insertModel.setCreater(getTaskName());
+//                cmsBtDataAmountDao.insert(insertModel);
+                dataAmountService.updateWithInsert(channel.getOrder_channel_id()
+                        , CmsConstants.DataAmount.FEED_TO_MASTER_INSERT
+                        , String.valueOf(insertCnt)
+                        , "Feed导入Master新建"
+                        , getTaskName());
+
             }
 
             // 新建的件数
             if (updateCnt > 0) {
-                CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
-                updateModel.setChannelId(channel.getOrder_channel_id());
-                updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
-                updateModel.setAmountVal(String.valueOf(updateCnt));
-                updateModel.setComment("Feed导入Master更新");
-                updateModel.setCreater(getTaskName());
-                cmsBtDataAmountDao.insert(updateModel);
+//                CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
+//                updateModel.setChannelId(channel.getOrder_channel_id());
+//                updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
+//                updateModel.setAmountVal(String.valueOf(updateCnt));
+//                updateModel.setComment("Feed导入Master更新");
+//                updateModel.setCreater(getTaskName());
+//                cmsBtDataAmountDao.insert(updateModel);
+                dataAmountService.updateWithInsert(channel.getOrder_channel_id()
+                        , CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE
+                        , String.valueOf(insertCnt)
+                        , "Feed导入Master更新"
+                        , getTaskName());
             }
         }
         // jeff 2016/04 add end
