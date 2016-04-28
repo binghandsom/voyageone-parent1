@@ -71,7 +71,7 @@ define([
     function cancel () {
       $scope.vm.customInfo = { params: [] };
 
-      $scope.$close();
+      $scope.$dismiss();
     }
 
     /**

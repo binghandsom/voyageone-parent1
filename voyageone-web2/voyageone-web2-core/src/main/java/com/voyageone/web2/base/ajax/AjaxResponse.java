@@ -1,8 +1,8 @@
 package com.voyageone.web2.base.ajax;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voyageone.web2.base.message.DisplayType;
-import com.voyageone.web2.base.message.MessageModel;
+import com.voyageone.common.message.enums.DisplayType;
+import com.voyageone.service.bean.com.MessageBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public class AjaxResponse {
      * @param message 信息模型
      * @param args    格式化参数
      */
-    public void setMessage(MessageModel message, Object[] args) {
+    public void setMessage(MessageBean message, Object[] args) {
         setMessage(String.format(message.getMessage(), args));
         setCode(message.getCode());
         setDisplayType(message.getDisplayType());

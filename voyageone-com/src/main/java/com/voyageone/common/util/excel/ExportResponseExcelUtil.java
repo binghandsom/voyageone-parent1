@@ -1,6 +1,5 @@
 package com.voyageone.common.util.excel;
-import com.voyageone.common.help.DateHelp;
-import com.voyageone.common.help.ListHelp;
+import com.voyageone.common.util.DateTimeUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -140,9 +139,8 @@ public class ExportResponseExcelUtil {
         ExcelColumn column;
         //填充内容
         int rowNo = 1;
-        for (int index = 0; index < list.size(); index++) {
+        for (T item : list) {
             //获取单个对象
-            T item = list.get(index);
             hssfRow = sheet.createRow(rowNo);
             for (int i = 0; i < listColumn.size(); i++) {
                 column = listColumn.get(i);
@@ -183,7 +181,7 @@ public class ExportResponseExcelUtil {
         }
         else if(column.getColumnType()== EnumExcelColumnType.ColumnType_Date) {
             if (objValue == null) {
-                xh.setCellValue(DateHelp.getDefaultDate());
+                xh.setCellValue(DateTimeUtil.getCreatedDefaultDate());
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 xh.setCellValue(sdf.parse(objValue.toString()));

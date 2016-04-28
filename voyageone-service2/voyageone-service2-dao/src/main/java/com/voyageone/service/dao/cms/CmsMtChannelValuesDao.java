@@ -13,9 +13,11 @@ import java.util.Map;
 @Repository
 public interface CmsMtChannelValuesDao {
 
-    public List<CmsMtChannelValuesModel> selectList(Map<String, Object> map);
-    public int insert(CmsMtChannelValuesModel entity);
-    public int update(CmsMtChannelValuesModel entity);
+    List<CmsMtChannelValuesModel> selectList(Map<String, Object> map);
+
+    int insert(CmsMtChannelValuesModel entity);
+
+    int update(CmsMtChannelValuesModel entity);
 
 
 //    public int delete(CmsMtChannelValuesModel entity);

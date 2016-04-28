@@ -69,7 +69,7 @@ define([
         dictValue: {},
         textValue: ""
       };
-      $scope.$close();
+      $scope.$dismiss();
     }
 
     /**

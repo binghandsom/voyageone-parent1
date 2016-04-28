@@ -35,7 +35,7 @@ define([
 
             cancel: function () {
                 this.context.path.shift();
-                this.$modal.dismiss('cancel');
+                this.$modal.dismiss();
             }
         };
 

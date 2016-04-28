@@ -31,7 +31,7 @@
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t
                 ON b.task_id = t.task_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_model pm
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_groups pm
                 ON pm.promotion_id = t.promotion_id
                    AND pm.num_iid = b.num_iid
         SET b.message = #{message},
@@ -318,7 +318,7 @@
         FROM voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t ON t.task_id = b.task_id
             JOIN voyageone_cms2.cms_bt_promotion p ON p.promotion_id = t.promotion_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_model m ON m.promotion_id = p.promotion_id AND b.num_iid = m.num_iid
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_groups m ON m.promotion_id = p.promotion_id AND b.num_iid = m.num_iid
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes c ON c.promotion_id = p.promotion_id AND c.product_code =
         b.product_code
         WHERE (

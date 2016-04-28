@@ -1,11 +1,11 @@
 package com.voyageone.web2.core.views.user;
 
+import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.core.model.ChannelPermissionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +49,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(CoreUrlConstants.USER.GET_CHANNEL)
     public AjaxResponse getChannel() {
-        List<ChannelPermissionModel> companyBeans = userService.getPermissionCompany(getUser());
+        List<ChannelPermissionBean> companyBeans = userService.getPermissionCompany(getUser());
         return success(companyBeans);
     }
 

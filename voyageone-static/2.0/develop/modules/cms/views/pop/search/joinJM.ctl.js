@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (_,angularAMD) {
 
-    angularAMD.controller('popJoinJMCtl', function ($scope, $routeParams,context,jmPromotionProductAddService) {
+    angularAMD.controller('popJoinJMCtl', function ($scope, $translate, jmPromotionProductAddService, notify, context) {
 
         $scope.vm = _.extend({}, context);//包含promotion和selected products
 
@@ -23,17 +23,13 @@ define([
             $scope.vm.discount=$scope.discountForShow/10;
         });
 
-        /**
-         * 初始化数据.
-         */
-        $scope.initialize = function () {
-
-        };
         $scope.save = function () {
             jmPromotionProductAddService.add($scope.vm).then(function(resp) {
                 console.log(resp);
+                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                //$scope.$close();
+                $scope.$close();
             });
-            $scope.$close();
         };
 
     });

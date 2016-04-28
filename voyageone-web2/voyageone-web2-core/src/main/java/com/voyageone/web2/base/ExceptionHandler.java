@@ -3,14 +3,14 @@ package com.voyageone.web2.base;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.Constants.LANGUAGE;
+import com.voyageone.common.configs.beans.ExceptionLogBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.base.log.ExceptionLogBean;
 import com.voyageone.web2.base.log.LogService;
-import com.voyageone.web2.base.message.DisplayType;
-import com.voyageone.web2.base.message.MessageModel;
+import com.voyageone.common.message.enums.DisplayType;
+import com.voyageone.service.bean.com.MessageBean;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -117,7 +117,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         }
 
         String code = exception.getCode();
-        MessageModel msgModel = messageService.getMessage(lang, code);
+        MessageBean msgModel = messageService.getMessage(lang, code);
 
         if (msgModel != null) {
             return messageDeal(lang, code, null, response);
@@ -160,7 +160,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
 
         AjaxResponse ajaxResponse = new AjaxResponse();
 
-        MessageModel msgModel = messageService.getMessage(lang, code);
+        MessageBean msgModel = messageService.getMessage(lang, code);
 
         if (msgModel == null) {
             ajaxResponse.setCode(code);

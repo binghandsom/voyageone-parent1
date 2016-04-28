@@ -52,6 +52,8 @@ require([
       $ajax.post('/core/access/user/login', {
         username: $scope.username,
         password: $scope.password,
+
+
         timezone: -(new Date().getTimezoneOffset() / 60)
       }).then(function(){
         location.href = 'channel.html';

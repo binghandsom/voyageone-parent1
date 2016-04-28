@@ -1,7 +1,9 @@
 package com.voyageone.web2.base.message;
 
+import com.voyageone.service.bean.com.MessageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.voyageone.service.daoext.com.MessageDao;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,14 +19,14 @@ public class MessageService {
     @Autowired
     private MessageDao messageDao;
 
-    private Map<String, MessageModel> cache = new HashMap<>();
+    private Map<String, MessageBean> cache = new HashMap<>();
 
     /**
      * 获得消息
      */
-    public MessageModel getMessage(String lang, String code) {
+    public MessageBean getMessage(String lang, String code) {
 
-        MessageModel message = cache.get(lang + code);
+        MessageBean message = cache.get(lang + code);
 
         if (message == null) {
             message = messageDao.selectMessage(lang, code);

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="cms_bt_platform_images_select" parameterType="Map"
+            resultType="com.voyageone.service.model.cms.CmsBtPlatformImagesModel">
+        SELECT
+        id,
+        channel_id as channelId,
+        cart_id as cartId,
+        search_id as searchId,
+        img_name as imgName,
+        original_img_url as originalImgUrl,
+        platform_img_url as platformImgUrl,
+        platform_img_id as platformImgId,
+        upd_flg as updFlg,
+        active,
+        creater,
+        created,
+        modifier,
+        modified
+        FROM voyageone_cms2.cms_bt_platform_images
+        WHERE
+        channel_id = #{channelId}
+        AND cart_id = #{cartId}
+        AND search_id = #{searchId}
+        <if test="originalImgUrl != null">
+            AND original_img_url = #{originalImgUrl}
+        </if>
+    </select>
+
+    <insert id="cms_bt_platform_images_insertByList" parameterType="List">
+        insert into voyageone_cms2.cms_bt_platform_images (
+        channel_id,
+        cart_id,
+        search_id,
+        img_name,
+        original_img_url,
+        platform_img_url,
+        platform_img_id,
+        upd_flg,
+        created,
+        creater,
+        modified,
+        modifier
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.channelId},
+            #{item.cartId},
+            #{item.searchId},
+            #{item.imgName},
+            #{item.originalImgUrl},
+            #{item.platformImgUrl},
+            #{item.platformImgId},
+            #{item.updFlg},
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater})
+        </foreach>
+    </insert>
+
+    <update id="cms_bt_platform_images_updateById"
+            parameterType="com.voyageone.service.model.cms.CmsBtPlatformImagesModel">
+        update voyageone_cms2.cms_bt_platform_images
+        set platform_img_url = #{platformImgUrl},
+        platform_img_id = #{platformImgId},
+        upd_flg = #{updFlg},
+        modified = now(),
+        modifier = #{modifier}
+        where id = #{id}
+    </update>
+
+</mapper>

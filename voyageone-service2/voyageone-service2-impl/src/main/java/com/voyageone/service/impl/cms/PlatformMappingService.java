@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms;
 
 import com.mongodb.WriteResult;
-import com.voyageone.service.dao.cms.CmsMtPlatformSpecialFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.daoext.cms.CmsMtPlatformSpecialFieldDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -20,7 +20,7 @@ import java.util.List;
 public class PlatformMappingService extends BaseService {
 
     @Autowired
-    private CmsMtPlatformSpecialFieldDao platformSpecialFieldDao;
+    private CmsMtPlatformSpecialFieldDaoExt platformSpecialFieldDao;
 
     @Autowired
     private CmsMtPlatformMappingDao platformMappingDao;

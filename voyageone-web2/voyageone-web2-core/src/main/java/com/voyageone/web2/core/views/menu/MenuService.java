@@ -7,7 +7,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.core.dao.UserRolePropertyDao;
+import com.voyageone.service.daoext.com.UserRolePropertyDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
