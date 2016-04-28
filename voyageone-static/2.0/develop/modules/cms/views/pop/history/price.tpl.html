@@ -6,11 +6,10 @@
     </div>
     <div class="modal-body">
     <div class="form-group">
-        <label class="col-sm-2 control-label m-t-xs" translate="TXT_PRICE_TYPE"></label>
+        <label class="col-sm-2 control-label m-t-xs" translate="TXT_SKU_LIST"></label>
         <div class="col-sm-4">
-            <select class="form-control" ng-model="vm.priceType"  ng-change="initialize()"
-                    ng-options="priceType.value as priceType.name for priceType in vm.priceTypeList">
-                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+            <select class="form-control" ng-model="vm.sku"  ng-change="getPriceList()"
+                    ng-options="sku.skuCode as sku.skuCode for sku in vm.skuList">
             </select>
         </div>
     </div>
@@ -22,8 +21,13 @@
                     <table class="table table-hover-new vo_table text-center">
                         <thead>
                         <tr>
-                            <th class="text-left" translate="TXT_CODE_OR_SKU"></th>
-                            <th class="text-center" translate="TXT_PRICE"></th>
+                            <th class="text-left" translate="TXT_SKU"></th>
+                            <th class="text-center" translate="TXT_MSRP_PRICE"></th>
+                            <th class="text-center" translate="TXT_RETAIL_PRICE"></th>
+                            <th class="text-center" translate="TXT_SALE_PRICE"></th>
+                            <th class="text-center" translate="TXT_CLIENT_MSRP_PRICE"></th>
+                            <th class="text-center" translate="TXT_CLIENT_RETAIL_PRICE"></th>
+                            <th class="text-center" translate="TXT_CLIENT_NET_PRICE"></th>
                             <th class="text-left" translate="TXT_COMMENT"></th>
                             <th class="text-left" translate="TXT_UPDATE_TIME"></th>
                             <th class="text-left" translate="TXT_UPDATE_BY"></th>
@@ -31,9 +35,13 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="list in vm.priceList">
-                            <td class="text-left" ng-if="vm.type == 'code'">{{list.code}}</td>
-                            <td class="text-left" ng-if="vm.type == 'sku'">{{list.sku}}</td>
+                            <td class="text-left">{{list.sku}}</td>
+                            <td class="text-center">{{list.msrpPrice}}</td>
+                            <td class="text-center">{{list.retailPrice}}</td>
                             <td class="text-center">{{list.salePrice}}</td>
+                            <td class="text-center">{{list.clientMsrpPrice}}</td>
+                            <td class="text-center">{{list.clientNetPrice}}</td>
+                            <td class="text-center">{{list.clientRetailPrice}}</td>
                             <td class="text-left">{{list.comment}}</td>
                             <td class="text-left">{{list.modified.substring(0, 19)}}</td>
                             <td class="text-left">{{list.modifier}}</td>
