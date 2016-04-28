@@ -32,7 +32,7 @@ public class CmsMtImageCreateFileServiceTest {
     public  void  testAddList() {
         AddListParameter parameter = new AddListParameter();
         parameter.setData(new ArrayList<CreateImageParameter>());
-        for (int i = 10; i < 20; i++) {
+        for (int i = 20; i < 200; i++) {
             parameter.getData().add(getCreateImageParameter(i));
         }
         service.addList(parameter);
