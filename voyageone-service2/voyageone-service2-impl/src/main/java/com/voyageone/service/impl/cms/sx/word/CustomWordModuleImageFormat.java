@@ -25,15 +25,15 @@ public class CustomWordModuleImageFormat extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamImageFormat customModuleUserParamImageFormat= ((CustomWordValueImageFormat) customWord.getValue()).getUserParam();
 
         RuleExpression htmlTemplateExpression = customModuleUserParamImageFormat.getHtmlTemplate();
         RuleExpression imageUrlExpression = customModuleUserParamImageFormat.getImageUrl();
 
-        String htmlTemplate= expressionParser.parse(htmlTemplateExpression, shopBean, user);
-        String imageUrl = expressionParser.parse(imageUrlExpression, shopBean, user);
+        String htmlTemplate= expressionParser.parse(htmlTemplateExpression, shopBean, user, extParameter);
+        String imageUrl = expressionParser.parse(imageUrlExpression, shopBean, user, extParameter);
 
        String parseResult = String.format(htmlTemplate, imageUrl);
 

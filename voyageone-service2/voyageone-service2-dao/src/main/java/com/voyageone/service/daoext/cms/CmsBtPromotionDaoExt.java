@@ -6,6 +6,7 @@ package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.springframework.stereotype.Repository;
 
@@ -79,5 +80,23 @@ public class CmsBtPromotionDaoExt extends ServiceBaseDao {
      */
     public HashMap selectPromotionIDByCartId(String PromotionID) {
         return selectOne("select_cms_bt_promotion_by_cat_id", PromotionID);
+    }
+
+    /**
+     * 获取该product参加的promotion履历
+     * @param param
+     * @return
+     */
+    public List<CmsBtPromotionHistoryBean> selectPromotionHistory(Map<String, Object> param) {
+        return updateTemplate.selectList("select_promotion_history", param);
+    }
+
+    /**
+     * 获取该product参加的promoiton的总件数
+     * @param param
+     * @return
+     */
+    public int selectPromotionHistoryCnt(Map<String, Object> param) {
+        return updateTemplate.selectOne("select_promotion_history_cnt", param);
     }
 }

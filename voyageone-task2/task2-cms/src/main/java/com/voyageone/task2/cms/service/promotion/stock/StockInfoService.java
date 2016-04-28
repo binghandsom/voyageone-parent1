@@ -81,9 +81,9 @@ public class StockInfoService {
     @Autowired
     private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
+    private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;
     @Autowired
-    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
+    private CmsBtTasksIncrementStockDaoExt cmsBtTasksIncrementStockDaoExt;
     @Autowired
     private ImsBtLogSynInventoryDao imsBtLogSynInventoryDao;
 
@@ -122,7 +122,7 @@ public class StockInfoService {
         sqlParam.clear();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
-        List<Map<String, Object>> listPlatform = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> listPlatform = cmsBtTasksStockDaoExt.selectStockSeparatePlatform(sqlParam);
         listPlatform.forEach(data -> {
             Integer taskId = (Integer) data.get("task_id");
             if (!listSeparateTaskId.contains(taskId)) {
@@ -158,9 +158,9 @@ public class StockInfoService {
         List<Integer> listIncrementTaskId = new ArrayList<>();
         sqlParam.clear();
         sqlParam.put("taskIdList", listSeparateTaskId);
-        List<Map<String, Object>> listIncTask = cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> listIncTask = cmsBtTasksIncrementStockDaoExt.selectStockSeparateIncrementTask(sqlParam);
         listIncTask.forEach(data -> {
-            Integer subTaskId = (Integer) data.get("sub_task_id");
+            Integer subTaskId = (Integer) data.get("id");
             if (!listIncrementTaskId.contains(subTaskId)) {
                 listIncrementTaskId.add(subTaskId);
             }
@@ -242,7 +242,7 @@ public class StockInfoService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
-        List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> resultData = cmsBtTasksStockDaoExt.selectStockSeparatePlatform(sqlParam);
         resultData.forEach(data -> {
             Integer cartId = (Integer) data.get("cart_id");
             if (!listSeparateCartId.contains(cartId)) {

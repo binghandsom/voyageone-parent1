@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="cms_bt_stock_separate_increment_task_selectStockSeparateIncrementTask" resultType="HashMap"
+            parameterType="HashMap">
+        select
+        t1.id,
+        t1.task_id,
+        t1.sub_task_name,
+        t1.cart_id,
+        t1.type,
+        t1.value
+        <if test="channelId !=null and lang != null">
+            ,t2.name
+        </if>
+        from voyageone_cms2.cms_bt_tasks_increment_stock t1
+        <if test="channelId !=null and lang != null">
+            left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id =
+            #{channelId} and lang_id = #{lang}) t2
+            on t1.cart_id = t2.value
+        </if>
+        where 1=1
+        <if test="subTaskId != null">
+            and id = #{subTaskId}
+        </if>
+        <if test="subTaskIdList != null and subTaskIdList.size() > 0">
+            and (id in
+            <foreach collection="subTaskIdList" item="subTaskIdListItem" open="(" separator="," close=")">
+                #{subTaskIdListItem}
+            </foreach>
+            )
+        </if>
+        <if test="taskId != null">
+            and task_id = #{taskId}
+        </if>
+        <if test="taskIdList != null and taskIdList.size() > 0">
+            and (task_id in
+            <foreach collection="taskIdList" item="taskIdListItem" open="(" separator="," close=")">
+                #{taskIdListItem}
+            </foreach>
+            )
+        </if>
+        <if test="cartId != null and cartId != ''">
+            and cart_id = #{cartId}
+        </if>
+        <if test="subTaskName != null and subTaskName != ''">
+            and sub_task_name like '%${subTaskName}%'
+        </if>
+    </select>
+
+    <delete id="cms_bt_stock_separate_increment_task_deleteStockSeparateIncrementTask" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_tasks_increment_stock
+        where 1=1
+        <if test="subTaskId != null">
+            and id = #{subTaskId}
+        </if>
+        <if test="taskId != null">
+            and task_id = #{taskId}
+        </if>
+    </delete>
+
+    <insert id="insert_cms_bt_stock_separate_increment_task_by_taskId" parameterType="HashMap" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into voyageone_cms2.cms_bt_tasks_increment_stock (
+        task_id,
+        sub_task_name,
+        cart_id,
+        type,
+        value,
+        created,
+        creater,
+        modified,
+        modifier
+        )value(
+        #{task_id},
+        #{sub_task_name},
+        #{cart_id},
+        #{type},
+        #{value},
+        now(),
+        #{creater},
+        now(),
+        #{creater})
+    </insert>
+    <update id="update_cms_bt_stock_separate_increment_task_by_subTaskId">
+        update voyageone_cms2.cms_bt_tasks_increment_stock
+        <set>
+            <if test="taskId != null">
+                task_id = #{taskId},
+            </if>
+            <if test="subTaskName != null">
+                sub_task_name = #{subTaskName},
+            </if>
+            <if test="cartId != null">
+                revert_flg = #{cartId},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="value != null">
+                value = #{value},
+            </if>
+            created = now(),
+            <if test="creater != null">
+                creater = #{creater},
+            </if>
+            modified = now(),
+            <if test="modifier != null">
+                modifier = #{modifier},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="subTaskId != null">
+                and id = #{subTaskId}
+            </if>
+        </where>
+    </update>
+</mapper>

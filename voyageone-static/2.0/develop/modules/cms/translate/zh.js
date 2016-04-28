@@ -82,6 +82,7 @@ define(function(){
         "TXT_MASTER_CATEGORY_WITH_COLON": "主类目:",
         "TXT_FEED_CATEGORY": "Feed类目",
         "TXT_ON_SALE_TIME": "销售时间",
+        "TXT_IN_STOCK_TIME": "在库时间",
         "TXT_MSRP_WITH_COLON": "官方售价:",
         "TXT_RETAIL_PRICE_WITH_COLON": "指导售价:",
         "TXT_CREATE_TIME_WITH_COLON": "创建时间:",

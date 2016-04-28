@@ -46,8 +46,7 @@
     <bean id="updateTemplateDaoScanCms2" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCms2"/>
         <property name="basePackage" value="com.voyageone.service.dao.cms,
-                                            com.voyageone.service.dao.jumei,
-                                            com.voyageone.service.daoext.jumei,
+                                            com.voyageone.service.daoext.cms,
                                             com.voyageone.task2.cms.dao.feed,
                                             com.voyageone.service.daoext.synship,
                                             "/>

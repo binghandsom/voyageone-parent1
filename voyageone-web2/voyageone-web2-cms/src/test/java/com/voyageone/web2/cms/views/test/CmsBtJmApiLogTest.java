@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.test;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmApiLogService;
-import com.voyageone.service.model.jumei.CmsBtJmApiLogModel;
+import com.voyageone.service.model.cms.CmsBtJmApiLogModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

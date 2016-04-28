@@ -28,7 +28,7 @@ public class CustomWordModuleConditionAnd extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamConditionAnd customModuleUserParamConditionAnd = ((CustomWordValueConditionAnd) customWord.getValue()).getUserParam();
 
@@ -42,7 +42,7 @@ public class CustomWordModuleConditionAnd extends CustomWordModule {
             CustomWord conditionWord = (CustomWord) ruleWord;
             RuleExpression conditionExpression = new RuleExpression();
             conditionExpression.addRuleWord(conditionWord);
-            String booleanRs = expressionParser.parse(conditionExpression, shopBean, user);
+            String booleanRs = expressionParser.parse(conditionExpression, shopBean, user, extParameter);
             if (!Boolean.valueOf(booleanRs))
                 return String.valueOf(false);
         }

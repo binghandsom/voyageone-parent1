@@ -30,15 +30,15 @@ public class CustomWordModuleConditionLike extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamConditionLike customModuleUserParamConditionLike = ((CustomWordValueConditionLike) customWord.getValue()).getUserParam();
 
         RuleExpression firstParamExpression = customModuleUserParamConditionLike.getFirstParam();
         RuleExpression secondParamExpression = customModuleUserParamConditionLike.getSecondParam();
 
-        String firsetParam = expressionParser.parse(firstParamExpression, shopBean, user);
-        String secondParam = expressionParser.parse(secondParamExpression, shopBean, user);
+        String firsetParam = expressionParser.parse(firstParamExpression, shopBean, user, extParameter);
+        String secondParam = expressionParser.parse(secondParamExpression, shopBean, user, extParameter);
 
         // 防止null
         if (StringUtils.isEmpty(firsetParam)) {
