@@ -1383,7 +1383,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (insertCnt > 0) {
                 CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
                 insertModel.setChannelId(channel.getOrder_channel_id());
-                insertModel.setAmountName("FEED_TO_MASTER_INSERT");
+                insertModel.setAmountName(CmsConstants.DataAmount.FEED_TO_MASTER_INSERT);
                 insertModel.setAmountVal(String.valueOf(insertCnt));
                 insertModel.setComment("Feed导入Master新建");
                 insertModel.setCreater(getTaskName());
@@ -1394,7 +1394,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (updateCnt > 0) {
                 CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
                 updateModel.setChannelId(channel.getOrder_channel_id());
-                updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
+                updateModel.setAmountName(CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE);
                 updateModel.setAmountVal(String.valueOf(updateCnt));
                 updateModel.setComment("Feed导入Master更新");
                 updateModel.setCreater(getTaskName());
