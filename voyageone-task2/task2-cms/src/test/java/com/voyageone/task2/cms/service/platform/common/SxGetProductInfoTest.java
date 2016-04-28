@@ -93,7 +93,7 @@ public class SxGetProductInfoTest {
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
 //        Map<String, Object> res = sxProductService.constructMappingPlatformProps(fields,cmsMtPlatformMappingModel,shopBean,exp,"morse");
-        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse");
+        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse", null);
         System.out.println(res);
         // constructMappingPlatformProps end
 
@@ -280,6 +280,23 @@ public class SxGetProductInfoTest {
             fieldsMap.put(field.getId(), field);
         }
         return fieldsMap;
+    }
+
+    @Test
+    public void testDict() throws Exception {
+        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+
+        String[] extParameter = {"c001"};
+        String val = sxProductService.resolveDict("京东产品图片-1", expressionParser, shopBean, "tom", extParameter);
+        System.out.println(val);
+
+        extParameter[0] = "c004";
+        val = sxProductService.resolveDict("京东产品图片-1", expressionParser, shopBean, "tom", extParameter);
+        System.out.println(val);
     }
 
 }
