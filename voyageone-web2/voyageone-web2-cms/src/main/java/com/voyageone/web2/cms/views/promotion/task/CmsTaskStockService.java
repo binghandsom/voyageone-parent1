@@ -269,9 +269,9 @@ public class CmsTaskStockService extends BaseAppService {
         List<Integer> repeatList = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得活动开始时间
-            Map<String, String> promotionInfo = promotionService.getPromotionIDByCartId(entry.getKey());
+            Map<String, Object> promotionInfo = promotionService.getPromotionIDByCartId(entry.getKey());
             //取得活动的ID
-            int cartId = Integer.parseInt(promotionInfo.get("cart_id"));
+            int cartId = (int) promotionInfo.get("cart_id");
             //日期的格式
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             //取得活动开始时间
@@ -320,7 +320,7 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String, Object> platformList = new HashMap<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得隔离的CartID
-            Map<String, String> cartNameMap = promotionService.getPromotionIDByCartId(entry.getKey());
+            Map<String, Object> cartNameMap = promotionService.getPromotionIDByCartId(entry.getKey());
             platformList.put(entry.getKey(), cartNameMap);
         }
         return platformList;
@@ -679,7 +679,7 @@ public class CmsTaskStockService extends BaseAppService {
             List<Map<String, String>> separatePlatformMapList = getInsertStockSeparatePlatFormByPromotionInfo(param, onlySku);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
             importSkuByPromotionInfo(param, onlySku, channelID, cmsBtTasksBean, separatePlatformMapList);
-            String taskID = String.valueOf(cmsBtTasksBean.getTask_id());
+            String taskID = String.valueOf(cmsBtTasksBean.getId());
             //将取得的taskId放入param
             param.put("taskId", taskID);
         }

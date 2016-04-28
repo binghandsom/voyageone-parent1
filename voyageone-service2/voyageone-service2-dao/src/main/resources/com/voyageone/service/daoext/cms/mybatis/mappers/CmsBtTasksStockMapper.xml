@@ -102,7 +102,7 @@
     <select id="cms_bt_stock_separate_platform_selectStockSeparatePlatFormInfoById" resultType="HashMap">
         select
         a.channel_id,
-        a.promotion_id,
+        a.id,
         a.cart_id,
         b.revert_time
         from voyageone_cms2.cms_bt_promotion a

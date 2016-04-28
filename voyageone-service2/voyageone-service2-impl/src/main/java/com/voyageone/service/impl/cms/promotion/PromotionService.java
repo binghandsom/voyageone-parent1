@@ -190,7 +190,7 @@ public class PromotionService extends BaseService {
         return cmsBtPromotionDaoExt.deleteById(param);
     }
 
-    public Map<String,String>  getPromotionIDByCartId(String promotionId) {
+    public Map<String,Object>  getPromotionIDByCartId(String promotionId) {
         return cmsBtPromotionDaoExt.selectPromotionIDByCartId(promotionId);
     }
 

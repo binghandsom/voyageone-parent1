@@ -370,7 +370,7 @@ public class JdWareService extends JdBase {
      * @param retry retrycount
      * @return inputStream / throw Exception
      */
-    private static InputStream getImgInputStream(String url, int retry) throws BusinessException {
+    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
         Exception exception = null;
         if (--retry > 0) {
             try {
