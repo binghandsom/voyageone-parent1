@@ -77,13 +77,12 @@ public class StoreOperationServiceTest extends BaseTest {
         }
     }
 
-    @Test(expected = BusinessException.class)
+    @Test(expected = BusinessException.class )
     public void testCheckInterval() throws Exception {
         checkInInterval("010");
         checkInInterval("010");
     }
 
-    @Test
     public void testGetHistoryBy() throws Exception {
         CmsBtStoreOperationHistoryModel model = new CmsBtStoreOperationHistoryModel();
         model.setCreater("will" + System.currentTimeMillis());
