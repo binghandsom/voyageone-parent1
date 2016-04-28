@@ -2,6 +2,9 @@ package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
@@ -462,15 +465,20 @@ public class TranslationService extends BaseAppService {
     /**
      * 获取翻译时标题和描述的长度设置
      */
-    public Map<String, Object> getTransLenSet(String chnId) {
-        Map<String, Object> setInfo = new HashMap<>();
-        List<Map<String, Object>> rslt = customWordService.getTransLenSet(chnId);
-        for (Map<String, Object> item : rslt) {
-            String lenType = (String) item.get("lenType");
-            item.remove("lenType");
-            setInfo.put(lenType, item);
+    public List<Map<String, Object>> getTransLenSet() {
+        List<Map<String, Object>> result = new ArrayList<>();
+        List<CmsChannelConfigBean> configBeans = CmsChannelConfigs.getConfigBeans("000", CmsConstants.ChannelConfig.TRANS_LEN_SET);
+        for (CmsChannelConfigBean config : configBeans) {
+            Map<String, Object> configMap = new HashMap<>();
+
+            Map<String, Object> value = new HashMap<>();
+            value.put("minLen", config.getConfigValue1());
+            value.put("maxLen", config.getConfigValue2());
+
+            configMap.put(config.getConfigCode(), value);
+            result.add(configMap);
         }
-        return setInfo;
+        return result;
     }
 
     /**

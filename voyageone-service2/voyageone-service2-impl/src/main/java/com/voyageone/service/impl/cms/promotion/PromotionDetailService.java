@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
@@ -243,7 +244,9 @@ public class PromotionDetailService extends BaseService {
     @VOTransactional
     public void teJiaBaoPromotionInsert(CmsBtPromotionCodesBean cmsBtPromotionCodesBean) {
         if (cmsBtPromotionCodesBean.getPromotionId() == 0) {
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtPromotionCodesBean.getChannelId(), "TEJIABAO_ID", cmsBtPromotionCodesBean.getCartId().toString());
+            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtPromotionCodesBean.getChannelId()
+                    , CmsConstants.ChannelConfig.TEJIABAO_ID
+                    , cmsBtPromotionCodesBean.getCartId().toString());
             if(cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())){
                 return;
             }else{
@@ -286,7 +289,9 @@ public class PromotionDetailService extends BaseService {
     public void teJiaBaoPromotionUpdate(CmsBtPromotionCodesBean cmsBtPromotionCodesBean) {
 
         if (cmsBtPromotionCodesBean.getPromotionId() == 0) {
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtPromotionCodesBean.getChannelId(), "TEJIABAO_ID", cmsBtPromotionCodesBean.getCartId().toString());
+            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtPromotionCodesBean.getChannelId()
+                    , CmsConstants.ChannelConfig.TEJIABAO_ID
+                    , cmsBtPromotionCodesBean.getCartId().toString());
             if(cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())){
                 return;
             }else{

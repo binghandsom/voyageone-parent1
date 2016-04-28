@@ -289,8 +289,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
                 // 增加特价宝的调用 tom START
                 // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
-                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_open");
-                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_price");
+                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id()
+                        , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                        , String.valueOf(workLoadBean.getCart_id()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id()
+                        , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                        , String.valueOf(workLoadBean.getCart_id()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
 
                 // 检查一下
                 String tejiabaoOpenFlag = null;

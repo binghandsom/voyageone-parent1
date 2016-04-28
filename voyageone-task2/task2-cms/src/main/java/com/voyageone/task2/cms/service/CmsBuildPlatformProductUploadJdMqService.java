@@ -1046,7 +1046,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private double getItemPrice(List<CmsBtProductModel> sxProducts, String channelId, String cartId, String priceType) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // priceType:"retail_price"(市场价)  "sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, "PRICE", cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, com.voyageone.common.CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
 
         // 检查一下
         String sxPricePropName;
@@ -1090,7 +1090,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private double getSkuPrice(CmsBtProductModel_Sku cmsBtProductModelSku, String channelId, String cartId, String priceType) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // SKU价格类型应该用"sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, "PRICE", cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, com.voyageone.common.CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
 
         // 检查一下
         String sxPricePropName;

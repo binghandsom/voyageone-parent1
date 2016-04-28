@@ -102,13 +102,13 @@
     </select>
 
     <!-- 查询指定类目已翻译属性 -->
-    <select id="cms_mt_feed_custom_prop_getSameAttr" resultType="HashMap" parameterType="HashMap">
-        SELECT
-          a.config_code
-        FROM voyageone_cms2.cms_mt_channel_config a
-        WHERE a.channel_id = #{channelId}
-        AND a.config_key = 'SAME_ATTR'
-    </select>
+    <!--<select id="cms_mt_feed_custom_prop_getSameAttr" resultType="HashMap" parameterType="HashMap">-->
+        <!--SELECT-->
+          <!--a.config_code-->
+        <!--FROM voyageone_cms2.cms_mt_channel_config a-->
+        <!--WHERE a.channel_id = #{channelId}-->
+        <!--AND a.config_key = 'SAME_ATTR'-->
+    <!--</select>-->
 
     <!-- 新增属性名 -->
     <insert id="cms_mt_feed_custom_prop_add" parameterType="java.util.List">

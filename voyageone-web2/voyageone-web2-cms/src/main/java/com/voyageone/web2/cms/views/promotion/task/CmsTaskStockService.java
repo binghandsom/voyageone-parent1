@@ -20,7 +20,6 @@ import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.impl.wms.InventoryCenterService;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;

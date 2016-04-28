@@ -1200,7 +1200,9 @@ public class TmallProductService {
     private double calcItemPrice(List<SxProductBean> sxProducts, Map<String, Integer> skuInventoryMap,
                                  String channelId, int cartId) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, "PRICE", String.valueOf(cartId) + ".sx_price");
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
+                , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
 
         // 检查一下
         String sxPricePropName;

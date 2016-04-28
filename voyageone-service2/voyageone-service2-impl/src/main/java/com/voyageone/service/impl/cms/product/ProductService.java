@@ -9,8 +9,10 @@ import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
@@ -24,11 +26,9 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
-import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +67,6 @@ public class ProductService extends BaseService {
 
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
-
-    @Autowired
-    private CmsMtChannelConfigDaoExt cmsMtChannelConfigDaoExt;
 
     /**
      * 获取商品 根据ID获
@@ -643,8 +640,10 @@ public class ProductService extends BaseService {
             resultInfo.setClientNetPrice(String.valueOf(product.getSku(productSku).getClientNetPrice()));
 
             // 设置原始价格单位
-            List<CmsMtChannelConfigModel> channelConfigs = cmsMtChannelConfigDaoExt.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
-            resultInfo.setClientPriceUnit(channelConfigs.get(0).getConfigValue1());
+
+            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                    , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
+            resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
 
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setWeightkg("");

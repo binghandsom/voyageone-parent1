@@ -44,9 +44,49 @@ public class CmsConstants {
         SetInStock      // 下架
     }
 
-    public interface channelConfig {
+    public interface ChannelConfig {
+
+        // 全店统一属性结构
         String SAME_ATTR = "SAME_ATTR";
+
+        // 该店铺是否自动审批价格
+        String AUTO_APPROVE_PRICE = "AUTO_APPROVE_PRICE";
+
+        // 第三方原始价格单位
         String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
+
+        // 特价宝id
+        String TEJIABAO_ID = "TEJIABAO_ID";
+
+        // 翻译用到的长度check
+        String TRANS_LEN_SET = "TRANS_LEN_SET";
+
+        // 各个平台渠道导入master数据的PlatformActive初始值
+        String PLATFORM_ACTIVE = "PLATFORM_ACTIVE";
+
+        // 价格自动同步间隔天数
+        String AUTO_SYN_DAY = "AUTO_SYN_DAY";
+
+        // 强制击穿阈值(例如: 10 表示的是10%)
+        String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
+
+        // Feed导入Master时是否自动上新
+        String AUTO_APPROVE_PRODUCT_CHANGE = "AUTO_APPROVE_PRODUCT_CHANGE";
+
+        // 店铺级别MSRP价格计算公式
+        String PRICE_MSRP_CALC_FORMULA = "PRICE_MSRP_CALC_FORMULA";
+
+        // 店铺级别指导价格计算公式
+        String PRICE_RETAIL_CALC_FORMULA = "PRICE_RETAIL_CALC_FORMULA";
+
+        // 全店操作配置最小间隔时间
+        String STORE_OPERATION_INTERVAL_TIME = "STORE_OPERATION_INTERVAL_TIME";
+
+        // 价格相关
+        String PRICE = "PRICE";
+        String PRICE_SX_PRICE = ".sx_price";
+        String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
+        String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
     }
 
     public interface JmMasterPlatCode {

@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -52,7 +54,8 @@ public class CmsFeedCustPropService extends BaseAppService {
             List<Map<String, Object>> unvalList = convertList(list1, false, true);
 
             // 判断是否全店铺共通属性
-            String commFlg = feedCustomPropService.getSameAttr(userInfo.getSelChannelId());
+            String commFlg = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId()
+                    , CmsConstants.ChannelConfig.SAME_ATTR).getConfigValue1();
             if (!"1".equals(commFlg)) {
                 if (!"0".equals(catPath)) {
                     List<Map<String, Object>> initAttrList = null;
