@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao">
+    <resultMap id="ResultMap" type="CmsMtImageCreateTemplateModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from
+        cms_mt_image_create_template
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="name != null">
+                AND `name` = #{name}
+            </if>
+            <if test="content != null">
+                AND `content` = #{content}
+            </if>
+            <if test="height != null">
+                AND `height` = #{height}
+            </if>
+            <if test="width != null">
+                AND `width` = #{width}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from
+        cms_mt_image_create_template
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="name != null">
+                AND `name` = #{name}
+            </if>
+
+            <if test="content != null">
+                AND `content` = #{content}
+            </if>
+
+            <if test="height != null">
+                AND `height` = #{height}
+            </if>
+
+            <if test="width != null">
+                AND `width` = #{width}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_mt_image_create_template
+        set
+
+            `channel_id`=#{channelId}
+            ,`name`=#{name}
+            ,`content`=#{content}
+            ,`height`=#{height}
+            ,`width`=#{width}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_image_create_template
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_mt_image_create_template
+        (
+              `channel_id`,
+              `name`,
+              `content`,
+              `height`,
+              `width`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{name},
+              #{content},
+              #{height},
+              #{width},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>
