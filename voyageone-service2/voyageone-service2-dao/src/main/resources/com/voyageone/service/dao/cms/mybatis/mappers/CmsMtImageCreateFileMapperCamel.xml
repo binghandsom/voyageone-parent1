@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateFileDao">
+    <resultMap id="ResultMap" type="CmsMtImageCreateFileModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`
+        from cms_mt_image_create_file
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="hashCode != null">
+                AND `hash_code` = #{hashCode}
+            </if>
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+            <if test="templateId != null">
+                AND `template_id` = #{templateId}
+            </if>
+            <if test="file != null">
+                AND `file` = #{file}
+            </if>
+            <if test="filePath != null">
+                AND `file_path` = #{filePath}
+            </if>
+            <if test="vparam != null">
+                AND `vparam` = #{vparam}
+            </if>
+            <if test="ossFilePath != null">
+                AND `oss_file_path` = #{ossFilePath}
+            </if>
+            <if test="usCdnFilePath != null">
+                AND `us_cdn_file_path` = #{usCdnFilePath}
+            </if>
+            <if test="state != null">
+                AND `state` = #{state}
+            </if>
+            <if test="ossState != null">
+                AND `oss_state` = #{ossState}
+            </if>
+            <if test="uscdnState != null">
+                AND `uscdn_state` = #{uscdnState}
+            </if>
+            <if test="errorMsg != null">
+                AND `error_msg` = #{errorMsg}
+            </if>
+            <if test="errorCode != null">
+                AND `error_code` = #{errorCode}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier`
+        from cms_mt_image_create_file
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="hashCode != null">
+                AND `hash_code` = #{hashCode}
+            </if>
+
+            <if test="channelId != null">
+                AND `channel_id` = #{channelId}
+            </if>
+
+            <if test="templateId != null">
+                AND `template_id` = #{templateId}
+            </if>
+
+            <if test="file != null">
+                AND `file` = #{file}
+            </if>
+
+            <if test="filePath != null">
+                AND `file_path` = #{filePath}
+            </if>
+
+            <if test="vparam != null">
+                AND `vparam` = #{vparam}
+            </if>
+
+            <if test="ossFilePath != null">
+                AND `oss_file_path` = #{ossFilePath}
+            </if>
+
+            <if test="usCdnFilePath != null">
+                AND `us_cdn_file_path` = #{usCdnFilePath}
+            </if>
+
+            <if test="state != null">
+                AND `state` = #{state}
+            </if>
+
+            <if test="ossState != null">
+                AND `oss_state` = #{ossState}
+            </if>
+
+            <if test="uscdnState != null">
+                AND `uscdn_state` = #{uscdnState}
+            </if>
+
+            <if test="errorMsg != null">
+                AND `error_msg` = #{errorMsg}
+            </if>
+
+            <if test="errorCode != null">
+                AND `error_code` = #{errorCode}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`hash_code`,`channel_id`,`template_id`,`file`,`file_path`,`vparam`,`oss_file_path`,`us_cdn_file_path`,`state`,`oss_state`,`uscdn_state`,`error_msg`,`error_code`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_file where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_mt_image_create_file
+        set
+
+            `hash_code`=#{hashCode}
+            ,`channel_id`=#{channelId}
+            ,`template_id`=#{templateId}
+            ,`file`=#{file}
+            ,`file_path`=#{filePath}
+            ,`vparam`=#{vparam}
+            ,`oss_file_path`=#{ossFilePath}
+            ,`us_cdn_file_path`=#{usCdnFilePath}
+            ,`state`=#{state}
+            ,`oss_state`=#{ossState}
+            ,`uscdn_state`=#{uscdnState}
+            ,`error_msg`=#{errorMsg}
+            ,`error_code`=#{errorCode}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_image_create_file
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_mt_image_create_file
+        (
+              `hash_code`,
+              `channel_id`,
+              `template_id`,
+              `file`,
+              `file_path`,
+              `vparam`,
+              `oss_file_path`,
+              `us_cdn_file_path`,
+              `state`,
+              `oss_state`,
+              `uscdn_state`,
+              `error_msg`,
+              `error_code`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{hashCode},
+              #{channelId},
+              #{templateId},
+              #{file},
+              #{filePath},
+              #{vparam},
+              #{ossFilePath},
+              #{usCdnFilePath},
+              #{state},
+              #{ossState},
+              #{uscdnState},
+              #{errorMsg},
+              #{errorCode},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>
