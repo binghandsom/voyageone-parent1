@@ -11,7 +11,7 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtImagesDao;
+import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -22,9 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +38,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
     private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
 
     @Autowired
-    CmsBtImagesDao imagesDao;
+    CmsBtImagesDaoExt cmsBtImagesDaoExt;
 //    @Autowired
 //    ImagesService imagesService;
 
@@ -61,17 +59,14 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
                 String channelId = taskControl.getCfg_val1();
                 $info("渠道"+channelId);
-//                CmsBtImagesModel feedImage = new CmsBtImagesModel();
-//                feedImage.setUpdFlg(0);
-//                feedImage.setChannelId(channelId);
-                Map<String, Object> feedImage = new HashMap<>();
-                feedImage.put("updFlg", 0);
-                feedImage.put("channelId", channelId);
+                CmsBtImagesModel feedImage = new CmsBtImagesModel();
+                feedImage.setUpdFlg(0);
+                feedImage.setChannelId(channelId);
 
                 ExecutorService es  = Executors.newFixedThreadPool(10);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
-                    List<CmsBtImagesModel> imageUrlList = imagesDao.selectList(feedImage);
+                    List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
                     $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
                         List<List<CmsBtImagesModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
@@ -122,7 +117,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             subSuccessImageUrlList.forEach(CmsBtImagesModel -> {
                 CmsBtImagesModel.setUpdFlg(1);
                 CmsBtImagesModel.setModifier(getTaskName());
-                imagesDao.update(CmsBtImagesModel);
+                cmsBtImagesDaoExt.updateImage(CmsBtImagesModel);
             });
         }
 
@@ -130,7 +125,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             urlErrorList.forEach(CmsBtImagesModel -> {
                 CmsBtImagesModel.setUpdFlg(3);
                 CmsBtImagesModel.setModifier(getTaskName());
-                imagesDao.update(CmsBtImagesModel);
+                cmsBtImagesDaoExt.updateImage(CmsBtImagesModel);
             });
         }
 
@@ -205,7 +200,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                                 imageUrlList.get(i).setUpdFlg(3);
                                 imageUrlList.get(i).setModifier(getTaskName());
 
-                                imagesDao.update(imageUrlList.get(i));
+                                cmsBtImagesDaoExt.updateImage(imageUrlList.get(i));
                                 // 记录url错误图片以便删除这张图片相关记录
 //                                urlErrorList.add(imageUrlList.get(i));
 

@@ -30,8 +30,8 @@ import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
-import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -105,7 +105,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     ProductPriceLogService productPriceLogService;
     @Autowired
-    private CmsBtImagesDao cmsBtImageDao;
+    private CmsBtImagesDaoExt cmsBtImageDaoExt;
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
@@ -1264,7 +1264,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             param.setChannelId(channelId);
             param.setCode(code);
             param.setOriginalUrl(originalUrl);
-            List<CmsBtImagesModel> findImage = cmsBtImageDao.selectList(JsonUtil.jsonToMap(JsonUtil.bean2Json(param)));
+            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
 
             // 不存在则插入
             if (findImage.size() == 0) {
@@ -1275,7 +1275,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
-                List<CmsBtImagesModel> oldImages = cmsBtImageDao.selectList(JsonUtil.jsonToMap(JsonUtil.bean2Json(param)));
+                List<CmsBtImagesModel> oldImages = cmsBtImageDaoExt.selectImages(param);
                 if (oldImages.size() > 0) {
                     // 取得图片名最后一部分中的索引的最大值 + 1
                     try {
@@ -1287,7 +1287,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 CmsBtImagesModel newModel = new CmsBtImagesModel(channelId, code, originalUrl, index++, getTaskName());
-                cmsBtImageDao.insert(newModel);
+                cmsBtImageDaoExt.insertImages(newModel);
 
                 return newModel.getImgName();
             } else {
