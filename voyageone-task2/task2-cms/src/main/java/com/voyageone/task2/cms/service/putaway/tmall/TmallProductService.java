@@ -1549,9 +1549,9 @@ public class TmallProductService {
 
                     Field processField = processFields.get(0);
                     CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
-                    if (platformActive == CmsConstants.PlatformActive.Onsale) {
+                    if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
                         ((SingleCheckField) processField).setValue("0");
-                    } else if (platformActive == CmsConstants.PlatformActive.Instock) {
+                    } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
                         ((SingleCheckField) processField).setValue("2");
                     } else {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("PlatformActive must be Onsale or Instock, but now it is " + platformActive));

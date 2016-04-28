@@ -1,6 +1,11 @@
 package com.voyageone.web2.cms.views.jm;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotionInfo;
+import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
+import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -8,12 +13,7 @@ import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
-import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotionInfo;
-import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
-import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,7 +232,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         Map<String, Object> result = new HashMap<>();
         result.put("categoryList", cmsBtJmCategoryService.selectAll());
         result.put("brandList", cmsBtJmMasterBrandService.selectAll());
-        result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.PRICE_UNIT));
+        result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.JmMasterPlatCode.PRICE_UNIT));
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)

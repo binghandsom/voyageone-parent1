@@ -262,7 +262,7 @@ public class UploadToUSJoiService extends BaseTaskService{
             // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
             platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
             // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
-            platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
+            platform.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
 
             // qty
             platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的

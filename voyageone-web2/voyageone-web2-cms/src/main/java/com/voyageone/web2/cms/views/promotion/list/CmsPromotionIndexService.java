@@ -9,6 +9,7 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -83,7 +84,7 @@ public class CmsPromotionIndexService extends BaseAppService {
     public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
-        String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.PROMOTION_EXPORT_TEMPLATE);
 
         CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionIdOrgChannelId(promotionId, channelId);
         List<CmsBtPromotionCodesBean> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(promotionId, channelId);

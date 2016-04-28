@@ -1,23 +1,26 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.configs.Properties;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionExportTaskService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +50,7 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
         CmsBtJmPromotionExportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
-        String path = Properties.readValue(CmsConstants.Props.CMS_JM_EXPORT_PATH);
+        String path = Properties.readValue(CmsProperty.Props.CMS_JM_EXPORT_PATH);
         String fileName = model.getFileName().trim();
         String filePath = path + "/" + fileName;
         File excelFile = new File(filePath);

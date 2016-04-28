@@ -7,9 +7,9 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -442,7 +442,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @throws InvalidFormatException
      */
     public byte[] getExcelFileStockIncrementInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
-        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.STOCK_EXPORT_TEMPLATE);
 
         param.put("whereSql", cmsTaskStockService.getWhereSql(param, true));
         List<StockIncrementExcelBean> resultData = stockSeparateService.getExcelStockIncrementInfo(param);

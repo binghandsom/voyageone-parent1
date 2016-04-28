@@ -12,6 +12,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.TagService;
@@ -22,7 +23,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -510,7 +510,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
     public byte[] getCodeExcelFile(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean)
             throws IOException, InvalidFormatException {
 
-        String templatePath = Properties.readValue(CmsConstants.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE);
 
         long recCount = productService.getCnt(userInfo.getSelChannelId(), getSearchQuery(searchValue, cmsSessionBean, false));
 

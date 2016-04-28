@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
@@ -17,7 +18,6 @@ import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,8 +55,8 @@ public class CmsFieldEditService extends BaseAppService {
         for (CmsMtCommonPropDefModel model : modelList) {
             CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             Field field = model.getField();
-            if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
-                    || CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+            if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                 OptionsField optionsField = getOptions(field, language, channel_id);
                 resModel.setField(optionsField);
             } else {
@@ -87,9 +87,7 @@ public class CmsFieldEditService extends BaseAppService {
 
             // 处理如果是批量更新status,如果该产品以前就是approved,则不做处理
             if ("status".equals(prop_id)
-                    && CmsConstants.productStatus.APPROVED.equals(
-
-                    productModel.getFields().getStatus()))
+                    && com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(productModel.getFields().getStatus()))
                 break;
 
 
@@ -103,10 +101,10 @@ public class CmsFieldEditService extends BaseAppService {
                 CmsBtProductGroupModel.setMainProductCode(code);
 
                 // 设置platformActive的状态
-                if(com.voyageone.common.CmsConstants.PlatformActive.Onsale.name().equals(field[1].toString()))
-                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Onsale);
-                else if (com.voyageone.common.CmsConstants.PlatformActive.Instock.name().equals(field[1].toString()))
-                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.Instock);
+                if(com.voyageone.common.CmsConstants.PlatformActive.ToOnSale.name().equals(field[1].toString()))
+                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.ToOnSale);
+                else if (com.voyageone.common.CmsConstants.PlatformActive.ToInStock.name().equals(field[1].toString()))
+                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.ToInStock);
 
                 CmsBtProductGroupModel.setModifier(userInfo.getUserName());
 
@@ -181,7 +179,7 @@ public class CmsFieldEditService extends BaseAppService {
 
 
         OptionsField optionsField = (OptionsField) field;
-        if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+        if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
             List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
 
             // 替换成field需要的样式
@@ -193,7 +191,7 @@ public class CmsFieldEditService extends BaseAppService {
                 options.add(opt);
             }
             optionsField.setOptions(options);
-        } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+        } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
             // 获取type channel bean
             List<TypeChannelBean> typeChannelBeanList;
             if (FIELD_SKU_CARTS.equals(field.getId())) {

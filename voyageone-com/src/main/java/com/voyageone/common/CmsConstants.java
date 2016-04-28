@@ -18,8 +18,8 @@ public class CmsConstants {
      */
     public enum PlatformStatus {
         WaitingPublish,		// 等待上新
-        Onsale, 			// 在售
-        Instock 			// 在库
+        OnSale, 			// 在售
+        InStock 			// 在库
     }
 
 
@@ -27,27 +27,38 @@ public class CmsConstants {
      * platformActive
      */
     public enum PlatformActive {
-        // 变更前 DB相关内容变更后请删除Onsale/Instock
-        Onsale, 		// 在售
-        Instock,  		// 在库
         // 变更后
-        ToOnsale,		// 在售
-        ToInstock 		// 在库
+        ToOnSale,		// 在售
+        ToInStock 		// 在库
     }
 
 	/**
 	 * workload type
      */
+    // TODO: 16/4/28 无人使用就删除了
     public enum WorkloadType {
         Sx,             // 上新 / 全属性更新
         UpdProdImage,   // 更新商品图片
         UpdDesc,        // 更新商品描述
-        SetOnsale,      // 上架
-        SetInstock      // 下架
+        SetOnSale,      // 上架
+        SetInStock      // 下架
     }
 
     public interface channelConfig {
         String SAME_ATTR = "SAME_ATTR";
         String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
+    }
+
+    public interface JmMasterPlatCode {
+        String BRND = "0";
+        String PRICE_UNIT = "1";
+        String STOCK = "2";
+    }
+
+    public interface OptionConfigType {
+
+        String OPTION_DATA_SOURCE = "optConfig";
+
+        String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
     }
 }

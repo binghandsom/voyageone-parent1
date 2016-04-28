@@ -227,20 +227,20 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     publishTime = DateTimeUtil.getNow();
                 }
 
-                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-                        && platformActive == CmsConstants.PlatformActive.Onsale) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.OnSale)
+                        && platformActive == CmsConstants.PlatformActive.ToOnSale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
-                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-                        && platformActive == CmsConstants.PlatformActive.Instock) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.InStock)
+                        && platformActive == CmsConstants.PlatformActive.ToInStock) {
                     inStockTime = DateTimeUtil.getNow();
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
-                if (platformActive == CmsConstants.PlatformActive.Instock) {
-                    newPlatformStatus = CmsConstants.PlatformStatus.Instock;
+                if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+                    newPlatformStatus = CmsConstants.PlatformStatus.InStock;
                 } else {
-                    newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
+                    newPlatformStatus = CmsConstants.PlatformStatus.OnSale;
                 }
                 // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),

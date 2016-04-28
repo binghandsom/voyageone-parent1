@@ -12,6 +12,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -2506,7 +2507,7 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public byte[] getExcelFileStockInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
 
-        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.STOCK_EXPORT_TEMPLATE);
 
         param.put("whereSql", getWhereSql(param, true));
         List<StockExcelBean> resultData = stockSeparateService.getExcelStockInfo(param);
@@ -3235,7 +3236,7 @@ public class CmsTaskStockService extends BaseAppService {
     public byte[] getExcelFileStockErrorInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
         String taskId = (String) param.get("taskId");
 
-        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.STOCK_EXPORT_TEMPLATE);
 
         Map<String, Object> searchParam = new HashMap<>();
         searchParam.put("taskId", taskId);

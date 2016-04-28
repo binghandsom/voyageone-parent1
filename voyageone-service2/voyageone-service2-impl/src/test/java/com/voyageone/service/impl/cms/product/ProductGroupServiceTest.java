@@ -34,7 +34,7 @@ public class ProductGroupServiceTest {
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
         model.setInStockTime("2016-04-25 11:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+        model.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
         List<String> productCodes = new ArrayList<>();
         productCodes.add("51A0HC13E1-00LCNB0");
@@ -70,8 +70,8 @@ public class ProductGroupServiceTest {
         model.setPublishTime("2016-04-25 21:11:11");
         model.setOnSaleTime("2016-04-25 21:11:12");
         model.setInStockTime("2016-04-25 21:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
-        model.setPlatformActive(CmsConstants.PlatformActive.Instock);
+        model.setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
+        model.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
 
         productCodes.add("15053");
         model.setProductCodes(productCodes);
@@ -105,7 +105,7 @@ public class ProductGroupServiceTest {
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
         model.setInStockTime("2016-04-25 11:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+        model.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
         List<String> productCodes = new ArrayList<>();
         productCodes.add("51A0HC13E1-00LCNB0");
@@ -142,7 +142,7 @@ public class ProductGroupServiceTest {
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
         model.setInStockTime("2016-04-25 11:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+        model.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
         List<String> productCodes = new ArrayList<>();
         productCodes.add("51A0HC13E1-00LCNB0");
