@@ -92,10 +92,11 @@ public class PromotionService extends BaseService {
      * @param channelId
      * @return
      */
-    public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId) {
-        Map<String, Object> params = new HashMap<>();
+    public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId, Map<String, Object> params) {
+//        Map<String, Object> params = new HashMap<>();
+        params = params == null ? new HashMap<>() : params;
         if(Channels.isUsJoi(channelId)){
-            params.put("orgChannelId", params.get("channelId"));
+            params.put("orgChannelId", channelId);
             params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
         } else {
             params.put("channelId", channelId);
@@ -124,7 +125,8 @@ public class PromotionService extends BaseService {
         if (cmsBtPromotionBean.getId() != 0) {
             result = cmsBtPromotionDaoExt.update(cmsBtPromotionBean);
             cmsBtPromotionBean.getTagList().forEach(cmsBtTagModel -> {
-                if (cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel) == 0) {
+                cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
+                if (cmsBtTagDao.update(cmsBtTagModel) == 0) {
                     cmsBtTagModel.setChannelId(cmsBtPromotionBean.getChannelId());
                     cmsBtTagModel.setParentTagId(cmsBtPromotionBean.getRefTagId());
                     cmsBtTagModel.setTagType(2);
@@ -132,10 +134,10 @@ public class PromotionService extends BaseService {
                     cmsBtTagModel.setTagPathName(String.format("-%s-%s-", cmsBtPromotionBean.getPromotionName(), cmsBtTagModel.getTagName()));
                     cmsBtTagModel.setTagPath("");
                     cmsBtTagModel.setCreater(cmsBtPromotionBean.getModifier());
-                    cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
-                    cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
+//                    cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
+                    cmsBtTagDao.insert(cmsBtTagModel);
                     cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getId()));
-                    cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+                    cmsBtTagDao.update(cmsBtTagModel);
                 }
             });
         } else {

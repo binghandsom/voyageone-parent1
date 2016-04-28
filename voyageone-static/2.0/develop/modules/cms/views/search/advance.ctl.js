@@ -42,8 +42,8 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
-        //$scope.openJMActivity = openJMActivity;
-        //$scope.openBulkUpdate = openBulkUpdate;
+        $scope.openJMActivity = openJMActivity;
+        $scope.openBulkUpdate = openBulkUpdate;
 
         /**
          * 初始化数据.
@@ -264,7 +264,28 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
-            openAddToPromotion(promotion, selList).then(function (res) {
+            openAddToPromotion(promotion, getSelProductList()).then(function () {
+                search ()
+            })
+        }
+
+        /**
+         * popup出添加到聚美Promotion的功能
+         * @param promotion
+         * @param openJMActivity
+         */
+        function openJMActivity (promotion, openJMActivity) {
+            openJMActivity(promotion, getSelProductList()).then(function () {
+                search ()
+            })
+        }
+
+        /**
+         * popup出批量修改产品的field属性
+         * @param openFieldEdit
+         */
+        function openBulkUpdate (openFieldEdit) {
+            openFieldEdit(getSelProductList()).then(function () {
                 search ()
             })
         }
@@ -274,7 +295,7 @@ define([
          * @param popupNewCategory
          */
         function openCategoryMapping (popupNewCategory) {
-            var selList = $scope.vm.currTab === 'group' ? $scope.vm.groupSelList.selList : $scope.vm.productSelList.selList;
+            var selList = getSelProductList();
             if (selList && selList.length) {
                 feedMappingService.getMainCategories()
                     .then(function (res) {
@@ -295,8 +316,7 @@ define([
             confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                 .then(function () {
                     var productIds = [];
-                    _.forEach($scope.vm.currTab === 'group' ? $scope.vm.groupSelList.selList : $scope.vm.productSelList.selList
-                        , function (object) {
+                    _.forEach(getSelProductList(), function (object) {
                         productIds.push(object.id);
                     });
                     var data = {
@@ -333,6 +353,25 @@ define([
             } else {
                 alert("最少保留一项")
             }
+        }
+
+        /**
+         * 返回选中的数据,如果选中的是groups则返回的group下面所有的product,如果选择的是product,则只返回选中的product
+         * @returns {Array}
+         */
+        function getSelProductList () {
+            var selList = [];
+            if ($scope.vm.currTab === 'group') {
+                _.forEach($scope.vm.groupSelList.selList, function (info) {
+                    selList.push({"id": info.id, "code": info.code});
+                    _.forEach(info.prodIds, function (prodInfo) {
+                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
+                    })
+                });
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            return selList;
         }
 
     };

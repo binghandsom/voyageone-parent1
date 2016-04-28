@@ -38,7 +38,7 @@ public class CmsPromotionIndexController extends CmsController {
 
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
-        return success(promotionService.getPromotionsByChannelId(getUser().getSelChannelId()));
+        return success(promotionService.getPromotionsByChannelId(getUser().getSelChannelId(), params));
     }
 
     @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION, PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
