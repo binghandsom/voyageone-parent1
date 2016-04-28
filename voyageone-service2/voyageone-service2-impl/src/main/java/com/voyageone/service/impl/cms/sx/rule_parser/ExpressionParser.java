@@ -46,7 +46,7 @@ public class ExpressionParser extends VOAbsLoggable {
         this.skuWordParser = new SkuWordParser();
     }
 
-    public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user) throws Exception {
+    public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         StringBuilder resultStr = new StringBuilder();
 
         if (ruleExpression != null) {
@@ -85,7 +85,7 @@ public class ExpressionParser extends VOAbsLoggable {
                             return null;
                         }
 
-                        plainValue = parse(dictWordDefine.getExpression(), shopBean, user);
+                        plainValue = parse(dictWordDefine.getExpression(), shopBean, user, extParameter);
 
                         if (plainValue != null && dictWordDefine.getIsUrl()) {
                             if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
@@ -100,7 +100,7 @@ public class ExpressionParser extends VOAbsLoggable {
                         break;
                     }
                     case CUSTOM: {
-                        plainValue = customWordParser.parse(ruleWord, shopBean, user);
+                        plainValue = customWordParser.parse(ruleWord, shopBean, user, extParameter);
                         break;
                     }
                     case SKU: {

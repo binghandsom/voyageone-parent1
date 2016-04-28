@@ -521,7 +521,7 @@ public class SxProductService extends BaseService {
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
             retMap = new HashMap();
             SimpleMappingBean simpleMappingBean = (SimpleMappingBean) mappingBean;
-            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user);
+            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user, null);
             if (null == expressionValue) {
                 return null;
             }
@@ -569,10 +569,10 @@ public class SxProductService extends BaseService {
     /**
      * 根据字典名字解析
      */
-    public String resolveDict(String dictName, ExpressionParser expressionParser, ShopBean shopBean, String user) throws Exception {
+    public String resolveDict(String dictName, ExpressionParser expressionParser, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         RuleExpression ruleExpression = new RuleExpression();
         ruleExpression.addRuleWord(new DictWord(dictName));
-        return expressionParser.parse(ruleExpression, shopBean, user);
+        return expressionParser.parse(ruleExpression, shopBean, user, extParameter);
     }
 
     public List<CmsMtPlatFormDictModel> searchDictList(Map<String, Object> map) {

@@ -27,7 +27,7 @@ public class CustomWordParser extends VOAbsLoggable {
     }
 
 //    public String parse(RuleWord ruleWord, ShopBean shopBean, String user, Set<String> imageSet) {
-    public String parse(RuleWord ruleWord, ShopBean shopBean, String user) throws Exception {
+    public String parse(RuleWord ruleWord, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         if (!WordType.CUSTOM.equals(ruleWord.getWordType())) {
             return null;
         }
@@ -38,6 +38,6 @@ public class CustomWordParser extends VOAbsLoggable {
             $error("没有找到匹配的模块-moduleName:" + customWord.getValue().getModuleName());
             return null;
         }
-        return customWordModule.parse(customWord, expressionParser, sxData, shopBean, user);
+        return customWordModule.parse(customWord, expressionParser, sxData, shopBean, user, extParameter);
     }
 }

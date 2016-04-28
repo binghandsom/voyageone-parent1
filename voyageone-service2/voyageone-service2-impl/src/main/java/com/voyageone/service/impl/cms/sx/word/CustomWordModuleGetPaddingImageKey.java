@@ -34,7 +34,7 @@ public class CustomWordModuleGetPaddingImageKey extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         String channelId = sxData.getChannelId();
         int cartId = sxData.getCartId();
 
@@ -44,8 +44,8 @@ public class CustomWordModuleGetPaddingImageKey extends CustomWordModule {
         RuleExpression paddingPropNameExpression = customModuleUserParamGetPaddingImageKey.getPaddingPropName();
         RuleExpression imageIndexExpression = customModuleUserParamGetPaddingImageKey.getImageIndex();
 
-        String paddingPropName = expressionParser.parse(paddingPropNameExpression, shopBean, user);
-        int imageIndex = Integer.valueOf(expressionParser.parse(imageIndexExpression, shopBean, user));
+        String paddingPropName = expressionParser.parse(paddingPropNameExpression, shopBean, user, extParameter);
+        int imageIndex = Integer.valueOf(expressionParser.parse(imageIndexExpression, shopBean, user, extParameter));
 
         return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }

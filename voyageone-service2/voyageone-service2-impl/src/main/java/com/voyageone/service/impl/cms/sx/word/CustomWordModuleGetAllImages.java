@@ -39,7 +39,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamGetAllImages customModuleUserParamGetAllImages = ((CustomWordValueGetAllImages) customWord.getValue()).getUserParam();
 
@@ -47,9 +47,9 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         RuleExpression htmlTemplateExpression = customModuleUserParamGetAllImages.getHtmlTemplate();
         RuleExpression imageTypeExpression = customModuleUserParamGetAllImages.getImageType();
 
-        String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user);
-        String htmlTemplate= expressionParser.parse(htmlTemplateExpression, shopBean, user);
-        String imageTypeStr = expressionParser.parse(imageTypeExpression, shopBean, user);
+        String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
+        String htmlTemplate= expressionParser.parse(htmlTemplateExpression, shopBean, user, extParameter);
+        String imageTypeStr = expressionParser.parse(imageTypeExpression, shopBean, user, extParameter);
         CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
 
         //system param
