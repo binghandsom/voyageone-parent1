@@ -3,10 +3,10 @@ package com.voyageone.service.impl.cms.jumei;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.components.jumei.bean.JmBrandBean;
 import com.voyageone.components.jumei.service.JumeiBrandService;
-import com.voyageone.service.dao.jumei.CmsBtJmMasterBrandDao;
-import com.voyageone.service.daoext.jumei.CmsBtJmMasterBrandDaoExt;
+import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
+import com.voyageone.service.daoext.cms.CmsBtJmMasterBrandDaoExt;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
-import com.voyageone.service.model.jumei.CmsBtJmMasterBrandModel;
+import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

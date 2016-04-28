@@ -4,8 +4,8 @@ import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
 import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
-import com.voyageone.service.dao.jumei.CmsBtJmPromotionProductDao;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionProductModel;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

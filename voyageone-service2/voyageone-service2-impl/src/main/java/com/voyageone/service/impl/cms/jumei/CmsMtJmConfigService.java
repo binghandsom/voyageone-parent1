@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.jumei;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.jumei.CmsMtJmConfigDao;
-import com.voyageone.service.daoext.jumei.CmsMtJmConfigDaoExt;
-import com.voyageone.service.model.jumei.CmsMtJmConfigModel;
-import com.voyageone.service.model.jumei.businessmodel.JMDefaultSet;
+import com.voyageone.service.dao.cms.CmsMtJmConfigDao;
+import com.voyageone.service.daoext.cms.CmsMtJmConfigDaoExt;
+import com.voyageone.service.model.cms.CmsMtJmConfigModel;
+import com.voyageone.service.bean.cms.businessmodel.JMDefaultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.jumei;
 
-import com.voyageone.service.dao.jumei.CmsBtJmPromotionSkuDao;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionSkuModel;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
+import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

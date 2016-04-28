@@ -6,7 +6,7 @@ import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionExportTaskService;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionExportTaskModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
