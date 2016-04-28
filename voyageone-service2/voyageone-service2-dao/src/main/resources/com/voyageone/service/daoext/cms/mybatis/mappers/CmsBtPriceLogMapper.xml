@@ -9,7 +9,10 @@
         <result column="sku" property="sku" jdbcType="VARCHAR"/>
         <result column="msrp_price" property="msrpPrice" jdbcType="VARCHAR"/>
         <result column="retail_price" property="retailPrice" jdbcType="VARCHAR"/>
-        <result column="price" property="salePrice" jdbcType="VARCHAR"/>
+        <result column="sale_price" property="salePrice" jdbcType="VARCHAR"/>
+        <result column="client_msrp_price" property="clientMsrpPrice" jdbcType="VARCHAR"/>
+        <result column="client_retail_price" property="clientRetailPrice" jdbcType="VARCHAR"/>
+        <result column="client_net_price" property="clientNetPrice" jdbcType="VARCHAR"/>
         <result column="comment" property="comment" jdbcType="VARCHAR"/>
         <result column="created" property="created" jdbcType="TIMESTAMP"/>
         <result column="creater" property="creater" jdbcType="VARCHAR"/>
@@ -24,15 +27,12 @@
         log.product_id,
         log.code,
         log.sku,
-        <if test="priceType !=null and priceType == 'priceMsrp'">
-            log.msrp_price as price,
-        </if>
-        <if test="priceType !=null and priceType == 'priceRetail'">
-            log.retail_price as price,
-        </if>
-        <if test="priceType !=null and priceType == 'priceSale'">
-            log.sale_price as price,
-        </if>
+        log.msrp_price,
+        log.retail_price,
+        log.sale_price,
+        log.client_msrp_price,
+        log.client_retail_price,
+        log.client_net_price,
         log.comment,
         log.created,
         log.creater,
@@ -44,15 +44,6 @@
             and log.sku = #{sku}
         </if>
         and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'priceMsrp'">
-            and log.msrp_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceRetail'">
-            and log.retail_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceSale'">
-            and log.sale_price != 'null-null'
-        </if>
         order by log.modified desc
         limit #{offset}, #{rows}
     </select>
@@ -60,104 +51,7 @@
     <select id="select_cms_bt_price_log_by_code_cnt" resultType="int" parameterType="HashMap">
         select count(1) from voyageone_cms2.cms_bt_price_log log
         where log.code = #{code} and log.sku = #{sku} and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'priceMsrp'">
-            and log.msrp_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceRetail'">
-            and log.retail_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceSale'">
-            and log.sale_price != 'null-null'
-        </if>
     </select>
-
-    <select id="select_cms_bt_price_log_by_sku" resultMap="PriceLogMap" parameterType="HashMap">
-        select DISTINCT
-        log.id,
-        log.channel_id,
-        log.product_id,
-        log.code,
-        log.sku,
-        <if test="priceType !=null and priceType == 'priceMsrp'">
-            log.msrp_price as price,
-        </if>
-        <if test="priceType !=null and priceType == 'priceRetail'">
-            log.retail_price as price,
-        </if>
-        <if test="priceType !=null and priceType == 'priceSale'">
-            log.sale_price as price,
-        </if>
-        log.comment,
-        log.created,
-        log.creater,
-        log.modified,
-        log.modifier
-        from voyageone_cms2.cms_bt_price_log log
-        where log.sku = #{sku}
-        and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'priceMsrp'">
-            and log.msrp_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceRetail'">
-            and log.retail_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceSale'">
-            and log.sale_price != 'null-null'
-        </if>
-        order by log.modified desc
-        limit #{offset}, #{rows}
-    </select>
-
-    <select id="select_cms_bt_price_log_by_sku_cnt" resultType="int" parameterType="HashMap">
-        select count(1) from voyageone_cms2.cms_bt_price_log log
-        where log.sku = #{sku} and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'priceMsrp'">
-            and log.msrp_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceRetail'">
-            and log.retail_price != 'null-null'
-        </if>
-        <if test="priceType !=null and priceType == 'priceSale'">
-            and log.sale_price != 'null-null'
-        </if>
-    </select>
-
-    <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel"
-            useGeneratedKeys="true" keyProperty="seq">
-        insert into voyageone_cms2.cms_bt_price_log (
-            channel_id,
-            product_id,
-            code,
-            sku,
-            msrp_price,
-            retail_price,
-            sale_price,
-            client_msrp_price,
-            client_retail_price,
-            client_net_price,
-            comment,
-            created,
-            creater,
-            modified,
-            modifier
-        ) value (
-            #{channelId},
-            #{productId},
-            #{code},
-            #{sku},
-            #{msrpPrice},
-            #{retailPrice},
-            #{salePrice},
-            #{clientMsrpPrice},
-            #{clientRetailPrice},
-            #{clientNetPrice},
-            #{comment},
-            now(),
-            #{item.creater},
-            now(),
-            #{item.creater}
-        )
-    </insert>
 
     <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_price_log (

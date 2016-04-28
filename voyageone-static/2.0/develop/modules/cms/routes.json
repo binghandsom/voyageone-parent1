@@ -192,7 +192,8 @@
   "system_store_operation": {
     "hash": "/system/storeoperation",
     "templateUrl": "views/system/storeoperation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl"
+    "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl",
+    "controller": "storeOperationController as store"
   },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list/:parentId",

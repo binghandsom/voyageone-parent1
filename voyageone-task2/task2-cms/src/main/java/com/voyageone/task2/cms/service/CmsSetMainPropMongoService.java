@@ -580,31 +580,28 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 //            }
 
+            // 官方网站链接，商品图片1，产品分类，适用人群的Feed数据可能会变化，所以不管新建还是更新操作都会去重新设定
             // 官方网站链接
-            if (newFlg || !newFlg && StringUtils.isEmpty(productField.getClientProductUrl())) {
-                if (feed.getClientProductURL() == null) {
-                    field.setClientProductUrl("");
-                } else {
-                    field.setClientProductUrl(feed.getClientProductURL());
-                }
+            if (feed.getClientProductURL() == null) {
+                field.setClientProductUrl("");
+            } else {
+                field.setClientProductUrl(feed.getClientProductURL());
             }
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
-                if (newFlg || !newFlg && productField.getAttribute("images1") == null) {
-                    List<Map<String, Object>> multiComplex = new LinkedList<>();
+                List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                    List<String> lstImageOrg = feed.getImage();
-                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                        for (String imgOrg : lstImageOrg) {
-                            Map<String, Object> multiComplexChildren = new HashMap<>();
-                            multiComplexChildren.put("image1", imgOrg);
-                            multiComplex.add(multiComplexChildren);
-                        }
+                List<String> lstImageOrg = feed.getImage();
+                if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                    for (String imgOrg : lstImageOrg) {
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        multiComplexChildren.put("image1", imgOrg);
+                        multiComplex.add(multiComplexChildren);
                     }
-
-                    field.put("images1", multiComplex);
                 }
+
+                field.put("images1", multiComplex);
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
@@ -613,19 +610,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             switch (feed.getChannelId()) {
                 case "010":
                     // 产品分类
-                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getProductType())) {
-                        field.setProductType(feed.getAttribute().get("ItemClassification").get(0));
-                    }
+                    field.setProductType(feed.getAttribute().get("ItemClassification").get(0));
                     // 适用人群
-                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getSizeType())) {
-                        switch (feed.getSizeType()) {
-                            case "Women's":
-                                field.setSizeType("women");
-                                break;
-                            case "Men's":
-                                field.setSizeType("men");
-                                break;
-                        }
+                    switch (feed.getSizeType()) {
+                        case "Women's":
+                            field.setSizeType("women");
+                            break;
+                        case "Men's":
+                            field.setSizeType("men");
+                            break;
                     }
 
                     break;
@@ -1243,11 +1236,27 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param images Feed的图片信息
          */
         private void doUpdateImage(String channelId, String code, List<String> images) {
-
+            // 图片名最后一部分的值（索引）
             int index = 1;
+
+            // 检查该code是否存在该Image（为了取得图片名最后一部分中的索引的最大值）
+            CmsBtImagesModel param = new CmsBtImagesModel();
+            param.setChannelId(channelId);
+            param.setCode(code);
+            List<CmsBtImagesModel> oldImages = cmsBtImageDao.selectImages(param);
+            if (oldImages.size() > 0) {
+                // 取得图片名最后一部分中的索引的最大值 + 1
+                try {
+                    index = oldImages.stream().map((imagesModel) -> Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))).max(Integer::compare).get() + 1;
+                } catch (Exception ex) {
+                    $error(ex);
+                    throw new RuntimeException("ImageName Parse Fail!", ex);
+                }
+            }
+
             for (String image : images) {
                 // 检查是否存在该Image
-                CmsBtImagesModel param = new CmsBtImagesModel();
+                param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
                 param.setOriginalUrl(image);

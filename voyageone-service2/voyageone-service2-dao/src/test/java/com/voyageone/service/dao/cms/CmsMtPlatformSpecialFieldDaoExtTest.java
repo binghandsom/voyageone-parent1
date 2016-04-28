@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.service.daoext.cms.CmsMtPlatformSpecialFieldDaoExt;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +15,10 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class CmsMtPlatformSpecialFieldDaoTest {
+public class CmsMtPlatformSpecialFieldDaoExtTest {
 
     @Autowired
-    private CmsMtPlatformSpecialFieldDao cmsMtPlatformSpecialFieldDao;
+    private CmsMtPlatformSpecialFieldDaoExt cmsMtPlatformSpecialFieldDaoExt;
 
     @Test
     public void testInsert() throws Exception {
@@ -28,27 +29,27 @@ public class CmsMtPlatformSpecialFieldDaoTest {
         model.setType("1");
         model.setCreater("liang");
         model.setModifier("liang");
-        cmsMtPlatformSpecialFieldDao.insert(model);
+        cmsMtPlatformSpecialFieldDaoExt.insert(model);
     }
 
     @Test
     public void testSelect() throws Exception {
-        List<CmsMtPlatformSpecialFieldModel> list = cmsMtPlatformSpecialFieldDao.select(1, null, null, null);
+        List<CmsMtPlatformSpecialFieldModel> list = cmsMtPlatformSpecialFieldDaoExt.select(1, null, null, null);
         for (CmsMtPlatformSpecialFieldModel model : list) {
             System.out.println(model.getCatId() + "," + model.getCartId() + "," + model.getFieldId() + "," + model.getType());
         }
 
-        list = cmsMtPlatformSpecialFieldDao.select(1, "11", null, null);
+        list = cmsMtPlatformSpecialFieldDaoExt.select(1, "11", null, null);
         for (CmsMtPlatformSpecialFieldModel model : list) {
             System.out.println(model.getCatId() + "," + model.getCartId() + "," + model.getFieldId() + "," + model.getType());
         }
 
-        list = cmsMtPlatformSpecialFieldDao.select(1, "11", "testFieldId11", null);
+        list = cmsMtPlatformSpecialFieldDaoExt.select(1, "11", "testFieldId11", null);
         for (CmsMtPlatformSpecialFieldModel model : list) {
             System.out.println(model.getCatId() + "," + model.getCartId() + "," + model.getFieldId() + "," + model.getType());
         }
 
-        list = cmsMtPlatformSpecialFieldDao.select(1, "11", "testFieldId11", "2");
+        list = cmsMtPlatformSpecialFieldDaoExt.select(1, "11", "testFieldId11", "2");
         for (CmsMtPlatformSpecialFieldModel model : list) {
             System.out.println(model.getCatId() + "," + model.getCartId() + "," + model.getFieldId() + "," + model.getType());
         }
@@ -61,6 +62,6 @@ public class CmsMtPlatformSpecialFieldDaoTest {
         model.setCatId("22");
         model.setFieldId("testFieldId22");
         model.setType("2");
-        cmsMtPlatformSpecialFieldDao.delete(model);
+        cmsMtPlatformSpecialFieldDaoExt.delete(model);
     }
 }

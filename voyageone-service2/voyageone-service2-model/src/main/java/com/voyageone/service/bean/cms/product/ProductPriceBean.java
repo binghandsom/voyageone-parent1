@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.cms.product;
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,4 +58,6 @@ public class ProductPriceBean {
     public void addSkuPrice(ProductSkuPriceBean model) {
         skuPrices.add(model);
     }
+
+
 }

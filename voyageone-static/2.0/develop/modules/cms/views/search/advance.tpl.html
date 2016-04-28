@@ -301,7 +301,7 @@
 					</ul>
 				</div>&nbsp;
 				<div class="btn-group" uib-dropdown>
-					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.jmPromotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_JM_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
 					</button>
 					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
@@ -309,12 +309,12 @@
 					<!--</button>-->
 					<ul uib-dropdown-menu ng-if="vm.masterData.jmPromotionList.length">
 						<li ng-repeat="promotion in vm.masterData.jmPromotionList">
-							<a href ng-click="$parent.openJMActivity(promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.name}}|{{promotion.cartName}}</a>
+							<a href ng-click="$parent.openJMActivity(promotion, openAddJMActivity)">{{promotion.name}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
 				</div>&nbsp;
 				<div class="btn-group" uib-dropdown>
-					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+					<button type="button" class="btn btn-default" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}&nbsp;<span class="caret"></span>
 					</button>
 					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
@@ -322,7 +322,7 @@
 					<!--</button>-->
 					<ul uib-dropdown-menu>
 						<li>
-							<a href ng-click="$parent.openBulkUpdate('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">
+							<a href ng-click="$parent.openBulkUpdate(openFieldEdit)">
 								{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
 						</li>
 						<li>

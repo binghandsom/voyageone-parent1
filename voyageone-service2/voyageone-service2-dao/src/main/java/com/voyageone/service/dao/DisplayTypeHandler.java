@@ -1,4 +1,4 @@
-package com.voyageone.web2.base.message;
+package com.voyageone.service.dao;
 
 import com.voyageone.common.message.enums.DisplayType;
 import org.apache.ibatis.type.BaseTypeHandler;

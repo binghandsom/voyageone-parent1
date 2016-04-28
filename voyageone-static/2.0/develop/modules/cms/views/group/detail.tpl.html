@@ -12,11 +12,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_NUM_IID"></label>
 									<label class="col-sm-5 control-label text-left text-vo">
-										<a ng-href="https://detail.tmall.com/item.htm?id={{vm.productList[0].groups.numIId}}"
-										   target="_blank" class="text-u-l" ng-bind="vm.productList[0].groups.numIId"></a>
+										<a ng-href="https://detail.tmall.com/item.htm?id={{vm.groupInfo.numIId}}"
+										   target="_blank" class="text-u-l" ng-bind="vm.groupInfo.numIId"></a>
 									</label>
-									<label class="col-sm-3 col-sm-1-off text-left label" ng-bind="vm.productList[0].groups.platformStatus"
-										   ng-class="{'label-success-new': vm.productList[0].groups.platformStatus == 'Onsale','label-yellow-new': vm.productList[0].groups.platformStatus == 'Instock', 'label-danger-new': vm.productList[0].groups.platformStatus == 'Waitingpublish'}">
+									<label class="col-sm-3 col-sm-1-off text-left label" ng-bind="vm.groupInfo.platformStatus"
+										   ng-class="{'label-success-new': vm.groupInfo.platformStatus == 'Onsale','label-yellow-new': vm.groupInfo.platformStatus == 'Instock', 'label-danger-new': vm.groupInfo.platformStatus == 'Waitingpublish'}">
 									</label>
 								</div><!-- .form-group -->
 								<div class="form-group">
@@ -28,7 +28,7 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ng-model="vm.productList[0].groups.qty" readonly>
+										<input type="text" class="form-control" ng-model="vm.groupInfo.qty" readonly>
 									</div>
 								</div><!-- .form-group -->
 							</form><!-- .form -->
@@ -60,13 +60,13 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ng-model="vm.productList[0].groups.publishTime" readonly>
+										<input type="text" class="form-control" ng-model="vm.groupInfo.publishTime" readonly>
 									</div>
 								</div><!-- .form-group -->
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_ON_SALE_TIME"></label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ng-model="vm.productList[0].groups.onSaleTime" readonly>
+										<input type="text" class="form-control" ng-model="vm.groupInfo.onSaleTime" readonly>
 									</div>
 								</div><!-- .form-group -->
 							</form><!-- .form -->
@@ -92,12 +92,43 @@
 					<!--</button>-->
 					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
 						<li ng-repeat="promotion in vm.masterData.promotionList">
-							<a href ng-click="openAddToPromotion('md', promotion, vm.productIds, vm.productPageOption.fetch)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+							<a href ng-click="openAddToPromotion(promotion, vm.productIds)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+						</li>
+					</ul>
+				</div>&nbsp;
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.jmPromotionList.length < 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_JM_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
+					</button>
+					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
+					<!--<span class="caret"></span>-->
+					<!--</button>-->
+					<ul uib-dropdown-menu ng-if="vm.masterData.jmPromotionList.length">
+						<li ng-repeat="promotion in vm.masterData.jmPromotionList">
+							<a href ng-click="openAddJMActivity(promotion, vm.productIds)">{{promotion.name}}|{{promotion.cartName}}</a>
+						</li>
+					</ul>
+				</div>&nbsp;
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}&nbsp;<span class="caret"></span>
+					</button>
+					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
+					<!--<span class="caret"></span>-->
+					<!--</button>-->
+					<ul uib-dropdown-menu>
+						<li>
+							<a href ng-click="openFieldEdit(vm.productIds)">
+								{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
+						</li>
+						<li>
+							<a href ng-click="$parent.openCategoryMapping(popupNewCategory)">
+								{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
 						</li>
 					</ul>
 				</div>
-				<button class="btn btn-default" ng-click="openBulkUpdate('md', vm.productIds, vm.productPageOption.fetch)"><i class="fa fa-pencil-square"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
-				<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
+				<!--<button class="btn btn-default" ng-click="openBulkUpdate('md', vm.productIds, vm.productPageOption.fetch)"><i class="fa fa-pencil-square"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>-->
+				<!--<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>-->
 			</div><!-- /right-btn -->
 			<tab>
 				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
@@ -124,7 +155,7 @@
 							<tr ng-class="{'table_bg_green_mint': productInfo.groups.publishTime}" class="table_bg_gray">
 								<td colspan="9" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-radio">
-										<input type="radio" name="radioMainProduct" ng-checked="productInfo.groups.isMain" ng-click="setMainProduct(productInfo)">
+										<input type="radio" name="radioMainProduct" ng-checked="productInfo.fields.code == vm.mainProductCode" ng-click="setMainProduct(productInfo.fields.code)">
 										<span class="fa fa-check"></span>
 									</label>
 									<span class="label m-r-lg m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
@@ -192,9 +223,9 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="col-sm-12 m-t-sm">
-						<vpagination config="vm.productPageOption"></vpagination>
-					</div>
+					<!--<div class="col-sm-12 m-t-sm">-->
+						<!--<vpagination config="vm.productPageOption"></vpagination>-->
+					<!--</div>-->
 				</div><!-- .table-responsive -->
 				</table><!-- .table-responsive -->
 			</tab>

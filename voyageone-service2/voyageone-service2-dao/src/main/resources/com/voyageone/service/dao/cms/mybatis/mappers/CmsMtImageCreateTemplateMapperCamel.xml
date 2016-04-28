@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao">
     <resultMap id="ResultMap" type="CmsMtImageCreateTemplateModel">
-        
+
     </resultMap>
-	
+
     <select id="selectList" resultMap="ResultMap">
 
         select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier`        from cms_mt_image_create_template
@@ -42,7 +42,7 @@
       </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template 
+        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template
         <where>
             <if test="id != null">
                 AND `id` = #{id}

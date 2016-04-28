@@ -15,12 +15,12 @@ import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.SimpleMappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -67,7 +67,7 @@ public class SxProductService extends BaseService {
     @Autowired
     private CmsBtSizeMapDao cmsBtSizeMapDao;
     @Autowired
-    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
+    private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
@@ -75,44 +75,11 @@ public class SxProductService extends BaseService {
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
-    private enum SkuSort {
-        DIGIT("digit", 1), // 纯数字系列
-        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
-        XXX("XXX", 3), // XXX
-        XXS("XXS", 4), // XXS
-        XS("XS", 5), // XS
-        XS_S("XS/S", 6), // XS/S
-        XSS("XSS", 7), // XSS
-        S("S", 8), // S
-        S_M("S/M", 9), // S/M
-        M("M", 10), // M
-
-        M_L("M/L", 11), // M/L
-        L("L", 12), // L
-        XL("XL", 13), // XL
-        XXL("XXL", 14), // XXL
-        N_S("N/S", 15), // N/S
-        O_S("O/S", 16), // O/S
-        ONE_SIZE("OneSize", 17), // OneSize
-
-        OTHER("Other", 18), // 以外
-        ;
-
-        private final String size;
-        private final int sort;
-
-        private SkuSort(String size, int sort) {
-            this.size = size;
-            this.sort = sort;
-        }
-
-        private String getSize() {
-            return this.size;
-        }
-
-        private int getSort() {
-            return this.sort;
-        }
+    public static String encodeImageUrl(String plainValue) {
+        String endStr = "%&";
+        if (!plainValue.endsWith(endStr))
+            return plainValue + endStr;
+        return plainValue;
     }
 
     /**
@@ -261,7 +228,7 @@ public class SxProductService extends BaseService {
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
-        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDao.selectPlatformImagesList(channelId, cartId, groupId);
+        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImagesList(channelId, cartId, groupId);
 
         Map<String,CmsBtPlatformImagesModel> mapImageUrl = new HashMap<>();
         for (CmsBtPlatformImagesModel model : imageUrlModel) {
@@ -297,7 +264,7 @@ public class SxProductService extends BaseService {
                     model.setPlatformImgId(pictureId);
                     model.setUpdFlg(UPD_FLG_UPLOADED);
 
-                    cmsBtPlatformImagesDao.updatePlatformImagesById(model, user);
+                    cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
                 } else if (UPD_FLG_UPLOADED.equals(updFlg)) {
                     // upd_flg=1,已经上传
                     retUrls.put(srcUrl, model.getPlatformImgUrl());
@@ -336,7 +303,7 @@ public class SxProductService extends BaseService {
 
         if (imageUrlSaveModels.size() > 0) {
             // insert image url
-            cmsBtPlatformImagesDao.insertPlatformImagesByList(imageUrlSaveModels);
+            cmsBtPlatformImagesDaoExt.insertPlatformImagesByList(imageUrlSaveModels);
         }
 
         return retUrls;
@@ -422,13 +389,6 @@ public class SxProductService extends BaseService {
         return picture;
     }
 
-    public static String encodeImageUrl(String plainValue) {
-        String endStr = "%&";
-        if (!plainValue.endsWith(endStr))
-            return plainValue + endStr;
-        return plainValue;
-    }
-
     public String decodeImageUrl(String encodedValue) {
         return encodedValue.substring(0, encodedValue.length() - 2);
     }
@@ -437,7 +397,7 @@ public class SxProductService extends BaseService {
      * 上新用的商品数据取得
      *
      * @param channelId channelId
-     * @param groupId groupId
+     * @param groupId   groupId
      * @return SxData
      */
     public SxData getSxProductDataByGroupId(String channelId, Long groupId) {
@@ -468,7 +428,7 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
-        for (CmsBtProductModel productModel: productModelList) {
+        for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getFields().getCode())) {
                 // 主商品
                 sxData.setMainProduct(productModel);
@@ -598,6 +558,46 @@ public class SxProductService extends BaseService {
         }
 
         return retMap;
+    }
+
+    private enum SkuSort {
+        DIGIT("digit", 1), // 纯数字系列
+        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
+        XXX("XXX", 3), // XXX
+        XXS("XXS", 4), // XXS
+        XS("XS", 5), // XS
+        XS_S("XS/S", 6), // XS/S
+        XSS("XSS", 7), // XSS
+        S("S", 8), // S
+        S_M("S/M", 9), // S/M
+        M("M", 10), // M
+
+        M_L("M/L", 11), // M/L
+        L("L", 12), // L
+        XL("XL", 13), // XL
+        XXL("XXL", 14), // XXL
+        N_S("N/S", 15), // N/S
+        O_S("O/S", 16), // O/S
+        ONE_SIZE("OneSize", 17), // OneSize
+
+        OTHER("Other", 18), // 以外
+        ;
+
+        private final String size;
+        private final int sort;
+
+        private SkuSort(String size, int sort) {
+            this.size = size;
+            this.sort = sort;
+        }
+
+        private String getSize() {
+            return this.size;
+        }
+
+        private int getSort() {
+            return this.sort;
+        }
     }
 
 }

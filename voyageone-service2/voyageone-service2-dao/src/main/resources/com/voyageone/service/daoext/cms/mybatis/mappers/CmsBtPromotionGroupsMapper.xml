@@ -31,7 +31,7 @@
         modified,
         modifier
         FROM
-        voyageone_cms2.cms_bt_promotion_model
+        voyageone_cms2.cms_bt_promotion_groups
         <where>
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
@@ -62,7 +62,7 @@
         b.syn_flg,
         b.created
         FROM
-        voyageone_cms2.cms_bt_promotion_model b
+        voyageone_cms2.cms_bt_promotion_groups b
         <where>
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
@@ -109,7 +109,7 @@
         SELECT
         count(1)
         FROM
-        voyageone_cms2.cms_bt_promotion_model b
+        voyageone_cms2.cms_bt_promotion_groups b
         <where>
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
@@ -125,7 +125,7 @@
         </where>
     </select>
     <insert id="insert_cms_bt_promotion_model" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean">
-        insert IGNORE into voyageone_cms2.cms_bt_promotion_model
+        insert IGNORE into voyageone_cms2.cms_bt_promotion_groups
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="promotionId != null">
                 promotion_id,
@@ -190,7 +190,7 @@
         </trim>
     </insert>
     <update id="update_cms_bt_promotion_model" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean">
-        update cms_bt_promotion_model
+        update cms_bt_promotion_groups
         <set>
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER},
@@ -223,7 +223,7 @@
     </update>
     <delete id="delete_cms_bt_promotion_model" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean">
         delete
-        from voyageone_cms2.cms_bt_promotion_model
+        from voyageone_cms2.cms_bt_promotion_groups
         where
         promotion_id = #{promotionId,jdbcType=INTEGER}
         <if test="modelId != null">
