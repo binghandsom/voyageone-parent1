@@ -18,7 +18,6 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
@@ -32,6 +31,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
+import com.voyageone.service.impl.cms.DataAmountService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -114,8 +114,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //    @Autowired
 //    private ImagesService imagesService;
 
-//    @Autowired
-//    private DataAmountService dataAmountService;
+    @Autowired
+    private DataAmountService dataAmountService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -1384,22 +1384,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
                 insertModel.setChannelId(channel.getOrder_channel_id());
                 insertModel.setAmountName("FEED_TO_MASTER_INSERT");
-
-                insertModel = cmsBtDataAmountDao.selectOne(JsonUtil.jsonToMap(JsonUtil.bean2Json(insertModel)));
                 insertModel.setAmountVal(String.valueOf(insertCnt));
                 insertModel.setComment("Feed导入Master新建");
                 insertModel.setCreater(getTaskName());
-                cmsBtDataAmountDao.selectOne(JsonUtil.jsonToMap(JsonUtil.bean2Json(insertModel)));
-                if(insertModel.getId() > 0)
-                    cmsBtDataAmountDao.update(insertModel);
-                else
-                    cmsBtDataAmountDao.insert(insertModel);
-//                dataAmountService.updateWithInsert(channel.getOrder_channel_id()
-//                        , CmsConstants.DataAmount.FEED_TO_MASTER_INSERT
-//                        , String.valueOf(insertCnt)
-//                        , "Feed导入Master新建"
-//                        , getTaskName());
-
+                cmsBtDataAmountDao.insert(insertModel);
             }
 
             // 新建的件数
@@ -1407,19 +1395,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
                 updateModel.setChannelId(channel.getOrder_channel_id());
                 updateModel.setAmountName("FEED_TO_MASTER_UPDATE");
-                updateModel = cmsBtDataAmountDao.selectOne(JsonUtil.jsonToMap(JsonUtil.bean2Json(updateModel)));
                 updateModel.setAmountVal(String.valueOf(updateCnt));
                 updateModel.setComment("Feed导入Master更新");
                 updateModel.setCreater(getTaskName());
-                if(updateModel.getId() > 0)
-                    cmsBtDataAmountDao.update(updateModel);
-                else
-                    cmsBtDataAmountDao.insert(updateModel);
-//                dataAmountService.updateWithInsert(channel.getOrder_channel_id()
-//                        , CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE
-//                        , String.valueOf(insertCnt)
-//                        , "Feed导入Master更新"
-//                        , getTaskName());
+                cmsBtDataAmountDao.insert(updateModel);
             }
         }
         // jeff 2016/04 add end
