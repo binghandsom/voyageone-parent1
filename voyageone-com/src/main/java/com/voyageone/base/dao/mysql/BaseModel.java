@@ -1,5 +1,7 @@
 package com.voyageone.base.dao.mysql;
 
+import java.util.Date;
+
 /**
  * 对数据模型提供基础字段
  * @author Jonas
@@ -13,7 +15,7 @@ public class BaseModel {
 
     private String creater;
 
-    private String modified;
+    private Date modified;
 
     private String modifier;
 
@@ -33,11 +35,11 @@ public class BaseModel {
         this.creater = creater;
     }
 
-    public String getModified() {
+    public Date getModified() {
         return modified;
     }
 
-    public void setModified(String modified) {
+    public void setModified(Date modified) {
         this.modified = modified;
     }
 

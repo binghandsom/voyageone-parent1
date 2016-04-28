@@ -1,14 +1,22 @@
 package com.voyageone.service.dao.cms;
+
+import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.springframework.stereotype.Repository;
-import com.voyageone.service.model.cms.*;
-import java.util.Map;
+
 import java.util.List;
+import java.util.Map;
+
 @Repository
 public interface CmsMtImageCreateTemplateDao {
-     public List<CmsMtImageCreateTemplateModel> selectList(Map<String, Object> map);
-    public CmsMtImageCreateTemplateModel selectOne(Map<String, Object> map);
-    public CmsMtImageCreateTemplateModel select(long id);
-    public int insert(CmsMtImageCreateTemplateModel entity);
-    public int update(CmsMtImageCreateTemplateModel entity);
-    public int delete(long id);
-    }
+    List<CmsMtImageCreateTemplateModel> selectList(Map<String, Object> map);
+
+    CmsMtImageCreateTemplateModel selectOne(Map<String, Object> map);
+
+    CmsMtImageCreateTemplateModel select(long id);
+
+    int insert(CmsMtImageCreateTemplateModel entity);
+
+    int update(CmsMtImageCreateTemplateModel entity);
+
+    int delete(long id);
+}

@@ -6,12 +6,23 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
+import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDao;
+import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.*;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
+import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
+import com.voyageone.service.model.cms.CmsMtImageCreateTaskModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/3/18.
@@ -26,6 +37,13 @@ public class CmsImageFileService extends BaseService {
     private USCDNFileService serviceUSCDNFile;
     @Autowired
     private LiquidFireImageService serviceLiquidFireImage;
+    @Autowired
+    private MqSender sender;
+    @Autowired
+    CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
+    @Autowired
+    CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
+    public GetImageResultBean getImage(String channelId, int templateId, String file, String vparam, String requesttQueryString, String Creater) throws Exception {
 
     public GetImageResultBean getImage(String channelId, int templateId, String file, boolean isUploadUSCDN, String vparam, String creater) throws Exception {
         GetImageResultBean result = new GetImageResultBean();
@@ -107,19 +125,33 @@ public class CmsImageFileService extends BaseService {
         }
         return result;
     }
-
-
     public AddListResultBean addList(AddListParameter parameter) {
         AddListResultBean result = new AddListResultBean();
         try {
             checkAddListParameter(parameter);
-
+            //保存事务待处理 超过一秒加事务
+            CmsMtImageCreateTaskModel modelTask=new CmsMtImageCreateTaskModel();
+            List<CmsMtImageCreateTaskDetailModel> listTaskDetail=new ArrayList<>();
+            CmsMtImageCreateFileModel modelCmsMtImageCreateFile=null;
             for (CreateImageParameter imageInfo : parameter.getData()) {
                 long hashCode = imageCreateFileService.getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
-                if (!imageCreateFileService.existsHashCode(hashCode)) {//1.创建记录信息
-                    imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
+                modelCmsMtImageCreateFile = imageCreateFileService.getModelByHashCode(hashCode);
+                if (modelCmsMtImageCreateFile==null) {//1.创建记录信息
+                    modelCmsMtImageCreateFile= modelCmsMtImageCreateFile = imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode);
                 }
+                CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
+                detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
+                listTaskDetail.add(detailModel);
             }
+            daoCmsMtImageCreateTask.insert(modelTask);
+            for (CmsMtImageCreateTaskDetailModel detailModel:listTaskDetail)
+            {
+                detailModel.setCmsMtImageCreateTaskId(modelTask.getId());
+                daoCmsMtImageCreateTaskDetail.insert(detailModel);
+            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("id",modelTask.getId());
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_LiquidFireJob,map);
         } catch (OpenApiException ex) {
             result.setErrorCode(ex.getErrorCode());
             result.setErrorMsg(ex.getMsg());

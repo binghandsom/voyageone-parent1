@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao">
+    <resultMap id="ResultMap" type="CmsMtImageCreateTaskDetailModel">
+        
+    </resultMap>
+	
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`cms_mt_image_create_task_id`,`cms_mt_image_create_file_id`,`begin_time`,`end_time`,`state`        from cms_mt_image_create_task_detail
+        <where>
+                <if test="id != null">
+                        AND `id` = #{id}
+                    </if>
+                                <if test="cmsMtImageCreateTaskId != null">
+                        AND `cms_mt_image_create_task_id` = #{cmsMtImageCreateTaskId}
+                    </if>
+                                <if test="cmsMtImageCreateFileId != null">
+                        AND `cms_mt_image_create_file_id` = #{cmsMtImageCreateFileId}
+                    </if>
+                                <if test="beginTime != null">
+                        AND `begin_time` = #{beginTime}
+                    </if>
+                                <if test="endTime != null">
+                        AND `end_time` = #{endTime}
+                    </if>
+                                <if test="state != null">
+                        AND `state` = #{state}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`cms_mt_image_create_task_id`,`cms_mt_image_create_file_id`,`begin_time`,`end_time`,`state` from cms_mt_image_create_task_detail 
+        <where>
+                
+                    <if test="id != null">
+                        AND `id` = #{id}
+                    </if> 
+                
+                    <if test="cmsMtImageCreateTaskId != null">
+                        AND `cms_mt_image_create_task_id` = #{cmsMtImageCreateTaskId}
+                    </if> 
+                
+                    <if test="cmsMtImageCreateFileId != null">
+                        AND `cms_mt_image_create_file_id` = #{cmsMtImageCreateFileId}
+                    </if> 
+                
+                    <if test="beginTime != null">
+                        AND `begin_time` = #{beginTime}
+                    </if> 
+                
+                    <if test="endTime != null">
+                        AND `end_time` = #{endTime}
+                    </if> 
+                
+                    <if test="state != null">
+                        AND `state` = #{state}
+                    </if> 
+        </where> limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`cms_mt_image_create_task_id`,`cms_mt_image_create_file_id`,`begin_time`,`end_time`,`state` from cms_mt_image_create_task_detail where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_mt_image_create_task_detail
+        set
+
+            `cms_mt_image_create_task_id`=#{cmsMtImageCreateTaskId}
+            ,`cms_mt_image_create_file_id`=#{cmsMtImageCreateFileId}
+            ,`begin_time`=#{beginTime}
+            ,`end_time`=#{endTime}
+            ,`state`=#{state}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_image_create_task_detail
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_mt_image_create_task_detail
+        (
+              `cms_mt_image_create_task_id`,
+              `cms_mt_image_create_file_id`,
+              `begin_time`,
+              `end_time`,
+              `state`
+        )
+        VALUES(
+              #{cmsMtImageCreateTaskId},
+              #{cmsMtImageCreateFileId},
+              #{beginTime},
+              #{endTime},
+              #{state}
+        )
+    </insert>
+</mapper>
