@@ -190,7 +190,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                     queryObject.setProjection("{'fields.code':1,'carts':{'$elemMatch':{'cartId':" + cartId + "}}}");
 
                     List<CmsBtProductModel> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
-                    if (modelList != null && modelList.size() > 0) {
+                    if (modelList != null && modelList.size() > 0 && modelList.get(0).getCarts().size()>0) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                         map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
                     }

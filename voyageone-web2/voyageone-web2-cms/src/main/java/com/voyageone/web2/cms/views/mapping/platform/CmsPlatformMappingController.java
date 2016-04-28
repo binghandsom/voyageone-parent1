@@ -91,7 +91,7 @@ public class CmsPlatformMappingController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_DICT_LIST)
     public AjaxResponse getDictList(@RequestBody Map<String, String> params) {
-        return success(platformPropMappingService.getDictList(params.get("cart_id"), getLang(), getUser()));
+        return success(platformPropMappingService.getDictList(params.get("cartId"), getLang(), getUser()));
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_MAPPING)

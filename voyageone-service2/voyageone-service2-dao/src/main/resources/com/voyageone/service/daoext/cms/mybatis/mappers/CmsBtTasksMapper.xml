@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.service.bean.cms.CmsBtTasksBean"
-            useGeneratedKeys="true" keyProperty="task_id">
+            useGeneratedKeys="true" keyProperty="id">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
         task_name, task_type, promotion_id, channel_id, activity_start, activity_end,
         <if test="config != null">
@@ -23,13 +23,13 @@
         config = #{config},
         modified = NOW(),
             modifier  = #{modifier}
-        WHERE task_id = #{task_id}
+        WHERE id = #{task_id}
               AND modified = #{modified}
     </update>
 
 
     <resultMap id="taskWithPromotion" type="com.voyageone.service.bean.cms.CmsBtTasksBean" autoMapping="true">
-        <id property="task_id" column="task_id"/>
+        <id property="task_id" column="id"/>
         <result property="activity_start" column="t_start"/>
         <result property="activity_end" column="t_end"/>
         <result property="status" column="status"/>
@@ -60,7 +60,7 @@
 
     <select id="cms_bt_tasks_select" resultMap="taskWithPromotion">
         SELECT
-        task_id,
+        t.id,
         task_name,
         task_type,
         t.promotion_id,
@@ -85,7 +85,7 @@
         tejiabao_id,
         promotion_type,
         ref_tag_id,
-        is_active,
+        active,
         is_all_promotion,
         p.created p_created,
         p.creater p_creater,
@@ -93,10 +93,10 @@
         p.modifier p_modifier
         FROM voyageone_cms2.cms_bt_tasks t
         LEFT JOIN voyageone_cms2.cms_bt_promotion p
-        ON t.promotion_id = p.promotion_id
+        ON t.promotion_id = p.id
         <where>
             <if test="task_id != null">
-                task_id = #{task_id}
+                t.id = #{task_id}
             </if>
             <if test="channelId != null">
                 and t.channel_id = #{channelId}
@@ -126,10 +126,10 @@
         delete
         from voyageone_cms2.cms_bt_tasks
         where
-        task_id = #{task_id}
+        id = #{task_id}
     </delete>
     <select id="select_cms_bt_tasks_task_id" parameterType="String" resultType="String">
-      select task_id
+      select id
         from voyageone_cms2.cms_bt_tasks
        where task_name=#{task_name}
     </select>
