@@ -269,9 +269,9 @@ public class CmsTaskStockService extends BaseAppService {
         List<Integer> repeatList = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得活动开始时间
-            Map<String, String> promotionInfo = promotionService.getPromotionIDByCartId(entry.getKey());
+            Map<String, Object> promotionInfo = promotionService.getPromotionIDByCartId(entry.getKey());
             //取得活动的ID
-            int cartId = Integer.parseInt(promotionInfo.get("cart_id"));
+            int cartId = (int) promotionInfo.get("cart_id");
             //日期的格式
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             //取得活动开始时间
@@ -320,7 +320,7 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String, Object> platformList = new HashMap<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得隔离的CartID
-            Map<String, String> cartNameMap = promotionService.getPromotionIDByCartId(entry.getKey());
+            Map<String, Object> cartNameMap = promotionService.getPromotionIDByCartId(entry.getKey());
             platformList.put(entry.getKey(), cartNameMap);
         }
         return platformList;
