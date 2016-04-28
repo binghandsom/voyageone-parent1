@@ -88,10 +88,8 @@ public class ImageCreateFileService extends BaseService {
 
 
     //获取模板
-    private CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(CmsMtImageCreateTemplateModel modelTemplate, int templateId) {
-        if (modelTemplate == null) {
-            modelTemplate = cmsMtImageCreateTemplateDao.select(templateId);
-        }
-        return modelTemplate;
+    //获取模板
+    public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(int templateId) {
+        return cmsMtImageCreateTemplateDao.select(templateId);
     }
 }

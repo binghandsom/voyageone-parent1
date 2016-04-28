@@ -21,12 +21,7 @@ public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
 
-    public void createImage(CmsMtImageCreateFileModel modelFile) throws Exception {
-
-        CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(modelFile.getTemplateId());//获取模板
-        if (modelTemplate == null) {
-            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
-        }
+    public void createImage(CmsMtImageCreateFileModel modelFile, CmsMtImageCreateTemplateModel modelTemplate) throws Exception {
         try {
             String filePath = createImage(modelTemplate.getContent(), modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
             modelFile.setFilePath(filePath);
@@ -40,11 +35,11 @@ public class LiquidFireImageService extends BaseService {
         }
     }
 
-    public void createImage(int CmsMtImageCreateFileId) throws Exception {
+    public void createImage(int CmsMtImageCreateFileId, CmsMtImageCreateTemplateModel modelTemplate) throws Exception {
         CmsMtImageCreateFileModel modelFile = null;
         try {
             modelFile = daoCmsMtImageCreateFile.select(CmsMtImageCreateFileId);
-            createImage(modelFile);
+            createImage(modelFile, modelTemplate);
         } catch (OpenApiException ex) {
             //业务异常
             if (modelFile != null) {
@@ -70,6 +65,6 @@ public class LiquidFireImageService extends BaseService {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
         String[] vparamList = vparam.split(",");
         String source = String.format(templateContent, vparamList);
-        return client.getImage(source, fileName);
+        return client.getImage(source, fileName, ImageConfig.getImageProxyIP(), ImageConfig.getImageProxyPort());
     }
 }

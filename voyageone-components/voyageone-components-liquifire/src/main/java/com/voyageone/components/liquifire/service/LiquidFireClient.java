@@ -1,11 +1,13 @@
 package com.voyageone.components.liquifire.service;
 
-import com.voyageone.common.util.HashCodeUtil;
+import com.voyageone.common.util.StringUtils;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 
 /**
@@ -64,21 +66,29 @@ public class LiquidFireClient {
         this.savePath = savePath;
     }
 
-    public String getImage(String param, String fileName) throws Exception {
+    public String getImage(String param, String fileName, String proxyIP, String proxyPort) throws Exception {
         String outFileFullName = this.getSavePath() + "/" + fileName + ".jpg";
         String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
-        download(this.getUrl() + "?" + urlParameter, outFileFullName);
+        download(this.getUrl() + "?" + urlParameter, outFileFullName, proxyIP, proxyPort);
         return outFileFullName;
     }
 
-    private void download(String urlString, String filename) throws Exception {
+    private void download(String urlString, String filename, String proxyIP, String proxyPort) throws Exception {
         InputStream is = null;
         OutputStream os = null;
         try {
             // 构造URL
             URL url = new URL(urlString);
             // 打开连接
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn;
+            if (StringUtils.isEmpty(proxyIP)) {
+                conn = (HttpURLConnection) url.openConnection();
+            } else {
+                // 设置代理 地址和端口
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIP, Integer.parseInt(proxyPort)));
+                conn = (HttpURLConnection) url.openConnection(proxy);
+            }
+
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(this.getConnectTimeout());
             conn.setReadTimeout(this.getReadTimeout());

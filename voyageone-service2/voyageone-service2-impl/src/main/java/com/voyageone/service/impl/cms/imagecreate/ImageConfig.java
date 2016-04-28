@@ -16,7 +16,7 @@ public class ImageConfig {
     }
 
     public static String getValue(String id, String code) {
-        return Codes.getCodeName(id,code);
+        return Codes.getCodeName(id, code);
     }
     public static String getLiquidFireUrl() {
         return getValue("LiquidFire_Confige", "url");
@@ -24,6 +24,14 @@ public class ImageConfig {
     public static String getLiquidFireImageSavePath() {
         return getValue("LiquidFire_Confige", "imageSavePath");
     }
+    public static String getImageProxyIP() {
+        return getValue("LiquidFire_Confige", "imageProxyIP");
+    }
+    public static String getImageProxyPort() {
+        return getValue("LiquidFire_Confige", "imageProxyPort");
+    }
+
+
 
     public  static String getUSCDNUrl()
     {
@@ -41,6 +49,8 @@ public class ImageConfig {
     {
         return getValue("US_CDN_Confige", "workingDirectory");
     }
+
+
 
 //    -- USCDN配置
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
@@ -67,6 +77,10 @@ public class ImageConfig {
 //    VALUE('LiquidFire_Confige','url','http://voyageone.ma.liquifire.com/voyageone','','LiquidFire 生成图片地址',NOW(),'system','system',1);
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
 //    VALUE('LiquidFire_Confige','imageSavePath','/usr/createImages','','LiquidFire 生成图片缓存路径',NOW(),'system','system',1);
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('LiquidFire_Confige','imageProxyIP','47.89.48.208','','LiquidFire 生成图片proxyIP',NOW(),'system','system',1);
+//    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('LiquidFire_Confige','imageProxyPort','7656','','LiquidFire 生成图片ProxyPort',NOW(),'system','system',1);
 
 //    `cms_mt_image_create_file`
 //            `cms_mt_image_create_template`
