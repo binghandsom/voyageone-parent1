@@ -15,7 +15,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class CmsBtSxWorkloadDaoExtTest {
+public class CmsBtSxWorkloadDaoExtExtTest {
 
     @Autowired
     private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
