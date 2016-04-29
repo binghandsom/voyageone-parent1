@@ -51,14 +51,10 @@ define([
         $scope.openFeedImagedetail = function (idx) {
             var feedObj = $scope.vm.feedList[idx];
             if (feedObj.hasImgFlg > 0) {
-                if (feedObj.hasImgFlg == 1) {
-                    $routeParams.imageMain = feedObj.image[0];
-                    $routeParams.imageList = [];
-                } else {
-                    $routeParams.imageMain = feedObj.image[0];
-                    $routeParams.imageList = feedObj.image.slice(1, feedObj.image.length);
-                }
-                return this.openImagedetail();
+                var picList = [];
+                picList[0] = feedObj.image;
+                var para = {'mainPic': feedObj.image[0], 'picList': picList};
+                return this.openImagedetail(para);
             }
         };
 
