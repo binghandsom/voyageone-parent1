@@ -523,9 +523,25 @@ public class ChannelConfigEnums {
         LUCKY_VITAMIN("017"),
 
         /**
-         * EDC_SKINCARE
+         * TARGET
          */
-        EDC_SKINCARE("018"),
+        TARGET("018"),
+
+        /**
+         * SummerGuru
+         */
+        SUMMERGURU("019"),
+
+        /**
+         * EdcSkincare
+         */
+        EDCSKINCARE("020"),
+
+        /**
+         * BHFO_MINIMALL
+         */
+        BHFO_MINIMALL("021"),
+
 
         /**
          * VOYAGEONE
@@ -577,7 +593,10 @@ public class ChannelConfigEnums {
                 case "015": return GILT;
                 case "016": return SHOE_CITY;
                 case "017": return LUCKY_VITAMIN;
-                case "018": return EDC_SKINCARE;
+                case "018": return TARGET;
+                case "019": return SUMMERGURU;
+                case "020": return EDCSKINCARE;
+                case "021": return BHFO_MINIMALL;
                 case "997": return VOYAGEONE;
                 case "998": return THIRD_PARTY;
                 default: return null;

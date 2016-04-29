@@ -90,6 +90,8 @@ public class FeedToCmsService extends BaseService {
         Set<String> sizeTypeList = new HashSet<>();
         Set<String> productTypeList = new HashSet<>();
 
+        Map<String ,CmsBtFeedInfoModel> cache = new HashMap<>();
+
 
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
         for (CmsBtFeedInfoModel product : products) {
@@ -132,7 +134,9 @@ public class FeedToCmsService extends BaseService {
 //                    }
 //                    product.setImage(images);
 //                }
-                CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
+                CmsBtFeedInfoModel befproduct;
+                befproduct = cache.get(product.getCode());
+                if(befproduct == null) befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
                     //把之前的sku（新的product中没有的sku）保存到新的product的sku中
@@ -152,6 +156,9 @@ public class FeedToCmsService extends BaseService {
                 }
                 product.setCatId(MD5.getMD5(product.getCategory()));
                 feedInfoService.updateFeedInfo(product);
+                if(product.get_id() != null){
+                    cache.put(product.getCode(),product);
+                }
 
                 brandList.add(product.getBrand());
                 sizeTypeList.add(product.getSizeType());
