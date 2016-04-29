@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
@@ -469,7 +470,7 @@ public class TranslationService extends BaseAppService {
      */
     public List<Map<String, Object>> getTransLenSet() {
         List<Map<String, Object>> result = new ArrayList<>();
-        List<CmsChannelConfigBean> configBeans = CmsChannelConfigs.getConfigBeans("000", CmsConstants.ChannelConfig.TRANS_LEN_SET);
+        List<CmsChannelConfigBean> configBeans = CmsChannelConfigs.getConfigBeans(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.TRANS_LEN_SET);
         for (CmsChannelConfigBean config : configBeans) {
             Map<String, Object> configMap = new HashMap<>();
 
