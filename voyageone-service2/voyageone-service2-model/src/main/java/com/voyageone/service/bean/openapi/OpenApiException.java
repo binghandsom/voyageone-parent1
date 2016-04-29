@@ -44,6 +44,7 @@ public class OpenApiException extends Exception {
     public OpenApiException(ErrorEnumInterface enumInterface, Throwable ex) {
         this(enumInterface, "", ex);
     }
+
     public OpenApiException(ErrorEnumInterface enumInterface, String msg, Throwable ex) {
         super(msg, ex);
         this.setEnumInterface(enumInterface);

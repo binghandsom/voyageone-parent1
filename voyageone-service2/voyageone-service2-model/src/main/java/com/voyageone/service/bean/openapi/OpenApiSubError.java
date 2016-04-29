@@ -27,6 +27,7 @@ public class OpenApiSubError {
         this.setErrorCode(errorCode);
         this.setErrorMsg(errorMsg);
     }
+
     public OpenApiSubError(ErrorEnumInterface errorEnumInterface) {
         this.setErrorCode(errorEnumInterface.getCode());
         this.setErrorMsg(errorEnumInterface.getMsg());

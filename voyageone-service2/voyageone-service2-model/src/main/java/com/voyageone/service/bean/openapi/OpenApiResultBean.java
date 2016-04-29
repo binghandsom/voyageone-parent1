@@ -54,6 +54,7 @@ public abstract class OpenApiResultBean {
         this.setErrorCode(errorEnumInterface.getCode());
         this.setErrorMsg(errorEnumInterface.getMsg());
     }
+
     public void setSubEnumError(ErrorEnumInterface errorEnumInterface) {
         if (this.getSubErrorList() == null) {
             this.setSubErrorList(new ArrayList<>());
