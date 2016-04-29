@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmSkuDao">
+    <resultMap id="ResultMap" type="CmsBtJmSkuModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`channel_id`,`product_code`,`cms_bt_jm_product_id`,`sku_code`,`jm_spu_no`,`jm_sku_no`,`upc`,`cms_size`,`jm_size`,`state`,`creater`,`created`,`modified`,`modifier`        from cms_bt_jm_sku
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="channelId != null">
+                        AND channel_id = #{channelId}
+                    </if>
+                                <if test="productCode != null">
+                        AND product_code = #{productCode}
+                    </if>
+                                <if test="cmsBtJmProductId != null">
+                        AND cms_bt_jm_product_id = #{cmsBtJmProductId}
+                    </if>
+                                <if test="skuCode != null">
+                        AND sku_code = #{skuCode}
+                    </if>
+                                <if test="jmSpuNo != null">
+                        AND jm_spu_no = #{jmSpuNo}
+                    </if>
+                                <if test="jmSkuNo != null">
+                        AND jm_sku_no = #{jmSkuNo}
+                    </if>
+                                <if test="upc != null">
+                        AND upc = #{upc}
+                    </if>
+                                <if test="cmsSize != null">
+                        AND cms_size = #{cmsSize}
+                    </if>
+                                <if test="jmSize != null">
+                        AND jm_size = #{jmSize}
+                    </if>
+                                <if test="state != null">
+                        AND state = #{state}
+                    </if>
+                                <if test="creater != null">
+                        AND creater = #{creater}
+                    </if>
+                                <if test="created != null">
+                        AND created = #{created}
+                    </if>
+                                <if test="modified != null">
+                        AND modified = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`channel_id`,`product_code`,`cms_bt_jm_product_id`,`sku_code`,`jm_spu_no`,`jm_sku_no`,`upc`,`cms_size`,`jm_size`,`state`,`creater`,`created`,`modified`,`modifier` from cms_bt_jm_sku
+        <where>
+
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if>
+
+                    <if test="channelId != null">
+                        AND channel_id = #{channelId}
+                    </if>
+
+                    <if test="productCode != null">
+                        AND product_code = #{productCode}
+                    </if>
+
+                    <if test="cmsBtJmProductId != null">
+                        AND cms_bt_jm_product_id = #{cmsBtJmProductId}
+                    </if>
+
+                    <if test="skuCode != null">
+                        AND sku_code = #{skuCode}
+                    </if>
+
+                    <if test="jmSpuNo != null">
+                        AND jm_spu_no = #{jmSpuNo}
+                    </if>
+
+                    <if test="jmSkuNo != null">
+                        AND jm_sku_no = #{jmSkuNo}
+                    </if>
+
+                    <if test="upc != null">
+                        AND upc = #{upc}
+                    </if>
+
+                    <if test="cmsSize != null">
+                        AND cms_size = #{cmsSize}
+                    </if>
+
+                    <if test="jmSize != null">
+                        AND jm_size = #{jmSize}
+                    </if>
+
+                    <if test="state != null">
+                        AND state = #{state}
+                    </if>
+
+                    <if test="creater != null">
+                        AND creater = #{creater}
+                    </if>
+
+                    <if test="created != null">
+                        AND created = #{created}
+                    </if>
+
+                    <if test="modified != null">
+                        AND modified = #{modified}
+                    </if>
+
+                    <if test="modifier != null">
+                        AND modifier = #{modifier}
+                    </if>
+        </where> limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`channel_id`,`product_code`,`cms_bt_jm_product_id`,`sku_code`,`jm_spu_no`,`jm_sku_no`,`upc`,`cms_size`,`jm_size`,`state`,`creater`,`created`,`modified`,`modifier` from cms_bt_jm_sku where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_bt_jm_sku
+        set
+
+            `channel_id`=#{channelId}
+            ,`product_code`=#{productCode}
+            ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
+            ,`sku_code`=#{skuCode}
+            ,`jm_spu_no`=#{jmSpuNo}
+            ,`jm_sku_no`=#{jmSkuNo}
+            ,`upc`=#{upc}
+            ,`cms_size`=#{cmsSize}
+            ,`jm_size`=#{jmSize}
+            ,`state`=#{state}
+            ,`modifier`=#{modifier}
+            ,`modified`=now()
+         where id=#{id}
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_jm_sku
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_bt_jm_sku
+        (
+              `channel_id`,
+              `product_code`,
+              `cms_bt_jm_product_id`,
+              `sku_code`,
+              `jm_spu_no`,
+              `jm_sku_no`,
+              `upc`,
+              `cms_size`,
+              `jm_size`,
+              `state`,
+              `creater`,
+              `created`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{channelId},
+              #{productCode},
+              #{cmsBtJmProductId},
+              #{skuCode},
+              #{jmSpuNo},
+              #{jmSkuNo},
+              #{upc},
+              #{cmsSize},
+              #{jmSize},
+              #{state},
+              #{creater},
+              #{created},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

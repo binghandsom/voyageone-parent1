@@ -12,10 +12,13 @@ import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.ims.rule_expression.DictWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.SimpleMappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
+import com.voyageone.service.dao.cms.CmsMtDictPlatformDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -27,6 +30,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -74,6 +78,8 @@ public class SxProductService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    @Autowired
+    private CmsMtDictPlatformDao cmsMtDictPlatformDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -472,8 +478,8 @@ public class SxProductService extends BaseService {
      * @return Map<field_id, mt里转换后的值>
      * @throws Exception
      */
-    public Map<String, Object> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
-        Map<String, Object> retMap = null;
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Field> retMap = null;
 
         // TODO:特殊字段处理
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
@@ -496,7 +502,7 @@ public class SxProductService extends BaseService {
                 if (mappingBean == null) {
                     continue;
                 }
-                Map<String, Object> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+                Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
                 if (resolveField != null) {
                     if (retMap == null) {
                         retMap = new HashMap<>();
@@ -509,36 +515,47 @@ public class SxProductService extends BaseService {
         return retMap;
     }
 
-    public Map<String, Object> resolveMapping(MappingBean mappingBean, Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
-        Map<String, Object> retMap = null;
+    public Map<String, Field> resolveMapping(MappingBean mappingBean, Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Field> retMap = null;
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
             retMap = new HashMap();
             SimpleMappingBean simpleMappingBean = (SimpleMappingBean) mappingBean;
-            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user);
+            String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user, null);
             if (null == expressionValue) {
                 return null;
             }
 
             switch (field.getType()) {
                 case INPUT: {
-                    retMap.put(field.getId(), expressionValue);
-                    ((InputField) field).setValue(expressionValue);
+                    InputField inputField = (InputField) field;
+                    inputField.setValue(expressionValue);
+                    retMap.put(field.getId(), inputField);
+//                    ((InputField) field).setValue(expressionValue);
                     break;
                 }
                 case SINGLECHECK: {
-                    retMap.put(field.getId(), expressionValue);
-                    ((SingleCheckField) field).setValue(expressionValue);
+                    SingleCheckField singleCheckField = (SingleCheckField) field;
+                    singleCheckField.setValue(expressionValue);
+                    retMap.put(field.getId(), singleCheckField);
+//                    ((SingleCheckField) field).setValue(expressionValue);
                     break;
                 }
                 case MULTIINPUT:
                     break;
                 case MULTICHECK: {
                     String[] valueArrays = ExpressionParser.decodeString(expressionValue);
-                    retMap.put(field.getId(), Arrays.asList(valueArrays));
-                    for (String value : valueArrays) {
-                        ((MultiCheckField) field).addValue(value);
+
+                    MultiCheckField multiCheckField = (MultiCheckField)field;
+                    for (String val : valueArrays) {
+                        multiCheckField.addValue(val);
                     }
+                    retMap.put(field.getId(), multiCheckField);
+
+//                    retMap.put(field.getId(), Arrays.asList(valueArrays));
+//                    for (String value : valueArrays) {
+//                        ((MultiCheckField) field).addValue(value);
+//                    }
                     break;
                 }
                 case COMPLEX:
@@ -558,6 +575,19 @@ public class SxProductService extends BaseService {
         }
 
         return retMap;
+    }
+
+    /**
+     * 根据字典名字解析
+     */
+    public String resolveDict(String dictName, ExpressionParser expressionParser, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+        RuleExpression ruleExpression = new RuleExpression();
+        ruleExpression.addRuleWord(new DictWord(dictName));
+        return expressionParser.parse(ruleExpression, shopBean, user, extParameter);
+    }
+
+    public List<CmsMtPlatFormDictModel> searchDictList(Map<String, Object> map) {
+        return cmsMtDictPlatformDao.selectList(map);
     }
 
     private enum SkuSort {

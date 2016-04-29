@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.daoext.jumei.CmsBtJmApiLogDaoExt">
-    <resultMap id="ResultMap" type="CmsBtJmApiLogModel">
-    </resultMap>
-    <select id="getPage" resultType="Map">
-        select id,source_id,api_type,error_msg,error_code,remark        from cms_bt_jm_api_log
-    </select>
-</mapper>

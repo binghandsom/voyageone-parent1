@@ -9,11 +9,12 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
+import com.voyageone.common.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,14 +77,14 @@ public class CmsPromotionIndexService extends BaseAppService {
         }
     }
 
-    public int delete(CmsBtPromotionModel cmsBtPromotionModel) {
-        return promotionService.delete(cmsBtPromotionModel);
+    public int delete(CmsBtPromotionBean cmsBtPromotionBean) {
+        return promotionService.delete(cmsBtPromotionBean);
     }
 
     public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
-        String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.PROMOTION_EXPORT_TEMPLATE);
 
         CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionIdOrgChannelId(promotionId, channelId);
         List<CmsBtPromotionCodesBean> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(promotionId, channelId);

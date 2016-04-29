@@ -6,7 +6,7 @@
             custom_size_id,
             custom_prop_id,
             custom_prop_value
-        FROM voyageone_cms2.cms_bt_custom_size
+        FROM voyageone_cms2.cms_mt_channel_sku_config
         WHERE
             channel_id=#{channel_id}
     </select>

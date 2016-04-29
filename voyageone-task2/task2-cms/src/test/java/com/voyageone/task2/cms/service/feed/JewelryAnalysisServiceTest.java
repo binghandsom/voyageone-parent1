@@ -20,8 +20,16 @@ public class JewelryAnalysisServiceTest {
 
     @Autowired
     private JewelryAnalysisService jewelryAnalysisService;
+
+    @Autowired
+    JewelryAnalysis2Service jewelryAnalysis2Service;
     @Test
     public void testOnStartup() throws Exception {
         jewelryAnalysisService.onStartup(new ArrayList<TaskControlBean>());
+    }
+
+    @Test
+    public void testOnStartup2() throws Exception {
+        jewelryAnalysis2Service.onStartup(new ArrayList<TaskControlBean>());
     }
 }

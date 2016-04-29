@@ -285,4 +285,72 @@
         from voyageone_cms2.cms_bt_promotion a
         where a.id = #{PromotionID}
     </select>
+
+    <select id="select_promotion_history" resultType="com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean" parameterType="HashMap">
+        SELECT
+        a.id as seq,
+        a.promotion_id as promotionId,
+        b.channel_id as channelId,
+        b.cart_id as cartId,
+        b.name,
+        b.add_name2 as shortName,
+        b.promotion_status as promotionStatus,
+        b.promotion_name as promotionName,
+        b.activity_start as activityStart,
+        b.activity_end as activityEnd,
+        a.product_id as productId,
+        a.product_code as productCode,
+        a.sale_price as salePrice,
+        a.msrp,
+        a.promotion_price as promotionPrice,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        FROM voyageone_cms2.cms_bt_promotion_codes a
+        INNER JOIN (
+        SELECT
+        p.id,
+        p.channel_id,
+        p.cart_id,
+        p.promotion_status,
+        p.promotion_name,
+        p.activity_start,
+        p.activity_end,
+        c.name,
+        c.add_name2
+        FROM voyageone_cms2.cms_bt_promotion p
+        INNER JOIN Synship.com_mt_value_channel c
+        ON p.cart_id = c.value and c.type_id = '53' and c.lang_id = #{lang} and p.channel_id = c.channel_id) b
+        ON a.promotion_id = b.id
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
+        <if test="cartId !=null and cartId != ''">
+            and b.cart_id = #{cartId}
+        </if>
+        LIMIT #{offset}, #{rows}
+    </select>
+
+    <select id="select_promotion_history_cnt" resultType="int" parameterType="HashMap">
+        SELECT COUNT(1)
+        FROM voyageone_cms2.cms_bt_promotion_codes a
+        INNER JOIN (
+        SELECT
+        p.id,
+        p.channel_id,
+        p.cart_id,
+        p.promotion_status,
+        p.promotion_name,
+        p.activity_start,
+        p.activity_end,
+        c.name,
+        c.add_name2
+        FROM voyageone_cms2.cms_bt_promotion p
+        INNER JOIN Synship.com_mt_value_channel c
+        ON p.cart_id = c.value and c.type_id = '53' and c.lang_id = #{lang} and p.channel_id = c.channel_id) b
+        ON a.promotion_id = b.id
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
+        <if test="cartId !=null and cartId != ''">
+            and b.cart_id = #{cartId}
+        </if>
+    </select>
 </mapper>

@@ -4,6 +4,7 @@ import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 
 import java.util.Set;
 
@@ -14,9 +15,9 @@ public class DictWordParser {
      private String order_channel_id;
      private DictValueFactory dictValueFactory;
 
-     public DictWordParser(String order_channel_id) {
+     public DictWordParser(SxProductService sxProductService, String order_channel_id) {
           this.order_channel_id = order_channel_id;
-          dictValueFactory = new DictValueFactory();
+          dictValueFactory = new DictValueFactory(sxProductService);
      }
 
      public RuleExpression parse(RuleWord ruleWord)

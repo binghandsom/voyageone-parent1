@@ -18,8 +18,8 @@ public class CmsConstants {
      */
     public enum PlatformStatus {
         WaitingPublish,		// 等待上新
-        Onsale, 			// 在售
-        Instock 			// 在库
+        OnSale, 			// 在售
+        InStock 			// 在库
     }
 
 
@@ -27,27 +27,111 @@ public class CmsConstants {
      * platformActive
      */
     public enum PlatformActive {
-        // 变更前 DB相关内容变更后请删除Onsale/Instock
-        Onsale, 		// 在售
-        Instock,  		// 在库
         // 变更后
-        ToOnsale,		// 在售
-        ToInstock 		// 在库
+        ToOnSale,		// 在售
+        ToInStock 		// 在库
     }
 
 	/**
 	 * workload type
      */
+    // TODO: 16/4/28 无人使用就删除了
     public enum WorkloadType {
         Sx,             // 上新 / 全属性更新
         UpdProdImage,   // 更新商品图片
         UpdDesc,        // 更新商品描述
-        SetOnsale,      // 上架
-        SetInstock      // 下架
+        SetOnSale,      // 上架
+        SetInStock      // 下架
     }
 
-    public interface channelConfig {
+    public interface ChannelConfig {
+
+        // 全店统一属性结构
         String SAME_ATTR = "SAME_ATTR";
+
+        // 该店铺是否自动审批价格
+        String AUTO_APPROVE_PRICE = "AUTO_APPROVE_PRICE";
+
+        // 第三方原始价格单位
         String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
+
+        // 特价宝id
+        String TEJIABAO_ID = "TEJIABAO_ID";
+
+        // 翻译用到的长度check
+        String TRANS_LEN_SET = "TRANS_LEN_SET";
+
+        // 各个平台渠道导入master数据的PlatformActive初始值
+        String PLATFORM_ACTIVE = "PLATFORM_ACTIVE";
+
+        // 价格自动同步间隔天数
+        String AUTO_SYN_DAY = "AUTO_SYN_DAY";
+
+        // 强制击穿阈值(例如: 10 表示的是10%)
+        String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
+
+        // Feed导入Master时是否自动上新
+        String AUTO_APPROVE_PRODUCT_CHANGE = "AUTO_APPROVE_PRODUCT_CHANGE";
+
+        // 店铺级别MSRP价格计算公式
+        String PRICE_MSRP_CALC_FORMULA = "PRICE_MSRP_CALC_FORMULA";
+
+        // 店铺级别指导价格计算公式
+        String PRICE_RETAIL_CALC_FORMULA = "PRICE_RETAIL_CALC_FORMULA";
+
+        // 全店操作配置最小间隔时间
+        String STORE_OPERATION_INTERVAL_TIME = "STORE_OPERATION_INTERVAL_TIME";
+
+        // 价格相关
+        String PRICE = "PRICE";
+        String PRICE_SX_PRICE = ".sx_price";
+        String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
+        String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
+    }
+
+    public interface DataAmount {
+        String FEED_TO_MASTER_INSERT = "FEED_TO_MASTER_INSERT";
+        String FEED_TO_MASTER_UPDATE = "FEED_TO_MASTER_UPDATE";
+    }
+
+    public interface JmMasterPlatCode {
+        String BRND = "0";
+        String PRICE_UNIT = "1";
+        String STOCK = "2";
+    }
+
+    public interface OptionConfigType {
+
+        String OPTION_DATA_SOURCE = "optConfig";
+
+        String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    }
+
+    public interface CellNum {
+        int cartIdCellNum = 0;
+        int channelIdCellNum = 1;
+        int catPathCellNum = 2;
+        int numberIdCellNum = 3;
+        int groupIdCellNum = 4;
+        int groupNameCellNum = 5;
+        int productIdCellNum = 6;
+        int productCodeCellNum = 7;
+        int productNameCellNum = 8;
+        int skuCellNum = 9;
+        int tagCellNum = 10;
+        int msrpUSCellNum = 11;
+        int msrpRMBCellNum = 12;
+        int retailPriceCellNum = 13;
+        int salePriceCellNum = 14;
+        int promotionPriceCellNum = 15;
+        int inventoryCellNum = 16;
+        int image1CellNum = 17;
+        int image2CellNum = 18;
+        int image3CellNum = 19;
+        int timeCellNum = 20;
+        int property1CellNum = 21;
+        int property2CellNum = 22;
+        int property3CellNum = 23;
+        int property4CellNum = 24;
     }
 }

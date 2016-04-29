@@ -113,10 +113,10 @@ class CmsPlatformPropMappingService extends BaseAppService {
     /**
      * 获取当前渠道的所有可用字典
      */
-    List<CmsMtPlatFormDictModel> getDictList(String cart_id, String lang, UserSessionBean user) {
+    List<CmsMtPlatFormDictModel> getDictList(String cartId, String lang, UserSessionBean user) {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(user.getSelChannelId());
-        params.setCart_id(cart_id);
+        params.setCartId(cartId);
         params.setLang(lang);
         return dictService.getModesByChannel(params);
     }

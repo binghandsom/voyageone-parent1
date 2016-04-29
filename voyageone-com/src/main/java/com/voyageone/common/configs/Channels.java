@@ -5,6 +5,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.OrderChannelDao;
 import com.voyageone.common.redis.CacheHelper;
+import de.undercouch.bson4jackson.io.StaticBuffers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,13 @@ public class Channels {
         );
         CacheHelper.reFreshSSB(KEY, orderChannelBeanMap);
         logger.info("orderChannel 读取数量: " + CacheHelper.getSize(KEY));
+    }
+
+    /**
+     * 让缓存失效
+     */
+    public static void invalidate(){
+        CacheHelper.delete(KEY);
     }
 
     /**

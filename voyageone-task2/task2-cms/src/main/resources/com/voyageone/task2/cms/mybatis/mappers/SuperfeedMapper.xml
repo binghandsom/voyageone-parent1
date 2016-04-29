@@ -10,7 +10,7 @@
     <!-- 插入Jewelry产品文件信息 -->
     <insert id="cms_superfeed_insertSuperfeedJEInfo" parameterType="com.voyageone.task2.cms.bean.SuperFeedJEBean">
   insert into
-   voyageone_cms.cms_zz_worktable_je_superfeed
+   voyageone_cms.cms_zz_feed_je_product_temp
   (
   `Auction Title`
   ,`Inventory Number`

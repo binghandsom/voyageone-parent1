@@ -24,7 +24,4 @@ public class CustomWordService extends BaseService {
         return customWordDaoExt.selectWithParam();
     }
 
-    public List<Map<String, Object>> getTransLenSet(String chnId) {
-        return customWordDaoExt.selectTransLenSet(chnId);
-    }
 }

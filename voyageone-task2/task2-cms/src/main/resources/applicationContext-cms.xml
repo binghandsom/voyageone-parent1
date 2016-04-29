@@ -51,6 +51,9 @@
         <!-- Shoe City feed 导入 cms2 -->
         <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="20 0 0/1 * * ?"/>
 
+        <!-- BHFO feed 导入 cms2 -->
+        <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="50 0 0/1 * * ?"/>
+
         <!-- 维他命 feed 导入 cms2 -->
         <task:scheduled ref="CmsVtmJob" method="run" cron="10 0/1 * * * ?"/>
 

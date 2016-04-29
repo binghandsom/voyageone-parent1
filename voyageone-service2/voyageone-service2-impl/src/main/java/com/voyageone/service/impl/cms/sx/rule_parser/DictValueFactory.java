@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.sx.rule_parser;
 
-import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
-import com.voyageone.service.daoext.cms.DictWordDaoExt;
+import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 
 import java.util.*;
 
@@ -11,23 +11,25 @@ import java.util.*;
  * Created by morse.lu on 16-4-26.(copy from task2 and then modified)
  */
 public class DictValueFactory {
-    private DictWordDaoExt dictWordDaoExt;
+
+    private SxProductService sxProductService;
+
     private Map<String, Set<DictWord>> channelDictWordMap;
 
 
-    public DictValueFactory() {
+    public DictValueFactory(SxProductService sxProductService) {
+        this.sxProductService = sxProductService;
         this.channelDictWordMap = new HashMap<>();
-        dictWordDaoExt = new DictWordDaoExt();
     }
 
     public void updateMapFromDatabase()
     {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-        List<DictWordBean> dictWordBeanList = dictWordDaoExt.selectDictWords();
+        List<CmsMtPlatFormDictModel> dictWordBeanList = sxProductService.searchDictList(null);
         channelDictWordMap.clear();
-        for (DictWordBean dictWordBean : dictWordBeanList)
+        for (CmsMtPlatFormDictModel dictModel : dictWordBeanList)
         {
-            String orderChannelId = dictWordBean.getOrder_channel_id();
+            String orderChannelId = dictModel.getOrderChannelId();
             Set<DictWord> dictWordSet = channelDictWordMap.get(orderChannelId);
             if (dictWordSet == null)
             {
@@ -35,7 +37,7 @@ public class DictValueFactory {
                 channelDictWordMap.put(orderChannelId, dictWordSet);
             }
 
-            DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
+            DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictModel.getValue());
             dictWordSet.add(dictWord);
         }
     }

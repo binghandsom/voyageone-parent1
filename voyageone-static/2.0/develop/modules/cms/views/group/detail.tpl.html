@@ -16,7 +16,7 @@
 										   target="_blank" class="text-u-l" ng-bind="vm.groupInfo.numIId"></a>
 									</label>
 									<label class="col-sm-3 col-sm-1-off text-left label" ng-bind="vm.groupInfo.platformStatus"
-										   ng-class="{'label-success-new': vm.groupInfo.platformStatus == 'Onsale','label-yellow-new': vm.groupInfo.platformStatus == 'Instock', 'label-danger-new': vm.groupInfo.platformStatus == 'Waitingpublish'}">
+										   ng-class="{'label-success-new': vm.groupInfo.platformStatus == 'Onsale','label-yellow-new': vm.groupInfo.platformStatus == 'Instock', 'label-danger-new': vm.groupInfo.platformStatus == 'WaitingPublish'}">
 									</label>
 								</div><!-- .form-group -->
 								<div class="form-group">
@@ -69,6 +69,12 @@
 										<input type="text" class="form-control" ng-model="vm.groupInfo.onSaleTime" readonly>
 									</div>
 								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_IN_STOCK_TIME"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.groupInfo.inStockTime" readonly>
+									</div>
+								</div><!-- .form-group -->
 							</form><!-- .form -->
 						</div><!--.col -->
 						</div>
@@ -118,7 +124,7 @@
 					<!--</button>-->
 					<ul uib-dropdown-menu>
 						<li>
-							<a href ng-click="openFieldEdit(vm.productIds)">
+							<a href ng-click="$parent.openBulkUpdate(openFieldEdit)">
 								{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
 						</li>
 						<li>
@@ -155,7 +161,7 @@
 							<tr ng-class="{'table_bg_green_mint': productInfo.groups.publishTime}" class="table_bg_gray">
 								<td colspan="9" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-radio">
-										<input type="radio" name="radioMainProduct" ng-checked="productInfo.fields.code == vm.mainProductCode" ng-click="setMainProduct(productInfo.fields.code)">
+										<input type="radio" name="radioMainProduct" ng-checked="productInfo.fields.code == vm.groupInfo.mainProductCode" ng-click="setMainProduct(productInfo.fields.code)">
 										<span class="fa fa-check"></span>
 									</label>
 									<span class="label m-r-lg m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">

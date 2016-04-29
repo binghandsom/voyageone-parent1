@@ -39,14 +39,14 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamGetMainPrductImages customModuleUserParamGetMainPrductImages = ((CustomWordValueGetMainProductImages) customWord.getValue()).getUserParam();
 
         int imageIndex = -1;
         RuleExpression imageIndexExpression = customModuleUserParamGetMainPrductImages.getImageIndex();
         if (imageIndexExpression != null) {
-            String imageIndexStr = expressionParser.parse(imageIndexExpression, shopBean, user);
+            String imageIndexStr = expressionParser.parse(imageIndexExpression, shopBean, user, extParameter);
             imageIndex = Integer.parseInt(imageIndexStr);
         }
 
@@ -54,25 +54,36 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         String htmlTemplate = null;
 
         if (htmlTemplateExpression != null)
-            htmlTemplate = expressionParser.parse(htmlTemplateExpression, shopBean, user);
+            htmlTemplate = expressionParser.parse(htmlTemplateExpression, shopBean, user, extParameter);
 
         RuleExpression imageTemplateExpression = customModuleUserParamGetMainPrductImages.getImageTemplate();
 
         String imageTemplate = null;
 
         if(imageTemplateExpression!=null)
-            imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user);
+            imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
 
         RuleExpression imageTypeExpression = customModuleUserParamGetMainPrductImages.getImageType();
 
 
-        String imageTypeStr = expressionParser.parse(imageTypeExpression, shopBean, user);
+        String imageTypeStr = expressionParser.parse(imageTypeExpression, shopBean, user, extParameter);
         CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
 
         //system param
         CmsBtProductModel mainProduct = sxData.getMainProduct();
 
+        // 判断想要获取哪个product的图片
+        // 如果没有指定特别的extParameter, 那么就认为是主商品的图片
         List<CmsBtProductModel_Field_Image> productImages = mainProduct.getFields().getImages(imageType);
+        if (extParameter != null && extParameter.length > 0) {
+            // 获取指定product的图片(如果没找到, 那么就使用主商品的图片)
+            for (CmsBtProductModel product : sxData.getProductList()) {
+                if (product.getFields().getCode().equals(extParameter[0])) {
+                    productImages = product.getFields().getImages(imageType);
+                    break;
+                }
+            }
+        }
 
         String parseResult = "";
 
@@ -94,7 +105,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         } //padding图片
         else if (imageIndex >= productImages.size()) {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
-            String paddingImageKey = expressionParser.parse(paddingExpression, shopBean, user);
+            String paddingImageKey = expressionParser.parse(paddingExpression, shopBean, user, extParameter);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {
                 return null;
             }

@@ -17,7 +17,7 @@ public abstract class CustomWordModule extends VOAbsLoggable {
         this.moduleName = moduleName;
     }
 
-    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception;
+    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception;
 //    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, Set<String> imageSet);
 
     @Override

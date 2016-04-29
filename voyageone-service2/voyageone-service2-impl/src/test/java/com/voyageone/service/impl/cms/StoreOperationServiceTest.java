@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.BaseTest;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import org.apache.commons.lang.math.RandomUtils;
@@ -24,7 +23,7 @@ import static org.junit.Assume.*;
  * @date: 2016/4/26 19:15
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
-public class StoreOperationServiceTest extends BaseTest {
+public class StoreOperationServiceTest {
 
     @Resource
     StoreOperationService storeOperationService;
@@ -77,13 +76,12 @@ public class StoreOperationServiceTest extends BaseTest {
         }
     }
 
-    @Test(expected = BusinessException.class)
+    @Test(expected = BusinessException.class )
     public void testCheckInterval() throws Exception {
         checkInInterval("010");
         checkInInterval("010");
     }
 
-    @Test
     public void testGetHistoryBy() throws Exception {
         CmsBtStoreOperationHistoryModel model = new CmsBtStoreOperationHistoryModel();
         model.setCreater("will" + System.currentTimeMillis());

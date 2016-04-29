@@ -23,6 +23,7 @@
         <result column="Secondary Categories" property="secondaryCategories"/>
         <result column="Warnings" property="Warnings"/>
         <result column="clientProductURL" property="clientProductURL"/>
+        <result column="product_type" property="productType"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -69,6 +70,7 @@
         ,${i_size} as i_size
         ,${i_barcode} as i_barcode
         ,${i_client_sku} as i_client_sku
+        ,${product_type} as product_type
         ,1 as i_active
         ,${image} as image
         ,1 as image_type
@@ -85,11 +87,11 @@
     </select>
 
     <update id="cms_zz_worktable_vtm_superfeed_full_update">
-        UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed_full set UpdateFlag = 0
+        UPDATE voyageone_cms2.cms_zz_feed_vtm_product_full set UpdateFlag = 0
     </update>
 
     <update id="cms_zz_worktable_vtm_superfeed_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed set UpdateFlag = 3 where UpdateFlag = 1 and `SKU` in (
+        UPDATE voyageone_cms2.cms_zz_feed_vtm_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `SKU` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
         </foreach>
@@ -97,8 +99,8 @@
     </update>
 
     <insert id="cms_zz_worktable_vtm_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_vtm_superfeed_full SELECT * from
-        voyageone_cms2.cms_zz_worktable_vtm_superfeed where `SKU` in
+        INSERT INTO voyageone_cms2.cms_zz_feed_vtm_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_vtm_product_temp where `SKU` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -109,7 +111,7 @@
     <delete id="cms_zz_worktable_vtm_superfeed_full_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms2.cms_zz_worktable_vtm_superfeed_full
+        voyageone_cms2.cms_zz_feed_vtm_product_full
         where `SKU` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
