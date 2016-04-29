@@ -123,6 +123,8 @@ public class ImageCreateFileService extends BaseService {
             //.创建并上传图片
             isCreateNewFile = createAndUploadImage(modelFile);
             imagePathCache.set(modelFile.getHashCode(),modelFile.getOssFilePath());
+            $info("CmsMtImageCreateTaskJobService:onStartup ok result; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],filePath=[%s] model.id=[%s]",
+                    modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getOssFilePath(), modelFile.getId());
         } catch (OpenApiException ex) {
             //4.处理业务异常
             errorCode = ex.getErrorCode();

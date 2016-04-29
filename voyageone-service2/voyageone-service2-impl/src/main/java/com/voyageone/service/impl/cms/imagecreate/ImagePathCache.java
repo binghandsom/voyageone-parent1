@@ -1,13 +1,9 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
-import com.voyageone.common.redis.VoCacheTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * Created by dell on 2016/4/28.
@@ -17,7 +13,7 @@ public class ImagePathCache {
     private static HashOperations<String, Long, String> hashOperation;
     public static final String HashtableName = "voyageone_image_create_hashcode_file";
     @Autowired
-    public  void setTemplate(VoCacheTemplate template) {
+    public  void setTemplate(RedisTemplate template) {
         hashOperation = template.opsForHash();
     }
 
