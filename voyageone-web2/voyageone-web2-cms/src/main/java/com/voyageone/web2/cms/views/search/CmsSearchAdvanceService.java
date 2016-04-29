@@ -887,7 +887,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
 
         // MINI MALL 店铺时查询原始CHANNEL
-        if (searchValue.getOrgChaId() != null && !"000".equals(searchValue.getOrgChaId())) {
+        if (searchValue.getOrgChaId() != null && !ChannelConfigEnums.Channel.NONE.getId().equals(searchValue.getOrgChaId())) {
             result.append(MongoUtils.splicingValue("orgChannelId", searchValue.getOrgChaId()));
             result.append(",");
         }

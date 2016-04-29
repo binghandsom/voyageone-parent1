@@ -103,10 +103,10 @@
         WHERE order_channel_id = #{channelId}
     </select>
 
-    <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
-        INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)
-        VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
-    </insert>
+    <!--<insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">-->
+        <!--INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)-->
+        <!--VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})-->
+    <!--</insert>-->
 
     <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map"
             resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">

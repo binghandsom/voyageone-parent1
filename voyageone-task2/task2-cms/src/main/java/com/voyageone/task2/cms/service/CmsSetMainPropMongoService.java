@@ -28,7 +28,6 @@ import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.DataAmountService;
@@ -39,7 +38,6 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
@@ -68,6 +66,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class CmsSetMainPropMongoService extends BaseTaskService {
@@ -77,8 +76,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     MainPropDao mainPropDao;
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
     @Autowired
@@ -104,6 +101,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     // jeff 2016/04 add start
     @Autowired
     ProductPriceLogService productPriceLogService;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private CmsBtImagesDaoExt cmsBtImageDaoExt;
     @Autowired
@@ -174,12 +173,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
      * 按渠道进行设置
      */
     public class setMainProp {
+        int insertCnt = 0;
+        int updateCnt = 0;
         private OrderChannelBean channel;
         private boolean skip_mapping_check;
-
         // jeff 2016/04 change start
         // 前一次的价格强制击穿时间
         private String priceBreakTime;
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        // jeff 2016/04 change end
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
 
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
         public setMainProp(String orderChannelId, boolean skip_mapping_check, String priceBreakTime) {
@@ -187,10 +190,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             this.skip_mapping_check = skip_mapping_check;
             this.priceBreakTime = priceBreakTime;
         }
-
-        int insertCnt = 0;
-        int updateCnt = 0;
-        // jeff 2016/04 change end
 
         public void doRun() {
             $info(channel.getFull_name() + "产品导入主数据开始");
@@ -1140,6 +1139,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
         }
 
+        // jeff 2016/04 change end
+
+        // jeff 2016/04 add start
+
         /**
          * 根据model, 到product表中去查找, 看看这家店里, 是否有相同的model已经存在
          * 如果已经存在, 返回 找到了的那个group id
@@ -1175,10 +1178,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
             return productGroupService.getList(channelId, queryObject);
         }
-
-        // jeff 2016/04 change end
-
-        // jeff 2016/04 add start
 
         /**
          * getPropSimpleValueByMapping 简单属性值的取得
@@ -1284,7 +1283,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
 
-                CmsBtImagesModel newModel = new CmsBtImagesModel(channelId, code, originalUrl, index++, getTaskName());
+//                CmsBtImagesModel newModel = new CmsBtImagesModel(channelId, code, originalUrl, index++, getTaskName());
+                CmsBtImagesModel newModel = new CmsBtImagesModel();
+                newModel.setChannelId(channelId);
+                newModel.setOriginalUrl(originalUrl);
+                newModel.setCode(code);
+                newModel.setUpdFlg(0);
+                newModel.setCreater(getTaskName());
+                String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+                Pattern special_symbol = Pattern.compile(URL_FORMAT);
+                newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
                 cmsBtImageDaoExt.insertImages(newModel);
 
                 return newModel.getImgName();
@@ -1356,6 +1364,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             return carts;
         }
+        // jeff 2016/04 add end
 
         /**
          * getIsMasterMain 是否是Main商品
@@ -1387,10 +1396,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE, String.valueOf(updateCnt), "Feed导入Master更新", getTaskName());
             }
         }
-        // jeff 2016/04 add end
-
-        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
 
         /**
          * getPropValueByMapping 属性匹配(递归)

@@ -443,6 +443,11 @@ public class ChannelConfigEnums {
     public enum Channel {
 
         /**
+         * 共通channel属性设置用, 000
+         */
+        NONE("000"),
+
+        /**
          * Sneakerhead, 001
          */
         SN("001"),
@@ -576,6 +581,7 @@ public class ChannelConfigEnums {
                 return null;
 
             switch (id) {
+                case "000": return NONE;
                 case "001": return SN;
                 case "002": return PA;
                 case "003": return GL;

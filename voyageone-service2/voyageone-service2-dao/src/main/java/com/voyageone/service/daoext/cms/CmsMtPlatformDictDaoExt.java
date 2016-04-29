@@ -29,9 +29,9 @@ public class CmsMtPlatformDictDaoExt extends ServiceBaseDao {
         return insert("cms_mt_dict_insertDict", cmsMtPlatFormDictModel);
     }
 
-    public int insertDictLog(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return insert("cms_mt_dict_insertDict_log", cmsMtPlatFormDictModel);
-    }
+//    public int insertDictLog(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
+//        return insert("cms_mt_dict_insertDict_log", cmsMtPlatFormDictModel);
+//    }
 
     public int updateDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
         return update("cms_mt_dict_updateDict", cmsMtPlatFormDictModel);
