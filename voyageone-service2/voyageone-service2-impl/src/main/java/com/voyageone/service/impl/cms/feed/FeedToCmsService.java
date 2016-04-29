@@ -288,9 +288,11 @@ public class FeedToCmsService extends BaseService {
         cmsMtChannelValuesModel.setCreater(modifier);
         cmsMtChannelValuesModel.setCreated(DateTimeUtil.getNow());
         values.forEach(s -> {
-            cmsMtChannelValuesModel.setKey(s);
-            cmsMtChannelValuesModel.setValue(s);
-            cmsMtChannelValuesService.insertCmsMtChannelValues(cmsMtChannelValuesModel);
+            if(!StringUtil.isEmpty(s)) {
+                cmsMtChannelValuesModel.setKey(s);
+                cmsMtChannelValuesModel.setValue(s);
+                cmsMtChannelValuesService.insertCmsMtChannelValues(cmsMtChannelValuesModel);
+            }
         });
 
     }
