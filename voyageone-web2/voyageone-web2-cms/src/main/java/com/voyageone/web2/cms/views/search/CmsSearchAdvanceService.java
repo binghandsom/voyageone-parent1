@@ -65,7 +65,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
-            "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
+            "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;" +
+            "fields.color;fields.origin;fields.shortTitle;fields.middleTitle";
 
     // DB检索页大小
     private final static int SELECT_PAGE_SIZE = 2000;
@@ -754,6 +755,14 @@ public class CmsSearchAdvanceService extends BaseAppService {
             FileUtils.cell(row, 14, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodeCrop()));
 
             FileUtils.cell(row, 15, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodePrivate()));
+
+            FileUtils.cell(row, 16, unlock).setCellValue(item.getFields().getMiddleTitle());
+
+            FileUtils.cell(row, 17, unlock).setCellValue(item.getFields().getShortTitle());
+
+            FileUtils.cell(row, 18, unlock).setCellValue(item.getFields().getColor());
+
+            FileUtils.cell(row, 19, unlock).setCellValue(item.getFields().getOrigin());
 
             startRowIndex = startRowIndex + 1;
         }
