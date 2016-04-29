@@ -13,26 +13,24 @@ import java.util.Map;
  * Created by dell on 2016/4/28.
  */
 @Component
-public  class ImagePathCache {
-    private static VoCacheTemplate<String, String> template;
-    public static final String HashtableName = "voyageone_Image_hashCode_path";
+public class ImagePathCache {
+    private static HashOperations<String, Long, String> hashOperation;
+    public static final String HashtableName = "voyageone_image_create_hashcode_file";
     @Autowired
     public  void setTemplate(VoCacheTemplate template) {
-        ImagePathCache.template = template;
+        hashOperation = template.opsForHash();
     }
-    public static HashOperations<String, Long, String> getHashOperation() {
-        return template.opsForHash();
-    }
+
     /**
      *
      * @param key      hashCode
      * @param value    图片路径
      */
-    public static void set(long key, String value) {
-        getHashOperation().put(HashtableName, key, value);
+    public void set(long key, String value) {
+        hashOperation.put(HashtableName, key, value);
     }
-    public static String get(Long key) {
-        return getHashOperation().get(HashtableName, key);
+    public String get(Long key) {
+        return hashOperation.get(HashtableName, key);
 
     }
 }

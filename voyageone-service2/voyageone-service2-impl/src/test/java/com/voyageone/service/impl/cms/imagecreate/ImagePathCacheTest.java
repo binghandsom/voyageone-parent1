@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.imagecreate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
@@ -15,11 +16,15 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class ImagePathCacheTest {
 
+    @Autowired
+    ImagePathCache imagePathCache;
+
     @Test
+
     public void test()
     {
         //ImagePathCache.set(3443,"testvalue");
-        String result=ImagePathCache.get(323L);
+        String result=imagePathCache.get(323L);
         //Assert.notNull();
     }
 }

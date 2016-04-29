@@ -37,6 +37,8 @@ public class CmsImageFileService extends BaseService {
     CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
     @Autowired
     CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
+    @Autowired
+    ImagePathCache imagePathCache;
 
     public GetImageResultBean checkGetImageParameter(String channelId, int templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
@@ -70,9 +72,8 @@ public class CmsImageFileService extends BaseService {
             }
             //hashCode做缓存key
             long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam);
-           String ossFilePath=ImagePathCache.get(hashCode);
-            if(!StringUtil.isEmpty(ossFilePath))
-            {
+            String ossFilePath = imagePathCache.get(hashCode);
+            if(!StringUtil.isEmpty(ossFilePath)) {
                 GetImageResultData resultData=new GetImageResultData();
                 resultData.setFilePath(ossFilePath);
                 result.setResultData(resultData);
@@ -89,7 +90,7 @@ public class CmsImageFileService extends BaseService {
             }
             //.创建并上传图片
             isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile);
-            ImagePathCache.set(hashCode,modelFile.getOssFilePath());
+            imagePathCache.set(hashCode,modelFile.getOssFilePath());
         } catch (OpenApiException ex) {
             //4.处理业务异常
             result.setErrorCode(ex.getErrorCode());
