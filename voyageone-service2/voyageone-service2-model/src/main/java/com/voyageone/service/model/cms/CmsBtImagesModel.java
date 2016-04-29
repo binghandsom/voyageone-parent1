@@ -1,80 +1,114 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.common.Constants;
 
-import java.util.regex.Pattern;
-
-/**
- * Created by jeff.duan on 2016/4/20.
- */
 public class CmsBtImagesModel extends BaseModel {
-    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
-    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
-    //    private Long id;
+
+    /**
+
+     */
     private String channelId;
+    /**
+
+     */
     private String code;
+    /**
+
+     */
     private String originalUrl;
+    /**
+
+     */
     private String imgName;
-    private Integer updFlg;
+    /**
 
-    public CmsBtImagesModel(String channelId, String code, String imageUrl, int index, String modifier){
-        this.channelId = channelId;
-        this.originalUrl = imageUrl;
-        this.imgName = channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index;
-        this.code = code;
-        this.updFlg = 0;
-        this.setCreater(modifier);
+     */
+    private int updFlg;
+
+
+    /**
+
+     */
+    public String getChannelId() {
+
+        return this.channelId;
     }
 
-    public CmsBtImagesModel(){
-        super();
-    }
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public void setChannelId(String channelId) {
+        if (channelId != null) {
+            this.channelId = channelId;
+        } else {
+            this.channelId = "";
+        }
 
+    }
+
+
+    /**
+
+     */
     public String getCode() {
-        return code;
+
+        return this.code;
     }
 
     public void setCode(String code) {
-        this.code = code;
+        if (code != null) {
+            this.code = code;
+        } else {
+            this.code = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getOriginalUrl() {
-        return originalUrl;
+
+        return this.originalUrl;
     }
 
     public void setOriginalUrl(String originalUrl) {
-        this.originalUrl = originalUrl;
+        if (originalUrl != null) {
+            this.originalUrl = originalUrl;
+        } else {
+            this.originalUrl = "";
+        }
+
     }
 
+
+    /**
+
+     */
     public String getImgName() {
-        return imgName;
+
+        return this.imgName;
     }
 
     public void setImgName(String imgName) {
-        this.imgName = imgName;
+        if (imgName != null) {
+            this.imgName = imgName;
+        } else {
+            this.imgName = "";
+        }
+
     }
 
-    public Integer getUpdFlg() {
-        return updFlg;
+
+    /**
+
+     */
+    public int getUpdFlg() {
+
+        return this.updFlg;
     }
 
     public void setUpdFlg(int updFlg) {
         this.updFlg = updFlg;
     }
 
-    public String getChannelId() {
-        return channelId;
-    }
 
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 }

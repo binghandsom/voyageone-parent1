@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.service.impl.cms.StoreOperationService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
@@ -48,7 +49,7 @@ public class StoreOperationCtrl extends CmsController {
 
 
     public int getConfigHours(String channelId) {
-        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode("000", CmsConstants.ChannelConfig.STORE_OPERATION_INTERVAL_TIME);
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.STORE_OPERATION_INTERVAL_TIME);
 
         if (config == null || config.getConfigValue1() == null) {
             return INTERVAL_DEFAULT;

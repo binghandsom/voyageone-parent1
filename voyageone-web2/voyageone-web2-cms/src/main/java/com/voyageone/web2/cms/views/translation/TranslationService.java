@@ -4,8 +4,10 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
 import com.voyageone.service.impl.cms.CustomWordService;
@@ -58,7 +60,6 @@ public class TranslationService extends BaseAppService {
             "fields.translator",
             "fields.translateStatus",
             "fields.clientProductUrl",
-            "groups.platforms",
             "modified"};
 
     /**
@@ -68,17 +69,11 @@ public class TranslationService extends BaseAppService {
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
-
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
-
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']}," +
-                "'groups.platforms':{$elemMatch: {'cartId': 0, 'isMain': 1}}," +
-                "'fields.translateStatus':'0'," +
-                "'fields.translator':'%s'," +
-                "'fields.translateTime':{'$gt':'%s'}}", userInfo.getUserName(), translateTimeStr);
+        String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'0','fields.isMasterMain':1," +
+                "'fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}", userInfo.getUserName(), translateTimeStr);
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
@@ -88,7 +83,7 @@ public class TranslationService extends BaseAppService {
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(userInfo.getSelChannelId(), queryObject);
 
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(userInfo.getSelChannelId(), cmsBtProductModels);
-
+        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
         translateTaskBean.setProdListTotal(cmsBtProductModels.size());
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
@@ -205,7 +200,7 @@ public class TranslationService extends BaseAppService {
             return this.getUndoneTasks(userInfo);
         }
 
-        String tasksQueryStr = String.format("{'groups.platforms.cartId':0,'fields.translator':'%s'", userInfo.getUserName());
+        String tasksQueryStr = String.format("{'fields.translator':'%s'", userInfo.getUserName());
         if (!StringUtils.isEmpty(condition)) {
             tasksQueryStr = tasksQueryStr + String.format(",$or:[{'fields.code':{$regex:'%s'}}," +
                             "{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}}," +
@@ -467,7 +462,7 @@ public class TranslationService extends BaseAppService {
      */
     public List<Map<String, Object>> getTransLenSet() {
         List<Map<String, Object>> result = new ArrayList<>();
-        List<CmsChannelConfigBean> configBeans = CmsChannelConfigs.getConfigBeans("000", CmsConstants.ChannelConfig.TRANS_LEN_SET);
+        List<CmsChannelConfigBean> configBeans = CmsChannelConfigs.getConfigBeans(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.TRANS_LEN_SET);
         for (CmsChannelConfigBean config : configBeans) {
             Map<String, Object> configMap = new HashMap<>();
 

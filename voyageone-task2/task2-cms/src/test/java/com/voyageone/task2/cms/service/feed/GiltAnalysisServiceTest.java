@@ -1,11 +1,14 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.components.gilt.service.GiltSkuService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
 
 /**
  * @author Jonas, 2/3/16.
@@ -24,6 +27,6 @@ public class GiltAnalysisServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        giltAnalysisService.startup();
+        giltAnalysisService.onStartup(new ArrayList<TaskControlBean>());
     }
 }

@@ -30,7 +30,7 @@ public class SEAnalysisService extends BaseTaskService {
 
     private final static Pattern ALL_ZERO = Pattern.compile("^0+$");
 
-    private final static String FILE_PATH = "/opt/app-shared/voyageone_web/contents/other/third_party/016/Feed/";
+    private final static String FILE_PATH = "/usr/web/contents/other/third_party/016/Feed/";
 
     @Autowired
     private ShoeCityDao shoeCityDao;

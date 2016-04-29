@@ -10,8 +10,8 @@
         select `seq`,`cartId`,`catId`,`fieldId`,`type`,`created`,`creater`,`modified`,`modifier` from
         cms_mt_platform_special_field
         <where>
-            <if test="seq != null">
-                AND `seq` = #{seq}
+            <if test="id != null">
+                AND `id` = #{id}
             </if>
             <if test="cartId != null">
                 AND `cartId` = #{cartId}
@@ -40,7 +40,7 @@
         </where>
     </select>
     <select id="selectOne" resultMap="ResultMap">
-        select `seq`,`cartId`,`catId`,`fieldId`,`type`,`created`,`creater`,`modified`,`modifier` from
+        select `id`,`cartId`,`catId`,`fieldId`,`type`,`created`,`creater`,`modified`,`modifier` from
         cms_mt_platform_special_field
         <where>
 
@@ -83,14 +83,15 @@
         limit 1
     </select>
     <select id="select" resultMap="ResultMap">
-        select `seq`,`cartId`,`catId`,`fieldId`,`type`,`created`,`creater`,`modified`,`modifier` from cms_mt_platform_special_field where id=#{id}
+        select `id`,`cartId`,`catId`,`fieldId`,`type`,`created`,`creater`,`modified`,`modifier` from
+        cms_mt_platform_special_field where id=#{id}
     </select>
 
     <update id="update">
         update cms_mt_platform_special_field
         set
 
-            `seq`=#{seq}
+        `id`=#{id}
             ,`cartId`=#{cartId}
             ,`catId`=#{catId}
             ,`fieldId`=#{fieldId}
@@ -108,7 +109,6 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO cms_mt_platform_special_field
         (
-              `seq`,
               `cartId`,
               `catId`,
               `fieldId`,
@@ -119,7 +119,6 @@
               `modifier`
         )
         VALUES(
-              #{seq},
               #{cartId},
               #{catId},
               #{fieldId},
