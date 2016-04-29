@@ -337,18 +337,18 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    from voyageone_cms2.cms_zz_feed_bhfo_product_temp
     where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    delete from voyageone_cms2.cms_zz_feed_bhfo_product_temp
     where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
   </delete>
   <delete id="delete">
-    delete from voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    delete from voyageone_cms2.cms_zz_feed_bhfo_product_temp
   </delete>
   <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
-    insert into voyageone_cms2.cms_zz_worktable_bhfo_superfeed (Inventory_Number, MSRP, VoyageOne_Price, 
+    insert into voyageone_cms2.cms_zz_feed_bhfo_product_temp (Inventory_Number, MSRP, VoyageOne_Price, 
       Shipping_Cost, Weight, md5, 
       Title, Description, Main_Image_URL, 
       Quantity, Additional_Images, Parent_Child_Standalone, 
@@ -560,7 +560,7 @@
       #{bandSize,jdbcType=LONGVARCHAR}, #{walletWidthInches,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
-    insert into voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    insert into voyageone_cms2.cms_zz_feed_bhfo_product_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="inventoryNumber != null" >
         Inventory_Number,
@@ -2235,7 +2235,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
-    update voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    update voyageone_cms2.cms_zz_feed_bhfo_product_temp
     <set >
       <if test="msrp != null" >
         MSRP = #{msrp,jdbcType=VARCHAR},
@@ -3072,7 +3072,7 @@
     where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
-    update voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    update voyageone_cms2.cms_zz_feed_bhfo_product_temp
     set MSRP = #{msrp,jdbcType=VARCHAR},
       VoyageOne_Price = #{voyageonePrice,jdbcType=VARCHAR},
       Shipping_Cost = #{shippingCost,jdbcType=VARCHAR},
@@ -3353,7 +3353,7 @@
     where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
-    update voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    update voyageone_cms2.cms_zz_feed_bhfo_product_temp
     set MSRP = #{msrp,jdbcType=VARCHAR},
       VoyageOne_Price = #{voyageonePrice,jdbcType=VARCHAR},
       Shipping_Cost = #{shippingCost,jdbcType=VARCHAR},
@@ -3430,7 +3430,7 @@
   </select>
 
   <update id="updateFlagBySku"  parameterType="java.util.List">
-    UPDATE voyageone_cms2.cms_zz_worktable_bhfo_superfeed set UpdateFlag = 3 where UpdateFlag = 1 and `Inventory_Number` in (
+    UPDATE voyageone_cms2.cms_zz_feed_bhfo_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `Inventory_Number` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>
@@ -3438,8 +3438,8 @@
   </update>
 
   <insert id="insertFullBySku"  parameterType="java.util.List">
-    INSERT INTO voyageone_cms2.cms_zz_worktable_bhfo_superfeed_full SELECT * from
-    voyageone_cms2.cms_zz_worktable_bhfo_superfeed where `Inventory_Number` in
+    INSERT INTO voyageone_cms2.cms_zz_feed_bhfo_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_bhfo_product_temp where `Inventory_Number` in
     (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
@@ -3450,7 +3450,7 @@
   <delete id="delFullBySku" parameterType="java.util.List">
     DELETE
     FROM
-    voyageone_cms2.cms_zz_worktable_bhfo_superfeed
+    voyageone_cms2.cms_zz_feed_bhfo_product_temp
     where `Inventory_Number` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
