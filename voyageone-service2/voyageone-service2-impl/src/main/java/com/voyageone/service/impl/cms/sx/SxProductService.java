@@ -478,8 +478,8 @@ public class SxProductService extends BaseService {
      * @return Map<field_id, mt里转换后的值>
      * @throws Exception
      */
-    public Map<String, Object> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
-        Map<String, Object> retMap = null;
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Field> retMap = null;
 
         // TODO:特殊字段处理
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
@@ -502,7 +502,7 @@ public class SxProductService extends BaseService {
                 if (mappingBean == null) {
                     continue;
                 }
-                Map<String, Object> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+                Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
                 if (resolveField != null) {
                     if (retMap == null) {
                         retMap = new HashMap<>();
@@ -515,8 +515,8 @@ public class SxProductService extends BaseService {
         return retMap;
     }
 
-    public Map<String, Object> resolveMapping(MappingBean mappingBean, Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
-        Map<String, Object> retMap = null;
+    public Map<String, Field> resolveMapping(MappingBean mappingBean, Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Field> retMap = null;
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
             retMap = new HashMap();
@@ -528,23 +528,34 @@ public class SxProductService extends BaseService {
 
             switch (field.getType()) {
                 case INPUT: {
-                    retMap.put(field.getId(), expressionValue);
-                    ((InputField) field).setValue(expressionValue);
+                    InputField inputField = (InputField) field;
+                    inputField.setValue(expressionValue);
+                    retMap.put(field.getId(), inputField);
+//                    ((InputField) field).setValue(expressionValue);
                     break;
                 }
                 case SINGLECHECK: {
-                    retMap.put(field.getId(), expressionValue);
-                    ((SingleCheckField) field).setValue(expressionValue);
+                    SingleCheckField singleCheckField = (SingleCheckField) field;
+                    singleCheckField.setValue(expressionValue);
+                    retMap.put(field.getId(), singleCheckField);
+//                    ((SingleCheckField) field).setValue(expressionValue);
                     break;
                 }
                 case MULTIINPUT:
                     break;
                 case MULTICHECK: {
                     String[] valueArrays = ExpressionParser.decodeString(expressionValue);
-                    retMap.put(field.getId(), Arrays.asList(valueArrays));
-                    for (String value : valueArrays) {
-                        ((MultiCheckField) field).addValue(value);
+
+                    MultiCheckField multiCheckField = (MultiCheckField)field;
+                    for (String val : valueArrays) {
+                        multiCheckField.addValue(val);
                     }
+                    retMap.put(field.getId(), multiCheckField);
+
+//                    retMap.put(field.getId(), Arrays.asList(valueArrays));
+//                    for (String value : valueArrays) {
+//                        ((MultiCheckField) field).addValue(value);
+//                    }
                     break;
                 }
                 case COMPLEX:
