@@ -40,6 +40,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by jeff.duan on 2016/03/04.
@@ -2167,9 +2168,9 @@ public class CmsTaskStockService extends BaseAppService {
             // 属性值
             String value = (String) property.get("value");
             // 属性输入check
-            if (StringUtils.isEmpty(value) || value.getBytes().length > 500) {
-                // [属性]必须输入且长度小于500
-                throw new BusinessException("7000028", new String[]{name, "500"});
+            if (!StringUtils.isEmpty(value) && value.getBytes().length > 500) {
+                // [属性]长度必须小于500
+                throw new BusinessException("7000075", new String[]{name, "500"});
             }
         }
 
@@ -2213,6 +2214,16 @@ public class CmsTaskStockService extends BaseAppService {
         if (stockSeparateItem.size() > 0) {
             // Sku已经存在
             throw new BusinessException("7000034");
+        }
+
+        // 验证channelId + sku 在逻辑库存表里是否存在
+        Map<String, Object> sqlParam1 = new HashMap<>();
+        sqlParam1.put("channelId", (String) param.get("channelId"));
+        sqlParam1.put("sku", sku);
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam1);
+        if (listLogicInventory.size() == 0) {
+            // 不能新建不正确的Sku
+            throw new BusinessException("7000076");
         }
     }
 
@@ -2737,11 +2748,21 @@ public class CmsTaskStockService extends BaseAppService {
                 }});
             }
         }
+        // 在逻辑库表中已经存在的sku列表
+        List<String> skuInLogicInventory = new ArrayList<>();
+        if (EXCEL_IMPORT_ADD.equals(importMode)) {
+            Map<String, Object> sqlParam1 = new HashMap<>();
+            sqlParam1.put("channelId", (String) param.get("channelId"));
+            List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam1);
+            if (listLogicInventory.size() > 0) {
+                skuInLogicInventory = listLogicInventory.stream().map(WmsBtInventoryCenterLogicModel::getSku).collect(Collectors.toList());
+            }
+        }
         $info("库存隔离数据取得结束");
 
         $info("导入Excel取得并check的处理开始");
         Map<String, List<String>> mapSku = new HashMap<>();
-        List<StockExcelBean> saveData = readExcel(file, importMode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
+        List<StockExcelBean> saveData = readExcel(file, importMode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean, skuInLogicInventory);
         $info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
@@ -2765,9 +2786,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB            cms_bt_stock_separate_item的数据
      * @param mapSku                原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      * @param resultBean            返回内容
+     * @param skuInLogicInventory 在逻辑库表中已经存在的sku列表
      * @return 更新对象
      */
-    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, List<String>> mapSku, Map<String, Object> resultBean) {
+    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, List<String>> mapSku, Map<String, Object> resultBean, List<String> skuInLogicInventory) {
         List<StockExcelBean> saveData = new ArrayList<>();
         List<String> listExcelSku = new ArrayList<>();
 
@@ -2790,7 +2812,7 @@ public class CmsTaskStockService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku, mapSku);
+                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku, mapSku, skuInLogicInventory);
                 if (isExecutingData && !hasExecutingData) {
                     hasExecutingData = true; // batch处理中数据存在
                 }
@@ -2924,9 +2946,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB   cms_bt_stock_separate_item的数据
      * @param saveData     保存对象
      * @param listExcelSku Excel输入的sku
+     * @param skuInLogicInventory 在逻辑库表中已经存在的sku列表
      * @param mapSku       原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      */
-    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku, Map<String, List<String>> mapSku) {
+    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku, Map<String, List<String>> mapSku,  List<String> skuInLogicInventory) {
         boolean isExecutingData = false; // 是否是隔离中,还原中,等待隔离,等待还原的数据
 
         String model = getCellValue(row, 0); // Model
@@ -2959,9 +2982,9 @@ public class CmsTaskStockService extends BaseAppService {
         for (int index = 3; index <= colPlatform[0] - 2; index++) {
             // 属性
             String property = getCellValue(row, index);
-            if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
-                // [属性]必须输入且长度小于500.Sku=[出错的sku]
-                throw new BusinessException("7000042", new String[]{getCellValue(rowHeader, index), "500", sku});
+            if (!StringUtils.isEmpty(property) && property.getBytes().length > 500) {
+                // [属性]长度必须小于500.Sku=[出错的sku]
+                throw new BusinessException("7000078", new String[]{getCellValue(rowHeader, index), "500", sku});
             }
         }
 
@@ -3000,6 +3023,12 @@ public class CmsTaskStockService extends BaseAppService {
                 if (mapCartIdInDB != null) {
                     // Sku = [出错的sku]的数据在DB里已经存在,不能增量
                     throw new BusinessException("7000046", sku);
+                }
+
+                // Sku在库存隔离表中不存在
+                if (!skuInLogicInventory.contains(sku)) {
+                    // Sku = [出错的sku]的逻辑库存不存在,不能增量
+                    throw new BusinessException("7000077", sku);
                 }
 
                 StockExcelBean bean = new StockExcelBean();
