@@ -38,10 +38,15 @@ class SEAnalysisContext {
         CmsBtFeedInfoModel_Sku sku = new CmsBtFeedInfoModel_Sku();
 
         sku.setSku(feedBean.getSku());
-        if (NUM_REGEX.matcher(feedBean.getSize()).matches())
-            sku.setSize(String.valueOf(Integer.valueOf(feedBean.getSize()) / 10));
-        else
+        if (NUM_REGEX.matcher(feedBean.getSize()).matches()) {
+            String size = String.valueOf(Integer.valueOf(feedBean.getSize()) / 10);
+            if(Integer.valueOf(feedBean.getSize()) % 10 != 0){
+                size +="."+Integer.valueOf(feedBean.getSize()) % 10;
+            }
+            sku.setSize(size);
+        }else {
             sku.setSize(feedBean.getSize());
+        }
         sku.setBarcode(feedBean.getUpc());
         sku.setClientSku(feedBean.getClientSku());
         sku.setPriceNet(feedBean.getCost().doubleValue());
