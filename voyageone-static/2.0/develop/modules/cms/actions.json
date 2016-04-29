@@ -278,12 +278,16 @@
           "search": "search",
           "updateFinishStatus": "updateFinishStatus"
         }
+      },
+      "$storeOpService":{
+        "root":"/cms/system/store_operation/",
+        "init":"init",
+        "rePublist":"rePublish",
+        "reUpload":"reUpload",
+        "rePublistPrice":"rePublishPrice",
+        "getHistory":"getHistory"
       }
     },
-
-
-
-
     "pop": {
       "$addToPromotionService": {
         "root": "/cms/pop/add_to_promotion",
@@ -347,6 +351,14 @@
             "updateCartIds":"updateCartIds",
             "genKey":"genKey"
           }
+      },
+      "tag": {
+        "channelTagService": {
+          "root": "/cms/channel/tag",
+          "init": "init",
+          "save": "saveTag",
+          "del": "delTag"
+        }
       }
     }
   }

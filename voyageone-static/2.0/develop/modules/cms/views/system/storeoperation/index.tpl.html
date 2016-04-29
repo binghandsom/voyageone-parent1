@@ -87,34 +87,37 @@
                     </div>
                 </div>
                 <!-------------------------------------------------- main table datas-------------------------------------------------------->
-                <div class="table-responsive">
-                        <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
-                            <thead>
-                            <tr>
-                                <th class="mfb-xt text-center">序号</th>
-                                <th class="mfb-xxt text-center">操作类型</th>
-                                <th class="mfb-xxt text-center">操作者</th>
-                                <th class="mfb-xxt text-center">操作时间</th>
-                            </tr>
-                            </thead>
-                           </table>
-                        <div class="col-sm-12 " if-no-rows="store.storeDataList.length" style="padding-left:0px">
-                            <table>
-                                <tbody ng-repeat="productInfo in store.storeDataList">
+                <div class="table-responsive box-body">
+                    <div class="table-responsive">
+                        <div class="col-sm-12 dropdown_table_main">
+                            <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+                                <thead>
                                 <tr>
-                                    <td class="mfb-xt text-center">{{$index + 1}}</td>
-                                    <td class="mfb-xxt text-center">{{productInfo.operationType}}</td>
-                                    <td class="mfb-xxt text-center">{{productInfo.modifier}}</td>
-                                    <td class="mfb-xxt text-center">{{productInfo.modified}}</td>
+                                    <th class="mfb-xt text-center">序号</th>
+                                    <th class="mfb-xxt text-center">操作类型</th>
+                                    <th class="mfb-xxt text-center">操作者</th>
+                                    <th class="mfb-xxt text-center">操作时间</th>
                                 </tr>
-                                </tbody>
+                                </thead>
                             </table>
+                            <div if-no-rows="store.storeDataList.length" style="padding-left:0px">
+                                <table class="table dropdown_table_main"  width="100%">
+                                    <tbody >
+                                        <tr ng-repeat="productInfo in store.storeDataList">
+                                            <td class="mfb-xt text-center">{{$index + 1}}</td>
+                                            <td class="mfb-xxt text-center">{{productInfo.operationType}}</td>
+                                            <td class="mfb-xxt text-center">{{productInfo.modifier}}</td>
+                                            <td class="mfb-xxt text-center">{{productInfo.modified}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                           </div>
                         </div>
+                    </div>
                 </div>
-
-            </div>
-            <div class="col-sm-12 m-t-lg m-b-lg">
-                <vpagination config="store.storePageOption"></vpagination>
+                <div class="col-sm-12 m-t-lg m-b-lg">
+                    <vpagination config="store.storePageOption"></vpagination>
+                </div>
             </div>
         </tab>
 
