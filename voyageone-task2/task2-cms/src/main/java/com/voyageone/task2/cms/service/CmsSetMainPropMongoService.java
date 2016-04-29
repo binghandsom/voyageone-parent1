@@ -108,8 +108,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private CmsBtImagesDaoExt cmsBtImageDaoExt;
     @Autowired
     private FeedInfoService feedInfoService;
-    @Autowired
-    private CmsBtDataAmountDao cmsBtDataAmountDao;
     // jeff 2016/04 add end
 //    @Autowired
 //    private ImagesService imagesService;
@@ -693,7 +691,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return null;
             }
             // ProductCarts
-            product.setCarts(getProductCarts(feed));
+            // product.setCarts(getProductCarts(feed));
             product.setFields(field);
 
             // 获取当前channel, 有多少个platform
@@ -1381,24 +1379,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 新建的件数
             if (insertCnt > 0) {
-                CmsBtDataAmountModel insertModel = new CmsBtDataAmountModel();
-                insertModel.setChannelId(channel.getOrder_channel_id());
-                insertModel.setAmountName(CmsConstants.DataAmount.FEED_TO_MASTER_INSERT);
-                insertModel.setAmountVal(String.valueOf(insertCnt));
-                insertModel.setComment("Feed导入Master新建");
-                insertModel.setCreater(getTaskName());
-                cmsBtDataAmountDao.insert(insertModel);
+                dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_INSERT, String.valueOf(insertCnt), "Feed导入Master新建", getTaskName());
             }
 
             // 新建的件数
             if (updateCnt > 0) {
-                CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
-                updateModel.setChannelId(channel.getOrder_channel_id());
-                updateModel.setAmountName(CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE);
-                updateModel.setAmountVal(String.valueOf(updateCnt));
-                updateModel.setComment("Feed导入Master更新");
-                updateModel.setCreater(getTaskName());
-                cmsBtDataAmountDao.insert(updateModel);
+                dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE, String.valueOf(updateCnt), "Feed导入Master更新", getTaskName());
             }
         }
         // jeff 2016/04 add end
