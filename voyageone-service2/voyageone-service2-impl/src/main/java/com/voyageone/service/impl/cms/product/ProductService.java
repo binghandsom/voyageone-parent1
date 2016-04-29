@@ -498,12 +498,13 @@ public class ProductService extends BaseService {
 //            carts.add(Integer.valueOf(typeChannelBean.getValue()));
 //        }
 
-        // 根据商品code获取其所有group信息(所有平台)
-        List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getFields().getCode() + "\"}", channelId);
-        Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
+        if (carts != null && carts.size() > 0) {
+            // 根据商品code获取其所有group信息(所有平台)
+            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getFields().getCode() + "\"}", channelId);
+            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
-        // 获取所有的可上新的平台group信息
-        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+            // 获取所有的可上新的平台group信息
+            List<CmsBtSxWorkloadModel> models = new ArrayList<>();
 //            for(CmsBtProductModel_Group_Platform platform : platforms) {
 //                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
 //                if (carts.contains(platform.getCartId()) && isNeed) {
@@ -516,19 +517,20 @@ public class ProductService extends BaseService {
 //                    models.add(model);
 //                }
 //            }
-        for(CmsBtProductModel_Carts cartInfo : carts) {
-            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-            model.setChannelId(channelId);
-            model.setGroupId(platformsMap.get(cartInfo.getCartId()).intValue());
-            model.setCartId(cartInfo.getCartId());
-            model.setPublishStatus(0);
-            model.setCreater(modifier);
-            model.setModifier(modifier);
-            models.add(model);
-        }
+            for (CmsBtProductModel_Carts cartInfo : carts) {
+                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                model.setChannelId(channelId);
+                model.setGroupId(platformsMap.get(cartInfo.getCartId()).intValue());
+                model.setCartId(cartInfo.getCartId());
+                model.setPublishStatus(0);
+                model.setCreater(modifier);
+                model.setModifier(modifier);
+                models.add(model);
+            }
 
-        if (models.size() > 0) {
-            cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+            if (models.size() > 0) {
+                cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+            }
         }
 //        }
     }
