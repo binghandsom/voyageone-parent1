@@ -1,4 +1,4 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
