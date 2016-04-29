@@ -3,6 +3,7 @@ package com.voyageone.service.bean.openapi.image;
 import com.voyageone.service.bean.openapi.ErrorEnumInterface;
 
 public enum ImageErrorEnum implements ErrorEnumInterface {
+    ParametersRequired(10100,"The parameters required"),
     ImageTemplateNotNull(10101, "Image template must not be null"),
     ChannelIdNotNull(10102, "ChannelId must not be null"),
     FileNotNull(10103, "File  must not be null"),

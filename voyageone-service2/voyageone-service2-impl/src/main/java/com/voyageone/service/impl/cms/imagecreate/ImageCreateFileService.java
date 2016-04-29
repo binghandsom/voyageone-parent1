@@ -148,12 +148,12 @@ public class ImageCreateFileService extends BaseService {
             if (modelFile != null) {
                 modelFile.setErrorCode(errorCode);
                 modelFile.setErrorMsg(errorMsg);
-                this.changeModel(modelFile);
             }
             modelTaskDetail.setStatus(2);
         } else {
             modelTaskDetail.setStatus(1);
         }
+        this.changeModel(modelFile);//一起保存
         modelTaskDetail.setEndTime(new Date());
         daoCmsMtImageCreateTaskDetail.update(modelTaskDetail);
     }

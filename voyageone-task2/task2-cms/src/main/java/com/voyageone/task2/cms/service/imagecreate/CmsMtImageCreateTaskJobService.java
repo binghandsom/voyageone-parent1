@@ -1,8 +1,8 @@
 package com.voyageone.task2.cms.service.imagecreate;
-
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.service.impl.cms.imagecreate.AliYunOSSFileService;
 import com.voyageone.service.impl.cms.imagecreate.CmsMtImageCreateTaskDetailService;
+import com.voyageone.service.impl.cms.imagecreate.CmsMtImageCreateTaskService;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob)
 public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
@@ -25,6 +23,8 @@ public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
     ImageCreateFileService serviceImageCreateFile;
     @Autowired
     CmsMtImageCreateTaskDetailService serviceCmsMtImageCreateTaskDetail;
+    @Autowired
+    CmsMtImageCreateTaskService serviceCmsMtImageCreateTask;
     private static final Logger LOG = LoggerFactory.getLogger(AliYunOSSJobService.class);
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -34,12 +34,14 @@ public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
 
         List<Runnable> threads = new ArrayList<>();
         for (CmsMtImageCreateTaskDetailModel modelTaskDetail : list) {
-            threads.add(new Runnable() {
-                @Override
-                public void run() {
-                    serviceImageCreateFile.createAndUploadImage(modelTaskDetail);
-                }
-            });
+            if (modelTaskDetail.getStatus() == 0) {
+                threads.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        serviceImageCreateFile.createAndUploadImage(modelTaskDetail);
+                    }
+                });
+            }
         }
         runWithThreadPool(threads, taskControlList);
     }

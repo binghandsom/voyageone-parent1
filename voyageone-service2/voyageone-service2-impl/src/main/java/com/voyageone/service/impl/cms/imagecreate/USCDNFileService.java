@@ -35,32 +35,32 @@ public class USCDNFileService extends BaseService {
             //清楚报错信息
             modelFile.setErrorCode(0);
             modelFile.setErrorMsg("");
-            daoCmsMtImageCreateFile.update(modelFile);
+           // daoCmsMtImageCreateFile.update(modelFile);
         }
     }
 
-    public void jobUpload(int CmsMtImageCreateFileRowId) {
-        CmsMtImageCreateFileModel modelFile = null;
-        try {
-            modelFile = daoCmsMtImageCreateFile.select(CmsMtImageCreateFileRowId);
-            upload(modelFile);
-        } catch (OpenApiException ex) {
-            //业务异常
-            if (modelFile != null) {
-                modelFile.setErrorCode(ex.getErrorCode());
-                modelFile.setErrorMsg(ex.getMsg());
-                daoCmsMtImageCreateFile.update(modelFile);
-            }
-        } catch (Exception ex) {
-            //未知异常
-            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-            $error("jobUpload requestId:" + requestId, ex);
-            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM, "jobUpload requestId:" + requestId);
-            if (modelFile != null) {
-                modelFile.setErrorCode(ImageErrorEnum.SystemError.getCode());
-                modelFile.setErrorMsg("requestId:" + requestId + ex.getMessage());
-                daoCmsMtImageCreateFile.update(modelFile);
-            }
-        }
-    }
+//    public void jobUpload(int CmsMtImageCreateFileRowId) {
+//        CmsMtImageCreateFileModel modelFile = null;
+//        try {
+//            modelFile = daoCmsMtImageCreateFile.select(CmsMtImageCreateFileRowId);
+//            upload(modelFile);
+//        } catch (OpenApiException ex) {
+//            //业务异常
+//            if (modelFile != null) {
+//                modelFile.setErrorCode(ex.getErrorCode());
+//                modelFile.setErrorMsg(ex.getMsg());
+//                daoCmsMtImageCreateFile.update(modelFile);
+//            }
+//        } catch (Exception ex) {
+//            //未知异常
+//            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+//            $error("jobUpload requestId:" + requestId, ex);
+//            issueLog.log(ex, ErrorType.OpenAPI, SubSystem.COM, "jobUpload requestId:" + requestId);
+//            if (modelFile != null) {
+//                modelFile.setErrorCode(ImageErrorEnum.SystemError.getCode());
+//                modelFile.setErrorMsg("requestId:" + requestId + ex.getMessage());
+//                daoCmsMtImageCreateFile.update(modelFile);
+//            }
+//        }
+//    }
 }
