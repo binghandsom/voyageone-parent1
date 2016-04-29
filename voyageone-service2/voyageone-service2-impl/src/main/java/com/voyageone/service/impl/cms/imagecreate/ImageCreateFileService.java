@@ -119,6 +119,7 @@ public class ImageCreateFileService extends BaseService {
             modelFile = cmsMtImageCreateFileDao.select(CmsMtImageCreateFileId);
             //.创建并上传图片
             isCreateNewFile = createAndUploadImage(modelFile);
+            ImagePathCache.set(modelFile.getHashCode(),modelFile.getOssFilePath());
         } catch (OpenApiException ex) {
             //4.处理业务异常
             errorCode = ex.getErrorCode();

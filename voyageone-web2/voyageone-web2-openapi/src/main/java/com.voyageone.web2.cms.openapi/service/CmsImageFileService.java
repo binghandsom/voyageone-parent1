@@ -12,6 +12,7 @@ import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
+import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
@@ -51,7 +52,7 @@ public class CmsImageFileService extends BaseService {
         if (StringUtil.isEmpty(vparam)) {
             resultBean.setSubEnumError(ImageErrorEnum.VParamNotNull);
         }
-        if(resultBean.getSubErrorList().size()>0)
+        if(resultBean.getSubErrorList()!=null&&resultBean.getSubErrorList().size()>0)
         {
             resultBean.setEnumError(ImageErrorEnum.ParametersRequired);
         }
@@ -69,6 +70,14 @@ public class CmsImageFileService extends BaseService {
             }
             //hashCode做缓存key
             long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam);
+           String ossFilePath=ImagePathCache.get(hashCode);
+            if(!StringUtil.isEmpty(ossFilePath))
+            {
+                GetImageResultData resultData=new GetImageResultData();
+                resultData.setFilePath(ossFilePath);
+                result.setResultData(resultData);
+                return  result;
+            }
             $info("CmsImageFileService:getImage create hashCode end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s]", channelId, templateId, file, vparam, hashCode);
             //getModel
             modelFile = imageCreateFileService.getModelByHashCode(hashCode);
@@ -80,6 +89,7 @@ public class CmsImageFileService extends BaseService {
             }
             //.创建并上传图片
             isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile);
+            ImagePathCache.set(hashCode,modelFile.getOssFilePath());
         } catch (OpenApiException ex) {
             //4.处理业务异常
             result.setErrorCode(ex.getErrorCode());
@@ -132,7 +142,7 @@ public class CmsImageFileService extends BaseService {
                 long hashCode = imageCreateFileService.getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
                 modelCmsMtImageCreateFile = imageCreateFileService.getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile==null) {//1.创建记录信息
-                    modelCmsMtImageCreateFile= modelCmsMtImageCreateFile = imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode,imageInfo.isUploadUsCdn());
+                   modelCmsMtImageCreateFile = imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode,imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
