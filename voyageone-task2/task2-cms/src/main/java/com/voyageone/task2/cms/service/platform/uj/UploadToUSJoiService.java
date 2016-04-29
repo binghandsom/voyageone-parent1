@@ -71,7 +71,7 @@ public class UploadToUSJoiService extends BaseTaskService{
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TI.getId()));
+        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TMM.getId()));
         cmsBtSxWorkloadModels.forEach(this::upload);
     }
 
@@ -182,7 +182,7 @@ public class UploadToUSJoiService extends BaseTaskService{
         // 找出approved 并且 sku的carts里包含 28（usjoi的cartid）
         productModels.stream().filter(productModel -> "Approved".equalsIgnoreCase(productModel.getFields().getStatus())).forEach(productModel -> {
             List<CmsBtProductModel_Sku> skus = productModel.getSkus().stream()
-                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TI.getId())))
+                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TMM.getId())))
                     .collect(toList());
             if (skus.size() > 0) {
                 skus.forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setSkuCarts(null));

@@ -41,19 +41,19 @@
                                     <label class="col-sm-3 control-label">Price</label>
                                     <div class="col-sm-8">
                                         <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" value="price_client_msrp" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> MSRP(USD)
+                                            <input name="priceType" type="radio" value="priceClientMsrp" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> MSRP(USD)
                                         </label>
                                         <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" value="price_client_retail" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Retail Price(USD)
+                                            <input name="priceType" type="radio" value="priceClientRetail" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Retail Price(USD)
                                         </label>
                                         <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" value="price_net" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Cost Price(USD)
+                                            <input name="priceType" type="radio" value="priceNet" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Cost Price(USD)
                                         </label>
                                         <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" value="price_msrp" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> MSRP(RMB)
+                                            <input name="priceType" type="radio" value="priceMsrp" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> MSRP(RMB)
                                         </label>
                                         <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" value="price_current" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Retail Price(RMB)
+                                            <input name="priceType" type="radio" value="priceCurrent" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> Retail Price(RMB)
                                         </label>
                                     </div>
                                 </div>
@@ -183,21 +183,21 @@
                         <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.name}}</td>
                         <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.model}}</td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">
-                            <popover-text content="feedInfo.short_description" direct="left"></popover-text>
+                            <popover-text content="feedInfo.shortDescription" direct="left"></popover-text>
                         </td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">
-                            <popover-text content="feedInfo.long_description" direct="left"></popover-text>
+                            <popover-text content="feedInfo.longDescription" direct="left"></popover-text>
                         </td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.color}}</td>
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.origin}}</td>
-                        <td class="text-left mfb-x" style="overflow: hidden;"></td>
+                        <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.productType}}</td>
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.sizeType}}</td>
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.brand}}</td>
-                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].price_client_msrp}}</td>
-                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].price_client_retail}}</td>
-                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].price_net}}</td>
-                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].price_msrp}}</td>
-                        <td class="text-right mfb-xxt" style="overflow: hidden;">{{feedInfo.skus[0].price_current}}</td>
+                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceClientMsrp}}</td>
+                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].priceClientRetail}}</td>
+                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].priceNet}}</td>
+                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp}}</td>
+                        <td class="text-right mfb-xxt" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent}}</td>
                         <td class="text-center mfb-x" style="overflow: hidden;">
                             <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
                                 <div class="table_main">

@@ -3363,7 +3363,7 @@
   </update>
 
 
-  <resultMap id="resultMap_bhfo" type="com.voyageone.task2.cms.model.CmsBtFeedInfoBhfoModel">
+  <resultMap id="resultMap_bhfo" type="com.voyageone.task2.cms.model.CmsBtFeedInfoBhfoModel" autoMapping="true">
     <result column="category" property="category" />
     <result column="channel_id" property="channelId" />
     <result column="m_brand" property="brand" />
@@ -3378,8 +3378,6 @@
     <result column="p_made_in_country" property="origin" />
     <result column="client_product_url" property="clientProductURL"/>
     <result column="product_type" property="productType"/>
-    <result column="MPN" property="MPN"/>
-    <result column="Material" property="Material"/>
     <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
       <result column="i_sku" property="sku" />
       <result column="i_size" property="size" />
@@ -3423,8 +3421,9 @@
     ,${image} as image
     ,${client_product_url} as client_product_url
     ,${product_type} as product_type
-    ,MPN
-    ,Material
+    <if test="attr != null">
+      ,${attr}
+    </if>
     from
     ${tableName}
     ${keyword}

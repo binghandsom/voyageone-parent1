@@ -96,8 +96,8 @@ define([
                     } else {
                         feedInfo.skusCnt = skusList.length;
                         _.forEach(skusList, function (skuInfo) {
-                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.price_client_msrp)  + ', ' + $.trim(skuInfo.price_client_retail) + ', ' + $.trim(skuInfo.price_net)
-                                + ', ' + $.trim(skuInfo.price_msrp) + ', ' + $.trim(skuInfo.price_current);
+                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.priceClientMsrp)  + ', ' + $.trim(skuInfo.priceClientRetail) + ', ' + $.trim(skuInfo.priceNet)
+                                + ', ' + $.trim(skuInfo.priceMsrp) + ', ' + $.trim(skuInfo.priceCurrent);
                             feedInfo._popSkuInfo.push(skuDesc);
                         });
                     }
