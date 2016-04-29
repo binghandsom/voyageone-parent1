@@ -82,25 +82,6 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 查询指定平台下的所有主商品
-     *
-     * @param channelId
-     * @param cartId
-     * @return List<String> 商品code
-     */
-    public List<String> getMainProductList(String channelId, int cartId) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(String.format("{ \"cartId\":%d}", cartId));
-        List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObject, channelId);
-        if (grpObjList == null) {
-            return new ArrayList<>(0);
-        }
-        List<String> codeList = new ArrayList<>();
-        grpObjList.forEach(grpObj -> codeList.add(grpObj.getMainProductCode()));
-        return codeList;
-    }
-
-    /**
      * 更新group数据
      * @param model
      * @return

@@ -69,19 +69,11 @@ public class TranslationService extends BaseAppService {
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
-        // 先找到主产品
-        List<String> codeList = productGroupService.getMainProductList(userInfo.getSelChannelId(), 0);
-        String[] codeArr = new String[codeList.size()];
-        codeArr = codeList.toArray(codeArr);
-        String tasksQueryStr = "{" + MongoUtils.splicingValue("fields.code", codeArr, "$in");
-
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        tasksQueryStr += String.format(",'fields.status':{'$nin':['New']}," +
-                "'fields.translateStatus':'0'," +
-                "'fields.translator':'%s'," +
-                "'fields.translateTime':{'$gt':'%s'}}", userInfo.getUserName(), translateTimeStr);
+        String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'0','fields.isMasterMain':1," +
+                "'fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}", userInfo.getUserName(), translateTimeStr);
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
