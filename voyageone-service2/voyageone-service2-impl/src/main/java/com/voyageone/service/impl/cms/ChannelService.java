@@ -8,7 +8,7 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.OrderChannelDao;
 import com.voyageone.common.configs.dao.ShopDao;
-import com.voyageone.service.dao.cms.CmsBtConfigHistoryDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtConfigHistoryDao;
 import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
 import org.springframework.stereotype.Service;
 

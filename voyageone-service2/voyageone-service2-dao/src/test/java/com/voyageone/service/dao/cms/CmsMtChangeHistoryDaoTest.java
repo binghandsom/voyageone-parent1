@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.service.dao.cms.mongo.CmsBtConfigHistoryDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
