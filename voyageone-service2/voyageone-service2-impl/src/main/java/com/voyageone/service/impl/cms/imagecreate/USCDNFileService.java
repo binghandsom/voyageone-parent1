@@ -1,8 +1,5 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
-import com.voyageone.common.Snowflake.FactoryIdWorker;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.uscdn.service.USCDNClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
@@ -30,7 +27,7 @@ public class USCDNFileService extends BaseService {
         }
     }
 
-    @Retryable(maxAttempts=3)
+    @Retryable(maxAttempts = 3)
     public void upload(CmsMtImageCreateFileModel modelFile) throws OpenApiException {
         //上传USCDN
         if (modelFile.getUscdnState() == 0) {
@@ -39,7 +36,6 @@ public class USCDNFileService extends BaseService {
             //清楚报错信息
             modelFile.setErrorCode(0);
             modelFile.setErrorMsg("");
-           // daoCmsMtImageCreateFile.update(modelFile);
         }
     }
 

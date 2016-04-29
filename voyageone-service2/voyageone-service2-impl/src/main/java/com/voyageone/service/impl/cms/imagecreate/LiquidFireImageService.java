@@ -1,8 +1,5 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
-import com.voyageone.common.Snowflake.FactoryIdWorker;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.liquifire.service.LiquidFireClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
@@ -24,7 +21,7 @@ public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
 
-    @Retryable(maxAttempts=3)
+    @Retryable(maxAttempts = 3)
     public void createImage(CmsMtImageCreateFileModel modelFile, CmsMtImageCreateTemplateModel modelTemplate) throws Exception {
         try {
             String filePath = createImage(modelTemplate.getContent(), modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径

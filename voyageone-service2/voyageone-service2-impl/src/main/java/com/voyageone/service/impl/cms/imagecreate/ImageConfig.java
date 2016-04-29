@@ -1,16 +1,21 @@
 package com.voyageone.service.impl.cms.imagecreate;
+
 import com.voyageone.common.configs.Codes;
+
 public class ImageConfig {
     //阿里OSS
     public static String getAliYunEndpoint() {
         return getValue("AliYun_OSS_Confige", "endpoint");
     }
+
     public static String getAliYunAccessKeyId() {
         return getValue("AliYun_OSS_Confige", "accessKeyId");
     }
+
     public static String getAliYunAccessKeySecret() {
         return getValue("AliYun_OSS_Confige", "accessKeySecret");
     }
+
     public static String getAliYunBucketName() {
         return getValue("AliYun_OSS_Confige", "bucketName");
     }
@@ -18,38 +23,39 @@ public class ImageConfig {
     public static String getValue(String id, String code) {
         return Codes.getCodeName(id, code);
     }
+
     public static String getLiquidFireUrl() {
         return getValue("LiquidFire_Confige", "url");
     }
+
     public static String getLiquidFireImageSavePath() {
         return getValue("LiquidFire_Confige", "imageSavePath");
     }
+
     public static String getImageProxyIP() {
         return getValue("LiquidFire_Confige", "imageProxyIP");
     }
+
     public static String getImageProxyPort() {
         return getValue("LiquidFire_Confige", "imageProxyPort");
     }
 
 
-
-    public  static String getUSCDNUrl()
-    {
+    public static String getUSCDNUrl() {
         return getValue("US_CDN_Confige", "url");
     }
-    public  static String getUSCDNUserName()
-    {
+
+    public static String getUSCDNUserName() {
         return getValue("US_CDN_Confige", "userName");
     }
-    public  static String getUSCDNPassword()
-    {
+
+    public static String getUSCDNPassword() {
         return getValue("US_CDN_Confige", "password");
     }
-    public  static String getUSCDNWorkingDirectory()
-    {
+
+    public static String getUSCDNWorkingDirectory() {
         return getValue("US_CDN_Confige", "workingDirectory");
     }
-
 
 
 //    -- USCDN配置

@@ -1,8 +1,5 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
-import com.voyageone.common.Snowflake.FactoryIdWorker;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.aliyun.AliYunOSSClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
@@ -29,7 +26,7 @@ public class AliYunOSSFileService extends BaseService {
         }
     }
 
-    @Retryable(maxAttempts=3)
+    @Retryable(maxAttempts = 3)
     public void upload(CmsMtImageCreateFileModel modelFile) throws OpenApiException {
         //上传阿里OSS
         if (modelFile.getOssState() == 0) {

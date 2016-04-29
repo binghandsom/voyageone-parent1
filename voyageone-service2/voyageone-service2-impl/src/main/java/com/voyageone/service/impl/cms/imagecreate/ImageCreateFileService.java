@@ -106,6 +106,7 @@ public class ImageCreateFileService extends BaseService {
     public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(int templateId) {
         return cmsMtImageCreateTemplateDao.select(templateId);
     }
+
     //CmsMtImageCreateTaskDetailModel
     public void createAndUploadImage(CmsMtImageCreateTaskDetailModel modelTaskDetail) {
         boolean isCreateNewFile = false;
