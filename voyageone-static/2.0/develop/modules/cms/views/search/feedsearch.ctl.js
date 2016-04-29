@@ -64,8 +64,7 @@ define([
             if (feedObj.attsList.length == 0) {
                 return;
             }
-            $routeParams.attsList = feedObj.attsList;
-            this.openCodeDetail();
+            this.openCodeDetail({'attsList': feedObj.attsList});
         };
 
         /**
