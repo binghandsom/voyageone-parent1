@@ -1,51 +1,49 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.configs.beans.FeedBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.CamelUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.SuperFeedJEBean;
 import com.voyageone.task2.cms.bean.SuperfeedBhfoBean;
 import com.voyageone.task2.cms.dao.feed.BhfoFeedDao;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoBhfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BHFO;
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.JEWELRY;
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BHFO_MINIMALL;
 
 /**
  * @author james.li on 2016/4/25.
  * @version 2.0.0
  */
 @Service
-public class BhfoAnalysisService extends BaseTaskService {
+public class BhfoAnalysisService extends BaseAnalysisService {
 
     @Autowired
     BhfoFeedDao bhfoFeedDao;
-
-    @Autowired
-    private Transformer transformer;
-
-    @Autowired
-    private TransactionRunner transactionRunnerCms2;
-
-    @Autowired
-    private BhfoWsdlInsert insertService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -55,25 +53,6 @@ public class BhfoAnalysisService extends BaseTaskService {
     @Override
     public String getTaskName() {
         return "CmsBhfoAnalySisJob";
-    }
-
-    @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-
-        bhfoFeedDao.delete();
-
-        $info("BHFO产品信息插入开始");
-        int cnt = superFeedImport();
-        $info("BHFO产品信息插入完成 共" + cnt + "条数据");
-        if (cnt > 0) {
-//            insertSuperFeed(superFeedJEBean);
-
-            transformer.new Context(BHFO, this).transform();
-
-//            insertService.new Context(BHFO).postNewProduct();
-
-//            backupFeedFile(BHFO.getId());
-        }
     }
 
     /**
@@ -104,11 +83,11 @@ public class BhfoAnalysisService extends BaseTaskService {
 
         CsvReader reader;
         try {
-            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.BHFO.getId(), FeedEnums.Name.file_id);
-            String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.BHFO.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileName = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id);
+            String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
-            String encode = Feeds.getVal1(ChannelConfigEnums.Channel.BHFO.getId(), FeedEnums.Name.feed_ftp_file_coding);
+            String encode = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_file_coding);
 
             reader = new CsvReader(new FileInputStream(fileFullName), '|', Charset.forName(encode));
 
@@ -401,13 +380,11 @@ public class BhfoAnalysisService extends BaseTaskService {
                 superfeedBhfobean.setWalletWidthInches(reader.get(i++));
                 superfeedBhfobean.setMd5(reader.get(i++));
                 superfeed.add(superfeedBhfobean);
-
                 cnt++;
                 if (superfeed.size() > 1000) {
                     transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
                 }
-
             }
 
             if (superfeed.size() > 0) {
@@ -425,24 +402,74 @@ public class BhfoAnalysisService extends BaseTaskService {
         return cnt;
     }
 
-    private boolean backupFeedFile(String channel_id) {
-        $info("备份处理文件开始");
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String date_ymd = sdf.format(date);
+    @Override
+    public ChannelConfigEnums.Channel getChannel() {
+        return BHFO_MINIMALL;
+    }
 
-        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
-        File file = new File(filename);
-        File file_backup = new File(filename_backup);
+    /**
+     * 生成类目数据包含model product数据
+     */
+    protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String category) {
 
-        if (!file.renameTo(file_backup)) {
-//            logger.error("产品文件备份失败");
-            $info("产品文件备份失败");
+        Map colums = getColumns();
+
+        List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
+        List<String> attList = new ArrayList<>();
+        for (FeedBean feedConfig : feedBeans) {
+            if (!StringUtil.isEmpty(feedConfig.getCfg_val1())) {
+                attList.add(feedConfig.getCfg_val1());
+            }
         }
 
-        $info("备份处理文件结束");
-        return true;
+        // 条件则根据类目筛选
+        String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
+                category.replace("'", "\\\'"));
+
+        colums.put("keyword", where);
+        colums.put("tableName", table);
+        if(attList.size()>0){
+            colums.put("attr", attList.stream().map(s -> "`" + s + "`").collect(Collectors.joining(",")));
+        }
+
+        List<CmsBtFeedInfoBhfoModel> vtmModelBeans = bhfoFeedDao.selectSuperfeedModel(colums);
+        List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
+        for (CmsBtFeedInfoBhfoModel vtmModelBean : vtmModelBeans) {
+
+            Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(vtmModelBean), HashMap.class);
+            Map<String, List<String>> attribute = new HashMap<>();
+            for (String attr : attList) {
+                String key = CamelUtil.underlineToCamel(attr.toLowerCase());
+                if(temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
+
+                List<String> values = new ArrayList<>();
+                values.add((String) temp.get(key));
+                attribute.put(key, values);
+            }
+
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
+            cmsBtFeedInfoModel.setAttribute(attribute);
+            modelBeans.add(cmsBtFeedInfoModel);
+
+        }
+        $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());
+
+        return modelBeans;
+    }
+
+
+    @Override
+    @Transactional
+    protected void updateFull(List<String> itemIds) {
+        if (itemIds.size() > 0) {
+            bhfoFeedDao.updateFlagBySku(itemIds);
+            bhfoFeedDao.insertFullBySku(itemIds);
+            bhfoFeedDao.updateFlagBySku(itemIds);
+        }
+    }
+
+    @Override
+    protected void zzWorkClear() {
+        bhfoFeedDao.delete();
     }
 }

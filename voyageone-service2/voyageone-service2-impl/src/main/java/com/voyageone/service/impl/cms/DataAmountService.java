@@ -4,6 +4,7 @@ import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author Edward
  * @version 2.0.0, 16/4/28
  */
+@Service
 public class DataAmountService extends BaseService {
 
     @Autowired
