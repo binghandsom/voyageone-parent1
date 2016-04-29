@@ -328,7 +328,8 @@ public class CmsProductDetailService extends BaseAppService {
         productService.updateProduct(channelId, productUpdateBean);
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
 
-        if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0 || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
+        if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0
+                || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
             CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
             cmsBtPromotionCodesBean.setProductId(productId);
             cmsBtPromotionCodesBean.setProductCode(oldProduct.getFields().getCode());
