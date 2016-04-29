@@ -4,6 +4,7 @@ import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author Edward
  * @version 2.0.0, 16/4/28
  */
+@Service
 public class DataAmountService extends BaseService {
 
     @Autowired
@@ -27,20 +29,29 @@ public class DataAmountService extends BaseService {
      * @return
      */
     public int updateWithInsert(String channelId, String amountName, String amountVal, String comment, String modifier) {
+        boolean upFlg = true;
         Map<String, Object> bean = new HashMap<>();
-        bean.put("channel_id", channelId);
-        bean.put("amount_name", amountName);
+        bean.put("channelId", channelId);
+        bean.put("amountName", amountName);
         CmsBtDataAmountModel result = cmsBtDataAmountDao.selectOne(bean);
+        if (result == null) {
+            result = new CmsBtDataAmountModel();
+            result.setChannelId(channelId);
+            result.setAmountName(amountName);
+            result.setAmountVal(amountVal);
+            result.setComment(comment);
+            result.setCreater(modifier);
+            result.setModifier(modifier);
+            upFlg = false;
+        } else {
+            result.setAmountVal(amountVal);
+            result.setComment(comment);
+            result.setModifier(modifier);
+        }
 
-        result.setChannelId(channelId);
-        result.setAmountName(amountName);
-        result.setAmountVal(amountVal);
-        result.setComment(comment);
-        result.setModifier(modifier);
-        if(result.getId() > 0)
+        if(upFlg)
             return cmsBtDataAmountDao.update(result);
         else {
-            result.setCreater(modifier);
             return cmsBtDataAmountDao.insert(result);
         }
 
