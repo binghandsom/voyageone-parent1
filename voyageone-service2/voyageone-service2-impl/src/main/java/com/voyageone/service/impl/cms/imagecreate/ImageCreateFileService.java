@@ -106,14 +106,13 @@ public class ImageCreateFileService extends BaseService {
     public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(int templateId) {
         return cmsMtImageCreateTemplateDao.select(templateId);
     }
-
     //CmsMtImageCreateTaskDetailModel
     public void createAndUploadImage(CmsMtImageCreateTaskDetailModel modelTaskDetail) {
         boolean isCreateNewFile = false;
         CmsMtImageCreateFileModel modelFile = null;
         int errorCode = 0;
         String errorMsg = "";
-        modelTaskDetail.setBeginTime(new Date());
+        modelTaskDetail.setBeginTime(new Date());//执行开始时间
         try {
             int CmsMtImageCreateFileId = modelTaskDetail.getCmsMtImageCreateFileId();//isUploadUSCDN
             modelFile = cmsMtImageCreateFileDao.select(CmsMtImageCreateFileId);
@@ -148,13 +147,16 @@ public class ImageCreateFileService extends BaseService {
             if (modelFile != null) {
                 modelFile.setErrorCode(errorCode);
                 modelFile.setErrorMsg(errorMsg);
+                modelFile.setState(0);
             }
             modelTaskDetail.setStatus(2);
         } else {
             modelTaskDetail.setStatus(1);
         }
-        this.changeModel(modelFile);//一起保存
-        modelTaskDetail.setEndTime(new Date());
+        if (modelFile != null) {
+            this.changeModel(modelFile);//一起保存
+        }
+        modelTaskDetail.setEndTime(new Date());//执行结束时间
         daoCmsMtImageCreateTaskDetail.update(modelTaskDetail);
     }
 

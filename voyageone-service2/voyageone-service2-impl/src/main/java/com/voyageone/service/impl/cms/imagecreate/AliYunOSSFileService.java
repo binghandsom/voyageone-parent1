@@ -10,9 +10,12 @@ import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Service
+@EnableRetry
 public class AliYunOSSFileService extends BaseService {
     @Autowired
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
@@ -26,6 +29,7 @@ public class AliYunOSSFileService extends BaseService {
         }
     }
 
+    @Retryable(maxAttempts=3)
     public void upload(CmsMtImageCreateFileModel modelFile) throws OpenApiException {
         //上传阿里OSS
         if (modelFile.getOssState() == 0) {
