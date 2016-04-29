@@ -367,7 +367,7 @@ public class StockSeparateService extends BaseService {
             Map<String, Object> proMapValue = (Map<String, Object>) allSkuProHashEntry.getValue();
             if (separateHashMaps.keySet().contains(allSkuProHashEntry.getKey())) {
                 //任务ID
-                aSkuProHash.put("taskId", proMapValue.get("task_id").toString());
+                aSkuProHash.put("taskId", taskID);
                 //渠道ID
                 aSkuProHash.put("channelId", proMapValue.get("channel_id").toString());
                 //model
@@ -404,7 +404,7 @@ public class StockSeparateService extends BaseService {
                 allSku.add(aSkuProHash);
             } else {
                 //任务ID
-                aSkuProHash.put("taskId", proMapValue.get("task_id").toString());
+                aSkuProHash.put("taskId", taskID);
                 //model
                 aSkuProHash.put("productModel", proMapValue.get("product_model").toString());
                 //code
