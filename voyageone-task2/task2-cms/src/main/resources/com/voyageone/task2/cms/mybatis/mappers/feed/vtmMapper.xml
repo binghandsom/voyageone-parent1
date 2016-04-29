@@ -23,6 +23,7 @@
         <result column="Secondary Categories" property="secondaryCategories"/>
         <result column="Warnings" property="Warnings"/>
         <result column="clientProductURL" property="clientProductURL"/>
+        <result column="product_type" property="productType"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -69,6 +70,7 @@
         ,${i_size} as i_size
         ,${i_barcode} as i_barcode
         ,${i_client_sku} as i_client_sku
+        ,${product_type} as product_type
         ,1 as i_active
         ,${image} as image
         ,1 as image_type

@@ -33,7 +33,7 @@ define([
                 if(context.first==true){
                     $scope.vm.tagPath="";
                 }else{
-                    $scope.$close();
+                    $scope.$dismiss();
                     alert('TXT_MSG_TAG');
                 }
             }

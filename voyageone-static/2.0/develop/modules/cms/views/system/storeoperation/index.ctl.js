@@ -4,6 +4,7 @@
 
 define([
     'cms',
+    'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
         return cms.controller('storeOperationController', (function(){
@@ -30,7 +31,9 @@ define([
                 },
                 search:function(){
                     var self = this;
-                    self.storeOpService.getHistory(self.storePageOption,self.searchInfo).then (function(res) {
+                    var data = self.storePageOption;
+                    _.extend(data , self.searchInfo);
+                    self.storeOpService.getHistory(data).then (function(res) {
                          self.storeDataList = res.data.data;
                          self.storePageOption.total = res.data.total;
                     })

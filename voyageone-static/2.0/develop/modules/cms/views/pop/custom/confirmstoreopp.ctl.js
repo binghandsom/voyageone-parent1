@@ -28,17 +28,23 @@ define([
             {
                 case 1:
                     $storeOpService.rePublist().then(function(resp){
-                        console.log(resp);
+                        if(resp.data == true)
+                            notify.success("操作成功！");
                     });
                     break;
                 case 3:
                     $storeOpService.rePublistPrice().then(function(resp){
-
+                        if(resp.data == true)
+                            notify.success("操作成功！");
                     });
                     break;
                 default:
-                    $storeOpService.reUpload({updFlg:context.upLoadFlag}).then(function(resp){
-
+                    var cleanCommonProperties = "0";
+                    if(context.upLoadFlag == 2)
+                        cleanCommonProperties = "1";
+                    $storeOpService.reUpload(cleanCommonProperties).then(function(resp){
+                        if(resp.data == true)
+                            notify.success("操作成功！");
                     });
             }
         }
