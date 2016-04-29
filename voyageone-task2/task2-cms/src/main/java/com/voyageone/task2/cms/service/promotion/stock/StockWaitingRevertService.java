@@ -24,13 +24,13 @@ import java.util.Map;
 public class StockWaitingRevertService extends BaseTaskService {
 
     @Autowired
-    private CmsBtStockSeparatePlatformInfoDaoExt cmsBtStockSeparatePlatformInfoDaoExt;
+    private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;
 
     @Autowired
     private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
 
     @Autowired
-    private CmsBtTaskKucungeliDaoExt cmsBtTaskKucungeliDaoExt;
+    private CmsBtTasksIncrementStockDaoExt cmsBtTasksIncrementStockDaoExt;
 
     @Autowired
     private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
@@ -102,7 +102,7 @@ public class StockWaitingRevertService extends BaseTaskService {
                 List<Map<String, Object>> stockIncrementList = getSubTaskInfo(taskId, cartId);
                 for (Map<String, Object> stockIncrement : stockIncrementList) {
                     // 更新增量库存隔离数据表（cms_bt_stock_separate_increment_item）中 状态为"3：增量成功"的状态为"5：还原"
-                    cntStockIncrement += updateStockSeparateIncrementItem(String.valueOf(stockIncrement.get("sub_task_id")));
+                    cntStockIncrement += updateStockSeparateIncrementItem(String.valueOf(stockIncrement.get("id")));
                 }
                 $info("增量库存隔离数据表 更新件数：" + cntStockIncrement);
 
@@ -135,7 +135,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("revertTimeWhere", sysTime);
         // 0: 未执行自动还原
         sqlParam.put("revertFlgWhere", StockInfoService.NOT_REVERT);
-        return cmsBtStockSeparatePlatformInfoDaoExt.updateStockSeparatePlatform(sqlParam);
+        return cmsBtTasksStockDaoExt.updateStockSeparatePlatform(sqlParam);
     }
 
     /**
@@ -219,7 +219,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         sqlParam.put("revertTime", sysTime);
         // 0: 未执行自动还原
         sqlParam.put("revertFlg", StockInfoService.NOT_REVERT);
-        List<Map<String, Object>> tasksList = cmsBtStockSeparatePlatformInfoDaoExt.selectStockSeparatePlatform(sqlParam);
+        List<Map<String, Object>> tasksList = cmsBtTasksStockDaoExt.selectStockSeparatePlatform(sqlParam);
         return  tasksList;
     }
 
@@ -255,7 +255,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("taskId", taskId);
         sqlParam.put("cartId", cartId);
-        List<Map<String, Object>> stockIncrementList = cmsBtTaskKucungeliDaoExt.selectStockSeparateIncrementTask(sqlParam);
+        List<Map<String, Object>> stockIncrementList = cmsBtTasksIncrementStockDaoExt.selectStockSeparateIncrementTask(sqlParam);
         return stockIncrementList;
     }
 

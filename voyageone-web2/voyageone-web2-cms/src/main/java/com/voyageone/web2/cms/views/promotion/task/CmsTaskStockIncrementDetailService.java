@@ -7,9 +7,9 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by morse.lu on 2016/3/23.
@@ -442,7 +443,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @throws InvalidFormatException
      */
     public byte[] getExcelFileStockIncrementInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
-        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.STOCK_EXPORT_TEMPLATE);
 
         param.put("whereSql", cmsTaskStockService.getWhereSql(param, true));
         List<StockIncrementExcelBean> resultData = stockSeparateService.getExcelStockIncrementInfo(param);
@@ -630,12 +631,27 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         for (StockIncrementExcelBean rowData : resultData) {
             mapSkuInDB.put(rowData.getSku(), rowData);
         }
+
+        // 在库存隔离库表中已经存在的隔离成功的sku列表
+        List<String> skuList = new ArrayList<>();
+        Map<String, Object> sqlParam1 = new HashMap<>();
+        //任务ID
+        sqlParam1.put("taskId", taskId);
+        //平台id
+        sqlParam1.put("cartId", paramPlatformInfo.get("cartId"));
+        //状态
+        sqlParam1.put("status", CmsTaskStockService.STATUS_SEPARATE_SUCCESS);
+        //取得隔离渠道SKU
+        List<Map<String, Object>> stockSeparateList = stockSeparateService.getStockSeparateItem(sqlParam1);
+        if (stockSeparateList.size() > 0) {
+            skuList = stockSeparateList.stream().map((stockSeparateInfo)->(String) stockSeparateInfo.get("sku")).collect(Collectors.toList());
+        }
         $info("增量库存隔离数据取得结束");
 
         $info("导入Excel取得并check的处理开始");
         List<StockIncrementExcelBean> insertData = new ArrayList<>(); // insert数据
         List<StockIncrementExcelBean> updateData = new ArrayList<>(); // update数据
-        readExcel(file, import_mode, paramPropertyList, paramPlatformInfo, mapSkuInDB, insertData, updateData);
+        readExcel(file, import_mode, paramPropertyList, paramPlatformInfo, mapSkuInDB, insertData, updateData, skuList);
         $info("导入Excel取得并check的处理结束");
 
         if (insertData.size() > 0 || updateData.size() > 0) {
@@ -662,8 +678,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param mapSkuInDB        cms_bt_stock_separate_increment_item的数据
      * @param insertData        insert数据
      * @param updateData        update数据
+     * @param skuList 在库存隔离库表中已经存在的隔离成功的sku列表
      */
-    private void readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData) {
+    private void readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, List<String> skuList) {
         List<String> listExcelSku = new ArrayList<>();
 
         Workbook wb;
@@ -684,7 +701,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfo);
             } else {
                 // 数据行
-                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData, listExcelSku);
+                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData, listExcelSku, skuList);
             }
         }
     }
@@ -781,8 +798,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param insertData   insert数据
      * @param updateData   update数据
      * @param listExcelSku Excel输入的sku
+     * @param skuList 在库存隔离库表中已经存在的隔离成功的sku列表
      */
-    private void checkRecord(Row row, Row rowHeader, String import_mode, int colPlatform, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, List<String> listExcelSku) {
+    private void checkRecord(Row row, Row rowHeader, String import_mode, int colPlatform, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, List<String> listExcelSku, List<String> skuList) {
         String model = getCellValue(row, 0); // Model
         String code = getCellValue(row, 1); // Code
         String sku = getCellValue(row, 2); // Sku
@@ -813,9 +831,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         for (int index = 3; index <= colPlatform - 2; index++) {
             // 属性
             String property = getCellValue(row, index);
-            if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
-                // [属性]必须输入且长度小于500.Sku=[出错的sku]
-                throw new BusinessException("7000042", new String[]{getCellValue(rowHeader, index), "500", sku});
+            if (!StringUtils.isEmpty(property) && property.getBytes().length > 500) {
+                // [属性]长度必须小于500.Sku=[出错的sku]
+                throw new BusinessException("7000078", new String[]{getCellValue(rowHeader, index), "500", sku});
             }
         }
 
@@ -891,6 +909,14 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         } else {
             // 重置方式导入
             isAddData = true;
+        }
+
+        if(isAddData) {
+            // 新数据，但是在库存隔离库表中已经存在的隔离成功的sku列表中不存在
+            if (!skuList.contains(sku)) {
+                // 不能导入在库存隔离库表中不存在的Sku.Sku=[出错的sku]
+                throw new BusinessException("7000079", sku);
+            }
         }
 
         if (isAddData || isUpdateData) {

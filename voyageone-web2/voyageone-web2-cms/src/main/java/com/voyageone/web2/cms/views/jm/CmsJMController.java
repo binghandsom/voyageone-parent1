@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.jm;
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.core.bean.UserSessionBean;

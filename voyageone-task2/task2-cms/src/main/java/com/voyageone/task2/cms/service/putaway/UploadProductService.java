@@ -227,20 +227,20 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     publishTime = DateTimeUtil.getNow();
                 }
 
-                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-                        && platformActive == CmsConstants.PlatformActive.Onsale) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.OnSale)
+                        && platformActive == CmsConstants.PlatformActive.ToOnSale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
-                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-                        && platformActive == CmsConstants.PlatformActive.Instock) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.InStock)
+                        && platformActive == CmsConstants.PlatformActive.ToInStock) {
                     inStockTime = DateTimeUtil.getNow();
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
-                if (platformActive == CmsConstants.PlatformActive.Instock) {
-                    newPlatformStatus = CmsConstants.PlatformStatus.Instock;
+                if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+                    newPlatformStatus = CmsConstants.PlatformStatus.InStock;
                 } else {
-                    newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
+                    newPlatformStatus = CmsConstants.PlatformStatus.OnSale;
                 }
                 // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
@@ -289,8 +289,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
                 // 增加特价宝的调用 tom START
                 // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
-                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_open");
-                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_price");
+                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id()
+                        , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                        , String.valueOf(workLoadBean.getCart_id()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id()
+                        , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                        , String.valueOf(workLoadBean.getCart_id()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
 
                 // 检查一下
                 String tejiabaoOpenFlag = null;

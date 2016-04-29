@@ -29,15 +29,15 @@ public class CustomWordModuleConditionEq extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamConditionEq customModuleUserParamConditionEq = ((CustomWordValueConditionEq) customWord.getValue()).getUserParam();
 
         RuleExpression firstParamExpression = customModuleUserParamConditionEq.getFirstParam();
         RuleExpression secondParamExpression = customModuleUserParamConditionEq.getSecondParam();
 
-        String firsetParam = expressionParser.parse(firstParamExpression, shopBean, user);
-        String secondParam = expressionParser.parse(secondParamExpression, shopBean, user);
+        String firsetParam = expressionParser.parse(firstParamExpression, shopBean, user, extParameter);
+        String secondParam = expressionParser.parse(secondParamExpression, shopBean, user, extParameter);
 
         if (firsetParam == null && secondParam == null) {
             return String.valueOf(true);

@@ -33,8 +33,8 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
-        model.setInstockTime("2016-04-25 11:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+        model.setInStockTime("2016-04-25 11:11:13");
+        model.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
         List<String> productCodes = new ArrayList<>();
         productCodes.add("51A0HC13E1-00LCNB0");
@@ -69,9 +69,9 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("1987654321");
         model.setPublishTime("2016-04-25 21:11:11");
         model.setOnSaleTime("2016-04-25 21:11:12");
-        model.setInstockTime("2016-04-25 21:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
-        model.setPlatformActive(CmsConstants.PlatformActive.Instock);
+        model.setInStockTime("2016-04-25 21:11:13");
+        model.setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
+        model.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
 
         productCodes.add("15053");
         model.setProductCodes(productCodes);
@@ -104,8 +104,8 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
-        model.setInstockTime("2016-04-25 11:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+        model.setInStockTime("2016-04-25 11:11:13");
+        model.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
         List<String> productCodes = new ArrayList<>();
         productCodes.add("51A0HC13E1-00LCNB0");
@@ -141,8 +141,8 @@ public class ProductGroupServiceTest {
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
         model.setOnSaleTime("2016-04-25 11:11:12");
-        model.setInstockTime("2016-04-25 11:11:13");
-        model.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+        model.setInStockTime("2016-04-25 11:11:13");
+        model.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
         List<String> productCodes = new ArrayList<>();
         productCodes.add("51A0HC13E1-00LCNB0");

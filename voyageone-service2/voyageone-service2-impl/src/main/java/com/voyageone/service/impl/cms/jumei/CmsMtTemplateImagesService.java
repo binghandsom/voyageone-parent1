@@ -1,10 +1,8 @@
 package com.voyageone.service.impl.cms.jumei;
-import com.voyageone.service.dao.jumei.*;
-import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.dao.cms.CmsMtTemplateImagesDao;
+import com.voyageone.service.model.cms.CmsMtTemplateImagesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by dell on 2016/3/18.
@@ -12,7 +10,7 @@ import java.util.List;
 @Service
 public class CmsMtTemplateImagesService {
 @Autowired
-    CmsMtTemplateImagesDao dao;
+CmsMtTemplateImagesDao dao;
     public CmsMtTemplateImagesModel select(int id)
     {
        return dao.select(id);

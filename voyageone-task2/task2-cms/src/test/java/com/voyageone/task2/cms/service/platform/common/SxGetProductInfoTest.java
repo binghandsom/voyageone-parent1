@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.platform.common;
 
 import com.google.common.collect.Lists;
+import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -9,6 +10,8 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
@@ -21,6 +24,8 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.ims.ImsBtProductModel;
+import com.voyageone.task2.cms.model.ConditionPropValueModel;
+import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +59,9 @@ public class SxGetProductInfoTest {
     @Autowired
     private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
 
+    @Autowired
+    private ConditionPropValueRepo conditionPropValueRepo;
+
     @Test
     public void testFuc() throws Exception {
         System.out.println();
@@ -86,14 +94,14 @@ public class SxGetProductInfoTest {
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
 
         SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
-        ExpressionParser exp = new ExpressionParser(sxData);
+        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
 
         ShopBean shopBean = new ShopBean();
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
-        Map<String, Object> res = sxProductService.constructMappingPlatformProps(fields,cmsMtPlatformMappingModel,shopBean,exp,"morse");
-//        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse");
+//        Map<String, Object> res = sxProductService.constructMappingPlatformProps(fields,cmsMtPlatformMappingModel,shopBean,exp,"morse");
+        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse", null);
         System.out.println(res);
         // constructMappingPlatformProps end
 
@@ -140,42 +148,6 @@ public class SxGetProductInfoTest {
 
 
         System.out.println("end");
-//        Integer[] arr = new Integer[]{1,2,6};
-//        List<Integer> intList = new ArrayList<>(Arrays.asList(arr));
-//        List<Integer> intList = new ArrayList<>();
-//        Collections.addAll(intList, arr);
-//        List<Integer> intList = Lists.newArrayList(arr);
-//        intList.add(5);
-
-//        List<Integer> intLiList = new LinkedList<>();
-////        intLiList
-//        intList.sort(Comparator.<Integer, Double>comparing(a -> a.doubleValue()).thenComparing(a -> a));
-//        intList.sort(Comparator.comparing((Integer a) -> a).thenComparing(b -> b));
-//        Comparator<Integer> c = ((a,b)->a.compareTo(b));
-//        intList.sort(((a,b)->a.compareTo(b)));
-//        int sum = 0;
-//        for (Iterator<Integer> iter = intList.iterator(); iter.hasNext(); ) {
-//            int v = iter.next().intValue();
-//            sum += v;
-//        }
-//        System.out.println(sum);
-//        getInstance();
-
-
-//        String ss1 = "5.5cm";
-//        String ss2 = "15.5cm";
-//        String ss3 = "25.5cm1";
-//        String ss4 = "25.5cm12";
-//        String ss5 = "25525cm";
-//        System.out.println(ss1.lastIndexOf("cm")==ss1.length()-2);
-//        System.out.println(ss2.lastIndexOf("cm")==ss2.length()-2);
-//        System.out.println(ss3.lastIndexOf("cm")==ss3.length()-2);
-//        System.out.println(ss4.lastIndexOf("cm")==ss4.length()-2);
-//        System.out.println(ss5.lastIndexOf("cm")==ss5.length()-2);
-//
-//        System.out.println(ss1.substring(0, ss1.length()-2));
-//        System.out.println(ss2.substring(0, ss2.length()-2));
-//        System.out.println(ss5.substring(0, ss5.length()-2));
 
 //        List<CmsBtProductModel_Sku> skuSourceList = new ArrayList<>();
 //
@@ -316,6 +288,70 @@ public class SxGetProductInfoTest {
             fieldsMap.put(field.getId(), field);
         }
         return fieldsMap;
+    }
+
+    @Test
+    public void testDict() throws Exception {
+        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+
+        String[] extParameter = {"c001"};
+        String val = sxProductService.resolveDict("京东产品图片-1", expressionParser, shopBean, "tom", extParameter);
+        System.out.println(val);
+
+        extParameter[0] = "c004";
+        val = sxProductService.resolveDict("京东产品图片-1", expressionParser, shopBean, "tom", extParameter);
+        System.out.println(val);
+    }
+
+	/**
+     * 只是用来测试, 真实逻辑不是这样的
+     */
+    @Test
+    public void testShopCustomCategory() throws Exception {
+        String Separtor_Semicolon = ";";
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id("010");
+        shop.setCart_id("23");
+
+        // 多个条件表达式用分号分隔用
+        StringBuilder builder = new StringBuilder();
+        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids"加cartId
+        String platformPropId = "seller_cids_" + shop.getCart_id();
+
+        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
+
+        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+        // 优先使用条件表达式
+        if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                // ===================expressionParser会被共通函数替换掉================================
+                String propValue = expressionParser.parse(conditionExpression, shop, "tom", null);  // TODO No.8 调用共通函数
+//                String propValue = "";
+                // 多个表达式(2392231-4345291格式)用分号分隔
+                if (propValue != null) {
+                    builder.append(propValue);
+                    builder.append(Separtor_Semicolon);   // 用分号(";")分隔
+                }
+            }
+        }
+        // 移除最后的分号
+        if (builder.length() > 0) {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+
+        // 店铺种类
+        System.out.println(builder.toString());
+
     }
 
 }

@@ -64,12 +64,4 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
         this.secondaryCategories = secondaryCategories;
     }
 
-    @Override
-    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(){
-        CmsBtFeedInfoModel cmsBtFeedInfoModel = super.getCmsBtFeedInfoModel();
-        String temp[] = this.secondaryCategories.split(":");
-        cmsBtFeedInfoModel.setProductType(temp.length > 0 ? temp[0] : "");
-        cmsBtFeedInfoModel.setSizeType(temp.length > 0?temp[0]:"");
-        return cmsBtFeedInfoModel;
-    }
 }

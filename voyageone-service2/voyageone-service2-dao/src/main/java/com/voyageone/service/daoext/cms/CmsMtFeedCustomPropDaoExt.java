@@ -51,13 +51,13 @@ public class CmsMtFeedCustomPropDaoExt extends ServiceBaseDao {
     }
 
     // 查询是否全店铺共通属性
-    public String selectSameAttr(Map<String, Object> params) {
-        List<Map<String, Object>> rslt = selectList("cms_mt_feed_custom_prop_getSameAttr", params);
-        if (rslt != null && rslt.size() > 0) {
-            return (String) rslt.get(0).get("config_code");
-        }
-        return "";
-    }
+//    public String selectSameAttr(Map<String, Object> params) {
+//        List<Map<String, Object>> rslt = selectList("cms_mt_feed_custom_prop_getSameAttr", params);
+//        if (rslt != null && rslt.size() > 0) {
+//            return (String) rslt.get(0).get("config_code");
+//        }
+//        return "";
+//    }
 
     // 根据类目路径查询自定义已翻译属性信息(不包含共通属性)
     public int insertAttr(Map<String, Object> params) {

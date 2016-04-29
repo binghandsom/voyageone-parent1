@@ -36,17 +36,17 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamImageWithParam customModuleUserParamImageWithParam= ((CustomWordValueImageWithParam) customWord.getValue()).getUserParam();
 
         RuleExpression imageTemplateExpression = customModuleUserParamImageWithParam.getImageTemplate();
         List<RuleExpression> imageParamExpressions = customModuleUserParamImageWithParam.getImageParams();
 
-        String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user);
+        String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
         List<String> imageParams = new ArrayList<>();
         for (RuleExpression imageParamExpression : imageParamExpressions) {
-            String imageParam = expressionParser.parse(imageParamExpression, shopBean, user);
+            String imageParam = expressionParser.parse(imageParamExpression, shopBean, user, extParameter);
             if (imageParam == null) {
                 continue;
             }

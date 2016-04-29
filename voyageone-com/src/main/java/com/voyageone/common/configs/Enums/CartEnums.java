@@ -50,9 +50,19 @@ public class CartEnums {
 		JM("27"),
 
 		/**
+		 * 京东国际 匠心界
+		 */
+		JGJ("28"),
+
+		/**
+		 * 京东国际 悦境
+		 */
+		JGY("29"),
+
+		/**
 		 * 天猫MiniMall
 		 */
-		TI("28");
+		TMM("30");
 
 
     	private String id;
@@ -82,7 +92,11 @@ public class CartEnums {
 				case "27":
 					return JM;
 				case "28":
-					return TI;
+					return JGJ;
+				case "29":
+					return JGY;
+				case "30":
+					return TMM;
 				default:
 					return null;
 			}

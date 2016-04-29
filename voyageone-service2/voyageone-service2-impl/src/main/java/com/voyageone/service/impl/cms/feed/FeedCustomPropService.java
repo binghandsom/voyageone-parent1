@@ -373,11 +373,11 @@ public class FeedCustomPropService extends BaseService {
 	}
 
 	// 取得全店铺共通配置属性
-	public String getSameAttr(String channelId) {
-		Map<String, Object> params = new HashMap<>(2);
-		params.put("channelId", channelId);
-		return cmsMtFeedCustomPropDaoExt.selectSameAttr(params);
-	}
+//	public String getSameAttr(String channelId) {
+//		Map<String, Object> params = new HashMap<>(2);
+//		params.put("channelId", channelId);
+//		return cmsMtFeedCustomPropDaoExt.selectSameAttr(params);
+//	}
 
 	// 查询指定属性值是否存在
 	public boolean isPropValueExist(int propId, String chnId, String origValue) {

@@ -12,6 +12,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -19,7 +20,6 @@ import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.impl.wms.InventoryCenterService;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -40,6 +40,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by jeff.duan on 2016/03/04.
@@ -269,9 +270,9 @@ public class CmsTaskStockService extends BaseAppService {
         List<Integer> repeatList = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得活动开始时间
-            Map<String, String> promotionInfo = promotionService.getPromotionIDByCartId(entry.getKey());
+            Map<String, Object> promotionInfo = promotionService.getPromotionIDByCartId(entry.getKey());
             //取得活动的ID
-            int cartId = Integer.parseInt(promotionInfo.get("cart_id"));
+            int cartId = (int) promotionInfo.get("cart_id");
             //日期的格式
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             //取得活动开始时间
@@ -320,7 +321,7 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String, Object> platformList = new HashMap<>();
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
             //根据活动ID取得隔离的CartID
-            Map<String, String> cartNameMap = promotionService.getPromotionIDByCartId(entry.getKey());
+            Map<String, Object> cartNameMap = promotionService.getPromotionIDByCartId(entry.getKey());
             platformList.put(entry.getKey(), cartNameMap);
         }
         return platformList;
@@ -679,7 +680,7 @@ public class CmsTaskStockService extends BaseAppService {
             List<Map<String, String>> separatePlatformMapList = getInsertStockSeparatePlatFormByPromotionInfo(param, onlySku);
             //将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表
             importSkuByPromotionInfo(param, onlySku, channelID, cmsBtTasksBean, separatePlatformMapList);
-            String taskID = String.valueOf(cmsBtTasksBean.getTask_id());
+            String taskID = String.valueOf(cmsBtTasksBean.getId());
             //将取得的taskId放入param
             param.put("taskId", taskID);
         }
@@ -832,7 +833,7 @@ public class CmsTaskStockService extends BaseAppService {
                         } else {
                             //隔离平台的隔离比例
                             String separate = value.substring(0, value.lastIndexOf("%"));
-                            if (separate.contains("%") || value.getBytes().length > 2 || !StringUtils.isDigit(separate)) {
+                            if (separate.contains("%") || separate.getBytes().length > 2 || !StringUtils.isDigit(separate)) {
                                 throw new BusinessException("7000014");
                             }
                         }
@@ -1127,7 +1128,7 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("taskIdList", listSeparateTaskId);
         List<Map<String, Object>> listIncTask = stockSeparateService.getStockSeparateIncrementTask(sqlParam);
         listIncTask.forEach(data -> {
-            Integer subTaskId = (Integer) data.get("sub_task_id");
+            Integer subTaskId = (Integer) data.get("id");
             if (!listIncrementTaskId.contains(subTaskId)) {
                 listIncrementTaskId.add(subTaskId);
             }
@@ -2167,9 +2168,9 @@ public class CmsTaskStockService extends BaseAppService {
             // 属性值
             String value = (String) property.get("value");
             // 属性输入check
-            if (StringUtils.isEmpty(value) || value.getBytes().length > 500) {
-                // [属性]必须输入且长度小于500
-                throw new BusinessException("7000028", new String[]{name, "500"});
+            if (!StringUtils.isEmpty(value) && value.getBytes().length > 500) {
+                // [属性]长度必须小于500
+                throw new BusinessException("7000075", new String[]{name, "500"});
             }
         }
 
@@ -2213,6 +2214,16 @@ public class CmsTaskStockService extends BaseAppService {
         if (stockSeparateItem.size() > 0) {
             // Sku已经存在
             throw new BusinessException("7000034");
+        }
+
+        // 验证channelId + sku 在逻辑库存表里是否存在
+        Map<String, Object> sqlParam1 = new HashMap<>();
+        sqlParam1.put("channelId", (String) param.get("channelId"));
+        sqlParam1.put("sku", sku);
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam1);
+        if (listLogicInventory.size() == 0) {
+            // 不能新建不正确的Sku
+            throw new BusinessException("7000076");
         }
     }
 
@@ -2506,7 +2517,7 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public byte[] getExcelFileStockInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
 
-        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.STOCK_EXPORT_TEMPLATE);
 
         param.put("whereSql", getWhereSql(param, true));
         List<StockExcelBean> resultData = stockSeparateService.getExcelStockInfo(param);
@@ -2715,16 +2726,16 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException("7000039");
         }
 
-        String task_id = (String) param.get("task_id");
-        String import_mode = (String) param.get("import_mode");
+        String taskId = (String) param.get("task_id");
+        String importMode = (String) param.get("import_mode");
         List<Map> paramPropertyList = JacksonUtil.json2Bean((String) param.get("propertyList"), List.class);
         List<Map> paramPlatformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), List.class);
 
         // 库存隔离数据取得
-        $info("库存隔离数据取得开始, task_id=" + task_id);
+        $info("库存隔离数据取得开始, task_id=" + taskId);
         Map<String, Object> searchParam = new HashMap<>();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
-        searchParam.put("whereSql", " where task_id= '" + task_id + "'");
+        searchParam.put("whereSql", " where task_id= '" + taskId + "'");
         List<StockExcelBean> resultData = stockSeparateService.getExcelStockInfo(searchParam);
         // Map<sku, Map<cart_id, StockExcelBean>>
         Map<String, Map<String, StockExcelBean>> mapSkuInDB = new HashMap<>();
@@ -2737,16 +2748,26 @@ public class CmsTaskStockService extends BaseAppService {
                 }});
             }
         }
+        // 在逻辑库表中已经存在的sku列表
+        List<String> skuInLogicInventory = new ArrayList<>();
+        if (EXCEL_IMPORT_ADD.equals(importMode)) {
+            Map<String, Object> sqlParam1 = new HashMap<>();
+            sqlParam1.put("channelId", (String) param.get("channelId"));
+            List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam1);
+            if (listLogicInventory.size() > 0) {
+                skuInLogicInventory = listLogicInventory.stream().map(WmsBtInventoryCenterLogicModel::getSku).collect(Collectors.toList());
+            }
+        }
         $info("库存隔离数据取得结束");
 
         $info("导入Excel取得并check的处理开始");
         Map<String, List<String>> mapSku = new HashMap<>();
-        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
+        List<StockExcelBean> saveData = readExcel(file, importMode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean, skuInLogicInventory);
         $info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
             $info("更新开始");
-            saveImportData(saveData, mapSku, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
+            saveImportData(saveData, mapSku, importMode, taskId, (String) param.get("userName"), (String) param.get("channelId"));
             $info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
             $info("没有更新对象");
@@ -2765,9 +2786,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB            cms_bt_stock_separate_item的数据
      * @param mapSku                原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      * @param resultBean            返回内容
+     * @param skuInLogicInventory 在逻辑库表中已经存在的sku列表
      * @return 更新对象
      */
-    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, List<String>> mapSku, Map<String, Object> resultBean) {
+    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, List<String>> mapSku, Map<String, Object> resultBean, List<String> skuInLogicInventory) {
         List<StockExcelBean> saveData = new ArrayList<>();
         List<String> listExcelSku = new ArrayList<>();
 
@@ -2790,7 +2812,7 @@ public class CmsTaskStockService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku, mapSku);
+                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku, mapSku, skuInLogicInventory);
                 if (isExecutingData && !hasExecutingData) {
                     hasExecutingData = true; // batch处理中数据存在
                 }
@@ -2924,9 +2946,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB   cms_bt_stock_separate_item的数据
      * @param saveData     保存对象
      * @param listExcelSku Excel输入的sku
+     * @param skuInLogicInventory 在逻辑库表中已经存在的sku列表
      * @param mapSku       原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      */
-    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku, Map<String, List<String>> mapSku) {
+    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku, Map<String, List<String>> mapSku,  List<String> skuInLogicInventory) {
         boolean isExecutingData = false; // 是否是隔离中,还原中,等待隔离,等待还原的数据
 
         String model = getCellValue(row, 0); // Model
@@ -2959,9 +2982,9 @@ public class CmsTaskStockService extends BaseAppService {
         for (int index = 3; index <= colPlatform[0] - 2; index++) {
             // 属性
             String property = getCellValue(row, index);
-            if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
-                // [属性]必须输入且长度小于500.Sku=[出错的sku]
-                throw new BusinessException("7000042", new String[]{getCellValue(rowHeader, index), "500", sku});
+            if (!StringUtils.isEmpty(property) && property.getBytes().length > 500) {
+                // [属性]长度必须小于500.Sku=[出错的sku]
+                throw new BusinessException("7000078", new String[]{getCellValue(rowHeader, index), "500", sku});
             }
         }
 
@@ -3000,6 +3023,12 @@ public class CmsTaskStockService extends BaseAppService {
                 if (mapCartIdInDB != null) {
                     // Sku = [出错的sku]的数据在DB里已经存在,不能增量
                     throw new BusinessException("7000046", sku);
+                }
+
+                // Sku在库存隔离表中不存在
+                if (!skuInLogicInventory.contains(sku)) {
+                    // Sku = [出错的sku]的逻辑库存不存在,不能增量
+                    throw new BusinessException("7000077", sku);
                 }
 
                 StockExcelBean bean = new StockExcelBean();
@@ -3140,19 +3169,19 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @param saveData    保存对象
      * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
-     * @param import_mode 导入方式
-     * @param task_id     任务id
+     * @param importMode 导入方式
+     * @param taskId     任务id
      * @param creater     创建者/更新者
      * @param channelId   渠道id
      */
-    private void saveImportData(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String import_mode, String task_id, String creater, String channelId) {
+    private void saveImportData(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String importMode, String taskId, String creater, String channelId) {
         try {
-            if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
+            if (EXCEL_IMPORT_UPDATE.equals(importMode)) {
                 // 变更方式
-                stockSeparateService.importExcelFileStockUpdate(saveData, mapSku, import_mode, task_id, creater, channelId);
+                stockSeparateService.importExcelFileStockUpdate(saveData, mapSku,taskId, creater, channelId);
             } else {
                 // 增量方式
-                stockSeparateService.importExcelFileStockAdd(saveData, mapSku, import_mode, task_id, creater, channelId);
+                stockSeparateService.importExcelFileStockAdd(saveData, taskId, creater, channelId);
             }
         } catch (Exception e) {
             $error(e.getMessage());
@@ -3235,7 +3264,7 @@ public class CmsTaskStockService extends BaseAppService {
     public byte[] getExcelFileStockErrorInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
         String taskId = (String) param.get("taskId");
 
-        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+        String templatePath = Properties.readValue(CmsProperty.Props.STOCK_EXPORT_TEMPLATE);
 
         Map<String, Object> searchParam = new HashMap<>();
         searchParam.put("taskId", taskId);

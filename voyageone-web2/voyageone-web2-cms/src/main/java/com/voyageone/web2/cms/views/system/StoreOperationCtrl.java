@@ -3,7 +3,9 @@ package com.voyageone.web2.cms.views.system;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.service.impl.cms.StoreOperationService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class StoreOperationCtrl extends CmsController {
 
 
     public int getConfigHours(String channelId) {
-        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(channelId, "STORE_OPERATION_INTERVAL_TIME", "default");
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.STORE_OPERATION_INTERVAL_TIME);
 
         if (config == null || config.getConfigValue1() == null) {
             return INTERVAL_DEFAULT;

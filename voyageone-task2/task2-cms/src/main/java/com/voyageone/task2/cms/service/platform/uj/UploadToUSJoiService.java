@@ -71,7 +71,7 @@ public class UploadToUSJoiService extends BaseTaskService{
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TI.getId()));
+        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TMM.getId()));
         cmsBtSxWorkloadModels.forEach(this::upload);
     }
 
@@ -182,7 +182,7 @@ public class UploadToUSJoiService extends BaseTaskService{
         // 找出approved 并且 sku的carts里包含 28（usjoi的cartid）
         productModels.stream().filter(productModel -> "Approved".equalsIgnoreCase(productModel.getFields().getStatus())).forEach(productModel -> {
             List<CmsBtProductModel_Sku> skus = productModel.getSkus().stream()
-                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TI.getId())))
+                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TMM.getId())))
                     .collect(toList());
             if (skus.size() > 0) {
                 skus.forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setSkuCarts(null));
@@ -262,7 +262,7 @@ public class UploadToUSJoiService extends BaseTaskService{
             // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
             platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
             // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
-            platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
+            platform.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
 
             // qty
             platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的

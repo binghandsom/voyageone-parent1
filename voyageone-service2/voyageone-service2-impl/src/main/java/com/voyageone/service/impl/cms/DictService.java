@@ -85,7 +85,7 @@ public class DictService extends BaseService {
      */
     @VOTransactional
     public int removeDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        cmsMtPlatformDictDaoExt.insertDictLog(cmsMtPlatFormDictModel);
+//        cmsMtPlatformDictDaoExt.insertDictLog(cmsMtPlatFormDictModel);
         return cmsMtPlatformDictDaoExt.deleteDict(cmsMtPlatFormDictModel);
     }
 
@@ -101,7 +101,7 @@ public class DictService extends BaseService {
             throw new BusinessException("该条数据已经被其他人更新过了,请确认!");
         }
 
-        cmsMtPlatformDictDaoExt.insertDictLog(oldCmsMtPlatFormDictModel);
+//        cmsMtPlatformDictDaoExt.insertDictLog(oldCmsMtPlatFormDictModel);
         return cmsMtPlatformDictDaoExt.updateDict(cmsMtPlatFormDictModel);
     }
 }

@@ -5,7 +5,6 @@
     <resultMap id="resultMap_jewelry" type="com.voyageone.task2.cms.model.CmsBtFeedInfoJewelryModel">
         <result column="category" property="category" />
         <result column="channel_id" property="channelId" />
-        <result column="m_product_type" property="sizeType" />
         <result column="m_brand" property="brand" />
         <result column="m_model" property="model" />
         <result column="p_name" property="name" />
@@ -229,10 +228,8 @@
         select
         ${category} as category
         ,#{channel_id} as channel_id
-        ,${m_product_type} as m_product_type
         ,${m_brand} as m_brand
         ,case when ifnull(`Variation Parent SKU`,'') = '' then `Inventory Number` else `Variation Parent SKU` end as m_model
-        ,${m_name} as m_name
         ,${m_size_type} as m_size_type
         ,${m_weight} as m_weight
         ,${p_code} as p_code
@@ -240,9 +237,6 @@
         ,${p_color} as p_color
         ,${p_made_in_country} as p_made_in_country
         ,${pe_short_description} as pe_short_description
-        <if test="p_product_type != null">
-            ,${p_product_type} as p_product_type
-        </if>
         ,${pe_long_description} as pe_long_description
 
         ,${price_client_msrp} as price_client_msrp
@@ -461,7 +455,7 @@
 
 
     <update id="cms_zz_worktable_je_superfeed_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms2.cms_zz_worktable_je_superfeed set UpdateFlag = 3 where `Inventory Number` in (
+        UPDATE voyageone_cms2.cms_zz_feed_je_product_temp set UpdateFlag = 3 where `Inventory Number` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
         </foreach>
@@ -469,8 +463,8 @@
     </update>
 
     <insert id="cms_zz_worktable_je_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_je_superfeed_full SELECT * from
-        voyageone_cms2.cms_zz_worktable_je_superfeed where `Inventory Number` in
+        INSERT INTO voyageone_cms2.cms_zz_feed_je_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_je_product_temp where `Inventory Number` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -481,7 +475,7 @@
     <delete id="cms_zz_worktable_je_superfeed_full_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms2.cms_zz_worktable_je_superfeed_full
+        voyageone_cms2.cms_zz_feed_je_product_full
         where `Inventory Number` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}

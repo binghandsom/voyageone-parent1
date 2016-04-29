@@ -2,9 +2,8 @@ package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterPlatService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
-import com.voyageone.service.model.jumei.CmsMtJmConfigModel;
+import com.voyageone.service.model.cms.CmsMtJmConfigModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.voyageone.common.CmsConstants.JmMasterPlatCode;
 
 @RestController
 @RequestMapping(
@@ -33,7 +34,7 @@ public class CmsMtJmConfigIndexController extends CmsController {
 
         Map<String, Object> masterData = new HashMap<>();
 
-        masterData.put("jmShippingStockList", masterPlatService.selectListByCode(CmsConstants.jmMasterPlatCode.STOCK));
+        masterData.put("jmShippingStockList", masterPlatService.selectListByCode(JmMasterPlatCode.STOCK));
 
         return success(masterData);
     }

@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
@@ -35,7 +36,6 @@ import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -328,7 +328,8 @@ public class CmsProductDetailService extends BaseAppService {
         productService.updateProduct(channelId, productUpdateBean);
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
 
-        if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0 || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
+        if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0
+                || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
             CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
             cmsBtPromotionCodesBean.setProductId(productId);
             cmsBtPromotionCodesBean.setProductCode(oldProduct.getFields().getCode());
@@ -829,8 +830,8 @@ public class CmsProductDetailService extends BaseAppService {
 
         for (Field field : fields) {
 
-            if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
-                    || CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+            if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
 
                 FieldTypeEnum type = field.getType();
 
@@ -841,7 +842,7 @@ public class CmsProductDetailService extends BaseAppService {
                         break;
                     case SINGLECHECK:
                     case MULTICHECK:
-                        if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                        if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
                             List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
 
                             // 替换成field需要的样式
@@ -855,7 +856,7 @@ public class CmsProductDetailService extends BaseAppService {
 
                             OptionsField optionsField = (OptionsField) field;
                             optionsField.setOptions(options);
-                        } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                        } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                             // 获取type channel bean
                             List<TypeChannelBean> typeChannelBeanList;
                             if (FIELD_SKU_CARTS.equals(field.getId())) {

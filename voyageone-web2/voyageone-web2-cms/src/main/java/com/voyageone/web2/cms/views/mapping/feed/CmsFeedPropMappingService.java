@@ -2,24 +2,25 @@ package com.voyageone.web2.cms.views.mapping.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.field.SingleCheckField;
-import com.voyageone.common.masterdate.schema.option.Option;
-import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
-import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
+import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
@@ -27,7 +28,6 @@ import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FieldBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
@@ -374,7 +374,7 @@ class CmsFeedPropMappingService extends BaseAppService {
 
         for (Field field : fields) {
             if (field instanceof SingleCheckField) {
-                if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
                     List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
 
                     // 替换成field需要的样式
@@ -388,7 +388,7 @@ class CmsFeedPropMappingService extends BaseAppService {
                         }
                         ((SingleCheckField) field).setOptions(options);
                     }
-                } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                     // 获取type channel bean
                     List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
 

@@ -16,7 +16,7 @@ define([
             this.notify = notify;
             this.searchInfo={};
 
-            this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"}];
+            this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"},{"name":"库存隔离","value":"2"}];
             this.datePicker = [];
 
             this.downloadUrl = urls.root + "/" + urls.exportErrorInfo;

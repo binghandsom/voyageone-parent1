@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.jumei;
-import com.voyageone.service.dao.jumei.*;
-import com.voyageone.service.daoext.jumei.CmsMtMasterInfoDaoExt;
-import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.dao.cms.CmsMtMasterInfoDao;
+import com.voyageone.service.daoext.cms.CmsMtMasterInfoDaoExt;
+import com.voyageone.service.model.cms.CmsMtMasterInfoModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

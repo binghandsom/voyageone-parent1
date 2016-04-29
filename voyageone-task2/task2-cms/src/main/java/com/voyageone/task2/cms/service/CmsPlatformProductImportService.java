@@ -356,10 +356,10 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         String status = fields.get("item_status").toString();
         switch (status) {
             case "0": // 出售中
-                CmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
+                CmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
                 break;
             default: // 定时上架 或者 仓库中
-                CmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+                CmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
         }
         productGroupService.update(CmsBtProductGroupModel);
         // edward 2016-04-23 对应删除了saveGroups方法 - end

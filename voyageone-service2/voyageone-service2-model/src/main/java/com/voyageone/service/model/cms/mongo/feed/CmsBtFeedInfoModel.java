@@ -178,6 +178,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("model", this.model);
         attribute.put("color", this.color);
         attribute.put("origin", this.origin);
+        attribute.put("productType", this.productType);
         attribute.put("sizeType", this.sizeType);
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
@@ -187,11 +188,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
         // 增加了sku级别的价格属性的支持
         if (this.getSkus() != null && this.getSkus().size() > 0) {
-            attribute.put("price_current", this.getSkus().get(0).getPriceCurrent());
-            attribute.put("price_msrp", this.getSkus().get(0).getPriceMsrp());
+            attribute.put("priceCurrent", this.getSkus().get(0).getPriceCurrent());
+            attribute.put("priceMsrp", this.getSkus().get(0).getPriceMsrp());
         } else {
-            attribute.put("price_current", "0");
-            attribute.put("price_msrp", "0");
+            attribute.put("priceCurrent", "0");
+            attribute.put("priceMsrp", "0");
         }
 
         this.fullAttribute = attribute;

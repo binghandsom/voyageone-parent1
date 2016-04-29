@@ -9,8 +9,10 @@ import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
@@ -24,11 +26,9 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
-import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +67,6 @@ public class ProductService extends BaseService {
 
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
-
-    @Autowired
-    private CmsMtChannelConfigDaoExt cmsMtChannelConfigDaoExt;
 
     /**
      * 获取商品 根据ID获
@@ -205,7 +202,7 @@ public class ProductService extends BaseService {
                 platformModel.setCartId(cartId);
                 platformModel.setGroupId(grpId);
                 platformModel.setNumIId(groupModelMap.getNumIId());
-                platformModel.setInstockTime(groupModelMap.getInstockTime());
+                platformModel.setInStockTime(groupModelMap.getInStockTime());
                 platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
                 platformModel.setPublishTime(groupModelMap.getPublishTime());
                 platformModel.setQty(groupModelMap.getQty());
@@ -501,12 +498,13 @@ public class ProductService extends BaseService {
 //            carts.add(Integer.valueOf(typeChannelBean.getValue()));
 //        }
 
-        // 根据商品code获取其所有group信息(所有平台)
-        List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getFields().getCode() + "\"}", channelId);
-        Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
+        if (carts != null && carts.size() > 0) {
+            // 根据商品code获取其所有group信息(所有平台)
+            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getFields().getCode() + "\"}", channelId);
+            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
-        // 获取所有的可上新的平台group信息
-        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+            // 获取所有的可上新的平台group信息
+            List<CmsBtSxWorkloadModel> models = new ArrayList<>();
 //            for(CmsBtProductModel_Group_Platform platform : platforms) {
 //                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
 //                if (carts.contains(platform.getCartId()) && isNeed) {
@@ -519,19 +517,20 @@ public class ProductService extends BaseService {
 //                    models.add(model);
 //                }
 //            }
-        for(CmsBtProductModel_Carts cartInfo : carts) {
-            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-            model.setChannelId(channelId);
-            model.setGroupId(platformsMap.get(cartInfo.getCartId()).intValue());
-            model.setCartId(cartInfo.getCartId());
-            model.setPublishStatus(0);
-            model.setCreater(modifier);
-            model.setModifier(modifier);
-            models.add(model);
-        }
+            for (CmsBtProductModel_Carts cartInfo : carts) {
+                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                model.setChannelId(channelId);
+                model.setGroupId(platformsMap.get(cartInfo.getCartId()).intValue());
+                model.setCartId(cartInfo.getCartId());
+                model.setPublishStatus(0);
+                model.setCreater(modifier);
+                model.setModifier(modifier);
+                models.add(model);
+            }
 
-        if (models.size() > 0) {
-            cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+            if (models.size() > 0) {
+                cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+            }
         }
 //        }
     }
@@ -643,8 +642,10 @@ public class ProductService extends BaseService {
             resultInfo.setClientNetPrice(String.valueOf(product.getSku(productSku).getClientNetPrice()));
 
             // 设置原始价格单位
-            List<CmsMtChannelConfigModel> channelConfigs = cmsMtChannelConfigDaoExt.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
-            resultInfo.setClientPriceUnit(channelConfigs.get(0).getConfigValue1());
+
+            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                    , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
+            resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
 
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setWeightkg("");

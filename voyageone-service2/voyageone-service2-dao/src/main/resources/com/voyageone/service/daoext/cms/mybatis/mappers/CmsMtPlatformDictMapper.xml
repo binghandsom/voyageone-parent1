@@ -6,7 +6,7 @@
         SELECT DISTINCT
         a.id,
         a.order_channel_id as orderChannelId,
-        a.cart_id as catId,
+        a.cart_id as cartId,
         b.name as cartName,
         a.name,
         a.`value`,
@@ -22,8 +22,8 @@
         <if test="name != null and name != ''">
             AND a.name like CONCAT('%',#{name},'%' )
         </if>
-        <if test="cart_id != null and cart_id != ''">
-            AND a.cart_id in (#{cart_id}, 0)
+        <if test="cartId != null and cartId != ''">
+            AND a.cart_id in (#{cartId}, 0)
         </if>
         <if test="offset != null and rows != null and rows != 0">
             LIMIT #{offset}, #{rows};
@@ -40,8 +40,8 @@
         <if test="name != null and name != ''">
             AND a.name like CONCAT('%',#{name},'%' )
         </if>
-        <if test="cart_id != null and cart_id != ''">
-            AND a.cart_id in (#{cart_id}, 0)
+        <if test="cartId != null and cartId != ''">
+            AND a.cart_id in (#{cartId}, 0)
         </if>
     </select>
 
@@ -103,10 +103,10 @@
         WHERE order_channel_id = #{channelId}
     </select>
 
-    <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
-        INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)
-        VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
-    </insert>
+    <!--<insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">-->
+        <!--INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)-->
+        <!--VALUES (#{id},#{orderChannelId}, #{cartId}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})-->
+    <!--</insert>-->
 
     <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map"
             resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
