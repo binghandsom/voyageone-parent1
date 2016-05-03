@@ -1980,7 +1980,7 @@ public class CmsTaskStockService extends BaseAppService {
                 }
             }
         }
-        if (!updateStockSalesQuantityList.isEmpty()) {
+        if (!updateStockSeparateItemList.isEmpty() || !updateStockSalesQuantityList.isEmpty()) {
             stockSeparateService.updateStockSalesQuantityList(updateStockSeparateItemList, updateStockSalesQuantityList);
         }
 
