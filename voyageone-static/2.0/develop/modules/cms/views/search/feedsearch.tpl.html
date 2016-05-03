@@ -183,10 +183,12 @@
                         <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.name}}</td>
                         <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.model}}</td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">
-                            <popover-text content="feedInfo.shortDescription" direct="left"></popover-text>
+                            <span ng-if="feedInfo.shortDescription.length > 50"><popover-text content="feedInfo.shortDescription" direct="left" size="50"></popover-text></span>
+                            <span ng-if="feedInfo.shortDescription.length <= 50">{{feedInfo.shortDescription}}</span>
                         </td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">
-                            <popover-text content="feedInfo.longDescription" direct="left"></popover-text>
+                            <span ng-if="feedInfo.longDescription.length > 50"><popover-text content="feedInfo.longDescription" direct="left" size="50"></popover-text></span>
+                            <span ng-if="feedInfo.longDescription.length <= 50">{{feedInfo.longDescription}}</span>
                         </td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.color}}</td>
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.origin}}</td>
