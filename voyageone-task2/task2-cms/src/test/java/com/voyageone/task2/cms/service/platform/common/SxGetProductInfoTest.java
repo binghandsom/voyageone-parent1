@@ -8,6 +8,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -66,27 +67,54 @@ public class SxGetProductInfoTest {
     public void testFuc() throws Exception {
         System.out.println();
         System.out.println("start:"+ DateTimeUtil.getNow());
+        System.out.println(getInstance().format(new Date()));
 
         // constructMappingPlatformProps start
         String schema = "<itemRule>\n" +
                 "<field id=\"infos\" name=\"品牌信息\" type=\"input\">\n" +
-                "<rules>\n" +
-                "<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "</rules>\n" +
-                "</field>\n" +
-                "<field id=\"colors\" name=\"尺码\" type=\"multiCheck\">\n" +
-                "<rules>\n" +
-                "<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "</rules>\n" +
-                "<options>\n" +
-                "<option displayName=\"蓝\" value=\"b\"/>\n" +
-                "<option displayName=\"红\" value=\"r\"/>\n" +
-                "</options>\n" +
+                "\t<rules>\n" +
+                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                "\t</rules>\n" +
                 "</field>\n" +
                 "<field id=\"title\" name=\"牌\" type=\"singleCheck\">\n" +
-                "<rules>\n" +
-                "<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "</rules>\n" +
+                "\t<rules>\n" +
+                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                "\t</rules>\n" +
+                "</field>\n" +
+                "<field id=\"product_s_s\" name=\"商品\" type=\"multiComplex\">\n" +
+                "<fields>\n" +
+                "\t<field id=\"code_f\" name=\"Code\" type=\"input\">\n" +
+                "\t</field>\n" +
+                "\t<field id=\"orgin_f\" name=\"Code\" type=\"input\">\n" +
+                "\t</field>\n" +
+                "\t<field id=\"product_s\" name=\"商品\" type=\"multiComplex\">\t\t\n" +
+                "\t\t<fields>\n" +
+                "\t\t\t<field id=\"code_sf\" name=\"Code\" type=\"input\">\n" +
+                "\t\t\t</field>\n" +
+                "\t\t\t<field id=\"orgin_sf\" name=\"产地\" type=\"input\">\n" +
+                "\t\t\t</field>\n" +
+                "\t\t</fields>\n" +
+                "\t</field>\n" +
+                "\t<field id=\"sell_p_s\" name=\"卖点\" type=\"complex\">\n" +
+                "\t\t<fields>\n" +
+                "\t\t\t<field id=\"sell_p_0\" name=\"卖点1\" type=\"input\">\n" +
+                "\t\t\t</field>\n" +
+                "\t\t\t<field id=\"sell_p_1\" name=\"卖点2\" type=\"input\">\n" +
+                "\t\t\t</field>\n" +
+                "\t\t\t<field id=\"sell_p_2\" name=\"卖点3\" type=\"input\">\n" +
+                "\t\t\t</field>\n" +
+                "\t\t</fields>\n" +
+                "\t</field>\n" +
+                "\t<field id=\"col\" name=\"颜色\" type=\"multiCheck\">\n" +
+                "\t\t<rules>\n" +
+                "\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                "\t\t</rules>\n" +
+                "\t\t<options>\n" +
+                "\t\t<option displayName=\"蓝\" value=\"b\"/>\n" +
+                "\t\t<option displayName=\"红\" value=\"r\"/>\n" +
+                "\t\t</options>\n" +
+                "\t</field>\n" +
+                "</fields>\n" +
                 "</field>\n" +
                 "</itemRule>";
         List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -100,9 +128,10 @@ public class SxGetProductInfoTest {
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
-//        Map<String, Object> res = sxProductService.constructMappingPlatformProps(fields,cmsMtPlatformMappingModel,shopBean,exp,"morse");
-        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse", null);
-        System.out.println(res);
+        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse");
+        res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
+//        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse", null);
+//        System.out.println(res);
         // constructMappingPlatformProps end
 
 

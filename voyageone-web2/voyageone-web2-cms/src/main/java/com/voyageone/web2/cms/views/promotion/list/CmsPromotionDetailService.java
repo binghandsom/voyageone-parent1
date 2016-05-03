@@ -376,7 +376,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
             if (!StringUtil.isEmpty(modelId)) {
-                model.setModelId(Integer.parseInt(modelId));
+                model.setModelId(Long.parseLong(modelId));
             }
         }
 

@@ -15,7 +15,7 @@ public class CmsBtSxWorkloadModel extends BaseModel {
     /**
 
      */
-    private int publishStatus;
+    private int publish_status;
     /**
 
      */
@@ -58,11 +58,11 @@ public class CmsBtSxWorkloadModel extends BaseModel {
      */
     public int getPublishStatus() {
 
-        return this.publishStatus;
+        return this.publish_status;
     }
 
-    public void setPublishStatus(int publishStatus) {
-        this.publishStatus = publishStatus;
+    public void setPublishStatus(int publish_status) {
+        this.publish_status = publish_status;
     }
 
 
