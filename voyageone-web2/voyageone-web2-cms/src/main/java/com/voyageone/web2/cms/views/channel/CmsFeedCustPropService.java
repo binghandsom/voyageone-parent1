@@ -219,7 +219,7 @@ public class CmsFeedCustPropService extends BaseAppService {
         List<CmsMtFeedCategoryTreeModel> topTree = feedCategoryTreeService.getFeedAllCategoryList(userInfo.getSelChannelId());
         List<CmsMtFeedCategoryTreeModel> rsltList = new ArrayList<>();
         CmsMtFeedCategoryTreeModel comMdl = new CmsMtFeedCategoryTreeModel();
-        comMdl.setCatPath("0");
+        comMdl.setCatPath("共通属性");
         comMdl.setCatName("共通属性");
         comMdl.setCatId("共通属性");
         rsltList.add(comMdl);
@@ -254,7 +254,7 @@ public class CmsFeedCustPropService extends BaseAppService {
         Map<String, Object> dataMap = new HashMap<>();
         int listCnt = rslt1.size();
         dataMap.put("total", listCnt);
-        if (listCnt == 0) {
+        if (listCnt == 0 || skip == 0 || limit == 0) {
             dataMap.put("resultData", rslt1);
         } else {
             int staIdx = (skip - 1) * limit;

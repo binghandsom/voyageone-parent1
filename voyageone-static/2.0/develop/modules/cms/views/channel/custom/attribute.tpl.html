@@ -34,8 +34,8 @@
 					<span class="m-l-xs m-r-sm">未翻译属性</span><input type="text" placeholder="快速检索" class="form-control" style="width:83%" ng-model="searchUnval">
 				</div>
 				<div class="category_drag_list_qh">
-					<ul>
-						<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval"><a>{{unvalData.prop_original}} <span class="pull-right text-muted" style="cursor:pointer" ng-click="addVal(unvalData, $index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></a></li>
+					<ul style="margin-left:5px">
+						<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval" style="height:25px" onmouseover="this.style.background='white'" onmouseout="this.style.background='#f5f9ff'"><div style="cursor:pointer" ng-click="addVal(unvalData, $index);">{{unvalData.prop_original}} <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text-vo"></i></span></div></li>
 					</ul>
 				</div>
 			</div>

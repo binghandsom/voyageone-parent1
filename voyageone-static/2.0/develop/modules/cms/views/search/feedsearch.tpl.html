@@ -12,7 +12,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="vm.searchInfo.category"
+                                        <select search-contains="true" class="form-control" chosen ng-model="vm.searchInfo.category"
                                                 ng-options="category.catPath as category.catPath for category in vm.masterData.categoryList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
@@ -146,7 +146,7 @@
     <div class="box">
         <div class="box-body">
             <div class="table-responsive">
-                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2000px;table-layout: fixed;margin-bottom:0px" ng-controller="popupCtrl">
+                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2300px;table-layout: fixed;margin-bottom:0px" ng-controller="popupCtrl">
                     <thead>
                     <tr>
                         <th class="text-center mfb-xt" style="white-space: nowrap">No.</th>
@@ -162,12 +162,14 @@
                         <th class="text-left mfb-x" style="white-space: nowrap">Product Type</th>
                         <th class="text-left mfb-x" style="white-space: nowrap">Size Type</th>
                         <th class="text-left mfb-x" style="white-space: nowrap">Brand</th>
-                        <th class="text-right mfb-x" style="white-space: nowrap">MSRP(USD)</th>
-                        <th class="text-right mfb-xxx" style="white-space: nowrap">Retail Price(USD)</th>
-                        <th class="text-right mfb-xxx" style="white-space: nowrap">Cost Price(USD)</th>
-                        <th class="text-right mfb-x" style="white-space: nowrap">MSRP(RMB)</th>
+                        <th class="text-right mfb-xxt" style="white-space: nowrap">MSRP(USD)</th>
+                        <th class="text-right mfb-xxt" style="white-space: nowrap">Retail Price(USD)</th>
+                        <th class="text-right mfb-xxt" style="white-space: nowrap">Cost Price(USD)</th>
+                        <th class="text-right mfb-xxt" style="white-space: nowrap">MSRP(RMB)</th>
                         <th class="text-right mfb-xxt" style="white-space: nowrap">Retail Price(RMB)</th>
                         <th class="text-center mfb-x" style="white-space: nowrap">SKU 数</th>
+                        <th class="text-center" style="width:140px;white-space: nowrap">创建时间</th>
+                        <th class="text-center" style="width:160px;white-space: nowrap">更新时间</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -195,11 +197,11 @@
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.productType}}</td>
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.sizeType}}</td>
                         <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.brand}}</td>
-                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceClientMsrp}}</td>
-                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].priceClientRetail}}</td>
-                        <td class="text-right mfb-xxx" style="overflow: hidden;">{{feedInfo.skus[0].priceNet}}</td>
-                        <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp}}</td>
-                        <td class="text-right mfb-xxt" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent}}</td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceClientMsrp}}</td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceClientRetail}}</td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceNet}}</td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp}}</td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent}}</td>
                         <td class="text-center mfb-x" style="overflow: hidden;">
                             <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
                                 <div class="table_main">
@@ -209,6 +211,8 @@
                                 </div>
                             </small>
                         </td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.created}}</td>
+                        <td class="text-right" style="overflow: hidden;">{{feedInfo.modified}}</td>
                     </tr>
                     </tbody>
                 </table>
