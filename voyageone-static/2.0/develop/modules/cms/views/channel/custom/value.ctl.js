@@ -37,19 +37,6 @@ define([
                 // 获取页面一览
                 $scope.search();
             })
-
-            var params = $scope.vm.searchInfo;
-            if (params.catPathTxt == '共通属性') {
-                params.cat_path = '0';
-            } else {
-                params.cat_path = params.catPathTxt;
-            }
-            params.skip = 0;
-            params.limit = 0;
-            attributeValueService.init(params)
-                .then(function (res) {
-                    $scope.vm.allresultData = res.data.resultData;
-                })
         }
 
         /**
@@ -104,22 +91,35 @@ define([
          * @param openAddNewValue
          */
         function openAddAttributeValue (openAddNewValue) {
-            // 要先过滤数据，合并相同属性名
-            var valList = $scope.vm.allresultData;
-            var valMapNew = {};
-            for (var i = 0, l = valList.length; i < l; i++) {
-                var nowObj = valList[i];
-                valMapNew[nowObj.prop_id] = nowObj;
+            var params = $scope.vm.searchInfo;
+            if (params.catPathTxt == '共通属性') {
+                params.cat_path = '0';
+            } else {
+                params.cat_path = params.catPathTxt;
             }
-            var valListNew = _.toArray(valMapNew);
-            openAddNewValue({
-                from: $routeParams.catPath,
-                categoryList: $scope.vm.categoryList,
-                valueList: valListNew
-            }).then( function () {
-                    $scope.search();
-                }
-            );
+            params.skip = 0;
+            params.limit = 0;
+            attributeValueService.init(params)
+                .then(function (res) {
+                    // 要先过滤数据，合并相同属性名
+                    var valList = res.data.resultData;
+                    var valMapNew = {};
+                    for (var i = 0, l = valList.length; i < l; i++) {
+                        var nowObj = valList[i];
+                        valMapNew[nowObj.prop_id] = nowObj;
+                    }
+                    var valListNew = _.toArray(valMapNew);
+                    openAddNewValue({
+                        from: $scope.vm.searchInfo.cat_path,
+                        categoryList: $scope.vm.categoryList,
+                        valueList: valListNew
+                    }).then( function () {
+                            $scope.search();
+                        }
+                    );
+                })
+
+
         }
 
     }
