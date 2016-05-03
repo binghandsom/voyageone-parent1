@@ -999,13 +999,16 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             if(commonProps != null){
                 for (Map<String,String>prop: commonProps){
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getAttribute(prop.get("propId"))));
+                    Object value = item.getFields().getAttribute(prop.get("propId"));
+
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
 
             if(customProps != null){
                 for (Map<String,String>prop: customProps){
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"))));
+                    Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
 
