@@ -5,17 +5,16 @@ import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
-import com.voyageone.common.masterdate.schema.field.MultiCheckField;
-import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaReader;
+import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.service.bean.cms.MappingBean;
-import com.voyageone.service.bean.cms.SimpleMappingBean;
+import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsMtDictPlatformDao;
@@ -569,12 +568,116 @@ public class SxProductService extends BaseService {
                     return null;
             }
         } else if (MappingBean.MAPPING_COMPLEX.equals(mappingBean.getMappingType())) {
-            // TODO
+            // Complex 会包含【一组】由多个简单类型或复杂类型组成的一组类型
+            // 他的子属性可以包含任意类型， 包括Complex类型也可以
+            retMap = new HashMap();
+            CmsBtProductModel mainProduct = expressionParser.getSxData().getMainProduct();
+            ComplexMappingBean complexMappingBean = (ComplexMappingBean) mappingBean;
+            if (field.getType() == FieldTypeEnum.COMPLEX) {
+                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getFields().get(complexMappingBean.getMasterPropId());
+                if (masterWordEvaluationContext != null) {
+                    expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+                }
+
+                ComplexField complexField = (ComplexField) field;
+                ComplexValue complexValue = new ComplexValue();
+                complexField.setComplexValue(complexValue);
+
+                for (MappingBean subMappingBean : complexMappingBean.getSubMappings()) {
+                    String platformPropId = subMappingBean.getPlatformPropId();
+                    Map<String, Field> schemaFieldsMap = complexField.getFieldMap();
+
+                    Field schemaField = schemaFieldsMap.get(platformPropId);
+                    if (schemaField == null) {
+                        $warn("有" + platformPropId + "的mapping关系却没有该属性");
+                        $warn("跳过属性" + platformPropId);
+                        continue;
+                    }
+                    Field valueField = deepCloneField(schemaField);
+                    Map<String, Field> res = resolveMapping(subMappingBean, valueField, shopBean, expressionParser, user);
+                    if (res != null) {
+                        retMap.putAll(res);
+                    }
+                    complexValue.put(valueField);
+                }
+                if (masterWordEvaluationContext != null) {
+                    expressionParser.popMasterPropContext();
+                }
+            } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
+                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getFields().get(complexMappingBean.getMasterPropId());
+
+                if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
+                    $info("No value found for MultiComplex field: " + field.getId());
+                    return null;
+                }
+
+                MultiComplexField multiComplexField = (MultiComplexField) field;
+                List<ComplexValue> complexValues = new ArrayList<>();
+                multiComplexField.setComplexValues(complexValues);
+
+                int index = 0;
+                for (Map<String, Object> masterWordEvaluationContext : masterWordEvaluationContexts) {
+                    expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+                    ComplexValue complexValue = new ComplexValue();
+                    complexValues.add(complexValue);
+
+                    for (MappingBean subMappingBean : complexMappingBean.getSubMappings()) {
+                        String platformPropId = subMappingBean.getPlatformPropId();
+                        Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
+
+                        Field schemaField = schemaFieldsMap.get(platformPropId);
+                        Field valueField = deepCloneField(schemaField);
+                        Map<String, Field> res = resolveMapping(subMappingBean, valueField, shopBean, expressionParser, user);
+
+                        if (res != null) {
+                            for (Map.Entry<String, Field> entry : res.entrySet()) {
+                                retMap.put(field.getId() + "_" + String.valueOf(index) + "_" + entry.getKey(), entry.getValue());
+                            }
+                        }
+                        complexValue.put(valueField);
+                    }
+                    expressionParser.popMasterPropContext();
+                    index++;
+                }
+            } else {
+                $error("Unexpected field type: " + field.getType());
+                return null;
+            }
         } else if (MappingBean.MAPPING_MULTICOMPLEX_CUSTOM.equals(mappingBean.getMappingType())) {
-            // TODO
+            // MultiComplex 会包含【多组】由多个简单类型或复杂类型组成的一组组类型
+            // 他的子属性可以包含任意类型， 包括Complex类型也可以
+            retMap = new HashMap();
+            MultiComplexCustomMappingBean multiComplexCustomMappingBean = (MultiComplexCustomMappingBean) mappingBean;
+            MultiComplexField multiComplexField = (MultiComplexField) field;
+            List<ComplexValue> complexValues = new ArrayList<>();
+            for (MultiComplexCustomMappingValue multiComplexCustomMappingValue : multiComplexCustomMappingBean.getValues()) {
+                ComplexValue complexValue = new ComplexValue();
+                for (MappingBean subMapping : multiComplexCustomMappingValue.getSubMappings()) {
+                    String platformPropId = subMapping.getPlatformPropId();
+                    Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
+
+                    Field schemaField = schemaFieldsMap.get(platformPropId);
+                    Field valueField = deepCloneField(schemaField);
+                    Map<String, Field> res = resolveMapping(subMapping, valueField, shopBean, expressionParser, user);
+                    if (res != null) {
+                        retMap.putAll(res);
+                    }
+                    complexValue.put(valueField);
+                }
+                complexValues.add(complexValue);
+            }
+            multiComplexField.setComplexValues(complexValues);
         }
 
         return retMap;
+    }
+
+    private Field deepCloneField(Field field) throws Exception {
+        try {
+            return SchemaReader.elementToField(field.toElement());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 
     /**

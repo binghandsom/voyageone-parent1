@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms;
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 /**
@@ -16,9 +17,9 @@ public class CmsBtPromotionSkuBean extends CmsBtPromotionGroupsBean {
 
     private Integer qty;
 
-    public CmsBtPromotionSkuBean(CmsBtProductModel productInfo, int cartId, int promotionId, String operator, String productSku, Integer qty) {
+    public CmsBtPromotionSkuBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, String productSku, Integer qty) {
 
-        super(productInfo, cartId, promotionId, operator);
+        super(productInfo, groupModel, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         this.setProductSku(productSku);

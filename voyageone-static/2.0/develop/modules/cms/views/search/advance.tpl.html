@@ -368,8 +368,8 @@
 											   ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
 										<span class="fa fa-check"></span>
 									</label>
-									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platformStatus == 'WaitingPublish'}">
-										&nbsp;{{groupInfo.groups.platformStatus}}&nbsp;
+									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.carts[0].platformStatus == 'OnSale','label-yellow-new': groupInfo.carts[0].platformStatus == 'InStock', 'label-danger-new': groupInfo.carts[0].platformStatus == 'WaitingPublish'}">
+										&nbsp;{{groupInfo.carts[0].platformStatus}}&nbsp;
 									</span>
 									<span class="m-r-sm" ng-if="groupInfo.groups.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.numIId}}" target="_blank"  ng-bind="groupInfo.groups.numIId"></a>
