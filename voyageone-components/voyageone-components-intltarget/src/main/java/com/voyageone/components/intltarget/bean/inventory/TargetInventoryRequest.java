@@ -1,7 +1,5 @@
 package com.voyageone.components.intltarget.bean.inventory;
 
-import java.util.List;
-
 /**
  * @author aooer 2016/4/19.
  * @version 2.0.0
@@ -9,13 +7,43 @@ import java.util.List;
  */
 public class TargetInventoryRequest {
 
-    private List<TargetInventoryOrderRequestProduct> products;
+    private String product_id;
 
-    public List<TargetInventoryOrderRequestProduct> getProducts() {
-        return products;
+    private String multichannel_option;
+
+    private String inventory_type;
+
+    private String field_groups;
+
+    public String getProduct_id() {
+        return product_id;
     }
 
-    public void setProducts(List<TargetInventoryOrderRequestProduct> products) {
-        this.products = products;
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
+
+    public String getMultichannel_option() {
+        return multichannel_option;
+    }
+
+    public void setMultichannel_option(String multichannel_option) {
+        this.multichannel_option = multichannel_option;
+    }
+
+    public String getInventory_type() {
+        return inventory_type;
+    }
+
+    public void setInventory_type(String inventory_type) {
+        this.inventory_type = inventory_type;
+    }
+
+    public String getField_groups() {
+        return field_groups;
+    }
+
+    public void setField_groups(String field_groups) {
+        this.field_groups = field_groups;
     }
 }

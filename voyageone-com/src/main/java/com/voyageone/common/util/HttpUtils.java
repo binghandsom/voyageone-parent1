@@ -4,6 +4,7 @@ import com.voyageone.common.configs.beans.PostResponse;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -143,7 +144,7 @@ public class HttpUtils {
         post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
 
         //测试启用代理
-        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
+        //post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
 
         //post request
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -157,6 +158,27 @@ public class HttpUtils {
             sb.append(line);
         }
 
+        //关闭流
+        buffer.close();
+        return sb.toString();
+    }
+
+    public static String targetGet(String url, String jsonBody, String accept, String token) throws Exception {
+        HttpGet get = new HttpGet(new URI(url));
+        // setHeader Accept
+        get.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
+        // setHeader Authorization
+        if(!StringUtils.isEmpty(token)) get.setHeader("Authorization","Bearer " + token);
+        //post request
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpResponse response = httpclient.execute(get);
+        //从服务器获得输入流
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = buffer.readLine()) != null) {
+            sb.append(line);
+        }
         //关闭流
         buffer.close();
         return sb.toString();

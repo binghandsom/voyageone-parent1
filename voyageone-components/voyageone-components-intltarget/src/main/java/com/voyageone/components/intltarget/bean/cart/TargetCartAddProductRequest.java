@@ -1,11 +1,11 @@
 package com.voyageone.components.intltarget.bean.cart;
 
 /**
- * @author aooer 2016/4/13.
+ * @author aooer 2016/5/3.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class TargetCartProductRequest {
+public class TargetCartAddProductRequest {
 
     private String productId;
 
@@ -28,4 +28,5 @@ public class TargetCartProductRequest {
     public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
+
 }
