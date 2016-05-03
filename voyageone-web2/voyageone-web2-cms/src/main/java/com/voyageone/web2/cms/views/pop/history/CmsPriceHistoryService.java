@@ -3,11 +3,13 @@ package com.voyageone.web2.cms.views.pop.history;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +42,13 @@ public class CmsPriceHistoryService extends BaseAppService {
         if(isFirstSku){
             //根据页面Code取得对应的SkuList
             CmsBtProductModel cmsBtProductModel=productService.getProductByCode(channelId,code);
-            skuCode=cmsBtProductModel.getSkus().get(0).getSkuCode();
-            //获取SkuList
-            result.put("skuList",cmsBtProductModel.getSkus());
+            if(cmsBtProductModel.getSkus().size()>0){
+                skuCode=cmsBtProductModel.getSkus().get(0).getSkuCode();
+                //获取SkuList
+                result.put("skuList",cmsBtProductModel.getSkus());
+            }else{
+                result.put("skuList",new ArrayList<CmsBtProductModel_Sku>());
+            }
         }else{
             skuCode=(String) params.get("sku");
         }
