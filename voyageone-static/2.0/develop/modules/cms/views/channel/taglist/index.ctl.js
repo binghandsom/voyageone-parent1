@@ -172,6 +172,7 @@ define([
                  if(data[i].id == index)
                  {
                      $scope.vm.childs = data[i];
+                     return;
                  }
                 dGselect(index,data[i].children);
             }
