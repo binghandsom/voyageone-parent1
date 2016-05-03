@@ -1276,7 +1276,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (oldImages.size() > 0) {
                     // 取得图片名最后一部分中的索引的最大值 + 1
                     try {
-                        index = oldImages.stream().map((imagesModel) -> Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))).max(Integer::compare).get() + 1;
+                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
                     } catch (Exception ex) {
                         $error(ex);
                         throw new RuntimeException("ImageName Parse Fail!", ex);
