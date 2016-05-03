@@ -14,9 +14,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.service.bean.cms.ComplexMappingBean;
-import com.voyageone.service.bean.cms.MappingBean;
-import com.voyageone.service.bean.cms.SimpleMappingBean;
+import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsMtDictPlatformDao;
@@ -648,8 +646,27 @@ public class SxProductService extends BaseService {
         } else if (MappingBean.MAPPING_MULTICOMPLEX_CUSTOM.equals(mappingBean.getMappingType())) {
             // MultiComplex 会包含【多组】由多个简单类型或复杂类型组成的一组组类型
             // 他的子属性可以包含任意类型， 包括Complex类型也可以
-            // TODO
+            retMap = new HashMap();
+            MultiComplexCustomMappingBean multiComplexCustomMappingBean = (MultiComplexCustomMappingBean) mappingBean;
+            MultiComplexField multiComplexField = (MultiComplexField) field;
+            List<ComplexValue> complexValues = new ArrayList<>();
+            for (MultiComplexCustomMappingValue multiComplexCustomMappingValue : multiComplexCustomMappingBean.getValues()) {
+                ComplexValue complexValue = new ComplexValue();
+                for (MappingBean subMapping : multiComplexCustomMappingValue.getSubMappings()) {
+                    String platformPropId = subMapping.getPlatformPropId();
+                    Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
 
+                    Field schemaField = schemaFieldsMap.get(platformPropId);
+                    Field valueField = deepCloneField(schemaField);
+                    Map<String, Field> res = resolveMapping(subMapping, valueField, shopBean, expressionParser, user);
+                    if (res != null) {
+                        retMap.putAll(res);
+                    }
+                    complexValue.put(valueField);
+                }
+                complexValues.add(complexValue);
+            }
+            multiComplexField.setComplexValues(complexValues);
         }
 
         return retMap;
