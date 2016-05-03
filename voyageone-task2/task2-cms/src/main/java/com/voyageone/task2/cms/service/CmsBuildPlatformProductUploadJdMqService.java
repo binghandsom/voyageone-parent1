@@ -9,17 +9,17 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
 import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
-import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -87,7 +87,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     // SKU属性Active
     private final static int AttrType_Active_1 = 1;
     // 分隔符(tab)
-    private final static String Separtor_Tab = "\t";
+    private final static String Separtor_Xor = "^";
     // 分隔符(|)
     private final static String Separtor_Vertical = "|";
     // 分隔符(-)
@@ -242,11 +242,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
             // 构造该产品所有SKUCODE的字符串列表
-            List<String> strSkuList = new ArrayList<>();
-            skuList.forEach(sku -> strSkuList.add(sku.getSkuCode()));
+            List<String> strSkuCodeList = new ArrayList<>();
+            skuList.forEach(sku -> strSkuCodeList.add(sku.getSkuCode()));
             // 取得每个SKU的逻辑库存信息
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            skuLogicQtyMap = productService.getLogicQty(channelId, strSkuList);
+            skuLogicQtyMap = productService.getLogicQty(channelId, strSkuCodeList);
 
             String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
 
@@ -274,16 +274,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = new ArrayList<>();
             cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
 
-            // 获取预设属性设定表
-            // 未设计
-
             // 获取尺码表
             // 7. product.fields（mongodb， 共通字段略）增加三个字段
             //       * sizeGroupId        <-设置SKU信息     //不是新任务列表中的groupid
             //       * sizeChartIdPc      <-上传图片用
             //       * sizeChartIdMobile  <-上传图片用
             // 调用共通函数
-            // TODO No.1   SizeMapGroupId现在没有后面会加到field里面去
+            // TODO No.1 SizeMapGroupId现在没有后面会加到field里面去,暂时不做，预计五月中旬再做
             List<CmsBtSizeMapModel> cmsBtSizeMapModelList = new ArrayList<>();
 //                cmsBtSizeMapModelList = sxProductService.selectSizeMapList();
 
@@ -335,9 +332,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     throw new BusinessException(errMsg);
                 }
 
-                // 回写商品id(wareId->numIId)-----------等待共通函数----------------
-                // TODO No.2   共通函数还没做
+                // 回写商品id(wareId->numIId)
                 mainProduct.getGroups().setNumIId(String.valueOf(jdWareId));
+                // 更新者
+                mainProduct.setModifier(UserId_ClassName);
                 productGroupService.updateGroupsPlatformStatus(mainProduct.getGroups());
 
                 // 上传商品主图
@@ -351,8 +349,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //                String[] extParameter = {mainProduct.getFields().getCode()};   // 主产品code
                 ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
-                // 京东要求图片必须是5张， 如果不满5张，必须使用一张图片作为补充， 补图代码暂时忽略
-                // 商品主图的第一张已经在前面的共通属性里面设置了，这里最多只需要设置4张非主图
+                // 京东要求图片必须是5张，商品主图的第一张已经在前面的共通属性里面设置了，这里最多只需要设置4张非主图
                 for (String picName : mainPicNameList) {
                     String picUrl = "";
                     try {
@@ -363,7 +360,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     } catch (Exception ex) {
                         $error("京东上传主商品非主图失败！ wareId:" + jdWareId + " colorId:" + ColorId_MinPic + " picName:" + picName);
                         // 继续上传下一张图片
-                        continue;
                     }
                 }
 
@@ -405,8 +401,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     }
 
                     // 删除group表中的商品id(numIId)
-                    // TODO   No.2 就用更新numIId的共通函数，传给空的wareid给它，应该就更新成空了
                     mainProduct.getGroups().setNumIId("");
+                    // 更新者
+                    mainProduct.setModifier(UserId_ClassName);
                     productGroupService.updateGroupsPlatformStatus(mainProduct.getGroups());
 
                     // 失败状态设定
@@ -484,7 +481,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         JdProductBean jdProductBean = new JdProductBean();
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
-        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformMappingData, platformSchemaData);
+        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformMappingData, platformSchemaData, shopProp, expressionParser, UserId_ClassName);
 
         // 流水号(非必须)
 //        jdProductBean.setTradeNo(mainProduct.getXXX());                  // 不使用
@@ -558,7 +555,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         mainPicNameList.add("京东产品图片-3");
         mainPicNameList.add("京东产品图片-4");
         mainPicNameList.add("京东产品图片-5");
-        byte[] bytes = new byte[1024];
+        byte[] bytes = null;
 
         // 循环取得5张图片的url并分别上传到京东
         for (String picName : mainPicNameList) {
@@ -572,13 +569,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 取得图片就推出循环
                 break;
             } catch (Exception ex) {
-                String errMsg = String.format("京东取得详情页描述信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
+                String errMsg = String.format("京东取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                         channelId, cartId, groupId, platformCategoryId);
                 $error(errMsg);
-                // 继续去下一张图片
-                continue;
+                // 继续取下一张图片
             }
         }
+        // 图片信息（图片尺寸为800*800，单张大小不超过 1024K）(必须)
         jdProductBean.setWareImage(bytes);
 
         // 包装清单(非必须)
@@ -632,11 +629,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @return Map<String, String   Map(包含商品属性列表，用户自行输入的类目属性ID，用户自行输入的类目属性值)
      */
-    private Map<String, String> getJdProductAttributes(CmsMtPlatformMappingModel platformMappingData,
-                                          CmsMtPlatformCategorySchemaModel platformSchemaData) {
+    private Map<String, String> getJdProductAttributes(CmsMtPlatformMappingModel platformMappingData, CmsMtPlatformCategorySchemaModel platformSchemaData,
+                                           ShopBean shopBean, ExpressionParser expressionParser, String user) {
         Map<String, String> retAttrMap = new HashMap<>();
-
-        // FIXME: Question4 传入的参入都是主产品，主类目对应的mappingdata,schemadata，没有问题吧？
 
         // 取得schema数据中的propsItem(XML字符串)
         String propsItem = platformSchemaData.getPropsItem();
@@ -646,9 +641,17 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             itemFieldList = SchemaReader.readXmlForList(propsItem);
         }
 
-        // 取得平台mapping数据中的props
-        List<MappingBean> mappingBeanList = platformMappingData.getProps(); // TODO 看共通函数需要传入什么
-//        List<Map<String, Object>> testList = JacksonUtil.jsonToMapList(JacksonUtil.bean2JsonNotNull(mappingBeanList));
+        // 根据field列表取得属性值mapping数据
+        Map<String, Field> attrMap = null;
+
+        try {
+            // 取得所有field对应的属性值
+            attrMap = sxProductService.constructMappingPlatformProps(itemFieldList, platformMappingData, shopBean, expressionParser, user);
+        } catch (Exception e) {
+            String errMsg = String.format("取得京东商品属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
+                    shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformMappingData.getPlatformCartId());
+            $error(errMsg);
+        }
 
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1（需要从类目服务接口获取）
         // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值 
@@ -659,55 +662,70 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 图书品类输入值规则：ISBN：数字、字母格式 出版时间：日期格式“yyyy-mm-dd” 版次：数字格式 印刷时间：日期格式“yyyy-mm-dd” 印次：数字格式 页数：数字格式 字数：数字格式 套装数量：数字格式 附件数量：数字格式 
         StringBuffer sbInputStrs = new StringBuffer();
 
-        // 遍历fieldList
-        for (Field field : itemFieldList) {
-            // 属性值id(field_id)
-            String fieldId = field.getId();
-            // TODO No.6 调用共通函数取得属性id对应的属性值id 列表件数为1件    返回值List<Map<String, Object>>
-            List<Map<String, Object>> attrList = new ArrayList<>();
-            // attrList = xxxx();   // FIXME: 等待共通函数  ========================================
-            // 返回值List<Map<String, List>>
+        // 如果list为空说明没有mappingg过，不用设置
+        if (attrMap != null && attrMap.size() > 0) {
 
-            // 如果list为空说明没有mappingg过，不用设置
-            if (attrList != null && attrList.size() > 0) {
+            // 遍历fieldList
+            for (Field field : itemFieldList) {
+                // 属性值id(field_id)
+                String fieldId = field.getId();
 
-                // 取得属性值列表(多选有多个属性)
-                List<String> attrValueList =  new ArrayList<>();// TODO <-attrList.get(0).get(fieldId);
-
-                // 属性值设置(如果有多个，则用逗号分隔 "属性值1，属性值2，属性值3")
-                StringBuffer sbAttrValue = new StringBuffer();
-                if (attrValueList != null && attrValueList.size() > 0) {
-                    for (int i = 0; i < attrValueList.size(); i++) {
-                        // 属性值id(fieldId对应的属性值id)
-                        sbAttrValue.append(attrValueList.get(i));
-                        // 如果不是属性值列表中的最后一个则加上逗号("属性值1，属性值2，属性值3")
-                        if (i < attrValueList.size() - 1) {
-                            sbAttrValue.append(Separtor_Coma);   // ","
-                        }
-                    }
+                // 从属性值map里面取得当前fieldId对应的Field
+                Field fieldValue = attrMap.get(fieldId);
+                if (fieldValue == null) {
+                    $info("没找到该fieldId对应的属性值！ fieldId:" + fieldId);
+                    continue;
                 }
 
-                // 取得的属性值不为空的时候设置
-                if (!StringUtils.isEmpty(sbAttrValue.toString())) {
-                    // 输入类型input_type为1(单选)或2(多选)的时候
-                    if (FieldTypeEnum.SINGLECHECK == field.getType() ||
-                            FieldTypeEnum.MULTICHECK == field.getType()) {
+                // 根据输入类型分别设置3个属性值
+                switch (fieldValue.getType()) {
+                    case SINGLECHECK: {
+                        // 输入类型input_type为1(单选)的时候,设置【商品属性列表】
                         // 设置商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1
-                        sbAttributes.append(fieldId);          // 属性id(fieldId)
-                        sbAttributes.append(Separtor_Colon);   // ":"
+                        sbAttributes.append(fieldId);                          // 属性id(fieldId)
+                        sbAttributes.append(Separtor_Colon);                   // ":"
                         // 属性值设置(如果有多个，则用逗号分隔 "属性值1，属性值2，属性值3")
-                        sbAttributes.append(sbAttrValue.toString());  // 属性值id
-                        sbAttributes.append(Separtor_Vertical);       // "|"
-                    } else if (FieldTypeEnum.INPUT == field.getType()) {
-                        // 输入类型input_type为3(可输入)的时候
-                        // 设置用户自行输入的类目属性ID串结构：‘pid1|pid2|pid3’  // FIXME: Question京东说明里面为啥这里是pid,不是aid呢？难道不一样
-                        sbInputPids.append(fieldId);             // 属性id(fieldId)
-                        sbInputPids.append(Separtor_Vertical);   // "|"
+                        sbAttributes.append(fieldValue.getValue().toString()); // 属性值id
+                        sbAttributes.append(Separtor_Vertical);                // "|"
+                        break;
+                    }
+                    case MULTICHECK: {
+                        // 多选的时候，属性值多个，则用逗号分隔 "属性值1，属性值2，属性值3")
+                        StringBuffer sbMultiAttrValue = new StringBuffer();
+                        List<Value> valueList = ((MultiCheckField) fieldValue).getValues();
+                        if (valueList != null && valueList.size() > 0) {
+                            for (int i = 0; i < valueList.size(); i++) {
+                                // 属性值id(fieldId对应的属性值id)
+                                sbMultiAttrValue.append(valueList.get(i));
+                                // 如果不是属性值列表中的最后一个则加上逗号(末尾不加逗号)
+                                if (i < valueList.size() - 1) {
+                                    sbMultiAttrValue.append(Separtor_Coma);   // ","
+                                }
+                            }
+                        }
+
+                        // 输入类型input_type为2(多选)的时候,设置【商品属性列表】
+                        // 设置商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1
+                        sbAttributes.append(fieldId);                          // 属性id(fieldId)
+                        sbAttributes.append(Separtor_Colon);                   // ":"
+                        // 属性值设置(如果有多个，则用逗号分隔 "属性值1，属性值2，属性值3")
+                        sbAttributes.append(sbMultiAttrValue.toString());      // 属性值1,属性值2，属性值3
+                        sbAttributes.append(Separtor_Vertical);                // "|"
+                        break;
+                    }
+                    case INPUT: {
+                        // 输入类型input_type为3(可输入)的时候,设置【用户自行输入的类目属性ID串】和【用户自行输入的属性值】
+                        // 设置用户自行输入的类目属性ID串结构：‘pid1|pid2|pid3’
+                        sbInputPids.append(fieldId);                         // 属性id(fieldId)
+                        sbInputPids.append(Separtor_Vertical);               // "|"
 
                         // 设置用户自行输入的属性值,结构:‘输入值|输入值2|输入值3’
-                        sbInputStrs.append(sbAttrValue.toString()); // 属性值
-                        sbInputStrs.append(Separtor_Vertical);      // "|"
+                        sbInputStrs.append(fieldValue.getValue().toString()); // 属性值id
+                        sbInputStrs.append(Separtor_Vertical);                // "|"
+                        break;
                     }
+                    default:
+                        $error("复杂类型[" + field.getType() + "]不能作为属性值来使用！");
                 }
             }
         }
@@ -826,15 +844,15 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 设置该商品的自定义属性值别名(颜色1:颜色1的别名^颜色2:颜色2的别名)
             sbPropertyAlias.append(productColorMap.get(objProduct.getFields().getCode())); // 产品CODE对应的颜色值ID
             sbPropertyAlias.append(Separtor_Colon);         // ":"
-            sbPropertyAlias.append(objProduct.getFields().getCode());  // TODO Question 产品CODE作为颜色值别名
-            sbPropertyAlias.append(Separtor_Tab);           // "\t"
+            sbPropertyAlias.append(objProduct.getFields().getCode());
+            sbPropertyAlias.append(Separtor_Xor);           // "^"
 
             List<CmsBtProductModel_Sku> objProductSkuList = objProduct.getSkus();
             for (CmsBtProductModel_Sku objSku:objProductSkuList) {
                 // sku属性(1000021641:1523005913^1000021641:1523005771|1000021641:1523005913^1000021641:1523005772)
                 // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2
                 sbSkuProperties.append(productColorMap.get(objProduct.getFields().getCode()));
-                sbSkuProperties.append(Separtor_Tab);        // "\t"
+                sbSkuProperties.append(Separtor_Xor);        // "^"
                 sbSkuProperties.append(skuSizeMap.get(objSku.getSize()));
                 sbSkuProperties.append(Separtor_Vertical);   // "|"
 
@@ -863,7 +881,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //            String size = sxProductService.changeSize(cmsBtSizeMapModelList, entry.getKey());
             String size = entry.getKey();
             sbPropertyAlias.append(size == null ? "" : size); // 尺寸值别名(转换后尺码)
-            sbPropertyAlias.append(Separtor_Tab);             // "\t"
+            sbPropertyAlias.append(Separtor_Xor);             // "^"
         }
 
         // 移除sku属性最后的"|"
@@ -1055,13 +1073,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         $info("京东根据商品Id销售属性值Id上传产品主图失败！ wareId:" + wareId + " colorId:" + colorId + " picName:" + picName);
                     }
                     // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
-                    continue;
                 }
             }
 
             // 该产品5张图片全部上传失败的时候
             if (!uploadProductPicResult) {
                 $error("京东根据商品Id销售属性值Id增加该产品图片失败！ wareId:" + wareId + " productCode:" + product.getFields().getCode());
+            } else {
+                $info("京东根据商品Id销售属性值Id增加该产品图片成功！ wareId:" + wareId + " productCode:" + product.getFields().getCode());
             }
 
             // 图片上传返回状态判断(该商品下所有产品的图片均上传成功时，才返回成功，否则返回失败)
@@ -1233,24 +1252,5 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         return resultPrice;
     }
-
-
-    /**
-     * 回写group表的商品id
-     * 写到group表里， 上传商品时的返回值ware_id -> num_iid
-     */
-//    private void saveGroupNumIId(CmsBtProductModel mainProduct, long groupId, String wareId, String channelId) {
-//
-//        // 设置platform信息
-//        CmsBtProductModel_Group_Platform cmsPlatform = mainProduct.getGroups().getPlatformByGroupId(groupId);
-//        // 京东新增商品返回的商品id
-//        cmsPlatform.setNumIId(wareId);
-//
-//        // 更新group
-//        Set<Long> lngSet = new HashSet<>();
-//        lngSet.add(mainProduct.getProdId());
-//        productGroupService.saveGroups(channelId, lngSet, cmsPlatform);
-//        $info(String.format("京东新增商品返回的商品id回写到group表里. cms:group:[ProdId:%s][WareId:%s]", mainProduct.getProdId(), wareId));
-//    }
 
 }
