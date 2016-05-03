@@ -4,8 +4,11 @@ import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.intltarget.bean.guest.TargetGuestV3AuthResponse;
+import com.voyageone.components.intltarget.service.TargetGuestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,9 @@ public class TargetBaseHelper {
 
     private static String api_token;
 
+    @Autowired
+    private TargetGuestService targetGuestService;
+
     /**
      * 调用Target api 失败重试
      *
@@ -37,13 +43,15 @@ public class TargetBaseHelper {
      * @throws Exception
      */
     @Retryable
-    public String callTargetApi(String api_url, Map mapBody, boolean isNeedToken) throws Exception {
+    public String callTargetApi(String api_url, Map mapBody, boolean isNeedToken,String httpType) throws Exception {
         if (isNeedToken && StringUtils.isEmpty(api_token)) {
             refreshToken();//校验token
         }
-        String result = HttpUtils.post(getConfigApiUrl("api_url") + api_url,
-                JacksonUtil.bean2Json(mapBody), HTTP_HEAD_ACCEPT, api_token);
-
+        String result=null;
+        if(httpType.equals("post"))
+            result = HttpUtils.post(getConfigApiUrl("api_url") + api_url,JacksonUtil.bean2Json(mapBody), HTTP_HEAD_ACCEPT, api_token);
+        else if(httpType.equals("get"))
+            result = HttpUtils.targetGet(getConfigApiUrl("api_url") + api_url,JacksonUtil.bean2Json(mapBody), HTTP_HEAD_ACCEPT, api_token);
         //检查结果
         checkResult(result, isNeedToken);
         return result;
@@ -78,23 +86,14 @@ public class TargetBaseHelper {
      * @throws Exception
      */
     private void refreshToken() throws Exception {
-        String url = getConfigApiUrl("api_url") + "/guests/v3/auth?key=" + getConfigApiUrl("app_key");
-        String body = JacksonUtil.bean2Json(new HashMap<String, String>() {{
-            put("logonId", getConfigApiUrl("logonId"));
-            put("logonPassword", getConfigApiUrl("logonPassword"));
-        }});
-        String reponseStr  = HttpUtils.post(
-                url,
-                body,
-                "application/json",
-                null
-                );
-
         //重新赋值
-        api_token = (String)JacksonUtil.jsonToMap(reponseStr).get("accessToken");
+        api_token = targetGuestService.v3Auth().getAccessToken();
     }
 
     private String getConfigApiUrl(String key) {
-        return ThirdPartyConfigs.getVal1("018", key);
+        if(key.equals("app_key"))
+        return "wrQCAYQjwG6t9konlHC9ManaPPhgHHfS";
+        else
+        return "https://stage-api.target.com";//ThirdPartyConfigs.getVal1("018", key);
     }
 }

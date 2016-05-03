@@ -12,66 +12,72 @@ import java.util.HashMap;
  * @since 2.0.0
  */
 @Service
-public class TargetCartService extends TargetBase{
+public class TargetCartService extends TargetBase {
 
-    private static final String Url="/carts";
-
-    /**
-     * 添加shipping地址
-     * @param request 请求对象
-     * @return 地址信息
-     * @throws Exception
-     */
-    public TargetCartShippingAddress addCartShippingAddress(TargetCartShippingAddressRequest request) throws Exception {
-        return getApiResponseWithKey(Url+"/v2/shipping_address",request,TargetCartShippingAddress.class,true);
-    }
+    private static final String Url = "/carts";
 
     /**
      * 添加产品信息到cart
+     *
      * @param request 请求体
      * @return 产品信息
      * @throws Exception
      */
-    public TargetCartProduct addProductToCart(TargetCartProductRequest request) throws Exception {
-        return getApiResponseWithKey(Url+"/v2/products",request,TargetCartProduct.class,true);
+    public TargetCartAddProductResponse addProductToCart(TargetCartAddProductRequest request) throws Exception {
+        return postApiResponseWithKey(Url + "/v2/products?responseGroup=cartDetails", request, TargetCartAddProductResponse.class, true);
+    }
+
+    /**
+     * 获取已添加使用的地址信息
+     *
+     * @return 地址信息响应内容
+     * @throws Exception
+     */
+    public TargetCartUsableShippingAddressResponse getUsableShippingAddress() throws Exception {
+        return getApiResponseWithKey(Url + "/v2/usable_shipping_address", null, TargetCartUsableShippingAddressResponse.class, true);
+    }
+
+    /**
+     * 应用运输详细信息
+     * @param request 应用运输信息
+     * @return 操作结果
+     * @throws Exception
+     */
+    public TargetCartApplyShippingDetailResponse applyShippingDetails(TargetCartApplyShippingDetailRequest request) throws Exception {
+        return postApiResponseWithKey(Url + "/v2/shipping_details", request, TargetCartApplyShippingDetailResponse.class, true);
+    }
+
+    /**
+     * 添加支付卡信息
+     * @param request 支付信息
+     * @return 信息添加是否成功
+     */
+    public boolean addTenders(TargetCartAddTenderRequest request) {
+        try {
+            postApiResponseWithKey(Url + "/v2/shipping_details", request, TargetCartApplyShippingDetailResponse.class, true);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 订单review
+     * @return 订单review响应信息
+     * @throws Exception
+     */
+    public TargetCartOrderReviewResponse orderReview() throws Exception {
+        return getApiResponseWithKey(Url + "/v2/order_review", null, TargetCartOrderReviewResponse.class, true);
     }
 
     /**
      * checkout
+     *
      * @param request 请求体
      * @return check信息
      * @throws Exception
      */
-    public TargetCartCheckout checkout(TargetCartCheckoutRequest request) throws Exception {
-        return getApiResponseWithKey(Url+"/v2/checkout",request,TargetCartCheckout.class,true);
-    }
-
-    /**
-     * 添加订单email到cart
-     * @param request email信息
-     * @return 是否添加成功
-     * @throws Exception
-     */
-    public boolean addCartOrderTrackingEmail(TargetCartEmailRequest request) throws Exception{
-        getApiResponseWithKey(Url+"/v2/email",request,null,true);
-        return true;
-    }
-
-    /**
-     * 初始化checkOut
-     * @return check信息
-     * @throws Exception
-     */
-    public TargetCartCheckout initiateCheckout() throws Exception {
-        return getApiResponseWithKey(Url+"/v2/initiate_checkout",new HashMap<>(),TargetCartCheckout.class,true);
-    }
-
-    /**
-     * 添加paypalDetails
-     * @return TargetCartPayPal
-     * @throws Exception
-     */
-    public TargetCartPayPal addCartPayPalDetails(TargetCartPayPalRequest request) throws Exception {
-        return getApiResponseWithKey(Url+"/v2/paypal",request,TargetCartPayPal.class,true);
+    public TargetCartCheckoutResponse checkout(TargetCartCheckoutRequest request) throws Exception {
+        return postApiResponseWithKey(Url + "/v2/checkout", request, TargetCartCheckoutResponse.class, true);
     }
 }

@@ -1,9 +1,8 @@
 package com.voyageone.components.intltarget.service;
 
 import com.voyageone.components.intltarget.TargetBase;
-import com.voyageone.components.intltarget.bean.guest.TargetGuestShippingAddress;
-import com.voyageone.components.intltarget.bean.inventory.TargetInventory;
 import com.voyageone.components.intltarget.bean.inventory.TargetInventoryRequest;
+import com.voyageone.components.intltarget.bean.inventory.TargetInventoryResponse;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,10 +13,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TargetInventoryService extends TargetBase {
 
-    private static final String Url="/available_to_promise";
+    private static final String Url = "/available_to_promise";
 
-    public TargetInventory getTargetInventory(TargetInventoryRequest request) throws Exception {
-        return getApiResponseWithKey(Url+"/v2?request_type=availability",request,TargetInventory.class,true);
+    public TargetInventoryResponse getTargetInventory(TargetInventoryRequest request) throws Exception {
+        return getApiResponseWithKey(Url + "/v2/" + request.getProduct_id() + "?multichannel_option=" + request.getMultichannel_option() + "&inventory_type=" + request.getInventory_type() + "&field_groups=" + request.getField_groups() + "", request, TargetInventoryResponse.class, false);
     }
 
 }
