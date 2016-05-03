@@ -76,6 +76,13 @@ public class BhfoAnalysisService extends BaseAnalysisService {
      * Bhfo产品文件读入
      */
     public int superFeedImport() {
+
+
+        $info("Bhfo产品品牌黑名单读入开始");
+        Set<String> blackList = new HashSet<>();
+        Feeds.getConfigs(getChannel().getId(),FeedEnums.Name.blackList).forEach(m -> blackList.add(m.getCfg_val1().toLowerCase().trim()));
+
+
         $info("Bhfo产品文件读入开始");
 
         List<SuperfeedBhfoBean> superfeed = new ArrayList<>();
@@ -118,6 +125,9 @@ public class BhfoAnalysisService extends BaseAnalysisService {
                 superfeedBhfobean.setVaryingAttribute1(reader.get(i++));
                 superfeedBhfobean.setVaryingAttribute2(reader.get(i++));
                 superfeedBhfobean.setBrand1(reader.get(i++));
+                if(blackList.contains(superfeedBhfobean.getBrand1().toLowerCase().trim())) {
+                    continue;
+                }
                 superfeedBhfobean.setCountryOfOrigin(reader.get(i++));
                 superfeedBhfobean.setSeriesName(reader.get(i++));
                 superfeedBhfobean.setGtin(reader.get(i++));
