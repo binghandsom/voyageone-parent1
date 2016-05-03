@@ -222,7 +222,6 @@ public class CmsFeedCustPropService extends BaseAppService {
         comMdl.setCatPath("共通属性");
         comMdl.setCatName("共通属性");
         comMdl.setCatId("共通属性");
-        comMdl.setIsParent(0);
         rsltList.add(comMdl);
         rsltList.addAll(topTree);
 //        getSubCatTree2List(topTree, rsltList);

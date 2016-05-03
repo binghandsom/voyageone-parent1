@@ -64,6 +64,7 @@ import java.util.concurrent.TimeUnit;
  * @version 2.0.0
  */
 @Service
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
 public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
     // 京东平台的操作类型(在售)
@@ -130,16 +131,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private ProductGroupService productGroupService;
     // workload对象列表
     private Set<WorkLoadBean> workLoadBeans;
-
-    @Override
-    public SubSystem getSubSystem() {
-        return SubSystem.CMS;
-    }
-
-    @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
-    protected void onMessage(Message message){
-        super.onMessage(message);
-    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {

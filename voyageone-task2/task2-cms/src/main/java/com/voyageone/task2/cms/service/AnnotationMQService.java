@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,11 @@ import java.util.Map;
 public class AnnotationMQService extends BaseMQCmsService {
 
     static long start=System.currentTimeMillis();
+
+    @Override
+    public boolean isRunnable() {
+        return true;
+    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
