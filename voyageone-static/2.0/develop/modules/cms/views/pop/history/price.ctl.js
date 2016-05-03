@@ -20,7 +20,7 @@ define([
         $scope.initialize = function () {
             getPriceList();
         };
-
+        $scope.getPriceList = getPriceList;
         function getPriceList() {
         var data = {
             code: $scope.vm.code,
