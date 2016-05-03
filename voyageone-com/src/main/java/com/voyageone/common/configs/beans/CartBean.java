@@ -16,7 +16,6 @@ public class CartBean {
     private String creater;
     private String modified;
     private String modifier;
-    private Integer status;
 
     public String getCart_id() {
         return cart_id;
@@ -106,11 +105,4 @@ public class CartBean {
         this.modifier = modifier;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }

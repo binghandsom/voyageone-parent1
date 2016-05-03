@@ -32,9 +32,12 @@ define([
             //默认选中店铺类分类
             channelTagService.init($scope.vm).then(function (res) {
                 $scope.vm.tagTree = res.data;
-                $scope.vm.tagTree2 = $scope.vm.tagTree[0];
-                $scope.vm.tagTree3 = $scope.vm.tagTree[0].children[0];
-
+                if($scope.vm.tagTree!=null&&$scope.vm.tagTree.length!=0){
+                    $scope.vm.tagTree2 = $scope.vm.tagTree[0];
+                    if($scope.vm.tagTree2 !=null){
+                        $scope.vm.tagTree3 = $scope.vm.tagTree[0].children[0];
+                    }
+                }
             });
         };
 
@@ -172,6 +175,7 @@ define([
                  if(data[i].id == index)
                  {
                      $scope.vm.childs = data[i];
+                     return;
                  }
                 dGselect(index,data[i].children);
             }
