@@ -14,7 +14,7 @@
 									<div class="col-sm-6">
 										<!--<input type="text" class="form-control"/>-->
 										<!-- TODO categoryList返回的接口发生变化了 -->
-										<select name="" id="" search-contains="true" chosen class="form-control" ng-model="vm.searchInfo.catPathTxt" ng-options="category.catPath as category.catPath for category in vm.categoryList">
+										<select name="" id="" search-contains="true" chosen class="form-control" ng-model="vm.searchInfo.catPathTxt" ng-options="category.catPath as category.catPath for category in vm.categoryList | filter:{isParent:0}">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>
 									</div>
