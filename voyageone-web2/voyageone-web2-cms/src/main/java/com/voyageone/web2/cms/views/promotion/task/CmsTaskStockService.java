@@ -833,19 +833,20 @@ public class CmsTaskStockService extends BaseAppService {
                 if (!onlySku) {
                     if (value.contains("%")) {
                         if (value.startsWith("%")) {
-                            //隔离平台的隔离比例必须填且为大于0小于100整数
+                            //隔离平台的隔离比例必须填且为大于0小于等于100整数
                             throw new BusinessException("7000014");
                         } else {
                             //隔离平台的隔离比例
                             String separate = value.substring(0, value.lastIndexOf("%"));
-                            if (separate.contains("%") || separate.getBytes().length > 2 || !StringUtils.isDigit(separate)) {
+                            if (separate.contains("%") || !StringUtils.isDigit(separate)
+                                    || Integer.parseInt(separate)>100 ) {
                                 throw new BusinessException("7000014");
                             }
                         }
                     } else {
                         if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)
-                                || value.getBytes().length > 2) {
-                            //隔离平台的隔离比例必须填且为大于0小于100整数
+                                || Integer.parseInt(value)>100 ) {
+                            //隔离平台的隔离比例必须填且为大于0小于等于100整数
                             throw new BusinessException("7000014");
                         }
                     }
