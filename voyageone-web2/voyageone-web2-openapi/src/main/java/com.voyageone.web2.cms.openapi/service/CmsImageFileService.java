@@ -1,16 +1,16 @@
 package com.voyageone.web2.cms.openapi.service;
-
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.openapi.OpenApiException;
-import com.voyageone.service.bean.openapi.OpenApiSubError;
 import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
+import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
@@ -21,10 +21,10 @@ import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-
 /**
  * product Service
  *
@@ -43,6 +43,10 @@ public class CmsImageFileService extends BaseService {
     CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
     @Autowired
     ImagePathCache imagePathCache;
+@Autowired
+CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
+    @Autowired
+    TransactionRunner transactionRunnerCms2;
 
     public GetImageResultBean checkGetImageParameter(String channelId, int templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
@@ -65,7 +69,6 @@ public class CmsImageFileService extends BaseService {
     }
 
     public GetImageResultBean getImage(String channelId, int templateId, String file, boolean isUploadUSCDN, String vparam, String creater) throws Exception {
-
         GetImageResultBean result = null;
         CmsMtImageCreateFileModel modelFile = null;
         boolean isCreateNewFile = false;
@@ -135,12 +138,19 @@ public class CmsImageFileService extends BaseService {
         return result;
     }
 
+    public AddListResultBean addListWithTrans(AddListParameter parameter) {
+        final AddListResultBean[] result = {null};
 
-    public AddListResultBean addList(AddListParameter parameter) {
+        transactionRunnerCms2.runWithTran(() -> {
+             result[0] = addList(parameter);
+        });
+        return result[0];
+    }
+
+     AddListResultBean addList(AddListParameter parameter) {
         AddListResultBean result = new AddListResultBean();
         try {
             checkAddListParameter(parameter);
-            //保存事务待处理 超过一秒加事务
             CmsMtImageCreateTaskModel modelTask = new CmsMtImageCreateTaskModel();
             List<CmsMtImageCreateTaskDetailModel> listTaskDetail = new ArrayList<>();
             CmsMtImageCreateFileModel modelCmsMtImageCreateFile;
@@ -170,8 +180,9 @@ public class CmsImageFileService extends BaseService {
             daoCmsMtImageCreateTask.insert(modelTask);
             for (CmsMtImageCreateTaskDetailModel detailModel : listTaskDetail) {
                 detailModel.setCmsMtImageCreateTaskId(modelTask.getId());
-                daoCmsMtImageCreateTaskDetail.insert(detailModel);
+               // daoCmsMtImageCreateTaskDetail.insert(detailModel);
             }
+            daoExtCmsMtImageCreateTaskDetail.insertList(listTaskDetail);
             Map<String, Object> map = new HashMap<>();
             map.put("id", modelTask.getId());
             sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
@@ -193,9 +204,9 @@ public class CmsImageFileService extends BaseService {
     }
 
     public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
-        if (parameter.getData().size() > 500) {
-            throw new OpenApiException(ImageErrorEnum.ParametersOutSize);
-        }
+//        if (parameter.getData().size() > ImageConfig.getMaxSize()) {
+//            throw new OpenApiException(ImageErrorEnum.ParametersOutSize,ImageConfig.getMaxSize()+"");
+//        }
         for (CreateImageParameter imageInfo : parameter.getData()) {
             if (StringUtil.isEmpty(imageInfo.getChannelId())) {
                 throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);

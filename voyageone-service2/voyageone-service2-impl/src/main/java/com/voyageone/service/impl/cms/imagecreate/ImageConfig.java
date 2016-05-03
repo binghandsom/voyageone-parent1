@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
 import com.voyageone.common.configs.Codes;
+import org.springframework.util.StringUtils;
 
 public class ImageConfig {
     //阿里OSS
@@ -23,7 +24,7 @@ public class ImageConfig {
     public static String getValue(String id, String code) {
         return Codes.getCodeName(id, code);
     }
-
+   //LiquidFire配置
     public static String getLiquidFireUrl() {
         return getValue("LiquidFire_Confige", "url");
     }
@@ -40,7 +41,7 @@ public class ImageConfig {
         return getValue("LiquidFire_Confige", "imageProxyPort");
     }
 
-
+    //USCDN 配置
     public static String getUSCDNUrl() {
         return getValue("US_CDN_Confige", "url");
     }
@@ -57,6 +58,15 @@ public class ImageConfig {
         return getValue("US_CDN_Confige", "workingDirectory");
     }
 
+    //上传最大记录数
+    public  static  int getMaxSize() {
+        String value = getValue("Image_Create_Confige", "MaxSize");
+        if (!StringUtils.isEmpty(value)) {
+            return Integer.parseInt(value);
+        }
+        //默认200
+        return 200;
+    }
 
 //    -- USCDN配置
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
@@ -88,6 +98,8 @@ public class ImageConfig {
 //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
 //    VALUE('LiquidFire_Confige','imageProxyPort','7656','','LiquidFire 生成图片ProxyPort',NOW(),'system','system',1);
 
+    //    INSERT `tm_code`(`id`,`code`,`name`,`name1`,`des`,`created`,`creater`,`modifier`,`status`)
+//    VALUE('Image_Create_Confige','MaxSize','200','批量上传最大记录数','',NOW(),'system','system',1);
 //    `cms_mt_image_create_file`
 //            `cms_mt_image_create_template`
 }

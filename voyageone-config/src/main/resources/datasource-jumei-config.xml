@@ -62,7 +62,7 @@
     <bean id="transactionRunnerJuMei" class="com.voyageone.common.components.transaction.TransactionRunner"
           p:simpleTransaction-ref="simpleTransactionJuMei"/>
 
-    <tx:annotation-driven transaction-manager="transactionManagerJuMei"/>
+    <!--<tx:annotation-driven transaction-manager="transactionManagerJuMei"/>-->
 
 
 </beans>

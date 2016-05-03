@@ -27,7 +27,7 @@ public class CmsImageFileController extends OpenAipBaseController {
         return service.getImage(cId, templateId, file, isUploadUSCDN, vparam, CREATE_USER);
     }
 
-    ///http://localhost:8081/rest/product/getImage?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered
+    ///http://localhost:8081/rest/product/image/get?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered
     @RequestMapping(value = "get")
     public GetImageResultBean get(HttpServletRequest request, @RequestParam String cId, @RequestParam int templateId, @RequestParam String file, @RequestParam String vparam) throws Exception {
         $info("CmsImageFileController:get start cId:=[%s],templateId=[%s],file=[%s],vparam=[%s]", cId, templateId, file, vparam);
@@ -36,6 +36,6 @@ public class CmsImageFileController extends OpenAipBaseController {
 
     @RequestMapping(value = "addList", method = RequestMethod.POST)
     public AddListResultBean addList(@RequestBody AddListParameter parameter) {
-        return service.addList(parameter);
+        return service.addListWithTrans(parameter);
     }
 }

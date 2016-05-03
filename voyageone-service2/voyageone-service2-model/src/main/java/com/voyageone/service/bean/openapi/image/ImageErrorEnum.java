@@ -11,7 +11,7 @@ public enum ImageErrorEnum implements ErrorEnumInterface {
     LiquidCreateImageError(10201, "Call  liquid interface exception"),
     AliyunOSSUploadError(10202, "Call  aliyun OSS interface exception"),
     USCDNUploadError(10203, "Call  US CDN interface exception"),
-    ParametersOutSize(10204, "parameter max size is 500."),
+    ParametersOutSize(10204, "parameter max size is ."),
 
     SystemError(10200, " System exception");
     int code;

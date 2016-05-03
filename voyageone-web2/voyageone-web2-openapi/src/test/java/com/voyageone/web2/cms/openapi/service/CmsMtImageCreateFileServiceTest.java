@@ -1,13 +1,23 @@
 package com.voyageone.web2.cms.openapi.service;
 
+import com.voyageone.common.util.excel.ExcelColumn;
+import com.voyageone.common.util.excel.ExcelImportUtil;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportProduct;
 import com.voyageone.service.bean.openapi.image.AddListParameter;
+import com.voyageone.service.bean.openapi.image.AddListResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
+import com.voyageone.service.impl.cms.jumei.enumjm.EnumCount;
+import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMProductImportColumn;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
+import java.io.*;
 import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,12 +42,15 @@ public class CmsMtImageCreateFileServiceTest {
     public  void  testAddList() {
         AddListParameter parameter = new AddListParameter();
         parameter.setData(new ArrayList<CreateImageParameter>());
-        for (int i = 1; i < 100; i++) {
+        for (int i =5000; i < 5500; i++) {
             parameter.getData().add(getCreateImageParameter(i));
         }
-        service.addList(parameter);
+        long start = System.currentTimeMillis();
+        AddListResultBean resultBean = service.addListWithTrans(parameter);
+       // AddListResultBean resultBean = service.addList(parameter);
+        System.out.println("total time:" + (System.currentTimeMillis()-start));
+        Assert.isTrue(resultBean.getErrorCode() == 0, resultBean.getErrorCode() + "");
     }
-
     CreateImageParameter getCreateImageParameter(int fileIndex) {
         String cId = "001";
         int templateId = 15;
@@ -52,5 +65,29 @@ public class CmsMtImageCreateFileServiceTest {
         parameter.setUploadUsCdn(true);
         parameter.setTemplateId(templateId);
         return parameter;
+    }
+    @Test
+    public  void testImportCreateImageInfo() throws Exception {
+//        String channelId;//
+//        int templateId;
+//        String file;
+//        String vParam;
+//        boolean isUploadUsCdn = false;
+        String filePath ="";
+        File excelFile = new File(filePath);
+        InputStream fileInputStream = null;
+        fileInputStream = new FileInputStream(excelFile);
+        HSSFWorkbook book = null;
+        book = new HSSFWorkbook(fileInputStream);
+        HSSFSheet productSheet = book.getSheet("Product");
+        List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
+        List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
+        List<ExcelColumn> listColumn = EnumJMProductImportColumn.getListExcelColumn();//配置列信息
+        listColumn.add( new ExcelColumn("channelId",1,"CreateImage","渠道Id"));
+        listColumn.add( new ExcelColumn("templateId",2,"CreateImage","模板Id"));
+        listColumn.add( new ExcelColumn("file",3,"CreateImage","文件名"));
+        listColumn.add( new ExcelColumn("vParam",4,"CreateImage","参数Id"));
+        listColumn.add( new ExcelColumn("isUploadUsCdn",5,"CreateImage","是否上传美国Cdn"));
+        ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CreateImageParameter.class);
     }
 }
