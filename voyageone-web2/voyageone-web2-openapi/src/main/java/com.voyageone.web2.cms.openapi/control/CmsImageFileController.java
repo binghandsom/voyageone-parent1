@@ -28,6 +28,7 @@ public class CmsImageFileController extends OpenAipBaseController {
     }
 
     ///http://localhost:8081/rest/product/image/get?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered
+    //http://localhost:8081/rest/product/image/get?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=["file:bcbg/bcbg-sku.png","file:bcbg/bcbgtupian.jpg","Text String to be rendered"]
     @RequestMapping(value = "get")
     public GetImageResultBean get(HttpServletRequest request, @RequestParam String cId, @RequestParam int templateId, @RequestParam String file, @RequestParam String vparam) throws Exception {
         $info("CmsImageFileController:get start cId:=[%s],templateId=[%s],file=[%s],vparam=[%s]", cId, templateId, file, vparam);

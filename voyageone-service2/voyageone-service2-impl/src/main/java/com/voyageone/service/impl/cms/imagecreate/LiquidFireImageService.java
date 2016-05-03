@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.liquifire.service.LiquidFireClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
@@ -63,8 +64,9 @@ public class LiquidFireImageService extends BaseService {
     //调用Liquid接口创建图片
     private String createImage(String templateContent, String vparam, String fileName) throws Exception {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
-        String[] vparamList = vparam.split(",");
-        String source = String.format(templateContent, vparamList);
+       // String[] vparamList = vparam.split(",");
+        String[] list= JacksonUtil.ToObjectFromJson(vparam,String [].class);
+        String source = String.format(templateContent, list);
         return client.getImage(source, fileName, ImageConfig.getImageProxyIP(), ImageConfig.getImageProxyPort());
     }
 }
