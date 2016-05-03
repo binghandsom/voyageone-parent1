@@ -153,7 +153,7 @@ public class ProductService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
         queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
-        queryObject.setProjection(projections);
+        queryObject.setProjectionExt(projections);
         return getList(channelId, queryObject);
     }
 
@@ -315,7 +315,7 @@ public class ProductService extends BaseService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(queryStr);
-        queryObject.setProjection("prodId", "modified", "fields.status", "groups");
+        queryObject.setProjectionExt("prodId", "modified", "fields.status", "groups");
 
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         if (findModel == null) {
@@ -605,7 +605,7 @@ public class ProductService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
         if (projection != null && projection.length > 0) {
-            queryObject.setProjection(projection);
+            queryObject.setProjectionExt(projection);
         }
 
         if (!StringUtils.isEmpty(productSku)) {
@@ -702,7 +702,7 @@ public class ProductService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
         if (projection != null && projection.length > 0) {
-            queryObject.setProjection(projection);
+            queryObject.setProjectionExt(projection);
         }
 
         StringBuilder sbQuery = new StringBuilder();

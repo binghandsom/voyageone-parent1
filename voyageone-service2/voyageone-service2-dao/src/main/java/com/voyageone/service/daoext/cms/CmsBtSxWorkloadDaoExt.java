@@ -29,7 +29,7 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
     }
 
     public void updateSxWorkloadModel(CmsBtSxWorkloadModel model) {
-        update("cms_update_sx_workload", parameters("seq", model.getId(), "publish_status", model.getPublishStatus()));
+        update("cms_update_sx_workload", parameters("id", model.getId(), "publish_status", model.getPublishStatus()));
     }
 
     public int updateSxWorkloadModelWithModifier(CmsBtSxWorkloadModel model) {

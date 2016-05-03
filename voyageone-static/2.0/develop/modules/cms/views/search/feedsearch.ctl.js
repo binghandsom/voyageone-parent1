@@ -53,7 +53,7 @@ define([
             if (feedObj.hasImgFlg > 0) {
                 var picList = [];
                 picList[0] = feedObj.image;
-                var para = {'mainPic': feedObj.image[0], 'picList': picList};
+                var para = {'mainPic': feedObj.image[0], 'picList': picList, 'hostUrl':0};
                 return this.openImagedetail(para);
             }
         };

@@ -45,7 +45,7 @@ public abstract class OpenApiBaseService extends VOAbsLoggable {
      * @param queryObject JomgoQuery
      */
     protected void buildProjection(VoApiRequest request, JomgoQuery queryObject) {
-        queryObject.setProjection(getProjection(request));
+        queryObject.setProjectionExt(getProjection(request));
     }
 
     /**

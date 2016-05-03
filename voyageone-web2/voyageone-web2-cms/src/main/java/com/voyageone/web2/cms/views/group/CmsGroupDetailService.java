@@ -86,7 +86,7 @@ public class CmsGroupDetailService extends BaseAppService {
 
         JomgoQuery grpQueryObject = new JomgoQuery();
         grpQueryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
-        grpQueryObject.setProjection(searchItems.split(";"));
+        grpQueryObject.setProjectionExt(searchItems.split(";"));
 
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);
         if (prodList == null || codeList.isEmpty()) {

@@ -38,7 +38,7 @@
         SET
             publish_status=#{publish_status}
         WHERE
-        id=#{seq}
+        id=#{id}
     </update>
 
     <update id="cms_update_sx_workload_with_modifier" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
@@ -49,7 +49,7 @@
         modifier=#{modifier},
         modified=now()
         WHERE
-        seq=#{id}
+        id=#{id}
     </update>
 
     <insert id="cms_insert_sx_workload" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
