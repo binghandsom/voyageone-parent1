@@ -28,22 +28,25 @@
             </div>
         </div>
     </div>
+
     <div class="box" ng-controller="popupCtrl">
+        <!---------------------------------------Tag one-------------------------------------->
         <div class="category_drag col-sm-4">
             <div class="category_drag_main">
                 <p class="text-center text-vo font-bold" translate="TXT_TAG_ONE"></p>
 
                 <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%">
+
+                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model = "vm.tagOneText">
                     <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="openNewTag({first:true,tagSelectObject:vm.tagTree[vm.indexTwo],tagInfo:vm,save:save})">
+                            ng-click="openNewTag({first:true,tagSelectObject:vm.tagTree2,tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
                 <div class="category_drag_list_qh">
                     <ul>
-                        <li ng-repeat="tagTree in vm.tagTree">
-                            <a href="javascript:void(0)" ng-click="vm.indexTwo = $index">
+                        <li ng-repeat="tagTree in vm.tagTree | filter : tagOneFilter">
+                            <a href="javascript:void(0)" ng-click="findChilds(tagTree.id,1)" ng-class="{indexSelected:vm.selectedId1 == tagTree.id}">
                                 <span>{{tagTree.tagChildrenName }}</span>
                                 <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
                                         ng-show=tagTree.isLeaf ng-click="delTag(tagTree)">
