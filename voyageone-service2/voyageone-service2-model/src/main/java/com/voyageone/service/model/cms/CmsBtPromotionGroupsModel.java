@@ -15,7 +15,7 @@ public class CmsBtPromotionGroupsModel extends BaseModel {
     /**
 
      */
-    private int modelId;
+    private Long modelId;
     /**
 
      */
@@ -71,12 +71,12 @@ public class CmsBtPromotionGroupsModel extends BaseModel {
     /**
 
      */
-    public int getModelId() {
+    public Long getModelId() {
 
         return this.modelId;
     }
 
-    public void setModelId(int modelId) {
+    public void setModelId(Long modelId) {
         this.modelId = modelId;
     }
 
