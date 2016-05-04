@@ -73,21 +73,25 @@ public class CmsMtImageCreateFileServiceTest {
 //        String file;
 //        String vParam;
 //        boolean isUploadUsCdn = false;
-        String filePath ="/usr/ImageCreateImport/ImageInfo.xlsx";
+        String filePath ="/usr/ImageCreateImport/ImageInfo.xls";
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
         fileInputStream = new FileInputStream(excelFile);
         HSSFWorkbook book = null;
         book = new HSSFWorkbook(fileInputStream);
-        HSSFSheet productSheet = book.getSheet("Product");
+        HSSFSheet productSheet = book.getSheet("Sheet1");
         List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
-        List<ExcelColumn> listColumn = EnumJMProductImportColumn.getListExcelColumn();//配置列信息
+        List<ExcelColumn> listColumn =new ArrayList<>();    //配置列信息
         listColumn.add( new ExcelColumn("channelId",1,"CreateImage","渠道Id"));
         listColumn.add( new ExcelColumn("templateId",2,"CreateImage","模板Id"));
         listColumn.add( new ExcelColumn("file",3,"CreateImage","文件名"));
         listColumn.add( new ExcelColumn("vParam",4,"CreateImage","参数Id"));
         listColumn.add( new ExcelColumn("isUploadUsCdn",5,"CreateImage","是否上传美国Cdn"));
-        ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CreateImageParameter.class);
+       ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CreateImageParameter.class,0);
+        Assert.isTrue(listErrorMap.size()==0,"导入错误");
+        AddListParameter parameter=new AddListParameter();
+        parameter.setData(listModel);
+        AddListResultBean resultBean = service.addListWithTrans(parameter);
     }
 }

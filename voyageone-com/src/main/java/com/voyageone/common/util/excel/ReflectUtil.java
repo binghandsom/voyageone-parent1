@@ -47,7 +47,17 @@ public class ReflectUtil {
             field.set(o, BigDecimal.valueOf(v1));
         } else if (Date.class == fieldType) {
             field.set(o, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(fieldValue.toString()));
-        } else {
+        } else  if(boolean.class==fieldType) {
+            if (fieldValue.equals("1")) {
+                field.set(o, true);
+            }
+            if (fieldValue.equals("0")) {
+                field.set(o, false);
+            }
+            field.set(o,Boolean.valueOf(fieldValue.toString()));
+        }
+        else
+        {
             field.set(o, fieldValue);
         }
     }
