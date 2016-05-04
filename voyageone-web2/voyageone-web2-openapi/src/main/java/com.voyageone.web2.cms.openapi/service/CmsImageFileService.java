@@ -160,6 +160,7 @@ public class CmsImageFileService extends BaseService {
         importModel.setFailuresFileName("");
         importModel.setCreated(DateTimeUtil.getNow());
         importModel.setModified(DateTimeUtil.getNow());
+        importModel.setIsImport(false);
         String filePath = path + "/" + fileName;
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
@@ -189,6 +190,9 @@ public class CmsImageFileService extends BaseService {
             ExportFileExcelUtil.exportExcel(errorfilePath, info);//保存导出的错误文件
             importModel.setFailuresFileName(failuresFileName);
             importModel.setFailuresRows(listErrorMap.size());
+        }
+        else {
+            importModel.setIsImport(true);
         }
         importModel.setFileName(fileName);
         importModel.setSuccessRows(listModel.size());
@@ -253,6 +257,7 @@ public class CmsImageFileService extends BaseService {
                 importModel.setCmsMtImageCreateTaskId(modelTask.getId());
                 importModel.setEndTime(new Date());
                 daoCmsMtImageCreateImport.insert(importModel);
+
             }
             for (CmsMtImageCreateTaskDetailModel detailModel : listTaskDetail) {
                 detailModel.setCmsMtImageCreateTaskId(modelTask.getId());

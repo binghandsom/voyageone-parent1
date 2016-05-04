@@ -17,6 +17,8 @@
         <tabset class="tab-container vo_nav-tabs">
             <tab ng-click="searchImport()">
                 <tab-heading>导入任务一览</tab-heading>
+                <div class="box">
+                <div  class="box-body">
                 <div class="table-responsive">
                     <table class="table table-hover-new vo_table" style="table-layout: fixed;">
                         <thead>
@@ -31,8 +33,8 @@
                             <th class="text-center">操作</th>
                         </tr>
                         </thead>
-                        <tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
-                        <tr ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
+                        <tbody ng-if="vm.modelList.length">
+                        <tr ng-repeat="model in vm.modelList">
                             <td class="text-left">{{model.fileName}}</td>
                             <td class="text-center">{{model.successRows}}</td>
                             <td class="text-center">{{model.failuresRows}}</td>
@@ -48,6 +50,12 @@
                         </tr>
                         </tbody>
                     </table>
+                    <div if-no-rows="vm.modelList.length"></div>
+                </div>
+                </div>
+                <div class="col-sm-12 m-t-lg m-b-lg">
+                    <vpagination config="dataPageOption"></vpagination>
+                </div>
                 </div>
             </tab>
         </tabset>

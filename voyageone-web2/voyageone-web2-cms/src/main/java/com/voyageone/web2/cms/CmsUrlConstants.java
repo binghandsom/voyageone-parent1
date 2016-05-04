@@ -556,5 +556,7 @@ interface CmsBtJmPromotionImportTask{
     {
         String ROOT="/cms/imagecreate/index";
         String Upload = "upload";
+        String GetPageByWhere="getPageByWhere";
+        String GetCountByWhere="getCountByWhere";
     }
 }

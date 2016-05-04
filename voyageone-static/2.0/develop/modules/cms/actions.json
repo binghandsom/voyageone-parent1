@@ -170,6 +170,13 @@
         "addExport": "addExport"
       }
     },
+    "cmsMtImageCreate":{
+      "cmsMtImageCreateService":{
+        "root":"/cms/imagecreate/index",
+        "getPageByWhere":"getPageByWhere",
+        "getCountByWhere":"getCountByWhere"
+      }
+},
     "imageManager": {
       "$CmsMtMasterInfoService": {
         "root": "/cms/cmsmtmasterinfo/index",

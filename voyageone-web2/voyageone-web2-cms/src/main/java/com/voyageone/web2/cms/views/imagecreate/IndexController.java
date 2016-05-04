@@ -8,6 +8,7 @@ import com.voyageone.service.bean.openapi.image.AddListParameter;
 import com.voyageone.service.bean.openapi.image.AddListResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.imagecreate.CmsMtImageCreateImportService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -34,6 +35,9 @@ import java.util.*;
     public class IndexController extends CmsController {
         @Autowired
         CmsImageFileService service;
+        @Autowired
+        CmsMtImageCreateImportService serviceCmsMtImageCreateImport;
+
         @RequestMapping(CmsUrlConstants.ImageCreate.Upload)
         public AjaxResponse upload(HttpServletRequest request) throws Exception {
             AddListResultBean resultBean = new AddListResultBean();
@@ -47,29 +51,15 @@ import java.util.*;
             }
             Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
             reponse.put("result", true);
-            reponse.put("msg",resultBean.getErrorMsg()+"requestId:"+ resultBean.getRequestId());
+            reponse.put("msg", resultBean.getErrorMsg() + "requestId:" + resultBean.getRequestId());
             return success(reponse);
         }
-        private void importImageCreateInfo(String filePath) throws Exception {
-            File excelFile = new File(filePath);
-            InputStream fileInputStream = null;
-            fileInputStream = new FileInputStream(excelFile);
-            HSSFWorkbook book = null;
-            book = new HSSFWorkbook(fileInputStream);
-            HSSFSheet productSheet = book.getSheet("Sheet1");
-            List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
-            List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
-            List<ExcelColumn> listColumn = new ArrayList<>();    //配置列信息
-            listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id"));
-            listColumn.add(new ExcelColumn("templateId", 2, "cms_mt_image_create_file", "模板Id"));
-            listColumn.add(new ExcelColumn("file", 3, "cms_mt_image_create_file", "文件名"));
-            listColumn.add(new ExcelColumn("vParam", 4, "cms_mt_image_create_file", "参数Id"));
-            listColumn.add(new ExcelColumn("isUploadUsCdn", 5, "cms_mt_image_create_file", "是否上传美国Cdn"));
-            ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CreateImageParameter.class, 0);
-            Assert.isTrue(listErrorMap.size() == 0, "导入错误");
-            AddListParameter parameter = new AddListParameter();
-            parameter.setData(listModel);
-            AddListResultBean resultBean = service.addListWithTrans(parameter);
-            Assert.isTrue(resultBean.getErrorCode() == 0, "导入错误");
+        @RequestMapping(CmsUrlConstants.ImageCreate.GetPageByWhere)
+        public List getPageByWhere(Map<String, Object> map) {
+            return serviceCmsMtImageCreateImport.getPageByWhere(map);
+        }
+        @RequestMapping(CmsUrlConstants.ImageCreate.GetCountByWhere)
+        public int getCountByWhere(Map<String, Object> map) {
+            return serviceCmsMtImageCreateImport.getCountByWhere(map);
         }
     }

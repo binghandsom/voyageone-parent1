@@ -5,17 +5,12 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    function detailController($scope, $uibModal, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
-        $scope.datePicker = [];
-        $scope.vm = {"promotionId": $routeParams.parentId,modelList:[],cmsBtJmPromotionImportTaskList:[],cmsBtJmPromotionExportTaskList:[]};
-        $scope.searchInfo={cmsBtJmPromotionId: $routeParams.parentId};
-        $scope.parentModel={};
-        $scope.modelUpdateDealEndTime={};
-        $scope.modelAllUpdateDealEndTime={};
+    function detailController($scope,cmsMtImageCreateService, $uibModal, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
+        $scope.vm = {modelList:[]};
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
         $scope.initialize = function () {
 
-           // $scope.search();
+            $scope.search();
         };
         $scope.clear = function () {
             $scope.searchInfo = {};
@@ -23,21 +18,20 @@ define([
         $scope.search = function () {
             // console.log("searchInfo");
             // console.log($scope.searchInfo);
-            loadSearchInfo();
-            var data = angular.copy($scope.searchInfo);
              goPage(1,10)
-            jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
-                $scope.dataPageOption.total = res.data;
+            var data={};
+            cmsMtImageCreateService.getCountByWhere(data).then(function (res) {
+                $scope.dataPageOption.total = res;
             }, function (res) {
             });
         };
         function  goPage(pageIndex,size) {
-            loadSearchInfo();
-            var data = angular.copy($scope.searchInfo);
+
+            var data ={};// angular.copy($scope.searchInfo);
             data.start = (pageIndex - 1) * size;
             data.length = size;
-            jmPromotionDetailService.getPromotionProductInfoListByWhere(data).then(function (res) {
-                $scope.vm.modelList = res.data;
+            cmsMtImageCreateService.getPageByWhere(data).then(function (res) {
+                $scope.vm.modelList = res;
             }, function (res) {
             })
         }
@@ -107,6 +101,6 @@ define([
     //        "backdrop": "static"
     //},
 
-    detailController.$inject = ['$scope', '$uibModal', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
+    detailController.$inject = ['$scope','cmsMtImageCreateService', '$uibModal', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
 });
