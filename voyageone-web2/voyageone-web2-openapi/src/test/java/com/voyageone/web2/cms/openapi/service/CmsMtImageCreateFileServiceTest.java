@@ -73,7 +73,7 @@ public class CmsMtImageCreateFileServiceTest {
 //        String file;
 //        String vParam;
 //        boolean isUploadUsCdn = false;
-        String filePath ="";
+        String filePath ="/usr/ImageCreateImport/ImageInfo.xlsx";
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
         fileInputStream = new FileInputStream(excelFile);
