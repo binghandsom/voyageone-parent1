@@ -78,6 +78,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private final static String Input_Pids = "input_pids";
     // 用户自行输入的属性值串
     private final static String Input_Strs = "input_strs";
+    // 前台展示的商家自定义店内分类
+    private final static String Prop_ShopCategory = "seller_cids_";
+    // 京东运费模板
+    private final static String Prop_TransportId = "transportid_";
+    // 京东关联板式
+    private final static String Prop_CommonHtmlId = "commonhtml_id_";
     // SKU属性类型(颜色)
     private final static String AttrType_Color = "c";
     // SKU属性类型(尺寸)
@@ -277,6 +283,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 获取cms_mt_platform_skus表里渠道指定类目对应的所有颜色和尺寸信息列表
             List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = new ArrayList<>();
             cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
+            if (cmsMtPlatformSkusList == null || cmsMtPlatformSkusList.size() == 0) {
+                String errMsg = String.format("获取颜色和尺寸信息失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [Active:%s]", channelId, cartId, platformCategoryId, AttrType_Active_1);
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
 
             // 获取尺码表
             // 7. product.fields（mongodb， 共通字段略）增加三个字段
@@ -290,7 +301,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 获取字典表(根据channel_id)上传图片的规格等信息
             List<CmsMtPlatFormDictModel> cmsMtPlatFormDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
-            if (cmsMtPlatFormDictModelList == null) {
+            if (cmsMtPlatFormDictModelList == null || cmsMtPlatFormDictModelList.size() == 0) {
                 String errMsg = String.format("获取字典表数据失败！[ChannelId:%s] [CartId:%s]", channelId, cartId);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
@@ -337,10 +348,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 }
 
                 // 回写商品id(wareId->numIId)
-                mainProduct.getGroups().setNumIId(String.valueOf(jdWareId));
-                // 更新者
-                mainProduct.setModifier(UserId_ClassName);
-                productGroupService.updateGroupsPlatformStatus(mainProduct.getGroups());
+                updateGroupsPlatformStatus(mainProduct, String.valueOf(jdWareId));
 
                 // 上传商品主图
                 List<String> mainPicNameList = new ArrayList<>();
@@ -405,10 +413,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     }
 
                     // 删除group表中的商品id(numIId)
-                    mainProduct.getGroups().setNumIId("");
-                    // 更新者
-                    mainProduct.setModifier(UserId_ClassName);
-                    productGroupService.updateGroupsPlatformStatus(mainProduct.getGroups());
+                    updateGroupsPlatformStatus(mainProduct, "");
 
                     // 失败状态设定
                     retStatus = false;
@@ -434,12 +439,27 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
+                // 新增或更新商品成功时，设置京东运费模板和关联板式
+                // 设置京东运费模板
+                updateJdWareTransportId(shopProp, sxData, jdWareId);
+                // 设置京东关联板式
+                updateJdWareLayoutId(shopProp, sxData, jdWareId);
+
                 // 回写workload表   (成功1)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
             } else {
-                // 正常结束
+                // 新增或更新商品失败
                 $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                         channelId, cartId, groupId, jdWareId));
+
+                // 更新商品出错时，也要设置运费模板和关联板式
+                if (updateWare) {
+                    // 设置京东运费模板
+                    updateJdWareTransportId(shopProp, sxData, jdWareId);
+                    // 设置京东关联板式
+                    updateJdWareLayoutId(shopProp, sxData, jdWareId);
+                }
+
                 // 回写workload表   (失败2)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
             }
@@ -1114,9 +1134,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private String getShopCategory(ShopBean shop, SxData sxData) throws Exception {
 
         // 多个条件表达式用分号分隔用
-        StringBuilder builder = new StringBuilder();
-        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids"加cartId
-        String platformPropId = "seller_cids_" + shop.getCart_id();
+        StringBuffer sbbuilder = new StringBuffer();
+        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
+        String platformPropId = Prop_ShopCategory + shop.getCart_id();
 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
@@ -1132,9 +1152,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 String propValue = expressionParser.parse(conditionExpression, shop, UserId_ClassName, null);
 
                 // 多个表达式(2392231-4345291格式)用分号分隔
-                if (propValue != null) {
-                    builder.append(propValue);
-                    builder.append(Separtor_Semicolon);   // 用分号(";")分隔
+                if (!StringUtils.isEmpty(propValue)) {
+                    sbbuilder.append(propValue);
+                    sbbuilder.append(Separtor_Semicolon);   // 用分号(";")分隔
                 }
             }
         } else {
@@ -1145,21 +1165,62 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     // 如果不是父类目的话，加到店内分类里，用分号分隔
                     if (!shopCategory.getParent()) {
                         // 转换成“parent_id-cid"格式，同时设置多个以分号（;）分隔
-                        builder.append(String.valueOf(shopCategory.getParentId()));
-                        builder.append(Separtor_Hyphen);       // 用连字符("-")连接
-                        builder.append(String.valueOf(shopCategory.getCid()));
-                        builder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                        sbbuilder.append(String.valueOf(shopCategory.getParentId()));
+                        sbbuilder.append(Separtor_Hyphen);       // 用连字符("-")连接
+                        sbbuilder.append(String.valueOf(shopCategory.getCid()));
+                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
                     }
                 }
             }
         }
         // 移除最后的分号
-        if (builder.length() > 0) {
-            builder.deleteCharAt(builder.length() - 1);
+        if (sbbuilder.length() > 0) {
+            sbbuilder.deleteCharAt(sbbuilder.length() - 1);
         }
 
         // 店铺种类
-        return builder.toString();
+        return sbbuilder.toString();
+    }
+
+    /**
+     * 取得运费模板id或关联版式id
+     *
+     * @param shop ShopBean 店铺对象
+     * @param sxData SxData 产品对象
+     * @param prePropId String 条件表达式前缀(运费模板:transportid_ 关联版式:commonhtml_id_)
+     * @return String 运费模板id或关联版式id
+     */
+    private String getConditionPropValue(ShopBean shop, SxData sxData, String prePropId) throws Exception {
+
+        // 运费模板id或关联版式id返回用
+        String  retStr = "";
+        // 条件表达式前缀(运费模板:transportid_ 关联版式:commonhtml_id_)
+        // 条件表达式表platform_prop_id字段的检索条件为条件表达式前缀加cartId
+        String platformPropId = prePropId + shop.getCart_id();
+
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
+
+        // 使用运费模板或关联版式条件表达式
+        if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                String propValue = expressionParser.parse(conditionExpression, shop, UserId_ClassName, null);
+
+                // 找到运费模板或关联版式表达式则跳出循环
+                if (!StringUtils.isEmpty(propValue)) {
+                    retStr = propValue;
+                    break;
+                }
+            }
+        }
+
+        // 运费模板id或关联版式id
+        return retStr;
     }
 
     /**
@@ -1261,6 +1322,70 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         resultPrice = cmsBtProductModelSku.getDoubleAttribute(sxPricePropName);
 
         return resultPrice;
+    }
+
+    /**
+     * 回写产品表里的商品id
+     *
+     * @param mainProduct CmsBtProductModel 主产品
+     * @param numIId String 商品id
+     */
+    private void updateGroupsPlatformStatus(CmsBtProductModel mainProduct, String numIId) {
+        // 回写商品id(wareId->numIId) 删除的时候设为空("")即可
+        mainProduct.getGroups().setNumIId(numIId);
+        // 更新者
+        mainProduct.setModifier(UserId_ClassName);
+        productGroupService.updateGroupsPlatformStatus(mainProduct.getGroups());
+    }
+
+    /**
+     * 设置京东运费模板
+     *
+     * @param shop ShopBean 店铺对象
+     * @param sxData SxData 上新数据
+     * @param wareId long 商品id
+     */
+    private void updateJdWareTransportId(ShopBean shop, SxData sxData, long wareId) {
+        // 京东运费模板id
+        String wareTransportId = "";
+
+        try {
+            // 取得京东运费模板id
+            wareTransportId = getConditionPropValue(shop, sxData, Prop_TransportId);
+        } catch (Exception ex) {
+            String errMsg = String.format("取得京东运费模板id失败！[ChannelId:%s] [CartId:%s] [Prop_TransportId:%s]",
+                    shop.getOrder_channel_id(), shop.getCart_id(), Prop_TransportId);
+            $info(errMsg);
+        }
+
+        // 调用京东API设置运费模板
+        if (!StringUtils.isEmpty(wareTransportId)) {
+            jdWareService.updateWareTransportId(shop, wareId, Long.parseLong(wareTransportId));
+        }
+    }
+
+    /**
+     * 设置京东关联板式
+     *
+     * @param shop ShopBean 店铺对象
+     * @param sxData SxData 上新数据
+     * @param wareId long 商品id
+     */
+    private void updateJdWareLayoutId(ShopBean shop, SxData sxData, long wareId) {
+        // 京东关联板式id
+        String commonHtml_Id = "";
+
+        try {
+            // 取得京东关联板式id
+            commonHtml_Id = getConditionPropValue(shop, sxData, Prop_CommonHtmlId);
+        } catch (Exception ex) {
+            String errMsg = String.format("取得京东关联板式id失败！[ChannelId:%s] [CartId:%s] [Prop_CommonHtmlId:%s]",
+                    shop.getOrder_channel_id(), shop.getCart_id(), Prop_CommonHtmlId);
+            $info(errMsg);
+        }
+
+        // 调用京东API设置关联板式（取消商品关联版式时，请将commonHtml_Id值设置为空）
+        jdWareService.updateWareLayoutId(shop, String.valueOf(wareId), commonHtml_Id);
     }
 
 }
