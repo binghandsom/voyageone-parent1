@@ -19,7 +19,6 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -324,22 +323,33 @@ public class CmsProductDetailService extends BaseAppService {
         String newModified = DateTimeUtil.getNowTimeStamp();
         productUpdateBean.setModified(newModified);
 
+        // 更新product数据
         CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
         productService.updateProduct(channelId, productUpdateBean);
+
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
 
-        if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0
-                || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
-            CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
-            cmsBtPromotionCodesBean.setProductId(productId);
-            cmsBtPromotionCodesBean.setProductCode(oldProduct.getFields().getCode());
-            cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
-            cmsBtPromotionCodesBean.setPromotionId(0);
-            cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
-            cmsBtPromotionCodesBean.setChannelId(channelId);
-            cmsBtPromotionCodesBean.setCartId(23);
-            cmsBtPromotionCodesBean.setModifier(userName);
-            promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+        //执行product上新
+        if(productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+
+            // 插入上新程序
+            productService.insertSxWorkLoad(channelId, newProduct, userName);
+
+            // 插入全店特价宝
+            // todo 插入全店特价宝要修正
+//            if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0
+//                    || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
+//                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+//                cmsBtPromotionCodesBean.setProductId(productId);
+//                cmsBtPromotionCodesBean.setProductCode(newProduct.getFields().getCode());
+//                cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
+//                cmsBtPromotionCodesBean.setPromotionId(0);
+//                cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
+//                cmsBtPromotionCodesBean.setChannelId(channelId);
+//                cmsBtPromotionCodesBean.setCartId(CartType.TMALLG.getCartId());
+//                cmsBtPromotionCodesBean.setModifier(userName);
+//                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+//            }
         }
 
         // Translation状态从完成-》未完成
