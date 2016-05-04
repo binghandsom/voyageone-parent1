@@ -7,7 +7,6 @@ import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

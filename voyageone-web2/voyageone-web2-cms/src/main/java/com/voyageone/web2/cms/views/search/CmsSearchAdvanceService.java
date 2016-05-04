@@ -1,9 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -20,7 +18,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
-import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
