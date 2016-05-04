@@ -4,7 +4,7 @@ define([
 ], function (_) {
 
 
-    function indexCtrl($scope, $routeParams, $translate, usjoiService, notify, confirm, alert) {
+    function indexCtrl($scope, $translate, usjoiService, notify, confirm, alert) {
         $scope.mallOptions = [{id: '-1', name: 'All'}, {id: '1', name: 'Yes'}, {id: '0', name: 'No'}];
         $scope.allowMinimallOption = '-1';// 默认-1
         $scope.service = usjoiService;
@@ -64,10 +64,12 @@ define([
         };
         $scope.delete = function (index, el) {
             var self = this;
-            el.status = 0; //删除 FIXME 是否需要改成对应的active
-            self.service.update(el).then(function () {
-                self.tableSource.splice(index, 1);
-            });
+            self.confirm(self.$translate.instant('TXT_MSG_DO_DELETE') + el.full_name).result.then(function () {
+                el.status = 0; //删除 FIXME 是否需要改成对应的active
+                self.service.update(el).then(function () {
+                    self.tableSource.splice(index, 1);
+                });
+            })
         };
 
         $scope.openChannelEdit = function (index, el, popUp) {
@@ -97,6 +99,6 @@ define([
         };
 
     };
-    indexCtrl.$inject = ['$scope', '$routeParams', '$translate', 'usjoiService', 'notify', 'confirm', 'alert'];
+    indexCtrl.$inject = ['$scope', '$translate', 'usjoiService', 'notify', 'confirm', 'alert'];
     return indexCtrl;
 });

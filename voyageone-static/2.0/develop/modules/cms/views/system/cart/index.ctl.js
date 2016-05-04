@@ -7,7 +7,7 @@ define([
 ], function (_) {
 
 
-    function indexController($scope, cartService, platformService) {
+    function indexController($scope, cartService, platformService, $translate, confirm) {
 
         var initVals = {cart_id: "", name: "", active: "1", cart_type: ''}; //表单初始化值注意顺序
 
@@ -72,15 +72,17 @@ define([
             });
         };
 
-        $scope.delete = function (index, cart_id) {
-            cartService.delete({cart_id: cart_id}).then(function () {
-                $scope.vm.data.splice(index, 1);
-            });
+        $scope.delete = function (index, cart) {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + cart.name).result.then(function () {
+                cartService.delete({cart_id: cart.cart_id}).then(function () {
+                    $scope.vm.data.splice(index, 1);
+                });
+            })
         };
 
 
     }
 
-    indexController.$inject = ['$scope', "systemCartService", 'platformService'];
+    indexController.$inject = ['$scope', "systemCartService", 'platformService', '$translate', 'confirm'];
     return indexController;
 });
