@@ -8,22 +8,34 @@ package com.voyageone.components.intltarget.bean.cart;
 public class TargetCartAddTenderRequest {
 
     private String phone1;
-    private String expiryMonth;
-    private String expiryYear;
-    private String country;
-    private String billingStateProvince;
-    private String zipCode;
-    private String cardName;
-    private String address1;
-    private String address2;
-    private String lastName;
-    private String firstName;
-    private String cvv;
-    private String cardType;
-    private String city;
-    private String cardNumber;
 
-    /* getter setter */
+    private String expiryMonth;
+
+    private String expiryYear;
+
+    private String country;
+
+    private String billingStateProvince;
+
+    private String zipCode;
+
+    private String cardName;
+
+    private String address1;
+
+    private String address2;
+
+    private String lastName;
+
+    private String firstName;
+
+    private String cvv;
+
+    private String cardType;
+
+    private String city;
+
+    private String cardNumber;
 
     public String getPhone1() {
         return phone1;

@@ -39,6 +39,7 @@ public class TargetCartService extends TargetBase {
 
     /**
      * 应用运输详细信息
+     *
      * @param request 应用运输信息
      * @return 操作结果
      * @throws Exception
@@ -49,6 +50,7 @@ public class TargetCartService extends TargetBase {
 
     /**
      * 添加支付卡信息
+     *
      * @param request 支付信息
      * @return 信息添加是否成功
      */
@@ -63,6 +65,7 @@ public class TargetCartService extends TargetBase {
 
     /**
      * 订单review
+     *
      * @return 订单review响应信息
      * @throws Exception
      */

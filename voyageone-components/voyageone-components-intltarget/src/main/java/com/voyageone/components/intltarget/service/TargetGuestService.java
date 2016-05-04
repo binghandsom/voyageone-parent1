@@ -10,17 +10,18 @@ import org.springframework.stereotype.Service;
  * @since 2.0.0
  */
 @Service
-public class TargetGuestService extends TargetBase{
+public class TargetGuestService extends TargetBase {
 
-    private static final String Url="/guests";
+    private static final String Url = "/guests";
 
     /**
      * 执行V3 Auth，获取验证响应
+     *
      * @return 验证信息
      * @throws Exception
      */
     public TargetGuestV3AuthResponse v3Auth() throws Exception {
-        return postApiResponseWithKey(Url+"/v3/auth",null,TargetGuestV3AuthResponse.class,false);
+        return postApiResponseWithKey(Url + "/v3/auth", null, TargetGuestV3AuthResponse.class, false);
     }
 
 }

@@ -7,7 +7,7 @@ package com.voyageone.components.intltarget.bean.cart;
  */
 public class TargetCartApplyShippingDetailResponse {
 
-    private String responseTime;
+    private String responseTime;//
 
     public String getResponseTime() {
         return responseTime;

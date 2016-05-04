@@ -11,8 +11,6 @@ public class TargetCartAddProductRequest {
 
     private String quantity;
 
-    /***********  getter setter ************/
-
     public String getProductId() {
         return productId;
     }
@@ -28,5 +26,4 @@ public class TargetCartAddProductRequest {
     public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
-
 }

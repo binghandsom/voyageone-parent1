@@ -16,4 +16,44 @@ public class TargetGuestV3AuthResponse {
     private String refreshToken;
 
     private String expiryTime;
+
+    public String getPersonalizationID() {
+        return personalizationID;
+    }
+
+    public void setPersonalizationID(String personalizationID) {
+        this.personalizationID = personalizationID;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getExpiryTime() {
+        return expiryTime;
+    }
+
+    public void setExpiryTime(String expiryTime) {
+        this.expiryTime = expiryTime;
+    }
 }

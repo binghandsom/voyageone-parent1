@@ -23,12 +23,9 @@ public class TargetInventoryServiceTest {
 
     @Test
     public void testGetTargetInventory() throws Exception {
-        TargetInventoryRequest request=new TargetInventoryRequest();
+        TargetInventoryRequest request = new TargetInventoryRequest();
         request.setProduct_id("11204568");
-        request.setField_groups("summary");
-        request.setInventory_type("all");
-        request.setMultichannel_option("ship");
-        TargetInventoryResponse response=targetInventoryService.getTargetInventory(request);
+        TargetInventoryResponse response = targetInventoryService.getTargetInventory(request);
         System.out.println(JacksonUtil.bean2Json(response));
     }
 }

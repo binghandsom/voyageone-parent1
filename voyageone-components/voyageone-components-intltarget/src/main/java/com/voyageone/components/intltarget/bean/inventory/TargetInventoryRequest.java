@@ -9,11 +9,11 @@ public class TargetInventoryRequest {
 
     private String product_id;
 
-    private String multichannel_option;
+    private String multichannel_option="ship"; //default value
 
-    private String inventory_type;
+    private String inventory_type="all"; //default value
 
-    private String field_groups;
+    private String field_groups="summary"; //default value
 
     public String getProduct_id() {
         return product_id;
@@ -46,4 +46,5 @@ public class TargetInventoryRequest {
     public void setField_groups(String field_groups) {
         this.field_groups = field_groups;
     }
+
 }
