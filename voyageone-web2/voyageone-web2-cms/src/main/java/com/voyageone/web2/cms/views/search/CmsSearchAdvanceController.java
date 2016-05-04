@@ -9,6 +9,7 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -271,4 +272,20 @@ public class CmsSearchAdvanceController extends CmsController {
         searchIndexService.saveCustColumnsInfo(getUser(), getCmsSession(), arr1, arr2);
         return success(null);
     }
+
+    /**
+     * 对产品添加指定自由标签
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping("addFreeTag")
+    public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
+        List<Integer> prodIdList = (List<Integer>) params.get("prodIdList");
+        String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
+
+        searchIndexService.addFreeTag(getUser(), tagPath, prodIdList);
+        return success(null);
+    }
+
 }
