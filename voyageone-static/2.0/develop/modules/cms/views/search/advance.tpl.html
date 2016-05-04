@@ -494,6 +494,15 @@
 											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
+
+										<span>
+											<button ng-controller="showPopoverCtrl" popover-html="showInfo({{2016101111111}})"
+													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">
+												标签
+											</button>
+											<!--<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>-->
+										</span>
+
 										<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>
 								</tr>
