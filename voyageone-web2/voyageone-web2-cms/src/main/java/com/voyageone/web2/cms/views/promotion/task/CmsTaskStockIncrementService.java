@@ -160,13 +160,14 @@ public class CmsTaskStockIncrementService extends BaseAppService {
                 } else {
                     //隔离平台的隔离比例
                     String separate = incrementValues.substring(0, incrementValues.lastIndexOf("%"));
-                    if (separate.contains("%") || separate.getBytes().length > 2 || !StringUtils.isDigit(separate)) {
+                    if (separate.contains("%") || !StringUtils.isDigit(separate)
+                            || Integer.parseInt(separate)>100 ) {
                         throw new BusinessException("7000056");
                     }
                 }
             } else {
                 if (StringUtils.isEmpty(incrementValues) || !StringUtils.isDigit(incrementValues)
-                        || incrementValues.getBytes().length > 2) {
+                        || Integer.parseInt(incrementValues)>100) {
                     //隔离平台的隔离比例必须填且为大于0小于100整数
                     throw new BusinessException("7000056");
                 }

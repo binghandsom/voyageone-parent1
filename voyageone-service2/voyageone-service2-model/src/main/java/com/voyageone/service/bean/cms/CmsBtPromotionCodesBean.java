@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms;
 
 import com.taobao.api.internal.util.StringUtils;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
@@ -58,8 +59,8 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private List<CmsBtPromotionSkuBean> skus;
 
-    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
-        super(productInfo, cartId, promotionId, operator);
+    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator) {
+        super(productInfo, groupModel, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         this.setProductName(StringUtils.isEmpty(productInfo.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());

@@ -5,6 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.com.mq.config.VOMQRunnable;
 import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -36,10 +37,9 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     private ExecutorService threadPool = null;
 
     /**
-     * @deprecated
-     * ignore MqJobService不需要实现此方法
      * @param taskControlList job 配置
      * @throws Exception
+     * @deprecated ignore MqJobService不需要实现此方法
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
@@ -48,70 +48,75 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     /**
      * MqJobService需要实现此方法
+     *
      * @param messageMap Mq消息Map
      * @throws Exception
      */
     public abstract void onStartup(Map<String, Object> messageMap) throws Exception;
 
     @RabbitHandler
-    private void onMessage(byte[] message,@Headers Map headers) throws Exception {
+    protected void onMessage(byte[] message, @Headers Map headers) throws Exception {
         MessageProperties messageProperties = new MessageProperties();
         BeanUtils.populate(messageProperties, headers);
         onMessage(new Message(message, messageProperties));
     }
 
-    /**
-     * 监听通知消息，执行任务
-     * @param message 接受到的消息体
-     */
-    protected void onMessage(Message message) {
-        // 先获取配置
+    // 先获取配置
+    protected void initControls() {
         if (taskControlList == null) {
             taskControlList = getControls();
             if (taskControlList == null) {
                 taskControlList = new ArrayList<>();
             }
         }
-
-        if (taskControlList.size() < 1) {
+        if (taskControlList.isEmpty()) {
             $info("没有找到任何配置。");
             logIssue("没有找到任何配置！！！", getTaskName());
-            return;
         }
+    }
 
-//        // 是否可以运行的判断
-//        if (!TaskControlUtils.isRunnable(taskControlList)) {
-//            return;
-//        }
+    @VOMQRunnable
+    public boolean isRunnable() {
+        //先获取配置
+        initControls();
+        try {
+            if (!taskControlList.isEmpty()) {
+                return TaskControlUtils.isRunnable(taskControlList);
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
+    }
 
-//        String taskID = TaskControlUtils.getTaskId(taskControlList);
+    /**
+     * 监听通知消息，执行任务
+     *
+     * @param message 接受到的消息体
+     */
+    protected void onMessage(Message message) {
+        //先获取配置
+        initControls();
 
-
-
-//        // 任务监控历史记录添加:启动
-//        taskDao.insertTaskHistory(taskID, status.getIs());
-
-        if(ObjectUtils.isEmpty(threadPool)){
-            String threadCount= TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
-            int nThreads = StringUtils.isEmpty(threadCount)?1:Integer.parseInt(threadCount);
+        if (ObjectUtils.isEmpty(threadPool)) {
+            String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+            int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
             threadPool = new ThreadPoolExecutor(nThreads, nThreads,
                     0L, TimeUnit.MILLISECONDS,
                     new VariableLinkedBlockingQueue<Runnable>());
         }
-        Future<TaskControlEnums.Status> result = threadPool.submit(()->process(message));
+        Future<TaskControlEnums.Status> result = threadPool.submit(() -> process(message));
         try {
             result.get();
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
-                throw (RuntimeException)e;
+                throw (RuntimeException) e;
             } else {
                 throw new RuntimeException(e);
             }
         }
-        //threadPool.execute(()->process(message,status,taskID));
     }
 
-    private TaskControlEnums.Status process(Message message){
+    private TaskControlEnums.Status process(Message message) {
         TaskControlEnums.Status status = TaskControlEnums.Status.START;
         try {
             String messageStr = new String(message.getBody(), "UTF-8");
@@ -123,22 +128,23 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             logIssue(be, be.getInfo());
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
-        }  catch (MQIgnoreException me) {
+        } catch (MQIgnoreException me) {
             status = TaskControlEnums.Status.ERROR;
             logIssue(me, me.getMessage());
             $error("MQIgnoreException，任务退出", me);
             throw new MQIgnoreException(me);
-        }  catch (Exception ex) {
+        } catch (Exception ex) {
             status = TaskControlEnums.Status.ERROR;
             if (isOutRetryTimes(message)) {
                 logIssue(ex, ex.getMessage());
             }
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
-        } finally {
-            // 任务监控历史记录添加:结束
-//            taskDao.insertTaskHistory(taskID, status.getIs());
         }
+//        finally {
+//            // 任务监控历史记录添加:结束
+//            taskDao.insertTaskHistory(taskID, status.getIs());
+//        }
         return status;
     }
 
@@ -153,7 +159,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     }
 
 
-    public TaskControlBean getTaskControlBean(List<TaskControlBean> taskControlList,String cfg_name) {
+    public TaskControlBean getTaskControlBean(List<TaskControlBean> taskControlList, String cfg_name) {
         for (TaskControlBean taskControlBean : taskControlList) {
             if (taskControlBean.getCfg_name().equals(cfg_name)) {
                 return taskControlBean;

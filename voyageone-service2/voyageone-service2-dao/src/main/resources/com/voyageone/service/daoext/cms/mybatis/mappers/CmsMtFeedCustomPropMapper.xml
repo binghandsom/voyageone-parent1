@@ -202,7 +202,7 @@
             AND (v1.feed_value_original like CONCAT('%',#{propValue},'%') or v1.feed_value_translation like
             CONCAT('%',#{propValue},'%') )
         </if>
-        ORDER BY p1.feed_cat_path, p1.display_order,v1.feed_value_original
+        ORDER BY p1.feed_cat_path, p1.display_order, p1.feed_prop_original, v1.feed_value_original
     </select>
 
 </mapper>

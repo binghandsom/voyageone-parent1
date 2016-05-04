@@ -14,14 +14,22 @@ define([
             value_translation:""
         };
         $scope.categoryList = context.categoryList;
-        $scope.valueList = context.valueList;
+        $scope.valList = context.valueList;
+        $scope.vm.cat_path = context.from;
+        if ($scope.vm.cat_path == '0') {
+            $scope.vm.cat_path = '共通属性';
+        }
 
         /**
          * 类目发生变化时,动态获取对应的属性值
          * @param catPath
          */
-        $scope.valueChange = function(catPath){
-            attributeService.init({cat_path:catPath,unsplitFlg:1})
+        $scope.valueChange = function(catPath ){
+            var catPathVal = catPath;
+            if (catPathVal == '共通属性') {
+                catPathVal = '0';
+            }
+            attributeService.init({cat_path:catPathVal,unsplitFlg:1})
                 .then(function (res){
                     $scope.vm.valList = res.data.valList;
                 });

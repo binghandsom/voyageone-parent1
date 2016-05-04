@@ -24,7 +24,9 @@ import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformRemoveFieldsModel;
 import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,13 +96,18 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         $info(JOB_NAME + " start...");
 
-        this.buildMasterCatSchema();
+        List<String> cartIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.cart_id);
+
+        // 循环所有店铺
+        if (cartIdList != null && cartIdList.size() > 0) {
+            cartIdList.forEach(this::buildMasterCatSchema);
+        }
 
         $info(JOB_NAME + " finished...");
 
     }
 
-    public void buildMasterCatSchema() throws TopSchemaException {
+    public void buildMasterCatSchema(String cartId) throws TopSchemaException {
 
         int index = 0;
 
@@ -110,7 +117,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         //删除原有数据
 //        cmsMtCategorySchemaDao.deleteAll();
 
-        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(CartEnums.Cart.TG.getId()));
+        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(cartId));
 
         List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDaoExt.selectActionModelList();
 
@@ -155,10 +162,10 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             CmsMtPlatformCategorySchemaModel schemaModel =
                     cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(
                             id,
-                            Integer.parseInt(CartEnums.Cart.TG.getId()));
+                            Integer.parseInt(cartId));
             if (schemaModel != null){
                 if(isExist(schemaModel.getCatFullPath())) continue;
-                if (CartEnums.Cart.TG == CartEnums.Cart.getValueByID(String.valueOf(schemaModel.getCartId()))) {
+                if (Integer.parseInt(cartId) == schemaModel.getCartId()) {
 
                     String itemSchema = schemaModel.getPropsItem();
                     String productSchema = schemaModel.getPropsProduct();
