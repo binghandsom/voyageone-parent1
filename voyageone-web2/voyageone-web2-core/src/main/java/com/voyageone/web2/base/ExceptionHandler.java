@@ -38,7 +38,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
 
     private boolean debug;
 
-    public boolean isDebug() {
+    private boolean isDebug() {
         return debug;
     }
 
