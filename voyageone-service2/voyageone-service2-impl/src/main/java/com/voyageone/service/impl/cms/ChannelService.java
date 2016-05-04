@@ -53,7 +53,7 @@ public class ChannelService {
                 flg = flg && (allowMinimall == bean.getIs_usjoi());
             }
             if (!Strings.isNullOrEmpty(active)) {
-                flg = flg && (active.equals(bean.getStatus()));
+                flg = flg && (active.equals(bean.getActive()));
             }
             return flg;
 

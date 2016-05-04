@@ -65,9 +65,11 @@ define([
         $scope.delete = function (index, el) {
             var self = this;
             self.confirm(self.$translate.instant('TXT_MSG_DO_DELETE') + el.full_name).result.then(function () {
-                el.status = 0; //删除 FIXME 是否需要改成对应的active
+                el.active = 0; //删除 FIXME 是否需要改成对应的active
                 self.service.update(el).then(function () {
-                    self.tableSource.splice(index, 1);
+                    //self.tableSource.splice(index, 1);
+                    $scope.page.curr = 1;
+                    $scope.refreshTable();
                 });
             })
         };
