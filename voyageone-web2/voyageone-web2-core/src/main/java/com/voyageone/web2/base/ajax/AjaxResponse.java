@@ -1,14 +1,7 @@
 package com.voyageone.web2.base.ajax;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.common.message.enums.DisplayType;
 import com.voyageone.service.bean.com.MessageBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 用于返回 Ajax 请求的结果数据
@@ -17,8 +10,6 @@ import java.io.PrintWriter;
  * @version 2.0.0 2015-12-05 15:07:45
  */
 public class AjaxResponse {
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 消息code
@@ -95,27 +86,5 @@ public class AjaxResponse {
 
     public void setRedirectTo(String redirectTo) {
         this.redirectTo = redirectTo;
-    }
-
-    /**
-     * 写入到响应中
-     * @param response 响应
-     */
-    public void writeTo(HttpServletResponse response) {
-
-        ObjectMapper mapper = new ObjectMapper();
-       // CMappingJacksonObjectMapper
-        PrintWriter out = null;
-        try {
-            response.setCharacterEncoding("UTF-8");
-            out = response.getWriter();
-            out.print(mapper.writeValueAsString(this));
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-        }
     }
 }
