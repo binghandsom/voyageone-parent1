@@ -6,6 +6,7 @@ import com.voyageone.common.Constants;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by james.li on 2015/11/26.
@@ -18,6 +19,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         super(channelId);
     }
 
+    private String catId;
     private String category;
     private String code;
     private String name;
@@ -28,14 +30,16 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<String> image;
     private String brand;
     private String weight;
-    private String short_description;
-    private String long_description;
+    private String shortDescription;
+    private String longDescription;
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
     private Map<String,List<String>> attribute = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private int updFlg;
-    private String clientProductURL;
+    private String clientProductURL = "";
+
+    private String productType;
 
     public String getCategory() {
         return category;
@@ -109,20 +113,20 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.brand = brand;
     }
 
-    public String getShort_description() {
-        return short_description;
+    public String getShortDescription() {
+        return shortDescription;
     }
 
-    public void setShort_description(String short_description) {
-        this.short_description = short_description;
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
     }
 
-    public String getLong_description() {
-        return long_description;
+    public String getLongDescription() {
+        return longDescription;
     }
 
-    public void setLong_description(String long_description) {
-        this.long_description = long_description;
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 
     public List<CmsBtFeedInfoModel_Sku> getSkus() {
@@ -175,20 +179,21 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("model", this.model);
         attribute.put("color", this.color);
         attribute.put("origin", this.origin);
+        attribute.put("productType", this.productType);
         attribute.put("sizeType", this.sizeType);
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
         attribute.put("weight", this.weight);
-        attribute.put("short_description", this.short_description);
-        attribute.put("long_description", this.long_description);
+        attribute.put("shortDescription", this.shortDescription);
+        attribute.put("longDescription", this.longDescription);
 
         // 增加了sku级别的价格属性的支持
         if (this.getSkus() != null && this.getSkus().size() > 0) {
-            attribute.put("price_current", this.getSkus().get(0).getPrice_current());
-            attribute.put("price_msrp", this.getSkus().get(0).getPrice_msrp());
+            attribute.put("priceCurrent", this.getSkus().get(0).getPriceCurrent());
+            attribute.put("priceMsrp", this.getSkus().get(0).getPriceMsrp());
         } else {
-            attribute.put("price_current", "0");
-            attribute.put("price_msrp", "0");
+            attribute.put("priceCurrent", "0");
+            attribute.put("priceMsrp", "0");
         }
 
         this.fullAttribute = attribute;
@@ -243,18 +248,34 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setOrigin(this.getOrigin());
         cmsBtFeedInfoModel.setSizeType(this.getSizeType());
         if(this.getImage().size()>0){
-            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(",")));
+            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(",")).stream().map(s -> s.trim()).collect(Collectors.toList()));
         }else{
             cmsBtFeedInfoModel.setImage(new ArrayList<>());
         }
         cmsBtFeedInfoModel.setBrand(this.getBrand());
         cmsBtFeedInfoModel.setWeight(this.getWeight());
-        cmsBtFeedInfoModel.setShort_description(this.getShort_description());
-        cmsBtFeedInfoModel.setLong_description(this.getLong_description());
+        cmsBtFeedInfoModel.setShortDescription(this.getShortDescription());
+        cmsBtFeedInfoModel.setLongDescription(this.getLongDescription());
         cmsBtFeedInfoModel.setSkus(this.getSkus());
         cmsBtFeedInfoModel.setUpdFlg(0);
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
+        cmsBtFeedInfoModel.setProductType(this.productType);
         return  cmsBtFeedInfoModel;
     }
 
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
 }

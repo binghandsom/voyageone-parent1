@@ -49,15 +49,15 @@ class SEAnalysisContext {
         }
         sku.setBarcode(feedBean.getUpc());
         sku.setClientSku(feedBean.getClientSku());
-        sku.setPrice_net(feedBean.getCost().doubleValue());
+        sku.setPriceNet(feedBean.getCost().doubleValue());
         BigDecimal price = new BigDecimal(getPriceCurrent(feedBean));
-        sku.setPrice_current(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+        sku.setPriceCurrent(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
 
-        sku.setPrice_msrp(CommonUtil.getRoundUpDigits(sku.getPrice_current() / 0.7, 0));
+        sku.setPriceMsrp(CommonUtil.getRoundUp2Digits(sku.getPriceCurrent() / 0.7));
 
-        sku.setPrice_client_msrp(CommonUtil.getRoundUpDigits(sku.getPrice_msrp() / 6.5,0));
+        sku.setPriceClientMsrp(CommonUtil.getRoundUp2Digits(sku.getPriceMsrp() / 6.5));
 
-        sku.setPrice_client_retail(CommonUtil.getRoundUpDigits(sku.getPrice_current() / 6.5,0));
+        sku.setPriceClientRetail(CommonUtil.getRoundUp2Digits(sku.getPriceCurrent() / 6.5));
 
         CmsBtFeedInfoModel code = getProduct(feedBean);
 
@@ -90,12 +90,13 @@ class SEAnalysisContext {
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
-        product.setShort_description("");
-        product.setLong_description("");
+        product.setShortDescription("");
+        product.setLongDescription("");
         product.setSkus(new ArrayList<>());
         product.setAttribute(new HashMap<>());
         product.setUpdFlg(0);
         product.setChannelId(ChannelConfigEnums.Channel.SHOE_CITY.getId());
+        product.setProductType(feedBean.getProduct_type());
 
         codeList.add(product);
         codeMap.put(code, product);

@@ -24,9 +24,6 @@ public class SEAnalysisServiceTest {
 
     @Test
     public void testStartup() throws Exception {
-
         seAnalysisService.onStartup(new ArrayList<TaskControlBean>());
     }
-
-
 }

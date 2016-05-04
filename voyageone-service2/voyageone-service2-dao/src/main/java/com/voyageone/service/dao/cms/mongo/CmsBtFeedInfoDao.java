@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.stereotype.Repository;
@@ -48,6 +49,17 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
 
         WriteResult updateRes = mongoTemplate.updateMulti(sbQuery.toString(),"{ $set: {updFlg: 0}}", collectionName);
 
+        return updateRes.getN();
+    }
+
+
+    /**
+     * 更新所有FeedInfo的UpdFlg
+     */
+    public int updateAllUpdFlg(String channelId,int updFlg){
+
+        WriteResult updateRes = mongoTemplate.updateMulti("{}", String.format("{ $set: {updFlg: %d}}", updFlg),
+                getCollectionName(channelId));
         return updateRes.getN();
     }
 }

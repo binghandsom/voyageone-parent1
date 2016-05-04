@@ -168,17 +168,16 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
 
                 buildSkuSize(skuFieldValue, cmsSkuProp, buildSkuResult, skuSubMappingMap.get(sku_sizeField.getId()));
 
-                // (由于天猫突然增加属性并要求六个小时内刷完入关方式, 临时写死) 现在取消写死的内容, 由运营自己填写 tom 20160424 START
-//                {
-//                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
-//                    for (Field fff : fList) {
-//                        if (fff.getId().equals("in_prop_161712509")) {
-//                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
-//                            break;
-//                        }
-//                    }
-//                }
-                // (由于天猫突然增加属性并要求六个小时内刷完入关方式, 临时写死) 现在取消写死的内容, 由运营自己填写 tom 20160424 END
+                {
+                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
+                    for (Field fff : fList) {
+                        if (fff.getId().equals("in_prop_161712509")) {
+                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
+                            break;
+                        }
+                    }
+                }
+
 
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
                     String propId = mappingBean.getPlatformPropId();

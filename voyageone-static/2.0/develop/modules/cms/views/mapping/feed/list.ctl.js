@@ -88,7 +88,7 @@ define([
         function MappingBean(obj) {
             if (!obj) return;
             // 没有 Scope 表示这应该是后端的 MappingBean 数据
-            if (!obj.scope) {
+            if (!obj.feedCategoryPath && !obj.mainCategoryPath) {
                 _.extend(this, obj);
                 return;
             }
@@ -97,8 +97,8 @@ define([
             this.defaultMapping = obj.defaultMapping;
             this.defaultMain = obj.defaultMain;
             this.matchOver = obj.matchOver;
-            this.feedPath = obj.scope.feedCategoryPath;
-            this.mainPath = obj.scope.mainCategoryPath;
+            this.feedPath = obj.feedCategoryPath;
+            this.mainPath = obj.mainCategoryPath;
         }
 
         /**
@@ -156,8 +156,8 @@ define([
                     $scope.$apply(function () {
                         var map = self.currCategoryMap;
                         var isCommon = mappingModel.defaultMain === 1;
-                        var mainPath = mappingModel.scope.mainCategoryPath;
-                        var feedPath = mappingModel.scope.feedCategoryPath;
+                        var mainPath = mappingModel.mainCategoryPath;
+                        var feedPath = mappingModel.feedCategoryPath;
                         // 更新目标 Feed Mapping
                         map[feedPath].selectedMapping.matchOver = matchOver;
                         if (!isCommon) return;
@@ -198,7 +198,7 @@ define([
                 var self = this;
                 self.feedMappingService.getTopCategories().then(function (res) {
                     self.topCategories = res.data;
-                    self.selectedTop = self.topCategories[0].cid;
+                    self.selectedTop = self.topCategories[0].catId;
                     self.refreshTable();
                 });
             },
@@ -233,8 +233,6 @@ define([
                             result = self.matched.property === feedCategoryBean.isPropertyMatched();
 
                         return result;
-                    }).sort(function (a, b) {
-                        return a.seq > b.seq ? 1 : -1;
                     });
 
                     // 绑定&显示

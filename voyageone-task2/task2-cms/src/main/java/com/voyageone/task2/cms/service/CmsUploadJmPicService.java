@@ -127,7 +127,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                         noError = false;
                         jmPicDao.updateJmpicFailedUploadModified(jmPicBean.getSeq(),getTaskName());
                         monitor.addErrorOne();
-                        $error("UploadTask -> run() -> exception:" + e);
+                        $error("UploadTask -> run() -> exception:", e);
                     }
                 }
                 if (noError) {

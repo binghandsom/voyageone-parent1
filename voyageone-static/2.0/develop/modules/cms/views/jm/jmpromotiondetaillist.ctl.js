@@ -12,7 +12,7 @@ define([
         $scope.parentModel={};
         $scope.modelUpdateDealEndTime={};
         $scope.modelAllUpdateDealEndTime={};
-        $scope.dataPageOption = {curr: 1, total: 0, size: 10, fetch: goPage.bind(this)}
+        $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
         $scope.initialize = function () {
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                     $scope.parentModel = res.data;

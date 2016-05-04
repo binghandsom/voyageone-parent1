@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtJmPromotionImportTaskDaoExt">
+    <resultMap id="ResultMap" type="CmsBtJmPromotionImportTaskModel">
+        
+    </resultMap>
+	
+    <select id="getByPromotionId" resultMap="ResultMap">
+        select *  from cms_bt_jm_promotion_import_task
+        <where>
+            <if test="cmsBtJmPromotionId!=null">
+                 AND cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
+            </if>
+        </where>
+        order by id desc
+    </select>
+</mapper>

@@ -104,4 +104,5 @@ public class CartBean {
     public void setModifier(String modifier) {
         this.modifier = modifier;
     }
+
 }

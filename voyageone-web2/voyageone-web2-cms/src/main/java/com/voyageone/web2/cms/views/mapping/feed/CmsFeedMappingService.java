@@ -8,9 +8,7 @@ import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
-import com.voyageone.service.model.cms.mongo.feed.mapping.Scope;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FeedCategoryBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
@@ -42,18 +40,16 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private FeedMappingService feedMappingService;
 
-    List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    List<CmsMtFeedCategoryTreeModel> getTopCategories(UserSessionBean user) {
         return feedCategoryTreeService.getOnlyTopFeedCategories(user.getSelChannelId());
     }
 
     List<FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeService.getFeedCategory(user.getSelChannelId(), topCategoryId);
+        CmsMtFeedCategoryTreeModel topCategory = feedCategoryTreeService.getFeedCategoryByCategoryId(user.getSelChannelId(), topCategoryId);
 
-        if (treeModelx.getCategoryTree().isEmpty())
+        if (topCategory == null)
             throw new BusinessException("未找到类目");
-
-        CmsMtFeedCategoryModel topCategory = treeModelx.getCategoryTree().get(0);
 
         // 查询 Mapping 信息
         // 当前渠道的所有所有所有 Mapping, 所以所有的 DefaultMain 都可以在这 List 里找到
@@ -62,10 +58,10 @@ public class CmsFeedMappingService extends BaseAppService {
         // 第一波, 先筛选出所有 DefaultMain
         Map<String, CmsBtFeedMappingModel> defaultMainMap = feedMappingModels.stream()
                 .filter(i -> i.getDefaultMain() == 1)
-                .collect(toMap(i -> i.getScope().getMainCategoryPath(), i -> i));
+                .collect(toMap(i -> i.getMainCategoryPath(), i -> i));
 
         Map<String, List<FeedCategoryBean.MappingBean>> mappingMap = feedMappingModels.stream()
-                .map(i -> new FeedCategoryBean.MappingBean(i, defaultMainMap.get(i.getScope().getMainCategoryPath())))
+                .map(i -> new FeedCategoryBean.MappingBean(i, defaultMainMap.get(i.getMainCategoryPath())))
                 .collect(groupingBy(FeedCategoryBean.MappingBean::getFeedPath, toList()));
 
         // 拍平, 转 Map, 供前台查询方便, 和显示方便
@@ -86,7 +82,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         List<CmsBtFeedMappingModel> mappings = new ArrayList<>();
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMappingWithoutProps(new ObjectId(param.getMappingId()));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMappingWithoutProps(user.getSelChannel(),new ObjectId(param.getMappingId()));
 
         mappings.add(feedMappingModel);
 
@@ -121,8 +117,8 @@ public class CmsFeedMappingService extends BaseAppService {
         // 如果不是当前的主类目, 就清空属性的 Mapping, 更换主类目路径
         if (defaultMapping != null) {
 
-            if (!defaultMapping.getScope().getMainCategoryPath().equals(setMappingBean.getTo())) {
-                defaultMapping.getScope().setMainCategoryPath(setMappingBean.getTo());
+            if (!defaultMapping.getMainCategoryPath().equals(setMappingBean.getTo())) {
+                defaultMapping.setMainCategoryPath(setMappingBean.getTo());
                 defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
                 defaultMapping.setMatchOver(0);
                 defaultMapping.setProps(new ArrayList<>());
@@ -145,18 +141,20 @@ public class CmsFeedMappingService extends BaseAppService {
         }
 
         // 如果上面的全部不成立, 就需要全新创建 Mapping
-        Scope scope = new Scope();
-        scope.setChannelId(user.getSelChannelId());
-        scope.setFeedCategoryPath(setMappingBean.getFrom());
-        scope.setMainCategoryPath(setMappingBean.getTo());
+//        Scope scope = new Scope();
+//        scope.setChannelId(user.getSelChannelId());
+//        scope.setFeedCategoryPath(setMappingBean.getFrom());
+//        scope.setMainCategoryPath(setMappingBean.getTo());
 
         defaultMapping = new CmsBtFeedMappingModel();
 
-        defaultMapping.setScope(scope);
+        defaultMapping.setChannelId(user.getSelChannelId());
+        defaultMapping.setFeedCategoryPath(setMappingBean.getFrom());
+        defaultMapping.setMainCategoryPath(setMappingBean.getTo());
         defaultMapping.setMatchOver(0);
         defaultMapping.setDefaultMapping(1);
         defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
-
+        defaultMapping.setChannelId(user.getSelChannelId());
         feedMappingService.setMapping(defaultMapping);
 
         return defaultMapping;
@@ -175,7 +173,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         if (feedMappingModel == null) return null;
 
-        SetMappingBean setMappingBean = new SetMappingBean(path, feedMappingModel.getScope().getMainCategoryPath());
+        SetMappingBean setMappingBean = new SetMappingBean(path, feedMappingModel.getMainCategoryPath());
 
         return setMapping(setMappingBean, user);
     }
@@ -183,9 +181,9 @@ public class CmsFeedMappingService extends BaseAppService {
     /**
      * 切换 MatchOver
      */
-    boolean switchMatchOver(String mappingId) {
+    boolean switchMatchOver(String mappingId, UserSessionBean user) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(mappingId));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(user.getSelChannel(),new ObjectId(mappingId));
 
         feedMappingModel.setMatchOver(feedMappingModel.getMatchOver() == 1 ? 0 : 1);
 
@@ -227,21 +225,21 @@ public class CmsFeedMappingService extends BaseAppService {
         return parentDefaultMapping;
     }
 
-    private void buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int[] seq, List<FeedCategoryBean> result) {
+    private void buildFeedCategoryBean(CmsMtFeedCategoryTreeModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int[] seq, List<FeedCategoryBean> result) {
 
         FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
         feedCategoryBean.setSeq(seq[0]++);
-        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getPath(), "-"));
-        feedCategoryBean.setIsChild(feedCategoryModel.getIsChild());
-        feedCategoryBean.setPath(feedCategoryModel.getPath());
-        if (feedMappingModelMap.containsKey(feedCategoryModel.getPath())) {
-            List<FeedCategoryBean.MappingBean> mappings = feedMappingModelMap.get(feedCategoryModel.getPath());
+        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getCatPath(), "-"));
+        feedCategoryBean.setIsChild(feedCategoryModel.getIsParent() == 1?0:1);
+        feedCategoryBean.setPath(feedCategoryModel.getCatPath());
+        if (feedMappingModelMap.containsKey(feedCategoryModel.getCatPath())) {
+            List<FeedCategoryBean.MappingBean> mappings = feedMappingModelMap.get(feedCategoryModel.getCatPath());
             feedCategoryBean.setMappings(mappings);
         }
 
         result.add(feedCategoryBean);
 
-        for (CmsMtFeedCategoryModel child : feedCategoryModel.getChild())
+        for (CmsMtFeedCategoryTreeModel child : feedCategoryModel.getChildren())
             buildFeedCategoryBean(child, feedMappingModelMap, seq, result);
     }
 }

@@ -1,9 +1,12 @@
 package com.voyageone.components.jd.service;
 
 import com.jd.open.api.sdk.JdException;
+//import com.jd.open.api.sdk.domain.afsservice.AfsServiceProcessFacade.AfsRefundInfoOut;
 import com.jd.open.api.sdk.domain.refundapply.RefundApplySoaService.RefundApplyVo;
+//import com.jd.open.api.sdk.request.afsservice.AfsserviceRefundinfoGetRequest;
 import com.jd.open.api.sdk.request.refundapply.PopAfsSoaRefundapplyQueryByIdRequest;
 import com.jd.open.api.sdk.request.refundapply.PopAfsSoaRefundapplyQueryPageListRequest;
+//import com.jd.open.api.sdk.response.afsservice.AfsserviceRefundinfoGetResponse;
 import com.jd.open.api.sdk.response.refundapply.PopAfsSoaRefundapplyQueryByIdResponse;
 import com.jd.open.api.sdk.response.refundapply.PopAfsSoaRefundapplyQueryPageListResponse;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -119,9 +122,9 @@ public class JdRefundService extends JdBase {
 		return null;
 	}
 	
-//	/**
-//	 * 京东根据服务单号取得退款信息
-//	 */
+	/**
+	 * 京东根据服务单号取得退款信息
+	 */
 //	public AfsRefundInfoOut doJDGetRefundInfo(ShopBean shop, String serviceId){
 //		AfsserviceRefundinfoGetRequest request=new AfsserviceRefundinfoGetRequest();
 //		request.setAfsServiceId(Integer.parseInt(serviceId));

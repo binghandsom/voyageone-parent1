@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtSizeMapDao">
+    <resultMap id="ResultMap" type="CmsBtSizeMapModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select `id`,`size_map_group_id`,`original_size`,`adjust_size`,`active`,`creater`,`created`,`modifier`,`modified`
+        from cms_bt_size_map
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="sizeMapGroupId != null">
+                AND `size_map_group_id` = #{sizeMapGroupId}
+            </if>
+            <if test="originalSize != null">
+                AND `original_size` = #{originalSize}
+            </if>
+            <if test="adjustSize != null">
+                AND `adjust_size` = #{adjustSize}
+            </if>
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select `id`,`size_map_group_id`,`original_size`,`adjust_size`,`active`,`creater`,`created`,`modifier`,`modified`
+        from cms_bt_size_map
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="sizeMapGroupId != null">
+                AND `size_map_group_id` = #{sizeMapGroupId}
+            </if>
+
+            <if test="originalSize != null">
+                AND `original_size` = #{originalSize}
+            </if>
+
+            <if test="adjustSize != null">
+                AND `adjust_size` = #{adjustSize}
+            </if>
+
+            <if test="active != null">
+                AND `active` = #{active}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`size_map_group_id`,`original_size`,`adjust_size`,`active`,`creater`,`created`,`modifier`,`modified` from cms_bt_size_map where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_bt_size_map
+        set
+
+            `size_map_group_id`=#{sizeMapGroupId}
+            ,`original_size`=#{originalSize}
+            ,`adjust_size`=#{adjustSize}
+            ,`active`=#{active}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_bt_size_map
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_bt_size_map
+        (
+              `size_map_group_id`,
+              `original_size`,
+              `adjust_size`,
+              `active`,
+              `creater`,
+              `created`,
+              `modifier`,
+              `modified`
+        )
+        VALUES(
+              #{sizeMapGroupId},
+              #{originalSize},
+              #{adjustSize},
+              #{active},
+              #{creater},
+              #{created},
+              #{modifier},
+              #{modified}
+        )
+    </insert>
+</mapper>

@@ -11,14 +11,14 @@
         SELECT order_channel_id,
             name,
             value
-        FROM voyageone_cms2.cms_mt_dict
+        FROM voyageone_cms2.cms_platform_mt_dict
     </select>
 
     <select id="cms_selectDictWordsByName" resultType="com.voyageone.ims.modelbean.DictWordBean" parameterType="Map">
         SELECT order_channel_id,
             name,
             value
-        FROM voyageone_cms2.cms_mt_dict
+        FROM voyageone_cms2.cms_platform_mt_dict
         WHERE
             name = #{name}
         AND

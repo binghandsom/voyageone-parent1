@@ -64,6 +64,17 @@ public class CmsChannelConfigs {
     }
 
     /**
+     * get one ConfigBean
+     *
+     * @param channelId  channel Id
+     * @param configKey  config Key
+     * @return CmsChannelConfigBean
+     */
+    public static CmsChannelConfigBean getConfigBeanNoCode(String channelId, String configKey) {
+        return CacheHelper.getBean(KEY, buildKey(channelId, configKey, "0"), selfClass);
+    }
+
+    /**
      * get ConfigBeans list
      *
      * @param channelId channel Id

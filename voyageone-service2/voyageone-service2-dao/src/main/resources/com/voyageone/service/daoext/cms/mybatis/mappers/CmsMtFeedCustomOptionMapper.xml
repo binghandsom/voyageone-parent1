@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <!-- 获取指定店铺的所有的自定义属性 -->
+    <select id="cms_mt_feed_custom_prop_select" parameterType="HashMap"
+            resultType="com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean">
+        select    id
+        , channel_id
+        , feed_cat_path
+        , feed_prop_original
+        , feed_prop_translation
+        , display_order
+        from voyageone_cms2.cms_mt_feed_custom_prop
+        where     channel_id = #{channel_id}
+        order by  display_order
+    </select>
+
+    <!-- 获取指定店铺的所有的自定义属性的值的翻译 -->
+    <select id="cms_mt_feed_custom_option_select" parameterType="HashMap"
+            resultType="com.voyageone.service.model.cms.CmsMtFeedCustomOptionModel">
+        select    id
+        , channel_id as channelId
+        , prop_id as propId
+        , feed_value_original as feedValueOriginal
+        , feed_value_translation as feedValueTranslation
+        from voyageone_cms2.cms_mt_feed_custom_option
+        where channel_id = #{channelId}
+    </select>
+
+</mapper>

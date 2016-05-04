@@ -21,7 +21,7 @@ define([
 
             this.context = context;
 
-            this.feedPath = context.mapping.scope.feedCategoryPath;
+            this.feedPath = context.mapping.feedCategoryPath;
             /**
              * 当前处理的主类目属性
              * @type {Field}
@@ -146,7 +146,7 @@ define([
             cancel: function () {
                 this.field.value = null;
                 this.field.values = null;
-                this.$uibModalInstance.dismiss('cancel');
+                this.$uibModalInstance.dismiss();
             }
         };
 

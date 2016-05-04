@@ -5,22 +5,25 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  *  Product Group Service
@@ -34,9 +37,10 @@ public class ProductSkuService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
     @Autowired
-    private CmsBtPriceLogDao cmsBtPriceLogDao;
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
 
     @Autowired
     private ProductGroupService productGroupService;
@@ -139,7 +143,7 @@ public class ProductSkuService extends BaseService {
 
         CmsBtProductModel findModel = null;
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("skus.skuCode");
+        queryObject.setProjectionExt("skus.skuCode");
         if (productId != null) {
             queryObject.setQuery("{\"prodId\":" + productId + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
@@ -206,7 +210,9 @@ public class ProductSkuService extends BaseService {
         }
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
-        List<CmsBtPriceLogModel> logList = new ArrayList<>();
+        // jeff 2016/04 del start
+        // List<CmsBtPriceLogModel> logList = new ArrayList<>();
+        // jeff 2016/04 del end
 
         for (ProductPriceBean model : productPrices) {
             if (model == null) {
@@ -215,13 +221,20 @@ public class ProductSkuService extends BaseService {
             if (model.getProductId() == null && model.getProductCode() == null) {
                 throw new RuntimeException("ProductPrices ProductId or ProductCode not found!");
             }
-            updatePricesAddBlukUpdateModel(channelId, model, bulkList, logList, modifier);
+
+            // jeff 2016/04 del start
+            // updatePricesAddBlukUpdateModel(channelId, model, bulkList, logList, modifier);
+            updatePricesAddBlukUpdateModel(channelId, model, bulkList, modifier);
+            // jeff 2016/04 del end
+
         }
 
+        // jeff 2016/04 del start
         // 插入log履历
-        if (logList.size()>0) {
-            cmsBtPriceLogDao.insertCmsBtPriceLogList(logList);
-        }
+//        if (logList.size()>0) {
+//            cmsBtPriceLogDao.insertCmsBtPriceLogList(logList);
+//        }
+        // jeff 2016/04 del end
 
         int result = 0;
         // 更新sku价格变更
@@ -239,25 +252,31 @@ public class ProductSkuService extends BaseService {
      *  更新group里的价格
      */
     private void updateGroupPrice(String channelId, List<ProductPriceBean> productPrices) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("prodId", "fields", "skus", "groups");
-
         List<BulkUpdateModel> bulkList = new ArrayList<>();
-        for(ProductPriceBean model : productPrices){
-            queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
-            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-            for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
-                List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
-                bulkList.add(calculatePriceRange(products, platform.getGroupId()));
-            }
+        for (ProductPriceBean model : productPrices) {
+            // 先根据产品id找到产品code
+            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{'prodId':" + model.getProductId() + "},{'fields.code':1}", channelId);
+            // 再根据产品code从group表中找出其所在group的信息
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{'productCodes':'" + findModel.getFields().getCode() + "'},{'productCodes':1,'groupId':1}", channelId);
+            grpList.forEach(grpObj -> {
+                // 其所在group下的所有产品code
+                List<String> codeList = grpObj.getProductCodes();
+                if (codeList != null && codeList.size() > 0) {
+                    // 再找到所有产品fields信息
+                    String[] codeArr = new String[codeList.size()];
+                    codeArr = codeList.toArray(codeArr);
+                    List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{'fields':1}", channelId);
+                    bulkList.add(calculatePriceRange(prodList, grpObj.getGroupId()));
+                }
+            });
         }
-        if(bulkList.size() > 0){
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        if (bulkList.size() > 0) {
+            cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
         }
     }
 
+    // 计算价格区间
     private BulkUpdateModel calculatePriceRange(List<CmsBtProductModel> products, Long groupId) {
-
         Double priceSaleSt = null;
         Double priceSaleEd = null;
         Double priceRetailSt = null;
@@ -265,57 +284,59 @@ public class ProductSkuService extends BaseService {
         Double priceMsrpSt = null;
         Double priceMsrpEd = null;
 
-        for(CmsBtProductModel product : products){
-            if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt){
+        for (CmsBtProductModel product : products) {
+            if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt) {
                 priceSaleSt = product.getFields().getPriceSaleSt();
             }
-            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd){
+            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd) {
                 priceSaleEd = product.getFields().getPriceSaleEd();
             }
 
-            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt){
+            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt) {
                 priceRetailSt = product.getFields().getPriceRetailSt();
             }
-            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd){
+            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd) {
                 priceRetailEd = product.getFields().getPriceRetailEd();
             }
 
-            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt){
+            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt) {
                 priceMsrpSt = product.getFields().getPriceMsrpSt();
             }
-            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd){
+            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd) {
                 priceMsrpEd = product.getFields().getPriceMsrpEd();
             }
         }
 
         Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("groups.platforms.$.priceSaleSt",priceSaleSt);
-        updateMap.put("groups.platforms.$.priceSaleEd",priceSaleEd);
-        updateMap.put("groups.platforms.$.priceRetailSt",priceRetailSt);
-        updateMap.put("groups.platforms.$.priceRetailEd",priceRetailEd);
-        updateMap.put("groups.platforms.$.priceMsrpSt",priceMsrpSt);
-        updateMap.put("groups.platforms.$.priceMsrpEd",priceMsrpEd);
+        updateMap.put("priceSaleSt", priceSaleSt);
+        updateMap.put("priceSaleEd", priceSaleEd);
+        updateMap.put("priceRetailSt", priceRetailSt);
+        updateMap.put("priceRetailEd", priceRetailEd);
+        updateMap.put("priceMsrpSt", priceMsrpSt);
+        updateMap.put("priceMsrpEd", priceMsrpEd);
 
         BulkUpdateModel bulk = new BulkUpdateModel();
         bulk.setUpdateMap(updateMap);
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("groups.platforms.groupId", groupId);
+        queryMap.put("groupId", groupId);
         bulk.setQueryMap(queryMap);
 
         return bulk;
     }
+
     /**
      * 批量更新价格信息 根据CodeList
      */
     private void updatePricesAddBlukUpdateModel(String channelId, ProductPriceBean model,
-                                               List<BulkUpdateModel> bulkList, List<CmsBtPriceLogModel> logList,
+                                               // List<BulkUpdateModel> bulkList, List<CmsBtPriceLogModel> logList,
+                                                List<BulkUpdateModel> bulkList,
                                                String modifier) {
 
         // 取得更新前的sku数据
         HashMap<String, Object> productQueryMap = new HashMap<>();
         CmsBtProductModel findModel;
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("prodId", "fields", "skus");
+        queryObject.setProjectionExt("prodId", "fields", "skus");
         if (model.getProductId() != null) {
             productQueryMap.put("prodId", model.getProductId());
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
@@ -347,8 +368,10 @@ public class ProductSkuService extends BaseService {
                     if (skuModel.getSkuCode().equals(skuModelBefore.getSkuCode())) {
                         // 判断价格是否发生变化
                         if (isPriceChanged(skuModelBefore, skuModel)) {
-                            CmsBtPriceLogModel cmsBtPriceLogModel = createPriceLogModel(channelId, findModel, skuModel, modifier);
-                            logList.add(cmsBtPriceLogModel);
+                            // jeff 2016/04 del start
+//                            CmsBtPriceLogModel cmsBtPriceLogModel = createPriceLogModel(channelId, findModel, skuModel, modifier);
+//                            logList.add(cmsBtPriceLogModel);
+                            // jeff 2016/04 del end
 
                             HashMap<String, Object> skuQueryMap = new HashMap<>();
                             if (model.getProductId() != null) {
@@ -431,8 +454,8 @@ public class ProductSkuService extends BaseService {
         }
 
         //update product price
-//        if ((boolean)resultField.get("isChanged")) {
-        if (bulkList.size() > 0) {
+        if ((boolean)resultField.get("isChanged")) {
+//        if (bulkList.size() > 0) {
 
             if (resultField.get("priceMsrpSt") != null) {
                 productUpdateMap.put("fields.priceMsrpSt", resultField.get("priceMsrpSt"));
@@ -453,18 +476,20 @@ public class ProductSkuService extends BaseService {
                 productUpdateMap.put("fields.priceSaleEd", resultField.get("priceSaleEd"));
             }
 
-            CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-            cmsBtPriceLogModel.setChannelId(channelId);
-            cmsBtPriceLogModel.setProductId(findModel.getProdId().intValue());
-            cmsBtPriceLogModel.setCode(findModel.getFields().getCode());
-            cmsBtPriceLogModel.setSku("0");
-            cmsBtPriceLogModel.setMsrpPrice(resultField.get("priceMsrpSt") + "-" + resultField.get("priceMsrpEd"));
-            cmsBtPriceLogModel.setRetailPrice(resultField.get("priceRetailSt") + "-" + resultField.get("priceRetailEd"));
-            cmsBtPriceLogModel.setSalePrice(resultField.get("priceSaleSt") + "-" + resultField.get("priceSaleEd"));
-            cmsBtPriceLogModel.setComment("价格更新");
-            cmsBtPriceLogModel.setCreater(modifier);
-
-            logList.add(cmsBtPriceLogModel);
+            // jeff 2016/04 del start
+//            CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+//            cmsBtPriceLogModel.setChannelId(channelId);
+//            cmsBtPriceLogModel.setProductId(findModel.getProdId().intValue());
+//            cmsBtPriceLogModel.setCode(findModel.getFields().getCode());
+//            cmsBtPriceLogModel.setSku("0");
+//            cmsBtPriceLogModel.setMsrpPrice(resultField.get("priceMsrpSt") + "-" + resultField.get("priceMsrpEd"));
+//            cmsBtPriceLogModel.setRetailPrice(resultField.get("priceRetailSt") + "-" + resultField.get("priceRetailEd"));
+//            cmsBtPriceLogModel.setSalePrice(resultField.get("priceSaleSt") + "-" + resultField.get("priceSaleEd"));
+//            cmsBtPriceLogModel.setComment("价格更新");
+//            cmsBtPriceLogModel.setCreater(modifier);
+//
+//            logList.add(cmsBtPriceLogModel);
+            // jeff 2016/04 del end
         }
 
 
@@ -477,70 +502,192 @@ public class ProductSkuService extends BaseService {
         }
     }
 
+    // jeff 2016/04 change start
     /**
      * 判断价格是否变更
+     * @param skuBefore 变更前SKU信息
+     * @param skuAfter 变更后SKU信息
+     * @return true:有变更；false：没有变更
      */
-    private boolean isPriceChanged(CmsBtProductModel_Sku model1, ProductSkuPriceBean model2) {
-        BigDecimal msrp1 = new BigDecimal(0);
-        if (model1.getPriceMsrp() != null) {
-            msrp1 = new BigDecimal(model1.getPriceMsrp());
+    private boolean isPriceChanged(CmsBtProductModel_Sku skuBefore, ProductSkuPriceBean skuAfter) {
+//    private boolean isPriceChanged(CmsBtProductModel_Sku model1, ProductSkuPriceBean model2) {
+//        BigDecimal msrp1 = new BigDecimal(0);
+//        if (model1.getPriceMsrp() != null) {
+//            msrp1 = new BigDecimal(model1.getPriceMsrp());
+//        }
+//        BigDecimal retail1 = new BigDecimal(0);
+//        if (model1.getPriceRetail() != null) {
+//            retail1 = new BigDecimal(model1.getPriceRetail());
+//        }
+//        BigDecimal sale1 = new BigDecimal(0);
+//        if (model1.getPriceSale() != null) {
+//            sale1 = new BigDecimal(model1.getPriceSale());
+//        }
+//
+//        BigDecimal msrp2 = new BigDecimal(0);
+//        if (model2.getPriceMsrp() != null) {
+//            msrp2 = new BigDecimal(model2.getPriceMsrp());
+//        }
+//        BigDecimal retail2 = new BigDecimal(0);
+//        if (model2.getPriceRetail() != null) {
+//            retail2 = new BigDecimal(model2.getPriceRetail());
+//        }
+//        BigDecimal sale2 = new BigDecimal(0);
+//        if (model2.getPriceSale() != null) {
+//            sale2 = new BigDecimal(model2.getPriceSale());
+//        }
+//
+//        return !(msrp1.compareTo(msrp2) == 0 && retail1.compareTo(retail2) == 0 && sale1.compareTo(sale2) == 0);
+        BigDecimal clientPriceMsrpBefore = null;
+        if (skuBefore.getClientMsrpPrice() != null) {
+            clientPriceMsrpBefore = new BigDecimal(skuBefore.getClientMsrpPrice());
         }
-        BigDecimal retail1 = new BigDecimal(0);
-        if (model1.getPriceRetail() != null) {
-            retail1 = new BigDecimal(model1.getPriceRetail());
+        BigDecimal clientPriceRetailBefore = null;
+        if (skuBefore.getClientRetailPrice() != null) {
+            clientPriceRetailBefore = new BigDecimal(skuBefore.getClientRetailPrice());
         }
-        BigDecimal sale1 = new BigDecimal(0);
-        if (model1.getPriceSale() != null) {
-            sale1 = new BigDecimal(model1.getPriceSale());
+        BigDecimal clientPriceNetBefore = null;
+        if (skuBefore.getClientNetPrice() != null) {
+            clientPriceNetBefore = new BigDecimal(skuBefore.getClientNetPrice());
         }
 
-        BigDecimal msrp2 = new BigDecimal(0);
-        if (model2.getPriceMsrp() != null) {
-            msrp2 = new BigDecimal(model2.getPriceMsrp());
+        BigDecimal clientPriceMsrpAfter = null;
+        if (skuAfter.getClientMsrpPrice() != null) {
+            clientPriceMsrpAfter = new BigDecimal(skuAfter.getClientMsrpPrice());
         }
-        BigDecimal retail2 = new BigDecimal(0);
-        if (model2.getPriceRetail() != null) {
-            retail2 = new BigDecimal(model2.getPriceRetail());
+        BigDecimal clientPriceRetailAfter = null;
+        if (skuAfter.getClientRetailPrice() != null) {
+            clientPriceRetailAfter = new BigDecimal(skuAfter.getClientRetailPrice());
         }
-        BigDecimal sale2 = new BigDecimal(0);
-        if (model2.getPriceSale() != null) {
-            sale2 = new BigDecimal(model2.getPriceSale());
+        BigDecimal clientPriceNetAfter = null;
+        if (skuAfter.getClientNetPrice() != null) {
+            clientPriceNetAfter = new BigDecimal(skuAfter.getClientNetPrice());
         }
 
-        return !(msrp1.compareTo(msrp2) == 0 && retail1.compareTo(retail2) == 0 && sale1.compareTo(sale2) == 0);
+        BigDecimal priceMsrpBefore = null;
+        if (skuBefore.getPriceMsrp() != null) {
+            priceMsrpBefore = new BigDecimal(skuBefore.getPriceMsrp());
+        }
+        BigDecimal priceRetailBefore = null;
+        if (skuBefore.getPriceRetail() != null) {
+            priceRetailBefore = new BigDecimal(skuBefore.getPriceRetail());
+        }
+        BigDecimal priceSaleBefore = null;
+        if (skuBefore.getPriceSale() != null) {
+            priceSaleBefore = new BigDecimal(skuBefore.getPriceSale());
+        }
+
+        BigDecimal priceMsrpAfter = null;
+        if (skuAfter.getPriceMsrp() != null) {
+            priceMsrpAfter = new BigDecimal(skuAfter.getPriceMsrp());
+        }
+        BigDecimal priceRetailAfter = null;
+        if (skuAfter.getPriceRetail() != null) {
+            priceRetailAfter = new BigDecimal(skuAfter.getPriceRetail());
+        }
+        BigDecimal priceSaleAfter = null;
+        if (skuAfter.getPriceSale() != null) {
+            priceSaleAfter = new BigDecimal(skuAfter.getPriceSale());
+        }
+
+        // true:变更前=变更后（没有变更）；false：变更前<>变更后（变更了）
+        boolean clientPriceMsrpFlg = true;
+        boolean clientPriceRetailFlg = true;
+        boolean clientPriceNetFlg = true;
+        boolean priceMsrpFlg = true;
+        boolean priceRetailFlg = true;
+        boolean priceSaleFlg = true;
+
+        // 变更后和变更前都存在的情况下进行比较，
+        // 变更后值存在,变更前值不存在的情况下，认为变更
+        if (clientPriceMsrpBefore != null && clientPriceMsrpAfter != null) {
+            if (clientPriceMsrpBefore.compareTo(clientPriceMsrpAfter) != 0) {
+                clientPriceMsrpFlg = false;
+            }
+        } else if (clientPriceMsrpAfter != null) {
+            clientPriceMsrpFlg = false;
+        }
+
+        if (clientPriceRetailBefore != null && clientPriceRetailAfter != null) {
+            if (clientPriceRetailBefore.compareTo(clientPriceRetailAfter) != 0) {
+                clientPriceRetailFlg = false;
+            }
+        } else if (clientPriceRetailAfter != null) {
+            // 变更后值存在,变更前值不存在的情况下，认为变更
+            clientPriceRetailFlg = false;
+        }
+
+        if (clientPriceNetBefore != null && clientPriceNetAfter != null) {
+            if (clientPriceNetBefore.compareTo(clientPriceNetAfter) != 0) {
+                clientPriceNetFlg = false;
+            }
+        } else if (clientPriceNetAfter != null) {
+            // 变更后值存在,变更前值不存在的情况下，认为变更
+            clientPriceNetFlg = false;
+        }
+
+        if (priceMsrpBefore != null && priceMsrpAfter != null) {
+            if (priceMsrpBefore.compareTo(priceMsrpAfter) != 0) {
+                priceMsrpFlg = false;
+            }
+        } else if (priceMsrpAfter != null) {
+            priceMsrpFlg = false;
+        }
+
+        if (priceRetailBefore != null && priceRetailAfter != null) {
+            if (priceRetailBefore.compareTo(priceRetailAfter) != 0) {
+                priceRetailFlg = false;
+            }
+        } else if (priceRetailAfter != null) {
+            // 变更后值存在,变更前值不存在的情况下，认为变更
+            priceRetailFlg = false;
+        }
+
+        if (priceSaleBefore != null && priceSaleAfter != null) {
+            if (priceSaleBefore.compareTo(priceSaleAfter) != 0) {
+                priceSaleFlg = false;
+            }
+        } else if (priceSaleAfter != null) {
+            // 变更后值存在,变更前值不存在的情况下，认为变更
+            priceSaleFlg = false;
+        }
+
+        return !(clientPriceMsrpFlg && clientPriceRetailFlg && clientPriceNetFlg && priceMsrpFlg && priceRetailFlg && priceSaleFlg);
     }
+
 
     /**
      * 创建 SKU PriceLog Model
      */
-    private CmsBtPriceLogModel createPriceLogModel(String channelId, CmsBtProductModel productModel, ProductSkuPriceBean skuModel, String modifier) {
-        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-        cmsBtPriceLogModel.setChannelId(channelId);
-        cmsBtPriceLogModel.setProductId(productModel.getProdId().intValue());
-        cmsBtPriceLogModel.setCode(productModel.getFields().getCode());
-        cmsBtPriceLogModel.setSku(skuModel.getSkuCode());
-
-        Double priceMsrp  = 0d;
-        if (skuModel.getPriceMsrp() != null && !"null-null".equals(skuModel.getPriceMsrp())) {
-            priceMsrp = skuModel.getPriceMsrp();
-        }
-        cmsBtPriceLogModel.setMsrpPrice(priceMsrp.toString());
-
-        Double priceRetail  = 0d;
-        if (skuModel.getPriceRetail() != null && !"null-null".equals(skuModel.getPriceRetail())) {
-            priceRetail = skuModel.getPriceRetail();
-        }
-        cmsBtPriceLogModel.setRetailPrice(priceRetail.toString());
-
-        Double priceSale  = 0d;
-        if (skuModel.getPriceSale() != null && !"null-null".equals(skuModel.getPriceSale())) {
-            priceSale = skuModel.getPriceSale();
-        }
-        cmsBtPriceLogModel.setSalePrice(priceSale.toString());
-        cmsBtPriceLogModel.setComment("价格更新");
-        cmsBtPriceLogModel.setCreater(modifier);
-        return cmsBtPriceLogModel;
-    }
+//    private CmsBtPriceLogModel createPriceLogModel(String channelId, CmsBtProductModel productModel, ProductSkuPriceBean skuModel, String modifier) {
+//        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+//        cmsBtPriceLogModel.setChannelId(channelId);
+//        cmsBtPriceLogModel.setProductId(productModel.getProdId().intValue());
+//        cmsBtPriceLogModel.setCode(productModel.getFields().getCode());
+//        cmsBtPriceLogModel.setSku(skuModel.getSkuCode());
+//
+//        Double priceMsrp  = 0d;
+//        if (skuModel.getPriceMsrp() != null && !"null-null".equals(skuModel.getPriceMsrp())) {
+//            priceMsrp = skuModel.getPriceMsrp();
+//        }
+//        cmsBtPriceLogModel.setMsrpPrice(priceMsrp.toString());
+//
+//        Double priceRetail  = 0d;
+//        if (skuModel.getPriceRetail() != null && !"null-null".equals(skuModel.getPriceRetail())) {
+//            priceRetail = skuModel.getPriceRetail();
+//        }
+//        cmsBtPriceLogModel.setRetailPrice(priceRetail.toString());
+//
+//        Double priceSale  = 0d;
+//        if (skuModel.getPriceSale() != null && !"null-null".equals(skuModel.getPriceSale())) {
+//            priceSale = skuModel.getPriceSale();
+//        }
+//        cmsBtPriceLogModel.setSalePrice(priceSale.toString());
+//        cmsBtPriceLogModel.setComment("价格更新");
+//        cmsBtPriceLogModel.setCreater(modifier);
+//        return cmsBtPriceLogModel;
+//    }
+    // jeff 2016/04 change end
 
     /**
      * 更新field价格
@@ -566,6 +713,7 @@ public class ProductSkuService extends BaseService {
             result.put("isChanged", false);
         }
         result.put("field", field);
+
         return result;
     }
 
@@ -581,7 +729,10 @@ public class ProductSkuService extends BaseService {
             priceList.sort((o1, o2) -> o2.compareTo(o1));
             start = priceList.get(priceList.size() - 1);
             end = priceList.get(0);
-            if (priceStart == null || priceEnd == null
+            // jeff 2016/06 change start
+            // if (priceStart == null || priceEnd == null
+            // jeff 2016/06 change end
+            if (priceStart == 0 || priceEnd == 0
                 || start.compareTo(priceStart) != 0
                 || end.compareTo(priceEnd) != 0) {
                 isChanged = true;

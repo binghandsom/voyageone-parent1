@@ -4,6 +4,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +43,9 @@ public class CmsFieldEditController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.SET_PRODUCT_FIELDS)
     public AjaxResponse setProductFields(@RequestBody Map<String, Object> params) {
-        propChangeService.setProductFields(params, getUser());
+        CmsSessionBean cmsSession = getCmsSession();
+        int cartId = Integer.valueOf(cmsSession.getPlatformType().get("cartId").toString());
+        propChangeService.setProductFields(params, getUser(), cartId);
         return success(true);
     }
 }

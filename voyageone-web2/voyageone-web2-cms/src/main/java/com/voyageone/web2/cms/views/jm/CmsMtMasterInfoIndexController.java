@@ -1,10 +1,10 @@
 package com.voyageone.web2.cms.views.jm;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.bean.cms.CallResult;
-import com.voyageone.service.impl.jumei.CmsBtJmMasterBrandService;
-import com.voyageone.service.impl.jumei.CmsMtMasterInfoService;
-import com.voyageone.service.impl.jumei.JMProductUpdate.JuMeiUploadImageService;
-import com.voyageone.service.model.jumei.CmsMtMasterInfoModel;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterBrandService;
+import com.voyageone.service.impl.cms.jumei.CmsMtMasterInfoService;
+import com.voyageone.service.impl.cms.jumei.platform.JuMeiUploadImageService;
+import com.voyageone.service.model.cms.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;

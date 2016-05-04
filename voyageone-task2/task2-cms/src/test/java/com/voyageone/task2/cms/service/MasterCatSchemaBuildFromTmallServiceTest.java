@@ -5,9 +5,9 @@ import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.bean.cms.CommonPropActionDefBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
+import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import net.minidev.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,15 +29,12 @@ import java.util.List;
 public class MasterCatSchemaBuildFromTmallServiceTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Autowired
-    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
-
     @Autowired
     MasterCatSchemaBuildFromTmallService masterCatSchemaBuildFromTmallService;
-
     @Autowired
-    private CmsMtCommonPropDao cmsMtCommonPropDao;
+    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
+    @Autowired
+    private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
     @Test
     public void testOnStartup() throws Exception {
@@ -52,7 +49,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
         logger.info("");
         List<JSONObject> masterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
         logger.info("总件数： "+masterSchemaIds.size());
-        List<CmsMtCommonPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.selectActionModelList();
+        List<CommonPropActionDefBean> commPropActionDefModels = cmsMtCommonPropDaoExt.selectActionModelList();
         int schemaCount = 0;
         for (JSONObject schemaId:masterSchemaIds) {
             schemaCount++;
@@ -70,7 +67,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
 
             logger.info("Schema 数:"+schemaCount+"件， Category Id: " + schemaModel.get("catId"));
 
-            for (CmsMtCommonPropActionDefModel defModel:commPropActionDefModels){
+            for (CommonPropActionDefBean defModel:commPropActionDefModels){
                 ActionType actionType = ActionType.valueOf(Integer.valueOf(defModel.getActionType()));
                 Field verifyField = null;
                     switch (actionType){
@@ -105,6 +102,6 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
     @Test
     public void testBuildMasterCatSchema() throws Exception {
 
-        masterCatSchemaBuildFromTmallService.buildMasterCatSchema();
+        masterCatSchemaBuildFromTmallService.buildMasterCatSchema("29");
     }
 }

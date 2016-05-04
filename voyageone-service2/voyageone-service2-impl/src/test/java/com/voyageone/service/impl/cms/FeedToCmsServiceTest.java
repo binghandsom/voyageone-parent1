@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FeedToCmsServiceTest {
 
     @Autowired
-    FeedToCmsService feedToCmsService;
+    FeedCategoryTreeService feedCategoryTreeService;
 
     @Test
     public void testGetFeedCategory() throws Exception {
@@ -109,5 +110,12 @@ public class FeedToCmsServiceTest {
 //
 //        products.add(p2);
 //        feedToCmsService.updateProduct("010", products);
+    }
+
+    @Test
+    public void testAddCategory() throws Exception {
+        feedCategoryTreeService.addCategory("111","b-b-e","james");
+        feedCategoryTreeService.addCategory("111","f-g-h","james");
+        feedCategoryTreeService.addCategory("111","f-g-i","james");
     }
 }

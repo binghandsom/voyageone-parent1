@@ -33,7 +33,7 @@ public class TranslationController extends CmsController{
         translateTaskBeanInfo.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
 
         // 获取翻译时标题和描述的长度设置
-        translateTaskBeanInfo.put("lenSetInfo", feedPropsTranslateService.getTransLenSet(getUser().getSelChannelId()));
+        translateTaskBeanInfo.put("lenSetInfo", feedPropsTranslateService.getTransLenSet());
 
         return success(translateTaskBeanInfo);
     }

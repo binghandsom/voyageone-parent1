@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <!-- 批量插入授权类目表查询若干条任务-->
+    <select id="cms_select_sx_workload" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        SELECT
+        id as id,
+            channel_id as channelId,
+            group_id as groupId,
+            cart_id as cartId,
+            publish_status as publishStatus,
+            creater,
+            created,
+            modifier,
+            modified
+        FROM voyageone_cms2.cms_bt_sx_workload
+        WHERE
+            publish_status=0
+        <if test="channel_id != null">
+        AND
+            channel_id=#{channel_id}
+        </if>
+        <if test="cartId != null">
+            AND
+            cart_id=#{cartId}
+        </if>
+            group by channel_id, cart_id, group_id
+            order by modified desc
+        <if test="record_count != null">
+            limit 0,#{record_count}
+        </if>
+    </select>
+
+    <update id="cms_update_sx_workload">
+        UPDATE
+            voyageone_cms2.cms_bt_sx_workload
+        SET
+            publish_status=#{publish_status}
+        WHERE
+        id=#{id}
+    </update>
+
+    <update id="cms_update_sx_workload_with_modifier" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        UPDATE
+        voyageone_cms2.cms_bt_sx_workload
+        SET
+        publish_status=#{publish_status},
+        modifier=#{modifier},
+        modified=now()
+        WHERE
+        id=#{id}
+    </update>
+
+    <insert id="cms_insert_sx_workload" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        insert into voyageone_cms2.cms_bt_sx_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            channel_id,
+            group_id,
+            cart_id,
+            publish_status,
+            created,
+            <if test="creater != null" >
+                creater,
+            </if>
+            modified,
+            <if test="modifier != null" >
+                modifier,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{channelId,jdbcType=VARCHAR},
+            #{groupId,jdbcType=INTEGER},
+            #{cartId,jdbcType=INTEGER},
+            #{publishStatus,jdbcType=INTEGER},
+            now(),
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="cms_insert_sx_workloads" parameterType="java.util.List">
+        insert into voyageone_cms2.cms_bt_sx_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            channel_id,
+            group_id,
+            cart_id,
+            publish_status,
+            created,
+            creater,
+            modified,
+            modifier
+        </trim>
+        value
+        <foreach collection="list" item="item" separator="," >
+            (
+            #{item.channelId,jdbcType=VARCHAR},
+            #{item.groupId,jdbcType=INTEGER},
+            #{item.cartId,jdbcType=INTEGER},
+            #{item.publishStatus,jdbcType=INTEGER},
+            now(),
+            #{item.creater,jdbcType=VARCHAR},
+            now(),
+            #{item.modifier,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+</mapper>

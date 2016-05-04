@@ -2,21 +2,28 @@ package com.voyageone.web2.cms.views.mapping.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.model.cms.enums.MappingPropType;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
+import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
@@ -49,6 +56,9 @@ class CmsFeedPropMappingService extends BaseAppService {
     private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
+    private FeedCategoryAttributeService feedCategoryAttributeService;
+
+    @Autowired
     private CategorySchemaService categorySchemaService;
 
     @Autowired
@@ -60,7 +70,7 @@ class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 返回主类目和相应的属性
      */
-    Map<String, Object> getMainCategoryInfo(String mainCategoryPath) {
+    Map<String, Object> getMainCategoryInfo(String mainCategoryPath, String channelId, String lang) {
 
         String categoryId = convertPathToId(mainCategoryPath);
 
@@ -87,6 +97,9 @@ class CmsFeedPropMappingService extends BaseAppService {
                 .collect(toList());
 
         List<Field> commonFields = getCommonSchema();
+
+        // 编辑SingleCheckField的Options项目
+        editOptions(commonFields, channelId, lang);
 
         // 对共通属性同样处理
         // 但如果普通属性里已经有的则需要忽略掉
@@ -121,9 +134,9 @@ class CmsFeedPropMappingService extends BaseAppService {
      * @param getFieldMappingBean 查询参数
      * @return 属性匹配设定
      */
-    Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean) {
+    Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel mappingModel = feedMappingService.getMapping(new ObjectId(getFieldMappingBean.getMappingId()));
+        CmsBtFeedMappingModel mappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),new ObjectId(getFieldMappingBean.getMappingId()));
 
         if (mappingModel == null)
             return null;
@@ -145,9 +158,9 @@ class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 获取类目匹配中已匹配的主类目属性
      */
-    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean) {
+    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(setMappingBean.getMappingId()));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),new ObjectId(setMappingBean.getMappingId()));
 
         List<Prop> props = feedMappingModel.getProps();
 
@@ -167,19 +180,17 @@ class CmsFeedPropMappingService extends BaseAppService {
      */
     Map<String, List<String>> getFeedAttributes(String feedCategoryPath, String lang, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = feedCategoryTreeService.getFeedCategory(userSessionBean.getSelChannelId());
-
-        CmsMtFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
+        CmsMtFeedAttributesModel cmsMtFeedAttributesModel = feedCategoryAttributeService.getCategoryAttributeByCategory(userSessionBean.getSelChannelId(),feedCategoryPath);
 
         // 从 type/value 中取得 Feed 通用的属性
         Map<String, List<String>> attributes = Types.getTypeList(49, lang)
                 .stream()
                 .collect(toMap(TypeBean::getValue, t -> new ArrayList<>(0)));
 
-        if (feedCategoryModel == null)
+        if (cmsMtFeedAttributesModel == null)
             return attributes;
 
-        attributes.putAll(feedCategoryModel.getAttribute());
+        attributes.putAll(cmsMtFeedAttributesModel.getAttribute());
 
         return attributes;
     }
@@ -199,9 +210,9 @@ class CmsFeedPropMappingService extends BaseAppService {
      *
      * @param saveFieldMappingBean 请求参数
      */
-    boolean saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean) {
+    boolean saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(saveFieldMappingBean.getMappingId()));
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),new ObjectId(saveFieldMappingBean.getMappingId()));
 
         if (feedMappingModel == null)
             throw new BusinessException("没找到 Mapping");
@@ -354,4 +365,47 @@ class CmsFeedPropMappingService extends BaseAppService {
         List list = commonSchemaService.getAll();
         return SchemaJsonReader.readJsonForList(list);
     }
+
+    // jeff 2016/04 add start
+    /**
+     * 编辑SingleCheckField的Options项目
+     */
+    private void editOptions (List<Field> fields, String channelId, String language) {
+
+        for (Field field : fields) {
+            if (field instanceof SingleCheckField) {
+                if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                    List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
+
+                    // 替换成field需要的样式
+                    List<Option> options = new ArrayList<>();
+                    if (typeBeanList != null) {
+                        for (TypeBean typeBean : typeBeanList) {
+                            Option opt = new Option();
+                            opt.setDisplayName(typeBean.getName());
+                            opt.setValue(typeBean.getValue());
+                            options.add(opt);
+                        }
+                        ((SingleCheckField) field).setOptions(options);
+                    }
+                } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                    // 获取type channel bean
+                    List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+
+                    // 替换成field需要的样式
+                    List<Option> options = new ArrayList<>();
+                    if (typeChannelBeanList != null) {
+                        for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                            Option opt = new Option();
+                            opt.setDisplayName(typeChannelBean.getName());
+                            opt.setValue(typeChannelBean.getValue());
+                            options.add(opt);
+                        }
+                        ((SingleCheckField) field).setOptions(options);
+                    }
+                }
+            }
+        }
+    }
+    // jeff 2016/04 add end
 }

@@ -1,5 +1,6 @@
 package com.voyageone.web2.base.log;
 
+import com.voyageone.common.configs.beans.ExceptionLogBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

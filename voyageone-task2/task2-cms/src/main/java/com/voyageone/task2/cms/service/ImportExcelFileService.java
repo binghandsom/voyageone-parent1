@@ -798,9 +798,9 @@ public class ImportExcelFileService extends BaseTaskService {
             skuModel.setDealId(ExcelUtils.getString(row, SkuSheetFormat.deal_id_index));
             skuModel.setSku(ExcelUtils.getString(row, SkuSheetFormat.sku_index, "#"));
             skuModel.setUpcCode(ExcelUtils.getString(row, SkuSheetFormat.upc_code_index, "#"));
-            skuModel.setAbroadPrice(CommonUtil.getRoundUpDigits(Double.valueOf(ExcelUtils.getString(row, SkuSheetFormat.abroad_price_index)), 2));
-            skuModel.setDealPrice(CommonUtil.getRoundUpDigits(ExcelUtils.getNum(row, SkuSheetFormat.deal_price_index), 2));
-            skuModel.setMarketPrice(CommonUtil.getRoundUpDigits(ExcelUtils.getNum(row, SkuSheetFormat.market_price_index), 2));
+            skuModel.setAbroadPrice(CommonUtil.getRoundUp2Digits(Double.valueOf(ExcelUtils.getString(row, SkuSheetFormat.abroad_price_index))));
+            skuModel.setDealPrice(CommonUtil.getRoundUp2Digits(ExcelUtils.getNum(row, SkuSheetFormat.deal_price_index)));
+            skuModel.setMarketPrice(CommonUtil.getRoundUp2Digits(ExcelUtils.getNum(row, SkuSheetFormat.market_price_index)));
             skuModel.setSize(ExcelUtils.getString(row, SkuSheetFormat.size_index));
 //        skuModel.setHscode(ExcelUtils.getString(row, SkuSheetFormat.hscode_index));
             skuModel.setHscode("");

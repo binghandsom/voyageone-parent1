@@ -1,5 +1,6 @@
 package com.voyageone.web2.base.log;
 
+import com.voyageone.common.configs.beans.ExceptionLogBean;
 import com.voyageone.web2.base.dao.WebBaseDao;
 import com.voyageone.web2.base.dao.WebDaoNs;
 import org.springframework.stereotype.Repository;

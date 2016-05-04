@@ -159,6 +159,11 @@
     "templateUrl": "views/channel/configuration/configuration.tpl.html",
     "controllerUrl": "modules/cms/views/channel/configuration/configuration.ctl"
   },
+  "channel_taglist": {
+    "hash": "/channel/taglist",
+    "templateUrl": "views/channel/taglist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
+  },
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
@@ -183,6 +188,12 @@
     "hash": "/system/cache/index",
     "templateUrl": "views/system/cache/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+  },
+  "system_store_operation": {
+    "hash": "/system/storeoperation",
+    "templateUrl": "views/system/storeoperation/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl",
+    "controller": "storeOperationController as store"
   },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list/:parentId",

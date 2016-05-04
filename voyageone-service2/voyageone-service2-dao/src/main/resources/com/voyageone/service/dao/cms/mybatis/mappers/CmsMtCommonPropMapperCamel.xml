@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtCommonPropDao">
+    <resultMap id="ResultMap" type="CmsMtCommonPropModel">
+
+    </resultMap>
+
+    <select id="selectList" resultMap="ResultMap">
+
+        select
+        `id`,`prop_id`,`prop_parent_id`,`prop_name`,`prop_type`,`action_type`,`platform_prop_ref_id`,`rules`,`defult`,`is_comm`,`is_code`,`tips`,`value_type`,`created`,`creater`,`modified`,`modifier`
+        from cms_mt_common_prop
+        <where>
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+            <if test="propId != null">
+                AND `prop_id` = #{propId}
+            </if>
+            <if test="propParentId != null">
+                AND `prop_parent_id` = #{propParentId}
+            </if>
+            <if test="propName != null">
+                AND `prop_name` = #{propName}
+            </if>
+            <if test="propType != null">
+                AND `prop_type` = #{propType}
+            </if>
+            <if test="actionType != null">
+                AND `action_type` = #{actionType}
+            </if>
+            <if test="platformPropRefId != null">
+                AND `platform_prop_ref_id` = #{platformPropRefId}
+            </if>
+            <if test="rules != null">
+                AND `rules` = #{rules}
+            </if>
+            <if test="defult != null">
+                AND `defult` = #{defult}
+            </if>
+            <if test="isComm != null">
+                AND `is_comm` = #{isComm}
+            </if>
+            <if test="isCode != null">
+                AND `is_code` = #{isCode}
+            </if>
+            <if test="tips != null">
+                AND `tips` = #{tips}
+            </if>
+            <if test="valueType != null">
+                AND `value_type` = #{valueType}
+            </if>
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select
+        `id`,`prop_id`,`prop_parent_id`,`prop_name`,`prop_type`,`action_type`,`platform_prop_ref_id`,`rules`,`defult`,`is_comm`,`is_code`,`tips`,`value_type`,`created`,`creater`,`modified`,`modifier`
+        from cms_mt_common_prop
+        <where>
+
+            <if test="id != null">
+                AND `id` = #{id}
+            </if>
+
+            <if test="propId != null">
+                AND `prop_id` = #{propId}
+            </if>
+
+            <if test="propParentId != null">
+                AND `prop_parent_id` = #{propParentId}
+            </if>
+
+            <if test="propName != null">
+                AND `prop_name` = #{propName}
+            </if>
+
+            <if test="propType != null">
+                AND `prop_type` = #{propType}
+            </if>
+
+            <if test="actionType != null">
+                AND `action_type` = #{actionType}
+            </if>
+
+            <if test="platformPropRefId != null">
+                AND `platform_prop_ref_id` = #{platformPropRefId}
+            </if>
+
+            <if test="rules != null">
+                AND `rules` = #{rules}
+            </if>
+
+            <if test="defult != null">
+                AND `defult` = #{defult}
+            </if>
+
+            <if test="isComm != null">
+                AND `is_comm` = #{isComm}
+            </if>
+
+            <if test="isCode != null">
+                AND `is_code` = #{isCode}
+            </if>
+
+            <if test="tips != null">
+                AND `tips` = #{tips}
+            </if>
+
+            <if test="valueType != null">
+                AND `value_type` = #{valueType}
+            </if>
+
+            <if test="created != null">
+                AND `created` = #{created}
+            </if>
+
+            <if test="creater != null">
+                AND `creater` = #{creater}
+            </if>
+
+            <if test="modified != null">
+                AND `modified` = #{modified}
+            </if>
+
+            <if test="modifier != null">
+                AND `modifier` = #{modifier}
+            </if>
+        </where>
+        limit 1
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select `id`,`prop_id`,`prop_parent_id`,`prop_name`,`prop_type`,`action_type`,`platform_prop_ref_id`,`rules`,`defult`,`is_comm`,`is_code`,`tips`,`value_type`,`created`,`creater`,`modified`,`modifier` from cms_mt_common_prop where id=#{id}
+    </select>
+
+    <update id="update">
+        update cms_mt_common_prop
+        set
+
+            `prop_id`=#{propId}
+            ,`prop_parent_id`=#{propParentId}
+            ,`prop_name`=#{propName}
+            ,`prop_type`=#{propType}
+            ,`action_type`=#{actionType}
+            ,`platform_prop_ref_id`=#{platformPropRefId}
+            ,`rules`=#{rules}
+            ,`defult`=#{defult}
+            ,`is_comm`=#{isComm}
+            ,`is_code`=#{isCode}
+            ,`tips`=#{tips}
+            ,`value_type`=#{valueType}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_common_prop
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cms_mt_common_prop
+        (
+              `prop_id`,
+              `prop_parent_id`,
+              `prop_name`,
+              `prop_type`,
+              `action_type`,
+              `platform_prop_ref_id`,
+              `rules`,
+              `defult`,
+              `is_comm`,
+              `is_code`,
+              `tips`,
+              `value_type`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{propId},
+              #{propParentId},
+              #{propName},
+              #{propType},
+              #{actionType},
+              #{platformPropRefId},
+              #{rules},
+              #{defult},
+              #{isComm},
+              #{isCode},
+              #{tips},
+              #{valueType},
+        now(),
+              #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+</mapper>

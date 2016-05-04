@@ -103,7 +103,7 @@ class BcbgAnalysisContext {
         if (codeMap.containsKey(code)) {
             feedInfoModel = codeMap.get(code);
             if (feedInfoModel.getName().length() < name.length())
-                feedInfoModel.setShort_description(name);
+                feedInfoModel.setShortDescription(name);
             return feedInfoModel;
         }
 
@@ -119,8 +119,8 @@ class BcbgAnalysisContext {
         feedInfoModel.setImage(bcbgBean.getStyleBean().getProductImgURLs());
         feedInfoModel.setBrand(bcbgBean.getBRAND_ID());
         feedInfoModel.setWeight(Constants.EmptyString);
-        feedInfoModel.setShort_description(name);
-        feedInfoModel.setLong_description(bcbgBean.getStyleBean().getProductDesc());
+        feedInfoModel.setShortDescription(name);
+        feedInfoModel.setLongDescription(bcbgBean.getStyleBean().getProductDesc());
         feedInfoModel.setSkus(new ArrayList<>());
         feedInfoModel.setAttribute(new HashMap<>());
         feedInfoModel.setUpdFlg(0);
@@ -160,11 +160,11 @@ class BcbgAnalysisContext {
 
         Double current = iMsrp.multiply(discount).setScale(0, BigDecimal.ROUND_DOWN).doubleValue();
 
-        sku.setPrice_current(current); // 当前售价
-        sku.setPrice_client_retail(price.doubleValue()); // 美金售价
-        sku.setPrice_msrp(iMsrp.doubleValue()); // 人民币专柜价
-        sku.setPrice_client_msrp(msrp.doubleValue()); // 美金专柜价
-        sku.setPrice_net(0d); // 美金成本价
+        sku.setPriceCurrent(current); // 当前售价
+        sku.setPriceClientRetail(price.doubleValue()); // 美金售价
+        sku.setPriceMsrp(iMsrp.doubleValue()); // 人民币专柜价
+        sku.setPriceClientMsrp(msrp.doubleValue()); // 美金专柜价
+        sku.setPriceNet(0d); // 美金成本价
     }
 
     private BigDecimal toRmb(BigDecimal bigDecimal, BigDecimal duty) {

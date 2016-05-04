@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
     <insert id="cms_zz_worktable_se_superfeed_insertList">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_se_superfeed (
+        INSERT INTO voyageone_cms2.cms_zz_feed_shoecity_product_temp (
         upc, code, `size`, category, cost, brand, vo_cost, img_id, color, size_type, product_type, saved, md5
         )
         VALUES
@@ -29,12 +29,12 @@
             product_type,
             saved,
             md5
-        FROM voyageone_cms2.cms_zz_worktable_se_superfeed_full
+        FROM voyageone_cms2.cms_zz_feed_shoecity_product_full
         WHERE saved = 0;
     </select>
 
     <update id="cms_zz_worktable_se_superfeed_full_updateSucceed">
-        UPDATE voyageone_cms2.cms_zz_worktable_se_superfeed_full
+        UPDATE voyageone_cms2.cms_zz_feed_shoecity_product_full
         SET saved = 1
         WHERE code IN (
         <foreach collection="succeed" item="i" separator=",">
@@ -44,6 +44,6 @@
     </update>
 
     <delete id="cms_zz_worktable_se_superfeed_clearTemp">
-        DELETE FROM voyageone_cms2.cms_zz_worktable_se_superfeed
+        DELETE FROM voyageone_cms2.cms_zz_feed_shoecity_product_temp
     </delete>
 </mapper>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="PromotionMap" type="com.voyageone.service.bean.cms.CmsBtPromotionBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
+        <result column="cart_id" property="cartId" jdbcType="INTEGER"/>
+        <result column="promotion_status" property="promotionStatus"  jdbcType="INTEGER"/>
+        <result column="active" property="active"  jdbcType="INTEGER"/>
+        <result column="is_all_promotion" property="isAllPromotion"  jdbcType="INTEGER"/>
+        <result column="ref_tag_id" property="refTagId" jdbcType="INTEGER"/>
+        <result column="promotion_name" property="promotionName" jdbcType="VARCHAR"/>
+        <result column="pre_period_start" property="prePeriodStart" jdbcType="VARCHAR"/>
+        <result column="pre_period_end" property="prePeriodEnd" jdbcType="VARCHAR"/>
+        <result column="pre_sale_start" property="preSaleStart" jdbcType="VARCHAR"/>
+        <result column="pre_sale_end" property="preSaleEnd" jdbcType="VARCHAR"/>
+        <result column="activity_start" property="activityStart" jdbcType="VARCHAR"/>
+        <result column="activity_end" property="activityEnd" jdbcType="VARCHAR"/>
+        <result column="tejiabao_id" property="tejiabaoId" jdbcType="VARCHAR"/>
+        <result column="promotion_type" property="promotionType" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="creater" property="creater" jdbcType="VARCHAR"/>
+        <result column="modified" property="modified" jdbcType="TIMESTAMP"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="cartName" property="cartName" jdbcType="VARCHAR"/>
+        <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtTagModel">
+            <id column="tag_id" property="id" jdbcType="INTEGER"/>
+            <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
+            <result column="tag_channel_id" property="channelId" jdbcType="VARCHAR"/>
+            <result column="tag_path" property="tagPath" jdbcType="VARCHAR"/>
+            <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR"/>
+            <result column="tag_type" property="tagType" jdbcType="INTEGER"/>
+            <result column="tag_status" property="tagStatus" jdbcType="INTEGER"/>
+            <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+            <result column="parent_tag_id" property="parentTagId" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+
+    <sql id="promotion_fields">
+        a.id,
+        a.channel_id,
+        a.cart_id,
+        a.promotion_status,
+        a.promotion_name,
+        a.pre_period_start,
+        a.pre_period_end,
+        a.pre_sale_start,
+        a.pre_sale_end,
+        a.activity_start,
+        a.activity_end,
+        a.tejiabao_id,
+        a.promotion_type,
+        a.active,
+        a.is_all_promotion,
+        a.ref_tag_id,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier,
+    </sql>
+
+    <!-- 根据id查询单条记录 -->
+    <select id="select_cms_bt_promotion_by_id" resultMap="PromotionMap" parameterType="Map">
+        select
+        <include refid="promotion_fields"/>
+        b.name as cartName,
+        c.id,
+        c.channel_id as tag_channel_id,
+        c.tag_name,
+        c.tag_path,
+        c.tag_path_name,
+        c.tag_type,
+        c.tag_status,
+        c.sort_order,
+        c.parent_tag_id
+        from voyageone_cms2.cms_bt_promotion a left join Synship.ct_cart b on a.cart_id = b.cart_id
+        left join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id
+        where a.active = 1
+        and a.id = #{promotionId}
+    </select>
+
+    <!-- 根据条件查询多条记录 -->
+    <select id="select_cms_bt_promotion_by_condtion" resultMap="PromotionMap" parameterType="Map">
+        select
+        <include refid="promotion_fields"/>
+        b.name as cartName,
+        c.id as tag_id,
+        c.channel_id as tag_channel_id,
+        c.tag_name,
+        c.tag_path,
+        c.tag_path_name,
+        c.tag_type,
+        c.tag_status,
+        c.sort_order,
+        c.parent_tag_id
+        from voyageone_cms2.cms_bt_promotion a left join ct_cart b on a.cart_id = b.cart_id
+        left join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id
+        where
+        a.active = 1
+        and (a.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or a.channel_id = #{orgChannelId}
+        </if>
+        )
+        <if test="promotionId != null and promotionId != ''">
+            and a.id = #{promotionId}
+        </if>
+        <if test="promotionName != null and promotionName != ''">
+            and a.promotion_name LIKE '%${promotionName}%'
+        </if>
+        <if test="promotionStatus != null">
+            and a.promotion_status = #{promotionStatus}
+        </if>
+        <if test="cartId != null and cartId != ''">
+            and a.cart_id = #{cartId,jdbcType=INTEGER}
+        </if>
+        <if test="promotionType != null and promotionType != ''">
+            and a.promotion_type = #{promotionType,jdbcType=VARCHAR}
+        </if>
+        <if test="createdStart != null and createdStart != ''">
+            and a.created >= #{createdStart,jdbcType=VARCHAR}
+        </if>
+        <if test="createdEnd != null and createdEnd != ''">
+            and #{createdEnd,jdbcType=VARCHAR} >= a.created
+        </if>
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert_cms_bt_promotion" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel">
+        insert into voyageone_cms2.cms_bt_promotion
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelId != null">
+                channel_id,
+            </if>
+            <if test="cartId != null">
+                cart_id,
+            </if>
+            <if test="promotionName != null">
+                promotion_name,
+            </if>
+            <if test="preSaleStart != null">
+                pre_sale_start,
+            </if>
+            <if test="preSaleEnd != null">
+                pre_sale_end,
+            </if>
+            <if test="prePeriodStart != null">
+                pre_period_start,
+            </if>
+            <if test="prePeriodEnd != null">
+                pre_period_end,
+            </if>
+            <if test="activityStart != null">
+                activity_start,
+            </if>
+            <if test="activityEnd != null">
+                activity_end,
+            </if>
+            <if test="tejiabaoId != null">
+                tejiabao_id,
+            </if>
+            <if test="promotionType != null">
+                promotion_type,
+            </if>
+            <if test="refTagId != null">
+                ref_tag_id,
+            </if>
+            created,
+            <if test="creater != null">
+                creater,
+            </if>
+            modified,
+            <if test="creater != null">
+                modifier,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channelId != null">
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null">
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="promotionName != null">
+                #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleStart != null">
+                #{preSaleStart,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleEnd != null">
+                #{preSaleEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodStart != null">
+                #{prePeriodStart,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodEnd != null">
+                #{prePeriodEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="activityStart != null">
+                #{activityStart,jdbcType=VARCHAR},
+            </if>
+            <if test="activityEnd != null">
+                #{activityEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="tejiabaoId != null">
+                #{tejiabaoId,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionType != null">
+                #{promotionType,jdbcType=VARCHAR},
+            </if>
+            <if test="refTagId != null">
+                #{refTagId,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="creater != null">
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="creater != null">
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update_cms_bt_promotion" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel">
+        update voyageone_cms2.cms_bt_promotion
+        <set>
+            <if test="channelId != null">
+                channel_id = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null">
+                cart_id = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="promotionName != null">
+                promotion_name = #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleStart != null">
+                pre_sale_start = #{preSaleStart,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleEnd != null">
+                pre_sale_end = #{preSaleEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodStart != null">
+                pre_period_start = #{prePeriodStart,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodEnd != null">
+                pre_period_end = #{prePeriodEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="activityStart != null">
+                activity_start = #{activityStart,jdbcType=VARCHAR},
+            </if>
+            <if test="activityEnd != null">
+                activity_end = #{activityEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="tejiabaoId != null">
+                tejiabao_id = #{tejiabaoId,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null">
+                active = #{active},
+            </if>
+            <if test="promotionType != null">
+                promotion_type = #{promotionType,jdbcType=VARCHAR},
+            </if>
+            modified = now(),
+            <if test="modifier != null">
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据id修改状态 增加条件 is_active = 1-->
+    <update id="delete_cms_bt_promotion_by_id" parameterType="Map">
+        update voyageone_cms2.cms_bt_promotion set active = 0, modified = now(), modifier = #{modifier,jdbcType=VARCHAR} where active = 1 and id = #{promotionId}
+    </update>
+    <!--根据产品ID或者CartID-->
+    <select id="select_cms_bt_promotion_by_cat_id" resultType="Map" parameterType="String">
+        select
+                a.id,
+                a.cart_id as cart_id,
+				a.channel_id as channel_id,
+				a.activity_end as activity_end,
+				a.activity_start as activity_start
+        from voyageone_cms2.cms_bt_promotion a
+        where a.id = #{PromotionID}
+    </select>
+
+    <select id="select_promotion_history" resultType="com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean" parameterType="HashMap">
+        SELECT
+        a.id as seq,
+        a.promotion_id as promotionId,
+        b.channel_id as channelId,
+        b.cart_id as cartId,
+        b.name,
+        b.add_name2 as shortName,
+        b.promotion_status as promotionStatus,
+        b.promotion_name as promotionName,
+        b.activity_start as activityStart,
+        b.activity_end as activityEnd,
+        a.product_id as productId,
+        a.product_code as productCode,
+        a.sale_price as salePrice,
+        a.msrp,
+        a.promotion_price as promotionPrice,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        FROM voyageone_cms2.cms_bt_promotion_codes a
+        INNER JOIN (
+        SELECT
+        p.id,
+        p.channel_id,
+        p.cart_id,
+        p.promotion_status,
+        p.promotion_name,
+        p.activity_start,
+        p.activity_end,
+        c.name,
+        c.add_name2
+        FROM voyageone_cms2.cms_bt_promotion p
+        INNER JOIN Synship.com_mt_value_channel c
+        ON p.cart_id = c.value and c.type_id = '53' and c.lang_id = #{lang} and p.channel_id = c.channel_id) b
+        ON a.promotion_id = b.id
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
+        <if test="cartId !=null and cartId != ''">
+            and b.cart_id = #{cartId}
+        </if>
+        LIMIT #{offset}, #{rows}
+    </select>
+
+    <select id="select_promotion_history_cnt" resultType="int" parameterType="HashMap">
+        SELECT COUNT(1)
+        FROM voyageone_cms2.cms_bt_promotion_codes a
+        INNER JOIN (
+        SELECT
+        p.id,
+        p.channel_id,
+        p.cart_id,
+        p.promotion_status,
+        p.promotion_name,
+        p.activity_start,
+        p.activity_end,
+        c.name,
+        c.add_name2
+        FROM voyageone_cms2.cms_bt_promotion p
+        INNER JOIN Synship.com_mt_value_channel c
+        ON p.cart_id = c.value and c.type_id = '53' and c.lang_id = #{lang} and p.channel_id = c.channel_id) b
+        ON a.promotion_id = b.id
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
+        <if test="cartId !=null and cartId != ''">
+            and b.cart_id = #{cartId}
+        </if>
+    </select>
+</mapper>

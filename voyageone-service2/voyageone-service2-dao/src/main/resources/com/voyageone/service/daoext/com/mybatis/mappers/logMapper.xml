@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <insert id="ct_exception_log_insert" parameterType="com.voyageone.common.configs.beans.ExceptionLogBean">
+        INSERT INTO Synship.ct_exception_log (user_name, url, exception_type, description, date_time, created)
+        VALUES (#{userName}, #{url}, #{exceptionType}, #{description}, #{dateTime}, #{created})
+    </insert>
+</mapper>

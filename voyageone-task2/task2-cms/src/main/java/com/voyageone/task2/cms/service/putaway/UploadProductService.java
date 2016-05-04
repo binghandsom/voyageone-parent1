@@ -1,47 +1,50 @@
 package com.voyageone.task2.cms.service.putaway;
 
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.ProductPublishBean;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.UpJobParamBean;
+import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.CmsBusinessLogDao;
 import com.voyageone.task2.cms.dao.ProductPublishDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.model.CmsBusinessLogModel;
-import com.voyageone.task2.cms.bean.WorkLoadBean;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by Leo on 2015/5/27.
  */
 @Repository
 public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
+    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     @Autowired
     private ProductService productService;
     @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
-    private CmsBtSxWorkloadDao sxWorkloadDao;
+    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private CmsBusinessLogDao cmsBusinessLogDao;
     @Autowired
@@ -50,8 +53,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private PromotionDetailService promotionDetailService;
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
-    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
 
@@ -89,27 +90,28 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             workload.setSxWorkloadModel(sxWorkloadModel);
 
-            Long groupId = sxWorkloadModel.getGroupId();
+            Long groupId = new Long(sxWorkloadModel.getGroupId());
             String channelId = sxWorkloadModel.getChannelId();
 
             workload.setOrder_channel_id(channelId);
             workload.setGroupId(groupId);
 
-            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId);
+            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
-            CmsBtProductModel_Group_Platform mainProductPlatform = null;
+            CmsBtProductGroupModel mainProductPlatform = null;
             SxProductBean mainSxProduct = null;
 
             for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
-                CmsBtProductModel_Group_Platform productPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(groupId);
+                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+                String prodCode = cmsBtProductModel.getFields().getCode();
                 // tom 获取feed info的数据 START
-                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, cmsBtProductModel.getFields().getCode());
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, prodCode);
                 // tom 获取feed info的数据 END
                 SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, feedInfo);
                 if (filtProductsByPlatform(sxProductBean)) {
                     sxProductBeans.add(sxProductBean);
-                    if (productPlatform.getIsMain()) {
+                    if (prodCode.equals(productPlatform.getMainProductCode())) {
                         mainProductModel = cmsBtProductModel;
                         mainProductPlatform = productPlatform;
                         mainSxProduct = sxProductBean;
@@ -120,7 +122,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 START
             if (mainSxProduct != null) {
                 if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
-                    if (!"23".equals(mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId().toString())) {
+                    if (23 != mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId()) {
                         continue;
                     }
                 }
@@ -145,7 +147,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     workload.setIsPublished(0);
                     upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
                 }
-                workload.setProductId(mainProductPlatform.getProductId());
+                workload.setProductId(mainProductPlatform.getPlatformPid());
             }
             workload.setWorkload_status(new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT));
 
@@ -162,7 +164,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
      */
     private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
         CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-        CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
         List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
         int cartId = cmsBtProductModelGroupPlatform.getCartId();
 
@@ -214,34 +216,35 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
 
                 assert mainCmsProductModel != null;
-                CmsBtProductModel_Group_Platform mainProductPlatform = mainCmsProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
+                CmsBtProductGroupModel mainProductPlatform = mainCmsProductModel.getGroups();
 
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-                String instockTime = null, onSaleTime = null, publishTime = null;
+                String inStockTime = null, onSaleTime = null, publishTime = null;
 
                 if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
                     publishTime = DateTimeUtil.getNow();
                 }
 
-                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
-                        && platformActive == CmsConstants.PlatformActive.Onsale) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.OnSale)
+                        && platformActive == CmsConstants.PlatformActive.ToOnSale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
-                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
-                        && platformActive == CmsConstants.PlatformActive.Instock) {
-                    instockTime = DateTimeUtil.getNow();
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.InStock)
+                        && platformActive == CmsConstants.PlatformActive.ToInStock) {
+                    inStockTime = DateTimeUtil.getNow();
                 }
 
-                CmsConstants.PlatformStatus newPlatformStatus;
-                if (platformActive == CmsConstants.PlatformActive.Instock) {
-                    newPlatformStatus = CmsConstants.PlatformStatus.Instock;
+                CmsConstants.PlatformStatus newPlatformStatus = null;
+                if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+                    newPlatformStatus = CmsConstants.PlatformStatus.InStock;
                 } else {
-                    newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
+                    newPlatformStatus = CmsConstants.PlatformStatus.OnSale;
                 }
-                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
-                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
+                // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
+//                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+//                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, inStockTime, newPlatformStatus);
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);
@@ -286,8 +289,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
                 // 增加特价宝的调用 tom START
                 // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
-                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_open");
-                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_price");
+                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id()
+                        , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                        , String.valueOf(workLoadBean.getCart_id()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id()
+                        , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                        , String.valueOf(workLoadBean.getCart_id()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
 
                 // 检查一下
                 String tejiabaoOpenFlag = null;
@@ -312,16 +319,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                         Double dblPrice = Double.parseDouble(sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
 
                         // 设置特价宝
-                        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
-                        cmsBtPromotionCodeModel.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
-                        cmsBtPromotionCodeModel.setChannelId(workLoadBean.getOrder_channel_id());
-                        cmsBtPromotionCodeModel.setCartId(workLoadBean.getCart_id());
-                        cmsBtPromotionCodeModel.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
-                        cmsBtPromotionCodeModel.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
-                        cmsBtPromotionCodeModel.setPromotionPrice(dblPrice); // 真实售价
-                        cmsBtPromotionCodeModel.setNumIid(workLoadBean.getNumId());
-                        cmsBtPromotionCodeModel.setModifier(getTaskName());
-                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+                        cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                        cmsBtPromotionCodesBean.setChannelId(workLoadBean.getOrder_channel_id());
+                        cmsBtPromotionCodesBean.setCartId(workLoadBean.getCart_id());
+                        cmsBtPromotionCodesBean.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
+                        cmsBtPromotionCodesBean.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
+                        cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
+                        cmsBtPromotionCodesBean.setNumIid(workLoadBean.getNumId());
+                        cmsBtPromotionCodesBean.setModifier(getTaskName());
+                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
                     }
                 }
 
@@ -341,8 +348,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     //成功时，publish_status设为1
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
-                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
-                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
+                // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
+//                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+//                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
 
                 //保存错误的日志
                 CmsBusinessLogModel cmsBusinessLogModel = new CmsBusinessLogModel();
@@ -381,57 +389,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(2);
                 sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
-
-                // 增加特价宝的调用 tom START
-                List<SxProductBean> sxProductBeenList = workLoadBean.getProcessProducts();
-                // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
-                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_open");
-                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_price");
-
-                // 检查一下
-                String tejiabaoOpenFlag = null;
-                String tejiabaoPricePropName = null;
-
-                if (tejiabaoOpenConfig != null && !StringUtils.isEmpty(tejiabaoOpenConfig.getConfigValue1())) {
-                    if ("0".equals(tejiabaoOpenConfig.getConfigValue1()) || "1".equals(tejiabaoOpenConfig.getConfigValue1())) {
-                        tejiabaoOpenFlag = tejiabaoOpenConfig.getConfigValue1();
-                    }
-                }
-                if (tejiabaoPriceConfig != null && !StringUtils.isEmpty(tejiabaoPriceConfig.getConfigValue1())) {
-                    tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
-                }
-
-                if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
-                    for (SxProductBean sxProductBean : sxProductBeenList) {
-
-                        if(StringUtils.isEmpty(workLoadBean.getNumId()))
-                        {
-                            continue;
-                        }
-
-                        // 获取价格
-                        if (sxProductBean.getCmsBtProductModel().getSkus() == null || sxProductBean.getCmsBtProductModel().getSkus().size() == 0) {
-                            // 没有sku的code, 跳过
-                            continue;
-                        }
-                        Double dblPrice = Double.parseDouble(sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
-
-                        // 设置特价宝
-                        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
-                        cmsBtPromotionCodeModel.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
-                        cmsBtPromotionCodeModel.setChannelId(workLoadBean.getOrder_channel_id());
-                        cmsBtPromotionCodeModel.setCartId(workLoadBean.getCart_id());
-                        cmsBtPromotionCodeModel.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
-                        cmsBtPromotionCodeModel.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
-                        cmsBtPromotionCodeModel.setPromotionPrice(dblPrice); // 真实售价
-                        cmsBtPromotionCodeModel.setNumIid(workLoadBean.getNumId());
-                        cmsBtPromotionCodeModel.setModifier(getTaskName());
-                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
-                    }
-                }
-
-                // 增加特价宝的调用 tom END
-
                 break;
             }
             default:

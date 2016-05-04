@@ -1,28 +1,22 @@
 package com.voyageone.web2.cms.views.jm;
+
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.help.DateHelp;
-import com.voyageone.common.mq.MqSender;
-import com.voyageone.common.mq.enums.MqRoutingKey;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.jumei.CmsBtJmPromotionImportTaskService;
-import com.voyageone.service.impl.jumei.CmsBtJmPromotionProductService;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionExportTaskModel;
-import com.voyageone.service.model.jumei.CmsBtJmPromotionImportTaskModel;
+import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionImportTaskService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.util.*;
 
 @RestController
@@ -45,7 +39,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
         CmsBtJmPromotionImportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
-        String importPath = Properties.readValue(CmsConstants.Props.CMS_JM_IMPORT_PATH);
+        String importPath = Properties.readValue(CmsProperty.Props.CMS_JM_IMPORT_PATH);
         String fileName = model.getFileName().trim();
         String path = importPath + "/" + fileName;//"/Product20160324164706.xls";
         FileUtils.downloadFile(response, fileName, path);
@@ -55,7 +49,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
         CmsBtJmPromotionImportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
-        String path = Properties.readValue(CmsConstants.Props.CMS_JM_EXPORT_PATH);
+        String path = Properties.readValue(CmsProperty.Props.CMS_JM_EXPORT_PATH);
         String fileName = model.getFailuresFileName().trim();
         String filepath = path + "/" + fileName;//"/Product20160324164706.xls";
         FileUtils.downloadFile(response, fileName, filepath);
@@ -64,7 +58,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
     public AjaxResponse upload(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         String userName = getUser().getUserName();
-        String path = Properties.readValue(CmsConstants.Props.CMS_JM_IMPORT_PATH);
+        String path = Properties.readValue(CmsProperty.Props.CMS_JM_IMPORT_PATH);
         FileUtils.mkdirPath(path);
         List<String> listFileName = FileUtils.uploadFile(request, path);//上传文件
         List<CmsBtJmPromotionImportTaskModel> listModel = new ArrayList<>();

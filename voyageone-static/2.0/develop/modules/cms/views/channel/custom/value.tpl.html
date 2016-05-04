@@ -14,7 +14,7 @@
 									<div class="col-sm-6">
 										<!--<input type="text" class="form-control"/>-->
 										<!-- TODO categoryList返回的接口发生变化了 -->
-										<select name="" id="" class="form-control" ng-model="vm.searchInfo.cat_path" ng-options="category.path as category.cid for category in vm.categoryList">
+										<select name="" id="" search-contains="true" chosen class="form-control" ng-model="vm.searchInfo.catPathTxt" ng-options="category.catPath as category.catPath for category in vm.categoryList | filter:{isParent:0}">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>
 									</div>
@@ -70,7 +70,7 @@
 		<div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
 			<button type="submit" class="btn btn-default btn-xs" ng-click="openAddAttributeValue(openAddNewValue)"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增共通自定义属性值</button>
 		</div><!-- .form-inline -->
-		<p class="m-l-sm m-t-xs">您当前选择的是：<span ng-bind="vm.searchInfo.cat_path == '0' ? '共通属性': vm.searchInfo.cat_path "></span> </p>
+		<p class="m-l-sm m-t-xs">您当前选择的是：<span ng-bind="vm.searchInfo.catPathTxt"></span></p>
 	</div>
 	<div class="box">
 		<tabset class="tab-container vo_nav-tabs">

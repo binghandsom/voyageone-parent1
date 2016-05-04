@@ -9,6 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
@@ -36,8 +37,7 @@ public class CmsFeedSearchService extends BaseAppService {
     private CmsFeedCustPropService cmsFeedCustPropService;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'short_description':1,'long_description':1," +
-            "'skus.price_current':1,'skus.price_msrp':1,'skus.price_net':1,'skus.price_client_retail':1,'skus.price_client_msrp':1,'skus.sku':1,'skus.size':1,'attribute':1}";
+    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'created':1,'modified':1}";
 
     // 查询产品信息时的缺省输出列
     private final String sortItems = "{'category':1,'code':1}";
@@ -53,13 +53,13 @@ public class CmsFeedSearchService extends BaseAppService {
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
         // 获取category list
-        List<CmsMtFeedCategoryModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
+        List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
         if (!feedCatList.isEmpty()) {
             feedCatList.remove(0);
         }
         List<Integer> delFlgList = new ArrayList<Integer>();
         for (int i = 0, leng = feedCatList.size(); i < leng; i ++) {
-            if (feedCatList.get(i).getIsChild() == 0) {
+            if (feedCatList.get(i).getIsParent() == 1) {
                 // 非子节点
                 delFlgList.add(i);
             }

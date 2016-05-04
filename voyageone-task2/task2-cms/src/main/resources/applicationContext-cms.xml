@@ -13,7 +13,7 @@
 
         <!-- cms2 batch add    -->
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
-        <task:scheduled ref="cmsSetMainPropMongoTask" method="run" cron="12 0/1 0-23 * * ?"/>
+        <task:scheduled ref="cmsSetMainPropMongoTask" method="run" cron="0 0/3 0-23 * * ?"/>
 
         <!-- 上新 -->
         <task:scheduled ref="UploadProductJob" method="run" cron="0 0/3 0-23 * * ?"/>
@@ -26,9 +26,6 @@
 
         <!-- 生成主数据的schema:手动batch -->
         <task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!-- 生成主数据的类目树:手动batch -->
-        <task:scheduled ref="CmsCreateCmsMtCategoryTreeJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 主数据到平台的默认mapping数据做成:手动batch -->
         <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 * * * ?"/>
@@ -53,6 +50,12 @@
 
         <!-- Shoe City feed 导入 cms2 -->
         <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="20 0 0/1 * * ?"/>
+
+        <!-- BHFO feed 导入 cms2 -->
+        <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="50 0 0/1 * * ?"/>
+
+        <!-- SummerGuru feed 导入 cms2 -->
+        <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="30 0 0/1 * * ?"/>
 
         <!-- 维他命 feed 导入 cms2 -->
         <task:scheduled ref="CmsVtmJob" method="run" cron="10 0/1 * * * ?"/>

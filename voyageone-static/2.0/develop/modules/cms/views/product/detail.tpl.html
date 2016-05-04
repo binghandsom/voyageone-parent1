@@ -256,15 +256,15 @@
                             </div>
                         </div>
                     </div>
-                    <tabset class="tab-container vo_nav-tabs">
-                        <tab>
+                    <uib-tabset class="tab-container vo_nav-tabs">
+                        <uib-tab>
                             <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                 商品
                             </tab-heading>
                             <div class="tab-content">
-                                <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                                <div class="tab-pane ng-scope active">
                                     <div class="vo_prodGallery">
-                                        <div class="thumbnailWrapper" >
+                                        <div class="thumbnailWrapper">
                                             <div  ng-repeat="image in ctrl.productDetails.productImages.image1 | limitTo: 10"
                                                   class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
                                                   ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image1"
@@ -280,13 +280,13 @@
                                     </div>
                                 </div>
                             </div>
-                        </tab>
-                        <tab>
+                        </uib-tab>
+                        <uib-tab>
                             <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                 包装
                             </tab-heading>
                             <div class="tab-content">
-                                <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                                <div class="tab-pane ng-scope active">
                                     <div class="vo_prodGallery">
                                         <div class="thumbnailWrapper">
                                             <div  ng-repeat="image in ctrl.productDetails.productImages.image2 | limitTo: 10"
@@ -304,13 +304,13 @@
                                     </div>
                                 </div>
                             </div>
-                        </tab>
-                        <tab>
+                        </uib-tab>
+                        <uib-tab>
                             <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                 带角度
                             </tab-heading>
                             <div class="tab-content">
-                                <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                                <div class="tab-pane ng-scope active">
                                     <div class="vo_prodGallery">
                                         <div class="thumbnailWrapper">
                                             <div  ng-repeat="image in ctrl.productDetails.productImages.image3 | limitTo: 10"
@@ -327,13 +327,13 @@
                                     </div>
                                 </div>
                             </div>
-                        </tab>
-                        <tab>
+                        </uib-tab>
+                        <uib-tab>
                             <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                 自定义
                             </tab-heading>
                             <div class="tab-content">
-                                <div class="tab-pane ng-scope active"  uib-tab-content-transclude="tab">
+                                <div class="tab-pane ng-scope active">
                                     <div class="vo_prodGallery">
                                         <div class="thumbnailWrapper">
                                             <div  ng-repeat="image in ctrl.productDetails.productImages.image4 | limitTo: 10"
@@ -350,8 +350,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </tab>
-                    </tabset>
+                        </uib-tab>
+                    </uib-tabset>
                     <!-- .vo_prodGallery -->
 
                     <div class="wrapper-sm">

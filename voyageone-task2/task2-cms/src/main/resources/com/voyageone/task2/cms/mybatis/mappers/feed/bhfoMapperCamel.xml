@@ -1,0 +1,3461 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.BhfoFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
+    <id column="Inventory_Number" property="inventoryNumber" jdbcType="VARCHAR" />
+    <result column="MSRP" property="msrp" jdbcType="VARCHAR" />
+    <result column="VoyageOne_Price" property="voyageonePrice" jdbcType="VARCHAR" />
+    <result column="Shipping_Cost" property="shippingCost" jdbcType="VARCHAR" />
+    <result column="Weight" property="weight" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="Title" property="title" jdbcType="LONGVARCHAR" />
+    <result column="Description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="Main_Image_URL" property="mainImageUrl" jdbcType="LONGVARCHAR" />
+    <result column="Quantity" property="quantity" jdbcType="LONGVARCHAR" />
+    <result column="Additional_Images" property="additionalImages" jdbcType="LONGVARCHAR" />
+    <result column="Parent_Child_Standalone" property="parentChildStandalone" jdbcType="LONGVARCHAR" />
+    <result column="Item_Group_ID" property="itemGroupId" jdbcType="LONGVARCHAR" />
+    <result column="Variation_Swap_Image_URL" property="variationSwapImageUrl" jdbcType="LONGVARCHAR" />
+    <result column="Varying_Attribute_Names" property="varyingAttributeNames" jdbcType="LONGVARCHAR" />
+    <result column="Varying_Attribute_1" property="varyingAttribute1" jdbcType="LONGVARCHAR" />
+    <result column="Varying_Attribute_2" property="varyingAttribute2" jdbcType="LONGVARCHAR" />
+    <result column="Brand1" property="brand1" jdbcType="LONGVARCHAR" />
+    <result column="Country_Of_Origin" property="countryOfOrigin" jdbcType="LONGVARCHAR" />
+    <result column="Series_Name" property="seriesName" jdbcType="LONGVARCHAR" />
+    <result column="GTIN" property="gtin" jdbcType="LONGVARCHAR" />
+    <result column="MPN" property="mpn" jdbcType="LONGVARCHAR" />
+    <result column="Store_Category" property="storeCategory" jdbcType="LONGVARCHAR" />
+    <result column="Material" property="material" jdbcType="LONGVARCHAR" />
+    <result column="Pattern" property="pattern" jdbcType="LONGVARCHAR" />
+    <result column="Color" property="color" jdbcType="LONGVARCHAR" />
+    <result column="Size" property="size" jdbcType="LONGVARCHAR" />
+    <result column="Gender" property="gender" jdbcType="LONGVARCHAR" />
+    <result column="Age_Group" property="ageGroup" jdbcType="LONGVARCHAR" />
+    <result column="Length" property="length" jdbcType="LONGVARCHAR" />
+    <result column="Width" property="width" jdbcType="LONGVARCHAR" />
+    <result column="Height" property="height" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Beauty_Item_Type" property="amazonBeautyItemType" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Department" property="amazonDepartment" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Heel_Height" property="amazonHeelHeight" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Home_Item_Type" property="amazonHomeItemType" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Inseam" property="amazonInseam" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Item_Type" property="amazonItemType" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_keywords_1" property="amazonKeywords1" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_keywords_2" property="amazonKeywords2" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_keywords_3" property="amazonKeywords3" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_keywords_4" property="amazonKeywords4" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Leg_Style" property="amazonLegStyle" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Mens_Item_Type" property="amazonMensItemType" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Photo_Ready" property="amazonPhotoReady" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Product_Type" property="amazonProductType" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Rise" property="amazonRise" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Shoe_Item_Type" property="amazonShoeItemType" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Shoe_Size" property="amazonShoeSize" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Shoe_Size_Map" property="amazonShoeSizeMap" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Shoe_Width" property="amazonShoeWidth" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Special_Size" property="amazonSpecialSize" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Variant_Details" property="amazonVariantDetails" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Waist_Size" property="amazonWaistSize" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Womens_Item_Type" property="amazonWomensItemType" jdbcType="LONGVARCHAR" />
+    <result column="Apparel_Style" property="apparelStyle" jdbcType="LONGVARCHAR" />
+    <result column="Application" property="application" jdbcType="LONGVARCHAR" />
+    <result column="Application_Area" property="applicationArea" jdbcType="LONGVARCHAR" />
+    <result column="Amazon_Category" property="amazonCategory" jdbcType="LONGVARCHAR" />
+    <result column="Application_Type" property="applicationType" jdbcType="LONGVARCHAR" />
+    <result column="ASIN" property="asin" jdbcType="LONGVARCHAR" />
+    <result column="Assembly" property="assembly" jdbcType="LONGVARCHAR" />
+    <result column="Attachment" property="attachment" jdbcType="LONGVARCHAR" />
+    <result column="Auction_Description" property="auctionDescription" jdbcType="LONGVARCHAR" />
+    <result column="Audio_Outputs" property="audioOutputs" jdbcType="LONGVARCHAR" />
+    <result column="Back_Coverage" property="backCoverage" jdbcType="LONGVARCHAR" />
+    <result column="Back_Pockets" property="backPockets" jdbcType="LONGVARCHAR" />
+    <result column="Bag_Depth_Inches" property="bagDepthInches" jdbcType="LONGVARCHAR" />
+    <result column="Bag_Height_Inches" property="bagHeightInches" jdbcType="LONGVARCHAR" />
+    <result column="Bag_Length_Inches" property="bagLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="Bag_Width_Inches" property="bagWidthInches" jdbcType="LONGVARCHAR" />
+    <result column="Bake_Shape" property="bakeShape" jdbcType="LONGVARCHAR" />
+    <result column="Bedding_Size" property="beddingSize" jdbcType="LONGVARCHAR" />
+    <result column="BHFO_eBay_Category" property="bhfoEbayCategory" jdbcType="LONGVARCHAR" />
+    <result column="BHFO_eBay_Store_Category" property="bhfoEbayStoreCategory" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_accessory_1_description_c" property="bhfoAccessory1DescriptionC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_accessory_1_title_c" property="bhfoAccessory1TitleC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_color_c" property="bhfoColorC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_color_text_c" property="bhfoColorTextC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_country_of_origin_c" property="bhfoCountryOfOriginC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_flaw_description_c" property="bhfoFlawDescriptionC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_size_c" property="bhfoSizeC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_size_additional_c" property="bhfoSizeAdditionalC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_size_type_c" property="bhfoSizeTypeC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_style_c" property="bhfoStyleC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_style_name_c" property="bhfoStyleNameC" jdbcType="LONGVARCHAR" />
+    <result column="bhfo_style_type_c" property="bhfoStyleTypeC" jdbcType="LONGVARCHAR" />
+    <result column="Bottle_Material" property="bottleMaterial" jdbcType="LONGVARCHAR" />
+    <result column="Bottle_Size_Ounces" property="bottleSizeOunces" jdbcType="LONGVARCHAR" />
+    <result column="Bottom_Closure" property="bottomClosure" jdbcType="LONGVARCHAR" />
+    <result column="Bottom_Rise" property="bottomRise" jdbcType="LONGVARCHAR" />
+    <result column="Bra_Closure" property="braClosure" jdbcType="LONGVARCHAR" />
+    <result column="Bra_Features" property="braFeatures" jdbcType="LONGVARCHAR" />
+    <result column="Bra_Straps" property="braStraps" jdbcType="LONGVARCHAR" />
+    <result column="Brand2" property="brand2" jdbcType="LONGVARCHAR" />
+    <result column="CA_Store_Category" property="caStoreCategory" jdbcType="LONGVARCHAR" />
+    <result column="Candle_Size" property="candleSize" jdbcType="LONGVARCHAR" />
+    <result column="Capacity_Ounces" property="capacityOunces" jdbcType="LONGVARCHAR" />
+    <result column="Classification" property="classification" jdbcType="LONGVARCHAR" />
+    <result column="Closure" property="closure" jdbcType="LONGVARCHAR" />
+    <result column="Collar" property="collar" jdbcType="LONGVARCHAR" />
+    <result column="Collection" property="collection" jdbcType="LONGVARCHAR" />
+    <result column="Color2" property="color2" jdbcType="LONGVARCHAR" />
+    <result column="Compartment" property="compartment" jdbcType="LONGVARCHAR" />
+    <result column="Compatible_Brands" property="compatibleBrands" jdbcType="LONGVARCHAR" />
+    <result column="Compatible_Products" property="compatibleProducts" jdbcType="LONGVARCHAR" />
+    <result column="condition" property="condition" jdbcType="LONGVARCHAR" />
+    <result column="Connectivity" property="connectivity" jdbcType="LONGVARCHAR" />
+    <result column="Cooking_Functions" property="cookingFunctions" jdbcType="LONGVARCHAR" />
+    <result column="Country_of_Origin2" property="countryOfOrigin2" jdbcType="LONGVARCHAR" />
+    <result column="Cup_Size" property="cupSize" jdbcType="LONGVARCHAR" />
+    <result column="Denim_Wash" property="denimWash" jdbcType="LONGVARCHAR" />
+    <result column="Depth_Inches" property="depthInches" jdbcType="LONGVARCHAR" />
+    <result column="Dimensions" property="dimensions" jdbcType="LONGVARCHAR" />
+    <result column="Dimensions_2" property="dimensions2" jdbcType="LONGVARCHAR" />
+    <result column="Dirt_Capture" property="dirtCapture" jdbcType="LONGVARCHAR" />
+    <result column="Display" property="display" jdbcType="LONGVARCHAR" />
+    <result column="Dress_Length" property="dressLength" jdbcType="LONGVARCHAR" />
+    <result column="Dress_Type" property="dressType" jdbcType="LONGVARCHAR" />
+    <result column="Drop_Length" property="dropLength" jdbcType="LONGVARCHAR" />
+    <result column="EAN" property="ean" jdbcType="LONGVARCHAR" />
+    <result column="Earpiece_Design" property="earpieceDesign" jdbcType="LONGVARCHAR" />
+    <result column="eBay_Heel_Height" property="ebayHeelHeight" jdbcType="LONGVARCHAR" />
+    <result column="Fabric_Type" property="fabricType" jdbcType="LONGVARCHAR" />
+    <result column="Features" property="features" jdbcType="LONGVARCHAR" />
+    <result column="Features_and_Fastening" property="featuresAndFastening" jdbcType="LONGVARCHAR" />
+    <result column="Features_2" property="features2" jdbcType="LONGVARCHAR" />
+    <result column="Finish" property="finish" jdbcType="LONGVARCHAR" />
+    <result column="Fit" property="fit" jdbcType="LONGVARCHAR" />
+    <result column="Fit_Design" property="fitDesign" jdbcType="LONGVARCHAR" />
+    <result column="FLAGSTYLE" property="flagstyle" jdbcType="LONGVARCHAR" />
+    <result column="Formulation" property="formulation" jdbcType="LONGVARCHAR" />
+    <result column="Frame_Material_Type" property="frameMaterialType" jdbcType="LONGVARCHAR" />
+    <result column="Frame_Metal" property="frameMetal" jdbcType="LONGVARCHAR" />
+    <result column="Front_Style" property="frontStyle" jdbcType="LONGVARCHAR" />
+    <result column="Fuel_Source" property="fuelSource" jdbcType="LONGVARCHAR" />
+    <result column="Function" property="function" jdbcType="LONGVARCHAR" />
+    <result column="Fur_Type" property="furType" jdbcType="LONGVARCHAR" />
+    <result column="Gender2" property="gender2" jdbcType="LONGVARCHAR" />
+    <result column="Genre" property="genre" jdbcType="LONGVARCHAR" />
+    <result column="Handle_Type" property="handleType" jdbcType="LONGVARCHAR" />
+    <result column="Harmonized_Code" property="harmonizedCode" jdbcType="LONGVARCHAR" />
+    <result column="Heel_Height_Inches" property="heelHeightInches" jdbcType="LONGVARCHAR" />
+    <result column="Height2" property="height2" jdbcType="LONGVARCHAR" />
+    <result column="Image_URL_1" property="imageUrl1" jdbcType="LONGVARCHAR" />
+    <result column="Image_URL_2" property="imageUrl2" jdbcType="LONGVARCHAR" />
+    <result column="Image_URL_3" property="imageUrl3" jdbcType="LONGVARCHAR" />
+    <result column="Image_URL_4" property="imageUrl4" jdbcType="LONGVARCHAR" />
+    <result column="Includes" property="includes" jdbcType="LONGVARCHAR" />
+    <result column="Includes_2" property="includes2" jdbcType="LONGVARCHAR" />
+    <result column="Inseam_Inches" property="inseamInches" jdbcType="LONGVARCHAR" />
+    <result column="Insert_Material" property="insertMaterial" jdbcType="LONGVARCHAR" />
+    <result column="Is_a_Child_Item" property="isAChildItem" jdbcType="LONGVARCHAR" />
+    <result column="Is_a_Parent_Item" property="isAParentItem" jdbcType="LONGVARCHAR" />
+    <result column="ISBLOCKED" property="isblocked" jdbcType="LONGVARCHAR" />
+    <result column="ISBN" property="isbn" jdbcType="LONGVARCHAR" />
+    <result column="ISFBA" property="isfba" jdbcType="LONGVARCHAR" />
+    <result column="Item_ID" property="itemId" jdbcType="LONGVARCHAR" />
+    <result column="Item_Shape" property="itemShape" jdbcType="LONGVARCHAR" />
+    <result column="Item_Subtitle" property="itemSubtitle" jdbcType="LONGVARCHAR" />
+    <result column="Item_Title" property="itemTitle" jdbcType="LONGVARCHAR" />
+    <result column="ITEMAUCTIONDESCRIPTION" property="itemauctiondescription" jdbcType="LONGVARCHAR" />
+    <result column="ITEMIMAGEURL10" property="itemimageurl10" jdbcType="LONGVARCHAR" />
+    <result column="ITEMIMAGEURL5" property="itemimageurl5" jdbcType="LONGVARCHAR" />
+    <result column="ITEMIMAGEURL6" property="itemimageurl6" jdbcType="LONGVARCHAR" />
+    <result column="ITEMIMAGEURL7" property="itemimageurl7" jdbcType="LONGVARCHAR" />
+    <result column="Jacket_Legth" property="jacketLegth" jdbcType="LONGVARCHAR" />
+    <result column="Jacket_Sleeve_Length_Inches" property="jacketSleeveLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="Length2" property="length2" jdbcType="LONGVARCHAR" />
+    <result column="Lens_Color" property="lensColor" jdbcType="LONGVARCHAR" />
+    <result column="Lens_Material_Type" property="lensMaterialType" jdbcType="LONGVARCHAR" />
+    <result column="Lens_Width_Millimeters" property="lensWidthMillimeters" jdbcType="LONGVARCHAR" />
+    <result column="Lid" property="lid" jdbcType="LONGVARCHAR" />
+    <result column="Lightbulb_Type" property="lightbulbType" jdbcType="LONGVARCHAR" />
+    <result column="Manufacturer" property="manufacturer" jdbcType="LONGVARCHAR" />
+    <result column="Manufacturer_Description" property="manufacturerDescription" jdbcType="LONGVARCHAR" />
+    <result column="Material2" property="material2" jdbcType="LONGVARCHAR" />
+    <result column="Material_Specialty" property="materialSpecialty" jdbcType="LONGVARCHAR" />
+    <result column="Max_Magnification" property="maxMagnification" jdbcType="LONGVARCHAR" />
+    <result column="MeLi_Category" property="meliCategory" jdbcType="LONGVARCHAR" />
+    <result column="MeLi_Color" property="meliColor" jdbcType="LONGVARCHAR" />
+    <result column="MeLi_Season" property="meliSeason" jdbcType="LONGVARCHAR" />
+    <result column="MeLi_Size" property="meliSize" jdbcType="LONGVARCHAR" />
+    <result column="MeLi_Title" property="meliTitle" jdbcType="LONGVARCHAR" />
+    <result column="Model_Number" property="modelNumber" jdbcType="LONGVARCHAR" />
+    <result column="Model_Number2" property="modelNumber2" jdbcType="LONGVARCHAR" />
+    <result column="Movement" property="movement" jdbcType="LONGVARCHAR" />
+    <result column="MPN2" property="mpn2" jdbcType="LONGVARCHAR" />
+    <result column="Neck_Size" property="neckSize" jdbcType="LONGVARCHAR" />
+    <result column="Neckline" property="neckline" jdbcType="LONGVARCHAR" />
+    <result column="ITEMLEVELSHIPPING" property="itemlevelshipping" jdbcType="LONGVARCHAR" />
+    <result column="Non_Stick" property="nonStick" jdbcType="LONGVARCHAR" />
+    <result column="Number_of_Pieces" property="numberOfPieces" jdbcType="LONGVARCHAR" />
+    <result column="Number_of_Slices" property="numberOfSlices" jdbcType="LONGVARCHAR" />
+    <result column="Occasion" property="occasion" jdbcType="LONGVARCHAR" />
+    <result column="Open_Quantity" property="openQuantity" jdbcType="LONGVARCHAR" />
+    <result column="OPENQUANTITYPOOLED" property="openquantitypooled" jdbcType="LONGVARCHAR" />
+    <result column="Padding" property="padding" jdbcType="LONGVARCHAR" />
+    <result column="Pant_Type" property="pantType" jdbcType="LONGVARCHAR" />
+    <result column="Panty_Style" property="pantyStyle" jdbcType="LONGVARCHAR" />
+    <result column="Parent_SKU" property="parentSku" jdbcType="LONGVARCHAR" />
+    <result column="Pattern2" property="pattern2" jdbcType="LONGVARCHAR" />
+    <result column="Photo_Size" property="photoSize" jdbcType="LONGVARCHAR" />
+    <result column="Pillow_Size" property="pillowSize" jdbcType="LONGVARCHAR" />
+    <result column="Platform" property="platform" jdbcType="LONGVARCHAR" />
+    <result column="Platform_Height_Inches" property="platformHeightInches" jdbcType="LONGVARCHAR" />
+    <result column="Pocket_Style" property="pocketStyle" jdbcType="LONGVARCHAR" />
+    <result column="Polarization_Type" property="polarizationType" jdbcType="LONGVARCHAR" />
+    <result column="Power" property="power" jdbcType="LONGVARCHAR" />
+    <result column="Product_Margin" property="productMargin" jdbcType="LONGVARCHAR" />
+    <result column="Protection" property="protection" jdbcType="LONGVARCHAR" />
+    <result column="Quantity_Available" property="quantityAvailable" jdbcType="LONGVARCHAR" />
+    <result column="Rating" property="rating" jdbcType="LONGVARCHAR" />
+    <result column="Received_in_Inventory" property="receivedInInventory" jdbcType="LONGVARCHAR" />
+    <result column="Recommended_Age" property="recommendedAge" jdbcType="LONGVARCHAR" />
+    <result column="Recommended_Age_Range" property="recommendedAgeRange" jdbcType="LONGVARCHAR" />
+    <result column="Relationship_Name" property="relationshipName" jdbcType="LONGVARCHAR" />
+    <result column="Retail_Price" property="retailPrice" jdbcType="LONGVARCHAR" />
+    <result column="Rise_Inches" property="riseInches" jdbcType="LONGVARCHAR" />
+    <result column="rop_date_first_complete" property="ropDateFirstComplete" jdbcType="LONGVARCHAR" />
+    <result column="Rug_Style" property="rugStyle" jdbcType="LONGVARCHAR" />
+    <result column="Ryka_Consignment" property="rykaConsignment" jdbcType="LONGVARCHAR" />
+    <result column="Scent_Type" property="scentType" jdbcType="LONGVARCHAR" />
+    <result column="Season" property="season" jdbcType="LONGVARCHAR" />
+    <result column="Seller_Logo_URL" property="sellerLogoUrl" jdbcType="LONGVARCHAR" />
+    <result column="Set" property="set" jdbcType="LONGVARCHAR" />
+    <result column="Shaft_Height_Inches" property="shaftHeightInches" jdbcType="LONGVARCHAR" />
+    <result column="Shaft_Width_Inches" property="shaftWidthInches" jdbcType="LONGVARCHAR" />
+    <result column="Shape" property="shape" jdbcType="LONGVARCHAR" />
+    <result column="Shoe_Closure" property="shoeClosure" jdbcType="LONGVARCHAR" />
+    <result column="Short_Description" property="shortDescription" jdbcType="LONGVARCHAR" />
+    <result column="Silhouette" property="silhouette" jdbcType="LONGVARCHAR" />
+    <result column="Size_Origin" property="sizeOrigin" jdbcType="LONGVARCHAR" />
+    <result column="Skirt_Length" property="skirtLength" jdbcType="LONGVARCHAR" />
+    <result column="Skirt_Type" property="skirtType" jdbcType="LONGVARCHAR" />
+    <result column="SKU" property="sku" jdbcType="LONGVARCHAR" />
+    <result column="Sleeve_Length" property="sleeveLength" jdbcType="LONGVARCHAR" />
+    <result column="Sleeve_Length_Inches" property="sleeveLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="Specialty" property="specialty" jdbcType="LONGVARCHAR" />
+    <result column="Sport" property="sport" jdbcType="LONGVARCHAR" />
+    <result column="ST_Keyword" property="stKeyword" jdbcType="LONGVARCHAR" />
+    <result column="Stone" property="stone" jdbcType="LONGVARCHAR" />
+    <result column="Store_Title" property="storeTitle" jdbcType="LONGVARCHAR" />
+    <result column="Strap_Drop_Inches" property="strapDropInches" jdbcType="LONGVARCHAR" />
+    <result column="Straps" property="straps" jdbcType="LONGVARCHAR" />
+    <result column="Style" property="style" jdbcType="LONGVARCHAR" />
+    <result column="Supplier" property="supplier" jdbcType="LONGVARCHAR" />
+    <result column="Supplier_PO" property="supplierPo" jdbcType="LONGVARCHAR" />
+    <result column="SUPPLIERCODE" property="suppliercode" jdbcType="LONGVARCHAR" />
+    <result column="SUPPLIERID" property="supplierid" jdbcType="LONGVARCHAR" />
+    <result column="Swimwear_Bottom" property="swimwearBottom" jdbcType="LONGVARCHAR" />
+    <result column="Swimwear_Top" property="swimwearTop" jdbcType="LONGVARCHAR" />
+    <result column="TAXPRODUCTCODE" property="taxproductcode" jdbcType="LONGVARCHAR" />
+    <result column="Theme" property="theme" jdbcType="LONGVARCHAR" />
+    <result column="Thread_Count" property="threadCount" jdbcType="LONGVARCHAR" />
+    <result column="Tie_Length" property="tieLength" jdbcType="LONGVARCHAR" />
+    <result column="Tie_Width" property="tieWidth" jdbcType="LONGVARCHAR" />
+    <result column="Total_Dress_Length_Inches" property="totalDressLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="Total_Jacket_Length_Inches" property="totalJacketLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="Total_Length_Inches" property="totalLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="Total_Skirt_Length_Inches" property="totalSkirtLengthInches" jdbcType="LONGVARCHAR" />
+    <result column="TOTALQUANTITYPOOLED" property="totalquantitypooled" jdbcType="LONGVARCHAR" />
+    <result column="Umbrella_Opener" property="umbrellaOpener" jdbcType="LONGVARCHAR" />
+    <result column="UPC" property="upc" jdbcType="LONGVARCHAR" />
+    <result column="UPLOADHASLASTMODIFIEDGMT" property="uploadhaslastmodifiedgmt" jdbcType="LONGVARCHAR" />
+    <result column="Vents" property="vents" jdbcType="LONGVARCHAR" />
+    <result column="Video_Inputs" property="videoInputs" jdbcType="LONGVARCHAR" />
+    <result column="Waist_Across_Inches" property="waistAcrossInches" jdbcType="LONGVARCHAR" />
+    <result column="Wallet_Height_Inches" property="walletHeightInches" jdbcType="LONGVARCHAR" />
+    <result column="WAREHOUSELOCATION" property="warehouselocation" jdbcType="LONGVARCHAR" />
+    <result column="Warranty" property="warranty" jdbcType="LONGVARCHAR" />
+    <result column="Weight2" property="weight2" jdbcType="LONGVARCHAR" />
+    <result column="Width2" property="width2" jdbcType="LONGVARCHAR" />
+    <result column="Year" property="year" jdbcType="LONGVARCHAR" />
+    <result column="Room" property="room" jdbcType="LONGVARCHAR" />
+    <result column="Latest_Supplier" property="latestSupplier" jdbcType="LONGVARCHAR" />
+    <result column="Band_Size" property="bandSize" jdbcType="LONGVARCHAR" />
+    <result column="Wallet_Width_Inches" property="walletWidthInches" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Inventory_Number, MSRP, VoyageOne_Price, Shipping_Cost, Weight, md5
+  </sql>
+  <sql id="Blob_Column_List" >
+    Title, Description, Main_Image_URL, Quantity, Additional_Images, Parent_Child_Standalone, 
+    Item_Group_ID, Variation_Swap_Image_URL, Varying_Attribute_Names, Varying_Attribute_1, 
+    Varying_Attribute_2, Brand1, Country_Of_Origin, Series_Name, GTIN, MPN, Store_Category, 
+    Material, Pattern, Color, Size, Gender, Age_Group, Length, Width, Height, Amazon_Beauty_Item_Type, 
+    Amazon_Department, Amazon_Heel_Height, Amazon_Home_Item_Type, Amazon_Inseam, Amazon_Item_Type, 
+    Amazon_keywords_1, Amazon_keywords_2, Amazon_keywords_3, Amazon_keywords_4, Amazon_Leg_Style, 
+    Amazon_Mens_Item_Type, Amazon_Photo_Ready, Amazon_Product_Type, Amazon_Rise, Amazon_Shoe_Item_Type, 
+    Amazon_Shoe_Size, Amazon_Shoe_Size_Map, Amazon_Shoe_Width, Amazon_Special_Size, Amazon_Variant_Details, 
+    Amazon_Waist_Size, Amazon_Womens_Item_Type, Apparel_Style, Application, Application_Area, 
+    Amazon_Category, Application_Type, ASIN, Assembly, Attachment, Auction_Description, 
+    Audio_Outputs, Back_Coverage, Back_Pockets, Bag_Depth_Inches, Bag_Height_Inches, 
+    Bag_Length_Inches, Bag_Width_Inches, Bake_Shape, Bedding_Size, BHFO_eBay_Category, 
+    BHFO_eBay_Store_Category, bhfo_accessory_1_description_c, bhfo_accessory_1_title_c, 
+    bhfo_color_c, bhfo_color_text_c, bhfo_country_of_origin_c, bhfo_flaw_description_c, 
+    bhfo_size_c, bhfo_size_additional_c, bhfo_size_type_c, bhfo_style_c, bhfo_style_name_c, 
+    bhfo_style_type_c, Bottle_Material, Bottle_Size_Ounces, Bottom_Closure, Bottom_Rise, 
+    Bra_Closure, Bra_Features, Bra_Straps, Brand2, CA_Store_Category, Candle_Size, Capacity_Ounces, 
+    Classification, Closure, Collar, Collection, Color2, Compartment, Compatible_Brands, 
+    Compatible_Products, condition, Connectivity, Cooking_Functions, Country_of_Origin2, 
+    Cup_Size, Denim_Wash, Depth_Inches, Dimensions, Dimensions_2, Dirt_Capture, Display, 
+    Dress_Length, Dress_Type, Drop_Length, EAN, Earpiece_Design, eBay_Heel_Height, Fabric_Type, 
+    Features, Features_and_Fastening, Features_2, Finish, Fit, Fit_Design, FLAGSTYLE, 
+    Formulation, Frame_Material_Type, Frame_Metal, Front_Style, Fuel_Source, Function, 
+    Fur_Type, Gender2, Genre, Handle_Type, Harmonized_Code, Heel_Height_Inches, Height2, 
+    Image_URL_1, Image_URL_2, Image_URL_3, Image_URL_4, Includes, Includes_2, Inseam_Inches, 
+    Insert_Material, Is_a_Child_Item, Is_a_Parent_Item, ISBLOCKED, ISBN, ISFBA, Item_ID, 
+    Item_Shape, Item_Subtitle, Item_Title, ITEMAUCTIONDESCRIPTION, ITEMIMAGEURL10, ITEMIMAGEURL5, 
+    ITEMIMAGEURL6, ITEMIMAGEURL7, Jacket_Legth, Jacket_Sleeve_Length_Inches, Length2, 
+    Lens_Color, Lens_Material_Type, Lens_Width_Millimeters, Lid, Lightbulb_Type, Manufacturer, 
+    Manufacturer_Description, Material2, Material_Specialty, Max_Magnification, MeLi_Category, 
+    MeLi_Color, MeLi_Season, MeLi_Size, MeLi_Title, Model_Number, Model_Number2, Movement, 
+    MPN2, Neck_Size, Neckline, ITEMLEVELSHIPPING, Non_Stick, Number_of_Pieces, Number_of_Slices, 
+    Occasion, Open_Quantity, OPENQUANTITYPOOLED, Padding, Pant_Type, Panty_Style, Parent_SKU, 
+    Pattern2, Photo_Size, Pillow_Size, Platform, Platform_Height_Inches, Pocket_Style, 
+    Polarization_Type, Power, Product_Margin, Protection, Quantity_Available, Rating, 
+    Received_in_Inventory, Recommended_Age, Recommended_Age_Range, Relationship_Name, 
+    Retail_Price, Rise_Inches, rop_date_first_complete, Rug_Style, Ryka_Consignment, 
+    Scent_Type, Season, Seller_Logo_URL, Set, Shaft_Height_Inches, Shaft_Width_Inches, 
+    Shape, Shoe_Closure, Short_Description, Silhouette, Size_Origin, Skirt_Length, Skirt_Type, 
+    SKU, Sleeve_Length, Sleeve_Length_Inches, Specialty, Sport, ST_Keyword, Stone, Store_Title, 
+    Strap_Drop_Inches, Straps, Style, Supplier, Supplier_PO, SUPPLIERCODE, SUPPLIERID, 
+    Swimwear_Bottom, Swimwear_Top, TAXPRODUCTCODE, Theme, Thread_Count, Tie_Length, Tie_Width, 
+    Total_Dress_Length_Inches, Total_Jacket_Length_Inches, Total_Length_Inches, Total_Skirt_Length_Inches, 
+    TOTALQUANTITYPOOLED, Umbrella_Opener, UPC, UPLOADHASLASTMODIFIEDGMT, Vents, Video_Inputs, 
+    Waist_Across_Inches, Wallet_Height_Inches, WAREHOUSELOCATION, Warranty, Weight2, 
+    Width2, Year, Room, Latest_Supplier, Band_Size, Wallet_Width_Inches
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
+  </delete>
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_bhfo_product_temp
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
+    insert into voyageone_cms2.cms_zz_feed_bhfo_product_temp (Inventory_Number, MSRP, VoyageOne_Price, 
+      Shipping_Cost, Weight, md5, 
+      Title, Description, Main_Image_URL, 
+      Quantity, Additional_Images, Parent_Child_Standalone, 
+      Item_Group_ID, Variation_Swap_Image_URL, 
+      Varying_Attribute_Names, Varying_Attribute_1, 
+      Varying_Attribute_2, Brand1, Country_Of_Origin, 
+      Series_Name, GTIN, MPN, 
+      Store_Category, Material, Pattern, 
+      Color, Size, Gender, 
+      Age_Group, Length, Width, 
+      Height, Amazon_Beauty_Item_Type, Amazon_Department, 
+      Amazon_Heel_Height, Amazon_Home_Item_Type, 
+      Amazon_Inseam, Amazon_Item_Type, Amazon_keywords_1, 
+      Amazon_keywords_2, Amazon_keywords_3, 
+      Amazon_keywords_4, Amazon_Leg_Style, 
+      Amazon_Mens_Item_Type, Amazon_Photo_Ready, 
+      Amazon_Product_Type, Amazon_Rise, 
+      Amazon_Shoe_Item_Type, Amazon_Shoe_Size, 
+      Amazon_Shoe_Size_Map, Amazon_Shoe_Width, 
+      Amazon_Special_Size, Amazon_Variant_Details, 
+      Amazon_Waist_Size, Amazon_Womens_Item_Type, 
+      Apparel_Style, Application, Application_Area, 
+      Amazon_Category, Application_Type, 
+      ASIN, Assembly, Attachment, 
+      Auction_Description, Audio_Outputs, 
+      Back_Coverage, Back_Pockets, Bag_Depth_Inches, 
+      Bag_Height_Inches, Bag_Length_Inches, 
+      Bag_Width_Inches, Bake_Shape, Bedding_Size, 
+      BHFO_eBay_Category, BHFO_eBay_Store_Category, 
+      bhfo_accessory_1_description_c, bhfo_accessory_1_title_c, 
+      bhfo_color_c, bhfo_color_text_c, bhfo_country_of_origin_c, 
+      bhfo_flaw_description_c, bhfo_size_c, 
+      bhfo_size_additional_c, bhfo_size_type_c, 
+      bhfo_style_c, bhfo_style_name_c, bhfo_style_type_c, 
+      Bottle_Material, Bottle_Size_Ounces, 
+      Bottom_Closure, Bottom_Rise, Bra_Closure, 
+      Bra_Features, Bra_Straps, Brand2, 
+      CA_Store_Category, Candle_Size, Capacity_Ounces, 
+      Classification, Closure, Collar, 
+      Collection, Color2, Compartment, 
+      Compatible_Brands, Compatible_Products, 
+      condition, Connectivity, Cooking_Functions, 
+      Country_of_Origin2, Cup_Size, Denim_Wash, 
+      Depth_Inches, Dimensions, Dimensions_2, 
+      Dirt_Capture, Display, Dress_Length, 
+      Dress_Type, Drop_Length, EAN, 
+      Earpiece_Design, eBay_Heel_Height, 
+      Fabric_Type, Features, Features_and_Fastening, 
+      Features_2, Finish, Fit, 
+      Fit_Design, FLAGSTYLE, Formulation, 
+      Frame_Material_Type, Frame_Metal, 
+      Front_Style, Fuel_Source, Function, 
+      Fur_Type, Gender2, Genre, 
+      Handle_Type, Harmonized_Code, Heel_Height_Inches, 
+      Height2, Image_URL_1, Image_URL_2, 
+      Image_URL_3, Image_URL_4, Includes, 
+      Includes_2, Inseam_Inches, Insert_Material, 
+      Is_a_Child_Item, Is_a_Parent_Item, ISBLOCKED, 
+      ISBN, ISFBA, Item_ID, 
+      Item_Shape, Item_Subtitle, Item_Title, 
+      ITEMAUCTIONDESCRIPTION, ITEMIMAGEURL10, 
+      ITEMIMAGEURL5, ITEMIMAGEURL6, ITEMIMAGEURL7, 
+      Jacket_Legth, Jacket_Sleeve_Length_Inches, 
+      Length2, Lens_Color, Lens_Material_Type, 
+      Lens_Width_Millimeters, Lid, Lightbulb_Type, 
+      Manufacturer, Manufacturer_Description, 
+      Material2, Material_Specialty, Max_Magnification, 
+      MeLi_Category, MeLi_Color, MeLi_Season, 
+      MeLi_Size, MeLi_Title, Model_Number, 
+      Model_Number2, Movement, MPN2, 
+      Neck_Size, Neckline, ITEMLEVELSHIPPING, 
+      Non_Stick, Number_of_Pieces, Number_of_Slices, 
+      Occasion, Open_Quantity, OPENQUANTITYPOOLED, 
+      Padding, Pant_Type, Panty_Style, 
+      Parent_SKU, Pattern2, Photo_Size, 
+      Pillow_Size, Platform, Platform_Height_Inches, 
+      Pocket_Style, Polarization_Type, 
+      Power, Product_Margin, Protection, 
+      Quantity_Available, Rating, Received_in_Inventory, 
+      Recommended_Age, Recommended_Age_Range, 
+      Relationship_Name, Retail_Price, 
+      Rise_Inches, rop_date_first_complete, 
+      Rug_Style, Ryka_Consignment, Scent_Type, 
+      Season, Seller_Logo_URL, Set, 
+      Shaft_Height_Inches, Shaft_Width_Inches, 
+      Shape, Shoe_Closure, Short_Description, 
+      Silhouette, Size_Origin, Skirt_Length, 
+      Skirt_Type, SKU, Sleeve_Length, 
+      Sleeve_Length_Inches, Specialty, 
+      Sport, ST_Keyword, Stone, 
+      Store_Title, Strap_Drop_Inches, Straps, 
+      Style, Supplier, Supplier_PO, 
+      SUPPLIERCODE, SUPPLIERID, Swimwear_Bottom, 
+      Swimwear_Top, TAXPRODUCTCODE, Theme, 
+      Thread_Count, Tie_Length, Tie_Width, 
+      Total_Dress_Length_Inches, Total_Jacket_Length_Inches, 
+      Total_Length_Inches, Total_Skirt_Length_Inches, 
+      TOTALQUANTITYPOOLED, Umbrella_Opener, 
+      UPC, UPLOADHASLASTMODIFIEDGMT, 
+      Vents, Video_Inputs, Waist_Across_Inches, 
+      Wallet_Height_Inches, WAREHOUSELOCATION, 
+      Warranty, Weight2, Width2, 
+      Year, Room, Latest_Supplier, 
+      Band_Size, Wallet_Width_Inches)
+    values (#{inventoryNumber,jdbcType=VARCHAR}, #{msrp,jdbcType=VARCHAR}, #{voyageonePrice,jdbcType=VARCHAR}, 
+      #{shippingCost,jdbcType=VARCHAR}, #{weight,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR}, 
+      #{title,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{mainImageUrl,jdbcType=LONGVARCHAR}, 
+      #{quantity,jdbcType=LONGVARCHAR}, #{additionalImages,jdbcType=LONGVARCHAR}, #{parentChildStandalone,jdbcType=LONGVARCHAR}, 
+      #{itemGroupId,jdbcType=LONGVARCHAR}, #{variationSwapImageUrl,jdbcType=LONGVARCHAR}, 
+      #{varyingAttributeNames,jdbcType=LONGVARCHAR}, #{varyingAttribute1,jdbcType=LONGVARCHAR}, 
+      #{varyingAttribute2,jdbcType=LONGVARCHAR}, #{brand1,jdbcType=LONGVARCHAR}, #{countryOfOrigin,jdbcType=LONGVARCHAR}, 
+      #{seriesName,jdbcType=LONGVARCHAR}, #{gtin,jdbcType=LONGVARCHAR}, #{mpn,jdbcType=LONGVARCHAR}, 
+      #{storeCategory,jdbcType=LONGVARCHAR}, #{material,jdbcType=LONGVARCHAR}, #{pattern,jdbcType=LONGVARCHAR}, 
+      #{color,jdbcType=LONGVARCHAR}, #{size,jdbcType=LONGVARCHAR}, #{gender,jdbcType=LONGVARCHAR}, 
+      #{ageGroup,jdbcType=LONGVARCHAR}, #{length,jdbcType=LONGVARCHAR}, #{width,jdbcType=LONGVARCHAR}, 
+      #{height,jdbcType=LONGVARCHAR}, #{amazonBeautyItemType,jdbcType=LONGVARCHAR}, #{amazonDepartment,jdbcType=LONGVARCHAR}, 
+      #{amazonHeelHeight,jdbcType=LONGVARCHAR}, #{amazonHomeItemType,jdbcType=LONGVARCHAR}, 
+      #{amazonInseam,jdbcType=LONGVARCHAR}, #{amazonItemType,jdbcType=LONGVARCHAR}, #{amazonKeywords1,jdbcType=LONGVARCHAR}, 
+      #{amazonKeywords2,jdbcType=LONGVARCHAR}, #{amazonKeywords3,jdbcType=LONGVARCHAR}, 
+      #{amazonKeywords4,jdbcType=LONGVARCHAR}, #{amazonLegStyle,jdbcType=LONGVARCHAR}, 
+      #{amazonMensItemType,jdbcType=LONGVARCHAR}, #{amazonPhotoReady,jdbcType=LONGVARCHAR}, 
+      #{amazonProductType,jdbcType=LONGVARCHAR}, #{amazonRise,jdbcType=LONGVARCHAR}, 
+      #{amazonShoeItemType,jdbcType=LONGVARCHAR}, #{amazonShoeSize,jdbcType=LONGVARCHAR}, 
+      #{amazonShoeSizeMap,jdbcType=LONGVARCHAR}, #{amazonShoeWidth,jdbcType=LONGVARCHAR}, 
+      #{amazonSpecialSize,jdbcType=LONGVARCHAR}, #{amazonVariantDetails,jdbcType=LONGVARCHAR}, 
+      #{amazonWaistSize,jdbcType=LONGVARCHAR}, #{amazonWomensItemType,jdbcType=LONGVARCHAR}, 
+      #{apparelStyle,jdbcType=LONGVARCHAR}, #{application,jdbcType=LONGVARCHAR}, #{applicationArea,jdbcType=LONGVARCHAR}, 
+      #{amazonCategory,jdbcType=LONGVARCHAR}, #{applicationType,jdbcType=LONGVARCHAR}, 
+      #{asin,jdbcType=LONGVARCHAR}, #{assembly,jdbcType=LONGVARCHAR}, #{attachment,jdbcType=LONGVARCHAR}, 
+      #{auctionDescription,jdbcType=LONGVARCHAR}, #{audioOutputs,jdbcType=LONGVARCHAR}, 
+      #{backCoverage,jdbcType=LONGVARCHAR}, #{backPockets,jdbcType=LONGVARCHAR}, #{bagDepthInches,jdbcType=LONGVARCHAR}, 
+      #{bagHeightInches,jdbcType=LONGVARCHAR}, #{bagLengthInches,jdbcType=LONGVARCHAR}, 
+      #{bagWidthInches,jdbcType=LONGVARCHAR}, #{bakeShape,jdbcType=LONGVARCHAR}, #{beddingSize,jdbcType=LONGVARCHAR}, 
+      #{bhfoEbayCategory,jdbcType=LONGVARCHAR}, #{bhfoEbayStoreCategory,jdbcType=LONGVARCHAR}, 
+      #{bhfoAccessory1DescriptionC,jdbcType=LONGVARCHAR}, #{bhfoAccessory1TitleC,jdbcType=LONGVARCHAR}, 
+      #{bhfoColorC,jdbcType=LONGVARCHAR}, #{bhfoColorTextC,jdbcType=LONGVARCHAR}, #{bhfoCountryOfOriginC,jdbcType=LONGVARCHAR}, 
+      #{bhfoFlawDescriptionC,jdbcType=LONGVARCHAR}, #{bhfoSizeC,jdbcType=LONGVARCHAR}, 
+      #{bhfoSizeAdditionalC,jdbcType=LONGVARCHAR}, #{bhfoSizeTypeC,jdbcType=LONGVARCHAR}, 
+      #{bhfoStyleC,jdbcType=LONGVARCHAR}, #{bhfoStyleNameC,jdbcType=LONGVARCHAR}, #{bhfoStyleTypeC,jdbcType=LONGVARCHAR}, 
+      #{bottleMaterial,jdbcType=LONGVARCHAR}, #{bottleSizeOunces,jdbcType=LONGVARCHAR}, 
+      #{bottomClosure,jdbcType=LONGVARCHAR}, #{bottomRise,jdbcType=LONGVARCHAR}, #{braClosure,jdbcType=LONGVARCHAR}, 
+      #{braFeatures,jdbcType=LONGVARCHAR}, #{braStraps,jdbcType=LONGVARCHAR}, #{brand2,jdbcType=LONGVARCHAR}, 
+      #{caStoreCategory,jdbcType=LONGVARCHAR}, #{candleSize,jdbcType=LONGVARCHAR}, #{capacityOunces,jdbcType=LONGVARCHAR}, 
+      #{classification,jdbcType=LONGVARCHAR}, #{closure,jdbcType=LONGVARCHAR}, #{collar,jdbcType=LONGVARCHAR}, 
+      #{collection,jdbcType=LONGVARCHAR}, #{color2,jdbcType=LONGVARCHAR}, #{compartment,jdbcType=LONGVARCHAR}, 
+      #{compatibleBrands,jdbcType=LONGVARCHAR}, #{compatibleProducts,jdbcType=LONGVARCHAR}, 
+      #{condition,jdbcType=LONGVARCHAR}, #{connectivity,jdbcType=LONGVARCHAR}, #{cookingFunctions,jdbcType=LONGVARCHAR}, 
+      #{countryOfOrigin2,jdbcType=LONGVARCHAR}, #{cupSize,jdbcType=LONGVARCHAR}, #{denimWash,jdbcType=LONGVARCHAR}, 
+      #{depthInches,jdbcType=LONGVARCHAR}, #{dimensions,jdbcType=LONGVARCHAR}, #{dimensions2,jdbcType=LONGVARCHAR}, 
+      #{dirtCapture,jdbcType=LONGVARCHAR}, #{display,jdbcType=LONGVARCHAR}, #{dressLength,jdbcType=LONGVARCHAR}, 
+      #{dressType,jdbcType=LONGVARCHAR}, #{dropLength,jdbcType=LONGVARCHAR}, #{ean,jdbcType=LONGVARCHAR}, 
+      #{earpieceDesign,jdbcType=LONGVARCHAR}, #{ebayHeelHeight,jdbcType=LONGVARCHAR}, 
+      #{fabricType,jdbcType=LONGVARCHAR}, #{features,jdbcType=LONGVARCHAR}, #{featuresAndFastening,jdbcType=LONGVARCHAR}, 
+      #{features2,jdbcType=LONGVARCHAR}, #{finish,jdbcType=LONGVARCHAR}, #{fit,jdbcType=LONGVARCHAR}, 
+      #{fitDesign,jdbcType=LONGVARCHAR}, #{flagstyle,jdbcType=LONGVARCHAR}, #{formulation,jdbcType=LONGVARCHAR}, 
+      #{frameMaterialType,jdbcType=LONGVARCHAR}, #{frameMetal,jdbcType=LONGVARCHAR}, 
+      #{frontStyle,jdbcType=LONGVARCHAR}, #{fuelSource,jdbcType=LONGVARCHAR}, #{function,jdbcType=LONGVARCHAR}, 
+      #{furType,jdbcType=LONGVARCHAR}, #{gender2,jdbcType=LONGVARCHAR}, #{genre,jdbcType=LONGVARCHAR}, 
+      #{handleType,jdbcType=LONGVARCHAR}, #{harmonizedCode,jdbcType=LONGVARCHAR}, #{heelHeightInches,jdbcType=LONGVARCHAR}, 
+      #{height2,jdbcType=LONGVARCHAR}, #{imageUrl1,jdbcType=LONGVARCHAR}, #{imageUrl2,jdbcType=LONGVARCHAR}, 
+      #{imageUrl3,jdbcType=LONGVARCHAR}, #{imageUrl4,jdbcType=LONGVARCHAR}, #{includes,jdbcType=LONGVARCHAR}, 
+      #{includes2,jdbcType=LONGVARCHAR}, #{inseamInches,jdbcType=LONGVARCHAR}, #{insertMaterial,jdbcType=LONGVARCHAR}, 
+      #{isAChildItem,jdbcType=LONGVARCHAR}, #{isAParentItem,jdbcType=LONGVARCHAR}, #{isblocked,jdbcType=LONGVARCHAR}, 
+      #{isbn,jdbcType=LONGVARCHAR}, #{isfba,jdbcType=LONGVARCHAR}, #{itemId,jdbcType=LONGVARCHAR}, 
+      #{itemShape,jdbcType=LONGVARCHAR}, #{itemSubtitle,jdbcType=LONGVARCHAR}, #{itemTitle,jdbcType=LONGVARCHAR}, 
+      #{itemauctiondescription,jdbcType=LONGVARCHAR}, #{itemimageurl10,jdbcType=LONGVARCHAR}, 
+      #{itemimageurl5,jdbcType=LONGVARCHAR}, #{itemimageurl6,jdbcType=LONGVARCHAR}, #{itemimageurl7,jdbcType=LONGVARCHAR}, 
+      #{jacketLegth,jdbcType=LONGVARCHAR}, #{jacketSleeveLengthInches,jdbcType=LONGVARCHAR}, 
+      #{length2,jdbcType=LONGVARCHAR}, #{lensColor,jdbcType=LONGVARCHAR}, #{lensMaterialType,jdbcType=LONGVARCHAR}, 
+      #{lensWidthMillimeters,jdbcType=LONGVARCHAR}, #{lid,jdbcType=LONGVARCHAR}, #{lightbulbType,jdbcType=LONGVARCHAR}, 
+      #{manufacturer,jdbcType=LONGVARCHAR}, #{manufacturerDescription,jdbcType=LONGVARCHAR}, 
+      #{material2,jdbcType=LONGVARCHAR}, #{materialSpecialty,jdbcType=LONGVARCHAR}, #{maxMagnification,jdbcType=LONGVARCHAR}, 
+      #{meliCategory,jdbcType=LONGVARCHAR}, #{meliColor,jdbcType=LONGVARCHAR}, #{meliSeason,jdbcType=LONGVARCHAR}, 
+      #{meliSize,jdbcType=LONGVARCHAR}, #{meliTitle,jdbcType=LONGVARCHAR}, #{modelNumber,jdbcType=LONGVARCHAR}, 
+      #{modelNumber2,jdbcType=LONGVARCHAR}, #{movement,jdbcType=LONGVARCHAR}, #{mpn2,jdbcType=LONGVARCHAR}, 
+      #{neckSize,jdbcType=LONGVARCHAR}, #{neckline,jdbcType=LONGVARCHAR}, #{itemlevelshipping,jdbcType=LONGVARCHAR}, 
+      #{nonStick,jdbcType=LONGVARCHAR}, #{numberOfPieces,jdbcType=LONGVARCHAR}, #{numberOfSlices,jdbcType=LONGVARCHAR}, 
+      #{occasion,jdbcType=LONGVARCHAR}, #{openQuantity,jdbcType=LONGVARCHAR}, #{openquantitypooled,jdbcType=LONGVARCHAR}, 
+      #{padding,jdbcType=LONGVARCHAR}, #{pantType,jdbcType=LONGVARCHAR}, #{pantyStyle,jdbcType=LONGVARCHAR}, 
+      #{parentSku,jdbcType=LONGVARCHAR}, #{pattern2,jdbcType=LONGVARCHAR}, #{photoSize,jdbcType=LONGVARCHAR}, 
+      #{pillowSize,jdbcType=LONGVARCHAR}, #{platform,jdbcType=LONGVARCHAR}, #{platformHeightInches,jdbcType=LONGVARCHAR}, 
+      #{pocketStyle,jdbcType=LONGVARCHAR}, #{polarizationType,jdbcType=LONGVARCHAR}, 
+      #{power,jdbcType=LONGVARCHAR}, #{productMargin,jdbcType=LONGVARCHAR}, #{protection,jdbcType=LONGVARCHAR}, 
+      #{quantityAvailable,jdbcType=LONGVARCHAR}, #{rating,jdbcType=LONGVARCHAR}, #{receivedInInventory,jdbcType=LONGVARCHAR}, 
+      #{recommendedAge,jdbcType=LONGVARCHAR}, #{recommendedAgeRange,jdbcType=LONGVARCHAR}, 
+      #{relationshipName,jdbcType=LONGVARCHAR}, #{retailPrice,jdbcType=LONGVARCHAR}, 
+      #{riseInches,jdbcType=LONGVARCHAR}, #{ropDateFirstComplete,jdbcType=LONGVARCHAR}, 
+      #{rugStyle,jdbcType=LONGVARCHAR}, #{rykaConsignment,jdbcType=LONGVARCHAR}, #{scentType,jdbcType=LONGVARCHAR}, 
+      #{season,jdbcType=LONGVARCHAR}, #{sellerLogoUrl,jdbcType=LONGVARCHAR}, #{set,jdbcType=LONGVARCHAR}, 
+      #{shaftHeightInches,jdbcType=LONGVARCHAR}, #{shaftWidthInches,jdbcType=LONGVARCHAR}, 
+      #{shape,jdbcType=LONGVARCHAR}, #{shoeClosure,jdbcType=LONGVARCHAR}, #{shortDescription,jdbcType=LONGVARCHAR}, 
+      #{silhouette,jdbcType=LONGVARCHAR}, #{sizeOrigin,jdbcType=LONGVARCHAR}, #{skirtLength,jdbcType=LONGVARCHAR}, 
+      #{skirtType,jdbcType=LONGVARCHAR}, #{sku,jdbcType=LONGVARCHAR}, #{sleeveLength,jdbcType=LONGVARCHAR}, 
+      #{sleeveLengthInches,jdbcType=LONGVARCHAR}, #{specialty,jdbcType=LONGVARCHAR}, 
+      #{sport,jdbcType=LONGVARCHAR}, #{stKeyword,jdbcType=LONGVARCHAR}, #{stone,jdbcType=LONGVARCHAR}, 
+      #{storeTitle,jdbcType=LONGVARCHAR}, #{strapDropInches,jdbcType=LONGVARCHAR}, #{straps,jdbcType=LONGVARCHAR}, 
+      #{style,jdbcType=LONGVARCHAR}, #{supplier,jdbcType=LONGVARCHAR}, #{supplierPo,jdbcType=LONGVARCHAR}, 
+      #{suppliercode,jdbcType=LONGVARCHAR}, #{supplierid,jdbcType=LONGVARCHAR}, #{swimwearBottom,jdbcType=LONGVARCHAR}, 
+      #{swimwearTop,jdbcType=LONGVARCHAR}, #{taxproductcode,jdbcType=LONGVARCHAR}, #{theme,jdbcType=LONGVARCHAR}, 
+      #{threadCount,jdbcType=LONGVARCHAR}, #{tieLength,jdbcType=LONGVARCHAR}, #{tieWidth,jdbcType=LONGVARCHAR}, 
+      #{totalDressLengthInches,jdbcType=LONGVARCHAR}, #{totalJacketLengthInches,jdbcType=LONGVARCHAR}, 
+      #{totalLengthInches,jdbcType=LONGVARCHAR}, #{totalSkirtLengthInches,jdbcType=LONGVARCHAR}, 
+      #{totalquantitypooled,jdbcType=LONGVARCHAR}, #{umbrellaOpener,jdbcType=LONGVARCHAR}, 
+      #{upc,jdbcType=LONGVARCHAR}, #{uploadhaslastmodifiedgmt,jdbcType=LONGVARCHAR}, 
+      #{vents,jdbcType=LONGVARCHAR}, #{videoInputs,jdbcType=LONGVARCHAR}, #{waistAcrossInches,jdbcType=LONGVARCHAR}, 
+      #{walletHeightInches,jdbcType=LONGVARCHAR}, #{warehouselocation,jdbcType=LONGVARCHAR}, 
+      #{warranty,jdbcType=LONGVARCHAR}, #{weight2,jdbcType=LONGVARCHAR}, #{width2,jdbcType=LONGVARCHAR}, 
+      #{year,jdbcType=LONGVARCHAR}, #{room,jdbcType=LONGVARCHAR}, #{latestSupplier,jdbcType=LONGVARCHAR}, 
+      #{bandSize,jdbcType=LONGVARCHAR}, #{walletWidthInches,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
+    insert into voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="inventoryNumber != null" >
+        Inventory_Number,
+      </if>
+      <if test="msrp != null" >
+        MSRP,
+      </if>
+      <if test="voyageonePrice != null" >
+        VoyageOne_Price,
+      </if>
+      <if test="shippingCost != null" >
+        Shipping_Cost,
+      </if>
+      <if test="weight != null" >
+        Weight,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="title != null" >
+        Title,
+      </if>
+      <if test="description != null" >
+        Description,
+      </if>
+      <if test="mainImageUrl != null" >
+        Main_Image_URL,
+      </if>
+      <if test="quantity != null" >
+        Quantity,
+      </if>
+      <if test="additionalImages != null" >
+        Additional_Images,
+      </if>
+      <if test="parentChildStandalone != null" >
+        Parent_Child_Standalone,
+      </if>
+      <if test="itemGroupId != null" >
+        Item_Group_ID,
+      </if>
+      <if test="variationSwapImageUrl != null" >
+        Variation_Swap_Image_URL,
+      </if>
+      <if test="varyingAttributeNames != null" >
+        Varying_Attribute_Names,
+      </if>
+      <if test="varyingAttribute1 != null" >
+        Varying_Attribute_1,
+      </if>
+      <if test="varyingAttribute2 != null" >
+        Varying_Attribute_2,
+      </if>
+      <if test="brand1 != null" >
+        Brand1,
+      </if>
+      <if test="countryOfOrigin != null" >
+        Country_Of_Origin,
+      </if>
+      <if test="seriesName != null" >
+        Series_Name,
+      </if>
+      <if test="gtin != null" >
+        GTIN,
+      </if>
+      <if test="mpn != null" >
+        MPN,
+      </if>
+      <if test="storeCategory != null" >
+        Store_Category,
+      </if>
+      <if test="material != null" >
+        Material,
+      </if>
+      <if test="pattern != null" >
+        Pattern,
+      </if>
+      <if test="color != null" >
+        Color,
+      </if>
+      <if test="size != null" >
+        Size,
+      </if>
+      <if test="gender != null" >
+        Gender,
+      </if>
+      <if test="ageGroup != null" >
+        Age_Group,
+      </if>
+      <if test="length != null" >
+        Length,
+      </if>
+      <if test="width != null" >
+        Width,
+      </if>
+      <if test="height != null" >
+        Height,
+      </if>
+      <if test="amazonBeautyItemType != null" >
+        Amazon_Beauty_Item_Type,
+      </if>
+      <if test="amazonDepartment != null" >
+        Amazon_Department,
+      </if>
+      <if test="amazonHeelHeight != null" >
+        Amazon_Heel_Height,
+      </if>
+      <if test="amazonHomeItemType != null" >
+        Amazon_Home_Item_Type,
+      </if>
+      <if test="amazonInseam != null" >
+        Amazon_Inseam,
+      </if>
+      <if test="amazonItemType != null" >
+        Amazon_Item_Type,
+      </if>
+      <if test="amazonKeywords1 != null" >
+        Amazon_keywords_1,
+      </if>
+      <if test="amazonKeywords2 != null" >
+        Amazon_keywords_2,
+      </if>
+      <if test="amazonKeywords3 != null" >
+        Amazon_keywords_3,
+      </if>
+      <if test="amazonKeywords4 != null" >
+        Amazon_keywords_4,
+      </if>
+      <if test="amazonLegStyle != null" >
+        Amazon_Leg_Style,
+      </if>
+      <if test="amazonMensItemType != null" >
+        Amazon_Mens_Item_Type,
+      </if>
+      <if test="amazonPhotoReady != null" >
+        Amazon_Photo_Ready,
+      </if>
+      <if test="amazonProductType != null" >
+        Amazon_Product_Type,
+      </if>
+      <if test="amazonRise != null" >
+        Amazon_Rise,
+      </if>
+      <if test="amazonShoeItemType != null" >
+        Amazon_Shoe_Item_Type,
+      </if>
+      <if test="amazonShoeSize != null" >
+        Amazon_Shoe_Size,
+      </if>
+      <if test="amazonShoeSizeMap != null" >
+        Amazon_Shoe_Size_Map,
+      </if>
+      <if test="amazonShoeWidth != null" >
+        Amazon_Shoe_Width,
+      </if>
+      <if test="amazonSpecialSize != null" >
+        Amazon_Special_Size,
+      </if>
+      <if test="amazonVariantDetails != null" >
+        Amazon_Variant_Details,
+      </if>
+      <if test="amazonWaistSize != null" >
+        Amazon_Waist_Size,
+      </if>
+      <if test="amazonWomensItemType != null" >
+        Amazon_Womens_Item_Type,
+      </if>
+      <if test="apparelStyle != null" >
+        Apparel_Style,
+      </if>
+      <if test="application != null" >
+        Application,
+      </if>
+      <if test="applicationArea != null" >
+        Application_Area,
+      </if>
+      <if test="amazonCategory != null" >
+        Amazon_Category,
+      </if>
+      <if test="applicationType != null" >
+        Application_Type,
+      </if>
+      <if test="asin != null" >
+        ASIN,
+      </if>
+      <if test="assembly != null" >
+        Assembly,
+      </if>
+      <if test="attachment != null" >
+        Attachment,
+      </if>
+      <if test="auctionDescription != null" >
+        Auction_Description,
+      </if>
+      <if test="audioOutputs != null" >
+        Audio_Outputs,
+      </if>
+      <if test="backCoverage != null" >
+        Back_Coverage,
+      </if>
+      <if test="backPockets != null" >
+        Back_Pockets,
+      </if>
+      <if test="bagDepthInches != null" >
+        Bag_Depth_Inches,
+      </if>
+      <if test="bagHeightInches != null" >
+        Bag_Height_Inches,
+      </if>
+      <if test="bagLengthInches != null" >
+        Bag_Length_Inches,
+      </if>
+      <if test="bagWidthInches != null" >
+        Bag_Width_Inches,
+      </if>
+      <if test="bakeShape != null" >
+        Bake_Shape,
+      </if>
+      <if test="beddingSize != null" >
+        Bedding_Size,
+      </if>
+      <if test="bhfoEbayCategory != null" >
+        BHFO_eBay_Category,
+      </if>
+      <if test="bhfoEbayStoreCategory != null" >
+        BHFO_eBay_Store_Category,
+      </if>
+      <if test="bhfoAccessory1DescriptionC != null" >
+        bhfo_accessory_1_description_c,
+      </if>
+      <if test="bhfoAccessory1TitleC != null" >
+        bhfo_accessory_1_title_c,
+      </if>
+      <if test="bhfoColorC != null" >
+        bhfo_color_c,
+      </if>
+      <if test="bhfoColorTextC != null" >
+        bhfo_color_text_c,
+      </if>
+      <if test="bhfoCountryOfOriginC != null" >
+        bhfo_country_of_origin_c,
+      </if>
+      <if test="bhfoFlawDescriptionC != null" >
+        bhfo_flaw_description_c,
+      </if>
+      <if test="bhfoSizeC != null" >
+        bhfo_size_c,
+      </if>
+      <if test="bhfoSizeAdditionalC != null" >
+        bhfo_size_additional_c,
+      </if>
+      <if test="bhfoSizeTypeC != null" >
+        bhfo_size_type_c,
+      </if>
+      <if test="bhfoStyleC != null" >
+        bhfo_style_c,
+      </if>
+      <if test="bhfoStyleNameC != null" >
+        bhfo_style_name_c,
+      </if>
+      <if test="bhfoStyleTypeC != null" >
+        bhfo_style_type_c,
+      </if>
+      <if test="bottleMaterial != null" >
+        Bottle_Material,
+      </if>
+      <if test="bottleSizeOunces != null" >
+        Bottle_Size_Ounces,
+      </if>
+      <if test="bottomClosure != null" >
+        Bottom_Closure,
+      </if>
+      <if test="bottomRise != null" >
+        Bottom_Rise,
+      </if>
+      <if test="braClosure != null" >
+        Bra_Closure,
+      </if>
+      <if test="braFeatures != null" >
+        Bra_Features,
+      </if>
+      <if test="braStraps != null" >
+        Bra_Straps,
+      </if>
+      <if test="brand2 != null" >
+        Brand2,
+      </if>
+      <if test="caStoreCategory != null" >
+        CA_Store_Category,
+      </if>
+      <if test="candleSize != null" >
+        Candle_Size,
+      </if>
+      <if test="capacityOunces != null" >
+        Capacity_Ounces,
+      </if>
+      <if test="classification != null" >
+        Classification,
+      </if>
+      <if test="closure != null" >
+        Closure,
+      </if>
+      <if test="collar != null" >
+        Collar,
+      </if>
+      <if test="collection != null" >
+        Collection,
+      </if>
+      <if test="color2 != null" >
+        Color2,
+      </if>
+      <if test="compartment != null" >
+        Compartment,
+      </if>
+      <if test="compatibleBrands != null" >
+        Compatible_Brands,
+      </if>
+      <if test="compatibleProducts != null" >
+        Compatible_Products,
+      </if>
+      <if test="condition != null" >
+        `condition`,
+      </if>
+      <if test="connectivity != null" >
+        Connectivity,
+      </if>
+      <if test="cookingFunctions != null" >
+        Cooking_Functions,
+      </if>
+      <if test="countryOfOrigin2 != null" >
+        Country_of_Origin2,
+      </if>
+      <if test="cupSize != null" >
+        Cup_Size,
+      </if>
+      <if test="denimWash != null" >
+        Denim_Wash,
+      </if>
+      <if test="depthInches != null" >
+        Depth_Inches,
+      </if>
+      <if test="dimensions != null" >
+        Dimensions,
+      </if>
+      <if test="dimensions2 != null" >
+        Dimensions_2,
+      </if>
+      <if test="dirtCapture != null" >
+        Dirt_Capture,
+      </if>
+      <if test="display != null" >
+        Display,
+      </if>
+      <if test="dressLength != null" >
+        Dress_Length,
+      </if>
+      <if test="dressType != null" >
+        Dress_Type,
+      </if>
+      <if test="dropLength != null" >
+        Drop_Length,
+      </if>
+      <if test="ean != null" >
+        EAN,
+      </if>
+      <if test="earpieceDesign != null" >
+        Earpiece_Design,
+      </if>
+      <if test="ebayHeelHeight != null" >
+        eBay_Heel_Height,
+      </if>
+      <if test="fabricType != null" >
+        Fabric_Type,
+      </if>
+      <if test="features != null" >
+        Features,
+      </if>
+      <if test="featuresAndFastening != null" >
+        Features_and_Fastening,
+      </if>
+      <if test="features2 != null" >
+        Features_2,
+      </if>
+      <if test="finish != null" >
+        Finish,
+      </if>
+      <if test="fit != null" >
+        Fit,
+      </if>
+      <if test="fitDesign != null" >
+        Fit_Design,
+      </if>
+      <if test="flagstyle != null" >
+        FLAGSTYLE,
+      </if>
+      <if test="formulation != null" >
+        Formulation,
+      </if>
+      <if test="frameMaterialType != null" >
+        Frame_Material_Type,
+      </if>
+      <if test="frameMetal != null" >
+        Frame_Metal,
+      </if>
+      <if test="frontStyle != null" >
+        Front_Style,
+      </if>
+      <if test="fuelSource != null" >
+        Fuel_Source,
+      </if>
+      <if test="function != null" >
+        `Function`,
+      </if>
+      <if test="furType != null" >
+        Fur_Type,
+      </if>
+      <if test="gender2 != null" >
+        Gender2,
+      </if>
+      <if test="genre != null" >
+        Genre,
+      </if>
+      <if test="handleType != null" >
+        Handle_Type,
+      </if>
+      <if test="harmonizedCode != null" >
+        Harmonized_Code,
+      </if>
+      <if test="heelHeightInches != null" >
+        Heel_Height_Inches,
+      </if>
+      <if test="height2 != null" >
+        Height2,
+      </if>
+      <if test="imageUrl1 != null" >
+        Image_URL_1,
+      </if>
+      <if test="imageUrl2 != null" >
+        Image_URL_2,
+      </if>
+      <if test="imageUrl3 != null" >
+        Image_URL_3,
+      </if>
+      <if test="imageUrl4 != null" >
+        Image_URL_4,
+      </if>
+      <if test="includes != null" >
+        Includes,
+      </if>
+      <if test="includes2 != null" >
+        Includes_2,
+      </if>
+      <if test="inseamInches != null" >
+        Inseam_Inches,
+      </if>
+      <if test="insertMaterial != null" >
+        Insert_Material,
+      </if>
+      <if test="isAChildItem != null" >
+        Is_a_Child_Item,
+      </if>
+      <if test="isAParentItem != null" >
+        Is_a_Parent_Item,
+      </if>
+      <if test="isblocked != null" >
+        ISBLOCKED,
+      </if>
+      <if test="isbn != null" >
+        ISBN,
+      </if>
+      <if test="isfba != null" >
+        ISFBA,
+      </if>
+      <if test="itemId != null" >
+        Item_ID,
+      </if>
+      <if test="itemShape != null" >
+        Item_Shape,
+      </if>
+      <if test="itemSubtitle != null" >
+        Item_Subtitle,
+      </if>
+      <if test="itemTitle != null" >
+        Item_Title,
+      </if>
+      <if test="itemauctiondescription != null" >
+        ITEMAUCTIONDESCRIPTION,
+      </if>
+      <if test="itemimageurl10 != null" >
+        ITEMIMAGEURL10,
+      </if>
+      <if test="itemimageurl5 != null" >
+        ITEMIMAGEURL5,
+      </if>
+      <if test="itemimageurl6 != null" >
+        ITEMIMAGEURL6,
+      </if>
+      <if test="itemimageurl7 != null" >
+        ITEMIMAGEURL7,
+      </if>
+      <if test="jacketLegth != null" >
+        Jacket_Legth,
+      </if>
+      <if test="jacketSleeveLengthInches != null" >
+        Jacket_Sleeve_Length_Inches,
+      </if>
+      <if test="length2 != null" >
+        Length2,
+      </if>
+      <if test="lensColor != null" >
+        Lens_Color,
+      </if>
+      <if test="lensMaterialType != null" >
+        Lens_Material_Type,
+      </if>
+      <if test="lensWidthMillimeters != null" >
+        Lens_Width_Millimeters,
+      </if>
+      <if test="lid != null" >
+        Lid,
+      </if>
+      <if test="lightbulbType != null" >
+        Lightbulb_Type,
+      </if>
+      <if test="manufacturer != null" >
+        Manufacturer,
+      </if>
+      <if test="manufacturerDescription != null" >
+        Manufacturer_Description,
+      </if>
+      <if test="material2 != null" >
+        Material2,
+      </if>
+      <if test="materialSpecialty != null" >
+        Material_Specialty,
+      </if>
+      <if test="maxMagnification != null" >
+        Max_Magnification,
+      </if>
+      <if test="meliCategory != null" >
+        MeLi_Category,
+      </if>
+      <if test="meliColor != null" >
+        MeLi_Color,
+      </if>
+      <if test="meliSeason != null" >
+        MeLi_Season,
+      </if>
+      <if test="meliSize != null" >
+        MeLi_Size,
+      </if>
+      <if test="meliTitle != null" >
+        MeLi_Title,
+      </if>
+      <if test="modelNumber != null" >
+        Model_Number,
+      </if>
+      <if test="modelNumber2 != null" >
+        Model_Number2,
+      </if>
+      <if test="movement != null" >
+        Movement,
+      </if>
+      <if test="mpn2 != null" >
+        MPN2,
+      </if>
+      <if test="neckSize != null" >
+        Neck_Size,
+      </if>
+      <if test="neckline != null" >
+        Neckline,
+      </if>
+      <if test="itemlevelshipping != null" >
+        ITEMLEVELSHIPPING,
+      </if>
+      <if test="nonStick != null" >
+        Non_Stick,
+      </if>
+      <if test="numberOfPieces != null" >
+        Number_of_Pieces,
+      </if>
+      <if test="numberOfSlices != null" >
+        Number_of_Slices,
+      </if>
+      <if test="occasion != null" >
+        Occasion,
+      </if>
+      <if test="openQuantity != null" >
+        Open_Quantity,
+      </if>
+      <if test="openquantitypooled != null" >
+        OPENQUANTITYPOOLED,
+      </if>
+      <if test="padding != null" >
+        Padding,
+      </if>
+      <if test="pantType != null" >
+        Pant_Type,
+      </if>
+      <if test="pantyStyle != null" >
+        Panty_Style,
+      </if>
+      <if test="parentSku != null" >
+        Parent_SKU,
+      </if>
+      <if test="pattern2 != null" >
+        Pattern2,
+      </if>
+      <if test="photoSize != null" >
+        Photo_Size,
+      </if>
+      <if test="pillowSize != null" >
+        Pillow_Size,
+      </if>
+      <if test="platform != null" >
+        Platform,
+      </if>
+      <if test="platformHeightInches != null" >
+        Platform_Height_Inches,
+      </if>
+      <if test="pocketStyle != null" >
+        Pocket_Style,
+      </if>
+      <if test="polarizationType != null" >
+        Polarization_Type,
+      </if>
+      <if test="power != null" >
+        Power,
+      </if>
+      <if test="productMargin != null" >
+        Product_Margin,
+      </if>
+      <if test="protection != null" >
+        Protection,
+      </if>
+      <if test="quantityAvailable != null" >
+        Quantity_Available,
+      </if>
+      <if test="rating != null" >
+        Rating,
+      </if>
+      <if test="receivedInInventory != null" >
+        Received_in_Inventory,
+      </if>
+      <if test="recommendedAge != null" >
+        Recommended_Age,
+      </if>
+      <if test="recommendedAgeRange != null" >
+        Recommended_Age_Range,
+      </if>
+      <if test="relationshipName != null" >
+        Relationship_Name,
+      </if>
+      <if test="retailPrice != null" >
+        Retail_Price,
+      </if>
+      <if test="riseInches != null" >
+        Rise_Inches,
+      </if>
+      <if test="ropDateFirstComplete != null" >
+        rop_date_first_complete,
+      </if>
+      <if test="rugStyle != null" >
+        Rug_Style,
+      </if>
+      <if test="rykaConsignment != null" >
+        Ryka_Consignment,
+      </if>
+      <if test="scentType != null" >
+        Scent_Type,
+      </if>
+      <if test="season != null" >
+        Season,
+      </if>
+      <if test="sellerLogoUrl != null" >
+        Seller_Logo_URL,
+      </if>
+      <if test="set != null" >
+        `Set`,
+      </if>
+      <if test="shaftHeightInches != null" >
+        Shaft_Height_Inches,
+      </if>
+      <if test="shaftWidthInches != null" >
+        Shaft_Width_Inches,
+      </if>
+      <if test="shape != null" >
+        Shape,
+      </if>
+      <if test="shoeClosure != null" >
+        Shoe_Closure,
+      </if>
+      <if test="shortDescription != null" >
+        Short_Description,
+      </if>
+      <if test="silhouette != null" >
+        Silhouette,
+      </if>
+      <if test="sizeOrigin != null" >
+        Size_Origin,
+      </if>
+      <if test="skirtLength != null" >
+        Skirt_Length,
+      </if>
+      <if test="skirtType != null" >
+        Skirt_Type,
+      </if>
+      <if test="sku != null" >
+        SKU,
+      </if>
+      <if test="sleeveLength != null" >
+        Sleeve_Length,
+      </if>
+      <if test="sleeveLengthInches != null" >
+        Sleeve_Length_Inches,
+      </if>
+      <if test="specialty != null" >
+        Specialty,
+      </if>
+      <if test="sport != null" >
+        Sport,
+      </if>
+      <if test="stKeyword != null" >
+        ST_Keyword,
+      </if>
+      <if test="stone != null" >
+        Stone,
+      </if>
+      <if test="storeTitle != null" >
+        Store_Title,
+      </if>
+      <if test="strapDropInches != null" >
+        Strap_Drop_Inches,
+      </if>
+      <if test="straps != null" >
+        Straps,
+      </if>
+      <if test="style != null" >
+        Style,
+      </if>
+      <if test="supplier != null" >
+        Supplier,
+      </if>
+      <if test="supplierPo != null" >
+        Supplier_PO,
+      </if>
+      <if test="suppliercode != null" >
+        SUPPLIERCODE,
+      </if>
+      <if test="supplierid != null" >
+        SUPPLIERID,
+      </if>
+      <if test="swimwearBottom != null" >
+        Swimwear_Bottom,
+      </if>
+      <if test="swimwearTop != null" >
+        Swimwear_Top,
+      </if>
+      <if test="taxproductcode != null" >
+        TAXPRODUCTCODE,
+      </if>
+      <if test="theme != null" >
+        Theme,
+      </if>
+      <if test="threadCount != null" >
+        Thread_Count,
+      </if>
+      <if test="tieLength != null" >
+        Tie_Length,
+      </if>
+      <if test="tieWidth != null" >
+        Tie_Width,
+      </if>
+      <if test="totalDressLengthInches != null" >
+        Total_Dress_Length_Inches,
+      </if>
+      <if test="totalJacketLengthInches != null" >
+        Total_Jacket_Length_Inches,
+      </if>
+      <if test="totalLengthInches != null" >
+        Total_Length_Inches,
+      </if>
+      <if test="totalSkirtLengthInches != null" >
+        Total_Skirt_Length_Inches,
+      </if>
+      <if test="totalquantitypooled != null" >
+        TOTALQUANTITYPOOLED,
+      </if>
+      <if test="umbrellaOpener != null" >
+        Umbrella_Opener,
+      </if>
+      <if test="upc != null" >
+        UPC,
+      </if>
+      <if test="uploadhaslastmodifiedgmt != null" >
+        UPLOADHASLASTMODIFIEDGMT,
+      </if>
+      <if test="vents != null" >
+        Vents,
+      </if>
+      <if test="videoInputs != null" >
+        Video_Inputs,
+      </if>
+      <if test="waistAcrossInches != null" >
+        Waist_Across_Inches,
+      </if>
+      <if test="walletHeightInches != null" >
+        Wallet_Height_Inches,
+      </if>
+      <if test="warehouselocation != null" >
+        WAREHOUSELOCATION,
+      </if>
+      <if test="warranty != null" >
+        Warranty,
+      </if>
+      <if test="weight2 != null" >
+        Weight2,
+      </if>
+      <if test="width2 != null" >
+        Width2,
+      </if>
+      <if test="year != null" >
+        Year,
+      </if>
+      <if test="room != null" >
+        Room,
+      </if>
+      <if test="latestSupplier != null" >
+        Latest_Supplier,
+      </if>
+      <if test="bandSize != null" >
+        Band_Size,
+      </if>
+      <if test="walletWidthInches != null" >
+        Wallet_Width_Inches,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="inventoryNumber != null" >
+        #{inventoryNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="msrp != null" >
+        #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageonePrice != null" >
+        #{voyageonePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingCost != null" >
+        #{shippingCost,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mainImageUrl != null" >
+        #{mainImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="additionalImages != null" >
+        #{additionalImages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parentChildStandalone != null" >
+        #{parentChildStandalone,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemGroupId != null" >
+        #{itemGroupId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationSwapImageUrl != null" >
+        #{variationSwapImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="varyingAttributeNames != null" >
+        #{varyingAttributeNames,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="varyingAttribute1 != null" >
+        #{varyingAttribute1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="varyingAttribute2 != null" >
+        #{varyingAttribute2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand1 != null" >
+        #{brand1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOrigin != null" >
+        #{countryOfOrigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="seriesName != null" >
+        #{seriesName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gtin != null" >
+        #{gtin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mpn != null" >
+        #{mpn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="storeCategory != null" >
+        #{storeCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material != null" >
+        #{material,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pattern != null" >
+        #{pattern,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ageGroup != null" >
+        #{ageGroup,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="length != null" >
+        #{length,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="width != null" >
+        #{width,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonBeautyItemType != null" >
+        #{amazonBeautyItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonDepartment != null" >
+        #{amazonDepartment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonHeelHeight != null" >
+        #{amazonHeelHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonHomeItemType != null" >
+        #{amazonHomeItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonInseam != null" >
+        #{amazonInseam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonItemType != null" >
+        #{amazonItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords1 != null" >
+        #{amazonKeywords1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords2 != null" >
+        #{amazonKeywords2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords3 != null" >
+        #{amazonKeywords3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords4 != null" >
+        #{amazonKeywords4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonLegStyle != null" >
+        #{amazonLegStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonMensItemType != null" >
+        #{amazonMensItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonPhotoReady != null" >
+        #{amazonPhotoReady,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonProductType != null" >
+        #{amazonProductType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonRise != null" >
+        #{amazonRise,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeItemType != null" >
+        #{amazonShoeItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeSize != null" >
+        #{amazonShoeSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeSizeMap != null" >
+        #{amazonShoeSizeMap,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeWidth != null" >
+        #{amazonShoeWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonSpecialSize != null" >
+        #{amazonSpecialSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonVariantDetails != null" >
+        #{amazonVariantDetails,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonWaistSize != null" >
+        #{amazonWaistSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonWomensItemType != null" >
+        #{amazonWomensItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="apparelStyle != null" >
+        #{apparelStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="application != null" >
+        #{application,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="applicationArea != null" >
+        #{applicationArea,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonCategory != null" >
+        #{amazonCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="applicationType != null" >
+        #{applicationType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="asin != null" >
+        #{asin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="assembly != null" >
+        #{assembly,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="auctionDescription != null" >
+        #{auctionDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="audioOutputs != null" >
+        #{audioOutputs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="backCoverage != null" >
+        #{backCoverage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="backPockets != null" >
+        #{backPockets,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagDepthInches != null" >
+        #{bagDepthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagHeightInches != null" >
+        #{bagHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagLengthInches != null" >
+        #{bagLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagWidthInches != null" >
+        #{bagWidthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bakeShape != null" >
+        #{bakeShape,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="beddingSize != null" >
+        #{beddingSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoEbayCategory != null" >
+        #{bhfoEbayCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoEbayStoreCategory != null" >
+        #{bhfoEbayStoreCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoAccessory1DescriptionC != null" >
+        #{bhfoAccessory1DescriptionC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoAccessory1TitleC != null" >
+        #{bhfoAccessory1TitleC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoColorC != null" >
+        #{bhfoColorC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoColorTextC != null" >
+        #{bhfoColorTextC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoCountryOfOriginC != null" >
+        #{bhfoCountryOfOriginC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoFlawDescriptionC != null" >
+        #{bhfoFlawDescriptionC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoSizeC != null" >
+        #{bhfoSizeC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoSizeAdditionalC != null" >
+        #{bhfoSizeAdditionalC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoSizeTypeC != null" >
+        #{bhfoSizeTypeC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoStyleC != null" >
+        #{bhfoStyleC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoStyleNameC != null" >
+        #{bhfoStyleNameC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoStyleTypeC != null" >
+        #{bhfoStyleTypeC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottleMaterial != null" >
+        #{bottleMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottleSizeOunces != null" >
+        #{bottleSizeOunces,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottomClosure != null" >
+        #{bottomClosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottomRise != null" >
+        #{bottomRise,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="braClosure != null" >
+        #{braClosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="braFeatures != null" >
+        #{braFeatures,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="braStraps != null" >
+        #{braStraps,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand2 != null" >
+        #{brand2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="caStoreCategory != null" >
+        #{caStoreCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="candleSize != null" >
+        #{candleSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="capacityOunces != null" >
+        #{capacityOunces,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="classification != null" >
+        #{classification,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="closure != null" >
+        #{closure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="collar != null" >
+        #{collar,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="collection != null" >
+        #{collection,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color2 != null" >
+        #{color2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compartment != null" >
+        #{compartment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compatibleBrands != null" >
+        #{compatibleBrands,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compatibleProducts != null" >
+        #{compatibleProducts,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="condition != null" >
+        #{condition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="connectivity != null" >
+        #{connectivity,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cookingFunctions != null" >
+        #{cookingFunctions,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOrigin2 != null" >
+        #{countryOfOrigin2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cupSize != null" >
+        #{cupSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="denimWash != null" >
+        #{denimWash,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="depthInches != null" >
+        #{depthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dimensions != null" >
+        #{dimensions,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dimensions2 != null" >
+        #{dimensions2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dirtCapture != null" >
+        #{dirtCapture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="display != null" >
+        #{display,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dressLength != null" >
+        #{dressLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dressType != null" >
+        #{dressType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dropLength != null" >
+        #{dropLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ean != null" >
+        #{ean,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="earpieceDesign != null" >
+        #{earpieceDesign,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ebayHeelHeight != null" >
+        #{ebayHeelHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fabricType != null" >
+        #{fabricType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="features != null" >
+        #{features,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featuresAndFastening != null" >
+        #{featuresAndFastening,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="features2 != null" >
+        #{features2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="finish != null" >
+        #{finish,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fit != null" >
+        #{fit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fitDesign != null" >
+        #{fitDesign,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="flagstyle != null" >
+        #{flagstyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="formulation != null" >
+        #{formulation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frameMaterialType != null" >
+        #{frameMaterialType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frameMetal != null" >
+        #{frameMetal,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frontStyle != null" >
+        #{frontStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fuelSource != null" >
+        #{fuelSource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="function != null" >
+        #{function,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="furType != null" >
+        #{furType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender2 != null" >
+        #{gender2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="genre != null" >
+        #{genre,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handleType != null" >
+        #{handleType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="harmonizedCode != null" >
+        #{harmonizedCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="heelHeightInches != null" >
+        #{heelHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="height2 != null" >
+        #{height2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl1 != null" >
+        #{imageUrl1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl2 != null" >
+        #{imageUrl2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl3 != null" >
+        #{imageUrl3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl4 != null" >
+        #{imageUrl4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="includes != null" >
+        #{includes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="includes2 != null" >
+        #{includes2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="inseamInches != null" >
+        #{inseamInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="insertMaterial != null" >
+        #{insertMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isAChildItem != null" >
+        #{isAChildItem,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isAParentItem != null" >
+        #{isAParentItem,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isblocked != null" >
+        #{isblocked,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isbn != null" >
+        #{isbn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isfba != null" >
+        #{isfba,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemShape != null" >
+        #{itemShape,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemSubtitle != null" >
+        #{itemSubtitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemTitle != null" >
+        #{itemTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemauctiondescription != null" >
+        #{itemauctiondescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl10 != null" >
+        #{itemimageurl10,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl5 != null" >
+        #{itemimageurl5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl6 != null" >
+        #{itemimageurl6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl7 != null" >
+        #{itemimageurl7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="jacketLegth != null" >
+        #{jacketLegth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="jacketSleeveLengthInches != null" >
+        #{jacketSleeveLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="length2 != null" >
+        #{length2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensColor != null" >
+        #{lensColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensMaterialType != null" >
+        #{lensMaterialType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensWidthMillimeters != null" >
+        #{lensWidthMillimeters,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lid != null" >
+        #{lid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lightbulbType != null" >
+        #{lightbulbType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerDescription != null" >
+        #{manufacturerDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material2 != null" >
+        #{material2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materialSpecialty != null" >
+        #{materialSpecialty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="maxMagnification != null" >
+        #{maxMagnification,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliCategory != null" >
+        #{meliCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliColor != null" >
+        #{meliColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliSeason != null" >
+        #{meliSeason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliSize != null" >
+        #{meliSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliTitle != null" >
+        #{meliTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelNumber != null" >
+        #{modelNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelNumber2 != null" >
+        #{modelNumber2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="movement != null" >
+        #{movement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mpn2 != null" >
+        #{mpn2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="neckSize != null" >
+        #{neckSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="neckline != null" >
+        #{neckline,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemlevelshipping != null" >
+        #{itemlevelshipping,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nonStick != null" >
+        #{nonStick,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="numberOfPieces != null" >
+        #{numberOfPieces,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="numberOfSlices != null" >
+        #{numberOfSlices,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="occasion != null" >
+        #{occasion,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="openQuantity != null" >
+        #{openQuantity,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="openquantitypooled != null" >
+        #{openquantitypooled,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="padding != null" >
+        #{padding,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pantType != null" >
+        #{pantType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pantyStyle != null" >
+        #{pantyStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parentSku != null" >
+        #{parentSku,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pattern2 != null" >
+        #{pattern2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="photoSize != null" >
+        #{photoSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pillowSize != null" >
+        #{pillowSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="platformHeightInches != null" >
+        #{platformHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pocketStyle != null" >
+        #{pocketStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="polarizationType != null" >
+        #{polarizationType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="power != null" >
+        #{power,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productMargin != null" >
+        #{productMargin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="protection != null" >
+        #{protection,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="quantityAvailable != null" >
+        #{quantityAvailable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="rating != null" >
+        #{rating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="receivedInInventory != null" >
+        #{receivedInInventory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="recommendedAge != null" >
+        #{recommendedAge,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="recommendedAgeRange != null" >
+        #{recommendedAgeRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipName != null" >
+        #{relationshipName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="retailPrice != null" >
+        #{retailPrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="riseInches != null" >
+        #{riseInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ropDateFirstComplete != null" >
+        #{ropDateFirstComplete,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="rugStyle != null" >
+        #{rugStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="rykaConsignment != null" >
+        #{rykaConsignment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="scentType != null" >
+        #{scentType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="season != null" >
+        #{season,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sellerLogoUrl != null" >
+        #{sellerLogoUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="set != null" >
+        #{set,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shaftHeightInches != null" >
+        #{shaftHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shaftWidthInches != null" >
+        #{shaftWidthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shape != null" >
+        #{shape,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoeClosure != null" >
+        #{shoeClosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        #{shortDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="silhouette != null" >
+        #{silhouette,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizeOrigin != null" >
+        #{sizeOrigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skirtLength != null" >
+        #{skirtLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skirtType != null" >
+        #{skirtType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sku != null" >
+        #{sku,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sleeveLength != null" >
+        #{sleeveLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sleeveLengthInches != null" >
+        #{sleeveLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialty != null" >
+        #{specialty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sport != null" >
+        #{sport,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stKeyword != null" >
+        #{stKeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stone != null" >
+        #{stone,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="storeTitle != null" >
+        #{storeTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="strapDropInches != null" >
+        #{strapDropInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="straps != null" >
+        #{straps,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="style != null" >
+        #{style,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="supplier != null" >
+        #{supplier,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="supplierPo != null" >
+        #{supplierPo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="suppliercode != null" >
+        #{suppliercode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="supplierid != null" >
+        #{supplierid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="swimwearBottom != null" >
+        #{swimwearBottom,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="swimwearTop != null" >
+        #{swimwearTop,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxproductcode != null" >
+        #{taxproductcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="theme != null" >
+        #{theme,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="threadCount != null" >
+        #{threadCount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="tieLength != null" >
+        #{tieLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="tieWidth != null" >
+        #{tieWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalDressLengthInches != null" >
+        #{totalDressLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalJacketLengthInches != null" >
+        #{totalJacketLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalLengthInches != null" >
+        #{totalLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalSkirtLengthInches != null" >
+        #{totalSkirtLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalquantitypooled != null" >
+        #{totalquantitypooled,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="umbrellaOpener != null" >
+        #{umbrellaOpener,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc != null" >
+        #{upc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="uploadhaslastmodifiedgmt != null" >
+        #{uploadhaslastmodifiedgmt,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="vents != null" >
+        #{vents,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="videoInputs != null" >
+        #{videoInputs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="waistAcrossInches != null" >
+        #{waistAcrossInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="walletHeightInches != null" >
+        #{walletHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="warehouselocation != null" >
+        #{warehouselocation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="warranty != null" >
+        #{warranty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight2 != null" >
+        #{weight2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="width2 != null" >
+        #{width2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="year != null" >
+        #{year,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="room != null" >
+        #{room,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="latestSupplier != null" >
+        #{latestSupplier,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bandSize != null" >
+        #{bandSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="walletWidthInches != null" >
+        #{walletWidthInches,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
+    update voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    <set >
+      <if test="msrp != null" >
+        MSRP = #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageonePrice != null" >
+        VoyageOne_Price = #{voyageonePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingCost != null" >
+        Shipping_Cost = #{shippingCost,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        Weight = #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        md5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        Title = #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        Description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mainImageUrl != null" >
+        Main_Image_URL = #{mainImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="quantity != null" >
+        Quantity = #{quantity,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="additionalImages != null" >
+        Additional_Images = #{additionalImages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parentChildStandalone != null" >
+        Parent_Child_Standalone = #{parentChildStandalone,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemGroupId != null" >
+        Item_Group_ID = #{itemGroupId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationSwapImageUrl != null" >
+        Variation_Swap_Image_URL = #{variationSwapImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="varyingAttributeNames != null" >
+        Varying_Attribute_Names = #{varyingAttributeNames,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="varyingAttribute1 != null" >
+        Varying_Attribute_1 = #{varyingAttribute1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="varyingAttribute2 != null" >
+        Varying_Attribute_2 = #{varyingAttribute2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand1 != null" >
+        Brand1 = #{brand1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOrigin != null" >
+        Country_Of_Origin = #{countryOfOrigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="seriesName != null" >
+        Series_Name = #{seriesName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gtin != null" >
+        GTIN = #{gtin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mpn != null" >
+        MPN = #{mpn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="storeCategory != null" >
+        Store_Category = #{storeCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material != null" >
+        Material = #{material,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pattern != null" >
+        Pattern = #{pattern,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color != null" >
+        Color = #{color,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="size != null" >
+        Size = #{size,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        Gender = #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ageGroup != null" >
+        Age_Group = #{ageGroup,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="length != null" >
+        Length = #{length,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="width != null" >
+        Width = #{width,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="height != null" >
+        Height = #{height,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonBeautyItemType != null" >
+        Amazon_Beauty_Item_Type = #{amazonBeautyItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonDepartment != null" >
+        Amazon_Department = #{amazonDepartment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonHeelHeight != null" >
+        Amazon_Heel_Height = #{amazonHeelHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonHomeItemType != null" >
+        Amazon_Home_Item_Type = #{amazonHomeItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonInseam != null" >
+        Amazon_Inseam = #{amazonInseam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonItemType != null" >
+        Amazon_Item_Type = #{amazonItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords1 != null" >
+        Amazon_keywords_1 = #{amazonKeywords1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords2 != null" >
+        Amazon_keywords_2 = #{amazonKeywords2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords3 != null" >
+        Amazon_keywords_3 = #{amazonKeywords3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonKeywords4 != null" >
+        Amazon_keywords_4 = #{amazonKeywords4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonLegStyle != null" >
+        Amazon_Leg_Style = #{amazonLegStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonMensItemType != null" >
+        Amazon_Mens_Item_Type = #{amazonMensItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonPhotoReady != null" >
+        Amazon_Photo_Ready = #{amazonPhotoReady,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonProductType != null" >
+        Amazon_Product_Type = #{amazonProductType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonRise != null" >
+        Amazon_Rise = #{amazonRise,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeItemType != null" >
+        Amazon_Shoe_Item_Type = #{amazonShoeItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeSize != null" >
+        Amazon_Shoe_Size = #{amazonShoeSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeSizeMap != null" >
+        Amazon_Shoe_Size_Map = #{amazonShoeSizeMap,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonShoeWidth != null" >
+        Amazon_Shoe_Width = #{amazonShoeWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonSpecialSize != null" >
+        Amazon_Special_Size = #{amazonSpecialSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonVariantDetails != null" >
+        Amazon_Variant_Details = #{amazonVariantDetails,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonWaistSize != null" >
+        Amazon_Waist_Size = #{amazonWaistSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonWomensItemType != null" >
+        Amazon_Womens_Item_Type = #{amazonWomensItemType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="apparelStyle != null" >
+        Apparel_Style = #{apparelStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="application != null" >
+        Application = #{application,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="applicationArea != null" >
+        Application_Area = #{applicationArea,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amazonCategory != null" >
+        Amazon_Category = #{amazonCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="applicationType != null" >
+        Application_Type = #{applicationType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="asin != null" >
+        ASIN = #{asin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="assembly != null" >
+        Assembly = #{assembly,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attachment != null" >
+        Attachment = #{attachment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="auctionDescription != null" >
+        Auction_Description = #{auctionDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="audioOutputs != null" >
+        Audio_Outputs = #{audioOutputs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="backCoverage != null" >
+        Back_Coverage = #{backCoverage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="backPockets != null" >
+        Back_Pockets = #{backPockets,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagDepthInches != null" >
+        Bag_Depth_Inches = #{bagDepthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagHeightInches != null" >
+        Bag_Height_Inches = #{bagHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagLengthInches != null" >
+        Bag_Length_Inches = #{bagLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bagWidthInches != null" >
+        Bag_Width_Inches = #{bagWidthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bakeShape != null" >
+        Bake_Shape = #{bakeShape,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="beddingSize != null" >
+        Bedding_Size = #{beddingSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoEbayCategory != null" >
+        BHFO_eBay_Category = #{bhfoEbayCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoEbayStoreCategory != null" >
+        BHFO_eBay_Store_Category = #{bhfoEbayStoreCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoAccessory1DescriptionC != null" >
+        bhfo_accessory_1_description_c = #{bhfoAccessory1DescriptionC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoAccessory1TitleC != null" >
+        bhfo_accessory_1_title_c = #{bhfoAccessory1TitleC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoColorC != null" >
+        bhfo_color_c = #{bhfoColorC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoColorTextC != null" >
+        bhfo_color_text_c = #{bhfoColorTextC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoCountryOfOriginC != null" >
+        bhfo_country_of_origin_c = #{bhfoCountryOfOriginC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoFlawDescriptionC != null" >
+        bhfo_flaw_description_c = #{bhfoFlawDescriptionC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoSizeC != null" >
+        bhfo_size_c = #{bhfoSizeC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoSizeAdditionalC != null" >
+        bhfo_size_additional_c = #{bhfoSizeAdditionalC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoSizeTypeC != null" >
+        bhfo_size_type_c = #{bhfoSizeTypeC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoStyleC != null" >
+        bhfo_style_c = #{bhfoStyleC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoStyleNameC != null" >
+        bhfo_style_name_c = #{bhfoStyleNameC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bhfoStyleTypeC != null" >
+        bhfo_style_type_c = #{bhfoStyleTypeC,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottleMaterial != null" >
+        Bottle_Material = #{bottleMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottleSizeOunces != null" >
+        Bottle_Size_Ounces = #{bottleSizeOunces,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottomClosure != null" >
+        Bottom_Closure = #{bottomClosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bottomRise != null" >
+        Bottom_Rise = #{bottomRise,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="braClosure != null" >
+        Bra_Closure = #{braClosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="braFeatures != null" >
+        Bra_Features = #{braFeatures,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="braStraps != null" >
+        Bra_Straps = #{braStraps,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand2 != null" >
+        Brand2 = #{brand2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="caStoreCategory != null" >
+        CA_Store_Category = #{caStoreCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="candleSize != null" >
+        Candle_Size = #{candleSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="capacityOunces != null" >
+        Capacity_Ounces = #{capacityOunces,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="classification != null" >
+        Classification = #{classification,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="closure != null" >
+        Closure = #{closure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="collar != null" >
+        Collar = #{collar,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="collection != null" >
+        Collection = #{collection,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color2 != null" >
+        Color2 = #{color2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compartment != null" >
+        Compartment = #{compartment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compatibleBrands != null" >
+        Compatible_Brands = #{compatibleBrands,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compatibleProducts != null" >
+        Compatible_Products = #{compatibleProducts,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="condition != null" >
+        condition = #{condition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="connectivity != null" >
+        Connectivity = #{connectivity,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cookingFunctions != null" >
+        Cooking_Functions = #{cookingFunctions,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOrigin2 != null" >
+        Country_of_Origin2 = #{countryOfOrigin2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cupSize != null" >
+        Cup_Size = #{cupSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="denimWash != null" >
+        Denim_Wash = #{denimWash,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="depthInches != null" >
+        Depth_Inches = #{depthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dimensions != null" >
+        Dimensions = #{dimensions,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dimensions2 != null" >
+        Dimensions_2 = #{dimensions2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dirtCapture != null" >
+        Dirt_Capture = #{dirtCapture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="display != null" >
+        Display = #{display,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dressLength != null" >
+        Dress_Length = #{dressLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dressType != null" >
+        Dress_Type = #{dressType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dropLength != null" >
+        Drop_Length = #{dropLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ean != null" >
+        EAN = #{ean,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="earpieceDesign != null" >
+        Earpiece_Design = #{earpieceDesign,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ebayHeelHeight != null" >
+        eBay_Heel_Height = #{ebayHeelHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fabricType != null" >
+        Fabric_Type = #{fabricType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="features != null" >
+        Features = #{features,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featuresAndFastening != null" >
+        Features_and_Fastening = #{featuresAndFastening,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="features2 != null" >
+        Features_2 = #{features2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="finish != null" >
+        Finish = #{finish,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fit != null" >
+        Fit = #{fit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fitDesign != null" >
+        Fit_Design = #{fitDesign,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="flagstyle != null" >
+        FLAGSTYLE = #{flagstyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="formulation != null" >
+        Formulation = #{formulation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frameMaterialType != null" >
+        Frame_Material_Type = #{frameMaterialType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frameMetal != null" >
+        Frame_Metal = #{frameMetal,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frontStyle != null" >
+        Front_Style = #{frontStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fuelSource != null" >
+        Fuel_Source = #{fuelSource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="function != null" >
+        Function = #{function,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="furType != null" >
+        Fur_Type = #{furType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender2 != null" >
+        Gender2 = #{gender2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="genre != null" >
+        Genre = #{genre,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handleType != null" >
+        Handle_Type = #{handleType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="harmonizedCode != null" >
+        Harmonized_Code = #{harmonizedCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="heelHeightInches != null" >
+        Heel_Height_Inches = #{heelHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="height2 != null" >
+        Height2 = #{height2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl1 != null" >
+        Image_URL_1 = #{imageUrl1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl2 != null" >
+        Image_URL_2 = #{imageUrl2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl3 != null" >
+        Image_URL_3 = #{imageUrl3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl4 != null" >
+        Image_URL_4 = #{imageUrl4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="includes != null" >
+        Includes = #{includes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="includes2 != null" >
+        Includes_2 = #{includes2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="inseamInches != null" >
+        Inseam_Inches = #{inseamInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="insertMaterial != null" >
+        Insert_Material = #{insertMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isAChildItem != null" >
+        Is_a_Child_Item = #{isAChildItem,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isAParentItem != null" >
+        Is_a_Parent_Item = #{isAParentItem,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isblocked != null" >
+        ISBLOCKED = #{isblocked,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isbn != null" >
+        ISBN = #{isbn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isfba != null" >
+        ISFBA = #{isfba,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemId != null" >
+        Item_ID = #{itemId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemShape != null" >
+        Item_Shape = #{itemShape,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemSubtitle != null" >
+        Item_Subtitle = #{itemSubtitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemTitle != null" >
+        Item_Title = #{itemTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemauctiondescription != null" >
+        ITEMAUCTIONDESCRIPTION = #{itemauctiondescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl10 != null" >
+        ITEMIMAGEURL10 = #{itemimageurl10,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl5 != null" >
+        ITEMIMAGEURL5 = #{itemimageurl5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl6 != null" >
+        ITEMIMAGEURL6 = #{itemimageurl6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemimageurl7 != null" >
+        ITEMIMAGEURL7 = #{itemimageurl7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="jacketLegth != null" >
+        Jacket_Legth = #{jacketLegth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="jacketSleeveLengthInches != null" >
+        Jacket_Sleeve_Length_Inches = #{jacketSleeveLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="length2 != null" >
+        Length2 = #{length2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensColor != null" >
+        Lens_Color = #{lensColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensMaterialType != null" >
+        Lens_Material_Type = #{lensMaterialType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensWidthMillimeters != null" >
+        Lens_Width_Millimeters = #{lensWidthMillimeters,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lid != null" >
+        Lid = #{lid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lightbulbType != null" >
+        Lightbulb_Type = #{lightbulbType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        Manufacturer = #{manufacturer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerDescription != null" >
+        Manufacturer_Description = #{manufacturerDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material2 != null" >
+        Material2 = #{material2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materialSpecialty != null" >
+        Material_Specialty = #{materialSpecialty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="maxMagnification != null" >
+        Max_Magnification = #{maxMagnification,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliCategory != null" >
+        MeLi_Category = #{meliCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliColor != null" >
+        MeLi_Color = #{meliColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliSeason != null" >
+        MeLi_Season = #{meliSeason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliSize != null" >
+        MeLi_Size = #{meliSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="meliTitle != null" >
+        MeLi_Title = #{meliTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelNumber != null" >
+        Model_Number = #{modelNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelNumber2 != null" >
+        Model_Number2 = #{modelNumber2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="movement != null" >
+        Movement = #{movement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mpn2 != null" >
+        MPN2 = #{mpn2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="neckSize != null" >
+        Neck_Size = #{neckSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="neckline != null" >
+        Neckline = #{neckline,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemlevelshipping != null" >
+        ITEMLEVELSHIPPING = #{itemlevelshipping,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nonStick != null" >
+        Non_Stick = #{nonStick,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="numberOfPieces != null" >
+        Number_of_Pieces = #{numberOfPieces,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="numberOfSlices != null" >
+        Number_of_Slices = #{numberOfSlices,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="occasion != null" >
+        Occasion = #{occasion,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="openQuantity != null" >
+        Open_Quantity = #{openQuantity,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="openquantitypooled != null" >
+        OPENQUANTITYPOOLED = #{openquantitypooled,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="padding != null" >
+        Padding = #{padding,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pantType != null" >
+        Pant_Type = #{pantType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pantyStyle != null" >
+        Panty_Style = #{pantyStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parentSku != null" >
+        Parent_SKU = #{parentSku,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pattern2 != null" >
+        Pattern2 = #{pattern2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="photoSize != null" >
+        Photo_Size = #{photoSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pillowSize != null" >
+        Pillow_Size = #{pillowSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="platform != null" >
+        Platform = #{platform,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="platformHeightInches != null" >
+        Platform_Height_Inches = #{platformHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pocketStyle != null" >
+        Pocket_Style = #{pocketStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="polarizationType != null" >
+        Polarization_Type = #{polarizationType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="power != null" >
+        Power = #{power,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productMargin != null" >
+        Product_Margin = #{productMargin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="protection != null" >
+        Protection = #{protection,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="quantityAvailable != null" >
+        Quantity_Available = #{quantityAvailable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="rating != null" >
+        Rating = #{rating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="receivedInInventory != null" >
+        Received_in_Inventory = #{receivedInInventory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="recommendedAge != null" >
+        Recommended_Age = #{recommendedAge,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="recommendedAgeRange != null" >
+        Recommended_Age_Range = #{recommendedAgeRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipName != null" >
+        Relationship_Name = #{relationshipName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="retailPrice != null" >
+        Retail_Price = #{retailPrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="riseInches != null" >
+        Rise_Inches = #{riseInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ropDateFirstComplete != null" >
+        rop_date_first_complete = #{ropDateFirstComplete,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="rugStyle != null" >
+        Rug_Style = #{rugStyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="rykaConsignment != null" >
+        Ryka_Consignment = #{rykaConsignment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="scentType != null" >
+        Scent_Type = #{scentType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="season != null" >
+        Season = #{season,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sellerLogoUrl != null" >
+        Seller_Logo_URL = #{sellerLogoUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="set != null" >
+        Set = #{set,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shaftHeightInches != null" >
+        Shaft_Height_Inches = #{shaftHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shaftWidthInches != null" >
+        Shaft_Width_Inches = #{shaftWidthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shape != null" >
+        Shape = #{shape,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoeClosure != null" >
+        Shoe_Closure = #{shoeClosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        Short_Description = #{shortDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="silhouette != null" >
+        Silhouette = #{silhouette,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizeOrigin != null" >
+        Size_Origin = #{sizeOrigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skirtLength != null" >
+        Skirt_Length = #{skirtLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skirtType != null" >
+        Skirt_Type = #{skirtType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sku != null" >
+        SKU = #{sku,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sleeveLength != null" >
+        Sleeve_Length = #{sleeveLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sleeveLengthInches != null" >
+        Sleeve_Length_Inches = #{sleeveLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialty != null" >
+        Specialty = #{specialty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sport != null" >
+        Sport = #{sport,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stKeyword != null" >
+        ST_Keyword = #{stKeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stone != null" >
+        Stone = #{stone,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="storeTitle != null" >
+        Store_Title = #{storeTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="strapDropInches != null" >
+        Strap_Drop_Inches = #{strapDropInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="straps != null" >
+        Straps = #{straps,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="style != null" >
+        Style = #{style,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="supplier != null" >
+        Supplier = #{supplier,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="supplierPo != null" >
+        Supplier_PO = #{supplierPo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="suppliercode != null" >
+        SUPPLIERCODE = #{suppliercode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="supplierid != null" >
+        SUPPLIERID = #{supplierid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="swimwearBottom != null" >
+        Swimwear_Bottom = #{swimwearBottom,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="swimwearTop != null" >
+        Swimwear_Top = #{swimwearTop,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxproductcode != null" >
+        TAXPRODUCTCODE = #{taxproductcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="theme != null" >
+        Theme = #{theme,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="threadCount != null" >
+        Thread_Count = #{threadCount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="tieLength != null" >
+        Tie_Length = #{tieLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="tieWidth != null" >
+        Tie_Width = #{tieWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalDressLengthInches != null" >
+        Total_Dress_Length_Inches = #{totalDressLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalJacketLengthInches != null" >
+        Total_Jacket_Length_Inches = #{totalJacketLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalLengthInches != null" >
+        Total_Length_Inches = #{totalLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalSkirtLengthInches != null" >
+        Total_Skirt_Length_Inches = #{totalSkirtLengthInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalquantitypooled != null" >
+        TOTALQUANTITYPOOLED = #{totalquantitypooled,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="umbrellaOpener != null" >
+        Umbrella_Opener = #{umbrellaOpener,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc != null" >
+        UPC = #{upc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="uploadhaslastmodifiedgmt != null" >
+        UPLOADHASLASTMODIFIEDGMT = #{uploadhaslastmodifiedgmt,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="vents != null" >
+        Vents = #{vents,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="videoInputs != null" >
+        Video_Inputs = #{videoInputs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="waistAcrossInches != null" >
+        Waist_Across_Inches = #{waistAcrossInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="walletHeightInches != null" >
+        Wallet_Height_Inches = #{walletHeightInches,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="warehouselocation != null" >
+        WAREHOUSELOCATION = #{warehouselocation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="warranty != null" >
+        Warranty = #{warranty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight2 != null" >
+        Weight2 = #{weight2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="width2 != null" >
+        Width2 = #{width2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="year != null" >
+        Year = #{year,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="room != null" >
+        Room = #{room,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="latestSupplier != null" >
+        Latest_Supplier = #{latestSupplier,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bandSize != null" >
+        Band_Size = #{bandSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="walletWidthInches != null" >
+        Wallet_Width_Inches = #{walletWidthInches,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
+    update voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    set MSRP = #{msrp,jdbcType=VARCHAR},
+      VoyageOne_Price = #{voyageonePrice,jdbcType=VARCHAR},
+      Shipping_Cost = #{shippingCost,jdbcType=VARCHAR},
+      Weight = #{weight,jdbcType=VARCHAR},
+      md5 = #{md5,jdbcType=VARCHAR},
+      Title = #{title,jdbcType=LONGVARCHAR},
+      Description = #{description,jdbcType=LONGVARCHAR},
+      Main_Image_URL = #{mainImageUrl,jdbcType=LONGVARCHAR},
+      Quantity = #{quantity,jdbcType=LONGVARCHAR},
+      Additional_Images = #{additionalImages,jdbcType=LONGVARCHAR},
+      Parent_Child_Standalone = #{parentChildStandalone,jdbcType=LONGVARCHAR},
+      Item_Group_ID = #{itemGroupId,jdbcType=LONGVARCHAR},
+      Variation_Swap_Image_URL = #{variationSwapImageUrl,jdbcType=LONGVARCHAR},
+      Varying_Attribute_Names = #{varyingAttributeNames,jdbcType=LONGVARCHAR},
+      Varying_Attribute_1 = #{varyingAttribute1,jdbcType=LONGVARCHAR},
+      Varying_Attribute_2 = #{varyingAttribute2,jdbcType=LONGVARCHAR},
+      Brand1 = #{brand1,jdbcType=LONGVARCHAR},
+      Country_Of_Origin = #{countryOfOrigin,jdbcType=LONGVARCHAR},
+      Series_Name = #{seriesName,jdbcType=LONGVARCHAR},
+      GTIN = #{gtin,jdbcType=LONGVARCHAR},
+      MPN = #{mpn,jdbcType=LONGVARCHAR},
+      Store_Category = #{storeCategory,jdbcType=LONGVARCHAR},
+      Material = #{material,jdbcType=LONGVARCHAR},
+      Pattern = #{pattern,jdbcType=LONGVARCHAR},
+      Color = #{color,jdbcType=LONGVARCHAR},
+      Size = #{size,jdbcType=LONGVARCHAR},
+      Gender = #{gender,jdbcType=LONGVARCHAR},
+      Age_Group = #{ageGroup,jdbcType=LONGVARCHAR},
+      Length = #{length,jdbcType=LONGVARCHAR},
+      Width = #{width,jdbcType=LONGVARCHAR},
+      Height = #{height,jdbcType=LONGVARCHAR},
+      Amazon_Beauty_Item_Type = #{amazonBeautyItemType,jdbcType=LONGVARCHAR},
+      Amazon_Department = #{amazonDepartment,jdbcType=LONGVARCHAR},
+      Amazon_Heel_Height = #{amazonHeelHeight,jdbcType=LONGVARCHAR},
+      Amazon_Home_Item_Type = #{amazonHomeItemType,jdbcType=LONGVARCHAR},
+      Amazon_Inseam = #{amazonInseam,jdbcType=LONGVARCHAR},
+      Amazon_Item_Type = #{amazonItemType,jdbcType=LONGVARCHAR},
+      Amazon_keywords_1 = #{amazonKeywords1,jdbcType=LONGVARCHAR},
+      Amazon_keywords_2 = #{amazonKeywords2,jdbcType=LONGVARCHAR},
+      Amazon_keywords_3 = #{amazonKeywords3,jdbcType=LONGVARCHAR},
+      Amazon_keywords_4 = #{amazonKeywords4,jdbcType=LONGVARCHAR},
+      Amazon_Leg_Style = #{amazonLegStyle,jdbcType=LONGVARCHAR},
+      Amazon_Mens_Item_Type = #{amazonMensItemType,jdbcType=LONGVARCHAR},
+      Amazon_Photo_Ready = #{amazonPhotoReady,jdbcType=LONGVARCHAR},
+      Amazon_Product_Type = #{amazonProductType,jdbcType=LONGVARCHAR},
+      Amazon_Rise = #{amazonRise,jdbcType=LONGVARCHAR},
+      Amazon_Shoe_Item_Type = #{amazonShoeItemType,jdbcType=LONGVARCHAR},
+      Amazon_Shoe_Size = #{amazonShoeSize,jdbcType=LONGVARCHAR},
+      Amazon_Shoe_Size_Map = #{amazonShoeSizeMap,jdbcType=LONGVARCHAR},
+      Amazon_Shoe_Width = #{amazonShoeWidth,jdbcType=LONGVARCHAR},
+      Amazon_Special_Size = #{amazonSpecialSize,jdbcType=LONGVARCHAR},
+      Amazon_Variant_Details = #{amazonVariantDetails,jdbcType=LONGVARCHAR},
+      Amazon_Waist_Size = #{amazonWaistSize,jdbcType=LONGVARCHAR},
+      Amazon_Womens_Item_Type = #{amazonWomensItemType,jdbcType=LONGVARCHAR},
+      Apparel_Style = #{apparelStyle,jdbcType=LONGVARCHAR},
+      Application = #{application,jdbcType=LONGVARCHAR},
+      Application_Area = #{applicationArea,jdbcType=LONGVARCHAR},
+      Amazon_Category = #{amazonCategory,jdbcType=LONGVARCHAR},
+      Application_Type = #{applicationType,jdbcType=LONGVARCHAR},
+      ASIN = #{asin,jdbcType=LONGVARCHAR},
+      Assembly = #{assembly,jdbcType=LONGVARCHAR},
+      Attachment = #{attachment,jdbcType=LONGVARCHAR},
+      Auction_Description = #{auctionDescription,jdbcType=LONGVARCHAR},
+      Audio_Outputs = #{audioOutputs,jdbcType=LONGVARCHAR},
+      Back_Coverage = #{backCoverage,jdbcType=LONGVARCHAR},
+      Back_Pockets = #{backPockets,jdbcType=LONGVARCHAR},
+      Bag_Depth_Inches = #{bagDepthInches,jdbcType=LONGVARCHAR},
+      Bag_Height_Inches = #{bagHeightInches,jdbcType=LONGVARCHAR},
+      Bag_Length_Inches = #{bagLengthInches,jdbcType=LONGVARCHAR},
+      Bag_Width_Inches = #{bagWidthInches,jdbcType=LONGVARCHAR},
+      Bake_Shape = #{bakeShape,jdbcType=LONGVARCHAR},
+      Bedding_Size = #{beddingSize,jdbcType=LONGVARCHAR},
+      BHFO_eBay_Category = #{bhfoEbayCategory,jdbcType=LONGVARCHAR},
+      BHFO_eBay_Store_Category = #{bhfoEbayStoreCategory,jdbcType=LONGVARCHAR},
+      bhfo_accessory_1_description_c = #{bhfoAccessory1DescriptionC,jdbcType=LONGVARCHAR},
+      bhfo_accessory_1_title_c = #{bhfoAccessory1TitleC,jdbcType=LONGVARCHAR},
+      bhfo_color_c = #{bhfoColorC,jdbcType=LONGVARCHAR},
+      bhfo_color_text_c = #{bhfoColorTextC,jdbcType=LONGVARCHAR},
+      bhfo_country_of_origin_c = #{bhfoCountryOfOriginC,jdbcType=LONGVARCHAR},
+      bhfo_flaw_description_c = #{bhfoFlawDescriptionC,jdbcType=LONGVARCHAR},
+      bhfo_size_c = #{bhfoSizeC,jdbcType=LONGVARCHAR},
+      bhfo_size_additional_c = #{bhfoSizeAdditionalC,jdbcType=LONGVARCHAR},
+      bhfo_size_type_c = #{bhfoSizeTypeC,jdbcType=LONGVARCHAR},
+      bhfo_style_c = #{bhfoStyleC,jdbcType=LONGVARCHAR},
+      bhfo_style_name_c = #{bhfoStyleNameC,jdbcType=LONGVARCHAR},
+      bhfo_style_type_c = #{bhfoStyleTypeC,jdbcType=LONGVARCHAR},
+      Bottle_Material = #{bottleMaterial,jdbcType=LONGVARCHAR},
+      Bottle_Size_Ounces = #{bottleSizeOunces,jdbcType=LONGVARCHAR},
+      Bottom_Closure = #{bottomClosure,jdbcType=LONGVARCHAR},
+      Bottom_Rise = #{bottomRise,jdbcType=LONGVARCHAR},
+      Bra_Closure = #{braClosure,jdbcType=LONGVARCHAR},
+      Bra_Features = #{braFeatures,jdbcType=LONGVARCHAR},
+      Bra_Straps = #{braStraps,jdbcType=LONGVARCHAR},
+      Brand2 = #{brand2,jdbcType=LONGVARCHAR},
+      CA_Store_Category = #{caStoreCategory,jdbcType=LONGVARCHAR},
+      Candle_Size = #{candleSize,jdbcType=LONGVARCHAR},
+      Capacity_Ounces = #{capacityOunces,jdbcType=LONGVARCHAR},
+      Classification = #{classification,jdbcType=LONGVARCHAR},
+      Closure = #{closure,jdbcType=LONGVARCHAR},
+      Collar = #{collar,jdbcType=LONGVARCHAR},
+      Collection = #{collection,jdbcType=LONGVARCHAR},
+      Color2 = #{color2,jdbcType=LONGVARCHAR},
+      Compartment = #{compartment,jdbcType=LONGVARCHAR},
+      Compatible_Brands = #{compatibleBrands,jdbcType=LONGVARCHAR},
+      Compatible_Products = #{compatibleProducts,jdbcType=LONGVARCHAR},
+      condition = #{condition,jdbcType=LONGVARCHAR},
+      Connectivity = #{connectivity,jdbcType=LONGVARCHAR},
+      Cooking_Functions = #{cookingFunctions,jdbcType=LONGVARCHAR},
+      Country_of_Origin2 = #{countryOfOrigin2,jdbcType=LONGVARCHAR},
+      Cup_Size = #{cupSize,jdbcType=LONGVARCHAR},
+      Denim_Wash = #{denimWash,jdbcType=LONGVARCHAR},
+      Depth_Inches = #{depthInches,jdbcType=LONGVARCHAR},
+      Dimensions = #{dimensions,jdbcType=LONGVARCHAR},
+      Dimensions_2 = #{dimensions2,jdbcType=LONGVARCHAR},
+      Dirt_Capture = #{dirtCapture,jdbcType=LONGVARCHAR},
+      Display = #{display,jdbcType=LONGVARCHAR},
+      Dress_Length = #{dressLength,jdbcType=LONGVARCHAR},
+      Dress_Type = #{dressType,jdbcType=LONGVARCHAR},
+      Drop_Length = #{dropLength,jdbcType=LONGVARCHAR},
+      EAN = #{ean,jdbcType=LONGVARCHAR},
+      Earpiece_Design = #{earpieceDesign,jdbcType=LONGVARCHAR},
+      eBay_Heel_Height = #{ebayHeelHeight,jdbcType=LONGVARCHAR},
+      Fabric_Type = #{fabricType,jdbcType=LONGVARCHAR},
+      Features = #{features,jdbcType=LONGVARCHAR},
+      Features_and_Fastening = #{featuresAndFastening,jdbcType=LONGVARCHAR},
+      Features_2 = #{features2,jdbcType=LONGVARCHAR},
+      Finish = #{finish,jdbcType=LONGVARCHAR},
+      Fit = #{fit,jdbcType=LONGVARCHAR},
+      Fit_Design = #{fitDesign,jdbcType=LONGVARCHAR},
+      FLAGSTYLE = #{flagstyle,jdbcType=LONGVARCHAR},
+      Formulation = #{formulation,jdbcType=LONGVARCHAR},
+      Frame_Material_Type = #{frameMaterialType,jdbcType=LONGVARCHAR},
+      Frame_Metal = #{frameMetal,jdbcType=LONGVARCHAR},
+      Front_Style = #{frontStyle,jdbcType=LONGVARCHAR},
+      Fuel_Source = #{fuelSource,jdbcType=LONGVARCHAR},
+      Function = #{function,jdbcType=LONGVARCHAR},
+      Fur_Type = #{furType,jdbcType=LONGVARCHAR},
+      Gender2 = #{gender2,jdbcType=LONGVARCHAR},
+      Genre = #{genre,jdbcType=LONGVARCHAR},
+      Handle_Type = #{handleType,jdbcType=LONGVARCHAR},
+      Harmonized_Code = #{harmonizedCode,jdbcType=LONGVARCHAR},
+      Heel_Height_Inches = #{heelHeightInches,jdbcType=LONGVARCHAR},
+      Height2 = #{height2,jdbcType=LONGVARCHAR},
+      Image_URL_1 = #{imageUrl1,jdbcType=LONGVARCHAR},
+      Image_URL_2 = #{imageUrl2,jdbcType=LONGVARCHAR},
+      Image_URL_3 = #{imageUrl3,jdbcType=LONGVARCHAR},
+      Image_URL_4 = #{imageUrl4,jdbcType=LONGVARCHAR},
+      Includes = #{includes,jdbcType=LONGVARCHAR},
+      Includes_2 = #{includes2,jdbcType=LONGVARCHAR},
+      Inseam_Inches = #{inseamInches,jdbcType=LONGVARCHAR},
+      Insert_Material = #{insertMaterial,jdbcType=LONGVARCHAR},
+      Is_a_Child_Item = #{isAChildItem,jdbcType=LONGVARCHAR},
+      Is_a_Parent_Item = #{isAParentItem,jdbcType=LONGVARCHAR},
+      ISBLOCKED = #{isblocked,jdbcType=LONGVARCHAR},
+      ISBN = #{isbn,jdbcType=LONGVARCHAR},
+      ISFBA = #{isfba,jdbcType=LONGVARCHAR},
+      Item_ID = #{itemId,jdbcType=LONGVARCHAR},
+      Item_Shape = #{itemShape,jdbcType=LONGVARCHAR},
+      Item_Subtitle = #{itemSubtitle,jdbcType=LONGVARCHAR},
+      Item_Title = #{itemTitle,jdbcType=LONGVARCHAR},
+      ITEMAUCTIONDESCRIPTION = #{itemauctiondescription,jdbcType=LONGVARCHAR},
+      ITEMIMAGEURL10 = #{itemimageurl10,jdbcType=LONGVARCHAR},
+      ITEMIMAGEURL5 = #{itemimageurl5,jdbcType=LONGVARCHAR},
+      ITEMIMAGEURL6 = #{itemimageurl6,jdbcType=LONGVARCHAR},
+      ITEMIMAGEURL7 = #{itemimageurl7,jdbcType=LONGVARCHAR},
+      Jacket_Legth = #{jacketLegth,jdbcType=LONGVARCHAR},
+      Jacket_Sleeve_Length_Inches = #{jacketSleeveLengthInches,jdbcType=LONGVARCHAR},
+      Length2 = #{length2,jdbcType=LONGVARCHAR},
+      Lens_Color = #{lensColor,jdbcType=LONGVARCHAR},
+      Lens_Material_Type = #{lensMaterialType,jdbcType=LONGVARCHAR},
+      Lens_Width_Millimeters = #{lensWidthMillimeters,jdbcType=LONGVARCHAR},
+      Lid = #{lid,jdbcType=LONGVARCHAR},
+      Lightbulb_Type = #{lightbulbType,jdbcType=LONGVARCHAR},
+      Manufacturer = #{manufacturer,jdbcType=LONGVARCHAR},
+      Manufacturer_Description = #{manufacturerDescription,jdbcType=LONGVARCHAR},
+      Material2 = #{material2,jdbcType=LONGVARCHAR},
+      Material_Specialty = #{materialSpecialty,jdbcType=LONGVARCHAR},
+      Max_Magnification = #{maxMagnification,jdbcType=LONGVARCHAR},
+      MeLi_Category = #{meliCategory,jdbcType=LONGVARCHAR},
+      MeLi_Color = #{meliColor,jdbcType=LONGVARCHAR},
+      MeLi_Season = #{meliSeason,jdbcType=LONGVARCHAR},
+      MeLi_Size = #{meliSize,jdbcType=LONGVARCHAR},
+      MeLi_Title = #{meliTitle,jdbcType=LONGVARCHAR},
+      Model_Number = #{modelNumber,jdbcType=LONGVARCHAR},
+      Model_Number2 = #{modelNumber2,jdbcType=LONGVARCHAR},
+      Movement = #{movement,jdbcType=LONGVARCHAR},
+      MPN2 = #{mpn2,jdbcType=LONGVARCHAR},
+      Neck_Size = #{neckSize,jdbcType=LONGVARCHAR},
+      Neckline = #{neckline,jdbcType=LONGVARCHAR},
+      ITEMLEVELSHIPPING = #{itemlevelshipping,jdbcType=LONGVARCHAR},
+      Non_Stick = #{nonStick,jdbcType=LONGVARCHAR},
+      Number_of_Pieces = #{numberOfPieces,jdbcType=LONGVARCHAR},
+      Number_of_Slices = #{numberOfSlices,jdbcType=LONGVARCHAR},
+      Occasion = #{occasion,jdbcType=LONGVARCHAR},
+      Open_Quantity = #{openQuantity,jdbcType=LONGVARCHAR},
+      OPENQUANTITYPOOLED = #{openquantitypooled,jdbcType=LONGVARCHAR},
+      Padding = #{padding,jdbcType=LONGVARCHAR},
+      Pant_Type = #{pantType,jdbcType=LONGVARCHAR},
+      Panty_Style = #{pantyStyle,jdbcType=LONGVARCHAR},
+      Parent_SKU = #{parentSku,jdbcType=LONGVARCHAR},
+      Pattern2 = #{pattern2,jdbcType=LONGVARCHAR},
+      Photo_Size = #{photoSize,jdbcType=LONGVARCHAR},
+      Pillow_Size = #{pillowSize,jdbcType=LONGVARCHAR},
+      Platform = #{platform,jdbcType=LONGVARCHAR},
+      Platform_Height_Inches = #{platformHeightInches,jdbcType=LONGVARCHAR},
+      Pocket_Style = #{pocketStyle,jdbcType=LONGVARCHAR},
+      Polarization_Type = #{polarizationType,jdbcType=LONGVARCHAR},
+      Power = #{power,jdbcType=LONGVARCHAR},
+      Product_Margin = #{productMargin,jdbcType=LONGVARCHAR},
+      Protection = #{protection,jdbcType=LONGVARCHAR},
+      Quantity_Available = #{quantityAvailable,jdbcType=LONGVARCHAR},
+      Rating = #{rating,jdbcType=LONGVARCHAR},
+      Received_in_Inventory = #{receivedInInventory,jdbcType=LONGVARCHAR},
+      Recommended_Age = #{recommendedAge,jdbcType=LONGVARCHAR},
+      Recommended_Age_Range = #{recommendedAgeRange,jdbcType=LONGVARCHAR},
+      Relationship_Name = #{relationshipName,jdbcType=LONGVARCHAR},
+      Retail_Price = #{retailPrice,jdbcType=LONGVARCHAR},
+      Rise_Inches = #{riseInches,jdbcType=LONGVARCHAR},
+      rop_date_first_complete = #{ropDateFirstComplete,jdbcType=LONGVARCHAR},
+      Rug_Style = #{rugStyle,jdbcType=LONGVARCHAR},
+      Ryka_Consignment = #{rykaConsignment,jdbcType=LONGVARCHAR},
+      Scent_Type = #{scentType,jdbcType=LONGVARCHAR},
+      Season = #{season,jdbcType=LONGVARCHAR},
+      Seller_Logo_URL = #{sellerLogoUrl,jdbcType=LONGVARCHAR},
+      Set = #{set,jdbcType=LONGVARCHAR},
+      Shaft_Height_Inches = #{shaftHeightInches,jdbcType=LONGVARCHAR},
+      Shaft_Width_Inches = #{shaftWidthInches,jdbcType=LONGVARCHAR},
+      Shape = #{shape,jdbcType=LONGVARCHAR},
+      Shoe_Closure = #{shoeClosure,jdbcType=LONGVARCHAR},
+      Short_Description = #{shortDescription,jdbcType=LONGVARCHAR},
+      Silhouette = #{silhouette,jdbcType=LONGVARCHAR},
+      Size_Origin = #{sizeOrigin,jdbcType=LONGVARCHAR},
+      Skirt_Length = #{skirtLength,jdbcType=LONGVARCHAR},
+      Skirt_Type = #{skirtType,jdbcType=LONGVARCHAR},
+      SKU = #{sku,jdbcType=LONGVARCHAR},
+      Sleeve_Length = #{sleeveLength,jdbcType=LONGVARCHAR},
+      Sleeve_Length_Inches = #{sleeveLengthInches,jdbcType=LONGVARCHAR},
+      Specialty = #{specialty,jdbcType=LONGVARCHAR},
+      Sport = #{sport,jdbcType=LONGVARCHAR},
+      ST_Keyword = #{stKeyword,jdbcType=LONGVARCHAR},
+      Stone = #{stone,jdbcType=LONGVARCHAR},
+      Store_Title = #{storeTitle,jdbcType=LONGVARCHAR},
+      Strap_Drop_Inches = #{strapDropInches,jdbcType=LONGVARCHAR},
+      Straps = #{straps,jdbcType=LONGVARCHAR},
+      Style = #{style,jdbcType=LONGVARCHAR},
+      Supplier = #{supplier,jdbcType=LONGVARCHAR},
+      Supplier_PO = #{supplierPo,jdbcType=LONGVARCHAR},
+      SUPPLIERCODE = #{suppliercode,jdbcType=LONGVARCHAR},
+      SUPPLIERID = #{supplierid,jdbcType=LONGVARCHAR},
+      Swimwear_Bottom = #{swimwearBottom,jdbcType=LONGVARCHAR},
+      Swimwear_Top = #{swimwearTop,jdbcType=LONGVARCHAR},
+      TAXPRODUCTCODE = #{taxproductcode,jdbcType=LONGVARCHAR},
+      Theme = #{theme,jdbcType=LONGVARCHAR},
+      Thread_Count = #{threadCount,jdbcType=LONGVARCHAR},
+      Tie_Length = #{tieLength,jdbcType=LONGVARCHAR},
+      Tie_Width = #{tieWidth,jdbcType=LONGVARCHAR},
+      Total_Dress_Length_Inches = #{totalDressLengthInches,jdbcType=LONGVARCHAR},
+      Total_Jacket_Length_Inches = #{totalJacketLengthInches,jdbcType=LONGVARCHAR},
+      Total_Length_Inches = #{totalLengthInches,jdbcType=LONGVARCHAR},
+      Total_Skirt_Length_Inches = #{totalSkirtLengthInches,jdbcType=LONGVARCHAR},
+      TOTALQUANTITYPOOLED = #{totalquantitypooled,jdbcType=LONGVARCHAR},
+      Umbrella_Opener = #{umbrellaOpener,jdbcType=LONGVARCHAR},
+      UPC = #{upc,jdbcType=LONGVARCHAR},
+      UPLOADHASLASTMODIFIEDGMT = #{uploadhaslastmodifiedgmt,jdbcType=LONGVARCHAR},
+      Vents = #{vents,jdbcType=LONGVARCHAR},
+      Video_Inputs = #{videoInputs,jdbcType=LONGVARCHAR},
+      Waist_Across_Inches = #{waistAcrossInches,jdbcType=LONGVARCHAR},
+      Wallet_Height_Inches = #{walletHeightInches,jdbcType=LONGVARCHAR},
+      WAREHOUSELOCATION = #{warehouselocation,jdbcType=LONGVARCHAR},
+      Warranty = #{warranty,jdbcType=LONGVARCHAR},
+      Weight2 = #{weight2,jdbcType=LONGVARCHAR},
+      Width2 = #{width2,jdbcType=LONGVARCHAR},
+      Year = #{year,jdbcType=LONGVARCHAR},
+      Room = #{room,jdbcType=LONGVARCHAR},
+      Latest_Supplier = #{latestSupplier,jdbcType=LONGVARCHAR},
+      Band_Size = #{bandSize,jdbcType=LONGVARCHAR},
+      Wallet_Width_Inches = #{walletWidthInches,jdbcType=LONGVARCHAR}
+    where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperfeedBhfoBean" >
+    update voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    set MSRP = #{msrp,jdbcType=VARCHAR},
+      VoyageOne_Price = #{voyageonePrice,jdbcType=VARCHAR},
+      Shipping_Cost = #{shippingCost,jdbcType=VARCHAR},
+      Weight = #{weight,jdbcType=VARCHAR},
+      md5 = #{md5,jdbcType=VARCHAR}
+    where Inventory_Number = #{inventoryNumber,jdbcType=VARCHAR}
+  </update>
+
+
+  <resultMap id="resultMap_bhfo" type="com.voyageone.task2.cms.model.CmsBtFeedInfoBhfoModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_bhfo" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_itemcode} as i_itemcode
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_bhfo_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `Inventory_Number` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_bhfo_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_bhfo_product_temp where `Inventory_Number` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_bhfo_product_full
+    where `Inventory_Number` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+
+</mapper>

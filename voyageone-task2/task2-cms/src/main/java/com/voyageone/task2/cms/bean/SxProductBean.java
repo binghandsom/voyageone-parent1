@@ -1,19 +1,24 @@
 package com.voyageone.task2.cms.bean;
 
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by Leo on 15-12-11.
  */
 public class SxProductBean {
     private CmsBtProductModel cmsBtProductModel;
-    private CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform;
+    private CmsBtProductGroupModel cmsBtProductModelGroupPlatform;
     private CmsBtFeedInfoModel cmsBtFeedInfoModel;
 
-    public SxProductBean(CmsBtProductModel cmsBtProductModel, CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform, CmsBtFeedInfoModel cmsBtFeedInfoModel) {
+    public SxProductBean(CmsBtProductModel cmsBtProductModel) {
+        this.cmsBtProductModel = cmsBtProductModel;
+    }
+
+    public SxProductBean(CmsBtProductModel cmsBtProductModel, CmsBtProductGroupModel cmsBtProductModelGroupPlatform, CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         this.cmsBtProductModelGroupPlatform = cmsBtProductModelGroupPlatform;
         this.cmsBtProductModel = cmsBtProductModel;
         this.cmsBtFeedInfoModel = cmsBtFeedInfoModel;
@@ -27,11 +32,11 @@ public class SxProductBean {
         this.cmsBtProductModel = cmsBtProductModel;
     }
 
-    public CmsBtProductModel_Group_Platform getCmsBtProductModelGroupPlatform() {
+    public CmsBtProductGroupModel getCmsBtProductModelGroupPlatform() {
         return cmsBtProductModelGroupPlatform;
     }
 
-    public void setCmsBtProductModelGroupPlatform(CmsBtProductModel_Group_Platform cmsBtProductModelGroupPlatform) {
+    public void setCmsBtProductModelGroupPlatform(CmsBtProductGroupModel cmsBtProductModelGroupPlatform) {
         this.cmsBtProductModelGroupPlatform = cmsBtProductModelGroupPlatform;
     }
 

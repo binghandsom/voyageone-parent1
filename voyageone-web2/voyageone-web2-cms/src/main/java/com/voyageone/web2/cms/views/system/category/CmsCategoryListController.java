@@ -42,10 +42,11 @@ public class CmsCategoryListController extends CmsController {
     }
 
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_DETAIL)
-    public AjaxResponse getCategoryById(@RequestBody String id) {
+    public AjaxResponse getCategoryById(@RequestBody Map<String ,String> id) {
 
 //        JSONObject resultBean = cmsCategoryListService.getMasterSchemaJsonObjectByCatId(id);
-        CmsMtCategorySchemaModel resultBean = cmsCategoryListService.getMasterSchemaModelByCatId(id);
+
+        CmsMtCategorySchemaModel resultBean = cmsCategoryListService.getMasterSchemaModelByCatId(id.get("id"));
 
         // 返回用户信息
         return success(resultBean);

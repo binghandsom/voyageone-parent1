@@ -12,7 +12,7 @@ define([
 
             this.taskBean = {
                 task_name: '',
-                promotion_id: context.promotionId,
+                promotion_id: context.id,
                 activity_start: context.activityStart,
                 activity_end: context.activityEnd,
                 config: {
@@ -37,7 +37,7 @@ define([
             },
 
             cancel: function () {
-                this.$uibModalInstance.close();
+                this.$uibModalInstance.dismiss();
             }
         };
         

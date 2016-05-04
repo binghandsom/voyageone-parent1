@@ -5,17 +5,18 @@
     <resultMap id="resultMap_jewelry" type="com.voyageone.task2.cms.model.CmsBtFeedInfoJewelryModel">
         <result column="category" property="category" />
         <result column="channel_id" property="channelId" />
-        <result column="m_product_type" property="sizeType" />
         <result column="m_brand" property="brand" />
         <result column="m_model" property="model" />
         <result column="p_name" property="name" />
-        <result column="pe_short_description" property="short_description" />
-        <result column="pe_long_description" property="long_description" />
+        <result column="pe_short_description" property="shortDescription" />
+        <result column="pe_long_description" property="longDescription" />
         <result column="m_size_type" property="sizeType" />
         <result column="m_weight" property="weight" />
         <result column="p_code" property="code" />
         <result column="p_color" property="color" />
         <result column="p_made_in_country" property="origin" />
+        <result column="client_product_url" property="clientProductURL"/>
+        <result column="product_type" property="productType"/>
         <result column="Attribute1Name" property="Attribute1Name" />
         <result column="Attribute2Name" property="Attribute2Name" />
         <result column="Attribute3Name" property="Attribute3Name" />
@@ -213,11 +214,11 @@
             <result column="i_size" property="size" />
             <result column="i_barcode" property="barcode" />
             <result column="i_client_sku" property="clientSku" />
-            <result column="price_msrp" property="price_msrp" />
-            <result column="price_current" property="price_current" />
-            <result column="price_net" property="price_net" />
-            <result column="price_client_retail" property="price_client_retail" />
-            <result column="price_client_msrp" property="price_client_msrp" />
+            <result column="price_msrp" property="priceMsrp" />
+            <result column="price_current" property="priceCurrent" />
+            <result column="price_net" property="priceNet" />
+            <result column="price_client_retail" property="priceClientRetail" />
+            <result column="price_client_msrp" property="priceClientMsrp" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -227,10 +228,8 @@
         select
         ${category} as category
         ,#{channel_id} as channel_id
-        ,${m_product_type} as m_product_type
         ,${m_brand} as m_brand
         ,case when ifnull(`Variation Parent SKU`,'') = '' then `Inventory Number` else `Variation Parent SKU` end as m_model
-        ,${m_name} as m_name
         ,${m_size_type} as m_size_type
         ,${m_weight} as m_weight
         ,${p_code} as p_code
@@ -238,9 +237,6 @@
         ,${p_color} as p_color
         ,${p_made_in_country} as p_made_in_country
         ,${pe_short_description} as pe_short_description
-        <if test="p_product_type != null">
-            ,${p_product_type} as p_product_type
-        </if>
         ,${pe_long_description} as pe_long_description
 
         ,${price_client_msrp} as price_client_msrp
@@ -257,8 +253,10 @@
         ,1 as i_active
         ,${image} as image
         ,1 as image_type
-        ,0 as display_order,
-        Attribute1Name,
+        ,0 as display_order
+        ,${client_product_url} as client_product_url
+        ,${product_type} as product_type
+        ,Attribute1Name,
         Attribute2Name,
         Attribute3Name,
         Attribute4Name,
@@ -457,7 +455,7 @@
 
 
     <update id="cms_zz_worktable_je_superfeed_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms2.cms_zz_worktable_je_superfeed set UpdateFlag = 3 where `Inventory Number` in (
+        UPDATE voyageone_cms2.cms_zz_feed_je_product_temp set UpdateFlag = 3 where `Inventory Number` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
         </foreach>
@@ -465,8 +463,8 @@
     </update>
 
     <insert id="cms_zz_worktable_je_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_worktable_je_superfeed_full SELECT * from
-        voyageone_cms2.cms_zz_worktable_je_superfeed where `Inventory Number` in
+        INSERT INTO voyageone_cms2.cms_zz_feed_je_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_je_product_temp where `Inventory Number` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -477,7 +475,7 @@
     <delete id="cms_zz_worktable_je_superfeed_full_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms2.cms_zz_worktable_je_superfeed_full
+        voyageone_cms2.cms_zz_feed_je_product_full
         where `Inventory Number` in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}

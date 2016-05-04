@@ -16,7 +16,7 @@ define([
         $scope.vm = {
             searchInfo : {},
             taskInfos: {},
-            prodPageOption : {curr: 1, total: 0, size: 20, fetch: searchHistoryTasks},
+            prodPageOption : {curr: 1, total: 0, fetch: searchHistoryTasks},
             sortFieldOptions : [],
             lenInfo : {},
             getTaskInfo : {

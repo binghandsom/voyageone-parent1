@@ -76,12 +76,16 @@ define([
                 "addToPromotion": {
                     "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/addToPromotion.ctl",
-                    "controller": 'popAddToPromotionCtl'
+                    "controller": 'popAddToPromotionCtl',
+                    "backdrop": 'static',
+                    "size": 'md'
                 },
                 "fieldEdit": {
                     "templateUrl": "views/pop/bulkUpdate/fieldEdit.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/fieldEdit.ctl",
-                    "controller": 'popFieldEditCtl'
+                    "controller": 'popFieldEditCtl',
+                    "backdrop": 'static',
+                    "size": 'md'
                 },
                 "category": {
                     "templateUrl": "views/pop/bulkUpdate/masterCategory.tpl.html",
@@ -119,7 +123,22 @@ define([
                     "templateUrl": "views/pop/custom/column.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
                     "controller": 'popCustomColumnCtl'
-                }
+                },
+                "addtaglist": {
+                    "templateUrl": "views/pop/custom/addtaglist.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/addtaglist.ctl",
+                    "controller": 'popAddTagListCtl'
+                },
+                "storeoperation": {
+                    "templateUrl": "views/pop/custom/storeoperation.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/storeoperation.ctl",
+                    "controller": 'popStoreOperationCtl'
+                },
+                "confirmstoreopp": {
+                    "templateUrl": "views/pop/custom/confirmstoreopp.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/confirmstoreopp.ctl",
+                    "controller": 'popConfirmStoreOppCtl'
+                },
 
             },
             "configuration": {
@@ -241,13 +260,6 @@ define([
                     "controller": "popPromotionHistoryCtl"
                 }
             },
-            "image": {
-                "setting": {
-                    "templateUrl": "views/pop/image/imgSetting.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
-                    "controller": "popImgSettingCtl"
-                }
-            },
             "promotion": {
                 "detail": {
                     "templateUrl": "views/pop/promotion/detail.tpl.html",
@@ -349,6 +361,13 @@ define([
                 }
             },
             "search": {
+                "joinJM": {
+                    "templateUrl": "views/pop/search/joinJM.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
+                    "controller": 'popJoinJMCtl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                },
                 "imagedetail": {
                     "templateUrl": "views/pop/search/imagedetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
@@ -381,6 +400,11 @@ define([
                 "templateUrl": "views/pop/system/cartList.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
                 "controller": 'popCartListCtl'
+            },
+            "channelList": {
+                "templateUrl": "views/pop/system/channelList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                "controller": 'popChannelListCtl'
             }
         },
 
@@ -482,72 +506,63 @@ define([
          * pop出promotion选择页面,用于设置
          * @type {openAddToPromotion}
          */
-        $scope.openAddToPromotion = openAddToPromotion;
-        function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
-            require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
-                if (selList && selList.length) {
-                    var modalInstance = $uibModal.open({
-                        templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
-                        controller: popActions.bulkUpdate.addToPromotion.controller,
-                        size: viewSize,
-                        resolve: {
-                            promotion: function () {
-                                //var productIds = [];
-                                //_.forEach(selList, function (object) {
-                                //    productIds.push(object);
-                                //});
-                                var productIds = [];
-                                _.forEach(selList, function (object) {
-                                    productIds.push(object.id);
-                                });
-                                return {"promotion": promotion, "productIds": productIds, "products": selList};
-                            }
-                        }
-                    });
-
-                    // 回调主页面的刷新操作
-                    modalInstance.result.then(function () {
-                        fnInitial();
-                    })
-                } else {
-                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                }
-            });
-        }
+        $scope.openAddToPromotion = function (promotion, selList) {
+            if (selList && selList.length) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.id);
+                });
+                return openModel(popActions.bulkUpdate.addToPromotion, {"promotion": promotion, "productIds": productIds, "products": selList});
+            } else {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
+        };
 
         /**
          * pop出properties变更页面,用于批量更新产品属性
          * @type {openupdateProperties}
          */
-        $scope.openBulkUpdate = openBulkUpdate;
-        function openBulkUpdate(viewSize, selList, fnInitial) {
-            require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
-                if (selList && selList.length) {
-                    var modalInstance = $uibModal.open({
-                        templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
-                        controller: popActions.bulkUpdate.fieldEdit.controller,
-                        size: viewSize,
-                        resolve: {
-                            productIds: function () {
-                                var productIds = [];
-                                _.forEach(selList, function (object) {
-                                    productIds.push(object.id);
-                                });
-                                return productIds;
-                            }
-                        }
-                    });
+        $scope.openFieldEdit = function (selList) {
+            if (selList && selList.length) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.code);
+                });
+                return openModel(popActions.bulkUpdate.fieldEdit, {"productIds": productIds});
+            } else {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
+        };
 
-                    // 回调主页面的刷新操作
-                    modalInstance.result.then(function () {
-                        fnInitial();
-                    })
-
-                } else {
-                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                }
-            });
-        }
+        //$scope.openBulkUpdate = openBulkUpdate;
+        //function openBulkUpdate(selList, fnInitial) {
+        //    require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
+        //        if (selList && selList.length) {
+        //            var modalInstance = $uibModal.open({
+        //                templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
+        //                controller: popActions.bulkUpdate.fieldEdit.controller,
+        //                size: 'md',
+        //                resolve: {
+        //                    productIds: function () {
+        //                        var productIds = [];
+        //                        _.forEach(selList, function (object) {
+        //                            productIds.push(object.id);
+        //                        });
+        //                        return productIds;
+        //                    }
+        //                }
+        //            });
+        //
+        //            // 回调主页面的刷新操作
+        //            modalInstance.result.then(function () {
+        //                fnInitial();
+        //            })
+        //
+        //        } else {
+        //            alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+        //        }
+        //    });
+        //}
 
         /**
          * 打开类目选择页面
@@ -576,11 +591,46 @@ define([
             return openModel(popActions.custom.newAttribute, context);
         };
 
+        // function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
+        //    require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
+        //        if (selList && selList.length) {
+        //            var modalInstance = $uibModal.open({
+        //                templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
+        //                controller: popActions.bulkUpdate.addToPromotion.controller,
+        //                size: viewSize,
+        //                resolve: {
+        //                    promotion: function () {
+        //                        //var productIds = [];
+        //                        //_.forEach(selList, function (object) {
+        //                        //    productIds.push(object);
+        //                        //});
+        //                        var productIds = [];
+        //                        _.forEach(selList, function (object) {
+        //                            productIds.push(object.id);
+        //                        });
+        //                        return {"promotion": promotion, "productIds": productIds, "products": selList};
+        //                    }
+        //                }
+        //            });
+        //
+        //            // 回调主页面的刷新操作
+        //            modalInstance.result.then(function () {
+        //                fnInitial();
+        //            })
+        //        } else {
+        //            alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+        //        }
+        //    });
+        //}
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
-        $scope.openJMActivity = function (context) {
-            return openModel(popActions.search.joinJM, context);
+        $scope.openAddJMActivity = function (promotion, selList) {
+            if(selList && selList.length) {
+                return openModel(popActions.search.joinJM, {promotion:promotion,products:selList});
+            }else{
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
         };
 
         /**
@@ -792,7 +842,14 @@ define([
                 });
             });
         }
-
+        //全店操作页面中，操作按钮弹出
+        $scope.openNewOpp = function (header,upLoadFlag) {
+            return openModel(popActions.custom.storeoperation,{header:header,upLoadFlag:upLoadFlag});
+        };
+        //全店操作页面中，确认操作按钮弹出
+        $scope.openConfirmOpp = function (header,upLoadFlag) {
+            return openModel(popActions.custom.confirmstoreopp,{header:header,upLoadFlag:upLoadFlag});
+        };
         /**
          * 打开price历史页面
          * @type {openHistoryPrice}
@@ -841,6 +898,7 @@ define([
                     if (fnInitial) {
                         fnInitial();
                     }
+
                 })
             });
         }
@@ -1005,6 +1063,7 @@ define([
         };
 
 
+
         /**
          * 新增ChannelList页,设置操作弹出
          * */
@@ -1020,6 +1079,9 @@ define([
             return openModel(popActions.system.channeledit, context);
         };
 
+        $scope.openCartEdit = function (context) {
+            return openModel(popActions.system.cartList, context);
+        };
 
         /**
          * 弹出自定义属性列
@@ -1043,6 +1105,10 @@ define([
             });
         }
 
+        //TagList一览中，新增标签
+        $scope.openNewTag = function (context) {
+            return openModel(popActions.custom.addtaglist,context);
+        };
         $scope.openJmPromotionDefaultSetting = function (context) {
             return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
         };

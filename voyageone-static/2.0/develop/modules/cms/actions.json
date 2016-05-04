@@ -130,6 +130,12 @@
         "insert": "insert",
         "update": "update"
       },
+      "jmPromotionProductAddService": {
+        "root": "/cms/jm/promotion/product/",
+        "add": "add"
+      },
+
+
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
@@ -252,6 +258,19 @@
           "updateCategorySchema":"updateCategorySchema"
         }
       },
+      "systemCartService":{
+        "root":"/cms/system/cart",
+        "search":"list",
+        "delete":"delete",
+        "saveOrUpdate":"saveOrUpdate",
+        "save":"save"
+      },
+      "platform":{
+        "platformService":{
+          "root": "/cms/system/platform",
+          "list":"list"
+        }
+      },
       "error": {
         "$errorListService": {
           "root":"/cms/system/error",
@@ -259,6 +278,14 @@
           "search": "search",
           "updateFinishStatus": "updateFinishStatus"
         }
+      },
+      "$storeOpService":{
+        "root":"/cms/system/store_operation/",
+        "init":"init",
+        "rePublist":"rePublish",
+        "reUpload":"reUpload",
+        "rePublistPrice":"rePublishPrice",
+        "getHistory":"getHistory"
       }
     },
     "pop": {
@@ -319,8 +346,19 @@
             "getList":"getList",
             "update":"update",
             "getCarts":"getCarts",
-            "updateCartIds":"updateCartIds"
+            "save":"save",
+            "getCompanys":"getCompanys",
+            "updateCartIds":"updateCartIds",
+            "genKey":"genKey"
           }
+      },
+      "tag": {
+        "channelTagService": {
+          "root": "/cms/channel/tag",
+          "init": "init",
+          "save": "saveTag",
+          "del": "delTag"
+        }
       }
     }
   }

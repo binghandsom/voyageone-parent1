@@ -123,6 +123,12 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
             map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
             map.put("price_client_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_client_msrp)));
             map.put("price_client_retail", (Feeds.getVal1(channel, FeedEnums.Name.price_client_retail)));
+
+            map.put("client_product_url", (Feeds.getVal1(channel, FeedEnums.Name.client_product_url)));
+            map.put("product_type", (Feeds.getVal1(channel, FeedEnums.Name.product_type)));
+
+
+
             return map;
         }
 
@@ -185,7 +191,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
                     updateFull(itemIds);
                     productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
                 }catch (Exception e){
-                    $error(e.getMessage());
+                    $error(e);
                     issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 }
             }

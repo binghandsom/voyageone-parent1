@@ -31,6 +31,10 @@ public class TaskDao extends BaseDao {
         return ret;
     }
 
+    public int updateTaskControl(TaskControlBean bean) {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_CORE + "tm_task_control_update", bean);
+    }
+
     /**
      * 取得后台任务对应的相关属性
      */

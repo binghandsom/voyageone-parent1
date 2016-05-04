@@ -442,11 +442,19 @@
                                     break;
 
                                 case fieldTypes.COMPLEX:
-                                    if (!_.isEmpty(data.complexValue.fieldMap)) field.complexValue = data.complexValue.fieldMap[field.id].complexValue; else field.complexValue = data.defaultComplexValue.fieldMap[field.id].complexValue;
+                                    if (!_.isEmpty(data.complexValue.fieldMap) && !_.isUndefined(data.complexValue.fieldMap[field.id])) {
+                                        field.complexValue = data.complexValue.fieldMap[field.id].complexValue;
+                                    } else if (!_.isEmpty(data.defaultComplexValue.fieldMap) && !_.isUndefined(data.defaultComplexValue.fieldMap[field.id])) {
+                                        field.complexValue = data.defaultComplexValue.fieldMap[field.id].complexValue;
+                                    }
                                     break;
 
                                 case fieldTypes.MULTI_COMPLEX:
-                                    if (!_.isEmpty(data.complexValue.fieldMap)) field.complexValues = data.complexValue.fieldMap[field.id].complexValues; else field.complexValues = data.defaultComplexValue.fieldMap[field.id].complexValues;
+                                    if (!_.isEmpty(data.complexValue.fieldMap) && !_.isUndefined(data.complexValue.fieldMap[field.id])) {
+                                        field.complexValues = data.complexValue.fieldMap[field.id].complexValues;
+                                    } else if (!_.isEmpty(data.defaultComplexValue.fieldMap) && !_.isUndefined(data.defaultComplexValue.fieldMap[field.id])) {
+                                        field.complexValues = data.defaultComplexValue.fieldMap[field.id].complexValues;
+                                    }
                                     break;
                             }
                         });

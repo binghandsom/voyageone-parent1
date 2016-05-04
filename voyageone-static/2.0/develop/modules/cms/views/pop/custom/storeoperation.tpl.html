@@ -1,0 +1,30 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;{{pop.header}}</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="col-sm-10 col-sm-offset-1">
+                         <label class="">一旦你进行了操作，所有相关数据将被清空。这是一个不可恢复的操作，请谨慎对待！</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-controller="popupCtrl">
+                <div class="col-sm-12">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <button class="form-control btn-warning" ng-click="openConfirmOpp(pop.header,pop.upLoadFlag)">全店操作</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+
+        <!--<button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 确认</button>-->
+    </div>
+</div><!-- .vo_modal -->

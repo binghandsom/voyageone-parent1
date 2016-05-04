@@ -1,6 +1,6 @@
 <!-- list -->
 <ul class="nav">
-    <!-- CMS 类目管理 -->
+    <!-- 类目管理 -->
     <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
     <li ng-if="!$root.isTranslator">
         <a class="auto" ui-sref="cms.category">
@@ -34,7 +34,7 @@
             </li>
         </ul>
     </li>
-    <!-- Promotion管理 -->
+    <!-- 活动管理 -->
     <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
@@ -50,12 +50,14 @@
                     <span translate="TXT_PROMOTION_MANAGER"></span>
                 </a>
             </li>
+            <!-- 活动一览 -->
             <li ui-sref-active="active">
                 <a href="#/promotion/index">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span TRANSLATE="TXT_PROMOTION_LIST"></span>
                 </a>
             </li>
+            <!-- 任务一览 -->
             <li ui-sref-active="active">
                 <a href="#/promotion/task">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
@@ -65,7 +67,7 @@
         </ul>
     </li>
 
-    <!-- 高级检索 -->
+    <!-- 检索管理 -->
     <li  ng-if="!$root.isTranslator">
         <a class="auto">
         <span class="pull-right text-muted">
@@ -81,21 +83,17 @@
                     <span translate="TXT_SEARCH"></span>
                 </a>
             </li>
+            <!-- 高级检索 -->
             <li ui-sref-active="active">
                 <a href="#/search/advance">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span translate="TXT_ADVANCE_SEARCH"></span>
                 </a>
             </li>
-            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
-                <a href="#/search/feedsearch">
-                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>Feed检索</span>
-                </a>
-            </li>
         </ul>
     </li>
-    <!-- 设定 -->
+
+    <!-- 匹配关系 -->
     <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
@@ -111,27 +109,24 @@
                     <span translate="TXT_MAPPING_SETTING"></span>
                 </a>
             </li>
+            <!-- Feed匹配关系设置 -->
             <li ui-sref-active="active">
                 <a href="#/mapping/feed">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_FEED_CONNECTION_SETTING"></span>
                 </a>
             </li>
+            <!-- 平台匹配关系设置 -->
             <li ui-sref-active="active">
                 <a href="#/mapping/platform">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_PLATFORM_CONNECTION_SETTING"></span>
                 </a>
             </li>
-            <li ui-sref-active="active">
-                <a href="#/mapping/dictionary">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_DICTIONARY_INDEX"></span>
-                </a>
-            </li>
         </ul>
     </li>
-    <!-- 翻译 -->
+
+    <!-- 翻译管理 -->
     <li>
         <a class="auto">
             <span class="pull-right text-muted">
@@ -147,6 +142,7 @@
                     <span translate="TXT_TRANSLATION_MANAGER"></span>
                 </a>
             </li>
+            <!-- 翻译一览 -->
             <li ui-sref-active="active">
                 <a href="#/translation/index">
                     <i class="fa fa-minus icon text-vo"></i>
@@ -155,6 +151,7 @@
             </li>
         </ul>
     </li>
+
     <!-- 店铺管理 -->
     <li ng-if="!$root.isTranslator">
         <a class="auto">
@@ -171,39 +168,45 @@
                     <span translate="TXT_CHANNEL_MANAGER"></span>
                 </a>
             </li>
+            <!-- Feed过滤一览 -->
+            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
+                <a href="#/search/feedsearch">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span>Feed过滤一览</span>
+                </a>
+            </li>
+            <!-- 品牌一览 -->
+            <!-- 尺码表一览 -->
+            <!-- 共通图片一览 -->
+            <!-- 图片模板一览 -->
+            <!-- 辞典一览 -->
+            <li ui-sref-active="active">
+                <a href="#/mapping/dictionary">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_DICTIONARY_INDEX"></span>
+                </a>
+            </li>
+            <!-- 自定义属性设置 -->
             <li ui-sref-active="active">
                 <a href="#/channel/custom/0">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_CUSTOM_ATTRIBUTE_MANAGER"></span>
                 </a>
             </li>
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/channel/feedImportRule/feedImportRuleList">-->
-                    <!--<i class="glyphicon glyphicon-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_FEED_IMPORT_RULE"></span>-->
-                <!--</a>-->
-            <!--</li>-->
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/channel/common">-->
-                    <!--<i class="fa fa-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_COMMON_ATTRIBUTE_MANAGER"></span>-->
-                <!--</a>-->
-            <!--</li>-->
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/channel/authority">-->
-                    <!--<i class="fa fa-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_AUTHORITY_SETTING"></span>-->
-                <!--</a>-->
-            <!--</li>-->
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/channel/configuration">-->
-                    <!--<i class="fa fa-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_CONFIGURATION_SETTING"></span>-->
-                <!--</a>-->
-            <!--</li>-->
+            <!-- 默认属性设置 -->
+            <!-- 店铺设置 -->
+            <!-- 权限设置 -->
+            <!-- 标签管理 -->
+            <li ui-sref-active="active">
+                <a href="#/channel/taglist">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_TAG_MANAGEMENT"></span>
+                </a>
+            </li>
         </ul>
     </li>
-    <!-- 系统管理 -->
+
+    <!-- 系统管理(运营) -->
     <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
@@ -211,47 +214,84 @@
                 <i class="fa fa-fw fa-angle-down text-active"></i>
             </span>
             <i class="fa fa-cogs icon text-vo"></i>
-            <span class="" translate="TXT_SYSTEM_SETTING"></span>
+            <span class="" translate="TXT_SYSTEM_SETTING_MARKETING"></span>
         </a>
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
-                    <span translate="TXT_SYSTEM_SETTING"></span>
+                    <span translate="TXT_SYSTEM_SETTING_MARKETING"></span>
                 </a>
             </li>
-            <li ui-sref-active="active">
-                <a href="#/system/category">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_CATEGORY_INDEX"></span>
-                </a>
-            </li>
+            <!-- 上新异常一览（运营） -->
             <li ui-sref-active="active">
                 <a href="#/system/error/1">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_ERROR_MANAGER_MARKETING"></span>
                 </a>
             </li>
+            <!-- 禁用词一览（运营） -->
+        </ul>
+    </li>
+
+    <!-- 系统管理(维护) -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_SYSTEM_SETTING_IT"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_SYSTEM_SETTING_IT"></span>
+                </a>
+            </li>
+            <!-- 平台设置 -->
+            <li ui-sref-active="active">
+                <a href="#/system/cart/index">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CART_LIST"></span>
+                </a>
+            </li>
+            <!-- MiniMall渠道设置 -->
+            <li ui-sref-active="active">
+                <a href="#/system/channel/index">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CHANNEL_LIST"></span>
+                </a>
+            </li>
+            <!-- 辞典设置 -->
+            <!-- 全量操作设置 -->
+            <li ui-sref-active="active">
+                <a href="#/system/storeoperation">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span>全店操作</span>
+                </a>
+            </li>
+            <!-- 主类目一览 -->
+            <li ui-sref-active="active">
+                <a href="#/system/category">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CATEGORY_INDEX"></span>
+                </a>
+            </li>
+            <!-- 平台类目一览 -->
+            <!-- 辞典一览 -->
+            <!-- 禁用词一览（维护） -->
+            <!-- 上新异常一览（维护） -->
             <li ui-sref-active="active">
                 <a href="#/system/error/2">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_ERROR_MANAGER_MAINTENANCE"></span>
                 </a>
             </li>
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/system/channel/index">-->
-                    <!--<i class="fa fa-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_CHANNEL_LIST"></span>-->
-                <!--</a>-->
-            <!--</li>-->
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/system/cart/index">-->
-                    <!--<i class="fa fa-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_CART_LIST"></span>-->
-                <!--</a>-->
-            <!--</li>-->
         </ul>
     </li>
-    <!-- 聚美专场管理 -->
+
+    <!-- 聚美专场一览 -->
     <li>
         <a class="auto">
             <span class="pull-right text-muted">
@@ -267,12 +307,14 @@
                     <span>聚美专场管理</span>
                 </a>
             </li>
+            <!-- 专场一览 -->
             <li ui-sref-active="active">
                 <a href="#/jm/promotion_manage">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span>专场一览</span>
                 </a>
             </li>
+            <!-- 图片管理 -->
             <li ui-sref-active="active">
                 <a href="#/jm/image_manage">
                     <i class="fa fa-minus icon text-vo"></i>

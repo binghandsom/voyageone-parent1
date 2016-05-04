@@ -13,57 +13,70 @@ define([
             masterData: null,
             productList: [],
             productIds: [],
-            productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
-            mainProduct: null
+            //productPageOption: {curr: 1, total: 0, fetch: getProductList},
+            groupInfo: null
         };
 
         $scope.initialize = initialize;
-        $scope.getProductList = getProductList;
+        //$scope.getProductList = getProductList;
         $scope.setMainProduct = setMainProduct;
         $scope.openCategoryMapping = openCategoryMapping;
+        $scope.openBulkUpdate = openBulkUpdate;
         $scope.bindCategory = bindCategory;
 
         /**
          * 初始化数据:获取masterdata数据及该group下的productList数据
          */
         function initialize () {
-            groupDetailService.init($routeParams.id, $scope.vm.productPageOption)
+            groupDetailService.init($routeParams.id)
                 .then(function (res) {
                     $scope.vm.masterData = res.data.masterData;
                     $scope.vm.productList = res.data.productList;
                     $scope.vm.productListCopy = angular.copy($scope.vm.productList);
-                    $scope.vm.productPageOption.total = res.data.productListTotal;
+                    //$scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productIds = res.data.productIds;
+                    $scope.vm.groupInfo = res.data.groupInfo;
                 });
         }
 
-        /**
-         * 获取该group下的productList数据,主要用于翻页
-         */
-        function getProductList () {
-
-            groupDetailService.getProductList($routeParams.id, $scope.vm.productPageOption)
-                .then(function (res) {
-                    $scope.vm.productList = res.data.productList;
-                    $scope.vm.productListCopy = angular.copy($scope.vm.productList);
-                    $scope.vm.productPageOption.total = res.data.productListTotal;
-                    $scope.vm.productIds = res.data.productIds;
-                });
-        }
+        ///**
+        // * 获取该group下的productList数据,主要用于翻页
+        // */
+        //function getProductList () {
+        //
+        //    groupDetailService.getProductList($routeParams.id)
+        //        .then(function (res) {
+        //            $scope.vm.productList = res.data.productList;
+        //            $scope.vm.productListCopy = angular.copy($scope.vm.productList);
+        //            //$scope.vm.productPageOption.total = res.data.productListTotal;
+        //            $scope.vm.productIds = res.data.productIds;
+        //            $scope.vm.groupInfo = res.data.groupInfo;
+        //        });
+        //}
 
         /**
          * 设置group的主商品
          */
-        function setMainProduct (product) {
+        function setMainProduct (code) {
 
             confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT')).result
                 .then(function () {
-                    groupDetailService.setMainProduct({groupId: product.groups.platforms[0].groupId, prodId: product.prodId}).then(function () {
+                    groupDetailService.setMainProduct({groupId: $scope.vm.groupInfo.groupId, mainProductCode: code}).then(function () {
                         notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     });
                 }, function () {
                     $scope.vm.productList = angular.copy($scope.vm.productListCopy);
                 })
+        }
+
+        /**
+         * popup出批量修改产品的field属性
+         * @param openFieldEdit
+         */
+        function openBulkUpdate (openFieldEdit) {
+            openFieldEdit($scope.vm.productIds).then(function () {
+                initialize ()
+            })
         }
 
         function openCategoryMapping (popupNewCategory) {

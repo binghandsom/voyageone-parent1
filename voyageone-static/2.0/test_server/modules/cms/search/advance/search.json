@@ -1,1 +1,3514 @@
-{"code":null,"displayType":null,"message":null,"data":{"productListTotal":1,"groupListTotal":1,"groupList":[{"_id":"56737a26cf891e70fb001560","created":"2015-12-18 11:14:46","creater":"0","modified":"2015-12-23 17:52:56.276","modifier":"will","channelId":"001","prodId":1,"catId":"617","catPath":"女装>休闲服>上衣","fields":{"code":"100001","brand":"Jewelry7","productName":"Stud Earrings with Cubic Zirconia in Sterling Silver 100001","longTitle":"Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题9","middleTitle":"Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题76","shortTitle":"Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题72","model":"model-aa-77","color":"Color99","origin":"china8","shortDesCn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述中文37","longDesCn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述中文49","shortDesEn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语40","longDesEn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语55","hsCodeCrop":"100010","hsCodePrivate":"Stud Ear2","priceChange":0,"images1":[{"name":"xxxxx-9"},{"name":"xxxxx-4.jpg"},{"name":"xxxxx-3.jpg"},{"name":"xxxxx-5.jpg"},{"name":"xxxxx-0.jpg"}],"images2":[{"name":"yyyyy-9.jpg"},{"name":"yyyyy-2.jpg"},{"name":"yyyyy-6.jpg"},{"name":"yyyyy-4.jpg"},{"name":"yyyyy-1.jpg"}],"images3":[{"name":"uuuuu-9.jpg"},{"name":"uuuuu-4.jpg"},{"name":"uuuuu-1.jpg"},{"name":"uuuuu-4.jpg"},{"name":"uuuuu-3.jpg"},{"name":"zzzzz-3.jpg"},{"name":"zzzzz-9.jpg"},{"name":"zzzzz-6.jpg"},{"name":"zzzzz-2.jpg"},{"name":"zzzzz-9.jpg"}],"lock":0,"msrpStart":113.0,"msrpEnd":219.0,"retailPriceStart":375.0,"retailPriceEnd":497.0,"salePriceStart":532.0,"salePriceEnd":660.0,"currentPriceStart":769.0,"currentPriceEnd":886.0,"status":"Pending","sizeType":"Men2","inventory":102},"groups":{"msrpStart":102.0,"msrpEnd":279.0,"retailPriceStart":369.0,"salePriceStart":537.0,"salePriceEnd":675.0,"platforms":[{"groupId":855,"cartId":23,"numIId":"2000436","isMain":1,"displayOrder":86,"publishTime":"2015-11-12 16:19:00","instockTime":"2015-11-18 16:19:00","platformStatus":"Onsale","taskResults":[{"comment":"xxxx","doSx":1}],"inventory":89}]},"skus":[{"skuCode":"100001-1","barcode":"1234567890159","priceMsrp":117.0,"priceRetail":304.0,"priceSale":836.0,"skuCarts":[21,23]},{"skuCode":"100001-2","barcode":"1234567890184","priceMsrp":114.0,"priceRetail":330.0,"priceSale":897.0,"skuCarts":[21,23]},{"skuCode":"100001-3","barcode":"1234567890122","priceMsrp":169.0,"priceRetail":364.0,"priceSale":843.0,"skuCarts":[21,23]},{"skuCode":"100001-4","barcode":"1234567890148","priceMsrp":162.0,"priceRetail":312.0,"priceSale":876.0,"skuCarts":[21,23]}],"tags":[],"batchField":{},"feedOrgAtts":{},"feedCnAtts":{}}],"productList":[{"_id":"56737a26cf891e70fb001560","created":"2015-12-18 11:14:46","creater":"0","modified":"2015-12-23 17:52:56.276","modifier":"will","channelId":"001","prodId":1,"catId":"617","catPath":"女装>休闲服>上衣","fields":{"code":"100001","brand":"Jewelry7","productName":"Stud Earrings with Cubic Zirconia in Sterling Silver 100001","longTitle":"Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题9","middleTitle":"Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题76","shortTitle":"Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题72","model":"model-aa-77","color":"Color99","origin":"china8","shortDesCn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述中文37","longDesCn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述中文49","shortDesEn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语40","longDesEn":"Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语55","hsCodeCrop":"100010","hsCodePrivate":"Stud Ear2","priceChange":0,"images1":[{"name":"xxxxx-9"},{"name":"xxxxx-4.jpg"},{"name":"xxxxx-3.jpg"},{"name":"xxxxx-5.jpg"},{"name":"xxxxx-0.jpg"}],"images2":[{"name":"yyyyy-9.jpg"},{"name":"yyyyy-2.jpg"},{"name":"yyyyy-6.jpg"},{"name":"yyyyy-4.jpg"},{"name":"yyyyy-1.jpg"}],"images3":[{"name":"uuuuu-9.jpg"},{"name":"uuuuu-4.jpg"},{"name":"uuuuu-1.jpg"},{"name":"uuuuu-4.jpg"},{"name":"uuuuu-3.jpg"},{"name":"zzzzz-3.jpg"},{"name":"zzzzz-9.jpg"},{"name":"zzzzz-6.jpg"},{"name":"zzzzz-2.jpg"},{"name":"zzzzz-9.jpg"}],"lock":0,"msrpStart":113.0,"msrpEnd":219.0,"retailPriceStart":375.0,"retailPriceEnd":497.0,"salePriceStart":532.0,"salePriceEnd":660.0,"currentPriceStart":769.0,"currentPriceEnd":886.0,"status":"Pending","sizeType":"Men2","inventory":102},"groups":{"msrpStart":102.0,"msrpEnd":279.0,"retailPriceStart":369.0,"salePriceStart":537.0,"salePriceEnd":675.0,"platforms":[{"groupId":855,"cartId":23,"numIId":"2000436","isMain":1,"displayOrder":86,"publishTime":"2015-11-12 16:19:00","instockTime":"2015-11-18 16:19:00","platformStatus":"Onsale","taskResults":[{"comment":"xxxx","doSx":1}],"inventory":89}]},"skus":[{"skuCode":"100001-1","barcode":"1234567890159","priceMsrp":117.0,"priceRetail":304.0,"priceSale":836.0,"skuCarts":[21,23]},{"skuCode":"100001-2","barcode":"1234567890184","priceMsrp":114.0,"priceRetail":330.0,"priceSale":897.0,"skuCarts":[21,23]},{"skuCode":"100001-3","barcode":"1234567890122","priceMsrp":169.0,"priceRetail":364.0,"priceSale":843.0,"skuCarts":[21,23]},{"skuCode":"100001-4","barcode":"1234567890148","priceMsrp":162.0,"priceRetail":312.0,"priceSale":876.0,"skuCarts":[21,23]}],"tags":[],"batchField":{},"feedOrgAtts":{},"feedCnAtts":{}}]},"redirectTo":null}
+{
+  "code": null,
+  "displayType": null,
+  "message": null,
+  "data": {
+    "productListTotal": 2881,
+    "prodChgInfoList": [
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      }
+    ],
+    "groupListTotal": 2805,
+    "customProps": [
+      {
+        "feed_cat_path": "0",
+        "prop_id": 1,
+        "feed_prop_translation": "产品品牌",
+        "created": 1455884895000,
+        "modifier": "will",
+        "display_order": 1,
+        "creater": "tom",
+        "feed_prop_original": "brand",
+        "modified": 1458554982000,
+        "channel_id": "010"
+      },
+      {
+        "feed_cat_path": "0",
+        "prop_id": 3,
+        "feed_prop_translation": "产品宝石",
+        "created": 1455884895000,
+        "modifier": "will",
+        "display_order": 3,
+        "creater": "tom",
+        "feed_prop_original": "Stone",
+        "modified": 1458554982000,
+        "channel_id": "010"
+      },
+      {
+        "feed_cat_path": "0",
+        "prop_id": 4,
+        "feed_prop_translation": "产品尺寸",
+        "created": 1455884895000,
+        "modifier": "will",
+        "display_order": 4,
+        "creater": "tom",
+        "feed_prop_original": "Description Measure",
+        "modified": 1458554982000,
+        "channel_id": "010"
+      },
+      {
+        "feed_cat_path": "0",
+        "prop_id": 5,
+        "feed_prop_translation": "宝石性质",
+        "created": 1455884895000,
+        "modifier": "will",
+        "display_order": 5,
+        "creater": "tom",
+        "feed_prop_original": "GemCreationMethod",
+        "modified": 1458554982000,
+        "channel_id": "010"
+      },
+      {
+        "feed_cat_path": "0",
+        "prop_id": 6,
+        "feed_prop_translation": "宝石重量",
+        "created": 1455884895000,
+        "modifier": "will",
+        "display_order": 6,
+        "creater": "tom",
+        "feed_prop_original": "GemstoneTotalWeight",
+        "modified": 1458554982000,
+        "channel_id": "010"
+      }
+    ],
+    "commonProps": [
+      {
+        "propId": "priceMsrpSt",
+        "propName": "官方建议最低售价"
+      },
+      {
+        "propId": "priceMsrpEd",
+        "propName": "官方建议最高售价"
+      },
+      {
+        "propId": "priceRetailSt",
+        "propName": "最低销售价格（未审批）"
+      },
+      {
+        "propId": "priceRetailEd",
+        "propName": "最高销售价格（未审批）"
+      },
+      {
+        "propId": "status",
+        "propName": "商品状态"
+      },
+      {
+        "propId": "translateStatus",
+        "propName": "商品翻译状态"
+      },
+      {
+        "propId": "translator",
+        "propName": "翻译者"
+      },
+      {
+        "propId": "translateTime",
+        "propName": "翻译时间"
+      },
+      {
+        "propId": "editStatus",
+        "propName": "商品编辑状态"
+      },
+      {
+        "propId": "sizeType",
+        "propName": "适用人群"
+      },
+      {
+        "propId": "quantity",
+        "propName": "库存"
+      }
+    ],
+    "groupList": [
+      {
+        "_id": "56e6b8d7eb99b2fdf432ddfe",
+        "created": "2016-03-14 21:12:54",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-24 16:23:12.142",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22139,
+        "catId": "2d0e4b1c769c3d21ce8925621deb72b2",
+        "catPath": "珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰",
+        "fields": {
+          "code": "51A0HC13E1-00LCNB0",
+          "brand": "Jewelry.com",
+          "productNameEn": "7/8 ct Natural Amethyst Bangle Bracelet with Diamond in Sterling Silver over Brass",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.",
+          "images1": [
+            {
+              "image1": "51a0hc13e1-00lcnb0_main_1"
+            },
+            {
+              "image1": "51a0hc13e1-00lcnb0_a1_1"
+            },
+            {
+              "image1": "51a0hc13e1-00lcnb0_a2"
+            },
+            {
+              "image1": "51a0hc13e1-00lcnb0_a3"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 110,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 110,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 23,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-29 14:43:43",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84616,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Instock",
+              "qty": 0,
+              "priceRetailSt": 273,
+              "priceRetailEd": 2224,
+              "priceMsrpSt": 711,
+              "priceSaleSt": 0,
+              "priceMsrpEd": 6510,
+              "priceSaleEd": 1046
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A0HC13E1-00LCNB0",
+            "barcode": "716825514058",
+            "size": "OneSize",
+            "skuCarts": [
+              23
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "prop_9066257": "266414017",
+            "in_prop_151018199": "",
+            "priceSale": 110,
+            "client_msrp_price": 800,
+            "client_retail_price": 799,
+            "client_net_price": 699
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "紫水晶",
+            "Description Measure": "周长 7 1/4 英寸(约18.42 cm)",
+            "GemstoneTotalWeight": "0.85",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d9eb99b2fdf432de01",
+        "created": "2016-03-14 21:12:57",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-24 16:23:12.277",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22145,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "51A2GJ93W4-00LA600",
+          "brand": "Jewelry.com",
+          "productNameEn": "Twist Bangle Bracelet with Diamond in Sterling Silver Plate",
+          "status": "Ready",
+          "longTitle": "Jewelry.com 钻石 手镯",
+          "images1": [
+            {
+              "image1": "51a2gj93w4-00la600_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 113,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 113,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 0,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84628,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Instock",
+              "qty": 0,
+              "priceRetailSt": 273,
+              "priceRetailEd": 273,
+              "priceMsrpSt": 711,
+              "priceSaleSt": 113,
+              "priceMsrpEd": 711,
+              "priceSaleEd": 113
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A2GJ93W4-00LA600",
+            "barcode": "716825493254",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "priceChgFlg": "D102",
+            "prop_9066257": "266396743",
+            "priceSale": 113,
+            "in_prop_151018199": ""
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d9eb99b2fdf432de02",
+        "created": "2016-03-14 21:12:57",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:51.712",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22146,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "51A2GJ94W4-0DTA600",
+          "brand": "Jewelry.com",
+          "productNameEn": "Twist Bangle Bracelet with Diamonds in 18K Gold Plate",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 钻石黄铜镀18K金时尚优雅魅力波浪女款手镯百搭新品",
+          "images1": [
+            {
+              "image1": "51a2gj94w4-0dta600_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 18,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84632,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A2GJ94W4-0DTA600",
+            "barcode": "716825493261",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "priceChgFlg": "D100",
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d9eb99b2fdf432de03",
+        "created": "2016-03-14 21:12:57",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:51.905",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22147,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "ESH96163FFEI",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/5 ct Diamond Buckle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 纯银14K金手镯镶嵌0.2克拉钻石带扣女款个性饰品",
+          "images1": [
+            {
+              "image1": "esh96163ffei_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1662,
+          "priceMsrpEd": 4430,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 4430,
+          "priceRetailEd": 1662,
+          "quantity": 0,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84636,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "ESH96163FFEI",
+            "barcode": "096303110546",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1662,
+            "priceMsrp": 4430,
+            "priceChgFlg": "X93",
+            "prop_9066257": "266396743",
+            "in_prop_151018199": "19.05cm"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8daeb99b2fdf432de04",
+        "created": "2016-03-14 21:12:58",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:52.112",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22148,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "H36899",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/3 ct Diamond Double Heart Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银14K金镶0.33克拉钻石双心女款时尚心相印手链",
+          "images1": [
+            {
+              "image1": "h36899_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1193,
+          "priceMsrpEd": 3252,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 3252,
+          "priceRetailEd": 1193,
+          "quantity": 57,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84640,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "H36899",
+            "barcode": "H36899",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1193,
+            "priceMsrp": 3252,
+            "priceChgFlg": "X109",
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 3/4 英寸(约19.69 cm)",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8daeb99b2fdf432de05",
+        "created": "2016-03-14 21:12:58",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:52.657",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22149,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "SDI882DBE.07",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/10 ct Diamond Black Ceramic Circle Bangle Bracelet in Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银镶0.1克拉钻石黑色圆圈手镯女款个性饰品",
+          "images1": [
+            {
+              "image1": "sdi882dbe07_main"
+            },
+            {
+              "image1": "sdi882dbe07_a1"
+            },
+            {
+              "image1": "sdi882dbe07_a2"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1341,
+          "priceMsrpEd": 3578,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 3578,
+          "priceRetailEd": 1341,
+          "quantity": 18,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84644,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "SDI882DBE.07",
+            "barcode": "729367873910",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1341,
+            "priceMsrp": 3578,
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dbeb99b2fdf432de06",
+        "created": "2016-03-14 21:12:59",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:52.913",
+        "modifier": "will",
+        "channelId": "11",
+        "prodId": 22150,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "ZBR.223D.S7",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/3 ct Diamond Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银14K金镶0.33克拉钻石手镯女款欧美创意饰品",
+          "images1": [
+            {
+              "image1": "zbr223ds7_main"
+            },
+            {
+              "image1": "zbr223ds7_a1"
+            },
+            {
+              "image1": "zbr223ds7_a2"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1488,
+          "priceMsrpEd": 3904,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 3904,
+          "priceRetailEd": 1488,
+          "quantity": 16,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84648,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "ZBR.223D.S7",
+            "barcode": "729367063519",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1488,
+            "priceMsrp": 3904,
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dbeb99b2fdf432de07",
+        "created": "2016-03-14 21:12:59",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.112",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22151,
+        "catId": "2d0e4b1c769c3d21ce8925621deb72b2",
+        "catPath": "珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰",
+        "fields": {
+          "code": "BF00003YGK",
+          "brand": "Jewelry.com",
+          "productNameEn": "Grey Moonstone Bangle Bracelet in 18K Gold Over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 灰色月长石925银镀18K金珠宝细手镯时尚女款精品",
+          "images1": [
+            {
+              "image1": "bf00003ygk_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 16,
+          "translateStatus": "Translated",
+          "translator": "will",
+          "translateTime": "2016-03-25 11:28:52",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84652,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "BF00003YGK",
+            "barcode": "648352935696",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "prop_9066257": "266414017"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "月长石",
+            "Description Measure": "直径2 5/8 英寸（约6.67cm）",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dceb99b2fdf432de08",
+        "created": "2016-03-14 21:13:00",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.263",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22152,
+        "catId": "2d0e4b1c769c3d21ce8925621deb72b2",
+        "catPath": "珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰",
+        "fields": {
+          "code": "5190838801-0DTCN00",
+          "brand": "Jewelry.com",
+          "productNameEn": "2 1/5 ct Multi-Stone Bangle Bracelet with Diamond in 18K Gold over Brass",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 黄铜镀18K金精致彩色女款细镯子 欧美时尚时尚",
+          "images1": [
+            {
+              "image1": "5190838801-0dtcn00_main_3"
+            },
+            {
+              "image1": "5190838801-0dtcn00_a1_2"
+            },
+            {
+              "image1": "5190838801-0dtcn00_a2"
+            },
+            {
+              "image1": "5190838801-0dtcn00_a3_1"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 310,
+          "priceMsrpEd": 841,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 841,
+          "priceRetailEd": 310,
+          "quantity": 354,
+          "translateStatus": "Translated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:56:47",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84656,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "5190838801-0DTCN00",
+            "barcode": "716825280687",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 310,
+            "priceMsrp": 841,
+            "prop_9066257": "266414017"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "多种宝石",
+            "GemstoneTotalWeight": "2.18"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dceb99b2fdf432de09",
+        "created": "2016-03-14 21:13:00",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.478",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22153,
+        "catId": "4d9b79423d2f21294597677b6b0e618a",
+        "catPath": "珠宝/钻石/翡翠/黄金>黄金首饰（新）>手饰",
+        "fields": {
+          "code": "1FMG0423Y8H",
+          "brand": "Just Gold",
+          "productNameEn": "Checkerboard Bangle Bracelet in 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 14K金浮雕棋盘风女士手镯精美时尚饰品",
+          "images1": [
+            {
+              "image1": "1fmg0423y8h_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 3697,
+          "priceMsrpEd": 12191,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 12191,
+          "priceRetailEd": 3697,
+          "quantity": 12,
+          "translateStatus": "Translated",
+          "translator": "james",
+          "translateTime": "2016-03-24 17:32:45",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84660,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "1FMG0423Y8H",
+            "barcode": "098087826811",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 3697,
+            "priceMsrp": 12191,
+            "prop_9066257": "37695092"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dceb99b2fdf432de0a",
+        "created": "2016-03-14 21:13:00",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-22 11:50:57.646",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22154,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "51A34F9781-0V0P100",
+          "brand": "Jewelry.com",
+          "productNameEn": "Bangle Bracelet with Heart Charm in Sterling Silver and 18K Rose Gold Plate",
+          "status": "Ready",
+          "longTitle": "Jewelry.com 镀银女款细手镯镀18k金心形小吊坠时尚魅力饰品",
+          "images1": [
+            {
+              "image1": "51a34f9781-0v0p100_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 800,
+          "priceMsrpEd": 500,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 500,
+          "priceRetailEd": 800,
+          "quantity": 27,
+          "translateStatus": "Translated",
+          "translator": "james",
+          "translateTime": "2016-03-24 17:55:04",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84664,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A34F9781-0V0P100",
+            "barcode": "716825505223",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 800,
+            "priceMsrp": 500,
+            "priceSale": 0
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8ddeb99b2fdf432de0b",
+        "created": "2016-03-14 21:13:01",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.911",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22155,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "B10-1902AG-3C",
+          "brand": "Jewelry.com",
+          "productNameEn": "Harlequin Bangle Bracelet in 10K Rose and Yellow Gold over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 纯银镀玫瑰色黄色10K金女士时尚个性手镯欧美新品",
+          "images1": [
+            {
+              "image1": "b10-1902ag-3c_main"
+            },
+            {
+              "image1": "b10-1902ag-3c_a1"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 604,
+          "priceMsrpEd": 1558,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 1558,
+          "priceRetailEd": 604,
+          "quantity": 64,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84668,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B10-1902AG-3C",
+            "barcode": "729367191663",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 604,
+            "priceMsrp": 1558
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8ddeb99b2fdf432de0c",
+        "created": "2016-03-14 21:13:01",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.123",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22156,
+        "catId": "4d9b79423d2f21294597677b6b0e618a",
+        "catPath": "珠宝/钻石/翡翠/黄金>黄金首饰（新）>手饰",
+        "fields": {
+          "code": "B10-416AGDC4-75",
+          "brand": "Jewelry.com",
+          "productNameEn": "Quilted Bangle Bracelet in Sterling Silver and 10K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 10K金925银编织风格时尚优雅气质女款手镯欧美新品",
+          "images1": [
+            {
+              "image1": "b10-416agdc4-75_main"
+            },
+            {
+              "image1": "b10-416agdc4-75_a1"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 531,
+          "priceMsrpEd": 1558,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 1558,
+          "priceRetailEd": 531,
+          "quantity": 23,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84672,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B10-416AGDC4-75",
+            "barcode": "729367017130",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 531,
+            "priceMsrp": 1558,
+            "prop_9066257": "37695092"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8ddeb99b2fdf432de0d",
+        "created": "2016-03-14 21:13:01",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.324",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22157,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "B900261D-LG",
+          "brand": "Jewelry.com",
+          "productNameEn": "Crossover Bangle Bracelet in 18K Gold Over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银镀18K金交叉手镯 女士简约优雅气质饰品",
+          "images1": [
+            {
+              "image1": "b900261d-lg_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 825,
+          "priceMsrpEd": 2144,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 2144,
+          "priceRetailEd": 825,
+          "quantity": 5,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84676,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B900261D-LG",
+            "barcode": "648352101572",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 825,
+            "priceMsrp": 2144
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "直径2 7/8 英寸（约7.30cm）"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8deeb99b2fdf432de0e",
+        "created": "2016-03-14 21:13:02",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.751",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22158,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "B900261G-LG",
+          "brand": "Jewelry.com",
+          "productNameEn": "Crossover Bangle in 18K Rose Gold over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银镀18K玫瑰金创意交叉手镯 女款简约百搭饰品",
+          "images1": [
+            {
+              "image1": "b900261g-lg_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1046,
+          "priceMsrpEd": 2796,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 2796,
+          "priceRetailEd": 1046,
+          "quantity": 4,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84680,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B900261G-LG",
+            "barcode": "648352101596",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1046,
+            "priceMsrp": 2796
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "直径2 7/8 英寸（约7.30cm）"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8deeb99b2fdf432de0f",
+        "created": "2016-03-14 21:13:02",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.99",
+        "modifier": "will",
+        "channelId": "A10",
+        "prodId": 22159,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "BG-1451AGTW-725",
+          "brand": "Jewelry.com",
+          "productNameEn": "Round Twist Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 14K金925银圆形螺旋时尚金属质感女款手镯新品百搭",
+          "images1": [
+            {
+              "image1": "bg-1451agtw-725_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1046,
+          "priceMsrpEd": 2796,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 2796,
+          "priceRetailEd": 1046,
+          "quantity": 28,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84684,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "BG-1451AGTW-7251",
+            "barcode": "7293675402491",
+            "size": "OneSize1",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceChgFlg": "X123",
+            "priceRetail": 9998,
+            "priceMsrp": 2796
+          },
+          {
+            "skuCode": "BG-1451AGTW-7252",
+            "barcode": "7293675402492",
+            "size": "OneSize2",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceChgFlg": "D23",
+            "priceRetail": 1046,
+            "priceMsrp": 2796
+          },
+          {
+            "skuCode": "BG-1451AGTW-7253",
+            "barcode": "7293675402493",
+            "size": "OneSize3",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceChgFlg": "X83",
+            "priceRetail": 1046,
+            "priceMsrp": 2796
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8deeb99b2fdf432de10",
+        "created": "2016-03-14 21:13:02",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:55.18",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22160,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "BG-1902AG-3C",
+          "brand": "Jewelry.com",
+          "productNameEn": "Harlequin-Patterned Bangle Bracelet in 14K Two-Tone Gold and Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 玫瑰色黄色14K金纯银女士时尚个性手镯欧美新品",
+          "images1": [
+            {
+              "image1": "bg-1902ag-3c_main_1"
+            },
+            {
+              "image1": "bg-1902ag-3c_a1_1"
+            },
+            {
+              "image1": "bg-1902ag-3c_a2"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 752,
+          "priceMsrpEd": 1949,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 1949,
+          "priceRetailEd": 752,
+          "quantity": 28,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84688,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "BG-1902AG-3C",
+            "barcode": "729367214959",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 752,
+            "priceMsrp": 1949
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "7 1/2×7/8 英寸(约19.05cm×2.22 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dfeb99b2fdf432de11",
+        "created": "2016-03-14 21:13:03",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:55.369",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22161,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "CRBT0001GP-",
+          "brand": "Chrysalis",
+          "productNameEn": "Chrysalis 'Lucky Ganesh' Expandable Bangle in 14K Gold over Brass",
+          "status": "Approved",
+          "longTitle": "Chrysalis Life系列象征幸运之神伽内什女士可调节时尚幸运手镯",
+          "images1": [
+            {
+              "image1": "crbt0001gp-_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 236,
+          "priceMsrpEd": 243,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 243,
+          "priceRetailEd": 236,
+          "quantity": 7,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84692,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "CRBT0001GP-",
+            "barcode": "5052469153365",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 236,
+            "priceMsrp": 243
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长8英寸的可调。加强你的生活的旅程与我们的生活收藏。每一个标签都有一个特殊的意义，这将吸引积极性和良好的能量进入你的生活。这是收集在铑音和14克拉的黄金色调可用。"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dfeb99b2fdf432de12",
+        "created": "2016-03-14 21:13:03",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-14 21:41:15.393",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22162,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "CRBT0001SP-",
+          "brand": "Chrysalis",
+          "productNameEn": "Chrysalis 'Lucky Ganesh' Expandable Bangle in Rhodium over Brass",
+          "status": "Approved",
+          "longTitle": "Chrysalis “生命”系列幸运伽内什铜镀铑可调节手镯女士精美饰品",
+          "images1": [
+            {
+              "image1": "crbt0001sp-_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 236,
+          "priceMsrpEd": 243,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 243,
+          "priceRetailEd": 236,
+          "quantity": 9,
+          "translateStatus": "Translated",
+          "translator": "will",
+          "translateTime": "2016-03-18 16:55:33",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84696,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Instock",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "CRBT0001SP-",
+            "barcode": "5052469153372",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 236,
+            "priceMsrp": 243
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长8英寸的可调。加强你的生活的旅程与我们的生活收藏。每一个标签都有一个特殊的意义，这将吸引积极性和良好的能量进入你的生活。这是收集在铑音和14克拉的黄金色调可用。"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8e0eb99b2fdf432de13",
+        "created": "2016-03-14 21:13:04",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-14 21:41:15.995",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22163,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "CRBT0006GP-",
+          "brand": "Chrysalis",
+          "productNameEn": "Chrysalis 'Mantra' Expandable Bangle Bracelet in 14K Gold over Brass",
+          "status": "Approved",
+          "longTitle": "Chrysalis \"颂歌\"系列金色手镯时尚设计师女款饰品镀14K金",
+          "images1": [
+            {
+              "image1": "crbt0006gp-_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 236,
+          "priceMsrpEd": 243,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 243,
+          "priceRetailEd": 236,
+          "quantity": 6,
+          "translateStatus": "Translated",
+          "translator": "will",
+          "translateTime": "2016-03-18 16:55:36",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84700,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Instock",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "CRBT0006GP-",
+            "barcode": "5052469153488",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 236,
+            "priceMsrp": 243
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "一个可调8英寸的周长，加强您的生活的旅程与我们的生活收藏。每一个标签都有一个特殊的意义，这将吸引积极性和良好的能量进入你的生活。这是收集在铑音和14克拉的黄金色调可用。"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      }
+    ],
+    "grpImgList": [
+      [
+        {
+          "value": "sj9020szw_main"
+        },
+        {
+          "value": "01411yaa_main"
+        }
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [
+        {
+          "value": "oj9103ff-8e_main"
+        },
+        {
+          "value": "sbg44902s7_main"
+        }
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    ],
+    "productList": [
+      {
+        "_id": "56e6b8d7eb99b2fdf432ddfe",
+        "created": "2016-03-14 21:12:54",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-24 16:23:12.142",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22139,
+        "catId": "2d0e4b1c769c3d21ce8925621deb72b2",
+        "catPath": "珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰",
+        "fields": {
+          "code": "51A0HC13E1-00LCNB0",
+          "brand": "Jewelry.com",
+          "productNameEn": "7/8 ct Natural Amethyst Bangle Bracelet with Diamond in Sterling Silver over Brass",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.",
+          "images1": [
+            {
+              "image1": "51a0hc13e1-00lcnb0_main_1"
+            },
+            {
+              "image1": "51a0hc13e1-00lcnb0_a1_1"
+            },
+            {
+              "image1": "51a0hc13e1-00lcnb0_a2"
+            },
+            {
+              "image1": "51a0hc13e1-00lcnb0_a3"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 110,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 110,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 23,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-29 14:43:43",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84616,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Instock",
+              "qty": 0,
+              "priceRetailSt": 273,
+              "priceRetailEd": 2224,
+              "priceMsrpSt": 711,
+              "priceSaleSt": 0,
+              "priceMsrpEd": 6510,
+              "priceSaleEd": 1046
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A0HC13E1-00LCNB0",
+            "barcode": "716825514058",
+            "size": "OneSize",
+            "skuCarts": [
+              23
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "prop_9066257": "266414017",
+            "in_prop_151018199": "",
+            "priceSale": 110,
+            "client_msrp_price": 800,
+            "client_retail_price": 799,
+            "client_net_price": 699
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "紫水晶",
+            "Description Measure": "周长 7 1/4 英寸(约18.42 cm)",
+            "GemstoneTotalWeight": "0.85",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d8eb99b2fdf432ddff",
+        "created": "2016-03-14 21:12:56",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-29 14:43:36.413",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22143,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "SJ9020SZW",
+          "brand": "Jewelry.com",
+          "productNameEn": "Bangle Bracelet with Swarovski Zirconia in Sterling Silver",
+          "status": "Ready",
+          "longTitle": "Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com",
+          "images1": [
+            {
+              "image1": "sj9020szw_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 1046,
+          "priceRetailSt": 1046,
+          "priceMsrpEd": 2796,
+          "priceSaleEd": 1046,
+          "priceMsrpSt": 2796,
+          "priceRetailEd": 1046,
+          "quantity": "4",
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-29 14:43:43",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84616,
+              "isMain": 0,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0,
+              "priceRetailSt": 273,
+              "priceRetailEd": 2224,
+              "priceMsrpSt": 711,
+              "priceSaleSt": 0,
+              "priceMsrpEd": 6510,
+              "priceSaleEd": 1046
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "SJ9020SZW",
+            "barcode": "096303198360",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1046,
+            "priceMsrp": 2796,
+            "priceChgFlg": "X220",
+            "client_retail_price": 0,
+            "client_net_price": 0,
+            "client_msrp_price": 0,
+            "priceSale": 1046
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "方晶锆石",
+            "Description Measure": "周长 8 英寸(约20.32 cm)",
+            "GemstoneTotalWeight": "9.39",
+            "GemCreationMethod": "再造"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d8eb99b2fdf432de00",
+        "created": "2016-03-14 21:12:56",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:51.25",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22144,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "01411YAA",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/2 ct Diamond Hinged Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.com 紫水晶 手链Jewelry.",
+          "images1": [
+            {
+              "image1": "01411yaa_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 2224,
+          "priceMsrpEd": 6510,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 6510,
+          "priceRetailEd": 2224,
+          "quantity": 6,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-29 14:43:43",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84616,
+              "isMain": 0,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0,
+              "priceRetailSt": 273,
+              "priceRetailEd": 2224,
+              "priceMsrpSt": 711,
+              "priceSaleSt": 0,
+              "priceMsrpEd": 6510,
+              "priceSaleEd": 1046
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "01411YAA",
+            "barcode": "742323116555",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 2224,
+            "priceMsrp": 6510,
+            "priceChgFlg": "U110",
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d9eb99b2fdf432de01",
+        "created": "2016-03-14 21:12:57",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-24 16:23:12.277",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22145,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "51A2GJ93W4-00LA600",
+          "brand": "Jewelry.com",
+          "productNameEn": "Twist Bangle Bracelet with Diamond in Sterling Silver Plate",
+          "status": "Ready",
+          "longTitle": "Jewelry.com 钻石 手镯",
+          "images1": [
+            {
+              "image1": "51a2gj93w4-00la600_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 113,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 113,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 0,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84628,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Instock",
+              "qty": 0,
+              "priceRetailSt": 273,
+              "priceRetailEd": 273,
+              "priceMsrpSt": 711,
+              "priceSaleSt": 113,
+              "priceMsrpEd": 711,
+              "priceSaleEd": 113
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A2GJ93W4-00LA600",
+            "barcode": "716825493254",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "priceChgFlg": "D102",
+            "prop_9066257": "266396743",
+            "priceSale": 113,
+            "in_prop_151018199": ""
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d9eb99b2fdf432de02",
+        "created": "2016-03-14 21:12:57",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:51.712",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22146,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "51A2GJ94W4-0DTA600",
+          "brand": "Jewelry.com",
+          "productNameEn": "Twist Bangle Bracelet with Diamonds in 18K Gold Plate",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 钻石黄铜镀18K金时尚优雅魅力波浪女款手镯百搭新品",
+          "images1": [
+            {
+              "image1": "51a2gj94w4-0dta600_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 18,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84632,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A2GJ94W4-0DTA600",
+            "barcode": "716825493261",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "priceChgFlg": "D100",
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8d9eb99b2fdf432de03",
+        "created": "2016-03-14 21:12:57",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:51.905",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22147,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "ESH96163FFEI",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/5 ct Diamond Buckle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 纯银14K金手镯镶嵌0.2克拉钻石带扣女款个性饰品",
+          "images1": [
+            {
+              "image1": "esh96163ffei_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1662,
+          "priceMsrpEd": 4430,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 4430,
+          "priceRetailEd": 1662,
+          "quantity": 0,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84636,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "ESH96163FFEI",
+            "barcode": "096303110546",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1662,
+            "priceMsrp": 4430,
+            "priceChgFlg": "X93",
+            "prop_9066257": "266396743",
+            "in_prop_151018199": "19.05cm"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8daeb99b2fdf432de04",
+        "created": "2016-03-14 21:12:58",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:52.112",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22148,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "H36899",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/3 ct Diamond Double Heart Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银14K金镶0.33克拉钻石双心女款时尚心相印手链",
+          "images1": [
+            {
+              "image1": "h36899_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1193,
+          "priceMsrpEd": 3252,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 3252,
+          "priceRetailEd": 1193,
+          "quantity": 57,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84640,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "H36899",
+            "barcode": "H36899",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1193,
+            "priceMsrp": 3252,
+            "priceChgFlg": "X109",
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 3/4 英寸(约19.69 cm)",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8daeb99b2fdf432de05",
+        "created": "2016-03-14 21:12:58",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:52.657",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22149,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "SDI882DBE.07",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/10 ct Diamond Black Ceramic Circle Bangle Bracelet in Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银镶0.1克拉钻石黑色圆圈手镯女款个性饰品",
+          "images1": [
+            {
+              "image1": "sdi882dbe07_main"
+            },
+            {
+              "image1": "sdi882dbe07_a1"
+            },
+            {
+              "image1": "sdi882dbe07_a2"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1341,
+          "priceMsrpEd": 3578,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 3578,
+          "priceRetailEd": 1341,
+          "quantity": 18,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84644,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "SDI882DBE.07",
+            "barcode": "729367873910",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1341,
+            "priceMsrp": 3578,
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dbeb99b2fdf432de06",
+        "created": "2016-03-14 21:12:59",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:52.913",
+        "modifier": "will",
+        "channelId": "11",
+        "prodId": 22150,
+        "catId": "cd7d193eddf2c831a57bcf9fbac0dc90",
+        "catPath": "珠宝/钻石/翡翠/黄金>钻石首饰（新）>手饰",
+        "fields": {
+          "code": "ZBR.223D.S7",
+          "brand": "Jewelry.com",
+          "productNameEn": "1/3 ct Diamond Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银14K金镶0.33克拉钻石手镯女款欧美创意饰品",
+          "images1": [
+            {
+              "image1": "zbr223ds7_main"
+            },
+            {
+              "image1": "zbr223ds7_a1"
+            },
+            {
+              "image1": "zbr223ds7_a2"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1488,
+          "priceMsrpEd": 3904,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 3904,
+          "priceRetailEd": 1488,
+          "quantity": 16,
+          "translateStatus": "Untranslated",
+          "translator": "will",
+          "translateTime": "2016-03-23 16:54:46",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84648,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "ZBR.223D.S7",
+            "barcode": "729367063519",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1488,
+            "priceMsrp": 3904,
+            "prop_9066257": "266396743"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "钻石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dbeb99b2fdf432de07",
+        "created": "2016-03-14 21:12:59",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.112",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22151,
+        "catId": "2d0e4b1c769c3d21ce8925621deb72b2",
+        "catPath": "珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰",
+        "fields": {
+          "code": "BF00003YGK",
+          "brand": "Jewelry.com",
+          "productNameEn": "Grey Moonstone Bangle Bracelet in 18K Gold Over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 灰色月长石925银镀18K金珠宝细手镯时尚女款精品",
+          "images1": [
+            {
+              "image1": "bf00003ygk_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 273,
+          "priceMsrpEd": 711,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 711,
+          "priceRetailEd": 273,
+          "quantity": 16,
+          "translateStatus": "Translated",
+          "translator": "will",
+          "translateTime": "2016-03-25 11:28:52",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84652,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "BF00003YGK",
+            "barcode": "648352935696",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 273,
+            "priceMsrp": 711,
+            "prop_9066257": "266414017"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "月长石",
+            "Description Measure": "直径2 5/8 英寸（约6.67cm）",
+            "GemCreationMethod": "天然"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dceb99b2fdf432de08",
+        "created": "2016-03-14 21:13:00",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.263",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22152,
+        "catId": "2d0e4b1c769c3d21ce8925621deb72b2",
+        "catPath": "珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰",
+        "fields": {
+          "code": "5190838801-0DTCN00",
+          "brand": "Jewelry.com",
+          "productNameEn": "2 1/5 ct Multi-Stone Bangle Bracelet with Diamond in 18K Gold over Brass",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 黄铜镀18K金精致彩色女款细镯子 欧美时尚时尚",
+          "images1": [
+            {
+              "image1": "5190838801-0dtcn00_main_3"
+            },
+            {
+              "image1": "5190838801-0dtcn00_a1_2"
+            },
+            {
+              "image1": "5190838801-0dtcn00_a2"
+            },
+            {
+              "image1": "5190838801-0dtcn00_a3_1"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 310,
+          "priceMsrpEd": 841,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 841,
+          "priceRetailEd": 310,
+          "quantity": 354,
+          "translateStatus": "Translated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:56:47",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84656,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "5190838801-0DTCN00",
+            "barcode": "716825280687",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 310,
+            "priceMsrp": 841,
+            "prop_9066257": "266414017"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "多种宝石",
+            "GemstoneTotalWeight": "2.18"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dceb99b2fdf432de09",
+        "created": "2016-03-14 21:13:00",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.478",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22153,
+        "catId": "4d9b79423d2f21294597677b6b0e618a",
+        "catPath": "珠宝/钻石/翡翠/黄金>黄金首饰（新）>手饰",
+        "fields": {
+          "code": "1FMG0423Y8H",
+          "brand": "Just Gold",
+          "productNameEn": "Checkerboard Bangle Bracelet in 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 14K金浮雕棋盘风女士手镯精美时尚饰品",
+          "images1": [
+            {
+              "image1": "1fmg0423y8h_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 3697,
+          "priceMsrpEd": 12191,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 12191,
+          "priceRetailEd": 3697,
+          "quantity": 12,
+          "translateStatus": "Translated",
+          "translator": "james",
+          "translateTime": "2016-03-24 17:32:45",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84660,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "1FMG0423Y8H",
+            "barcode": "098087826811",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 3697,
+            "priceMsrp": 12191,
+            "prop_9066257": "37695092"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dceb99b2fdf432de0a",
+        "created": "2016-03-14 21:13:00",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-22 11:50:57.646",
+        "modifier": "james",
+        "channelId": "010",
+        "prodId": 22154,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "51A34F9781-0V0P100",
+          "brand": "Jewelry.com",
+          "productNameEn": "Bangle Bracelet with Heart Charm in Sterling Silver and 18K Rose Gold Plate",
+          "status": "Ready",
+          "longTitle": "Jewelry.com 镀银女款细手镯镀18k金心形小吊坠时尚魅力饰品",
+          "images1": [
+            {
+              "image1": "51a34f9781-0v0p100_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 800,
+          "priceMsrpEd": 500,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 500,
+          "priceRetailEd": 800,
+          "quantity": 27,
+          "translateStatus": "Translated",
+          "translator": "james",
+          "translateTime": "2016-03-24 17:55:04",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84664,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "51A34F9781-0V0P100",
+            "barcode": "716825505223",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 800,
+            "priceMsrp": 500,
+            "priceSale": 0
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8ddeb99b2fdf432de0b",
+        "created": "2016-03-14 21:13:01",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:53.911",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22155,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "B10-1902AG-3C",
+          "brand": "Jewelry.com",
+          "productNameEn": "Harlequin Bangle Bracelet in 10K Rose and Yellow Gold over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 纯银镀玫瑰色黄色10K金女士时尚个性手镯欧美新品",
+          "images1": [
+            {
+              "image1": "b10-1902ag-3c_main"
+            },
+            {
+              "image1": "b10-1902ag-3c_a1"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 604,
+          "priceMsrpEd": 1558,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 1558,
+          "priceRetailEd": 604,
+          "quantity": 64,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84668,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B10-1902AG-3C",
+            "barcode": "729367191663",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 604,
+            "priceMsrp": 1558
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8ddeb99b2fdf432de0c",
+        "created": "2016-03-14 21:13:01",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.123",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22156,
+        "catId": "4d9b79423d2f21294597677b6b0e618a",
+        "catPath": "珠宝/钻石/翡翠/黄金>黄金首饰（新）>手饰",
+        "fields": {
+          "code": "B10-416AGDC4-75",
+          "brand": "Jewelry.com",
+          "productNameEn": "Quilted Bangle Bracelet in Sterling Silver and 10K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 10K金925银编织风格时尚优雅气质女款手镯欧美新品",
+          "images1": [
+            {
+              "image1": "b10-416agdc4-75_main"
+            },
+            {
+              "image1": "b10-416agdc4-75_a1"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 531,
+          "priceMsrpEd": 1558,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 1558,
+          "priceRetailEd": 531,
+          "quantity": 23,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84672,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B10-416AGDC4-75",
+            "barcode": "729367017130",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 531,
+            "priceMsrp": 1558,
+            "prop_9066257": "37695092"
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8ddeb99b2fdf432de0d",
+        "created": "2016-03-14 21:13:01",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.324",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22157,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "B900261D-LG",
+          "brand": "Jewelry.com",
+          "productNameEn": "Crossover Bangle Bracelet in 18K Gold Over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银镀18K金交叉手镯 女士简约优雅气质饰品",
+          "images1": [
+            {
+              "image1": "b900261d-lg_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 825,
+          "priceMsrpEd": 2144,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 2144,
+          "priceRetailEd": 825,
+          "quantity": 5,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84676,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B900261D-LG",
+            "barcode": "648352101572",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 825,
+            "priceMsrp": 2144
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "直径2 7/8 英寸（约7.30cm）"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8deeb99b2fdf432de0e",
+        "created": "2016-03-14 21:13:02",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.751",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22158,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "B900261G-LG",
+          "brand": "Jewelry.com",
+          "productNameEn": "Crossover Bangle in 18K Rose Gold over Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 925银镀18K玫瑰金创意交叉手镯 女款简约百搭饰品",
+          "images1": [
+            {
+              "image1": "b900261g-lg_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1046,
+          "priceMsrpEd": 2796,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 2796,
+          "priceRetailEd": 1046,
+          "quantity": 4,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84680,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "B900261G-LG",
+            "barcode": "648352101596",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 1046,
+            "priceMsrp": 2796
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "直径2 7/8 英寸（约7.30cm）"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8deeb99b2fdf432de0f",
+        "created": "2016-03-14 21:13:02",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:54.99",
+        "modifier": "will",
+        "channelId": "A10",
+        "prodId": 22159,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "BG-1451AGTW-725",
+          "brand": "Jewelry.com",
+          "productNameEn": "Round Twist Bangle Bracelet in Sterling Silver and 14K Gold",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 14K金925银圆形螺旋时尚金属质感女款手镯新品百搭",
+          "images1": [
+            {
+              "image1": "bg-1451agtw-725_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 1046,
+          "priceMsrpEd": 2796,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 2796,
+          "priceRetailEd": 1046,
+          "quantity": 28,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84684,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "BG-1451AGTW-7251",
+            "barcode": "7293675402491",
+            "size": "OneSize1",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceChgFlg": "X123",
+            "priceRetail": 9998,
+            "priceMsrp": 2796
+          },
+          {
+            "skuCode": "BG-1451AGTW-7252",
+            "barcode": "7293675402492",
+            "size": "OneSize2",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceChgFlg": "D23",
+            "priceRetail": 1046,
+            "priceMsrp": 2796
+          },
+          {
+            "skuCode": "BG-1451AGTW-7253",
+            "barcode": "7293675402493",
+            "size": "OneSize3",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceChgFlg": "X83",
+            "priceRetail": 1046,
+            "priceMsrp": 2796
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长 7 1/2 英寸(约19.05 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8deeb99b2fdf432de10",
+        "created": "2016-03-14 21:13:02",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:55.18",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22160,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "BG-1902AG-3C",
+          "brand": "Jewelry.com",
+          "productNameEn": "Harlequin-Patterned Bangle Bracelet in 14K Two-Tone Gold and Sterling Silver",
+          "status": "Approved",
+          "longTitle": "Jewelry.com 玫瑰色黄色14K金纯银女士时尚个性手镯欧美新品",
+          "images1": [
+            {
+              "image1": "bg-1902ag-3c_main_1"
+            },
+            {
+              "image1": "bg-1902ag-3c_a1_1"
+            },
+            {
+              "image1": "bg-1902ag-3c_a2"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 752,
+          "priceMsrpEd": 1949,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 1949,
+          "priceRetailEd": 752,
+          "quantity": 28,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84688,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "BG-1902AG-3C",
+            "barcode": "729367214959",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 752,
+            "priceMsrp": 1949
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "7 1/2×7/8 英寸(约19.05cm×2.22 cm)"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      },
+      {
+        "_id": "56e6b8dfeb99b2fdf432de11",
+        "created": "2016-03-14 21:13:03",
+        "creater": "CmsSetMainPropJob",
+        "modified": "2016-03-15 15:35:55.369",
+        "modifier": "will",
+        "channelId": "010",
+        "prodId": 22161,
+        "catId": "a73c965b1150fb36a5ed73daec3e84ff",
+        "catPath": "饰品/流行首饰/时尚饰品新>手镯",
+        "fields": {
+          "code": "CRBT0001GP-",
+          "brand": "Chrysalis",
+          "productNameEn": "Chrysalis 'Lucky Ganesh' Expandable Bangle in 14K Gold over Brass",
+          "status": "Approved",
+          "longTitle": "Chrysalis Life系列象征幸运之神伽内什女士可调节时尚幸运手镯",
+          "images1": [
+            {
+              "image1": "crbt0001gp-_main"
+            }
+          ],
+          "productType": "Bracelets",
+          "sizeType": "women",
+          "priceSaleSt": 0,
+          "priceRetailSt": 236,
+          "priceMsrpEd": 243,
+          "priceSaleEd": 0,
+          "priceMsrpSt": 243,
+          "priceRetailEd": 236,
+          "quantity": 7,
+          "translateStatus": "Untranslated",
+          "translator": "james",
+          "translateTime": "2016-03-24 16:37:26",
+          "editStatus": "",
+          "lock": ""
+        },
+        "groups": {
+          "platforms": [
+            {
+              "cartId": 0,
+              "groupId": 84692,
+              "isMain": 1,
+              "numIId": "",
+              "displayOrder": 0,
+              "platformStatus": "WaitingPublish",
+              "platformActive": "Onsale",
+              "qty": 0
+            }
+          ]
+        },
+        "skus": [
+          {
+            "skuCode": "CRBT0001GP-",
+            "barcode": "5052469153365",
+            "size": "OneSize",
+            "skuCarts": [
+              23,
+              27
+            ],
+            "priceRetail": 236,
+            "priceMsrp": 243
+          }
+        ],
+        "tags": [],
+        "batchField": {},
+        "feed": {
+          "orgAtts": {},
+          "cnAtts": {
+            "Stone": "无宝石",
+            "Description Measure": "周长8英寸的可调。加强你的生活的旅程与我们的生活收藏。每一个标签都有一个特殊的意义，这将吸引积极性和良好的能量进入你的生活。这是收集在铑音和14克拉的黄金色调可用。"
+          },
+          "customIds": [],
+          "customIdsCn": []
+        }
+      }
+    ],
+    "grpProdChgInfoList": [
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 1
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      },
+      {
+        "_chgFlg": 0
+      }
+    ]
+  },
+  "redirectTo": null
+}

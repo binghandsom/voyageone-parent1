@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class TagService extends BaseService {
 
     @Autowired
     // mysql
+    private CmsBtTagDaoExt cmsBtTagDaoExt;
+    @Autowired
     private CmsBtTagDao cmsBtTagDao;
 
     /**
@@ -31,7 +34,7 @@ public class TagService extends BaseService {
     @VOTransactional
     public int addTag(CmsTagInfoBean request) {
         // 返回值Tag设定
-        CmsBtTagModel tag = null;
+//        CmsBtTagModel tag = null;
         // 执行结果
         boolean ret = true;
 
@@ -40,17 +43,17 @@ public class TagService extends BaseService {
 
         // tag 新追加
         // 新追加TagId
-        int tagId = insertTag(request);
-        if (tagId == 0) {
+        CmsBtTagModel tag = insertTag(request);
+        if (tag == null) {
             ret = false;
         }
 
         // tagPath 更新
         if (ret) {
-            updateTagPathName(request.getParentTagId(), tagId);
+            updateTagPathName(tag);
         }
 
-        return tagId;
+        return tag.getId();
     }
 
     /**
@@ -61,20 +64,20 @@ public class TagService extends BaseService {
         // 父Tag追加的场合
         if (request.getParentTagId() == 0) {
             // TagName 对应Tag存在检查
-            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
+            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDaoExt.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
             if (cmsBtTagModelList.size() > 0) {
                 throw new RuntimeException("tag name is exist");
             }
             // 子Tag追加的场合
         } else {
             // 父TagId存在检查
-            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByParentTagId(request.getParentTagId());
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDaoExt.selectCmsBtTagByParentTagId(request.getParentTagId());
             if (cmsBtTagModel == null) {
                 throw new RuntimeException("parent tag not found");
             }
 
             // TagName 对应Tag存在检查
-            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
+            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDaoExt.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
             if (cmsBtTagModelList.size() > 0) {
                 throw new RuntimeException("tag name is exist");
             }
@@ -86,9 +89,7 @@ public class TagService extends BaseService {
      * @param request TagAddRequest
      * @return 新追加TagID
      */
-    private int insertTag(CmsTagInfoBean request) {
-        int tagId = 0;
-
+    private CmsBtTagModel insertTag(CmsTagInfoBean request) {
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         cmsBtTagModel.setChannelId(request.getChannelId());
         cmsBtTagModel.setTagName(request.getTagName());
@@ -102,39 +103,38 @@ public class TagService extends BaseService {
         cmsBtTagModel.setCreater(request.getModifier());
         cmsBtTagModel.setModifier(request.getModifier());
 
-        int recordCount = cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
+        int recordCount = cmsBtTagDao.insert(cmsBtTagModel);
 
         if (recordCount > 0) {
-            tagId = cmsBtTagModel.getTagId();
+            return cmsBtTagModel;
         }
 
-        return tagId;
+        return null;
     }
 
     /**
      * 更新TagPath
-     * @param parentTagId 父TagId
-     * @param tagId 子TagId
+     * @param cmsBtTagModel
      * @return 更新结果
      */
-    private boolean updateTagPathName(Integer parentTagId, Integer tagId) {
+    private boolean updateTagPathName(CmsBtTagModel cmsBtTagModel) {
         boolean ret = false;
 
         String tagPath = "";
 
         // 父Tag的场合
         String tagPathSeparator = "-";
-        if (parentTagId == 0) {
-            tagPath = tagPathSeparator + tagId + tagPathSeparator;
+        if (cmsBtTagModel.getParentTagId() == 0) {
+            tagPath = tagPathSeparator + cmsBtTagModel.getId() + tagPathSeparator;
         } else {
-            tagPath = tagPathSeparator + parentTagId + tagPathSeparator + tagId + tagPathSeparator;
+            tagPath = tagPathSeparator + cmsBtTagModel.getParentTagId() + tagPathSeparator + cmsBtTagModel.getId() + tagPathSeparator;
         }
 
-        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setTagId(tagId);
+//        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+//        cmsBtTagModel.setId(tagId);
         cmsBtTagModel.setTagPath(tagPath);
 
-        int updateRecCount = cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+        int updateRecCount = cmsBtTagDao.update(cmsBtTagModel);
 
         if (updateRecCount > 0) {
             ret = true;
@@ -156,7 +156,7 @@ public class TagService extends BaseService {
         if (parentTagId == 0) {
             ret = tagName;
         } else {
-            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByTagId(parentTagId);
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDaoExt.selectCmsBtTagByTagId(parentTagId);
             ret = cmsBtTagModel.getTagName() + ">" + tagName;
         }
 
@@ -167,13 +167,13 @@ public class TagService extends BaseService {
      * ParentTagId检索Tags
      */
     public List<CmsBtTagModel> getListByParentTagId(int parentTagId) {
-        return cmsBtTagDao.selectListByParentTagId(parentTagId);
+        return cmsBtTagDaoExt.selectListByParentTagId(parentTagId);
     }
 
     /**
      * 根据ChannelId检索Tags
      */
     public List<CmsBtTagModel> getListByChannelId(String channelId) {
-        return cmsBtTagDao.selectListByChannelId(channelId);
+        return cmsBtTagDaoExt.selectListByChannelId(channelId);
     }
 }

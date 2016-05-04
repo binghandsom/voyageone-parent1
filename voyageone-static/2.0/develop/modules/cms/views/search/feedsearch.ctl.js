@@ -9,7 +9,7 @@ define([
     function searchIndex($scope, $routeParams, $feedSearchService, $translate) {
         $scope.vm = {
             searchInfo: {},
-            feedPageOption: {curr: 1, total: 0, size: 20, fetch: search},
+            feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: []
         };
 
@@ -51,14 +51,10 @@ define([
         $scope.openFeedImagedetail = function (idx) {
             var feedObj = $scope.vm.feedList[idx];
             if (feedObj.hasImgFlg > 0) {
-                if (feedObj.hasImgFlg == 1) {
-                    $routeParams.imageMain = feedObj.image[0];
-                    $routeParams.imageList = [];
-                } else {
-                    $routeParams.imageMain = feedObj.image[0];
-                    $routeParams.imageList = feedObj.image.slice(1, feedObj.image.length);
-                }
-                return this.openImagedetail();
+                var picList = [];
+                picList[0] = feedObj.image;
+                var para = {'mainPic': feedObj.image[0], 'picList': picList, 'hostUrl':0};
+                return this.openImagedetail(para);
             }
         };
 
@@ -68,8 +64,7 @@ define([
             if (feedObj.attsList.length == 0) {
                 return;
             }
-            $routeParams.attsList = feedObj.attsList;
-            this.openCodeDetail();
+            this.openCodeDetail({'attsList': feedObj.attsList});
         };
 
         /**
@@ -96,8 +91,8 @@ define([
                     } else {
                         feedInfo.skusCnt = skusList.length;
                         _.forEach(skusList, function (skuInfo) {
-                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.price_client_msrp)  + ', ' + $.trim(skuInfo.price_client_retail) + ', ' + $.trim(skuInfo.price_net)
-                                + ', ' + $.trim(skuInfo.price_msrp) + ', ' + $.trim(skuInfo.price_current);
+                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.priceClientMsrp)  + ', ' + $.trim(skuInfo.priceClientRetail) + ', ' + $.trim(skuInfo.priceNet)
+                                + ', ' + $.trim(skuInfo.priceMsrp) + ', ' + $.trim(skuInfo.priceCurrent);
                             feedInfo._popSkuInfo.push(skuDesc);
                         });
                     }

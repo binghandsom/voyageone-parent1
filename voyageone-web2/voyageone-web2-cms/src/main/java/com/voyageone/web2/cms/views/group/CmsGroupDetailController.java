@@ -1,10 +1,8 @@
 package com.voyageone.web2.cms.views.group;
 
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,21 +29,10 @@ public class CmsGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.GROUP.DETAIL.INIT)
     public AjaxResponse init(@RequestBody Map<String, Object> params) throws Exception {
-
-        Map<String, Object> resultBean = new HashMap<>();
+        Map<String, Object> resultBean = getProductInfoList(params);
 
         // 获取master数据
-        resultBean.put("masterData", cmsGroupListService.getMasterData(getUser(), getLang()));
-
-        // 返回product数据
-        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList);
-        long totalCount = cmsGroupListService.getProductCnt(params, getUser(), getCmsSession());
-        resultBean.put("productListTotal", totalCount);
-
-        List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
-        resultBean.put("productIds", productIds);
-
+        resultBean.put("masterData", cmsGroupListService.getMasterData(getUser()));
         return success(resultBean);
     }
 
@@ -57,19 +43,13 @@ public class CmsGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.GROUP.DETAIL.GET_PRODUCT_LIST)
     public AjaxResponse getProductList(@RequestBody Map<String, Object> params) {
+        // 返回信息
+        return success(getProductInfoList(params));
+    }
 
-        Map<String, Object> resultBean = new HashMap<>();
-
-        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList);
-        long totalCount = cmsGroupListService.getProductCnt(params, getUser(), getCmsSession());
-        resultBean.put("productListTotal", totalCount);
-
-        List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
-        resultBean.put("productIds", productIds);
-
-        // 返回用户信息
-        return success(resultBean);
+    private Map<String, Object> getProductInfoList(Map<String, Object> params) {
+        // 返回信息
+        return cmsGroupListService.getProductList(params, getUser(), getCmsSession());
     }
 
     /**
@@ -79,12 +59,10 @@ public class CmsGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.GROUP.DETAIL.SET_MAIN_PRODUCT)
     public AjaxResponse setMainProduct(@RequestBody Map<String, Object> params) {
-
-        UserSessionBean userSession = super.getUser();
-        Map<String, Object> resultBean = cmsGroupListService.updateMainProduct(params,userSession);
+        cmsGroupListService.updateMainProduct(params, getUser());
 
         // 返回用户信息
-        return success(resultBean);
+        return success(new HashMap<>());
     }
 
 }

@@ -1,18 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.mongodb.WriteResult;
-import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
-import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformRemoveFieldsModel;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -25,6 +12,21 @@ import com.voyageone.common.masterdate.schema.label.Label;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CommonPropActionDefBean;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
+import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
+import com.voyageone.service.impl.cms.CategoryTreeService;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformRemoveFieldsModel;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,23 +40,46 @@ import java.util.*;
 public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implements MasterCategorySchemaBuildService{
 
     private final static String JOB_NAME = "buildMasterSchemaFromPlatformTask";
-
+    Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
-
     @Autowired
-    private CmsMtCommonPropDao cmsMtCommonPropDao;
-
+    private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
-
     @Autowired
     private CmsMtPlatformFieldsRemoveHistoryDao cmsMtPlatformFieldsRemoveHistoryDao;
-
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
+    @Autowired
+    private CategoryTreeService categoryTreeService;
 
-    Map<String, CmsMtCommonPropActionDefModel> allDefModelsMap = new HashMap<>();
+    //Field字段排序方法
+    private static void fieldsSort(List<Field> masterFields){
+        Collections.sort(masterFields,(a, b) ->{
+                //1.b为true, B前置
+                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
+                    return 1;
+                return -1;
+        });
+    }
+
+    //Sku Field字段排序方法
+    private static void skusSort(List<Field> masterFields){
+        Map<String,Integer> sortIndex=new HashMap<>();
+        //排序
+        Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
+           sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
+        });
+        Collections.sort(masterFields, (a,b) -> {
+                //1.a为空b非空 b前置 2.a>b b前置
+                Integer aIndex=sortIndex.get(a.getId());
+                Integer bIndex=sortIndex.get(b.getId());
+                if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
+                    return 1;
+                return -1;
+        });
+    }
 
     @Override
     public SubSystem getSubSystem() {
@@ -71,23 +96,18 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         $info(JOB_NAME + " start...");
 
-        this.buildMasterCatSchema();
+        List<String> cartIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.cart_id);
+
+        // 循环所有店铺
+        if (cartIdList != null && cartIdList.size() > 0) {
+            cartIdList.forEach(this::buildMasterCatSchema);
+        }
 
         $info(JOB_NAME + " finished...");
 
     }
 
-    //Field字段排序方法
-    private static void fieldsSort(List<Field> masterFields){
-        Collections.sort(masterFields,(a, b) ->{
-                //1.b为true, B前置
-                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
-                    return 1;
-                return -1;
-        });
-    }
-
-    public void buildMasterCatSchema() throws TopSchemaException {
+    public void buildMasterCatSchema(String cartId) throws TopSchemaException {
 
         int index = 0;
 
@@ -97,22 +117,22 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         //删除原有数据
 //        cmsMtCategorySchemaDao.deleteAll();
 
-        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys();
+        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(cartId));
 
-        List<CmsMtCommonPropActionDefModel> allDefModels = cmsMtCommonPropDao.selectActionModelList();
+        List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDaoExt.selectActionModelList();
 
-        List<CmsMtCommonPropActionDefModel> removelist =new ArrayList<>();
+        List<CommonPropActionDefBean> removelist =new ArrayList<>();
 
-        List<CmsMtCommonPropActionDefModel> addList =new ArrayList<>();
+        List<CommonPropActionDefBean> addList =new ArrayList<>();
 
-        List<CmsMtCommonPropActionDefModel> updateList =new ArrayList<>();
+        List<CommonPropActionDefBean> updateList =new ArrayList<>();
 
-        List<CmsMtCommonPropActionDefModel> comPropList =new ArrayList<>();
+        List<CommonPropActionDefBean> comPropList =new ArrayList<>();
 
         List<Field> comCategorySchema = new ArrayList<>();
 
         //先根据action type 分组
-        for (CmsMtCommonPropActionDefModel actionDefModel:allDefModels){
+        for (CommonPropActionDefBean actionDefModel:allDefModels){
 
             allDefModelsMap.put(actionDefModel.getPropId(),actionDefModel);
 
@@ -139,10 +159,13 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         for (JSONObject schemaId:schemaIds) {
             String id = schemaId.get("_id").toString();
-            CmsMtPlatformCategorySchemaModel schemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(id);
+            CmsMtPlatformCategorySchemaModel schemaModel =
+                    cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(
+                            id,
+                            Integer.parseInt(cartId));
             if (schemaModel != null){
                 if(isExist(schemaModel.getCatFullPath())) continue;
-                if (CartEnums.Cart.TG == CartEnums.Cart.getValueByID(schemaModel.getCartId().toString())) {
+                if (Integer.parseInt(cartId) == schemaModel.getCartId()) {
 
                     String itemSchema = schemaModel.getPropsItem();
                     String productSchema = schemaModel.getPropsProduct();
@@ -191,7 +214,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     }
 
                     //1. 先删除
-                    for (CmsMtCommonPropActionDefModel actionDefModel : removelist) {
+                    for (CommonPropActionDefBean actionDefModel : removelist) {
 
                         Field removeByIdField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
                         if (removeByIdField != null) {
@@ -228,7 +251,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
 
                     //4. 更新需要更新的 sub field
-                    for (CmsMtCommonPropActionDefModel actionDefModel : updateList) {
+                    for (CommonPropActionDefBean actionDefModel : updateList) {
 
                         Field updField = FieldUtil.getFieldById(masterFields, actionDefModel.getPlatformPropRefId());
 
@@ -280,7 +303,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     FieldUtil.removeFieldById(masterFields, "sku");
                     masterModel.setSku(sku);
 
-                    for (CmsMtCommonPropActionDefModel comModel:comPropList){
+                    for (CommonPropActionDefBean comModel:comPropList){
                         Field comField = FieldUtil.getFieldById(masterFields,comModel.getPropId());
                         comCategorySchema.add(comField);
                         FieldUtil.removeFieldById(masterFields,comModel.getPropId());
@@ -307,6 +330,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     //保存主数据schema
                     cmsMtCategorySchemaDao.insert(masterModel);
 
+                    //生成类目
+                    categoryTreeService.addCategory(masterModel.getCatFullPath(),getTaskName());
+
                     //save the fields which was deleted
                     CmsMtPlatformRemoveFieldsModel removeHistoryModel = new CmsMtPlatformRemoveFieldsModel();
                     removeHistoryModel.setCatId(StringUtils.generCatId(schemaModel.getCatFullPath()));
@@ -322,32 +348,15 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         }
     }
 
-    //Sku Field字段排序方法
-    private static void skusSort(List<Field> masterFields){
-        Map<String,Integer> sortIndex=new HashMap<>();
-        //排序
-        Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
-           sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
-        });
-        Collections.sort(masterFields, (a,b) -> {
-                //1.a为空b非空 b前置 2.a>b b前置
-                Integer aIndex=sortIndex.get(a.getId());
-                Integer bIndex=sortIndex.get(b.getId());
-                if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
-                    return 1;
-                return -1;
-        });
-    }
-
-    private void setValueType(CmsMtCommonPropActionDefModel actionDefModel, Field updField) {
+    private void setValueType(CommonPropActionDefBean actionDefModel, Field updField) {
         if (!StringUtil.isEmpty(actionDefModel.getValueType())){
             FieldValueTypeEnum valueType = FieldValueTypeEnum.getEnum(actionDefModel.getValueType());
             updField.setFieldValueType(valueType);
         }
     }
 
-    private void addField(List<CmsMtCommonPropActionDefModel> addList, List<Field> masterFields, List<Field> removeFields) {
-        for (CmsMtCommonPropActionDefModel actionDefModel : addList) {
+    private void addField(List<CommonPropActionDefBean> addList, List<Field> masterFields, List<Field> removeFields) {
+        for (CommonPropActionDefBean actionDefModel : addList) {
 
             Field isRmField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
 
@@ -377,7 +386,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 if (parentField == null){
 
-                    CmsMtCommonPropActionDefModel pModel = allDefModelsMap.get(actionDefModel.getParentPropId());
+                    CommonPropActionDefBean pModel = allDefModelsMap.get(actionDefModel.getParentPropId());
 
                     FieldTypeEnum pType = FieldTypeEnum.getEnum(pModel.getPropType());
 
@@ -412,7 +421,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         }
     }
 
-    private void updateField(List<Field> masterFields, CmsMtCommonPropActionDefModel actionDefModel, Field updField) {
+    private void updateField(List<Field> masterFields, CommonPropActionDefBean actionDefModel, Field updField) {
 
 
         updField.setId(actionDefModel.getPropId());
@@ -425,7 +434,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         FieldUtil.renameDependFieldId(updField,actionDefModel.getPropId(),actionDefModel.getPlatformPropRefId(),masterFields);
     }
 
-    private void setFieldDefaultValue(CmsMtCommonPropActionDefModel defModel, Field field){
+    private void setFieldDefaultValue(CommonPropActionDefBean defModel, Field field){
 
         FieldTypeEnum type = FieldTypeEnum.getEnum(defModel.getPropType());
 

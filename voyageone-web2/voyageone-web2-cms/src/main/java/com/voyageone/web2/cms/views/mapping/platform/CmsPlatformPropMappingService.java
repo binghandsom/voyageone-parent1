@@ -14,7 +14,7 @@ import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformMappingService;
-import com.voyageone.service.model.cms.CmsMtDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -113,10 +113,10 @@ class CmsPlatformPropMappingService extends BaseAppService {
     /**
      * 获取当前渠道的所有可用字典
      */
-    List<CmsMtDictModel> getDictList(String cart_id, String lang, UserSessionBean user) {
+    List<CmsMtPlatFormDictModel> getDictList(String cartId, String lang, UserSessionBean user) {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(user.getSelChannelId());
-        params.setCart_id(cart_id);
+        params.setCartId(cartId);
         params.setLang(lang);
         return dictService.getModesByChannel(params);
     }

@@ -14,6 +14,7 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
     private String DosageUnits;
     private String SuggestedUse;
     private String Warnings;
+    private String secondaryCategories;
 
     public String getManufacturer() {
         return Manufacturer;
@@ -53,6 +54,14 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
 
     public void setWarnings(String warnings) {
         Warnings = warnings;
+    }
+
+    public String getSecondaryCategories() {
+        return secondaryCategories;
+    }
+
+    public void setSecondaryCategories(String secondaryCategories) {
+        this.secondaryCategories = secondaryCategories;
     }
 
 }

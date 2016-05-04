@@ -4833,6 +4833,7 @@ a.label:focus {
 }
 .label-yellow-new {
   background-color: #f4b400;
+  color:#fff;
 }
 .label-yellow-new[href]:hover,
 .label-yellow-new[href]:focus {

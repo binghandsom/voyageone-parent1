@@ -1,37 +1,25 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Leo on 15-12-7.
  */
 @Repository
-public class CmsBtSxWorkloadDao extends ServiceBaseDao {
-    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannel(int recordCount, String channelId) {
-        return selectList("cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId));
-    }
+public interface CmsBtSxWorkloadDao {
+    List<CmsBtStoreOperationHistoryModel> selectList(Map<String, Object> map);
 
-    public List<CmsBtSxWorkloadModel> selectSxWorkloadModel(int recordCount) {
-        return selectList("cms_select_sx_workload", parameters("record_count", recordCount));
-    }
+    CmsBtStoreOperationHistoryModel selectOne(Map<String, Object> map);
 
-    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithCartId(int recordCount,int cartId) {
-        return selectList("cms_select_sx_workload", parameters("record_count", recordCount,"cartId",cartId));
-    }
+    CmsBtStoreOperationHistoryModel select(long id);
 
-    public void updateSxWorkloadModel(CmsBtSxWorkloadModel model) {
-        update("cms_update_sx_workload", parameters("seq", model.getSeq(), "publish_status", model.getPublishStatus()));
-    }
+    int insert(CmsBtStoreOperationHistoryModel entity);
 
-    public void insertSxWorkloadModel(CmsBtSxWorkloadModel model) {
-        insert("cms_insert_sx_workload", model);
-    }
+    int update(CmsBtStoreOperationHistoryModel entity);
 
-    public void insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
-        insert("cms_insert_sx_workloads", models);
-    }
+    int delete(long id);
 }

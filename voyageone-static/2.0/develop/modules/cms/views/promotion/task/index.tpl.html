@@ -96,7 +96,7 @@
                                     class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
                             </button>
                         </a>
-                        <a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.promotionId}}"
+                        <a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"
                            target="_blank">
                             <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
                                     class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
@@ -116,10 +116,10 @@
                     <td class="mfb-xxt text-center">
                         <button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
                                 ng-click="openMrbStock('lg',task)" ng-if="task.task_type == 2"><i class="fa fa-pencil"></i></button>
-                        <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(task)"><i
+                        <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(task)" ng-if="task.task_type == 2"><i
                                 class="fa  fa-trash-o"></i></button>
-                        <button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type != 2"><i
-                                class="fa fa-cloud-download"></i></button>
+                        <!--<button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type != 2"><i-->
+                                <!--class="fa fa-cloud-download"></i></button>-->
                         <button title="{{'BTN_DOWNLOAD_ERROR' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type == 2"
                                 ng-click="ctrl.download(task.task_id)"><i class="glyphicons glyphicons-cloud-download"></i></button>
                     </td>
