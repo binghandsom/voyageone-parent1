@@ -1,7 +1,5 @@
 package com.voyageone.base.dao.mongodb.support;
 
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.*;
 
 /**

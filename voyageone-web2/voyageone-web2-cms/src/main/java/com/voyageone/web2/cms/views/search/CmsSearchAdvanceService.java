@@ -256,7 +256,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         String[] codeArr = new String[prodCodeList.size()];
         codeArr = prodCodeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
-        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
+
+        Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
+        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";")));
+        projStr.insert(projStr.length() - 1, ",'carts':{$elemMatch:{'cartId':" + cartId + "}}");
+        queryObject.setProjection(projStr.toString());
         queryObject.setSort(setSortValue(searchValue));
 
         List<CmsBtProductModel> prodInfoList = productService.getList(userInfo.getSelChannelId(), queryObject);
@@ -525,7 +529,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         $info("准备打开文档 [ %s ]", templatePath);
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, false));
-        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
+        queryObject.setProjectionExt(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
         queryObject.setSort(setSortValue(searchValue));
 
         try (InputStream inputStream = new FileInputStream(templatePath);
@@ -719,10 +723,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
                     , "$elemMatch"));
             result.append(",");
-
-            // 获取其他检索条件
-            result.append(getSearchValueForMongo(searchValue));
         }
+
+        // 获取其他检索条件
+        result.append(getSearchValueForMongo(searchValue));
 
         if (!StringUtils.isEmpty(result.toString())) {
             return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
@@ -999,13 +1003,16 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             if(commonProps != null){
                 for (Map<String,String>prop: commonProps){
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getAttribute(prop.get("propId"))));
+                    Object value = item.getFields().getAttribute(prop.get("propId"));
+
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
 
             if(customProps != null){
                 for (Map<String,String>prop: customProps){
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"))));
+                    Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
 

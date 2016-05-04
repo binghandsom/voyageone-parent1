@@ -103,7 +103,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         JomgoQuery jomgoQuery = new JomgoQuery();
         jomgoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}",productId));
-        jomgoQuery.setProjection("prodId");
+        jomgoQuery.setProjectionExt("prodId");
 
         List<CmsBtProductModel> result = select(jomgoQuery, channelId);
 
