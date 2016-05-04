@@ -300,13 +300,6 @@ define([
                     "controller": 'popAddStockIncrementCtl'
                 }
             },
-            "search": {
-                "joinJM": {
-                    "templateUrl": "views/pop/search/joinJM.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
-                    "controller": 'popJoinJMCtl'
-                }
-            },
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
@@ -380,34 +373,40 @@ define([
                 }
 
         },
-        "system": {
-            "channelList": {
-                "templateUrl": "views/pop/system/channelList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
-                "controller": 'popChannelListCtl'
+            "system": {
+                "channelList": {
+                    "templateUrl": "views/pop/system/channelList.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                    "controller": 'popChannelListCtl'
+                },
+                "channelsetting": {
+                    "templateUrl": "views/pop/system/channelsetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
+                    "controller": 'popChannelSettingCtl'
+                },
+                "channeledit": {
+                    "templateUrl": "views/pop/system/channeledit.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
+                    "controller": 'popChannelEditCtl'
+                },
+                "cartList": {
+                    "templateUrl": "views/pop/system/cartList.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
+                    "controller": 'popCartListCtl'
+                },
+                "channelList": {
+                    "templateUrl": "views/pop/system/channelList.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                    "controller": 'popChannelListCtl'
+                }
             },
-            "channelsetting": {
-                "templateUrl": "views/pop/system/channelsetting.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
-                "controller": 'popChannelSettingCtl'
+            "image": {
+                "upload": {
+                    "templateUrl": "views/pop/image/imgSetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
+                    "controller": 'popImgSettingCtl'
+                }
             },
-            "channeledit": {
-                "templateUrl": "views/pop/system/channeledit.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
-                "controller": 'popChannelEditCtl'
-            },
-            "cartList": {
-                "templateUrl": "views/pop/system/cartList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
-                "controller": 'popCartListCtl'
-            },
-            "channelList": {
-                "templateUrl": "views/pop/system/channelList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
-                "controller": 'popChannelListCtl'
-            }
-        },
-
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -907,7 +906,7 @@ define([
          * @type {openPromotion}
          */
         $scope.openImageSetting = function (context) {
-            return openModel(popActions.image.setting, context);
+            return openModel(popActions.image.upload, context);
         };
         //function openImageSetting(viewSize, product, imageType, fnInitial) {
         //    require([popActions.image.setting.controllerUrl], function () {
@@ -1123,7 +1122,7 @@ define([
             return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
         //聚美图片管理中，追加按钮
-        $scope.openImageSetting = function (context) {
+        $scope.openJmImageSetting = function (context) {
             return openModel(popActions.jumei.jmImageManage.imageSetting, context);
         };
 

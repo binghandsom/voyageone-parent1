@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function cmsChannelTagController($scope, channelTagService) {
+    function cmsChannelTagController($scope, channelTagService,confirm) {
         $scope.vm = {
             tagTypeSelectValue:"1",
             tagTree: null,
@@ -112,16 +112,18 @@ define([
         $scope.delTag = function(tag) {
             $scope.vm.id = tag.id;
             $scope.vm.parentTagId = tag.parentTagId;
-            channelTagService.del($scope.vm).then(function (res) {
-                $scope.source = $scope.vm.tagTree = res.data.tagTree;
-                $scope.search(0);
-            });
+            confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                channelTagService.del($scope.vm).then(function (res) {
+                    $scope.source = $scope.vm.tagTree = res.data.tagTree;
+                    $scope.search(0);
+                });
+            })
         }
 
 
     }
 
-    cmsChannelTagController.$inject = ['$scope', 'channelTagService'];
+    cmsChannelTagController.$inject = ['$scope', 'channelTagService','confirm'];
 
     return cmsChannelTagController;
 });
