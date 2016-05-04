@@ -6,6 +6,7 @@ import com.voyageone.common.Constants;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by james.li on 2015/11/26.
@@ -247,7 +248,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setOrigin(this.getOrigin());
         cmsBtFeedInfoModel.setSizeType(this.getSizeType());
         if(this.getImage().size()>0){
-            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(",")));
+            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(",")).stream().map(s -> s.trim()).collect(Collectors.toList()));
         }else{
             cmsBtFeedInfoModel.setImage(new ArrayList<>());
         }
