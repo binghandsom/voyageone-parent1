@@ -1123,7 +1123,7 @@ define([
             return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
         //聚美图片管理中，追加按钮
-        $scope.openImageSetting = function (context) {
+        $scope.openJmImageSetting = function (context) {
             return openModel(popActions.jumei.jmImageManage.imageSetting, context);
         };
 
