@@ -36,16 +36,18 @@ import java.util.*;
         CmsImageFileService service;
         @RequestMapping(CmsUrlConstants.ImageCreate.Upload)
         public AjaxResponse upload(HttpServletRequest request) throws Exception {
+            AddListResultBean resultBean = new AddListResultBean();
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             String userName = getUser().getUserName();
             String path = Properties.readValue(CmsProperty.Props.CMS_Image_Ceate_Import_Path);
             FileUtils.mkdirPath(path);
             List<String> listFileName = FileUtils.uploadFile(request, path);//上传文件
             for (String fileName : listFileName) {
-                service.importImageCreateInfo(path, fileName, userName);
+                resultBean = service.importImageCreateInfo(path, fileName, userName);
             }
             Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
             reponse.put("result", true);
+            reponse.put("msg",resultBean.getErrorMsg()+"requestId:"+ resultBean.getRequestId());
             return success(reponse);
         }
         private void importImageCreateInfo(String filePath) throws Exception {
