@@ -381,6 +381,57 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(2);
                 sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
+
+                // 增加特价宝的调用 tom START
+                List<SxProductBean> sxProductBeenList = workLoadBean.getProcessProducts();
+                // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_open");
+                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_price");
+
+                // 检查一下
+                String tejiabaoOpenFlag = null;
+                String tejiabaoPricePropName = null;
+
+                if (tejiabaoOpenConfig != null && !StringUtils.isEmpty(tejiabaoOpenConfig.getConfigValue1())) {
+                    if ("0".equals(tejiabaoOpenConfig.getConfigValue1()) || "1".equals(tejiabaoOpenConfig.getConfigValue1())) {
+                        tejiabaoOpenFlag = tejiabaoOpenConfig.getConfigValue1();
+                    }
+                }
+                if (tejiabaoPriceConfig != null && !StringUtils.isEmpty(tejiabaoPriceConfig.getConfigValue1())) {
+                    tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
+                }
+
+                if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
+                    for (SxProductBean sxProductBean : sxProductBeenList) {
+
+                        if(StringUtils.isEmpty(workLoadBean.getNumId()))
+                        {
+                            continue;
+                        }
+
+                        // 获取价格
+                        if (sxProductBean.getCmsBtProductModel().getSkus() == null || sxProductBean.getCmsBtProductModel().getSkus().size() == 0) {
+                            // 没有sku的code, 跳过
+                            continue;
+                        }
+                        Double dblPrice = Double.parseDouble(sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+
+                        // 设置特价宝
+                        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
+                        cmsBtPromotionCodeModel.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                        cmsBtPromotionCodeModel.setChannelId(workLoadBean.getOrder_channel_id());
+                        cmsBtPromotionCodeModel.setCartId(workLoadBean.getCart_id());
+                        cmsBtPromotionCodeModel.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
+                        cmsBtPromotionCodeModel.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
+                        cmsBtPromotionCodeModel.setPromotionPrice(dblPrice); // 真实售价
+                        cmsBtPromotionCodeModel.setNumIid(workLoadBean.getNumId());
+                        cmsBtPromotionCodeModel.setModifier(getTaskName());
+                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                    }
+                }
+
+                // 增加特价宝的调用 tom END
+
                 break;
             }
             default:

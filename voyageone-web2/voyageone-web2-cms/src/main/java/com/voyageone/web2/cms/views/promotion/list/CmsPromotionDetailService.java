@@ -311,10 +311,10 @@ public class CmsPromotionDetailService extends BaseAppService {
                     continue;
                 }
 
-                if (row.getCell(CmsConstants.CellNum.catPathCellNum) == null || StringUtil.isEmpty(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue())) {
+                if (row.getCell(CmsConstants.CellNum.channelIdCellNum) == null || StringUtil.isEmpty(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue())) {
                     break;
                 }
-                String groupName = row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue();
+                String groupName = ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum);
                 if (!StringUtil.isEmpty(groupName)) {
                     CmsBtPromotionGroupModel model = hsModel.get(groupName);
                     if (model == null) {
@@ -341,14 +341,15 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtPromotionGroupModel getMode(Row row) {
 
         CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
-        model.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
-        model.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
-        model.setProductModel(row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue());
-        if (row.getCell(CmsConstants.CellNum.numberIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getNumericCellValue() + "");
-        } else {
-            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getStringCellValue());
-        }
+        model.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
+        model.setCatPath(ExcelUtils.getString(row, CmsConstants.CellNum.catPathCellNum));
+        model.setProductModel(ExcelUtils.getString(row, CmsConstants.CellNum.groupNameCellNum));
+//        if (row.getCell(CmsConstants.CellNum.numberIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+//            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getNumericCellValue() + "");
+//        } else {
+//            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getStringCellValue());
+//        }
+        model.setNumIid(ExcelUtils.getString(row,CmsConstants.CellNum.numberIdCellNum));
 
         String modelId;
         if (row.getCell(CmsConstants.CellNum.groupIdCellNum) != null) {
@@ -370,22 +371,22 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         CmsBtPromotionCodeModel code = new CmsBtPromotionCodeModel();
 
-        code.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
+        code.setOrgChannelId(ExcelUtils.getString(row,CmsConstants.CellNum.channelIdCellNum));
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
             code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
         }
         code.setProductModel(ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum));
 
-        code.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
+        code.setCatPath(ExcelUtils.getString(row, CmsConstants.CellNum.catPathCellNum));
 
-        code.setProductCode(row.getCell(CmsConstants.CellNum.productCodeCellNum).getStringCellValue());
+        code.setProductCode(ExcelUtils.getString(row, CmsConstants.CellNum.productCodeCellNum));
 
-        code.setImage_url_1(row.getCell(CmsConstants.CellNum.image1CellNum).getStringCellValue());
+        code.setImage_url_1(ExcelUtils.getString(row, CmsConstants.CellNum.image1CellNum));
 
-        code.setImage_url_2(row.getCell(CmsConstants.CellNum.image2CellNum).getStringCellValue());
+        code.setImage_url_2(ExcelUtils.getString(row, CmsConstants.CellNum.image2CellNum));
 
-        code.setImage_url_3(row.getCell(CmsConstants.CellNum.image3CellNum).getStringCellValue());
+        code.setImage_url_3(ExcelUtils.getString(row, CmsConstants.CellNum.image3CellNum));
 
         code.setMsrp(getNumericCellValue(row.getCell(CmsConstants.CellNum.msrpRMBCellNum)));
 
@@ -397,7 +398,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         code.setSalePrice(getNumericCellValue(row.getCell(CmsConstants.CellNum.salePriceCellNum)));
 
-        code.setProductName(row.getCell(CmsConstants.CellNum.productNameCellNum).getStringCellValue());
+        code.setProductName(ExcelUtils.getString(row, CmsConstants.CellNum.productNameCellNum));
 
         code.setTag(ExcelUtils.getString(row,CmsConstants.CellNum.tagCellNum));
 
@@ -431,11 +432,11 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtPromotionSkuModel getSku(Row row) {
 
         CmsBtPromotionSkuModel sku = new CmsBtPromotionSkuModel();
-        sku.setOrgChannelId(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue());
+        sku.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
         if (row.getCell(CmsConstants.CellNum.inventoryCellNum) != null) {
             sku.setQty(getNumericCellValue(row.getCell(CmsConstants.CellNum.inventoryCellNum)).intValue());
         }
-        sku.setProductSku(row.getCell(CmsConstants.CellNum.skuCellNum).getStringCellValue());
+        sku.setProductSku(ExcelUtils.getString(row, CmsConstants.CellNum.skuCellNum));
         return sku;
     }
 
