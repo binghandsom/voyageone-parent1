@@ -162,10 +162,10 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             CmsMtPlatformCategorySchemaModel schemaModel =
                     cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(
                             id,
-                            Integer.parseInt(CartEnums.Cart.TG.getId()));
+                            Integer.parseInt(cartId));
             if (schemaModel != null){
                 if(isExist(schemaModel.getCatFullPath())) continue;
-                if (CartEnums.Cart.TG == CartEnums.Cart.getValueByID(String.valueOf(schemaModel.getCartId()))) {
+                if (Integer.parseInt(cartId) == schemaModel.getCartId()) {
 
                     String itemSchema = schemaModel.getPropsItem();
                     String productSchema = schemaModel.getPropsProduct();
