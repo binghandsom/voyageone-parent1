@@ -54,7 +54,6 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 京东平台产品上新服务
@@ -159,11 +158,15 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-
-                // 京东平台商品信息新增或更新
+                // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
+                // 京东平台商品信息新增或更新(京东)
                 doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JD.getId()));
-                // 京东国际商品信息新增或更新
+                // 京东国际商品信息新增或更新(京东国际)
                 doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JG.getId()));
+                // 京东平台商品信息新增或更新(京东国际 匠心界)
+                doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JGJ.getId()));
+                // 京东国际商品信息新增或更新(京东国际 悦境)
+                doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JGY.getId()));
             }
         }
 
@@ -184,13 +187,17 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
         if (shopProp == null) {
-            $error("获取到店铺信息失败, shopProp == null");
+            $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
             return;
         }
 
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
         List<CmsBtSxWorkloadModel> sxWorkloadModels = jdProductUploadService.getSxWorkloadWithChannelIdCartId(
                 CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channelId, cartId);
+        if (sxWorkloadModels == null || sxWorkloadModels.size() == 0) {
+            $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channelId, cartId);
+            return;
+        }
 
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -199,11 +206,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 启动多线程
             executor.execute(() -> uploadProductJd(cmsBtSxWorkloadModel, shopProp));
         }
-        executor.shutdown();
-        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
+        // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
+        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+//        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
         // 正常结束
-        $info(String.format("京东指定渠道和平台新增或更新商品信息成功！[ChannelId:%s] [CartId:%s]", channelId, cartId));
+//        $info(String.format("京东指定渠道和平台新增或更新商品信息成功！[ChannelId:%s] [CartId:%s]", channelId, cartId));
 
     }
 
@@ -220,7 +229,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 渠道id
         String channelId = shopProp.getOrder_channel_id();
         // 平台id
-        int cartId = Integer.parseInt(shopProp.getOrder_channel_id());
+        int cartId = Integer.parseInt(shopProp.getCart_id());
         // 商品id
         long jdWareId = 0;
 
@@ -228,7 +237,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 主数据产品信息取得
             SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
-                String errMsg = "取得产品信息失败！channel_id:" + channelId + "group_id:" + groupId;
+                String errMsg = "取得产品信息失败！channel_id:" + channelId + " group_id:" + groupId;
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -240,6 +249,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> productList = sxData.getProductList();
             List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+            // 主产品取得结果判断
+            if (mainProduct == null) {
+                String errMsg = "取得主产品信息失败！channel_id:" + channelId + " group_id:" + groupId;
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
 
             // 构造该产品所有SKUCODE的字符串列表
             List<String> strSkuCodeList = new ArrayList<>();
@@ -433,11 +448,17 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 回写workload表   (成功1)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
             } else {
+                // 正常结束
+                $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [wareId:%s]",
+                        channelId, cartId, groupId, jdWareId));
                 // 回写workload表   (失败2)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
             }
         } catch (Exception ex) {
             // 回写workload表   (失败2)
+            // 正常结束
+            $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [wareId:%s]",
+                    channelId, cartId, groupId, jdWareId));
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
             throw ex;
         }
