@@ -439,18 +439,21 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
-                // 新增或更新商品成功时，设置京东运费模板和关联板式
+                // 新增或更新商品成功时
+                 // 回写workload表   (成功1)
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
+
+                // 设置京东运费模板和关联板式
                 // 设置京东运费模板
                 updateJdWareTransportId(shopProp, sxData, jdWareId);
                 // 设置京东关联板式
                 updateJdWareLayoutId(shopProp, sxData, jdWareId);
-
-                // 回写workload表   (成功1)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
             } else {
                 // 新增或更新商品失败
                 $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                         channelId, cartId, groupId, jdWareId));
+                // 回写workload表   (失败2)
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
 
                 // 更新商品出错时，也要设置运费模板和关联板式
                 if (updateWare) {
@@ -459,9 +462,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     // 设置京东关联板式
                     updateJdWareLayoutId(shopProp, sxData, jdWareId);
                 }
-
-                // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
             }
         } catch (Exception ex) {
             // 回写workload表   (失败2)
