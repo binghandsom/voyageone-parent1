@@ -119,6 +119,29 @@ public class CmsFieldEditService extends BaseAppService {
             updateRequest.setModifier(userInfo.getUserName());
 
             productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
+
+
+
+            CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
+
+            //执行product上新
+            if(newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+
+                // 插入上新程序
+                productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+
+                // TODO 插入全店特价宝
+//                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+//                cmsBtPromotionCodesBean.setProductId(newProduct.getProdId());
+//                cmsBtPromotionCodesBean.setProductCode(newProduct.getFields().getCode());
+//                cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
+//                cmsBtPromotionCodesBean.setPromotionId(0);
+//                cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
+//                cmsBtPromotionCodesBean.setChannelId(channelId);
+//                cmsBtPromotionCodesBean.setCartId(23);
+//                cmsBtPromotionCodesBean.setModifier(userName);
+//                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+            }
         }
     }
 
