@@ -3450,7 +3450,7 @@
   <delete id="delFullBySku" parameterType="java.util.List">
     DELETE
     FROM
-    voyageone_cms2.cms_zz_feed_bhfo_product_temp
+    voyageone_cms2.cms_zz_feed_bhfo_product_full
     where `Inventory_Number` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}

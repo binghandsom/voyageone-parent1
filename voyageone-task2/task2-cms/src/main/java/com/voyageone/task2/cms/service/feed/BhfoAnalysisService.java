@@ -472,7 +472,7 @@ public class BhfoAnalysisService extends BaseAnalysisService {
     @Transactional
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
-            bhfoFeedDao.updateFlagBySku(itemIds);
+            bhfoFeedDao.delFullBySku(itemIds);
             bhfoFeedDao.insertFullBySku(itemIds);
             bhfoFeedDao.updateFlagBySku(itemIds);
         }
