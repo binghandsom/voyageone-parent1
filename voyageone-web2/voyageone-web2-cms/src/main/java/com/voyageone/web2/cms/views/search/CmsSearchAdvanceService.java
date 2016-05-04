@@ -1,6 +1,10 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -12,6 +16,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -25,6 +30,7 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
+import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -62,15 +68,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
-    private TagService tagService;
-    @Autowired
     private FeedCustomPropService feedCustomPropService;
-//    @Autowired
-//    private CmsBtProductDao cmsBtProductDao;
-//    @Autowired
-//    private CmsBtProductGroupDao cmsBtProductGroupDao;
-//    @Autowired
-//    private BaseJomgoTemplate mongoTemplate;
+    @Autowired
+    private CmsChannelTagService cmsChannelTagService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     @Resource
     private CmsBtJmPromotionService jmPromotionService;
@@ -176,7 +178,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
 
         // 获取label
-        masterData.put("tagList", tagService.getListByChannelId(userInfo.getSelChannelId()));
+        Map param = new HashMap<>(2);
+        param.put("channel_id", userInfo.getSelChannelId());
+        param.put("tagTypeSelectValue", "4");
+        masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
 
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
@@ -676,6 +681,49 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if (rs == 0) {
             $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
         }
+    }
+
+    /**
+     * 保存用户自定义显示列设置
+     *
+     * @param userInfo
+     * @param tagPath
+     * @param prodIdList
+     */
+    public void addFreeTag(UserSessionBean userInfo, String tagPath, List<Integer> prodIdList) {
+        if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
+            $warn("CmsSearchAdvanceService：addFreeTag 缺少参数");
+            throw new BusinessException("缺少参数");
+        }
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        HashMap<String, Object> inMap = new HashMap<>();
+        inMap.put("$in", prodIdList);
+        queryMap.put("prodId", inMap);
+
+        String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+        int arrSize = pathArr.length;
+        List<String> pathList = new ArrayList<>(arrSize);
+        for (int j = 0; j < arrSize; j ++) {
+            StringBuilder curTagPath = new StringBuilder("-");
+            for (int i = 0; i <= j ; i ++) {
+                curTagPath.append(pathArr[i]);
+                curTagPath.append("-");
+            }
+            pathList.add(curTagPath.toString());
+        }
+
+        HashMap<String, Object> eachMap = new HashMap<>();
+        eachMap.put("$each", pathList);
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        HashMap<String, Object> tagsMap = new HashMap<>();
+        tagsMap.put("tags", eachMap);
+        updateMap.put("$addToSet", tagsMap);
+
+        // 批量更新product表
+        WriteResult result = cmsBtProductDao.update(userInfo.getSelChannelId(), queryMap, updateMap);
+        $debug(String.format("CmsSearchAdvanceService：addFreeTag 操作结果-> %s", result.toString()));
     }
 
     /**

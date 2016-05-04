@@ -276,7 +276,7 @@
         channel_id = #{channelId}
         and tag_type = #{tagType}
         and tag.active=1
-        order by tag.id
+        order by tag.parent_tag_id, tag.id
     </select>
     <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
     <select id="select_one_by_tag_info" resultMap="TagMap" parameterType="String">

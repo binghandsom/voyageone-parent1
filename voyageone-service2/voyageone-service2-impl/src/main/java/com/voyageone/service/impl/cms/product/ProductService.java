@@ -594,8 +594,10 @@ public class ProductService extends BaseService {
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.model", prodModel);
+        HashMap<String, Object> optMap = new HashMap<>();
+        optMap.put("$set", updateMap);
 
-        cmsBtProductDao.update(channelId, queryMap, updateMap);
+        cmsBtProductDao.update(channelId, queryMap, optMap);
     }
 
     /**
@@ -862,8 +864,10 @@ public class ProductService extends BaseService {
         rsMap.put("fields.translateStatus", translateStatus);
         rsMap.put("modifier", modifier);
         rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
 
-        cmsBtProductDao.update(channelId, paraMap, rsMap);
+        cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
 
     /**

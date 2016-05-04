@@ -7,6 +7,7 @@ import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,6 @@ public class CmsChannelTagService extends BaseAppService {
             //取得一级标签
             if (each.getParentTagId() == 0) {
                 ret.add(each);
-
             }
             for (CmsBtTagBean inner : categoryList) {
                 //取得子标签
@@ -96,6 +96,41 @@ public class CmsChannelTagService extends BaseAppService {
         }
         //返回数据类型
         return ret;
+    }
+
+    /**
+     * 查询指定标签类型下的所有标签(list形式)
+     *
+     * @param param
+     * @return List<CmsBtTagModel>
+     */
+    public List<CmsBtTagModel> getTagInfoList(Map param) {
+        // 取得所有的标签类型
+        List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
+        //循环取得标签并对其进行分类
+        List<CmsBtTagModel> ret = new ArrayList<>();
+        tagsList.forEach(item -> {
+            ret.addAll(treeToList(item));
+        });
+        //返回数据类型
+        return ret;
+    }
+
+    /**
+     * 一棵树转成list（拍平）
+     * @param tagBean 一棵树
+     * @return List<CmsBtTagModel>
+     */
+    private List<CmsBtTagModel> treeToList(CmsBtTagBean tagBean){
+        List<CmsBtTagModel> result = new ArrayList<>();
+        result.add(tagBean);
+        if (tagBean.getChildren() != null) {
+            tagBean.getChildren().forEach(item -> {
+                result.addAll(treeToList(item));
+            });
+            tagBean.setChildren(null);
+        }
+        return result;
     }
 
     /**
