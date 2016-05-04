@@ -37,19 +37,19 @@
 
                 <div class="form-inline m-l-xs">
 
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model = "vm.tagOneText">
-                    <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="key[0]">
+                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="openNewTag({first:true,tagSelectObject:vm.tagTree2,tagInfo:vm,save:save})">
+                            ng-click="tree[0].selected = tag1;search(1);openNewTag({first:true,tagSelectObject:tree[0].selected,tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
                 <div class="category_drag_list_qh">
                     <ul>
-                        <li ng-repeat="tagTree in vm.tagTree | filter : tagOneFilter">
-                            <a href="javascript:void(0)" ng-click="findChilds(tagTree.id,1)" ng-class="{indexSelected:vm.selectedId1 == tagTree.id}">
-                                <span>{{tagTree.tagChildrenName }}</span>
+                        <li ng-repeat="tag1 in tree[0]">
+                            <a href="javascript:void(0)" ng-click="tree[0].selected = tag1;search(1);" ng-class="{indexSelected:tree[0].selected == tag1}">
+                                <span>{{tag1.tagChildrenName}}</span>
                                 <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                        ng-show=tagTree.isLeaf ng-click="delTag(tagTree)">
+                                        ng-show = tag1.isLeaf ng-click="delTag(tag1)">
                                     <i class="fa  fa-trash-o"></i></button>
                             </a>
                         </li>
@@ -63,20 +63,20 @@
                 <p class="text-center text-vo font-bold" translate="TXT_TAG_TWO"></p>
 
                 <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="vm.tagTwoText">
-                    <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="key[1]">
+                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="openNewTag({first:false,tagSelectObject:vm.tagTree2,tagInfo:vm,save:save})">
+                            ng-click="openNewTag({first:false,tagSelectObject:tree[0].selected,tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
             <div class="category_drag_list_qh">
                 <ul>
-                    <li ng-repeat="tagTwo in vm.tagTree2.children | filter:tagTwoFilter">
-                        <a href="javascript:void(0)" ng-click="findChilds(tagTwo.id,2)"  ng-class="{indexSelected:vm.selectedId2 == tagTwo.id}">
-                            <span>{{:: tagTwo.tagChildrenName }}</span>
+                    <li ng-repeat="tag2 in tree[1]">
+                        <a href="javascript:void(0)" ng-click="tree[1].selected = tag2;search(2)"  ng-class="{indexSelected:tree[1].selected == tag2}">
+                            <span>{{tag2.tagChildrenName}}</span>
                             <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show=tagTwo.isLeaf ng-show="tagTwo.children.length" ng-click="delTag(tagTwo)">
+                                    ng-show = tag2.isLeaf ng-show="tagTwo.children.length" ng-click="delTag(tag2)">
                                 <i class="fa  fa-trash-o"></i></button>
                         </a>
                     </li>
@@ -89,20 +89,20 @@
                 <p class="text-center text-vo font-bold" translate="TXT_TAG_THREE"></p>
 
                 <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="vm.tagThreeText">
-                    <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="key[2]">
+                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="openNewTag({first:false,tagSelectObject:vm.tagTree3,tagInfo:vm,save:save})">
+                            ng-click="openNewTag({first:false,tagSelectObject:tree[1].selected,tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
             <div class="category_drag_list_qh">
                 <ul>
-                    <li ng-repeat="tagThree in vm.tagTree3.children | filter:tagThreeFilter">
-                        <a href="javascript:void(0)" ng-click="findChilds(tagThree.id,3)"  ng-class="{indexSelected:vm.selectedId3 == tagThree.id}">
-                            <span>{{:: tagThree.tagChildrenName }}</span>
+                    <li ng-repeat="tag3 in tree[2]">
+                        <a href="javascript:void(0)" ng-click="tree[2].selected = tag3"  ng-class="{indexSelected:tree[2].selected == tag3}">
+                            <span>{{ tag3.tagChildrenName }}</span>
                             <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show=tagThree.isLeaf ng-click="delTag(tagThree)">
+                                    ng-show = tag3.isLeaf ng-click="delTag(tag3)">
                                 <i class="fa  fa-trash-o"></i></button>
                         </a>
                     </li>
