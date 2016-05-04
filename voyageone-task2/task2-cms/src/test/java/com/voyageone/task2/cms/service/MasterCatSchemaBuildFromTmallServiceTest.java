@@ -102,6 +102,6 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
     @Test
     public void testBuildMasterCatSchema() throws Exception {
 
-        masterCatSchemaBuildFromTmallService.buildMasterCatSchema();
+        masterCatSchemaBuildFromTmallService.buildMasterCatSchema("29");
     }
 }
