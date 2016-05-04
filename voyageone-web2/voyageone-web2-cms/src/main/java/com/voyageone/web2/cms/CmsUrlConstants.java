@@ -550,6 +550,11 @@ interface CmsBtJmPromotionImportTask{
             String SAVE_CHANNEL_TAG = "saveTag";
             String DEL_CHANNEL_TAG = "delTag";
         }
-    }
 
+    }
+    interface  ImageCreate
+    {
+        String ROOT="/cms/imagecreate/index";
+        String Upload = "upload";
+    }
 }

@@ -220,6 +220,10 @@
     "hash": "/system/cart/index",
     "templateUrl": "views/system/cart/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cart/index.ctl"
+  },
+  "image_create": {
+    "hash": "/imagecreate/index",
+    "templateUrl": "views/imagecreate/index.tpl.html",
+    "controllerUrl": "modules/cms/views/imagecreate/index.ctl"
   }
-
 }
