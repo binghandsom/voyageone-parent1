@@ -1,6 +1,20 @@
 {
   "name": "voyageone_cms",
   "version": "0.2.0",
+  "description": "VoyageOne Front Project v2",
+  "scripts": {
+    "prebuild-dev-pkg": "gulp build-angular-suff",
+    "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
+    "build-css-pkg": "node node_scripts/npm-build-css-package.js"
+  },
+  "author": "VoyageOne",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "morgan": "^1.7.0",
+    "path": "^0.12.7",
+    "request": "^2.72.0"
+  },
   "devDependencies": {
     "gulp": "*",
     "gulp-ng-annotate": "*",
@@ -18,15 +32,6 @@
     "gulp-replace": "*",
     "gulp-rename": "*",
     "extend": "*",
-    "express": "*",
     "glob": "*"
-  },
-  "description": "VoyageOne Front Project v2",
-  "scripts": {
-    "prebuild-dev-pkg": "gulp build-angular-suff",
-    "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
-    "build-css-pkg": "node node_scripts/npm-build-css-package.js"
-  },
-  "author": "VoyageOne",
-  "license": "ISC"
+  }
 }
