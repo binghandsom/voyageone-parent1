@@ -2,6 +2,10 @@ package com.voyageone.task2.cms.bean;
 
 import com.voyageone.common.util.MD5;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SuperfeedSummerGuruBean {
     private String sku;
 
@@ -171,7 +175,12 @@ public class SuperfeedSummerGuruBean {
         temp.append(this.getProductId());
         temp.append(this.getWeight());
         temp.append(this.getMaterial());
-        temp.append(this.getImages());
+        List<String> images = Arrays.asList(this.images.split(","));
+        images.stream()
+                .map(s -> s.substring(s.lastIndexOf("/")).trim())
+                .sorted()
+                .collect(Collectors.toList())
+                .forEach(temp::append);
         temp.append(this.getBodyMeasurements());
         temp.append(this.getRelationshipName());
         temp.append(this.getParentId());
