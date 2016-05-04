@@ -278,4 +278,24 @@
         and tag.active=1
         order by tag.id
     </select>
+    <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
+    <select id="select_one_by_tag_info" resultMap="TagMap" parameterType="String">
+        select
+        tag.id,
+        tag.tag_name,
+        tag.channel_id,
+        tag.tag_path,
+        tag.tag_path_name,
+        tag.tag_type,
+        tag.tag_status,
+        tag.sort_order,
+        tag.parent_tag_id,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where tag.parent_tag_id = #{parentTagId}
+        and tag.tag_type = #{tagType}
+    </select>
 </mapper>

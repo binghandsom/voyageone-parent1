@@ -108,32 +108,53 @@ public class CmsChannelTagService extends BaseAppService {
         String tagPathName = (String) param.get("tagPathName");
         //渠道id
         String channelId = (String) param.get("channelId");
-        ////创建者/更新者用
+        //创建者/更新者用
         String userName = (String) param.get("userName");
         //插入数据的数值
         HashMap<String, Object> tagInfo = (HashMap<String, Object>) param.get("tagInfo");
+        String tagTypeValue=String.valueOf(tagInfo.get("tagTypeSelectValue"));
+        //父级标签ID
+        String parentTagId="";
+        //取得标签名称
+        String tagPathNameValue="";
+        //判断是否是一级标签
+        boolean firstTag = (boolean) param.get("first");
+        //取得所有的标签类型
+        HashMap<String, Object> tagSelectObject = (HashMap<String, Object>) param.get("tagSelectObject");
+        if (firstTag) {
+            parentTagId="0";
+            tagPathNameValue=tagPathName;
+        }else{
+            tagPathNameValue=String.valueOf(tagSelectObject.get("tagPathName")) + " > " + tagPathName;
+            parentTagId=String.valueOf(tagSelectObject.get("id"));
+        }
         //标签名称check
         if (StringUtils.isEmpty(tagPathName) || tagPathName.getBytes().length > 50) {
             //标签名称小于50字节
             throw new BusinessException("7000074");
         }
-        //判断是否是一级标签
-        boolean firstTag = (boolean) param.get("first");
-        HashMap<String, Object> tagSelectObject = (HashMap<String, Object>) param.get("tagSelectObject");
+        //tag中如果同一级中添加一个名字一样的，提示不能添加
+        List<CmsBtTagModel> categoryList = cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId,tagTypeValue);
+        //标签名称小于50字节
+        for(int i=0;i<categoryList.size();i++){
+            if(categoryList.get(i).getTagPathName().toString().equals(tagPathNameValue)){
+                throw new BusinessException("7000080");
+            }
+        }
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         //一级标签
         if (firstTag) {
             cmsBtTagModel.setChannelId(channelId);
-            if (TAG_TYPE_SHOP_CLASSIFY.equals(String.valueOf(tagInfo.get("tagTypeSelectValue")))) {
+            if (TAG_TYPE_SHOP_CLASSIFY.equals(tagTypeValue)) {
                 cmsBtTagModel.setTagName(TAG_TYPE_SHOP_CLASSIFY_NAME);
             }
-            if (TAG_TYPE_PROMOTION.equals(String.valueOf(tagInfo.get("tagTypeSelectValue")))) {
+            if (TAG_TYPE_PROMOTION.equals(tagTypeValue)) {
                 cmsBtTagModel.setTagName(TAG_TYPE_PROMOTION_NAME);
             }
-            if (TAG_TYPE_GOODS.equals(String.valueOf(tagInfo.get("tagTypeSelectValue")))) {
+            if (TAG_TYPE_GOODS.equals(tagTypeValue)) {
                 cmsBtTagModel.setTagName(TAG_TYPE_GOODS_NAME);
             }
-            if (TAG_TYPE_FREE.equals(String.valueOf(tagInfo.get("tagTypeSelectValue")))) {
+            if (TAG_TYPE_FREE.equals(tagTypeValue)) {
                 cmsBtTagModel.setTagName(TAG_TYPE_FREE_NAME);
             }
             cmsBtTagModel.setTagPath("0");
@@ -204,7 +225,7 @@ public class CmsChannelTagService extends BaseAppService {
         tagTypeSelectValue.put("children", new ArrayList<CmsBtTagModel>());
         tagTypeSelectValue.put("isLeaf", true);
         tagTypeSelectValue.put("isActive", cmsBtTagModel.getActive());
-        tagTypeSelectValue.put("tagChildrenName", (String) param.get("tagPathName"));
+        tagTypeSelectValue.put("tagChildrenName", param.get("tagPathName"));
         tagTypeSelectValue.put("created", cmsBtTagModel.getCreated());
         tagTypeSelectValue.put("creater", cmsBtTagModel.getCreater());
         tagTypeSelectValue.put("modified", cmsBtTagModel.getModified());
