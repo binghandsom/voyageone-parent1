@@ -438,7 +438,7 @@ define([
                         "controller": 'popImageDetailAddCtl'
                     },
                 },
-            }
+            },
             "image": {
                 "upload": {
                     "templateUrl": "views/pop/image/imgSetting.tpl.html",
@@ -446,7 +446,6 @@ define([
                     "controller": 'popImgSettingCtl'
                 }
             }
-
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -946,7 +945,7 @@ define([
          * @type {openPromotion}
          */
         $scope.openImageSetting = function (context) {
-            return openModel(popActions.image.setting, context);
+            return openModel(popActions.image.upload, context);
         };
         //function openImageSetting(viewSize, product, imageType, fnInitial) {
         //    require([popActions.image.setting.controllerUrl], function () {
@@ -1121,6 +1120,48 @@ define([
         $scope.openCartEdit = function (context) {
             return openModel(popActions.system.cartList, context);
         };
+        /**
+         * 新增店铺管理-Listing-sizechart页,设置操作弹出
+         * */
+        $scope.openSizeChartSetting = function (context) {
+            return openModel(popActions.store.listing.sizechart, context);
+        };
+        /**
+         * 新增店铺管理-Listing-sizechartimport页,倒入操作弹出
+         * */
+        $scope.openSizeChartImport = function (context) {
+            return openModel(popActions.store.listing.sizechartimport, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagetemplate页,设置操作弹出
+         * */
+        $scope.openImgTplEditing = function (context) {
+            return openModel(popActions.store.listing.imagetemplate, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagetemplate预览图片页,设置操作弹出
+         * */
+        $scope.openImgTplPreview = function (context) {
+            return openModel(popActions.store.listing.imagetemplatepreview, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup页,add操作弹出
+         * */
+        $scope.openImgGroupList = function (context) {
+            return openModel(popActions.store.listing.imagegroupadd, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
+         * */
+        $scope.openImgGroupListImg = function (context) {
+            return openModel(popActions.store.listing.imagegroupimg, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
+         * */
+        $scope.openImgGroupDetail = function (context) {
+            return openModel(popActions.store.listing.imagedetailadd, context);
+        };
 
         /**
          * 弹出自定义属性列
@@ -1162,7 +1203,7 @@ define([
             return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
         //聚美图片管理中，追加按钮
-        $scope.openImageSetting = function (context) {
+        $scope.openJmImageSetting = function (context) {
             return openModel(popActions.jumei.jmImageManage.imageSetting, context);
         };
 
