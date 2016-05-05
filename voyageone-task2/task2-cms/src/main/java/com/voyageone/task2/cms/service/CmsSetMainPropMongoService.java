@@ -1293,7 +1293,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
-                String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+                String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
                 cmsBtImageDaoExt.insertImages(newModel);
