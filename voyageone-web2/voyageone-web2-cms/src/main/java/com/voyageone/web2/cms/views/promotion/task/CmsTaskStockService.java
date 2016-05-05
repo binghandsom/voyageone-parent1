@@ -225,7 +225,14 @@ public class CmsTaskStockService extends BaseAppService {
         //共同方法TypeChannel.getTypeListSkuCarts取得该公司的所有销售渠道
         List<TypeChannelBean> typeChannelBeanList = getCartNameByChannelId(language, channelId);
         //取得活动结束时间的指定分钟数后还原
-        String min = Types.getValue(com_mt_value_type_id, com_mt_value_name, com_mt_value_lang_id);
+        String minuteValue = Types.getValue(com_mt_value_type_id, com_mt_value_name, com_mt_value_lang_id);
+        int minute;
+        //取得活动结束时间的指定分钟数后还原
+        if (StringUtils.isEmpty(minuteValue)) {
+            minute = 0;
+        } else {
+            minute = Integer.parseInt(minuteValue);
+        }
         //判断隔离任务:1新规的场 2合更新的场合
         String promotionType = (String) param.get("promotionType");
         if (promotionType.equals(TYPE_PROMOTION_INSERT)) {
@@ -236,7 +243,7 @@ public class CmsTaskStockService extends BaseAppService {
             //根据活动ID取得cms_bt_promotion隔离的CartID
             Map<String, Object> separateCartIdMap = getPromotionIdByCartID(selFlag);
             //取得隔离和未隔离的数据
-            allSeparateInfo = getSeparateCartByTypeChannel(separateCartIdMap, typeChannelBeanList, channelId, min);
+            allSeparateInfo = getSeparateCartByTypeChannel(separateCartIdMap, typeChannelBeanList, channelId, minute);
         }
         if (promotionType.equals(TYPE_PROMOTION_UPDATE)) {
             //取得TaskID
@@ -246,7 +253,7 @@ public class CmsTaskStockService extends BaseAppService {
             //根据TaskID取得初始画面的值
             List<Map<String, Object>> allSeparateCartIdMap = getCartNameBytaskId(String.valueOf(taskId));
             //取得新建库存隔离任务的数据
-            allSeparateInfo = getAllSeparateInfo(typeChannelBeanList, allSeparateCartIdMap, channelId);
+            allSeparateInfo = getAllSeparateInfo(typeChannelBeanList, allSeparateCartIdMap, channelId, minute);
         }
         //循环取得隔离的数据反应到初始画面
         //返回数据的类型
@@ -332,7 +339,7 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @return separatePlatformList
      */
-    private List<Map> getSeparateCartByTypeChannel(Map<String, Object> separateCartIdMap, List<TypeChannelBean> typeChannelBeanList, String channelId, String id) {
+    private List<Map> getSeparateCartByTypeChannel(Map<String, Object> separateCartIdMap, List<TypeChannelBean> typeChannelBeanList, String channelId, int min) {
 
         //取得隔离渠道的数据的集合
         List<Map> separatePlatformList = new ArrayList<>();
@@ -342,13 +349,6 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String, String> isAllSeparateCartName = new HashMap<>();
         // 还原时间
         String afterRevertTime = "";
-        int min;
-        //取得活动结束时间的指定分钟数后还原
-        if (StringUtils.isEmpty(id)) {
-            min = 0;
-        } else {
-            min = Integer.parseInt(id);
-        }
         //取得隔离渠道的数据
         for (TypeChannelBean cartId : typeChannelBeanList) {
             for (Map.Entry<String, Object> entry : separateCartIdMap.entrySet()) {
@@ -368,6 +368,8 @@ public class CmsTaskStockService extends BaseAppService {
                     separatePlatformMap.put("type", "1");
                     //还原时间
                     separatePlatformMap.put("revertTime", afterRevertTime);
+                    //指定还原时间
+                    separatePlatformMap.put("revertTimeHide", afterRevertTime);
                     //活动ID
                     separatePlatformMap.put("promotionId", entry.getKey());
                     //取得隔离渠道的名称
@@ -421,6 +423,8 @@ public class CmsTaskStockService extends BaseAppService {
             isNotSeparatePlatformMap.put("type", "2");
             // 还原时间
             isNotSeparatePlatformMap.put("revertTime", afterRevertTime);
+            //　指定还原时间
+            isNotSeparatePlatformMap.put("revertTimeHide", afterRevertTime);
             // 活动ID
             isNotSeparatePlatformMap.put("promotionId", "");
             //共享渠道的数据的集合
@@ -492,7 +496,7 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @return separatePlatformList
      */
-    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap, String channelId) {
+    private List<Map> getAllSeparateInfo(List<TypeChannelBean> typeChannelBeanList, List<Map<String, Object>> allSeparateCartIdMap, String channelId, int min) {
         List<Map> separatePlatformList = new ArrayList<>();
         //取得隔离渠道的名称
         Map<String, String> separateCartName = new HashMap<>();
@@ -523,6 +527,11 @@ public class CmsTaskStockService extends BaseAppService {
                     separatePlatformMap.put("type", anAllSeparateCartIdMap.get("type").toString());
                     //还原时间
                     separatePlatformMap.put("revertTime", revertTime);
+                    //取得活动还原时间
+                    Map<String, Object> cartNameMap = promotionService.getPromotionIDByCartId(anAllSeparateCartIdMap.get("promotionId").toString());
+                    String afterRevertTime = addDateMin(cartNameMap.get("activity_end").toString(), min);
+                    //指定还原时间
+                    separatePlatformMap.put("revertTimeHide", afterRevertTime);
                     //增优先
                     separatePlatformMap.put("addPriority", anAllSeparateCartIdMap.get("addPriority").toString());
                     //减优先
@@ -584,6 +593,8 @@ public class CmsTaskStockService extends BaseAppService {
             isNotSeparatePlatformMap.put("type", "2");
             //还原时间
             isNotSeparatePlatformMap.put("revertTime", revertTime);
+            //指定还原时间
+            isNotSeparatePlatformMap.put("revertTimeHide", revertTime);
             //0：未执行自动还原; 1：已经执行自动还原;
             isNotSeparatePlatformMap.put("revertFlg", "1");
             //增优先
@@ -609,7 +620,6 @@ public class CmsTaskStockService extends BaseAppService {
         int addPriority = 0;
         //减优先顺
         int subtractPriority = allSeparateCartIdMap.size();
-        String revertTime = "";
         //循环取得数据反应到初始画面
         for (Map anAllSeparateCartIdMap : allSeparateCartIdMap) {
             Map<String, Object> separatePlatformMap = new HashMap<>();
@@ -624,7 +634,8 @@ public class CmsTaskStockService extends BaseAppService {
             separatePlatformMap.put("type", anAllSeparateCartIdMap.get("type").toString());
             // 还原时间
             separatePlatformMap.put("revertTime", anAllSeparateCartIdMap.get("revertTime").toString());
-            revertTime = anAllSeparateCartIdMap.get("revertTime").toString();
+            // 指定还原时间
+            separatePlatformMap.put("revertTimeHide", anAllSeparateCartIdMap.get("revertTimeHide").toString());
             //活动ID
             if (promotionType.equals(TYPE_PROMOTION_INSERT)) {
                 separatePlatformMap.put("promotionId", anAllSeparateCartIdMap.get("promotionId").toString());
@@ -655,8 +666,6 @@ public class CmsTaskStockService extends BaseAppService {
             data.put("taskName", name);
         }
         data.put("onlySku", false);
-        //活动的还原时间
-        data.put("revertTime", revertTime);
         return data;
     }
 
@@ -785,8 +794,6 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map> separatePlatformList = (List<Map>) param.get("promotionList");
         //活动名称
         String taskName = (String) param.get("taskName");
-        //活动的还原时间
-        String realRevertTime = (String) param.get("revertTime");
         //任务名称
         if (StringUtils.isEmpty(taskName) || taskName.getBytes().length > 1000) {
             // 任务名称必须输入且长度小于1000
@@ -797,10 +804,6 @@ public class CmsTaskStockService extends BaseAppService {
         //减优先顺
         int[] subtractPriorityList = new int[separatePlatformList.size()];
         for (int i = 0; i < separatePlatformList.size(); i++) {
-//            //平台id
-//            String cartId=separatePlatformList.get(i).get("cartId").toString();
-//            //平台名
-//            String cartName=separatePlatformList.get(i).get("cartName").toString();
             //隔离比例
             String value = separatePlatformList.get(i).get("value").toString();
             //类型（1：隔离，2：共享）
@@ -812,6 +815,8 @@ public class CmsTaskStockService extends BaseAppService {
             if (type.equals(SEPARATE_TYPE)) {
                 // 还原时间
                 String revertTime;
+                //活动的还原时间
+                String realRevertTime =separatePlatformList.get(i).get("revertTimeHide").toString().toString();
                 boolean contains = separatePlatformList.get(i).containsKey("revertTime");
                 if (contains) {
                     if (null == separatePlatformList.get(i).get("revertTime")) {
@@ -828,19 +833,20 @@ public class CmsTaskStockService extends BaseAppService {
                 if (!onlySku) {
                     if (value.contains("%")) {
                         if (value.startsWith("%")) {
-                            //隔离平台的隔离比例必须填且为大于0小于100整数
+                            //隔离平台的隔离比例必须填且为大于0小于等于100整数
                             throw new BusinessException("7000014");
                         } else {
                             //隔离平台的隔离比例
                             String separate = value.substring(0, value.lastIndexOf("%"));
-                            if (separate.contains("%") || separate.getBytes().length > 2 || !StringUtils.isDigit(separate)) {
+                            if (separate.contains("%") || !StringUtils.isDigit(separate)
+                                    || Integer.parseInt(separate)>100 ) {
                                 throw new BusinessException("7000014");
                             }
                         }
                     } else {
                         if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)
-                                || value.getBytes().length > 2) {
-                            //隔离平台的隔离比例必须填且为大于0小于100整数
+                                || Integer.parseInt(value)>100 ) {
+                            //隔离平台的隔离比例必须填且为大于0小于等于100整数
                             throw new BusinessException("7000014");
                         }
                     }
@@ -890,8 +896,7 @@ public class CmsTaskStockService extends BaseAppService {
         }
         Arrays.sort(addPriorityList);
         //增优先的排序Check
-        for (int i = 0; i < addPriorityList.length; i++) {
-            System.out.println(addPriorityList[i]);
+        for (int i = 0; i < addPriorityList.length; i++){
             if (addPriorityList[i] != (i + 1)) {
                 // 增优先顺不是从1开始的连续自然数
                 throw new BusinessException("7000017");
@@ -899,8 +904,7 @@ public class CmsTaskStockService extends BaseAppService {
         }
         Arrays.sort(subtractPriorityList);
         //增优先的排序Check
-        for (int i = 0; i < subtractPriorityList.length; i++) {
-            System.out.println(subtractPriorityList[i]);
+        for (int i = 0; i < subtractPriorityList.length; i++){
             if (subtractPriorityList[i] != (i + 1)) {
                 // 减优先顺不是从1开始的连续自然数
                 throw new BusinessException("7000018");
@@ -1977,7 +1981,7 @@ public class CmsTaskStockService extends BaseAppService {
                 }
             }
         }
-        if (!updateStockSalesQuantityList.isEmpty()) {
+        if (!updateStockSeparateItemList.isEmpty() || !updateStockSalesQuantityList.isEmpty()) {
             stockSeparateService.updateStockSalesQuantityList(updateStockSeparateItemList, updateStockSalesQuantityList);
         }
 

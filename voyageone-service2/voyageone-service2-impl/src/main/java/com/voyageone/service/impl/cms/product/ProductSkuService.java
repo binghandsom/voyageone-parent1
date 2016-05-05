@@ -143,7 +143,7 @@ public class ProductSkuService extends BaseService {
 
         CmsBtProductModel findModel = null;
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("skus.skuCode");
+        queryObject.setProjectionExt("skus.skuCode");
         if (productId != null) {
             queryObject.setQuery("{\"prodId\":" + productId + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
@@ -336,7 +336,7 @@ public class ProductSkuService extends BaseService {
         HashMap<String, Object> productQueryMap = new HashMap<>();
         CmsBtProductModel findModel;
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("prodId", "fields", "skus");
+        queryObject.setProjectionExt("prodId", "fields", "skus");
         if (model.getProductId() != null) {
             productQueryMap.put("prodId", model.getProductId());
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");

@@ -66,6 +66,7 @@
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
   "search_feedsearch": {
+    "url": "/search/feedsearch/",
     "hash": "/search/feedsearch",
     "templateUrl": "views/search/feedsearch.tpl.html",
     "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
@@ -163,6 +164,31 @@
     "hash": "/channel/taglist",
     "templateUrl": "views/channel/taglist/index.tpl.html",
     "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
+  },
+  "channel_listing_sizechart": {
+    "hash": "/channel/sizechart",
+    "templateUrl": "views/channel/sizechart/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/sizechart/index.ctl"
+  },
+  "channel_listing_sizechart_detail": {
+    "hash": "/channel/sizechart/detail",
+    "templateUrl": "views/channel/sizechart/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/sizechart/detail.ctl"
+  },
+  "channel_imagetemplate_list": {
+    "hash": "/channel/imagetemplatelist",
+    "templateUrl": "views/channel/imagetemplatelist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/imagetemplatelist/index.ctl"
+  },
+  "channel_imagegroup_list": {
+    "hash": "/channel/imagegrouplist",
+    "templateUrl": "views/channel/imagegrouplist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/imagegrouplist/index.ctl"
+  },
+  "channel_listing_imagegrouplist_detail": {
+    "hash": "/channel/imagegrouplist/detail",
+    "templateUrl": "views/channel/imagegrouplist/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/imagegrouplist/detail.ctl"
   },
   "translation_index": {
     "hash": "/translation/index",

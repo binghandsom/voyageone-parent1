@@ -20,8 +20,6 @@ public class CmsMtChannelCategoryConfigDaoExt extends ServiceBaseDao {
     }
 
     public void insertWithList(List<CmsMtChannelCategoryConfigModel> models) {
-        models.forEach(s -> {
-            insert(s);
-        });
+        models.forEach(this::insert);
     }
 }

@@ -497,30 +497,78 @@ public class JdWareService extends JdBase {
         return false;
     }
 
+    /**
+     * 保存商品运费模板
+     *
+     * @param shop ShopBean  店铺信息
+     * @param wareId long    京东商品id
+     * @param transportId long 运费模板id
+     * @return boolean  保存商品运费模板是否成功
+     */
+    public boolean updateWareTransportId(ShopBean shop, long wareId, long transportId) throws BusinessException {
 
+        TransportWriteUpdateWareTransportIdRequest request = new TransportWriteUpdateWareTransportIdRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+        // 运费模板id(必须)
+        request.setTransportId(transportId);
 
+        try {
+            // 调用京东保存商品运费模板API( jingdong.transport.write.updateWareTransportId)
+            TransportWriteUpdateWareTransportIdResponse response = reqApi(shop, request);
 
+            if (response != null) {
+                // 京东返回正常的场合
+                if (response.getSuccess()) {
+                    return true;
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API设置商品运费模板失败! " + "wareId:" + wareId + ",transportId:" + transportId);
 
+            throw new BusinessException(shop.getShop_name() + "设置商品运费模板失败 " + ex.getMessage());
+        }
 
+        logger.error("调用京东API设置商品运费模板失败! " + "wareId:" + wareId + ",transportId:" + transportId);
+        return false;
+    }
 
+    /**
+     * 设置京东商品关联版式
+     *
+     * @param shop ShopBean   店铺信息
+     * @param wareIds String  京东商品编号集合
+     * @param layoutId String 版式id
+     * @return boolean  设置关联版式到商品是否成功
+     */
+    public boolean updateWareLayoutId(ShopBean shop, String wareIds, String layoutId) throws BusinessException {
 
+        WareTemplateToWaresUpdateRequest request = new WareTemplateToWaresUpdateRequest();
+        // 版式id（取消商品关联版式时，请将此字段值设置为空）(必须)(例：112312)
+        request.setId(layoutId);
+        // 商品编号集合，最大不超过20个(必须)(例：123313,12312123)
+        request.setWareIds(wareIds);
 
+        try {
+            // 调用京东设置关联版式到商品API(360buy.ware.template.to.wares.update)
+            WareTemplateToWaresUpdateResponse response = reqApi(shop, request);
 
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回设置关联版式到商品成功
+                    return true;
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API设置商品关联版式失败! " + "版式id:" + layoutId + ",商品编号集合:" + wareIds);
 
+            throw new BusinessException(shop.getShop_name() + "设置商品关联版式失败 " + ex.getMessage());
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        logger.error("调用京东API设置商品关联版式失败! " + "版式id:" + layoutId + ",商品编号集合:" + wareIds);
+        return false;
+    }
 
 
 

@@ -54,6 +54,9 @@
         <!-- BHFO feed 导入 cms2 -->
         <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="50 0 0/1 * * ?"/>
 
+        <!-- SummerGuru feed 导入 cms2 -->
+        <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="30 0 0/1 * * ?"/>
+
         <!-- 维他命 feed 导入 cms2 -->
         <task:scheduled ref="CmsVtmJob" method="run" cron="10 0/1 * * * ?"/>
 

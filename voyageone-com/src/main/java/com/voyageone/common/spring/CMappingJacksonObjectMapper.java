@@ -1,10 +1,12 @@
 package com.voyageone.common.spring;
 
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,7 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
       //  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
       //  this.setDateFormat(formatter);
+        this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         SimpleModule newModuleTimestamp = new SimpleModule("CJacksonTimestampSerializer", Version.unknownVersion());
       //  newModule.addSerializer(Date.class, new CJacksonDateSerializer());
         newModuleTimestamp.addDeserializer(Timestamp.class, new CJacksonTimestampDeserializer());
@@ -49,8 +52,8 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
         }
     }
 
-    @Override
-    public void writeValue(OutputStream out, Object value) throws IOException {
-        super.writeValue(out, value);
-    }
+//    @Override
+//    public void writeValue(OutputStream out, Object value) throws IOException {
+//        super.writeValue(out, value);
+//    }
 }

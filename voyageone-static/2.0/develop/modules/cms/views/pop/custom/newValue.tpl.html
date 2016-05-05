@@ -9,18 +9,20 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">种类</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="cat_path" ng-options="category.path as category.cid for category in categoryList" ng-change="valueChange(cat_path)">
+                    <select class="form-control" ng-model="vm.cat_path" ng-options="category.catPath as category.catPath for category in categoryList | filter:{isParent:0}" ng-change="valueChange(vm.cat_path)">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-4 control-label">属性名（EN）</label>
                 <div class="col-sm-6">
-                    <select name="" id="" class="form-control" ng-model="vm.prop_id" ng-options="propInfo.prop_id as (propInfo.prop_translation || propInfo.prop_original) for propInfo in vm.valList">
+                    <select name="" id="" class="form-control" ng-model="vm.prop_id" ng-options="propInfo.prop_id as propInfo.prop_original for propInfo in valList">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label">属性值（EN）</label>

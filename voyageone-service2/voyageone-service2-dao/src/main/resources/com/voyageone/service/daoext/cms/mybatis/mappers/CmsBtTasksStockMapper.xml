@@ -151,6 +151,7 @@
                 revert_time revertTime,
                 revert_flg revert_flg,
                 add_priority addPriority,
+                promotion_id promotionId,
                 subtract_priority subtractPriority
         from voyageone_cms2.cms_bt_tasks_stock
         where task_id =#{task_id}

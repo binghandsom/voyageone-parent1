@@ -2,6 +2,7 @@ package com.voyageone.service.bean.cms;
 
 import com.voyageone.common.CmsConstants;
 import com.voyageone.service.model.cms.CmsBtPromotionGroupsModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class CmsBtPromotionGroupsBean extends CmsBtPromotionGroupsModel {
         super();
     }
 
-    public CmsBtPromotionGroupsBean(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
+    public CmsBtPromotionGroupsBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel,int promotionId, String operator) {
         this();
         // catPath
         this.setCatPath(productInfo.getCatPath());
@@ -54,14 +55,12 @@ public class CmsBtPromotionGroupsBean extends CmsBtPromotionGroupsModel {
         this.setCreater(operator);
 
         this.setModifier(operator);
-        // TODO-- group信息另外设置
-//        CmsBtProductModel_Group_Platform platform = productInfo.getGroups().getPlatformByCartId(cartId);
-//        if(platform !=  null){
-//            // numIid
-//            this.setNumIid(platform.getNumIId() == null ? "": platform.getNumIId());
-//            // modelId
-//            this.setModelId(platform.getGroupId());
-//        }
+        if(groupModel !=  null){
+            // numIid
+            this.setNumIid(groupModel.getNumIId());
+            // modelId
+            this.setModelId(groupModel.getGroupId());
+        }
 
     }
 
