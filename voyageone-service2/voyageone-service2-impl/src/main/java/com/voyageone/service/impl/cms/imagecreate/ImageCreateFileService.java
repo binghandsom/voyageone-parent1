@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.imagecreate;
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
@@ -42,8 +41,6 @@ public class ImageCreateFileService extends BaseService {
     private USCDNFileService serviceUSCDNFile;
     @Autowired
     private LiquidFireImageService serviceLiquidFireImage;
-    @Autowired
-    TransactionRunner transactionRunner;
 
     @Autowired
     private MqSender sender;
