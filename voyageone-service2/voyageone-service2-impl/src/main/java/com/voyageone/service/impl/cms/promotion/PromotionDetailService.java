@@ -19,8 +19,8 @@ import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -137,7 +137,7 @@ public class PromotionDetailService extends BaseService {
             code.setPromotionId(cmsBtPromotionGroupsBean.getPromotionId());
             code.setNumIid(cmsBtPromotionGroupsBean.getNumIid());
             code.setModifier(cmsBtPromotionGroupsBean.getModifier());
-            code.setCreater(cmsBtPromotionGroupsBean.getModified());
+            code.setModified(cmsBtPromotionGroupsBean.getModified());
             code.setModelId(cmsBtPromotionGroupsBean.getModelId());
             if (cmsPromotionCodeDao.updatePromotionCode(code) == 0) {
                 cmsPromotionCodeDao.insertPromotionCode(code);
@@ -150,7 +150,7 @@ public class PromotionDetailService extends BaseService {
                 cmsBtPromotionSkuModel.setPromotionId(cmsBtPromotionGroupsBean.getPromotionId());
                 cmsBtPromotionSkuModel.setCatPath(cmsBtPromotionGroupsBean.getCatPath());
                 cmsBtPromotionSkuModel.setModifier(cmsBtPromotionGroupsBean.getModifier());
-                cmsBtPromotionSkuModel.setCreater(cmsBtPromotionGroupsBean.getModified());
+                cmsBtPromotionSkuModel.setModified(cmsBtPromotionGroupsBean.getModified());
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             });
         }

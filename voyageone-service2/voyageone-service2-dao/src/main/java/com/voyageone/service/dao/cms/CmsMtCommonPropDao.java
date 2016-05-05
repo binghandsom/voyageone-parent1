@@ -1,3 +1,10 @@
+/*
+ * CmsMtCommonPropDao.java
+ * Copyright(C) 20xx-2015 Voyageonone Group Inc.
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2016-05-05 Created
+ */
 package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtCommonPropModel;
@@ -12,11 +19,11 @@ public interface CmsMtCommonPropDao {
 
     CmsMtCommonPropModel selectOne(Map<String, Object> map);
 
-    CmsMtCommonPropModel select(long id);
+    CmsMtCommonPropModel select(Integer id);
 
-    int insert(CmsMtCommonPropModel entity);
+    int insert(CmsMtCommonPropModel record);
 
-    int update(CmsMtCommonPropModel entity);
+    int update(CmsMtCommonPropModel record);
 
-    int delete(long id);
+    int delete(Integer id);
 }

@@ -3,9 +3,9 @@ package com.voyageone.service.model.com;
 import com.voyageone.base.dao.mysql.BaseModel;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -25,7 +25,7 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
 
     private String cart_id;
 
-    private String call_time;
+    private Date call_time;
 
     private String time_zone;
 
@@ -51,7 +51,8 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
 
         Calendar calendar = Calendar.getInstance();
 
-        this.call_time = DateTimeUtil.getDateTime(calendar.getTime(), null);
+//        this.call_time = DateTimeUtil.getDateTime(calendar.getTime(), null);
+        this.call_time = new Date();
         this.time_zone = calendar.getTimeZone().getDisplayName();
 
         Map<String, String> local = CommonUtil.getLocalInfo();
@@ -97,11 +98,11 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
         this.cart_id = cart_id;
     }
 
-    public String getCall_time() {
+    public Date getCall_time() {
         return call_time;
     }
 
-    public void setCall_time(String call_time) {
+    public void setCall_time(Date call_time) {
         this.call_time = call_time;
     }
 
