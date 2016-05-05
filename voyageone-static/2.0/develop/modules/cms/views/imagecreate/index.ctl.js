@@ -46,16 +46,13 @@ define([
         }
         $scope.downloadImportExcel=function(id){
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
-            ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadExcel",angular.toJson({id:id}));
+            ExportExcel("/cms/imagecreate/index/downloadExcel",angular.toJson({id:id}));
         }
         $scope.downloadImportErrorExcel=function(id)
         {
-            ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadImportErrorExcel",angular.toJson({id:id}));
+            ExportExcel("/cms/imagecreate/index/downloadImportErrorExcel",angular.toJson({id:id}));
         }
-        $scope.downloadExportExcel=function(id){
-            ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
-            ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel",angular.toJson({id:id}));
-        }
+
         $scope.openImageCreateImport = function () {
             var controllerUrl="modules/cms/views/imagecreate/pop/import.ctl";
             var templateUrl="views/imagecreate/pop/import.tpl.html";
@@ -70,11 +67,9 @@ define([
                         }
                     }
                 });
-                //modalInstance.result.then(function () {
-                //    if (fnInitial) {
-                //        fnInitial();
-                //    }
-                //})
+                modalInstance.result.then(function () {
+                    $scope.search();
+                })
             });
         }
         function ExportExcel(action,source)//导出excel方法
@@ -91,16 +86,7 @@ define([
             Form.action = action;
             Form.submit();
         };
-
     }
-    //"import": {
-    //    "templateUrl": "views/pop/jm/import.tpl.html",
-    //        "controllerUrl": "modules/cms/views/pop/jm/import.ctl",
-    //        "controller": 'popPromotionDetailImportCtl',
-    //        "size": 'md',
-    //        "backdrop": "static"
-    //},
-
     detailController.$inject = ['$scope','cmsMtImageCreateService', '$uibModal', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
 });
