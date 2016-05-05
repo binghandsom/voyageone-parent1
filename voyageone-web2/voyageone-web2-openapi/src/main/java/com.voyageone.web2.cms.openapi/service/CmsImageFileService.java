@@ -16,26 +16,29 @@ import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.dao.cms.CmsMtImageCreateImportDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDao;
 import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
+import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
 import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.imagecreate.ImageConfig;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateImportModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTaskModel;
+import com.voyageone.service.model.cms.*;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.List;
+
 /**
  * product Service
  *
@@ -58,9 +61,9 @@ public class CmsImageFileService extends BaseService {
     CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
     @Autowired
     CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
-    @Autowired
-    TransactionRunner transactionRunner;
 
+@Autowired
+CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
     public GetImageResultBean checkGetImageParameter(String channelId, int templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
         if (StringUtils.isEmpty(channelId)) {
@@ -104,8 +107,12 @@ public class CmsImageFileService extends BaseService {
             modelFile = imageCreateFileService.getModelByHashCode(hashCode);
             $info("CmsImageFileService:getImage get db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model=[%s]", channelId, templateId, file, vparam, hashCode, modelFile);
             if (modelFile == null) {
+                CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(templateId);
+                if (modelTemplate == null) {
+                    throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + templateId);
+                }
                 //1.创建记录信息
-                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode, isUploadUSCDN);
+                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, modelTemplate, file, vparam, creater, hashCode, isUploadUSCDN);
                 $info("CmsImageFileService:getImage create db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
             }
             //.创建并上传图片
@@ -201,104 +208,23 @@ public class CmsImageFileService extends BaseService {
         importModel.setEndTime(new Date());
         importModel.setCreater(Creater);
         importModel.setModifier(Creater);
-
-
         AddListParameter parameter = new AddListParameter();
         parameter.setData(listModel);
-
         final AddListResultBean[] result = {null};
-
-        transactionRunner.runWithTran(() -> {
-            result[0] = addList(parameter,importModel);
-        });
+            result[0] = imageCreateFileService.addList(parameter,importModel);
         return result[0];
     }
-
-    @VOTransactional
     public AddListResultBean addListWithTrans(AddListParameter parameter) {
-        return addList(parameter,null);
-    }
-
-    AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
-        AddListResultBean result = new AddListResultBean();
-        try {
-            checkAddListParameter(parameter);
-            CmsMtImageCreateTaskModel modelTask = new CmsMtImageCreateTaskModel();
-            List<CmsMtImageCreateTaskDetailModel> listTaskDetail = new ArrayList<>();
-            CmsMtImageCreateFileModel modelCmsMtImageCreateFile;
-            for (CreateImageParameter imageInfo : parameter.getData()) {
-                long hashCode = imageCreateFileService.getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
-                modelCmsMtImageCreateFile = imageCreateFileService.getModelByHashCode(hashCode);
-                if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
-                    modelCmsMtImageCreateFile = imageCreateFileService.createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode, imageInfo.isUploadUsCdn());
-                }
-                CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
-                detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
-                detailModel.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
-                detailModel.setEndTime(DateTimeUtil.getCreatedDefaultDate());
-                detailModel.setCreater("");
-                detailModel.setModifier("");
-                detailModel.setCreated(new Date());
-                detailModel.setModified(new Date());
-                listTaskDetail.add(detailModel);
-            }
-            modelTask.setName(new Date().toString());
-            modelTask.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
-            modelTask.setEndTime(DateTimeUtil.getCreatedDefaultDate());
-            modelTask.setCreater("");
-            modelTask.setModifier("");
-            modelTask.setCreated(new Date());
-            modelTask.setModified(new Date());
-            daoCmsMtImageCreateTask.insert(modelTask);
-            if (importModel != null) {
-                importModel.setCmsMtImageCreateTaskId(modelTask.getId());
-                importModel.setEndTime(new Date());
-                daoCmsMtImageCreateImport.insert(importModel);
-
-            }
-            for (CmsMtImageCreateTaskDetailModel detailModel : listTaskDetail) {
-                detailModel.setCmsMtImageCreateTaskId(modelTask.getId());
-                // daoCmsMtImageCreateTaskDetail.insert(detailModel);
-            }
-            daoExtCmsMtImageCreateTaskDetail.insertList(listTaskDetail);
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", modelTask.getId());
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
-        } catch (OpenApiException ex) {
-            result.setErrorCode(ex.getErrorCode());
-            result.setErrorMsg(ex.getMsg());
-            if (ex.getSuppressed() != null) {
-                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-                $error("AddList requestId:" + requestId, ex);
-            }
-        } catch (Exception ex) {
-            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
-            $error("AddList requestId:" + requestId, ex);
-            result.setRequestId(requestId);
-            result.setErrorCode(ImageErrorEnum.SystemError.getCode());
-            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
+        if (parameter.getData().size() > ImageConfig.getMaxSize()) {
+            AddListResultBean resultBean=new AddListResultBean();
+            resultBean.setErrorCode(ImageErrorEnum.ParametersOutSize.getCode());
+            resultBean.setErrorMsg(ImageErrorEnum.ParametersOutSize.getMsg()+ ImageConfig.getMaxSize());
+            return resultBean;
         }
-        return result;
+        return imageCreateFileService.addList(parameter, null);
     }
 
-    public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
-//        if (parameter.getData().size() > ImageConfig.getMaxSize()) {
-//            throw new OpenApiException(ImageErrorEnum.ParametersOutSize,ImageConfig.getMaxSize()+"");
-//        }
-        for (CreateImageParameter imageInfo : parameter.getData()) {
-            if (StringUtil.isEmpty(imageInfo.getChannelId())) {
-                throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);
-            }
-            if (imageInfo.getTemplateId() == 0) {
-                throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull);
-            }
-            if (StringUtil.isEmpty(imageInfo.getFile())) {
-                throw new OpenApiException(ImageErrorEnum.FileNotNull);
-            }
-            if (StringUtil.isEmpty(imageInfo.getVParam())) {
-                throw new OpenApiException(ImageErrorEnum.VParamNotNull);
-            }
-        }
-    }
+
+
 }
 

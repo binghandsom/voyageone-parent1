@@ -5,23 +5,25 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.HashCodeUtil;
 import com.voyageone.service.bean.openapi.OpenApiException;
+import com.voyageone.service.bean.openapi.image.AddListParameter;
+import com.voyageone.service.bean.openapi.image.AddListResultBean;
+import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
-import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
+import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chuanyu.liang on 2016/4/19.
@@ -42,11 +44,19 @@ public class ImageCreateFileService extends BaseService {
     private LiquidFireImageService serviceLiquidFireImage;
     @Autowired
     TransactionRunner transactionRunner;
+
+    @Autowired
+    private MqSender sender;
+    @Autowired
+    CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
     @Autowired
     CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
     @Autowired
     ImagePathCache imagePathCache;
-
+    @Autowired
+    CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
+    @Autowired
+    CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
 
     public CmsMtImageCreateFileModel getModel(int id) {
         return cmsMtImageCreateFileDao.select(id);
@@ -63,17 +73,14 @@ public class ImageCreateFileService extends BaseService {
     }
 
     @VOTransactional
-    public CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String Creater, long hashCode, boolean isUploadUSCDN) throws OpenApiException {
-        CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(templateId);
-        if (modelTemplate == null) {
-            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + templateId);
-        }
+    public CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, CmsMtImageCreateTemplateModel modelTemplate, String file, String vparam, String Creater, long hashCode, boolean isUploadUSCDN) throws OpenApiException {
+
         final String ossFilePath = getCreateFilePathName(modelTemplate, channelId, file);
         final String usCDNFilePath = ImageConfig.getUSCDNWorkingDirectory() + ossFilePath;
         CmsMtImageCreateFileModel modelFile = new CmsMtImageCreateFileModel();
         modelFile.setChannelId(channelId);
         modelFile.setVparam(vparam);
-        modelFile.setTemplateId(templateId);
+        modelFile.setTemplateId(modelTemplate.getId());
         modelFile.setFile(file);//文件名字
         modelFile.setHashCode(hashCode);
         modelFile.setOssFilePath(ossFilePath);
@@ -91,7 +98,8 @@ public class ImageCreateFileService extends BaseService {
     }
 
     public String getCreateFilePathName(CmsMtImageCreateTemplateModel modelTemplate, String channelId, String file) {
-        return "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + modelTemplate.getId() + "/" + file + ".jpg";
+        //return "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + modelTemplate.getId() + "/" + file + ".jpg";
+        return "products/" + channelId  + "/" + modelTemplate.getId() + "/" + file + ".jpg";
     }
 
     public long getHashCode(String channelId, int templateId, String file, String vparam) {
@@ -191,5 +199,95 @@ public class ImageCreateFileService extends BaseService {
             $info("CmsImageFileService:getImage upload uscnd image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
         }
         return isCreateNewFile;
+    }
+    @VOTransactional
+   public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
+        Map<Integer, CmsMtImageCreateTemplateModel> cmsMtImageCreateTemplateModelMap = new HashMap<>();
+        AddListResultBean result = new AddListResultBean();
+        try {
+            checkAddListParameter(parameter);
+            CmsMtImageCreateTaskModel modelTask = new CmsMtImageCreateTaskModel();
+            List<CmsMtImageCreateTaskDetailModel> listTaskDetail = new ArrayList<>();
+            CmsMtImageCreateFileModel modelCmsMtImageCreateFile;
+            for (CreateImageParameter imageInfo : parameter.getData()) {
+                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
+                modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
+                if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
+                    if (!cmsMtImageCreateTemplateModelMap.containsKey(imageInfo.getTemplateId())) {
+                        CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(imageInfo.getTemplateId());
+                        if (modelTemplate == null) {
+                            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + imageInfo.getTemplateId());
+                        }
+                        cmsMtImageCreateTemplateModelMap.put(imageInfo.getTemplateId(), modelTemplate);
+                    }
+                    CmsMtImageCreateTemplateModel modelTemplate =  cmsMtImageCreateTemplateModelMap.get(imageInfo.getTemplateId());
+                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), modelTemplate, imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode, imageInfo.isUploadUsCdn());
+                }
+                CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
+                detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
+                detailModel.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+                detailModel.setEndTime(DateTimeUtil.getCreatedDefaultDate());
+                detailModel.setCreater("");
+                detailModel.setModifier("");
+                detailModel.setCreated(new Date());
+                detailModel.setModified(new Date());
+                listTaskDetail.add(detailModel);
+            }
+            modelTask.setName(new Date().toString());
+            modelTask.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+            modelTask.setEndTime(DateTimeUtil.getCreatedDefaultDate());
+            modelTask.setCreater("");
+            modelTask.setModifier("");
+            modelTask.setCreated(new Date());
+            modelTask.setModified(new Date());
+            daoCmsMtImageCreateTask.insert(modelTask);
+            if (importModel != null) {
+                importModel.setCmsMtImageCreateTaskId(modelTask.getId());
+                importModel.setEndTime(new Date());
+                daoCmsMtImageCreateImport.insert(importModel);
+
+            }
+            for (CmsMtImageCreateTaskDetailModel detailModel : listTaskDetail) {
+                detailModel.setCmsMtImageCreateTaskId(modelTask.getId());
+                // daoCmsMtImageCreateTaskDetail.insert(detailModel);
+            }
+            daoExtCmsMtImageCreateTaskDetail.insertList(listTaskDetail);
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", modelTask.getId());
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
+        } catch (OpenApiException ex) {
+            result.setErrorCode(ex.getErrorCode());
+            result.setErrorMsg(ex.getMsg());
+            if (ex.getSuppressed() != null) {
+                long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+                $error("AddList requestId:" + requestId, ex);
+            }
+        } catch (Exception ex) {
+            long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
+            $error("AddList requestId:" + requestId, ex);
+            result.setRequestId(requestId);
+            result.setErrorCode(ImageErrorEnum.SystemError.getCode());
+            result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
+        }
+
+        cmsMtImageCreateTemplateModelMap.clear();
+        return result;
+    }
+    public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
+
+        for (CreateImageParameter imageInfo : parameter.getData()) {
+            if (StringUtil.isEmpty(imageInfo.getChannelId())) {
+                throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);
+            }
+            if (imageInfo.getTemplateId() == 0) {
+                throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull);
+            }
+            if (StringUtil.isEmpty(imageInfo.getFile())) {
+                throw new OpenApiException(ImageErrorEnum.FileNotNull);
+            }
+            if (StringUtil.isEmpty(imageInfo.getVParam())) {
+                throw new OpenApiException(ImageErrorEnum.VParamNotNull);
+            }
+        }
     }
 }

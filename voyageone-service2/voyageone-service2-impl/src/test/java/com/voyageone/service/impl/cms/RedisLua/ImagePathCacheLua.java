@@ -45,7 +45,7 @@ public class ImagePathCacheLua {
      */
     public void set(long key, String value) {
         hashOperation.put(HashtableName, key, value);
-//        ZSetOperation.add(ZSetName, key, System.currentTimeMillis());
+        ZSetOperation.add(ZSetName, key, System.currentTimeMillis());
 //        if (ZSetOperation.size(ZSetName) > 10000) {
 //            Set<Long> hashCodeList = ZSetOperation.range(ZSetName, 1, 100);
 //            Object[] keys = hashCodeList.toArray();

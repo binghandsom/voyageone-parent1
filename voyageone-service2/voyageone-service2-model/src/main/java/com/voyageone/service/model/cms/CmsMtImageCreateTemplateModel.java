@@ -16,14 +16,6 @@ public class CmsMtImageCreateTemplateModel extends BaseModel {
      * 模板内容
      */
     private String content;
-    /**
-     * 高
-     */
-    private int height;
-    /**
-     * 宽
-     */
-    private int width;
 
 
     /**
@@ -77,32 +69,6 @@ public class CmsMtImageCreateTemplateModel extends BaseModel {
             this.content = "";
         }
 
-    }
-
-
-    /**
-     * 高
-     */
-    public int getHeight() {
-
-        return this.height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-
-    /**
-     * 宽
-     */
-    public int getWidth() {
-
-        return this.width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
     }
 
 
