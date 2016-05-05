@@ -12,15 +12,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class CmsMtDictPlatformDaoTest {
+public class CmsMtPlatformDictDaoTest {
 
     @Autowired
-    private CmsMtDictPlatformDao cmsMtDictPlatformDao;
+    private CmsMtPlatformDictDao cmsMtPlatformDictDao;
 
     @Test
     public void testSelect() throws Exception {
 
-        cmsMtDictPlatformDao.select(1);
+        cmsMtPlatformDictDao.select(1);
 
     }
 }
