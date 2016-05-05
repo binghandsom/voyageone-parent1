@@ -3,10 +3,14 @@ import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.excel.*;
+import com.voyageone.common.util.excel.ExcelColumn;
+import com.voyageone.common.util.excel.ExcelImportUtil;
+import com.voyageone.common.util.excel.ExportExcelInfo;
+import com.voyageone.common.util.excel.ExportFileExcelUtil;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.dao.cms.CmsMtImageCreateImportDao;
@@ -16,7 +20,6 @@ import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
-import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMProductImportColumn;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
@@ -27,8 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -56,9 +57,9 @@ public class CmsImageFileService extends BaseService {
     @Autowired
     CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
     @Autowired
-    TransactionRunner transactionRunnerCms2;
-    @Autowired
     CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
+    @Autowired
+    TransactionRunner transactionRunner;
 
     public GetImageResultBean checkGetImageParameter(String channelId, int templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
@@ -155,8 +156,8 @@ public class CmsImageFileService extends BaseService {
         importModel.setBeginTime(new Date());
         importModel.setErrorMsg("");
         importModel.setFailuresFileName("");
-        importModel.setCreated(DateTimeUtil.getNow());
-        importModel.setModified(DateTimeUtil.getNow());
+        importModel.setCreated(new Date());
+        importModel.setModified(new Date());
         importModel.setIsImport(false);
         importModel.setErrorCode(0);
         String filePath = path + "/" + fileName;
@@ -207,19 +208,15 @@ public class CmsImageFileService extends BaseService {
 
         final AddListResultBean[] result = {null};
 
-        transactionRunnerCms2.runWithTran(() -> {
+        transactionRunner.runWithTran(() -> {
             result[0] = addList(parameter,importModel);
         });
         return result[0];
     }
 
+    @VOTransactional
     public AddListResultBean addListWithTrans(AddListParameter parameter) {
-        final AddListResultBean[] result = {null};
-
-        transactionRunnerCms2.runWithTran(() -> {
-            result[0] = addList(parameter,null);
-        });
-        return result[0];
+        return addList(parameter,null);
     }
 
     AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
@@ -241,8 +238,8 @@ public class CmsImageFileService extends BaseService {
                 detailModel.setEndTime(DateTimeUtil.getCreatedDefaultDate());
                 detailModel.setCreater("");
                 detailModel.setModifier("");
-                detailModel.setCreated(new Date().toString());
-                detailModel.setModified(new Date().toString());
+                detailModel.setCreated(new Date());
+                detailModel.setModified(new Date());
                 listTaskDetail.add(detailModel);
             }
             modelTask.setName(new Date().toString());
@@ -250,8 +247,8 @@ public class CmsImageFileService extends BaseService {
             modelTask.setEndTime(DateTimeUtil.getCreatedDefaultDate());
             modelTask.setCreater("");
             modelTask.setModifier("");
-            modelTask.setCreated(new Date().toString());
-            modelTask.setModified(new Date().toString());
+            modelTask.setCreated(new Date());
+            modelTask.setModified(new Date());
             daoCmsMtImageCreateTask.insert(modelTask);
             if (importModel != null) {
                 importModel.setCmsMtImageCreateTaskId(modelTask.getId());
