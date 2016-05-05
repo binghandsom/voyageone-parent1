@@ -528,7 +528,7 @@
 										<span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
 										<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 									</td>
-									<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}aaaa</td>
+									<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}</td>
 									<td class="text-center" style="display:inline-block;width:165px;">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>
