@@ -293,7 +293,8 @@
       "$addToPromotionService": {
         "root": "/cms/pop/add_to_promotion",
         "getPromotionTags": "getPromotionTags",
-        "addToPromotion": "addToPromotion"
+        "addToPromotion": "addToPromotion",
+        "checkPromotionTags": "checkPromotionTags"
       },
       "$fieldEditService": {
         "root": "/cms/pop/field_edit",

@@ -435,7 +435,7 @@ interface CmsBtJmPromotionImportTask{
             String ROOT = "/cms/pop/add_to_promotion/";
 
             String GET_PROM_TAGS = "getPromotionTags";
-
+            String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 

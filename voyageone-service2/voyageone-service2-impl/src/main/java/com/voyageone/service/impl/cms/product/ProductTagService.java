@@ -1,17 +1,21 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.common.util.StringUtils;
+import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtTagProductLogModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *  Product Tag Service
@@ -23,217 +27,198 @@ import java.util.Map;
 @Service
 public class ProductTagService extends BaseService {
 
-//    @Autowired
-//    private CmsBtTagProductLogDao tagProductLogDao;
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtTagDaoExt cmsBtTagDaoExt;
+    @Autowired
+    private CmsBtTagDao cmsBtTagDao;
 
     /**
-     * 增加商品的Tag
+     * 向产品添加tag，同时添加该tag的所有上级tag
+     *
+     * @param channelId
+     * @param tagPath
+     * @param prodIdList
+     * @param modifier
      */
-    public void saveTagProducts(String channelId, String tagPath, List<Long> productIds, String modifier) {
-        Map<Long, List<String>> productIdTagsMap = new HashMap<>();
-        for (Long productId : productIds) {
-            if (!productIdTagsMap.containsKey(productId)) {
-                productIdTagsMap.put(productId, new ArrayList<>());
-            }
-            List<String> tagModelList = productIdTagsMap.get(productId);
-            if (!tagModelList.contains(tagPath)) {
-                tagModelList.add(tagPath);
-            }
+    public void addProdTag(String channelId, String tagPath, List<Long> prodIdList, String tagsKey, String modifier) {
+        if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
+            $warn("ProductTagService：addProdTag 缺少参数");
+            throw new BusinessException("缺少参数!");
         }
 
-        saveTagProducts(channelId, productIdTagsMap, modifier);
-    }
-
-    /**
-     * save tag products
-     */
-    public void saveTagProducts(String channelId, Map<Long, List<String>> productIdTagsMap, String modifier) {
-        if (productIdTagsMap == null || productIdTagsMap.size() == 0) {
-            throw new RuntimeException("productIdTagsMap is not empty!");
-        }
-
-        if (StringUtils.isEmpty(modifier)) {
-            throw new RuntimeException("modifier is not empty!");
-        }
-
-        // add tag products
-        List<BulkUpdateModel> bulkProductList = new ArrayList<>();
-        List<CmsBtTagProductLogModel> cmsBtTagLogModelList = new ArrayList<>();
-
-
-        for (Map.Entry<Long, List<String>> entry: productIdTagsMap.entrySet()) {
-
-            Long productId = entry.getKey();
-            List<String> tagPathList = entry.getValue();
-            if (tagPathList == null || tagPathList.size() == 0) {
-                continue;
-            }
-
-            for (String tagPath : tagPathList) {
-                if (tagPath == null || StringUtils.isEmpty(tagPath)) {
-                    throw new RuntimeException("tagPath is not empty!");
-                }
-
-                Integer tagId = getTagIdByTagPath(tagPath);
-                if (tagId == null) {
-                    throw new RuntimeException("tagPath is incorrect, not get tagId!");
-                }
-
-                addSaveTagProducts(channelId, tagId, tagPath, modifier, productId, bulkProductList, cmsBtTagLogModelList);
-            }
-        }
-
-//        if (cmsBtTagLogModelList.size() > 0) {
-//            tagProductLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
-//        }
-
-        if (bulkProductList.size() > 0) {
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, modifier, "$addToSet");
-        }
-    }
-
-    /**
-     * saveTagProductsBulk
-     * @param channelId channel Id
-     * @param tagId tagId
-     * @param tag tag
-     * @param modifier modifier
-     * @param productId product Id
-     * @param bulkList BulkUpdateModel List
-     * @param cmsBtTagLogModelList cmsBtTagLogModel List
-     */
-    private void addSaveTagProducts(String channelId, int tagId, String tag, String modifier, Long productId,
-                                     List<BulkUpdateModel> bulkList, List<CmsBtTagProductLogModel> cmsBtTagLogModelList) {
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("tags", tag);
+        // 更新条件
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", productId);
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
+        HashMap<String, Object> inMap = new HashMap<>();
+        inMap.put("$in", prodIdList);
+        queryMap.put("prodId", inMap);
 
-        CmsBtTagProductLogModel tagLogModel = new CmsBtTagProductLogModel();
-        tagLogModel.setTagId(tagId);
-        tagLogModel.setProductId(productId);
-        tagLogModel.setComment("insert");
-        tagLogModel.setCreater(modifier);
-        cmsBtTagLogModelList.add(tagLogModel);
-    }
-
-    /**
-     * 取得tagID
-     * @param tagPath tag Path
-     */
-    private Integer getTagIdByTagPath(String tagPath) {
-        Integer result = null;
-        if (tagPath != null) {
-            String[] tagPathArr = tagPath.split("-");
-            if (tagPathArr.length>1) {
-                String tagIdStr = tagPathArr[tagPathArr.length-1];
-                if (StringUtils.isDigit(tagIdStr)) {
-                    result = Integer.parseInt(tagIdStr);
-                }
+        // 生成级联tag path列表
+        String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+        int arrSize = pathArr.length;
+        List<String> pathList = new ArrayList<>(arrSize);
+        for (int j = 0; j < arrSize; j ++) {
+            StringBuilder curTagPath = new StringBuilder("-");
+            for (int i = 0; i <= j ; i ++) {
+                curTagPath.append(pathArr[i]);
+                curTagPath.append("-");
             }
-        }
-        return result;
-    }
-
-    /**
-     * tags deletes
-     */
-    public void delete(String channelId, String tagPath, List<Long> productIds, String modifier) {
-        Map<Long, List<String>> productIdTagsMap = new HashMap<>();
-        for (Long productId : productIds) {
-            if (!productIdTagsMap.containsKey(productId)) {
-                productIdTagsMap.put(productId, new ArrayList<>());
-            }
-            List<String> tagModelList = productIdTagsMap.get(productId);
-            if (!tagModelList.contains(tagPath)) {
-                tagModelList.add(tagPath);
-            }
+            pathList.add(curTagPath.toString());
         }
 
-        delete(channelId, productIdTagsMap, modifier);
-    }
+        // 更新操作
+        HashMap<String, Object> eachMap = new HashMap<>();
+        eachMap.put("$each", pathList);
 
-    /**
-     * tags deletes
-     */
-    public void delete(String channelId, Map<Long, List<String>> productIdTagsMap, String modifier) {
-        if (productIdTagsMap == null || productIdTagsMap.size() == 0) {
-            throw new RuntimeException("productIdTagsMap is not empty!");
-        }
-
-        if (StringUtils.isEmpty(modifier)) {
-            throw new RuntimeException("modifier is not empty!");
-        }
-
-        // add tag products
-        List<BulkUpdateModel> bulkProductList = new ArrayList<>();
-        List<CmsBtTagProductLogModel> cmsBtTagLogModelList = new ArrayList<>();
-
-        for (Map.Entry<Long, List<String>> entry: productIdTagsMap.entrySet()) {
-
-            Long productId = entry.getKey();
-            List<String> tagPathList = entry.getValue();
-            if (tagPathList == null || tagPathList.size() == 0) {
-                continue;
-            }
-
-            for (String tagPath : tagPathList) {
-                if (tagPath == null || StringUtils.isEmpty(tagPath)) {
-                    throw new RuntimeException("tagPath is not empty!");
-                }
-
-                Integer tagId = getTagIdByTagPath(tagPath);
-                if (tagId == null) {
-                    throw new RuntimeException("tagPath is incorrect, not get tagId!");
-                }
-
-                addDeleteTagBulk(channelId, tagId, tagPath, modifier, productId, bulkProductList, cmsBtTagLogModelList);
-            }
-        }
-
-//        if (cmsBtTagLogModelList.size() > 0) {
-//            tagProductLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
-//        }
-
-        if (bulkProductList.size() > 0) {
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, modifier, "$pull");
-        }
-    }
-
-    /**
-     * 批量delete tage 根据productId
-     * @param channelId channel Id
-     * @param tagId tagId
-     * @param tag tag
-     * @param modifier modifier
-     * @param productId product Id
-     * @param bulkList BulkUpdateModel List
-     * @param cmsBtTagLogModelList cmsBtTagLogModel List
-     */
-    private void addDeleteTagBulk(String channelId, int tagId, String tag, String modifier, Long productId,
-                List<BulkUpdateModel> bulkList, List<CmsBtTagProductLogModel> cmsBtTagLogModelList) {
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("tags", tag);
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", productId);
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
+        HashMap<String, Object> tagsMap = new HashMap<>();
+        tagsMap.put(tagsKey, eachMap);
+        updateMap.put("$addToSet", tagsMap);
 
-        CmsBtTagProductLogModel tagLogModel = new CmsBtTagProductLogModel();
-        tagLogModel.setTagId(tagId);
-        tagLogModel.setProductId(productId);
-        tagLogModel.setComment("delete");
-        tagLogModel.setCreater(modifier);
-        cmsBtTagLogModelList.add(tagLogModel);
+        // 批量更新product表
+        WriteResult result = cmsBtProductDao.update(channelId, queryMap, updateMap);
+        $debug(String.format("ProductTagService：addProdTag 操作结果-> %s", result.toString()));
     }
 
+    /**
+     * 批量删除商品的tag(根据指定的tag path)，同时删除关联的下级tag
+     * 当不存在同级的tag时，也删除关联的上级tag
+     */
+    public void delete(String channelId, String tagPath, List<Long> prodIdList, String tagsKey, String modifier) {
+        if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
+            $warn("ProductTagService：delete 缺少参数");
+            throw new RuntimeException("缺少参数!");
+        }
+
+        // 先找出该tag的所有子节点tag
+        List<String> pathList = new ArrayList<>();
+        pathList.add(tagPath);
+
+        String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+        if (pathArr.length == 3) {
+            // 先确认是否存在同级别的tag
+            int tagId = Integer.parseInt(pathArr[2]);
+            CmsBtTagModel tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
+            List<CmsBtTagModel> modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagId);
+            List<String> curPathList = new ArrayList<>();
+            if (modelList.size() > 0) {
+                modelList.forEach(model -> { curPathList.add(model.getTagPath()); });
+            }
+            JomgoQuery queryObject = new JomgoQuery();
+            StringBuilder queryStr = new StringBuilder();
+            queryStr.append("{");
+            queryStr.append( MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
+            queryStr.append(",");
+            queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
+            queryStr.append("}");
+            queryObject.setQuery(queryStr.toString());
+            queryObject.setProjection("{'fields.code':1,'_id':0}");
+            List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
+            if (prodInfoList.isEmpty()) {
+                // 若不存在，则删除关联的上级tag
+                tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
+                pathList.add(tagBean.getTagPath());
+
+                // 再向上查上级tag
+                modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagBean.getId());
+                List<String> upPathList = new ArrayList<>();
+                if (modelList.size() > 0) {
+                    modelList.forEach(model -> { upPathList.add(model.getTagPath()); });
+                }
+                queryObject = new JomgoQuery();
+                queryStr = new StringBuilder();
+                queryStr.append("{");
+                queryStr.append( MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
+                queryStr.append(",");
+                queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
+                queryStr.append("}");
+                queryObject.setQuery(queryStr.toString());
+                queryObject.setProjection("{'fields.code':1,'_id':0}");
+                prodInfoList = cmsBtProductDao.select(queryObject, channelId);
+                if (prodInfoList.isEmpty()) {
+                    // 若不存在，则删除关联的上级tag
+                    tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
+                    pathList.add(tagBean.getTagPath());
+                }
+            }
+
+        } else if (pathArr.length == 2) {
+            int tagId = Integer.parseInt(pathArr[1]);
+            List<CmsBtTagModel> tagList = cmsBtTagDaoExt.selectListByParentTagId(tagId);
+            tagList.forEach(model -> pathList.add(model.getTagPath()));
+
+            // 先确认是否存在同级别的tag
+            CmsBtTagModel tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
+            List<CmsBtTagModel> modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagId);
+            List<String> curPathList = new ArrayList<>();
+            if (modelList.size() > 0) {
+                modelList.forEach(model -> { curPathList.add(model.getTagPath()); });
+            }
+            JomgoQuery queryObject = new JomgoQuery();
+            StringBuilder queryStr = new StringBuilder();
+            queryStr.append("{");
+            queryStr.append( MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
+            queryStr.append(",");
+            queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
+            queryStr.append("}");
+            queryObject.setQuery(queryStr.toString());
+            queryObject.setProjection("{'fields.code':1,'_id':0}");
+            List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
+            if (prodInfoList.isEmpty()) {
+                // 若不存在，则删除关联的上级tag
+                tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
+                pathList.add(tagBean.getTagPath());
+            }
+        } else if (pathArr.length == 1) {
+            List<CmsBtTagModel> tagList = cmsBtTagDaoExt.selectListByParentTagId(Integer.parseInt(pathArr[0]));
+            tagList.forEach(model -> {
+                pathList.add(model.getTagPath());
+                List<CmsBtTagModel> nexttagList = cmsBtTagDaoExt.selectListByParentTagId(model.getId());
+                nexttagList.forEach(nextmodel -> pathList.add(nextmodel.getTagPath()));
+            });
+        }
+
+        // 更新条件
+        HashMap<String, Object> queryMap = new HashMap<>();
+        HashMap<String, Object> inMap = new HashMap<>();
+        inMap.put("$in", prodIdList);
+        queryMap.put("prodId", inMap);
+
+        // 更新操作
+        HashMap<String, Object> updateMap = new HashMap<>();
+        HashMap<String, Object> tagsMap = new HashMap<>();
+        tagsMap.put(tagsKey, pathList);
+        updateMap.put("$pullAll", tagsMap);
+
+        // 批量更新product表
+        WriteResult result = cmsBtProductDao.update(channelId, queryMap, updateMap);
+        $debug(String.format("ProductTagService：delete 操作结果-> %s", result.toString()));
+    }
+
+    /**
+     * 批量删除商品的tag(只删除指定的tag path)，不删除关联的上级以及下级tag
+     */
+    public void deleteTags(String channelId, List<Long> prodIdList, String tagsKey, List<String> tagPathList, String modifier) {
+        if (tagPathList == null || tagPathList.isEmpty() || prodIdList == null || prodIdList.isEmpty()) {
+            $warn("ProductTagService：deleteTags 缺少参数");
+            throw new RuntimeException("缺少参数!");
+        }
+
+        // 更新条件
+        HashMap<String, Object> queryMap = new HashMap<>();
+        HashMap<String, Object> inMap = new HashMap<>();
+        inMap.put("$in", prodIdList);
+        queryMap.put("prodId", inMap);
+
+        // 更新操作
+        HashMap<String, Object> updateMap = new HashMap<>();
+        HashMap<String, Object> tagsMap = new HashMap<>();
+        tagsMap.put(tagsKey, tagPathList);
+        updateMap.put("$pullAll", tagsMap);
+
+        // 批量更新product表
+        WriteResult result = cmsBtProductDao.update(channelId, queryMap, updateMap);
+        $debug(String.format("ProductTagService：deleteTags 操作结果-> %s", result.toString()));
+    }
 }

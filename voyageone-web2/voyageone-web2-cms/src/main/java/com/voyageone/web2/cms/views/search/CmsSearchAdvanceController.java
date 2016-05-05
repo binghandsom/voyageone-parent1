@@ -1,7 +1,9 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -31,8 +33,8 @@ public class CmsSearchAdvanceController extends CmsController {
 
     @Autowired
     private CmsSearchAdvanceService searchIndexService;
-//    @Autowired
-//    private CmsFeedCustPropService cmsFeedCustPropService;
+    @Autowired
+    private ProductTagService productTagService;
 
     /**
      * 初始化,获取master数据
@@ -281,10 +283,11 @@ public class CmsSearchAdvanceController extends CmsController {
      */
     @RequestMapping("addFreeTag")
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
-        List<Integer> prodIdList = (List<Integer>) params.get("prodIdList");
+        List<Long> prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
         String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
+        UserSessionBean userInfo = getUser();
 
-        searchIndexService.addFreeTag(getUser(), tagPath, prodIdList);
+        productTagService.addProdTag(userInfo.getSelChannelId(), tagPath, prodIdList, "freeTags", userInfo.getUserName());
         return success(null);
     }
 
