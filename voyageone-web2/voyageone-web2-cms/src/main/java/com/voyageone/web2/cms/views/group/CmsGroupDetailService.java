@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.views.group;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -29,9 +28,7 @@ import java.util.Map;
 public class CmsGroupDetailService extends BaseAppService {
 
     @Autowired
-    protected ProductGroupService productGroupService;
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    private ProductGroupService productGroupService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -69,7 +66,7 @@ public class CmsGroupDetailService extends BaseAppService {
         // 先取得group信息，
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchValue(params, cmsSessionBean));
-        List<CmsBtProductGroupModel> rstList = cmsBtProductGroupDao.select(queryObject, userInfo.getSelChannelId());
+        List<CmsBtProductGroupModel> rstList = productGroupService.getList(userInfo.getSelChannelId(), queryObject);
         if (rstList == null || rstList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList 没有group数据 " + params.toString());
             throw new BusinessException("该group不存在");

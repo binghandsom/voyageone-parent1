@@ -31,7 +31,7 @@ define([
             }
             attributeService.init({cat_path:catPathVal,unsplitFlg:1})
                 .then(function (res){
-                    $scope.vm.valList = res.data.valList;
+                    $scope.valList = res.data.valList;
                 });
         };
 

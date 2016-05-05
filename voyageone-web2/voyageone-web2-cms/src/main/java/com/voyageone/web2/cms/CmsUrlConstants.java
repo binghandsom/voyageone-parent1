@@ -544,11 +544,12 @@ interface CmsBtJmPromotionImportTask{
 
             String SAVE = "update";
         }
-        interface CHANNEL_TAG{
+        interface CHANNEL_TAG {
             String ROOT="/cms/channel/tag";
             String INIT_CHANNEL_TAG = "init";
             String SAVE_CHANNEL_TAG = "saveTag";
             String DEL_CHANNEL_TAG = "delTag";
+            String GET_TAG_LIST = "getTagList";
         }
     }
 

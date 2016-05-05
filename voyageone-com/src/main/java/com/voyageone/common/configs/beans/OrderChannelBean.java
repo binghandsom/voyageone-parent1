@@ -37,7 +37,7 @@ public class OrderChannelBean {
     private String creater;
     private Date modified;
     private String modifier;
-    private String status; //数据库映射字段 add by holysky
+    private String active; //数据库映射字段 add by holysky
 
 
     public String getSession_key() {
@@ -168,12 +168,12 @@ public class OrderChannelBean {
         this.modifier = modifier;
     }
 
-    public String getStatus() {
-        return status;
+    public String getActive() {
+        return active;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setActive(String active) {
+        this.active = active;
     }
 
     public String getImg_url() {

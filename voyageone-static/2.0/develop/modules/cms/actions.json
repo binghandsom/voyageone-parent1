@@ -29,7 +29,8 @@
         "getProductList": "getProductList",
         "exportProducts":"exportProducts",
         "getCustColumnsInfo":"getCustColumnsInfo",
-        "saveCustColumnsInfo":"saveCustColumnsInfo"
+        "saveCustColumnsInfo":"saveCustColumnsInfo",
+        "addFreeTag": "addFreeTag"
       },
       "$feedSearchService": {
         "root": "/cms/search/feed/",
@@ -357,7 +358,18 @@
           "root": "/cms/channel/tag",
           "init": "init",
           "save": "saveTag",
-          "del": "delTag"
+          "del": "delTag",
+          "getTagList": "getTagList"
+        }
+      },
+      "sizeChart":{
+        "sizeChartService": {
+          "root": "/cms/channel/sizeChartList",
+          "init": "sizeChartInit",
+          "search": "sizeChartSearch",
+          "delete": "sizeChartDelete",
+          "editSave": "sizeChartEdit",
+          "detailSave": "sizeChartDetail"
         }
       }
     }

@@ -158,7 +158,16 @@
 						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
-							<div class="col-sm-8">
+							<div class="col-sm-3">
+								<select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="getTagList()">
+									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
+									<option value="1" translate="TXT_TAG_STORE_CLASSIFY"></option>
+									<option value="2" translate="TXT_TAG_PROMOTION"></option>
+									<option value="3" translate="TXT_TAG_GOODS"></option>
+									<option value="4" translate="TXT_TAG_FREE"></option>
+								</select>
+							</div>
+							<div class="col-sm-5">
 								<select multiple chosen class="form-control" ng-model="vm.searchInfo.tags"
 										ng-options="tag.tagPath as tag.tagPathName for tag in vm.masterData.tagList">
 								</select>
@@ -287,6 +296,16 @@
 				<button class="btn btn-default" ng-click="openCustomColumn('lg',search)">
 					<i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}
 				</button>&nbsp;
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.freetagList.length == 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;Add Free Tag&nbsp;<span class="caret"></span>
+					</button>
+					<ul uib-dropdown-menu ng-if="vm.masterData.freetagList.length">
+						<li ng-repeat="tagBean in vm.masterData.freetagList">
+							<a href ng-click="addFreeTag(tagBean)">{{tagBean.tagPathName}}</a>
+						</li>
+					</ul>
+				</div>&nbsp;
 				<div class="btn-group" uib-dropdown>
 					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
@@ -494,6 +513,15 @@
 											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
+
+										<span>
+											<button ng-controller="showPopoverCtrl" popover-html="showInfo({{2016101111111}})"
+													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">
+												标签
+											</button>
+											<!--<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>-->
+										</span>
+
 										<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>
 								</tr>

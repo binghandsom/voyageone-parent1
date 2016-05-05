@@ -17,6 +17,7 @@ define([
         this.getGroupList = getGroupList;
         this.getProductList = getProductList;
         this.exportFile = exportFile;
+        this.addFreeTag = addFreeTag;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
@@ -92,6 +93,21 @@ define([
             var defer = $q.defer();
             $searchAdvanceService.getProductList(resetProductPagination(data, pagination)).then(function (res) {
                 _resetProductList(res.data, commonProps, customProps);
+                defer.resolve (res);
+            });
+            return defer.promise;
+        }
+
+        /**
+         * 检索group和product
+         * @param data
+         * @returns {*}
+         */
+        function addFreeTag(tagPath, prodIdList) {
+            var defer = $q.defer();
+            var data = {"tagPath":tagPath, "prodIdList":prodIdList};
+
+            $searchAdvanceService.addFreeTag(data).then(function (res) {
                 defer.resolve (res);
             });
             return defer.promise;

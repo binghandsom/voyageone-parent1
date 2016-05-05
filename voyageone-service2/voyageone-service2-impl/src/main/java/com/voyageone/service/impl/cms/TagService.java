@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
@@ -114,7 +115,7 @@ public class TagService extends BaseService {
 
     /**
      * 更新TagPath
-     * @param cmsBtTagModel
+     * @param cmsBtTagModel CmsBtTagModel
      * @return 更新结果
      */
     private boolean updateTagPathName(CmsBtTagModel cmsBtTagModel) {
@@ -175,5 +176,39 @@ public class TagService extends BaseService {
      */
     public List<CmsBtTagModel> getListByChannelId(String channelId) {
         return cmsBtTagDaoExt.selectListByChannelId(channelId);
+    }
+
+    /**
+     * 根据ChannelId 和 tagType 检索Tags
+     */
+    public List<CmsBtTagBean>  getListByChannelIdAndTagType(String channelId,String tagType) {
+        return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId, tagType);
+    }
+    public List<CmsBtTagModel>  getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
+        return cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId, tagTypeValue);
+    }
+
+
+    @VOTransactional
+    public int updateTagModel(CmsBtTagModel cmsBtTagModel) {
+        return cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+    }
+
+    @VOTransactional
+    public void insertCmsBtTagAndUpdateTagePath(CmsBtTagModel cmsBtTagModel, boolean firstTag) {
+        //将取得的数据插入到数据库
+        cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
+
+        //对tagPath进行二次组装
+        //一级标签
+        if (firstTag) {
+            cmsBtTagModel.setTagPath("-" + cmsBtTagModel.getId() + "-");
+        } else {
+            //对tagPath进行二次组装
+            cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + cmsBtTagModel.getId() + "-");
+
+        }
+        //更新数据cms_bt_tag
+        cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
     }
 }

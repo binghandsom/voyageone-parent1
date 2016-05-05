@@ -392,13 +392,13 @@ public class BhfoAnalysisService extends BaseAnalysisService {
                 superfeed.add(superfeedBhfobean);
                 cnt++;
                 if (superfeed.size() > 1000) {
-                    transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                    transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
                 }
             }
 
             if (superfeed.size() > 0) {
-                transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                 superfeed.clear();
             }
             reader.close();
@@ -422,7 +422,7 @@ public class BhfoAnalysisService extends BaseAnalysisService {
      */
     protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String category) {
 
-        Map colums = getColumns();
+        Map<String, Object> colums = getColumns();
 
         List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
         List<String> attList = new ArrayList<>();
@@ -472,7 +472,7 @@ public class BhfoAnalysisService extends BaseAnalysisService {
     @Transactional
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
-            bhfoFeedDao.updateFlagBySku(itemIds);
+            bhfoFeedDao.delFullBySku(itemIds);
             bhfoFeedDao.insertFullBySku(itemIds);
             bhfoFeedDao.updateFlagBySku(itemIds);
         }

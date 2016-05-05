@@ -7,7 +7,6 @@ import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.service.daoext.com.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +23,6 @@ public class CmsErrorListService extends BaseAppService{
 
     @Autowired
     protected ChannelCategoryService cmsBtChannelCategoryService;
-
-    @Autowired
-    protected ChannelShopDao channelShopDao;
 
     @Autowired
     private BusinessLogService businessLogService;

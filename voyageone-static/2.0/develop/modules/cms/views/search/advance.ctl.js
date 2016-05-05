@@ -8,7 +8,7 @@ define([
     'modules/cms/service/search.advance.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, confirm, $translate, notify, alert) {
+    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert) {
 
         $scope.vm = {
             searchInfo: {
@@ -44,6 +44,8 @@ define([
         $scope.openAddPromotion = openAddPromotion;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
+        $scope.getTagList = getTagList;
+        $scope.addFreeTag = addFreeTag;
 
         /**
          * 初始化数据.
@@ -82,6 +84,7 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0'
             };
+            $scope.vm.tagTypeSelectValue = '';
             $scope.vm.custAttrList = [{ inputVal: "", inputOpts: "" }];
         }
 
@@ -374,8 +377,55 @@ define([
             return selList;
         }
 
+        /**
+         * 查询指定标签类型下的所有标签(list形式)
+         */
+        function getTagList () {
+            if ($scope.vm.tagTypeSelectValue == '') {
+                $scope.vm.masterData.tagList = [];
+                return;
+            }
+            channelTagService.getTagList({'tagTypeSelectValue':$scope.vm.tagTypeSelectValue})
+                .then(function (res) {
+                    $scope.vm.masterData.tagList = res.data;
+                });
+        }
+
+        /**
+         * 添加产品到指定自由标签
+         */
+        function addFreeTag (tagBean) {
+            var selList = [];
+            if ($scope.vm.currTab === 'group') {
+                _.forEach($scope.vm.groupSelList.selList, function (info) {
+                    selList.push({"id": info.id, "code": info.code});
+                    _.forEach(info.prodIds, function (prodInfo) {
+                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
+                    })
+                });
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            if (selList && selList.length) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.id);
+                });
+
+                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
+                    .then(function () {
+                        searchAdvanceService.addFreeTag(tagBean.tagPath, productIds).then(function () {
+                            notify.success ($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            search();
+                        })
+                    });
+            } else {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+        }
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'confirm', '$translate', 'notify', 'alert'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
     return searchIndex;
 });
