@@ -367,6 +367,7 @@
           "root": "/cms/channel/SizeChartList",
           "sizeChartInit": "init",
           "sizeChartSearch": "search",
+          "sizeChartDelete": "delete",
           "sizeChartEdit": "editSave",
           "sizeChartDetail": "detailSave"
         }
