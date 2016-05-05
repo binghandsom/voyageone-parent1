@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  Product Tag Service
@@ -46,6 +47,19 @@ public class ProductTagService extends BaseService {
         if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
             $warn("ProductTagService：addProdTag 缺少参数");
             throw new BusinessException("缺少参数!");
+        }
+
+        // 先删除同级的tag
+        Map params = new HashMap<>(1);
+        params.put("tagPath", tagPath);
+        CmsBtTagModel tagBean = cmsBtTagDao.selectOne(params);
+        if (tagBean != null) {
+            List<CmsBtTagModel> modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagBean.getId());
+            if (modelList.size() > 0) {
+                List<String> pathList = new ArrayList<>(modelList.size());
+                modelList.forEach(model -> pathList.add(model.getTagPath()));
+                deleteTags(channelId, prodIdList, tagsKey, pathList, modifier);
+            }
         }
 
         // 更新条件
@@ -105,41 +119,55 @@ public class ProductTagService extends BaseService {
             if (modelList.size() > 0) {
                 modelList.forEach(model -> { curPathList.add(model.getTagPath()); });
             }
-            JomgoQuery queryObject = new JomgoQuery();
-            StringBuilder queryStr = new StringBuilder();
-            queryStr.append("{");
-            queryStr.append( MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
-            queryStr.append(",");
-            queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
-            queryStr.append("}");
-            queryObject.setQuery(queryStr.toString());
-            queryObject.setProjection("{'fields.code':1,'_id':0}");
-            List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
-            if (prodInfoList.isEmpty()) {
+            if (curPathList.isEmpty()) {
                 // 若不存在，则删除关联的上级tag
                 tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                 pathList.add(tagBean.getTagPath());
-
-                // 再向上查上级tag
-                modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagBean.getId());
-                List<String> upPathList = new ArrayList<>();
-                if (modelList.size() > 0) {
-                    modelList.forEach(model -> { upPathList.add(model.getTagPath()); });
-                }
-                queryObject = new JomgoQuery();
-                queryStr = new StringBuilder();
+            } else {
+                JomgoQuery queryObject = new JomgoQuery();
+                StringBuilder queryStr = new StringBuilder();
                 queryStr.append("{");
-                queryStr.append( MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
+                queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
                 queryStr.append(",");
                 queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
                 queryStr.append("}");
                 queryObject.setQuery(queryStr.toString());
                 queryObject.setProjection("{'fields.code':1,'_id':0}");
-                prodInfoList = cmsBtProductDao.select(queryObject, channelId);
+                List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
                 if (prodInfoList.isEmpty()) {
                     // 若不存在，则删除关联的上级tag
                     tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                     pathList.add(tagBean.getTagPath());
+
+                    // 再向上查上级tag
+                    modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagBean.getId());
+                    List<String> upPathList = new ArrayList<>();
+                    if (modelList.size() > 0) {
+                        modelList.forEach(model -> {
+                            upPathList.add(model.getTagPath());
+                        });
+                    }
+                    if (upPathList.isEmpty()) {
+                        // 若不存在，则删除关联的上级tag
+                        tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
+                        pathList.add(tagBean.getTagPath());
+                    } else {
+                        queryObject = new JomgoQuery();
+                        queryStr = new StringBuilder();
+                        queryStr.append("{");
+                        queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
+                        queryStr.append(",");
+                        queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
+                        queryStr.append("}");
+                        queryObject.setQuery(queryStr.toString());
+                        queryObject.setProjection("{'fields.code':1,'_id':0}");
+                        prodInfoList = cmsBtProductDao.select(queryObject, channelId);
+                        if (prodInfoList.isEmpty()) {
+                            // 若不存在，则删除关联的上级tag
+                            tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
+                            pathList.add(tagBean.getTagPath());
+                        }
+                    }
                 }
             }
 
@@ -155,20 +183,26 @@ public class ProductTagService extends BaseService {
             if (modelList.size() > 0) {
                 modelList.forEach(model -> { curPathList.add(model.getTagPath()); });
             }
-            JomgoQuery queryObject = new JomgoQuery();
-            StringBuilder queryStr = new StringBuilder();
-            queryStr.append("{");
-            queryStr.append( MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
-            queryStr.append(",");
-            queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
-            queryStr.append("}");
-            queryObject.setQuery(queryStr.toString());
-            queryObject.setProjection("{'fields.code':1,'_id':0}");
-            List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
-            if (prodInfoList.isEmpty()) {
+            if (curPathList.isEmpty()) {
                 // 若不存在，则删除关联的上级tag
                 tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                 pathList.add(tagBean.getTagPath());
+            } else {
+                JomgoQuery queryObject = new JomgoQuery();
+                StringBuilder queryStr = new StringBuilder();
+                queryStr.append("{");
+                queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
+                queryStr.append(",");
+                queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
+                queryStr.append("}");
+                queryObject.setQuery(queryStr.toString());
+                queryObject.setProjection("{'fields.code':1,'_id':0}");
+                List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
+                if (prodInfoList.isEmpty()) {
+                    // 若不存在，则删除关联的上级tag
+                    tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
+                    pathList.add(tagBean.getTagPath());
+                }
             }
         } else if (pathArr.length == 1) {
             List<CmsBtTagModel> tagList = cmsBtTagDaoExt.selectListByParentTagId(Integer.parseInt(pathArr[0]));
