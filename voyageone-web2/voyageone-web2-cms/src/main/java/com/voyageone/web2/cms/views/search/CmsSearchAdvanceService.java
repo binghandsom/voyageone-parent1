@@ -1,8 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -14,7 +12,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -52,8 +49,6 @@ import java.util.Map;
 @Service
 public class CmsSearchAdvanceService extends BaseAppService {
 
-    //    @Autowired
-//    private CmsPromotionIndexService cmsPromotionService;
     @Autowired
     private PromotionService promotionService;
     @Autowired
@@ -68,14 +63,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private FeedCustomPropService feedCustomPropService;
     @Autowired
     private CmsChannelTagService cmsChannelTagService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     @Resource
     private CmsBtJmPromotionService jmPromotionService;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;" +
+    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
@@ -84,9 +77,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     // Excel 文件最大行数
     private final static int MAX_EXCEL_REC_COUNT = 10000;
-
-//    // Sku 文件单线程用
-//    ReentrantLock lock = new ReentrantLock();
 
     /**
      * 取得用户自定义显示列设置
@@ -681,49 +671,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
     }
 
     /**
-     * 保存用户自定义显示列设置
-     *
-     * @param userInfo
-     * @param tagPath
-     * @param prodIdList
-     */
-    public void addFreeTag(UserSessionBean userInfo, String tagPath, List<Integer> prodIdList) {
-        if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
-            $warn("CmsSearchAdvanceService：addFreeTag 缺少参数");
-            throw new BusinessException("缺少参数");
-        }
-
-        HashMap<String, Object> queryMap = new HashMap<>();
-        HashMap<String, Object> inMap = new HashMap<>();
-        inMap.put("$in", prodIdList);
-        queryMap.put("prodId", inMap);
-
-        String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
-        int arrSize = pathArr.length;
-        List<String> pathList = new ArrayList<>(arrSize);
-        for (int j = 0; j < arrSize; j ++) {
-            StringBuilder curTagPath = new StringBuilder("-");
-            for (int i = 0; i <= j ; i ++) {
-                curTagPath.append(pathArr[i]);
-                curTagPath.append("-");
-            }
-            pathList.add(curTagPath.toString());
-        }
-
-        HashMap<String, Object> eachMap = new HashMap<>();
-        eachMap.put("$each", pathList);
-
-        HashMap<String, Object> updateMap = new HashMap<>();
-        HashMap<String, Object> tagsMap = new HashMap<>();
-        tagsMap.put("tags", eachMap);
-        updateMap.put("$addToSet", tagsMap);
-
-        // 批量更新product表
-        WriteResult result = cmsBtProductDao.update(userInfo.getSelChannelId(), queryMap, updateMap);
-        $debug(String.format("CmsSearchAdvanceService：addFreeTag 操作结果-> %s", result.toString()));
-    }
-
-    /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
@@ -842,10 +789,17 @@ public class CmsSearchAdvanceService extends BaseAppService {
             result.append(",");
         }
 
-        // 获取promotion
-        if (searchValue.getTags() != null && searchValue.getTags().length > 0) {
-            result.append(MongoUtils.splicingValue("tags", searchValue.getTags()));
-            result.append(",");
+        // 获取tag查询条件
+        if (searchValue.getTagTypeSelectValue() == 2) {
+            if (searchValue.getTags() != null && searchValue.getTags().length > 0) {
+                result.append(MongoUtils.splicingValue("tags", searchValue.getTags()));
+                result.append(",");
+            }
+        } else if (searchValue.getTagTypeSelectValue() == 4) {
+            if (searchValue.getTags() != null && searchValue.getTags().length > 0) {
+                result.append(MongoUtils.splicingValue("freeTags", searchValue.getTags()));
+                result.append(",");
+            }
         }
 
         // 获取code list用于检索code,model,productName,longTitle

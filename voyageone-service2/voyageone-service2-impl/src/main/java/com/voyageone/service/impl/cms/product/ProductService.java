@@ -288,6 +288,10 @@ public class ProductService extends BaseService {
         product.setGroups(grp);
     }
 
+    public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {
+        return cmsBtProductDao.update(channelId, paraMap, updateMap);
+    }
+
     /**
      * update product
      */
@@ -774,7 +778,7 @@ public class ProductService extends BaseService {
         }
 
         if (!StringUtils.isEmpty(cartId)) {
-            sbQuery.append(MongoUtils.splicingValue("fields.productCarts", Integer.valueOf(cartId)));
+            sbQuery.append(MongoUtils.splicingValue("carts.cartId", Integer.valueOf(cartId)));
             sbQuery.append(",");
         }
 

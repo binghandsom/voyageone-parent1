@@ -269,10 +269,14 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         $error(String.format("%s => %s", url, simpleMessage), exception);
     }
 
-    private ModelAndView jsonView(AjaxResponse object) {
+    private ModelAndView jsonView(AjaxResponse response) {
         MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
         ModelAndView mav = new ModelAndView(jsonView);
-        mav.addObject(object);
+        mav.addObject("code", response.getCode());
+        mav.addObject("data", response.getData());
+        mav.addObject("displayType", response.getDisplayType());
+        mav.addObject("message", response.getMessage());
+        mav.addObject("redirectTo", response.getRedirectTo());
         return mav;
     }
 }

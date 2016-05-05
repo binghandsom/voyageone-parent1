@@ -1662,7 +1662,9 @@ public class SuperFeedJEBean {
 		temp.append(this.BuyItNowPrice);
 		temp.append(this.RetailPrice);
         List<String> images = Arrays.asList(this.PictureURLs.split(","));
-        images.stream().map(s -> s.substring(s.lastIndexOf("/"))).sorted().collect(Collectors.toList()).forEach(temp::append);
+        images.stream()
+				.filter(s1 -> s1.lastIndexOf("/") >= 0)
+				.map(s -> s.substring(s.lastIndexOf("/"))).sorted().collect(Collectors.toList()).forEach(temp::append);
 		temp.append(this.TaxProductCode);
 		temp.append(this.SupplierCode);
 		temp.append(this.SupplierPO);

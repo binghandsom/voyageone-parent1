@@ -17,7 +17,7 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
-import com.voyageone.service.dao.cms.CmsMtDictPlatformDao;
+import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -78,7 +78,7 @@ public class SxProductService extends BaseService {
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
-    private CmsMtDictPlatformDao cmsMtDictPlatformDao;
+    private CmsMtPlatformDictDao cmsMtPlatformDictDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -690,7 +690,7 @@ public class SxProductService extends BaseService {
     }
 
     public List<CmsMtPlatFormDictModel> searchDictList(Map<String, Object> map) {
-        return cmsMtDictPlatformDao.selectList(map);
+        return cmsMtPlatformDictDao.selectList(map);
     }
 
     private enum SkuSort {

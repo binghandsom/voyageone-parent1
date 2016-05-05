@@ -159,8 +159,8 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
 							<div class="col-sm-3">
-								<select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="getTagList()">
-									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
+								<select class="form-control" ng-model="vm.searchInfo.tagTypeSelectValue" ng-change="getTagList()">
+									<option value="0" translate="TXT_SELECT_NO_VALUE"></option>
 									<option value="1" translate="TXT_TAG_STORE_CLASSIFY"></option>
 									<option value="2" translate="TXT_TAG_PROMOTION"></option>
 									<option value="3" translate="TXT_TAG_GOODS"></option>
@@ -171,9 +171,6 @@
 								<select multiple chosen class="form-control" ng-model="vm.searchInfo.tags"
 										ng-options="tag.tagPath as tag.tagPathName for tag in vm.masterData.tagList">
 								</select>
-								<!--<label class="checkbox-inline c-checkbox" ng-repeat="tag in vm.masterData.tagList">-->
-									<!--<input type="checkbox" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}-->
-								<!--</label>-->
 							</div>
 						</div>
 						<div class="form-group" ng-if="vm.masterData.isminimall == 1">
@@ -513,15 +510,10 @@
 											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
-
-										<span>
-											<button ng-controller="showPopoverCtrl" popover-html="showInfo({{2016101111111}})"
-													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">
-												标签
-											</button>
-											<!--<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>-->
+										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0">&nbsp;&nbsp;
+											<button ng-controller="showPopoverCtrl" popover-html="showTagInfo({{productInfo.freeTags}},showInfo)"
+													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
 										</span>
-
 										<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>
 								</tr>

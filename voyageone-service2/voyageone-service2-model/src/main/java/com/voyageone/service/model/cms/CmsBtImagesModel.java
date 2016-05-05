@@ -23,7 +23,7 @@ public class CmsBtImagesModel extends BaseModel {
     /**
 
      */
-    private int updFlg;
+    private Integer updFlg;
 
 
     /**
@@ -101,12 +101,12 @@ public class CmsBtImagesModel extends BaseModel {
     /**
 
      */
-    public int getUpdFlg() {
+    public Integer getUpdFlg() {
 
         return this.updFlg;
     }
 
-    public void setUpdFlg(int updFlg) {
+    public void setUpdFlg(Integer updFlg) {
         this.updFlg = updFlg;
     }
 
