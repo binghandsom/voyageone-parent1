@@ -551,6 +551,13 @@ interface CmsBtJmPromotionImportTask{
             String DEL_CHANNEL_TAG = "delTag";
             String GET_TAG_LIST = "getTagList";
         }
+        interface CHANNEL_IMAGE_GROUP {
+            String ROOT="/cms/channel/image_group";
+            String INIT_CHANNEL_IMAGE_GROUP = "init";
+            String SEARCH_CHANNEL_IMAGE_GROUP = "search";
+            String SAVE_CHANNEL_IMAGE_GROUP = "save";
+            String DELETE_CHANNEL_IMAGE_GROUP = "delete";
+        }
     }
 
 }

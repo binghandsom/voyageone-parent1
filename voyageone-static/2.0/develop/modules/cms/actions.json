@@ -362,6 +362,13 @@
           "getTagList": "getTagList"
         }
       },
+      "imageGroupService": {
+        "root": "/cms/channel/image_group",
+        "init": "init",
+        "search": "search",
+        "save": "save",
+        "delete": "delete"
+      },
       "sizeChart":{
         "sizeChartService": {
           "root": "/cms/channel/sizeChartList",
