@@ -2,6 +2,7 @@ package com.voyageone.task2.base;
 
 import com.rabbitmq.client.impl.VariableLinkedBlockingQueue;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.mq.MQHelper;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
@@ -72,6 +73,9 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         if (taskControlList.isEmpty()) {
             $info("没有找到任何配置。");
             logIssue("没有找到任何配置！！！", getTaskName());
+            MQHelper.stop(getClass().getName());
+        }else{
+            MQHelper.start(getClass().getName());
         }
     }
 

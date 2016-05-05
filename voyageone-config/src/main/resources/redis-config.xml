@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cache="http://www.springframework.org/schema/cache"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/cache
+     http://www.springframework.org/schema/cache/spring-cache.xsd">
 
     <!-- 连接池配置. -->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -68,6 +70,28 @@
         <property name="connectionFactory" ref="jedisConnectionFactory"/>
         <property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />
         <property name="hashValueSerializer" ref="genericJackson2JsonRedisSerializer" />
+    </bean>
+
+    <!-- 缓存注解启动 -->
+    <cache:annotation-driven />
+
+    <!-- default cache manager -->
+    <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+        <constructor-arg>
+            <bean class="org.springframework.data.redis.core.RedisTemplate">
+                <property name="connectionFactory" ref="jedisConnectionFactory"/>
+                <property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />
+            </bean>
+        </constructor-arg>
+        <property name="loadRemoteCachesOnStartup" value="true" /> <!-- 启动时 加载远程缓存 -->
+        <property name="usePrefix" value="true" /> <!-- 为缓存数据根据key提供范围前缀 -->
+        <!--<property name="cachePrefix" ref="cachePrefix" />--> <!-- default 形式为(cacheName:xxx) -->
+        <property name="defaultExpiration" value="3600"/> <!-- 默认过期时间 单位秒 1小时 -->
+        <property name="expires">
+            <map>
+                <entry key="Tcache" value="60" /> <!-- 单独设置缓存key的失效时间 单位秒 -->
+            </map>
+        </property>
     </bean>
 
 </beans>
