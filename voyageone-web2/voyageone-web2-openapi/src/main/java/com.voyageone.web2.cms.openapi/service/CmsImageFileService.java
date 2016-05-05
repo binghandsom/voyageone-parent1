@@ -6,10 +6,7 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.excel.ExcelColumn;
-import com.voyageone.common.util.excel.ExcelImportUtil;
-import com.voyageone.common.util.excel.ExportExcelInfo;
-import com.voyageone.common.util.excel.ExportFileExcelUtil;
+import com.voyageone.common.util.excel.*;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.dao.cms.CmsMtImageCreateImportDao;
@@ -161,6 +158,7 @@ public class CmsImageFileService extends BaseService {
         importModel.setCreated(DateTimeUtil.getNow());
         importModel.setModified(DateTimeUtil.getNow());
         importModel.setIsImport(false);
+        importModel.setErrorCode(0);
         String filePath = path + "/" + fileName;
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
@@ -171,11 +169,11 @@ public class CmsImageFileService extends BaseService {
         List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
         List<ExcelColumn> listColumn = new ArrayList<>();    //配置列信息
-        listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id"));
-        listColumn.add(new ExcelColumn("templateId", 2, "cms_mt_image_create_file", "模板Id"));
-        listColumn.add(new ExcelColumn("file", 3, "cms_mt_image_create_file", "文件名"));
-        listColumn.add(new ExcelColumn("vParam", 4, "cms_mt_image_create_file", "参数Id"));
-        listColumn.add(new ExcelColumn("isUploadUsCdn", 5, "cms_mt_image_create_file", "是否上传美国Cdn"));
+        listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id",false));
+        listColumn.add(new ExcelColumn("templateId", 2, "cms_mt_image_create_file", "模板Id",false));
+        listColumn.add(new ExcelColumn("file", 3, "cms_mt_image_create_file", "文件名",false));
+        listColumn.add(new ExcelColumn("vParam", 4, "cms_mt_image_create_file", "参数Id",false));
+        listColumn.add(new ExcelColumn("isUploadUsCdn", 5, "cms_mt_image_create_file", "是否上传美国Cdn",false));
         ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CreateImageParameter.class, 0);//
 
         if (listErrorMap.size() > 0 | listErrorMap.size() > 0 | listErrorMap.size() > 0) {
@@ -183,10 +181,12 @@ public class CmsImageFileService extends BaseService {
             String failuresFileName = "error" + fileName;
             String errorfilePath = path + "/error" + fileName.trim();
             ExportExcelInfo info = new ExportExcelInfo(null);
+            listColumn.add(info.getErrorColumn());
             info.setSheet("Sheet1");
             info.setDisplayColumnName(true);
             info.setDataSource(listErrorMap);
             info.setListColumn(listColumn);
+
             ExportFileExcelUtil.exportExcel(errorfilePath, info);//保存导出的错误文件
             importModel.setFailuresFileName(failuresFileName);
             importModel.setFailuresRows(listErrorMap.size());

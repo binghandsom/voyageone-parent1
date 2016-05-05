@@ -53,7 +53,11 @@ import java.util.*;
                 resultBean = service.importImageCreateInfo(path, fileName, userName);
             }
             Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
-            reponse.put("result", true);
+            if (resultBean.getErrorCode() > 0) {
+                reponse.put("result", false);
+            } else {
+                reponse.put("result", true);
+            }
             reponse.put("msg", resultBean.getErrorMsg() + "requestId:" + resultBean.getRequestId());
             return success(reponse);
         }
