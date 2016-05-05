@@ -300,13 +300,6 @@ define([
                     "controller": 'popAddStockIncrementCtl'
                 }
             },
-            "search": {
-                "joinJM": {
-                    "templateUrl": "views/pop/search/joinJM.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
-                    "controller": 'popJoinJMCtl'
-                }
-            },
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
@@ -379,7 +372,7 @@ define([
                     "controller": 'popCodeDetailCtl'
                 }
 
-        },
+            },
             "system": {
                 "channelList": {
                     "templateUrl": "views/pop/system/channelList.tpl.html",
@@ -445,8 +438,14 @@ define([
                         "controller": 'popImageDetailAddCtl'
                     },
                 },
+            },
+            "image": {
+                "upload": {
+                    "templateUrl": "views/pop/image/imgSetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
+                    "controller": 'popImgSettingCtl'
+                }
             }
-
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -946,7 +945,7 @@ define([
          * @type {openPromotion}
          */
         $scope.openImageSetting = function (context) {
-            return openModel(popActions.image.setting, context);
+            return openModel(popActions.image.upload, context);
         };
         //function openImageSetting(viewSize, product, imageType, fnInitial) {
         //    require([popActions.image.setting.controllerUrl], function () {
@@ -1204,7 +1203,7 @@ define([
             return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
         //聚美图片管理中，追加按钮
-        $scope.openImageSetting = function (context) {
+        $scope.openJmImageSetting = function (context) {
             return openModel(popActions.jumei.jmImageManage.imageSetting, context);
         };
 

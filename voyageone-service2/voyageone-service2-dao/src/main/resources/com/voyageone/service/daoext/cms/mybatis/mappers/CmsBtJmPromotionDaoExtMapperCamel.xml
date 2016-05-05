@@ -29,13 +29,19 @@
               <if test="state1!=null||state2!=null||state3!=null">
               and (
                <if test="state1!=null">-- 未开始
-                 or activity_star>now()
+                 activity_start>now()
               </if>
-              <if test="state2!=null"> -- 进行中
-                 or (activity_start &lt; now() and  activity_end >now())
+                  <if test="state1 != null and state2!=null"> -- 进行中
+                      or (activity_start &lt; now() and  activity_end >now())
+                  </if>
+              <if test="state1 == null and state2!=null"> -- 进行中
+                 (activity_start &lt; now() and  activity_end >now())
               </if>
-              <if test="state3!=null"> -- 完成
-                 or( activity_end  &lt;now())
+                  <if test="(state1 != null || state2!=null) and state3!=null"> -- 完成
+                      or ( activity_end  &lt;now())
+                  </if>
+              <if test="state1 == null and state2==null and state3!=null"> -- 完成
+                 ( activity_end  &lt;now())
               </if>
               )
               </if>

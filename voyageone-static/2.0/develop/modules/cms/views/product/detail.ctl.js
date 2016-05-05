@@ -115,16 +115,16 @@ define([
                 }
 
                 // 推算产品状态
-                // 如果该产品以前不是approve,这次变成approve的
-                if (self.productDetails.productStatus.statusInfo.isApproved
-                    && !self.productDetailsCopy.productStatus.statusInfo.isApproved)
-                    self.productDetails.productStatus.approveStatus = Status.APPROVED;
-                // 变成ready,或者以前是approve这次数据发生变化的
-                else if (self.productDetails.productStatus.statusInfo.isWaitingApprove
-                    || (self.productDetails.productStatus.statusInfo.isApproved
-                    && self.productDetailsCopy.productStatus.statusInfo.isApproved
-                    && self.productDetails != self.productDetailsCopy))
-                    self.productDetails.productStatus.approveStatus = Status.READY;
+                //// 如果该产品以前不是approve,这次变成approve的
+                //if (self.productDetails.productStatus.statusInfo.isApproved
+                //    && !self.productDetailsCopy.productStatus.statusInfo.isApproved)
+                //    self.productDetails.productStatus.approveStatus = Status.APPROVED;
+                //// 变成ready,或者以前是approve这次数据发生变化的
+                //else if (self.productDetails.productStatus.statusInfo.isWaitingApprove
+                //    || (self.productDetails.productStatus.statusInfo.isApproved
+                //    && self.productDetailsCopy.productStatus.statusInfo.isApproved
+                //    && self.productDetails != self.productDetailsCopy))
+                //    self.productDetails.productStatus.approveStatus = Status.READY;
 
                 this.productDetailService.updateProductDetail(this.productDetails)
                     .then(function (res) {
@@ -192,7 +192,7 @@ define([
                 //}.bind(this));
             },
 
-            openImageSetting: function(productDetails, imageType,openImageSetting) {
+            openProImageSetting: function(productDetails, imageType,openImageSetting) {
                 openImageSetting({
                     product:  productDetails,
                     imageType: imageType

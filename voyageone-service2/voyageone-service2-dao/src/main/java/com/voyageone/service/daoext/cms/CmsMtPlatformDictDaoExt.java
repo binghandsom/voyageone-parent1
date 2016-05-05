@@ -62,8 +62,8 @@ public class CmsMtPlatformDictDaoExt extends ServiceBaseDao {
      */
     public List<CmsMtPlatFormDictModel> selectByChannelCartId(String orderChannelId, int cartId) {
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("order_channel_id", orderChannelId);
+        dataMap.put("orderChannelId", orderChannelId);
         dataMap.put("cartId", cartId);
-        return selectOne("cms_mt_dict_selectByChannelCartId", dataMap);
+        return selectList("cms_mt_dict_selectByChannelCartId", dataMap);
     }
 }

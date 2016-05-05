@@ -315,7 +315,7 @@ public class ProductService extends BaseService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(queryStr);
-        queryObject.setProjectionExt("prodId", "modified", "fields.status", "groups");
+        queryObject.setProjectionExt("prodId", "modified", "fields.status", "carts");
 
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         if (findModel == null) {
@@ -377,6 +377,7 @@ public class ProductService extends BaseService {
                 updateMap.put("feed.customIds", feed.getCustomIds());
             }
         }
+
 
         /**
          * set update model
@@ -448,6 +449,49 @@ public class ProductService extends BaseService {
             // 更新sku信息
             productSkuService.saveSkus(channelId, findModel.getProdId(), skus);
         }
+
+        /**
+         * 更新carts
+         */
+//        if (productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+//            List<Integer> oldCarts = new ArrayList<>();
+//            for (CmsBtProductModel_Carts cart : findModel.getCarts()) {
+//                oldCarts.add(cart.getCartId());
+//            }
+//
+//            List<Integer> newCarts = new ArrayList<>();
+//            for (CmsBtProductModel_Sku sku:productModel.getSkus()) {
+//                newCarts.addAll(sku.getSkuCarts());
+//            }
+//            newCarts.removeAll(oldCarts);
+//            newCarts.stream().distinct().collect(toList());
+//
+//            List<BulkUpdateModel> bulkCartsList = new ArrayList<>();
+//            for (Integer cartId : newCarts) {
+//
+//                // 设置批量更新条件
+//                HashMap<String, Object> bulkQueryMap = new HashMap<>();
+//                bulkQueryMap.put("fields.code", productModel.getFields().getCode());
+//                bulkQueryMap.put("carts.cartId", cartId);
+//
+//                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+//                bulkUpdateMap.put("carts.$.platformStatus", CmsConstants.PlatformStatus.WaitingPublish.name());
+//
+//                // 设定批量更新条件和值
+//                if (bulkUpdateMap.size() > 0) {
+//                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+//                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+//                    bulkUpdateModel.setQueryMap(bulkQueryMap);
+//                    bulkCartsList.add(bulkUpdateModel);
+//                }
+//            }
+//
+//            // 批量更新product表
+//            if (bulkCartsList.size() > 0) {
+//                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkCartsList, null, "$set", true);
+//            }
+//
+//        }
 
     }
 

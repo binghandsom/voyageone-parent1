@@ -32,7 +32,7 @@ define([
 
             this.searchInfo = {synFlgList: []};
             this.imageDataList = [];
-            this.imageDataPageOption = {curr: 1, total: 0, fetch: this.search.bind(this)}
+            this.imageDataPageOption = {curr: 1, total: 0, size: 20, fetch: this.search.bind(this)}
             this.status = {
                 open: true
             }
@@ -91,8 +91,8 @@ define([
             },
 
             // 新加图片信息
-            openImage: function (imageData, openImageSetting) {
-                openImageSetting({
+            openImage: function (imageData, openJmImageSetting) {
+                openJmImageSetting({
                     imageData: {
                         brandName: imageData.brandName,
                         productType: imageData.productType,
