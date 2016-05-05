@@ -1,5 +1,8 @@
 package com.voyageone.service.bean.openapi.image;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.util.JacksonUtil;
+
 /**
  * Created by dell on 2016/4/26.
  */
@@ -7,7 +10,7 @@ public class CreateImageParameter {
     String channelId;//
     int templateId;
     String file;
-    String vParam;
+    String[] vParam;
     boolean isUploadUsCdn = false;
 
     public boolean isUploadUsCdn() {
@@ -36,10 +39,19 @@ public class CreateImageParameter {
     public void setFile(String file) {
         this.file = file;
     }
-    public String getVParam() {
+
+    public String[] getVParam() {
         return vParam;
     }
-    public void setVParam(String vParam) {
+    public void setVParam(String[] vParam) {
         this.vParam = vParam;
+    }
+
+    @JsonIgnore
+    public String getVParamStr() {
+        if (vParam == null) {
+            vParam = new String[0];
+        }
+        return JacksonUtil.bean2Json(vParam);
     }
 }

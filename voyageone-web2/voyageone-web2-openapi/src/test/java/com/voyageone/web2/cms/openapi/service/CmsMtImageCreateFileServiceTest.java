@@ -56,7 +56,7 @@ public class CmsMtImageCreateFileServiceTest {
         String cId = "001";
         int templateId = 15;
         String file = "nike-air-penny-ii-333886005-1" + fileIndex;//"test-test-1";//
-        String vparam = "[\"file:bcbg/bcbg-sku.png\",\"file:bcbg/bcbgtupian.jpg\",\"Text String to be rendered\"]";
+        String[] vparam = {"file:bcbg/bcbg-sku.png","file:bcbg/bcbgtupian.jpg","Text String to be rendered"};
         String queryString = "cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
 
         CreateImageParameter parameter = new CreateImageParameter();

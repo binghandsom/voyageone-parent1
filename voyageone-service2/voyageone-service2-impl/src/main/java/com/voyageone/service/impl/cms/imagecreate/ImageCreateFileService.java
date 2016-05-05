@@ -202,6 +202,7 @@ public class ImageCreateFileService extends BaseService {
 
     @VOTransactional
     public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
+        $info("CmsImageFileService:addList start");
         Map<Integer, CmsMtImageCreateTemplateModel> cmsMtImageCreateTemplateModelMap = new HashMap<>();
         AddListResultBean result = new AddListResultBean();
         try {
@@ -210,7 +211,7 @@ public class ImageCreateFileService extends BaseService {
             List<CmsMtImageCreateTaskDetailModel> listTaskDetail = new ArrayList<>();
             CmsMtImageCreateFileModel modelCmsMtImageCreateFile;
             for (CreateImageParameter imageInfo : parameter.getData()) {
-                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParam());
+                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr());
                 modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
                     if (!cmsMtImageCreateTemplateModelMap.containsKey(imageInfo.getTemplateId())) {
@@ -221,7 +222,7 @@ public class ImageCreateFileService extends BaseService {
                         cmsMtImageCreateTemplateModelMap.put(imageInfo.getTemplateId(), modelTemplate);
                     }
                     CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateModelMap.get(imageInfo.getTemplateId());
-                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), modelTemplate, imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode, imageInfo.isUploadUsCdn());
+                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), modelTemplate, imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
@@ -241,20 +242,22 @@ public class ImageCreateFileService extends BaseService {
             modelTask.setCreated(new Date());
             modelTask.setModified(new Date());
             daoCmsMtImageCreateTask.insert(modelTask);
+            $info("CmsImageFileService:daoCmsMtImageCreateTask.insert end");
             if (importModel != null) {
                 importModel.setCmsMtImageCreateTaskId(modelTask.getId());
                 importModel.setEndTime(new Date());
                 daoCmsMtImageCreateImport.insert(importModel);
-
+                $info("CmsImageFileService:daoCmsMtImageCreateImport.insert end");
             }
             for (CmsMtImageCreateTaskDetailModel detailModel : listTaskDetail) {
                 detailModel.setCmsMtImageCreateTaskId(modelTask.getId());
-                // daoCmsMtImageCreateTaskDetail.insert(detailModel);
             }
             daoExtCmsMtImageCreateTaskDetail.insertList(listTaskDetail);
+            $info("CmsImageFileService:daoExtCmsMtImageCreateTaskDetail.insertList end");
             Map<String, Object> map = new HashMap<>();
             map.put("id", modelTask.getId());
             sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
+            $info("CmsImageFileService:sendMessage end");
         } catch (OpenApiException ex) {
             result.setErrorCode(ex.getErrorCode());
             result.setErrorMsg(ex.getMsg());
@@ -271,6 +274,7 @@ public class ImageCreateFileService extends BaseService {
         }
 
         cmsMtImageCreateTemplateModelMap.clear();
+        $info("CmsImageFileService:addList end");
         return result;
     }
 
@@ -285,7 +289,7 @@ public class ImageCreateFileService extends BaseService {
             if (StringUtil.isEmpty(imageInfo.getFile())) {
                 throw new OpenApiException(ImageErrorEnum.FileNotNull);
             }
-            if (StringUtil.isEmpty(imageInfo.getVParam())) {
+            if (imageInfo.getVParam() == null) {
                 throw new OpenApiException(ImageErrorEnum.VParamNotNull);
             }
         }
