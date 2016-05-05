@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.web2.base.BaseAppService;
@@ -19,9 +18,6 @@ public class CmsTaskStockIncrementService extends BaseAppService {
 
     @Autowired
     private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
-
-    @Autowired
-    private SimpleTransaction simpleTransaction;
 
     @Autowired
     private StockSeparateService stockSeparateService;
@@ -103,20 +99,12 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         checkIncrementInfo(param);
         //判断增量任务:新规场合
         if (promotionType.equals(TYPE_INCREMENT_INSERT)) {
-            simpleTransaction.openTransaction();
-            try {
-                //更新的场合
-                //根据增量任务id，将增量任务信息插入到cms_bt_stock_separate_increment_task表
-                Map<String, Object> stockSeparateIncrementTaskMap = getAddIncrementTaskByTaskID(param);
-                //根据增量任务id，抽出cms_bt_stock_separate_item表中的所有sku后，计算出各sku的可用库存数并且根据增量任务的设定。
-                // 计算出增量库存隔离数，插入到cms_bt_stock_separate_increment_item表中。（固定值隔离标志位=0：按动态值进行增量隔离）
-                insertStockSeparateIncrementByTaskID(param, stockSeparateIncrementTaskMap);
-            } catch (Exception e) {
-                simpleTransaction.rollback();
-                throw e;
-            }
-            simpleTransaction.commit();
-
+            //更新的场合
+            //根据增量任务id，将增量任务信息插入到cms_bt_stock_separate_increment_task表
+            Map<String, Object> stockSeparateIncrementTaskMap = getAddIncrementTaskByTaskID(param);
+            //根据增量任务id，抽出cms_bt_stock_separate_item表中的所有sku后，计算出各sku的可用库存数并且根据增量任务的设定。
+            // 计算出增量库存隔离数，插入到cms_bt_stock_separate_increment_item表中。（固定值隔离标志位=0：按动态值进行增量隔离）
+            insertStockSeparateIncrementByTaskID(param, stockSeparateIncrementTaskMap);
         }
         //判断增量任务:更新场合
         if (promotionType.equals(TYPE_INCREMENT_UPDATE)) {

@@ -288,6 +288,10 @@ public class ProductService extends BaseService {
         product.setGroups(grp);
     }
 
+    public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {
+        return cmsBtProductDao.update(channelId, paraMap, updateMap);
+    }
+
     /**
      * update product
      */

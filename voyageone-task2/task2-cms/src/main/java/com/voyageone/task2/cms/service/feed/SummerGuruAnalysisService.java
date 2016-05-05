@@ -52,7 +52,6 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
      * @return isSuccess
      */
     public boolean insertSuperFeed(List<SuperfeedSummerGuruBean> superfeedlist) {
-        boolean isSuccess = true;
 
         for (SuperfeedSummerGuruBean superfeed : superfeedlist) {
 
@@ -60,7 +59,7 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
                 $info("SummerGuru产品信息插入失败 InventoryNumber = " + superfeed.getSku());
             }
         }
-        return isSuccess;
+        return true;
     }
 
     /**
@@ -129,13 +128,13 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
                 superfeed.add(SuperfeedSummerGuruBean);
                 cnt++;
                 if (superfeed.size() > 1000) {
-                    transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                    transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
                 }
             }
 
             if (superfeed.size() > 0) {
-                transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                 superfeed.clear();
             }
             reader.close();
@@ -160,7 +159,7 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
      */
     protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String category) {
 
-        Map colums = getColumns();
+        Map<String, Object> colums = getColumns();
 
         List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
         List<String> attList = new ArrayList<>();
@@ -210,15 +209,14 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
     private String getSizeType(CmsBtFeedInfoSummerGuruModel cmsBtFeedInfoSummerGuru) {
         String title = cmsBtFeedInfoSummerGuru.getName();
         String keys[] = {"Women's", "Baby Boy's", "Baby Girl's", "Men's",};
-        for (int i = 0; i < keys.length; i++) {
-            if (title.indexOf(keys[i]) >= 0) return keys[i];
+        for (String key : keys) {
+            if (title.contains(key)) return key;
         }
         return "One Size";
     }
 
     // productType 是类目的第三级
     private String getProducType(CmsBtFeedInfoSummerGuruModel cmsBtFeedInfoSummerGuru) {
-        String productType = "";
         String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
 
         String split[] = cmsBtFeedInfoSummerGuru.getCategory().split(categorySplit);
