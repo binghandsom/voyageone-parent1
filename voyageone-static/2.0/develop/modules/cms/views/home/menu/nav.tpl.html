@@ -90,6 +90,13 @@
                     <span translate="TXT_ADVANCE_SEARCH"></span>
                 </a>
             </li>
+            <!-- feed检索 -->
+            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
+                <a href="#/search/feedsearch">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span>Feed过滤一览</span>
+                </a>
+            </li>
         </ul>
     </li>
 
@@ -169,12 +176,6 @@
                 </a>
             </li>
             <!-- Feed过滤一览 -->
-            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
-                <a href="#/search/feedsearch">
-                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>Feed过滤一览</span>
-                </a>
-            </li>
             <!-- 品牌一览 -->
             <!-- 尺码表一览 -->
             <!-- 共通图片一览 -->
@@ -202,42 +203,6 @@
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_TAG_MANAGEMENT"></span>
                 </a>
-            </li>
-
-            <li ui-sref-active="active">
-                <a class="auto">
-            <span class="pull-right text-muted">
-                <i class="fa fa-fw fa-angle-right text"></i>
-                <i class="fa fa-fw fa-angle-down text-active"></i>
-            </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>Listing</span>
-                </a>
-                <ul class="nav nav-sub dk">
-                    <li class="nav-sub-header">
-                        <a href>
-                            <span>Listing</span>
-                        </a>
-                    </li>
-                    <li class="m-l-sm" ui-sref-active="active">
-                        <a href="#/channel/sizechart">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>sizechart</span>
-                        </a>
-                    </li>
-                    <li class="m-l-sm" ui-sref-active="active">
-                        <a href="#/channel/imagetemplatelist">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>imagetemplatelist</span>
-                        </a>
-                    </li>
-                    <li class="m-l-sm" ui-sref-active="active">
-                        <a href="#/channel/imagegrouplist">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>imagegrouplist</span>
-                        </a>
-                    </li>
-                </ul>
             </li>
         </ul>
     </li>

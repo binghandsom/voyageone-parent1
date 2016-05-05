@@ -777,7 +777,7 @@ public class ProductService extends BaseService {
             sbQuery.append(",");
         }
 
-        if (!StringUtils.isEmpty(cartId)) {
+        if (!StringUtils.isEmpty(cartId) && !"1".equals(cartId)) {
             sbQuery.append(MongoUtils.splicingValue("carts.cartId", Integer.valueOf(cartId)));
             sbQuery.append(",");
         }
