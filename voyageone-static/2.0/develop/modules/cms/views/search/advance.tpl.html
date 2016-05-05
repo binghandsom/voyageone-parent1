@@ -52,19 +52,31 @@
 						<div class="form-group" ng-repeat="option in vm.custAttrList">
 							<label class="col-sm-3 control-label" ng-if="$index == 0" translate="TXT_CUST_QUERY_ATTR"></label>
 							<label class="col-sm-3 control-label" ng-if="$index != 0" ></label>
-							<div class="col-sm-8 form-inline">
+							<div class="col-sm-3">
 								<select class="form-control" ng-model="option.inputOpts"
 										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+								</select>
+							</div>
+							<div class="col-sm-2">
+								<select class="form-control">
+									<option value="=">=</option>
+									<option value="!=">! =</option>
+									<option value="= null">= null</option>
+									<option value="= null">= null</option>
+									<option value="! = null">! = null</option>
 								</select>
 								<!--<select class="form-control" ng-model="option.inputOpts"-->
 										<!--ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">-->
 									<!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
 								<!--</select>-->
-								<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>
-								<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
-								<button ng-if="$last" id="addCustDiv" class="btn btn-success" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
+								<!--<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>-->
 							</div>
+							<div class="col-sm-2">
+								<input type="text" class="form-control" ng-model="option.inputVal">
+							</div>
+							<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
+							<button ng-if="$last" id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" >查询价格变动</label>
@@ -201,8 +213,8 @@
 							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label" translate="TXT_SORT_1"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortOneName"
@@ -214,7 +226,7 @@
 										<input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
 									</label>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="checkbox-inline c-radio">
 										<input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
 									</label>
@@ -222,8 +234,8 @@
 							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label" translate="TXT_SORT_2"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortTwoName"
@@ -232,19 +244,19 @@
 								</div>
 								<div class="col-sm-3 text-right">
 									<label class="checkbox-inline c-radio">
-										<input name="sortTwo" type="radio" value="1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+										<input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
 									</label>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="checkbox-inline c-radio">
-										<input name="sortTwo" type="radio" value="-1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+										<input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
 									</label>
 								</div>
 							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label" translate="TXT_SORT_3"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortThreeName"
@@ -256,15 +268,15 @@
 										<input name="sortThree" type="radio" value="1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
 									</label>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="checkbox-inline c-radio">
 										<input name="sortThree" type="radio" value="-1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
 									</label>
 								</div>
 							</div>
 						</div>
-						<div class="form-group"><!-- 查询翻译状态 -->
-							<label class="col-sm-3 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+						<div class="form-group" style="margin-left: -67px;"><!-- 查询翻译状态 -->
+							<label class="col-sm-4 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.transStsFlg">

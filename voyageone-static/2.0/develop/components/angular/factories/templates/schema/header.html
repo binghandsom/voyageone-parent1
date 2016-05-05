@@ -1,7 +1,7 @@
 <div class="form-group">
     <label class="col-sm-2 control-label" ng-class="{'vo_reqfield': header.isRequired}"
            ng-bind="$data.name"></label>
-    <div class="col-sm-8"
+    <div class="col-sm-6"
          ng-class="{'modal-open' : header.isMultiComplex, 'hierarchy_main': header.isComplex, 'ng-invalid': $data.$valid === false}" title="{{$data.$valid}}"
          ng-transclude></div>
     <div class="col-sm-2" ng-if="header.isMultiComplex">

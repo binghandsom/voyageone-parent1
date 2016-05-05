@@ -5,7 +5,7 @@
         <th ng-repeat="field in $data.fields" ng-class="{'vo_reqfield': schema.isRequired}"
             class="text-left">{{field.name}}
         </th>
-        <th ng-if="!schema.notShowEdit" class="text-center">{{::'TXT_ACTION'|translate}}</th>
+        <th ng-if="!schema.notShowEdit" class="text-left">{{::'TXT_ACTION'|translate}}</th>
     </tr>
     </thead>
     <tbody>
