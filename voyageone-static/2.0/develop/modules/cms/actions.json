@@ -364,12 +364,12 @@
       },
       "sizeChart":{
         "sizeChartService": {
-          "root": "/cms/channel/SizeChartList",
-          "sizeChartInit": "init",
-          "sizeChartSearch": "search",
-          "sizeChartDelete": "delete",
-          "sizeChartEdit": "editSave",
-          "sizeChartDetail": "detailSave"
+          "root": "/cms/channel/sizeChartList",
+          "init": "sizeChartInit",
+          "search": "sizeChartSearch",
+          "delete": "sizeChartDelete",
+          "editSave": "sizeChartEdit",
+          "detailSave": "sizeChartDetail"
         }
       }
     }
