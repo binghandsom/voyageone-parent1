@@ -30,12 +30,12 @@
                             <th class="text-left">导入结束时间</th>
                             <th class="text-left">异常信息Code</th>
                             <th class="text-left">失败文件</th>
-                            <th class="text-center">操作</th>
+
                         </tr>
                         </thead>
                         <tbody ng-if="vm.modelList.length">
                         <tr ng-repeat="model in vm.modelList">
-                            <td class="text-left">{{model.fileName}}</td>
+                            <td class="text-left"><a ng-click="downloadImportExcel(model.id);">{{model.fileName}}</a></td>
                             <td class="text-center">{{model.successRows}}</td>
                             <td class="text-center">{{model.failuresRows}}</td>
                             <td class="text-left">{{model.beginTime}}</td>
@@ -43,10 +43,10 @@
                             <td class="text-left"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>
                             </td>
                             <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
-                            <td class="text-center">
-                                <button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i
-                                        class="fa fa-download"></i></button>
-                            </td>
+                            <!--<td class="text-center">-->
+                                <!--<button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i-->
+                                        <!--class="fa fa-download"></i></button>-->
+                            <!--</td>-->
                         </tr>
                         </tbody>
                     </table>

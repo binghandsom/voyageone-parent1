@@ -7,7 +7,7 @@ define([
 ], function (angularAMD) {
     function detailController($scope,cmsMtImageCreateService, $uibModal, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
         $scope.vm = {modelList:[]};
-        $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
+        $scope.dataPageOption = {curr: 1,size:5, total: 0, fetch: goPage.bind(this)}
         $scope.initialize = function () {
 
             $scope.search();
@@ -26,10 +26,10 @@ define([
             });
         };
         function  goPage(pageIndex,size) {
-
+//(pageIndex - 1) * size;
             var data ={};// angular.copy($scope.searchInfo);
-            data.start = (pageIndex - 1) * size;
-            data.length = size;
+            data.start = ($scope.dataPageOption.curr - 1) *   $scope.dataPageOption.size
+            data.length =  $scope.dataPageOption.size;
             cmsMtImageCreateService.getPageByWhere(data).then(function (res) {
                 $scope.vm.modelList = res;
             }, function (res) {

@@ -22,10 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,11 +79,11 @@ import java.util.*;
             FileUtils.downloadFile(response, fileName, filepath);
         }
         @RequestMapping(CmsUrlConstants.ImageCreate.GetPageByWhere)
-        public List getPageByWhere(Map<String, Object> map) {
+        public List getPageByWhere(@RequestBody Map<String, Object> map) {
             return serviceCmsMtImageCreateImport.getPageByWhere(map);
         }
         @RequestMapping(CmsUrlConstants.ImageCreate.GetCountByWhere)
-        public int getCountByWhere(Map<String, Object> map) {
+        public int getCountByWhere(@RequestBody Map<String, Object> map) {
             return serviceCmsMtImageCreateImport.getCountByWhere(map);
         }
     }
