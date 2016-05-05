@@ -37,11 +37,11 @@ define([
           var customInfo = customValue.value;
           // 判断当前custom属于哪个custom
           _.forEach($scope.vm.masterData.customs, function (custom) {
-            if (_.isEqual(custom.word_name, customInfo.moduleName)) {
+            if (_.isEqual(custom.wordName, customInfo.moduleName)) {
               $scope.vm.customInfo = custom;
               // 为当前匹配的custom设置值
               _.forEach($scope.vm.customInfo.params, function (param) {
-                param.value = customInfo.userParam[param.param_name] != null ? customInfo.userParam[param.param_name].ruleWordList : null;
+                param.value = customInfo.userParam[param.paramName] != null ? customInfo.userParam[param.paramName].ruleWordList : null;
               })
             }
           })
@@ -56,7 +56,7 @@ define([
       var data = {
         type: $scope.vm.valueTypes.custom,
         value: {
-          moduleName: $scope.vm.customInfo.word_name,
+          moduleName: $scope.vm.customInfo.wordName,
           userParam: _getUserParam()
         }
       };
@@ -106,7 +106,7 @@ define([
       var tempUserParam = {};
 
       _.forEach($scope.vm.customInfo.params, function (param) {
-        tempUserParam[param.param_name] = param.value != null ? {ruleWordList: param.value} : null;
+        tempUserParam[param.paramName] = param.value != null ? {ruleWordList: param.value} : null;
       });
 
       return tempUserParam;

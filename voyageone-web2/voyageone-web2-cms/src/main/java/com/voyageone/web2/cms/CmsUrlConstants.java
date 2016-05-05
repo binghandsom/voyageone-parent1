@@ -469,7 +469,7 @@ public interface CmsUrlConstants {
     }
 
     // 产品编辑
-    interface PRODUCT {
+    interface PRODUCT{
 
         interface DETAIL {
 
@@ -477,9 +477,9 @@ public interface CmsUrlConstants {
 
             String GET_PRODUCT_INFO = "getProductInfo";
 
-            String UPDATE_PRODUCT_MASTER_INFO = "updateProductMasterInfo";
+            String  UPDATE_PRODUCT_MASTER_INFO = "updateProductMasterInfo";
 
-            String UPDATE_PRODUCT_SKU_INFO = "updateProductSkuInfo";
+            String  UPDATE_PRODUCT_SKU_INFO = "updateProductSkuInfo";
 
             String UPDATE_PRODUCT_ALL_INFO = "updateProductAllInfo";
 
@@ -490,7 +490,7 @@ public interface CmsUrlConstants {
     }
 
     // 商品编辑
-    interface GROUP {
+    interface GROUP{
 
         interface DETAIL {
             String ROOT = "/cms/group/detail";
@@ -558,6 +558,7 @@ public interface CmsUrlConstants {
             String INIT_CHANNEL_TAG = "init";
             String SAVE_CHANNEL_TAG = "saveTag";
             String DEL_CHANNEL_TAG = "delTag";
+            String GET_TAG_LIST = "getTagList";
         }
 
     }

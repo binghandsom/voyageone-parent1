@@ -139,6 +139,7 @@ public class FeedEnums {
         client_product_url,
         useDuty,
         priceWithDuty,
-        priceWithoutDuty
+        priceWithoutDuty,
+        blackList
     }
 }

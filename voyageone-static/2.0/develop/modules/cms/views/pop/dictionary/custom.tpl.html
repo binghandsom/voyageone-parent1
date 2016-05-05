@@ -9,7 +9,7 @@
             <label class="col-sm-1 control-label text-center" translate="TXT_CUSTOM"></label>
             <div class="col-sm-4">
                 <select id="dict-custom-name" class="form-control" ng-model="vm.customInfo" ng-change="resetValue()"
-                        ng-options="i as i.word_desc for i in vm.masterData.customs">
+                        ng-options="i as i.wordDesc for i in vm.masterData.customs">
                 </select>
             </div>
             <!--<label class="col-sm-5 control-label text-left" ng-bind="vm.customInfo.word_desc"></label>-->
@@ -29,8 +29,8 @@
                     <tbody>
                     <tr ng-repeat="param in vm.customInfo.params">
                         <td class="mfb-xt text-center">{{$index+1}}</td>
-                        <td class="mfb-xxs text-left" ng-bind="param.param_name"></td>
-                        <td class="mfb-xxxs text-left" ng-bind="param.param_desc"></td>
+                        <td class="mfb-xxs text-left" ng-bind="param.paramName"></td>
+                        <td class="mfb-xxxs text-left" ng-bind="param.paramDesc"></td>
                         <td class="mfb-xxxs text-left">{{param.value[0]}}</td>
                         <td class="mfb-xxt text-center" ng-controller="popupCtrl">
                             <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, param.value[0])"><i class="fa fa-pencil"></i></button>

@@ -7,7 +7,6 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
 import com.voyageone.service.impl.cms.CustomWordService;
@@ -77,7 +76,7 @@ public class TranslationService extends BaseAppService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
-        queryObject.setProjection(RET_FIELDS);
+        queryObject.setProjectionExt(RET_FIELDS);
 
         // 取得所有未翻译的主商品
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(userInfo.getSelChannelId(), queryObject);
@@ -218,7 +217,7 @@ public class TranslationService extends BaseAppService {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(tasksQueryStr);
         //设定返回值.
-        queryObject.setProjection(RET_FIELDS);
+        queryObject.setProjectionExt(RET_FIELDS);
         long prodTotal = productService.getCnt(userInfo.getSelChannelId(), queryObject.getQuery());
 
         int pageNum = (Integer) reqBean.get("pageNum");
@@ -460,20 +459,17 @@ public class TranslationService extends BaseAppService {
     /**
      * 获取翻译时标题和描述的长度设置
      */
-    public List<Map<String, Object>> getTransLenSet() {
-        List<Map<String, Object>> result = new ArrayList<>();
+    public Map<String, Map<String, Object>> getTransLenSet() {
         List<CmsChannelConfigBean> configBeans = CmsChannelConfigs.getConfigBeans(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.TRANS_LEN_SET);
+        Map<String, Map<String, Object>> configMap = new HashMap<>();
         for (CmsChannelConfigBean config : configBeans) {
-            Map<String, Object> configMap = new HashMap<>();
-
             Map<String, Object> value = new HashMap<>();
             value.put("minLen", config.getConfigValue1());
             value.put("maxLen", config.getConfigValue2());
 
             configMap.put(config.getConfigCode(), value);
-            result.add(configMap);
         }
-        return result;
+        return configMap;
     }
 
     /**

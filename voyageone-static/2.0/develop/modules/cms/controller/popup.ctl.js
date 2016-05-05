@@ -300,13 +300,6 @@ define([
                     "controller": 'popAddStockIncrementCtl'
                 }
             },
-            "search": {
-                "joinJM": {
-                    "templateUrl": "views/pop/search/joinJM.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
-                    "controller": 'popJoinJMCtl'
-                }
-            },
             "jumei": {
                 "jmPromotionDefaultSetting": {
                     "batch": {
@@ -379,35 +372,80 @@ define([
                     "controller": 'popCodeDetailCtl'
                 }
 
-        },
-        "system": {
-            "channelList": {
-                "templateUrl": "views/pop/system/channelList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
-                "controller": 'popChannelListCtl'
             },
-            "channelsetting": {
-                "templateUrl": "views/pop/system/channelsetting.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
-                "controller": 'popChannelSettingCtl'
+            "system": {
+                "channelList": {
+                    "templateUrl": "views/pop/system/channelList.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                    "controller": 'popChannelListCtl'
+                },
+                "channelsetting": {
+                    "templateUrl": "views/pop/system/channelsetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channelsetting.ctl",
+                    "controller": 'popChannelSettingCtl'
+                },
+                "channeledit": {
+                    "templateUrl": "views/pop/system/channeledit.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
+                    "controller": 'popChannelEditCtl'
+                },
+                "cartList": {
+                    "templateUrl": "views/pop/system/cartList.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
+                    "controller": 'popCartListCtl'
+                },
+                "channelList": {
+                    "templateUrl": "views/pop/system/channelList.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
+                    "controller": 'popChannelListCtl'
+                }
             },
-            "channeledit": {
-                "templateUrl": "views/pop/system/channeledit.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channeledit.ctl",
-                "controller": 'popChannelEditCtl'
+            "store": {
+                "listing": {
+                    "sizechart": {
+                        "templateUrl": "views/pop/store/listing/sizechart.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/sizechart.ctl",
+                        "controller": 'popSizeChartCtl'
+                    },
+                    "sizechartimport": {
+                        "templateUrl": "views/pop/store/listing/sizechartimport.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/sizechartimport.ctl",
+                        "controller": 'popSizeChartImportCtl'
+                    },
+                    "imagetemplate": {
+                        "templateUrl": "views/pop/store/listing/imagetemplate.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagetemplate.ctl",
+                        "controller": 'popImageTemplateCtl'
+                    },
+                    "imagetemplatepreview": {
+                        "templateUrl": "views/pop/store/listing/imagetemplatepreview.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagetemplatepreview.ctl",
+                        "controller": 'popImageTemplatePreviewCtl'
+                    },
+                    "imagegroupadd": {
+                        "templateUrl": "views/pop/store/listing/imagegroupadd.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagegroupadd.ctl",
+                        "controller": 'popImageGroupAddCtl'
+                    },
+                    "imagegroupimg": {
+                        "templateUrl": "views/pop/store/listing/imagegroupimg.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagegroupimg.ctl",
+                        "controller": 'popImageGroupImgCtl'
+                    },
+                    "imagedetailadd": {
+                        "templateUrl": "views/pop/store/listing/imagedetailadd.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagedetailadd.ctl",
+                        "controller": 'popImageDetailAddCtl'
+                    },
+                },
             },
-            "cartList": {
-                "templateUrl": "views/pop/system/cartList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/cartList.ctl",
-                "controller": 'popCartListCtl'
-            },
-            "channelList": {
-                "templateUrl": "views/pop/system/channelList.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
-                "controller": 'popChannelListCtl'
+            "image": {
+                "upload": {
+                    "templateUrl": "views/pop/image/imgSetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
+                    "controller": 'popImgSettingCtl'
+                }
             }
-        },
-
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -907,7 +945,7 @@ define([
          * @type {openPromotion}
          */
         $scope.openImageSetting = function (context) {
-            return openModel(popActions.image.setting, context);
+            return openModel(popActions.image.upload, context);
         };
         //function openImageSetting(viewSize, product, imageType, fnInitial) {
         //    require([popActions.image.setting.controllerUrl], function () {
@@ -1082,6 +1120,48 @@ define([
         $scope.openCartEdit = function (context) {
             return openModel(popActions.system.cartList, context);
         };
+        /**
+         * 新增店铺管理-Listing-sizechart页,设置操作弹出
+         * */
+        $scope.openSizeChartSetting = function (context) {
+            return openModel(popActions.store.listing.sizechart, context);
+        };
+        /**
+         * 新增店铺管理-Listing-sizechartimport页,倒入操作弹出
+         * */
+        $scope.openSizeChartImport = function (context) {
+            return openModel(popActions.store.listing.sizechartimport, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagetemplate页,设置操作弹出
+         * */
+        $scope.openImgTplEditing = function (context) {
+            return openModel(popActions.store.listing.imagetemplate, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagetemplate预览图片页,设置操作弹出
+         * */
+        $scope.openImgTplPreview = function (context) {
+            return openModel(popActions.store.listing.imagetemplatepreview, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup页,add操作弹出
+         * */
+        $scope.openImgGroupList = function (context) {
+            return openModel(popActions.store.listing.imagegroupadd, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
+         * */
+        $scope.openImgGroupListImg = function (context) {
+            return openModel(popActions.store.listing.imagegroupimg, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
+         * */
+        $scope.openImgGroupDetail = function (context) {
+            return openModel(popActions.store.listing.imagedetailadd, context);
+        };
 
         /**
          * 弹出自定义属性列
@@ -1123,7 +1203,7 @@ define([
             return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
         //聚美图片管理中，追加按钮
-        $scope.openImageSetting = function (context) {
+        $scope.openJmImageSetting = function (context) {
             return openModel(popActions.jumei.jmImageManage.imageSetting, context);
         };
 

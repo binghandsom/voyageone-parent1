@@ -58,12 +58,28 @@ public class JomgoQuery extends BaseCondition {
         return projection;
     }
 
-    public JomgoQuery setProjection(String... projection) {
+    /**
+     * 设置输出项目，兼容setProjection()方法
+     *
+     * @param projection 参数形式，可以为数组如：['key1','key2']，也可以直接使用字符串的形式如："{'key1':1,'key2':1}"
+     *                   注意：如果是单个输出项，该参数可以直接设为如：'key1'
+     */
+    public JomgoQuery setProjectionExt(String... projection) {
         String projectionTmp = buildProjection(projection);
         if (projectionTmp != null) {
             this.projection = projectionTmp;
         }
         return this;
+    }
+
+    /**
+     * 直接设置输出项目
+     *
+     * @param projection 必须是如"{'key1':1,'key2':1}"的形式，必须要有大括号
+     *                     注意：如果是单个输出项，该参数也必须设为如："{'key1':1}"
+     */
+    public void setProjection(String projection) {
+        this.projection = projection;
     }
 
     public String getQuery() {

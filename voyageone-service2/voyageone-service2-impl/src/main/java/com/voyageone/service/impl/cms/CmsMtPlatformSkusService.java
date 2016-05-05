@@ -27,7 +27,7 @@ public class CmsMtPlatformSkusService extends BaseService {
     public List<CmsMtPlatformSkusModel> getModesByAttrType(String channelId, int cartId, String platformCatId, int active) {
         Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put("channelId", channelId);
-        paramsMap.put("cart_id", cartId);
+        paramsMap.put("cartId", cartId);
         paramsMap.put("platformCategoryId", platformCatId);
         paramsMap.put("active", active);
 

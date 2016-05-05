@@ -70,7 +70,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param channelId 渠道ID
      * @param bulkList  更新条件
      * @param modifier  更新者
-     * @param key       MongoKey pop,set,push,addToSet
+     * @param key       MongoKey $pop,$set,$push,$addToSet
      * @return 运行结果
      */
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
@@ -82,7 +82,13 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         throw new BusinessException("not suppert");
     }
 
-    // 根据条件更新指定值
+    /**
+     * 根据条件更新指定值
+     * @param channelId String
+     * @param paraMap 更新条件
+     * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
+     * @return WriteResult
+     */
     public WriteResult update(String channelId, Map paraMap, Map rsMap) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
@@ -90,7 +96,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         params.putAll(paraMap);
         BasicDBObject result = new BasicDBObject();
         result.putAll(rsMap);
-        return coll.update(params, new BasicDBObject("$set", result), false, true);
+        return coll.update(params, result, false, true);
     }
 
     /**
@@ -103,7 +109,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         JomgoQuery jomgoQuery = new JomgoQuery();
         jomgoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}",productId));
-        jomgoQuery.setProjection("prodId");
+        jomgoQuery.setProjectionExt("prodId");
 
         List<CmsBtProductModel> result = select(jomgoQuery, channelId);
 

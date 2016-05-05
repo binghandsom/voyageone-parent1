@@ -5,9 +5,9 @@
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
         <result column="cart_id" property="cartId" jdbcType="INTEGER"/>
-        <result column="promotion_status" property="promotionStatus" jdbcType="BOOLEAN"/>
-        <result column="active" property="active" jdbcType="BOOLEAN"/>
-        <result column="is_all_promotion" property="isAllPromotion" jdbcType="BOOLEAN"/>
+        <result column="promotion_status" property="promotionStatus"  jdbcType="INTEGER"/>
+        <result column="active" property="active"  jdbcType="INTEGER"/>
+        <result column="is_all_promotion" property="isAllPromotion"  jdbcType="INTEGER"/>
         <result column="ref_tag_id" property="refTagId" jdbcType="INTEGER"/>
         <result column="promotion_name" property="promotionName" jdbcType="VARCHAR"/>
         <result column="pre_period_start" property="prePeriodStart" jdbcType="VARCHAR"/>
@@ -109,7 +109,7 @@
             and a.promotion_name LIKE '%${promotionName}%'
         </if>
         <if test="promotionStatus != null">
-            and a.promotion_status = #{promotionStatus,jdbcType=BOOLEAN}
+            and a.promotion_status = #{promotionStatus}
         </if>
         <if test="cartId != null and cartId != ''">
             and a.cart_id = #{cartId,jdbcType=INTEGER}
@@ -257,7 +257,7 @@
                 tejiabao_id = #{tejiabaoId,jdbcType=VARCHAR},
             </if>
             <if test="active != null">
-                active = #{active,jdbcType=BOOLEAN},
+                active = #{active},
             </if>
             <if test="promotionType != null">
                 promotion_type = #{promotionType,jdbcType=VARCHAR},

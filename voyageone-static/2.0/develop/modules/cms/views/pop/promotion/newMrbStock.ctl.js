@@ -21,8 +21,6 @@ define([
             taskId:null,
             //取得的TaskID
             taskName:null,
-            //还原时间
-            revertTime:null,
             //updateFlag
             updateFlag:null
         };
@@ -35,7 +33,6 @@ define([
                     function (res) {
                         $scope.vm.promotionList = res.data.platformList;
                         $scope.vm.onlySku = true;
-                        $scope.vm.revertTime=res.data.revertTime;
                     }
                 );
                 $scope.vm.taskId=data.task_id;
@@ -57,7 +54,6 @@ define([
                                 $scope.vm.promotionList = res.data.platformList;
                                 $scope.vm.onlySku = res.data.onlySku;
                                 $scope.vm.taskName=res.data.taskName;
-                                $scope.vm.revertTime=res.data.revertTime;
                     },
                             function (err) {
                                 if (err.message != null) {

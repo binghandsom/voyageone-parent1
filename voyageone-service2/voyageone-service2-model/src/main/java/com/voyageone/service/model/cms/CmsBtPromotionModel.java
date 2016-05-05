@@ -288,15 +288,13 @@ public class CmsBtPromotionModel extends BaseModel {
     /**
 
      */
-    public int geActive() {
-
-        return this.active;
+    public int getActive() {
+        return active;
     }
 
-    public void setActive(int isActive) {
-        this.active = isActive;
+    public void setActive(int active) {
+        this.active = active;
     }
-
 
     /**
      * 是否是全店特价宝的活动

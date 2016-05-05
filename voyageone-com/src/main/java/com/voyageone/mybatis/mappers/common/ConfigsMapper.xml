@@ -166,8 +166,8 @@
     </select>
 
     <insert id="ct_cart_insertOrUpdate" parameterType="com.voyageone.common.configs.beans.CartBean">
-        INSERT INTO Synship.ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, status)
-        VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier}, 1)
+        INSERT INTO Synship.ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater)
+        VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier})
         on duplicate key update name=#{name},short_name=#{short_name},description=#{description},platform_id=#{platform_id},cart_type=#{cart_type},
          modified=now(),modifier=#{modifier}
     </insert>
@@ -207,7 +207,7 @@
              <if test="is_usjoi!=null and is_usjoi!=''">is_usjoi=#{is_usjoi},</if>
              <if test="cart_ids!=null and cart_ids!=''">cart_ids=#{cart_ids},</if>
              <if test="modifier!=null and modifier!=''">modifier=#{modifier},</if>
-             <if test="status!=null and status!=''">status=#{status} ,</if>
+             <if test="active!=null and active!=''">active=#{active},</if>
              modified=now()
          </set>
         where order_channel_id=#{order_channel_id}
@@ -215,7 +215,7 @@
 
     <insert id="tm_order_channel_insert" parameterType="com.voyageone.common.configs.beans.OrderChannelBean">
         insert into Synship.tm_order_channel(order_channel_id, company_id, name, full_name, img_url, send_name, send_address, send_tel,
-         send_zip, screct_key, session_key, is_usjoi, cart_ids, created, creater, modified, modifier, status)
+         send_zip, screct_key, session_key, is_usjoi, cart_ids, created, creater, modified, modifier, active)
         VALUES (#{order_channel_id},#{company_id},#{name},#{full_name},#{img_url},#{send_name},#{send_address},#{send_tel},#{send_zip},
         #{screct_key}, #{session_key}, #{is_usjoi}, #{cart_ids}, now(), #{creater}, null, null, 1)
     </insert>

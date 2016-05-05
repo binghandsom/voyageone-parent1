@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -15,7 +17,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
-import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -25,6 +26,7 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
+import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -62,15 +64,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
-    private TagService tagService;
-    @Autowired
     private FeedCustomPropService feedCustomPropService;
-//    @Autowired
-//    private CmsBtProductDao cmsBtProductDao;
-//    @Autowired
-//    private CmsBtProductGroupDao cmsBtProductGroupDao;
-//    @Autowired
-//    private BaseJomgoTemplate mongoTemplate;
+    @Autowired
+    private CmsChannelTagService cmsChannelTagService;
 
     @Resource
     private CmsBtJmPromotionService jmPromotionService;
@@ -159,10 +155,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
     /**
      * 获取检索页面初始化的master data数据
      *
-     * @param userInfo
-     * @param cmsSession
-     * @param language
-     * @return
+     * @param userInfo UserSessionBean
+     * @param cmsSession CmsSessionBean
+     * @param language String
+     * @return Map
      * @throws IOException
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException {
@@ -176,7 +172,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
 
         // 获取label
-        masterData.put("tagList", tagService.getListByChannelId(userInfo.getSelChannelId()));
+        Map param = new HashMap<>(2);
+        param.put("channel_id", userInfo.getSelChannelId());
+        param.put("tagTypeSelectValue", "4");
+        masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
 
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
@@ -256,7 +255,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         String[] codeArr = new String[prodCodeList.size()];
         codeArr = prodCodeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
-        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
+
+        Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
+        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";")));
+        projStr.insert(projStr.length() - 1, ",'carts':{$elemMatch:{'cartId':" + cartId + "}}");
+        queryObject.setProjection(projStr.toString());
         queryObject.setSort(setSortValue(searchValue));
 
         List<CmsBtProductModel> prodInfoList = productService.getList(userInfo.getSelChannelId(), queryObject);
@@ -525,7 +528,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         $info("准备打开文档 [ %s ]", templatePath);
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, false));
-        queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
+        queryObject.setProjectionExt(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
         queryObject.setSort(setSortValue(searchValue));
 
         try (InputStream inputStream = new FileInputStream(templatePath);
@@ -675,6 +678,49 @@ public class CmsSearchAdvanceService extends BaseAppService {
     }
 
     /**
+     * 保存用户自定义显示列设置
+     *
+     * @param userInfo
+     * @param tagPath
+     * @param prodIdList
+     */
+    public void addFreeTag(UserSessionBean userInfo, String tagPath, List<Integer> prodIdList) {
+        if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
+            $warn("CmsSearchAdvanceService：addFreeTag 缺少参数");
+            throw new BusinessException("缺少参数");
+        }
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        HashMap<String, Object> inMap = new HashMap<>();
+        inMap.put("$in", prodIdList);
+        queryMap.put("prodId", inMap);
+
+        String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+        int arrSize = pathArr.length;
+        List<String> pathList = new ArrayList<>(arrSize);
+        for (int j = 0; j < arrSize; j ++) {
+            StringBuilder curTagPath = new StringBuilder("-");
+            for (int i = 0; i <= j ; i ++) {
+                curTagPath.append(pathArr[i]);
+                curTagPath.append("-");
+            }
+            pathList.add(curTagPath.toString());
+        }
+
+        HashMap<String, Object> eachMap = new HashMap<>();
+        eachMap.put("$each", pathList);
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        HashMap<String, Object> tagsMap = new HashMap<>();
+        tagsMap.put("tags", eachMap);
+        updateMap.put("$addToSet", tagsMap);
+
+        // 批量更新product表
+        WriteResult result = productService.updateProduct(userInfo.getSelChannelId(), queryMap, updateMap);
+        $debug(String.format("CmsSearchAdvanceService：addFreeTag 操作结果-> %s", result.toString()));
+    }
+
+    /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
     private String getSearchQuery(CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
@@ -719,10 +765,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
                     , "$elemMatch"));
             result.append(",");
-
-            // 获取其他检索条件
-            result.append(getSearchValueForMongo(searchValue));
         }
+
+        // 获取其他检索条件
+        result.append(getSearchValueForMongo(searchValue));
 
         if (!StringUtils.isEmpty(result.toString())) {
             return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
@@ -999,13 +1045,16 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             if(commonProps != null){
                 for (Map<String,String>prop: commonProps){
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getAttribute(prop.get("propId"))));
+                    Object value = item.getFields().getAttribute(prop.get("propId"));
+
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
 
             if(customProps != null){
                 for (Map<String,String>prop: customProps){
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"))));
+                    Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
 

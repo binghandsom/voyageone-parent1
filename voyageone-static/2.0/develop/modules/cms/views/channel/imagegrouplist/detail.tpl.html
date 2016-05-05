@@ -1,0 +1,197 @@
+<div class="wrapper-md" ng-init="initialize()" ng-controller="popupCtrl">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;imagedetail</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Platform</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control">
+                                            <option value="Select...">Select...</option>
+                                            <option value="TM">TM</option>
+                                            <option value="JD">JD</option>
+                                            <option value="JM">JM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Update Time</label>
+
+                                    <div class="col-sm-9" style="margin-left: -4px;">
+                                        <div class="col-sm-10 form-inline">
+                                            <div class="col-sm-5 input-group">
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.beginModified"
+                                                       max-date="ctrl.searchInfo.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                            </div>&nbsp;~&nbsp;
+                                            <div class="col-sm-5 input-group">
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.endModified"
+                                                       min-date="ctrl.searchInfo.beginModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Related Brand Name</label>
+                                    <div class="col-sm-7">
+                                        <select multiple chosen class="form-control" width="'250px'">
+                                            <option>Adidas</option>
+                                            <option>NewBalance</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Related Product Type</label>
+                                    <div class="col-sm-7">
+                                        <select multiple chosen class="form-control" width="'250px'">
+                                            <option>鞋子</option>
+                                            <option>上衣</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Related Size Type</label>
+                                    <div class="col-sm-7">
+                                        <select multiple chosen class="form-control" width="'250px'">
+                                            <option>男鞋</option>
+                                            <option>女鞋</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Image Group Name</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Image Type</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" placeholder="4:品牌故事">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">View Type</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" placeholder="APP">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-center m-b-sm">
+                        <div class="form-inline">
+                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>&nbsp;
+                            <button class="btn btn-vo"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <div class="table-responsive">
+                <div class="col-sm-12 dropdown_table_main">
+                    <div class="col-sm-12  m-t-sm m-b-xs">
+                        <button class="btn pull-right m-r-md m-b-xs btn-success" ng-click="openImgGroupDetail()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                    </div>
+                    <table class="table table-hover-new vo_table vo_tableforimggrouplist tableWordBreak" style="margin-bottom:0px;table-layout: fixed;" ng-controller="popupCtrl">
+                        <thead>
+                        <tr>
+                            <th class="mfb-xt3 text-center">序号</th>
+                            <th class="mfb-xxt text-center">Image</th>
+                            <th class="mfb-xxt text-center">Origin Url</th>
+                            <th class="mfb-xxt text-center">Platform Url</th>
+                            <th class="mfb-x text-center">顺序</th>
+                            <th class="mfb-x text-center">Status</th>
+                            <th class="mfb-xxs text-center">ErrorMsg</th>
+                            <th class="mfb-xxt text-center">Update Time</th>
+                            <th class="mfb-xx text-center">Update User</th>
+                            <th class="mfb-xxt text-center">编辑</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="mfb-xt text-center">1</td>
+                            <td class="mfb-xxt text-center"><img alt="05-61794" class="img-circle" src="http://image.sneakerhead.com/is/image/sneakerhead/prod_1582309212" ng-click="openImgGroupListImg()"></td>
+                            <td class="mfb-xxt text-left">http://xxxxx.com/sneakerhead/sss/xxx.jpg</td>
+                            <td class="mfb-xxt text-left">http/image.tmall.com/xxxx/xxx.jpg</td>
+                            <td class="mfb-xxt text-center"><i class="glyphicon glyphicon-arrow-up up"></i><i class="glyphicon glyphicon-arrow-down down"></i> </td>
+                            <td class="mfb-xxs text-center">上传成功</td>
+                            <td class="mfb-xxt text-center"></td>
+                            <td class="mfb-xxs text-center">2016-04-12 15:32:35</td>
+                            <td class="mfb-xxs text-center">neil</td>
+                            <td class="mfb-xxt text-center">
+                                <button title="重刷" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>
+                                <button title="编辑" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mfb-xt text-center">2</td>
+                            <td class="mfb-xxt text-center"><img alt="05-61794" class="img-circle" src="http://image.sneakerhead.com/is/image/sneakerhead/prod_1582309212" ng-click="openImgGroupListImg()"></td>
+                            <td class="mfb-xxt text-left">http://xxxxx.com/sneakerhead/sss/xxx.jpg</td>
+                            <td class="mfb-xxt text-left">http/image.tmall.com/xxxx/xxx.jpg</td>
+                            <td class="mfb-xxt text-center"><i class="glyphicon glyphicon-arrow-up up"></i><i class="glyphicon glyphicon-arrow-down down"></i> </td>
+                            <td class="mfb-xxs text-center">上传成功</td>
+                            <td class="mfb-xxt text-center"></td>
+                            <td class="mfb-xxs text-center">2016-04-14 15:32:35</td>
+                            <td class="mfb-xxs text-center">neil</td>
+                            <td class="mfb-xxt text-center">
+                                <button title="重刷" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>
+                                <button title="编辑" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mfb-xt text-center">3</td>
+                            <td class="mfb-xxt text-center"><img alt="05-61794" class="img-circle" src="http://image.sneakerhead.com/is/image/sneakerhead/prod_1582309212" ng-click="openImgGroupListImg()"></td>
+                            <td class="mfb-xxt text-left">http://xxxxx.com/sneakerhead/sss/xxx.jpg</td>
+                            <td class="mfb-xxt text-left">http/image.tmall.com/xxxx/xxx.jpg</td>
+                            <td class="mfb-xxt text-center"><i class="glyphicon glyphicon-arrow-up up"></i><i class="glyphicon glyphicon-arrow-down down"></i> </td>
+                            <td class="mfb-xxs text-center">上传失败</td>
+                            <td class="mfb-xxt text-center">链接超时</td>
+                            <td class="mfb-xxs text-center">2016-04-18 15:32:35</td>
+                            <td class="mfb-xxs text-center">neil</td>
+                            <td class="mfb-xxt text-center">
+                                <button title="重刷" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>
+                                <button title="编辑" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- .table-responsive -->
+                <div class="col-sm-12">
+                    <vpagination config="vm.groupPageOption"></vpagination>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="m-t-xs">
+            <vpagination config="vm.errorPageOption"></vpagination>
+        </div>
+    </div>
+</div><!-- end .wrapper-md -->

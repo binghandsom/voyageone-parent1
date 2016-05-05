@@ -156,4 +156,12 @@ public class ExpressionParser extends VOAbsLoggable {
         final String seperator = "~~";
         return encodedString.split(seperator);
     }
+
+    public SxData getSxData() {
+        return sxData;
+    }
+
+    public void setSxData(SxData sxData) {
+        this.sxData = sxData;
+    }
 }

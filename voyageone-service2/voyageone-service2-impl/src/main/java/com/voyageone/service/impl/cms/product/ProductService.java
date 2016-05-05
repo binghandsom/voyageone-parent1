@@ -153,7 +153,7 @@ public class ProductService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
         queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
-        queryObject.setProjection(projections);
+        queryObject.setProjectionExt(projections);
         return getList(channelId, queryObject);
     }
 
@@ -288,6 +288,10 @@ public class ProductService extends BaseService {
         product.setGroups(grp);
     }
 
+    public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {
+        return cmsBtProductDao.update(channelId, paraMap, updateMap);
+    }
+
     /**
      * update product
      */
@@ -315,7 +319,7 @@ public class ProductService extends BaseService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(queryStr);
-        queryObject.setProjection("prodId", "modified", "fields.status", "groups");
+        queryObject.setProjectionExt("prodId", "modified", "fields.status", "carts");
 
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         if (findModel == null) {
@@ -377,6 +381,7 @@ public class ProductService extends BaseService {
                 updateMap.put("feed.customIds", feed.getCustomIds());
             }
         }
+
 
         /**
          * set update model
@@ -448,6 +453,49 @@ public class ProductService extends BaseService {
             // 更新sku信息
             productSkuService.saveSkus(channelId, findModel.getProdId(), skus);
         }
+
+        /**
+         * 更新carts
+         */
+//        if (productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+//            List<Integer> oldCarts = new ArrayList<>();
+//            for (CmsBtProductModel_Carts cart : findModel.getCarts()) {
+//                oldCarts.add(cart.getCartId());
+//            }
+//
+//            List<Integer> newCarts = new ArrayList<>();
+//            for (CmsBtProductModel_Sku sku:productModel.getSkus()) {
+//                newCarts.addAll(sku.getSkuCarts());
+//            }
+//            newCarts.removeAll(oldCarts);
+//            newCarts.stream().distinct().collect(toList());
+//
+//            List<BulkUpdateModel> bulkCartsList = new ArrayList<>();
+//            for (Integer cartId : newCarts) {
+//
+//                // 设置批量更新条件
+//                HashMap<String, Object> bulkQueryMap = new HashMap<>();
+//                bulkQueryMap.put("fields.code", productModel.getFields().getCode());
+//                bulkQueryMap.put("carts.cartId", cartId);
+//
+//                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+//                bulkUpdateMap.put("carts.$.platformStatus", CmsConstants.PlatformStatus.WaitingPublish.name());
+//
+//                // 设定批量更新条件和值
+//                if (bulkUpdateMap.size() > 0) {
+//                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+//                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+//                    bulkUpdateModel.setQueryMap(bulkQueryMap);
+//                    bulkCartsList.add(bulkUpdateModel);
+//                }
+//            }
+//
+//            // 批量更新product表
+//            if (bulkCartsList.size() > 0) {
+//                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkCartsList, null, "$set", true);
+//            }
+//
+//        }
 
     }
 
@@ -594,8 +642,10 @@ public class ProductService extends BaseService {
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.model", prodModel);
+        HashMap<String, Object> optMap = new HashMap<>();
+        optMap.put("$set", updateMap);
 
-        cmsBtProductDao.update(channelId, queryMap, updateMap);
+        cmsBtProductDao.update(channelId, queryMap, optMap);
     }
 
     /**
@@ -605,7 +655,7 @@ public class ProductService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
         if (projection != null && projection.length > 0) {
-            queryObject.setProjection(projection);
+            queryObject.setProjectionExt(projection);
         }
 
         if (!StringUtils.isEmpty(productSku)) {
@@ -702,7 +752,7 @@ public class ProductService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
         if (projection != null && projection.length > 0) {
-            queryObject.setProjection(projection);
+            queryObject.setProjectionExt(projection);
         }
 
         StringBuilder sbQuery = new StringBuilder();
@@ -728,7 +778,7 @@ public class ProductService extends BaseService {
         }
 
         if (!StringUtils.isEmpty(cartId)) {
-            sbQuery.append(MongoUtils.splicingValue("fields.productCarts", Integer.valueOf(cartId)));
+            sbQuery.append(MongoUtils.splicingValue("carts.cartId", Integer.valueOf(cartId)));
             sbQuery.append(",");
         }
 
@@ -862,8 +912,10 @@ public class ProductService extends BaseService {
         rsMap.put("fields.translateStatus", translateStatus);
         rsMap.put("modifier", modifier);
         rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
 
-        cmsBtProductDao.update(channelId, paraMap, rsMap);
+        cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.system;
+package com.voyageone.web2.cms.views.system.storeoperation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @RestController
 @RequestMapping(value = "/cms/system/store_operation", method = RequestMethod.POST)
-public class StoreOperationCtrl extends CmsController {
+public class CmsStoreOperationController extends CmsController {
 
 //    public static LocalDateTime lastExecuteTime = null;
 
@@ -48,7 +48,7 @@ public class StoreOperationCtrl extends CmsController {
     StoreOperationService storeOperationService;
 
 
-    public int getConfigHours(String channelId) {
+    public int getConfigHours() {
         CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.STORE_OPERATION_INTERVAL_TIME);
 
         if (config == null || config.getConfigValue1() == null) {
@@ -79,7 +79,7 @@ public class StoreOperationCtrl extends CmsController {
             return;
         }
 
-        int interval = getConfigHours(channelId);
+        int interval = getConfigHours();
         boolean inRange = lastExecuteTime.plusHours(interval).isAfter(LocalDateTime.now());
         if (inRange) {
             throw new BusinessException("操作时间间隔必须在" + interval + "小时以上!");

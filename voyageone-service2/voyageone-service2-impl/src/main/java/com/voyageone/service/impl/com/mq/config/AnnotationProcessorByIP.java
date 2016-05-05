@@ -42,6 +42,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -73,7 +74,7 @@ public class AnnotationProcessorByIP
 
     private int increment;
 
-    private boolean local=false;
+    private boolean local = false;
 
     public boolean isLocal() {
         return local;
@@ -103,6 +104,7 @@ public class AnnotationProcessorByIP
     /**
      * Set the {@link RabbitListenerEndpointRegistry} that will hold the created
      * endpoint and manage the lifecycle of the related listener container.
+     *
      * @param endpointRegistry the {@link RabbitListenerEndpointRegistry} to set.
      */
     public void setEndpointRegistry(RabbitListenerEndpointRegistry endpointRegistry) {
@@ -112,6 +114,7 @@ public class AnnotationProcessorByIP
     /**
      * Set the name of the {@link RabbitListenerContainerFactory} to use by default.
      * <p>If none is specified, "rabbitListenerContainerFactory" is assumed to be defined.
+     *
      * @param containerFactoryBeanName the {@link RabbitListenerContainerFactory} bean name.
      */
     public void setContainerFactoryBeanName(String containerFactoryBeanName) {
@@ -125,6 +128,7 @@ public class AnnotationProcessorByIP
      * can be configured further to support additional method arguments
      * or to customize conversion and validation support. See
      * {@link DefaultMessageHandlerMethodFactory} Javadoc for more details.
+     *
      * @param messageHandlerMethodFactory the {@link MessageHandlerMethodFactory} instance.
      */
     public void setMessageHandlerMethodFactory(MessageHandlerMethodFactory messageHandlerMethodFactory) {
@@ -135,6 +139,7 @@ public class AnnotationProcessorByIP
      * Making a {@link BeanFactory} available is optional; if not set,
      * {@link RabbitListenerConfigurer} beans won't get autodetected and an
      * {@link #setEndpointRegistry endpoint registry} has to be explicitly configured.
+     *
      * @param beanFactory the {@link BeanFactory} to be used.
      */
     @Override
@@ -194,7 +199,31 @@ public class AnnotationProcessorByIP
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
         final RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
-        final List<Method> multiMethods = new ArrayList<Method>();
+        /**
+         * add VOMQRunnable aooer start
+         */
+        final boolean[] isVomqRunnable = {true};
+        if (classLevelListener != null) {
+            ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
+                @Override
+                public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                    VOMQRunnable vomqRunnable = AnnotationUtils.findAnnotation(method, VOMQRunnable.class);
+                    if (vomqRunnable != null) {
+                        try {
+                            isVomqRunnable[0] = (boolean) method.invoke(bean);
+                        } catch (InvocationTargetException ignored) {
+                        }
+                    }
+                }
+            });
+        }
+        if (!isVomqRunnable[0]) {
+            return bean;
+        }
+        /**
+         * add VOMQRunnable aooer end
+         */
+        final List<Method> multiMethods = new ArrayList<>();
         ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
 
             @Override
@@ -219,7 +248,7 @@ public class AnnotationProcessorByIP
 
     private void processMultiMethodListener(RabbitListener classLevelListener, List<Method> multiMethods, Object bean,
                                             String beanName) {
-        List<Method> checkedMethods = new ArrayList<Method>();
+        List<Method> checkedMethods = new ArrayList<>();
         for (Method method : multiMethods) {
             checkedMethods.add(checkProxy(method, bean));
         }
@@ -247,15 +276,12 @@ public class AnnotationProcessorByIP
                     try {
                         method = iface.getMethod(method.getName(), method.getParameterTypes());
                         break;
-                    }
-                    catch (NoSuchMethodException noMethod) {
+                    } catch (NoSuchMethodException ignored) {
                     }
                 }
-            }
-            catch (SecurityException ex) {
+            } catch (SecurityException ex) {
                 ReflectionUtils.handleReflectionException(ex);
-            }
-            catch (NoSuchMethodException ex) {
+            } catch (NoSuchMethodException ex) {
                 throw new IllegalStateException(String.format(
                         "@RabbitListener method '%s' found on bean target class '%s', " +
                                 "but not found in any interface(s) for bean JDK proxy. Either " +
@@ -277,7 +303,7 @@ public class AnnotationProcessorByIP
          * add ip to quenes key aooer start
          */
         String[] queues = resolveQueues(rabbitListener);
-        if(local) {
+        if (local) {
             for (int i = 0; i < queues.length; i++) {
                 queues[i] = MQConfigUtils.getAddStrQueneName(queues[i]);
             }
@@ -303,8 +329,7 @@ public class AnnotationProcessorByIP
         if (StringUtils.hasText(priority)) {
             try {
                 endpoint.setPriority(Integer.valueOf(priority));
-            }
-            catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 throw new BeanInitializationException("Invalid priority value for " +
                         rabbitListener + " (must be an integer)", ex);
             }
@@ -315,8 +340,7 @@ public class AnnotationProcessorByIP
             Assert.state(this.beanFactory != null, "BeanFactory must be set to resolve RabbitAdmin by bean name");
             try {
                 endpoint.setAdmin(this.beanFactory.getBean(rabbitAdmin, RabbitAdmin.class));
-            }
-            catch (NoSuchBeanDefinitionException ex) {
+            } catch (NoSuchBeanDefinitionException ex) {
                 throw new BeanInitializationException("Could not register rabbit listener endpoint on [" +
                         adminTarget + "], no " + RabbitAdmin.class.getSimpleName() + " with id '" +
                         rabbitAdmin + "' was found in the application context", ex);
@@ -330,8 +354,7 @@ public class AnnotationProcessorByIP
             Assert.state(this.beanFactory != null, "BeanFactory must be set to obtain container factory by bean name");
             try {
                 factory = this.beanFactory.getBean(containerFactoryBeanName, RabbitListenerContainerFactory.class);
-            }
-            catch (NoSuchBeanDefinitionException ex) {
+            } catch (NoSuchBeanDefinitionException ex) {
                 throw new BeanInitializationException("Could not register rabbit listener endpoint on [" +
                         adminTarget + "] for bean " + beanName + ", no " + RabbitListenerContainerFactory.class.getSimpleName() + " with id '" +
                         containerFactoryBeanName + "' was found in the application context", ex);
@@ -344,8 +367,7 @@ public class AnnotationProcessorByIP
     private String getEndpointId(RabbitListener rabbitListener) {
         if (StringUtils.hasText(rabbitListener.id())) {
             return resolve(rabbitListener.id());
-        }
-        else {
+        } else {
             return "org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#" + counter.getAndIncrement();
         }
     }
@@ -362,8 +384,7 @@ public class AnnotationProcessorByIP
                 Object resolvedValue = resolveExpression(queue);
                 resolveAsString(resolvedValue, result);
             }
-        }
-        else {
+        } else {
             return registerBeansForDeclaration(rabbitListener);
         }
         return result.toArray(new String[result.size()]);
@@ -377,16 +398,13 @@ public class AnnotationProcessorByIP
         }
         if (resolvedValueToUse instanceof Queue) {
             result.add(((Queue) resolvedValueToUse).getName());
-        }
-        else if (resolvedValueToUse instanceof String) {
+        } else if (resolvedValueToUse instanceof String) {
             result.add((String) resolvedValueToUse);
-        }
-        else if (resolvedValueToUse instanceof Iterable) {
+        } else if (resolvedValueToUse instanceof Iterable) {
             for (Object object : (Iterable<Object>) resolvedValueToUse) {
                 resolveAsString(object, result);
             }
-        }
-        else {
+        } else {
             throw new IllegalArgumentException(String.format(
                     "@RabbitListener can't resolve '%s' as either a String or a Queue",
                     resolvedValue));
@@ -434,8 +452,7 @@ public class AnnotationProcessorByIP
                             || resolveExpressionAsBoolean(bindingQueue.autoDelete())) {
                         autoDelete = true;
                     }
-                }
-                else {
+                } else {
                     exclusive = resolveExpressionAsBoolean(bindingQueue.exclusive());
                     autoDelete = resolveExpressionAsBoolean(bindingQueue.autoDelete());
                 }
@@ -460,20 +477,17 @@ public class AnnotationProcessorByIP
                             resolveExpressionAsBoolean(bindingExchange.durable()),
                             resolveExpressionAsBoolean(bindingExchange.autoDelete()));
                     actualBinding = new Binding(queueName, DestinationType.QUEUE, exchangeName, resolvedKey, null);
-                }
-                else if (exchangeType.equals(ExchangeTypes.FANOUT)) {
+                } else if (exchangeType.equals(ExchangeTypes.FANOUT)) {
                     exchange = new FanoutExchange(exchangeName,
                             resolveExpressionAsBoolean(bindingExchange.durable()),
                             resolveExpressionAsBoolean(bindingExchange.autoDelete()));
                     actualBinding = new Binding(queueName, DestinationType.QUEUE, exchangeName, "", null);
-                }
-                else if (exchangeType.equals(ExchangeTypes.TOPIC)) {
+                } else if (exchangeType.equals(ExchangeTypes.TOPIC)) {
                     exchange = new TopicExchange(exchangeName,
                             resolveExpressionAsBoolean(bindingExchange.durable()),
                             resolveExpressionAsBoolean(bindingExchange.autoDelete()));
                     actualBinding = new Binding(queueName, DestinationType.QUEUE, exchangeName, resolvedKey, null);
-                }
-                else {
+                } else {
                     throw new BeanInitializationException("Unexpected exchange type: " + exchangeType);
                 }
                 ((ConfigurableBeanFactory) this.beanFactory).registerSingleton(exchangeName + ++this.increment, exchange);
@@ -487,11 +501,9 @@ public class AnnotationProcessorByIP
         Object resolved = resolveExpression(value);
         if (resolved instanceof Boolean) {
             return (Boolean) resolved;
-        }
-        else if (resolved instanceof String) {
+        } else if (resolved instanceof String) {
             return Boolean.valueOf((String) resolved);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -500,6 +512,7 @@ public class AnnotationProcessorByIP
      * An {@link MessageHandlerMethodFactory} adapter that offers a configurable underlying
      * instance to use. Useful if the factory to use is determined once the endpoints
      * have been registered but not created yet.
+     *
      * @see RabbitListenerEndpointRegistrar#setMessageHandlerMethodFactory
      */
     private class RabbitHandlerMethodFactoryAdapter implements MessageHandlerMethodFactory {

@@ -4,12 +4,12 @@
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 产品详情</h5>
     </div>
-    <div class="modal-body wrapper ">
-        <div class="form-horizontal dropdown_table_main">
-           <div class="dropdown_table col-sm-11">
+    <div class="modal-body wrapper" style="padding:0px">
+        <div class="form-horizontal dropdown_table_main" style="height: 320px;overflow-y:auto">
+           <div class="col-sm-11" style="padding-top:5px">
             <div class="form-group" ng-repeat = "item in feedAttributesModel">
-                <label class="col-sm-4 control-label" ng-bind = "item.key"></label>
-                <div class="col-sm-8">
+                <label class="col-sm-5 control-label" ng-bind = "item.key"></label>
+                <div class="col-sm-7">
                     <input type="text" class="form-control" ng-model = "item.value" disabled>
                 </div>
             </div><!-- .form-group -->
