@@ -1,6 +1,5 @@
-package com.voyageone.service.dao.cms;
+package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.daoext.cms.CmsMtPlatformSpecialFieldDaoExt;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +13,7 @@ import java.util.List;
  * Created by DELL on 2016/1/26.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsMtPlatformSpecialFieldDaoExtTest {
 
     @Autowired
