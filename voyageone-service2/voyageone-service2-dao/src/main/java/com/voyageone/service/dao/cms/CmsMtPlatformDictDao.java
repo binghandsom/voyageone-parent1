@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface CmsMtDictPlatformDao {
+public interface CmsMtPlatformDictDao {
     List<CmsMtPlatFormDictModel> selectList(Map<String, Object> map);
 
     CmsMtPlatFormDictModel selectOne(Map<String, Object> map);

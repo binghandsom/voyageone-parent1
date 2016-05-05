@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.impl.BaseService;
@@ -120,9 +119,9 @@ public class CategoryTreeService extends BaseService {
 //            }
 //            result.setChildren(children);
 //            if (!isRoot) {
-//                result.setCreated(null);
+//                result.setCreatedStr(null);
 //                result.setCreater(null);
-//                result.setModified(null);
+//                result.setModifiedStr(null);
 //                result.setModifier(null);
 //            }
 //        }

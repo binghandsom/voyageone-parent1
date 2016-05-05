@@ -10,16 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Ethan Shi on 2016/5/3.
+ * Created by DELL on 2016/5/5.
  */
-public class VOStartUp {
+public class VOCmsDaoGenerator {
     public static void main(String[] arg) throws Exception {
         List<String> warnings = new ArrayList<String>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
-        File configurationFile = new File(VOStartUp.class.getResource("generatorConfig.xml").toURI());
-
-
-        System.out.println(configurationFile.exists());
+        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("cmsGeneratorConfig.xml").toURI());
+//
+//
+//        System.out.println(configurationFile.exists());
 
         Configuration config = cp.parseConfiguration(configurationFile);
 
@@ -32,5 +32,4 @@ public class VOStartUp {
         System.out.println(warnings);
 
     }
-
 }

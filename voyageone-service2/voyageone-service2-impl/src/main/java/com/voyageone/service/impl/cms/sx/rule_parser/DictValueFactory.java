@@ -30,11 +30,12 @@ public class DictValueFactory {
         for (CmsMtPlatFormDictModel dictModel : dictWordBeanList)
         {
             String orderChannelId = dictModel.getOrderChannelId();
-            Set<DictWord> dictWordSet = channelDictWordMap.get(orderChannelId);
+            int cartId = dictModel.getCartId();
+            Set<DictWord> dictWordSet = channelDictWordMap.get(orderChannelId + cartId);
             if (dictWordSet == null)
             {
                 dictWordSet = new HashSet<>();
-                channelDictWordMap.put(orderChannelId, dictWordSet);
+                channelDictWordMap.put(orderChannelId + cartId, dictWordSet);
             }
 
             DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictModel.getValue());
@@ -43,13 +44,13 @@ public class DictValueFactory {
     }
 
 
-    public Set<DictWord> getDictWords(String orderChannelId)
+    public Set<DictWord> getDictWords(String orderChannelId, int cartId)
     {
         if (channelDictWordMap.isEmpty())
         {
             updateMapFromDatabase();
         }
-        return channelDictWordMap.get(orderChannelId);
+        return channelDictWordMap.get(orderChannelId + cartId);
         /*
         Set<DictWord> dictWords = new HashSet<>();
 
