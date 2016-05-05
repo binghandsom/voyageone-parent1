@@ -103,10 +103,10 @@ public class JavaTypeResolverDefaultImpl implements JavaTypeResolver {
                 new FullyQualifiedJavaType(Object.class.getName())));
         typeMap.put(Types.TIME, new JdbcTypeInformation("TIME", //$NON-NLS-1$
                 new FullyQualifiedJavaType(Date.class.getName())));
-//        typeMap.put(Types.TIMESTAMP, new JdbcTypeInformation("TIMESTAMP", //$NON-NLS-1$
-//                new FullyQualifiedJavaType(Date.class.getName())));
-        typeMap.put(Types.TIMESTAMP, new JdbcTypeInformation("VARCHAR", //$NON-NLS-1$
-                new FullyQualifiedJavaType(String.class.getName())));
+        typeMap.put(Types.TIMESTAMP, new JdbcTypeInformation("TIMESTAMP", //$NON-NLS-1$
+                new FullyQualifiedJavaType(Date.class.getName())));
+//        typeMap.put(Types.TIMESTAMP, new JdbcTypeInformation("VARCHAR", //$NON-NLS-1$
+//                new FullyQualifiedJavaType(String.class.getName())));
         typeMap.put(Types.TINYINT, new JdbcTypeInformation("TINYINT", //$NON-NLS-1$
                 new FullyQualifiedJavaType(Byte.class.getName())));
         typeMap.put(Types.VARBINARY, new JdbcTypeInformation("VARBINARY", //$NON-NLS-1$
