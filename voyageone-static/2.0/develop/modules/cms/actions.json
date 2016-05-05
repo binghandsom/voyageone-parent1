@@ -361,6 +361,15 @@
           "del": "delTag",
           "getTagList": "getTagList"
         }
+      },
+      "sizeChart":{
+        "SizeChartService": {
+          "root": "/cms/channel/SizeChartList",
+          "sizeChartInit": "init",
+          "sizeChartSearch": "search",
+          "sizeChartEdit": "editSave",
+          "sizeChartDetail": "detailSave"
+        }
       }
     }
   }
