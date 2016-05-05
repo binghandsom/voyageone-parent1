@@ -14,7 +14,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -68,8 +67,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private FeedCustomPropService feedCustomPropService;
     @Autowired
     private CmsChannelTagService cmsChannelTagService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     @Resource
     private CmsBtJmPromotionService jmPromotionService;
@@ -158,10 +155,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
     /**
      * 获取检索页面初始化的master data数据
      *
-     * @param userInfo
-     * @param cmsSession
-     * @param language
-     * @return
+     * @param userInfo UserSessionBean
+     * @param cmsSession CmsSessionBean
+     * @param language String
+     * @return Map
      * @throws IOException
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException {
@@ -719,7 +716,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         updateMap.put("$addToSet", tagsMap);
 
         // 批量更新product表
-        WriteResult result = cmsBtProductDao.update(userInfo.getSelChannelId(), queryMap, updateMap);
+        WriteResult result = productService.updateProduct(userInfo.getSelChannelId(), queryMap, updateMap);
         $debug(String.format("CmsSearchAdvanceService：addFreeTag 操作结果-> %s", result.toString()));
     }
 
