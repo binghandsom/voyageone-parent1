@@ -122,7 +122,7 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
                 SuperfeedSummerGuruBean.setConditionNotes(reader.get(i++));
                 SuperfeedSummerGuruBean.setBrand(reader.get(i++));
 
-                if (StringUtil.isEmpty(SuperfeedSummerGuruBean.getCategory()) || StringUtil.isEmpty(SuperfeedSummerGuruBean.getTitle())) {
+                if (StringUtil.isEmpty(SuperfeedSummerGuruBean.getCategory()) || StringUtil.isEmpty(SuperfeedSummerGuruBean.getTitle()) || StringUtil.isEmpty(SuperfeedSummerGuruBean.getImages())) {
                     continue;
                 }
                 superfeed.add(SuperfeedSummerGuruBean);

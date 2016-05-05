@@ -1,11 +1,36 @@
 package com.voyageone.tools.dao.codegen;
 
-/**
- * Created by DELL on 2016/5/4.
- */
-public class VOStartup {
+import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.xml.ConfigurationParser;
+import org.mybatis.generator.internal.DefaultShellCallback;
 
-    public static void main(String[] args) {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Ethan Shi on 2016/5/3.
+ */
+public class VOStartUp {
+    public static void main(String[] arg) throws Exception {
+        List<String> warnings = new ArrayList<String>();
+        ConfigurationParser cp = new ConfigurationParser(warnings);
+        File configurationFile = new File(VOStartUp.class.getResource("generatorConfig.xml").toURI());
+
+
+        System.out.println(configurationFile.exists());
+
+        Configuration config = cp.parseConfiguration(configurationFile);
+
+        DefaultShellCallback shellCallback = new DefaultShellCallback(true);
+
+        MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
+
+        myBatisGenerator.generate(null);
+
+        System.out.println(warnings);
 
     }
+
 }
