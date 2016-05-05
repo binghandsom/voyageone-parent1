@@ -363,7 +363,7 @@
         }
       },
       "sizeChart":{
-        "SizeChartService": {
+        "sizeChartService": {
           "root": "/cms/channel/SizeChartList",
           "sizeChartInit": "init",
           "sizeChartSearch": "search",
