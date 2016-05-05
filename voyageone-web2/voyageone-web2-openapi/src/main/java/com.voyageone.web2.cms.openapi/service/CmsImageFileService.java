@@ -1,11 +1,9 @@
 package com.voyageone.web2.cms.openapi.service;
+
 import com.voyageone.common.Snowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
@@ -13,31 +11,26 @@ import com.voyageone.common.util.excel.ExportExcelInfo;
 import com.voyageone.common.util.excel.ExportFileExcelUtil;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
-import com.voyageone.service.dao.cms.CmsMtImageCreateImportDao;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDao;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTaskDetailDao;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
-import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.ImageConfig;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.*;
-import org.apache.commons.collections.map.HashedMap;
+import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
+import com.voyageone.service.model.cms.CmsMtImageCreateImportModel;
+import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * product Service
@@ -50,20 +43,8 @@ public class CmsImageFileService extends BaseService {
     @Autowired
     private ImageCreateFileService imageCreateFileService;
     @Autowired
-    private MqSender sender;
-    @Autowired
-    CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
-    @Autowired
-    CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
-    @Autowired
-    ImagePathCache imagePathCache;
-    @Autowired
-    CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
-    @Autowired
-    CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
+    private ImagePathCache imagePathCache;
 
-@Autowired
-CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
     public GetImageResultBean checkGetImageParameter(String channelId, int templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
         if (StringUtils.isEmpty(channelId)) {
@@ -107,7 +88,7 @@ CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
             modelFile = imageCreateFileService.getModelByHashCode(hashCode);
             $info("CmsImageFileService:getImage get db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model=[%s]", channelId, templateId, file, vparam, hashCode, modelFile);
             if (modelFile == null) {
-                CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(templateId);
+                CmsMtImageCreateTemplateModel modelTemplate = imageCreateFileService.getCmsMtImageCreateTemplate(templateId);
                 if (modelTemplate == null) {
                     throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + templateId);
                 }
@@ -158,7 +139,7 @@ CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
         return result;
     }
 
-    public AddListResultBean importImageCreateInfo(String path, String fileName,String Creater) throws Exception {
+    public AddListResultBean importImageCreateInfo(String path, String fileName, String Creater) throws Exception {
         CmsMtImageCreateImportModel importModel = new CmsMtImageCreateImportModel();
         importModel.setBeginTime(new Date());
         importModel.setErrorMsg("");
@@ -177,11 +158,11 @@ CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
         List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
         List<ExcelColumn> listColumn = new ArrayList<>();    //配置列信息
-        listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id",false));
-        listColumn.add(new ExcelColumn("templateId", 2, "cms_mt_image_create_file", "模板Id",false));
-        listColumn.add(new ExcelColumn("file", 3, "cms_mt_image_create_file", "文件名",false));
-        listColumn.add(new ExcelColumn("vParam", 4, "cms_mt_image_create_file", "参数Id",false));
-        listColumn.add(new ExcelColumn("isUploadUsCdn", 5, "cms_mt_image_create_file", "是否上传美国Cdn",false));
+        listColumn.add(new ExcelColumn("channelId", 1, "cms_mt_image_create_file", "渠道Id", false));
+        listColumn.add(new ExcelColumn("templateId", 2, "cms_mt_image_create_file", "模板Id", false));
+        listColumn.add(new ExcelColumn("file", 3, "cms_mt_image_create_file", "文件名", false));
+        listColumn.add(new ExcelColumn("vParam", 4, "cms_mt_image_create_file", "参数Id", false));
+        listColumn.add(new ExcelColumn("isUploadUsCdn", 5, "cms_mt_image_create_file", "是否上传美国Cdn", false));
         ExcelImportUtil.importSheet(productSheet, listColumn, listModel, listErrorMap, CreateImageParameter.class, 0);//
 
         if (listErrorMap.size() > 0 | listErrorMap.size() > 0 | listErrorMap.size() > 0) {
@@ -198,8 +179,7 @@ CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
             ExportFileExcelUtil.exportExcel(errorfilePath, info);//保存导出的错误文件
             importModel.setFailuresFileName(failuresFileName);
             importModel.setFailuresRows(listErrorMap.size());
-        }
-        else {
+        } else {
             importModel.setIsImport(true);
         }
         importModel.setFileName(fileName);
@@ -211,20 +191,19 @@ CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
         AddListParameter parameter = new AddListParameter();
         parameter.setData(listModel);
         final AddListResultBean[] result = {null};
-            result[0] = imageCreateFileService.addList(parameter,importModel);
+        result[0] = imageCreateFileService.addList(parameter, importModel);
         return result[0];
     }
+
     public AddListResultBean addListWithTrans(AddListParameter parameter) {
         if (parameter.getData().size() > ImageConfig.getMaxSize()) {
-            AddListResultBean resultBean=new AddListResultBean();
+            AddListResultBean resultBean = new AddListResultBean();
             resultBean.setErrorCode(ImageErrorEnum.ParametersOutSize.getCode());
-            resultBean.setErrorMsg(ImageErrorEnum.ParametersOutSize.getMsg()+ ImageConfig.getMaxSize());
+            resultBean.setErrorMsg(ImageErrorEnum.ParametersOutSize.getMsg() + ImageConfig.getMaxSize());
             return resultBean;
         }
         return imageCreateFileService.addList(parameter, null);
     }
-
-
 
 }
 

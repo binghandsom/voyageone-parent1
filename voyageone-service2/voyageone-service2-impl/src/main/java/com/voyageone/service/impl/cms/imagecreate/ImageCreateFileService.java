@@ -99,7 +99,7 @@ public class ImageCreateFileService extends BaseService {
 
     public String getCreateFilePathName(CmsMtImageCreateTemplateModel modelTemplate, String channelId, String file) {
         //return "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + modelTemplate.getId() + "/" + file + ".jpg";
-        return "products/" + channelId  + "/" + modelTemplate.getId() + "/" + file + ".jpg";
+        return "products/" + channelId + "/" + modelTemplate.getId() + "/" + file + ".jpg";
     }
 
     public long getHashCode(String channelId, int templateId, String file, String vparam) {
@@ -112,7 +112,6 @@ public class ImageCreateFileService extends BaseService {
         return cmsMtImageCreateFileDao.update(entity);
     }
 
-    //获取模板
     //获取模板
     public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(int templateId) {
         return cmsMtImageCreateTemplateDao.select(templateId);
@@ -130,7 +129,7 @@ public class ImageCreateFileService extends BaseService {
             modelFile = cmsMtImageCreateFileDao.select(CmsMtImageCreateFileId);
             //.创建并上传图片
             isCreateNewFile = createAndUploadImage(modelFile);
-            imagePathCache.set(modelFile.getHashCode(),modelFile.getOssFilePath());
+            imagePathCache.set(modelFile.getHashCode(), modelFile.getOssFilePath());
             $info("CmsMtImageCreateTaskJobService:onStartup ok result; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],filePath=[%s] model.id=[%s]",
                     modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getOssFilePath(), modelFile.getId());
         } catch (OpenApiException ex) {
@@ -200,8 +199,9 @@ public class ImageCreateFileService extends BaseService {
         }
         return isCreateNewFile;
     }
+
     @VOTransactional
-   public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
+    public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
         Map<Integer, CmsMtImageCreateTemplateModel> cmsMtImageCreateTemplateModelMap = new HashMap<>();
         AddListResultBean result = new AddListResultBean();
         try {
@@ -220,7 +220,7 @@ public class ImageCreateFileService extends BaseService {
                         }
                         cmsMtImageCreateTemplateModelMap.put(imageInfo.getTemplateId(), modelTemplate);
                     }
-                    CmsMtImageCreateTemplateModel modelTemplate =  cmsMtImageCreateTemplateModelMap.get(imageInfo.getTemplateId());
+                    CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateModelMap.get(imageInfo.getTemplateId());
                     modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), modelTemplate, imageInfo.getFile(), imageInfo.getVParam(), "system addList", hashCode, imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
@@ -273,8 +273,8 @@ public class ImageCreateFileService extends BaseService {
         cmsMtImageCreateTemplateModelMap.clear();
         return result;
     }
-    public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
 
+    public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
         for (CreateImageParameter imageInfo : parameter.getData()) {
             if (StringUtil.isEmpty(imageInfo.getChannelId())) {
                 throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);
