@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.ProductForOmsBean;
 import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -312,6 +313,15 @@ public class CmsProductServiceTest {
         String[] projection = "prodId;channelId;fields;skus;groups".split(";");
 
         ProductForWmsBean result = cmsProductService.getWmsProductsInfo("010", "51A0HC13E1-00LCNB0", projection);
+        System.out.println(result);
+    }
+
+    @Test
+    public void getOmsProductsInfo () {
+        List<String> skuList = new ArrayList<>();
+        skuList.add("1FMA3324Y11");
+
+        List<ProductForOmsBean> result = cmsProductService.getOmsProductsInfo("010", null, skuList, null, null, "23", null);
         System.out.println(result);
     }
 

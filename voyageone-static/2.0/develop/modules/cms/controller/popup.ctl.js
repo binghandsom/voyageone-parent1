@@ -425,7 +425,7 @@ define([
                     "imagegroupadd": {
                         "templateUrl": "views/pop/store/listing/imagegroupadd.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/store/listing/imagegroupadd.ctl",
-                        "controller": 'popImageGroupAddCtl'
+                        "controller": 'popImageGroupAddCtl as ctrl'
                     },
                     "imagegroupimg": {
                         "templateUrl": "views/pop/store/listing/imagegroupimg.tpl.html",
@@ -1153,9 +1153,26 @@ define([
         /**
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
-        $scope.openImgGroupList = function (context) {
-            return openModel(popActions.store.listing.imagegroupadd, context);
-        };
+        //$scope.openImgGroupAdd = function (context) {
+        //    return openModel(popActions.store.listing.imagegroupadd, context);
+        //};
+        $scope.openImgGroupAdd = openImgGroupAdd;
+        function openImgGroupAdd(data) {
+            require([popActions.store.listing.imagegroupadd.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagegroupadd.templateUrl,
+                    controller: popActions.store.listing.imagegroupadd.controller,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+
+
         /**
          * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
          * */

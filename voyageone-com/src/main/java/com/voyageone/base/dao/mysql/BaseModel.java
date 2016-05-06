@@ -1,5 +1,10 @@
 package com.voyageone.base.dao.mysql;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.util.DateTimeUtil;
+
+import java.util.Date;
+
 /**
  * 对数据模型提供基础字段
  * @author Jonas
@@ -7,21 +12,29 @@ package com.voyageone.base.dao.mysql;
  */
 public class BaseModel {
 
-    private int id;
+    protected Integer id;
 
-    private String created;
+    protected Date created;
 
-    private String creater;
+    protected String creater;
 
-    private String modified;
+    protected Date modified;
 
-    private String modifier;
+    protected String modifier;
 
-    public String getCreated() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
@@ -33,11 +46,11 @@ public class BaseModel {
         this.creater = creater;
     }
 
-    public String getModified() {
+    public Date getModified() {
         return modified;
     }
 
-    public void setModified(String modified) {
+    public void setModified(Date modified) {
         this.modified = modified;
     }
 
@@ -49,15 +62,16 @@ public class BaseModel {
         this.modifier = modifier;
     }
 
-    /**
-
-     */
-    public int getId() {
-
-        return this.id;
+    @Deprecated
+    @JsonIgnore
+    public void setModifiedStr(String modifiedStr) {
+        this.modified = DateTimeUtil.parse(modifiedStr);
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Deprecated
+    @JsonIgnore
+    public void setCreatedStr(String createdStr) {
+        this.created = DateTimeUtil.parse(createdStr);
     }
+
 }

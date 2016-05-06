@@ -177,6 +177,7 @@ public class SuperfeedSummerGuruBean {
         temp.append(this.getMaterial());
         List<String> images = Arrays.asList(this.images.split(","));
         images.stream()
+                .filter(s1 -> s1.lastIndexOf("/") >= 0)
                 .map(s -> s.substring(s.lastIndexOf("/")).trim())
                 .sorted()
                 .collect(Collectors.toList())

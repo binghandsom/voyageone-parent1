@@ -402,6 +402,8 @@ define(function() {
         "TXT_SEPARATE":"Separate",
         "TXT_SHARE":"Share",
         "TXT_SEPARATE_NEW_TASK":"New Separate Task",
+        "TXT_IMAGE_TYPE":"Image Type",
+        "TXT_SHIPPING_DESCRIPTION_IMAGE": "Shipping Description Image",
 
 
         "BTN_CREATE_TASK": "New Task",
