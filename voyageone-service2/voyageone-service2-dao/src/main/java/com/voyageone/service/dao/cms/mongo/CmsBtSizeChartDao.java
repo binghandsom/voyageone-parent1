@@ -4,13 +4,14 @@ import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by gjl on 2016/5/5.
  */
-
+@Repository
 public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> {
     /**
      * 尺码关系一览初始化画面
