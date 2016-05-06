@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel"
+    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.service.model.cms.CmsMtPlatformDictModel"
             parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
         SELECT DISTINCT
         a.id,
@@ -45,25 +45,25 @@
         </if>
     </select>
 
-    <insert id="cms_mt_dict_insertDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+    <insert id="cms_mt_dict_insertDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         INSERT INTO voyageone_cms2.cms_mt_platform_dict (order_channel_id, cart_id, name, value, created, creater,
         modified, modifier)
         VALUES (#{orderChannelId}, #{cartId}, #{name}, #{value}, NOW(), #{creater}, NOW(), #{modifier})
     </insert>
 
-    <update id="cms_mt_dict_updateDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+    <update id="cms_mt_dict_updateDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         UPDATE voyageone_cms2.cms_mt_platform_dict
         SET name = #{name}, value = #{value}, modified = NOW(), modifier = #{modifier}
         WHERE id = #{id} AND modified = #{modified}
     </update>
 
-    <delete id="cms_mt_dict_deleteDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+    <delete id="cms_mt_dict_deleteDict" parameterType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         DELETE FROM voyageone_cms2.cms_mt_platform_dict
         WHERE id = #{id}
     </delete>
 
-    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel"
-            resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.service.model.cms.CmsMtPlatformDictModel"
+            resultType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         SELECT
             id,
         order_channel_id as orderChannelId,
@@ -78,8 +78,8 @@
         WHERE order_channel_id = #{orderChannelId} AND name = #{name}
     </select>
 
-    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel"
-            resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtPlatformDictModel"
+            resultType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         SELECT
             id,
         order_channel_id as orderChannelId,
@@ -94,7 +94,7 @@
         WHERE order_channel_id = #{orderChannelId} AND id = #{id}
     </select>
 
-    <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+    <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         SELECT
         id,
         order_channel_id as orderChannelId,
@@ -109,7 +109,7 @@
     <!--</insert>-->
 
     <select id="cms_mt_dict_selectByChannelCartId" parameterType="Map"
-            resultType="com.voyageone.service.model.cms.CmsMtPlatFormDictModel">
+            resultType="com.voyageone.service.model.cms.CmsMtPlatformDictModel">
         SELECT
         id,
         order_channel_id as orderChannelId,

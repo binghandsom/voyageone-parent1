@@ -29,7 +29,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -689,7 +689,7 @@ public class SxProductService extends BaseService {
         return expressionParser.parse(ruleExpression, shopBean, user, extParameter);
     }
 
-    public List<CmsMtPlatFormDictModel> searchDictList(Map<String, Object> map) {
+    public List<CmsMtPlatformDictModel> searchDictList(Map<String, Object> map) {
         return cmsMtPlatformDictDao.selectList(map);
     }
 

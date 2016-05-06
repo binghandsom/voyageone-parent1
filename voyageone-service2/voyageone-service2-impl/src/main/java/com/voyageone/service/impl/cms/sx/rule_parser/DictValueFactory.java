@@ -3,7 +3,7 @@ package com.voyageone.service.impl.cms.sx.rule_parser;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 
 import java.util.*;
 
@@ -25,9 +25,9 @@ public class DictValueFactory {
     public void updateMapFromDatabase()
     {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-        List<CmsMtPlatFormDictModel> dictWordBeanList = sxProductService.searchDictList(null);
+        List<CmsMtPlatformDictModel> dictWordBeanList = sxProductService.searchDictList(null);
         channelDictWordMap.clear();
-        for (CmsMtPlatFormDictModel dictModel : dictWordBeanList)
+        for (CmsMtPlatformDictModel dictModel : dictWordBeanList)
         {
             String orderChannelId = dictModel.getOrderChannelId();
             int cartId = dictModel.getCartId();
