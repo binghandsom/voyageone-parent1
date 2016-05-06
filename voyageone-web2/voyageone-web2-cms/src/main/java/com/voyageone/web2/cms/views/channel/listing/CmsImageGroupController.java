@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -55,8 +56,11 @@ public class CmsImageGroupController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.SEARCH_CHANNEL_IMAGE_GROUP)
     public AjaxResponse search(@RequestBody Map<String, Object> param){
-        Map<String, Object> resultBean = new HashMap<>();
-        return success(resultBean);
+//        Map<String, Object> resultBean = new HashMap<>();
+        param.put("channelId", this.getUser().getSelChannelId());
+        param.put("lang", this.getLang());
+        List<CmsBtImageGroupBean> result = cmsImageGroupService.search(param);
+        return success(result);
     }
 
     /**
@@ -69,6 +73,18 @@ public class CmsImageGroupController extends CmsController {
     public AjaxResponse save(@RequestBody Map<String, Object> param){
         param.put("channelId", this.getUser().getSelChannelId());
         cmsImageGroupService.save(param);
+        return success(null);
+    }
+
+    /**
+     *  逻辑删除ImageGroup信息
+     *
+     * @param param 客户端参数
+     * @return 结果
+     */
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.DELETE_CHANNEL_IMAGE_GROUP)
+    public AjaxResponse delete(@RequestBody Map<String, Object> param){
+        cmsImageGroupService.delete(param);
         return success(null);
     }
 }
