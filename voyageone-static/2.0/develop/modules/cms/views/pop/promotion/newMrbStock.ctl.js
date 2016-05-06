@@ -43,7 +43,7 @@ define([
                 angular.forEach(data.selFlag, function(val,key) {
                     if(val){
                         $scope.vm.selFlag[key]=val;
-                        $scope.vm.isChoicePromotionIdList.push({key,val});
+                        $scope.vm.isChoicePromotionIdList.push({key: key, val: val});
                     }
                 });
                 $scope.initialize = function(){
