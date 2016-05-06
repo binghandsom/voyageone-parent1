@@ -24,6 +24,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
@@ -79,6 +80,8 @@ public class SxProductService extends BaseService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
     private CmsMtPlatformDictDao cmsMtPlatformDictDao;
+    @Autowired
+    private PaddingImageDaoExt paddingImageDaoExt;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -691,6 +694,10 @@ public class SxProductService extends BaseService {
 
     public List<CmsMtPlatformDictModel> searchDictList(Map<String, Object> map) {
         return cmsMtPlatformDictDao.selectList(map);
+    }
+
+    public String searchDictList(String channelId, int cartId, String paddingPropName, int imageIndex) {
+        return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }
 
     private enum SkuSort {

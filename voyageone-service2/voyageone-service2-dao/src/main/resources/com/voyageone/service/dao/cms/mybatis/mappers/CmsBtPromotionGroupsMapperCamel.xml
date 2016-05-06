@@ -1,226 +1,226 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionGroupsDao">
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel"/>
-    <sql id="Base_Column_List">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionGroupsDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel" />
+    <sql id="Base_Column_List" >
         `id`, `promotion_id`, `org_channel_id`, `model_id`, `product_model`, `cat_path`, 
         `num_iid`, `syn_flg`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_groups
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel" >
         insert into cms_bt_promotion_groups
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 `id`,
             </if>
-            <if test="promotionId != null">
+            <if test="promotionId != null" >
                 `promotion_id`,
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 `org_channel_id`,
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 `model_id`,
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 `product_model`,
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 `cat_path`,
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 `num_iid`,
             </if>
-            <if test="synFlg != null">
+            <if test="synFlg != null" >
                 `syn_flg`,
             </if>
             `created`,
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater`,
             </if>
             `modified`,
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier`,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="promotionId != null">
+            <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 #{orgChannelId,jdbcType=VARCHAR},
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 #{modelId,jdbcType=INTEGER},
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 #{productModel,jdbcType=VARCHAR},
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="synFlg != null">
+            <if test="synFlg != null" >
                 #{synFlg,jdbcType=VARCHAR},
             </if>
-            <if test="created == null">
+            <if test="created == null" >
                 now(),
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 now(),
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel" >
         update cms_bt_promotion_groups
-        <set>
-            <if test="promotionId != null">
+        <set >
+            <if test="promotionId != null" >
                 `promotion_id` = #{promotionId,jdbcType=INTEGER},
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 `model_id` = #{modelId,jdbcType=INTEGER},
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 `product_model` = #{productModel,jdbcType=VARCHAR},
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 `cat_path` = #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 `num_iid` = #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="synFlg != null">
+            <if test="synFlg != null" >
                 `syn_flg` = #{synFlg,jdbcType=VARCHAR},
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
 
-    <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Integer" >
         delete from cms_bt_promotion_groups
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_groups
-        <where>
-            <if test="promotionId != null">
+        <where >
+            <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 and `model_id` = #{modelId,jdbcType=INTEGER}
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 and `product_model` = #{productModel,jdbcType=VARCHAR}
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
-            <if test="synFlg != null">
+            <if test="synFlg != null" >
                 and `syn_flg` = #{synFlg,jdbcType=VARCHAR}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
 
-    <select id="selectList" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_groups
-        <where>
-            <if test="promotionId != null">
+        <where >
+            <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 and `model_id` = #{modelId,jdbcType=INTEGER}
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 and `product_model` = #{productModel,jdbcType=VARCHAR}
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
-            <if test="synFlg != null">
+            <if test="synFlg != null" >
                 and `syn_flg` = #{synFlg,jdbcType=VARCHAR}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
