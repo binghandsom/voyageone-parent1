@@ -13,7 +13,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 import java.util.Date;
 
 /**
- *
+ * 
  */
 public class CmsMtImageCreateTaskModel extends BaseModel {
     private String name;

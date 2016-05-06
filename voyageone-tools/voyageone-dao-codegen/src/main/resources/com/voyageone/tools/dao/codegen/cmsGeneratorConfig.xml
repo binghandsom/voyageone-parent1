@@ -145,6 +145,10 @@
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"></table>
 
+        <table tableName="cms_mt_channel_sku_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
 
     </context>
 </generatorConfiguration>

@@ -11,7 +11,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
- *
+ * 
  */
 public class CmsBtTaskTejiabaoModel extends BaseModel {
     private Integer promotionId;

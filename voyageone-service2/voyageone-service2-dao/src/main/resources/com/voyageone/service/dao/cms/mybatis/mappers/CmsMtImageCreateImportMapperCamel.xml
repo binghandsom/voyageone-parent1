@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateImportModel"/>
     <sql id="Base_Column_List">
         `id`, `cms_mt_image_create_task_id`, `is_import`, `file_name`, `error_msg`, `success_rows`,
-        `failures_rows`, `error_code`, `begin_time`, `end_time`, `creater`, `created`, `modified`,
+        `failures_rows`, `error_code`, `begin_time`, `end_time`, `creater`, `created`, `modified`, 
         `modifier`, `failures_file_Name`
     </sql>
 
