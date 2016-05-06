@@ -47,7 +47,6 @@ define([
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
         $scope.addFreeTag = addFreeTag;
-        $scope.showTagInfo = showTagInfo;
 
         /**
          * 初始化数据.
@@ -163,6 +162,10 @@ define([
 
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
+                for (idx in res.data.freeTagsList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj._freeTagsInfo = res.data.freeTagsList[idx];
+                }
 
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
@@ -250,6 +253,10 @@ define([
                 //    prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
                 //    prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 //}
+                for (idx in res.data.freeTagsList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj._freeTagsInfo = res.data.freeTagsList[idx];
+                }
             });
         }
 
@@ -428,13 +435,6 @@ define([
             }
         }
 
-        /**
-         * 查询指定标签类型下的所有标签(list形式)
-         */
-        function showTagInfo (tagsInfo, showInfoFunc) {
-            showInfoFunc('aaaaa');
-
-        }
     };
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
