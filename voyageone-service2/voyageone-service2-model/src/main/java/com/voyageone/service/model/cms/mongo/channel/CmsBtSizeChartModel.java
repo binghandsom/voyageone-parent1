@@ -1,6 +1,6 @@
 package com.voyageone.service.model.cms.mongo.channel;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * Created by gjl on 2016/5/5.
  */
-public class CmsBtSizeChartModel extends BaseMongoModel {
-    private String channelId;
+public class CmsBtSizeChartModel extends ChannelPartitionModel {
+
     private String sizeChartId;
     private String sizeChartName;
     private String finish;
@@ -18,13 +18,6 @@ public class CmsBtSizeChartModel extends BaseMongoModel {
     private List<String> sizeType;
     private List<CmsBtSizeChartModelSizeMap> carts = new ArrayList<>();
     private String active;
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public String getSizeChartId() {
         return sizeChartId;
