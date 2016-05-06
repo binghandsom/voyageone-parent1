@@ -222,7 +222,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                         && !StringUtils.isEmpty(typeChannelBean.getName())
                                         && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
                                 ) {
-                            mapBrandMapping.put(typeChannelBean.getAdd_name1(), typeChannelBean.getName());
+                            // key忽略大小写(feed进来的brand不区分大小写)
+                            mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase(), typeChannelBean.getName());
                         }
                     }
                 }
@@ -469,8 +470,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 品牌
             if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getBrand()))) {
-                if (mapBrandMapping.containsKey(feed.getBrand())) {
-                    field.setBrand(mapBrandMapping.get(feed.getBrand()));
+                if (mapBrandMapping.containsKey(feed.getBrand().toLowerCase())) {
+                    field.setBrand(mapBrandMapping.get(feed.getBrand().toLowerCase()));
                 } else {
                     $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
