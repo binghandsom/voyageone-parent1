@@ -36,39 +36,54 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
     public List<CmsBtSizeChartModel> selectSearchSizeChartInfo(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
 
         StringBuilder sbQuery = new StringBuilder();
-        sbQuery.append("{");
         //sizeChartName
-        if(StringUtils.isEmpty(cmsBtSizeChartModel.getSizeChartName())){
-            sbQuery.append("sizeChartName:"+cmsBtSizeChartModel.getSizeChartName()+",");
+        if(!StringUtils.isEmpty(cmsBtSizeChartModel.getSizeChartName())){
+            sbQuery.append(MongoUtils.splicingValue("sizeChartName", cmsBtSizeChartModel.getSizeChartName()));
+            sbQuery.append(",");
         }
         //finish
-        if(StringUtils.isEmpty(cmsBtSizeChartModel.getFinish())){
-            sbQuery.append("finish:"+cmsBtSizeChartModel.getFinish()+",");
+        if(!StringUtils.isEmpty(cmsBtSizeChartModel.getFinish())){
+            sbQuery.append(MongoUtils.splicingValue("finish", cmsBtSizeChartModel.getFinish()));
+            sbQuery.append(",");
         }
-        //UpdateTimeStr
-        if(StringUtils.isEmpty(cmsBtSizeChartModel.getCreated())){
-            sbQuery.append("modified:"+cmsBtSizeChartModel.getCreated() + ",");
-        }
-        //UpdateTimeEnd
-        if(StringUtils.isEmpty(cmsBtSizeChartModel.getModified())){
-            sbQuery.append("modified:"+cmsBtSizeChartModel.getModified()+",");
+        // Update Time
+        if (!StringUtils.isEmpty(cmsBtSizeChartModel.getCreated()) || !StringUtils.isEmpty(cmsBtSizeChartModel.getModified())) {
+            sbQuery.append("\"modified\":{" );
+            // 获取Update Time Start
+            if (!StringUtils.isEmpty(cmsBtSizeChartModel.getCreated())) {
+                sbQuery.append(MongoUtils.splicingValue("$gte", cmsBtSizeChartModel.getCreated() + " 00.00.00"));
+            }
+            // 获取Update Time End
+            if (!StringUtils.isEmpty(cmsBtSizeChartModel.getModified())) {
+                if (!StringUtils.isEmpty(cmsBtSizeChartModel.getModified())) {
+                    sbQuery.append(",");
+                }
+                sbQuery.append(MongoUtils.splicingValue("$lte", cmsBtSizeChartModel.getModified() + " 23.59.59"));
+            }
+            sbQuery.append("},");
         }
         //BrandName
         if(cmsBtSizeChartModel.getBrandName().size()>0){
+            // 带上"All"
+            cmsBtSizeChartModel.getBrandName().add("All");
             sbQuery.append(MongoUtils.splicingValue("brandName", cmsBtSizeChartModel.getBrandName()));
+            sbQuery.append(",");
         }
         //ProductType
         if(cmsBtSizeChartModel.getProductType().size()>0){
+            cmsBtSizeChartModel.getProductType().add("All");
             sbQuery.append(MongoUtils.splicingValue("productType", cmsBtSizeChartModel.getProductType()));
+            sbQuery.append(",");
         }
         //SizeType
         if(cmsBtSizeChartModel.getSizeType().size()>0){
+            cmsBtSizeChartModel.getSizeType().add("All");
             sbQuery.append(MongoUtils.splicingValue("sizeType", cmsBtSizeChartModel.getSizeType()));
+            sbQuery.append(",");
         }
-        sbQuery.append("}");
-        return select(sbQuery.toString(),channelId);
+        sbQuery.append(MongoUtils.splicingValue("active", 1));
+        return select("{" + sbQuery.toString() + "}",channelId);
     }
-
     /**
      * gen
      * @param channelId
