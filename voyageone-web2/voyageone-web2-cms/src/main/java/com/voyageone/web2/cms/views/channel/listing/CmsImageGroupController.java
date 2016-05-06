@@ -64,7 +64,7 @@ public class CmsImageGroupController extends CmsController {
     }
 
     /**
-     *  新加/编辑ImageGroup信息
+     *  新加ImageGroup信息
      *
      * @param param 客户端参数
      * @return 结果
