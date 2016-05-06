@@ -70,7 +70,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
     }
 
     /**
-     * 根据选中的更新数数据库
+     * gen
      * @param channelId
      * @param cmsBtSizeChartModel
      * @return WriteResult

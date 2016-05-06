@@ -96,11 +96,10 @@ public class CmsSizeChartService extends BaseAppService {
     public Map<String, Object>sizeChartUpdate(String channelId,Map param) {
         Map<String, Object> data =new HashMap<>();
         CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
-        Map searchInfo = (Map) param.get("sizeChartId");
         //公司平台销售渠道
         cmsBtSizeChartModel.setChannelId(channelId);
         //自增主键
-        cmsBtSizeChartModel.setSizeChartId((String)searchInfo.get("sizeChartId"));
+        cmsBtSizeChartModel.setSizeChartId((String)param.get("sizeChartId"));
         //尺码关系一览检索
         cmsBtSizeChartDao.sizeChartUpdate(channelId,cmsBtSizeChartModel);
         //返回数据的类型
@@ -121,27 +120,27 @@ public class CmsSizeChartService extends BaseAppService {
         Long sizeChartId =commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
         cmsBtSizeChartModel.setSizeChartId(String.valueOf(sizeChartId));
         cmsBtSizeChartModel.setSizeChartName(param.get("sizeChartName").toString());
-        cmsBtSizeChartModel.setFinish("1");
-        if ((param.get("brandName")) instanceof String) {
+        cmsBtSizeChartModel.setFinish("0");
+        if ((param.get("brandNameList")) instanceof String) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
             cmsBtSizeChartModel.setBrandName((List<String>) param.get("brandNameList"));
         }
-        if ((param.get("productType")) instanceof String) {
+        if ((param.get("productTypeList")) instanceof String) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setProductType(lst);
         } else {
             cmsBtSizeChartModel.setProductType((List<String>) param.get("productTypeList"));
         }
-        if ((param.get("sizeType")) instanceof String) {
+        if ((param.get("sizeTypeList")) instanceof String) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setSizeType(lst);
         } else {
-            cmsBtSizeChartModel.setProductType((List<String>) param.get("sizeTypeList"));
+            cmsBtSizeChartModel.setSizeType((List<String>) param.get("sizeTypeList"));
         }
         cmsBtSizeChartModel.setActive("1");
         //插入数据库
