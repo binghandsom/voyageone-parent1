@@ -297,7 +297,7 @@ public class AnnotationProcessorByIP
                                  Object adminTarget, String beanName) {
         endpoint.setBean(bean);
         endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
-        endpoint.setId(beanName);
+        endpoint.setId(bean.getClass().getName());
 
         /**
          * add ip to quenes key aooer start
