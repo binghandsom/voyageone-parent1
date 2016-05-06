@@ -88,12 +88,8 @@ public class CmsImageFileService extends BaseService {
             modelFile = imageCreateFileService.getModelByHashCode(hashCode);
             $info("CmsImageFileService:getImage get db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model=[%s]", channelId, templateId, file, vparam, hashCode, modelFile);
             if (modelFile == null) {
-                CmsMtImageCreateTemplateModel modelTemplate = imageCreateFileService.getCmsMtImageCreateTemplate(templateId);
-                if (modelTemplate == null) {
-                    throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + templateId);
-                }
                 //1.创建记录信息
-                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, modelTemplate, file, vparam, creater, hashCode, isUploadUSCDN);
+                modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode, isUploadUSCDN);
                 $info("CmsImageFileService:getImage create db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
             }
             //.创建并上传图片

@@ -97,7 +97,7 @@ public class LiquidFireClient {
             // 输入流
             is = conn.getInputStream();
             String lfError= conn.getHeaderField("LF-Error");
-            if(!org.springframework.util.StringUtils.isEmpty(lfError))
+            if(!StringUtils.isEmpty(lfError))
             {
                 throw new OpenApiException(ImageErrorEnum.LiquidCreateImageExceptionImage);
             }
