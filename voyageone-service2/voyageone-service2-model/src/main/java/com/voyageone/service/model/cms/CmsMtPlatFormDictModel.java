@@ -13,7 +13,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 /**
  * 
  */
-public class CmsMtPlatformDictModel extends BaseModel {
+public class CmsMtPlatFormDictModel extends BaseModel {
     private String orderChannelId;
 
     private Integer cartId;
