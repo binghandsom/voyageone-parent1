@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetMainPrductImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetMainProductImages;
@@ -103,7 +104,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 return parseResult;
             }
         } //padding图片
-        else if (imageIndex >= productImages.size()) {
+        else if (imageIndex >= productImages.size() || StringUtils.isEmpty(productImages.get(imageIndex).getName())) {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, shopBean, user, extParameter);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {
