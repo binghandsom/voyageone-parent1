@@ -14,6 +14,8 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+
 @Service
 @EnableRetry
 public class LiquidFireImageService extends BaseService {
@@ -71,6 +73,10 @@ public class LiquidFireImageService extends BaseService {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
        // String[] vparamList = vparam.split(",");
         String[] list= JacksonUtil.ToObjectFromJson(vparam,String [].class);
+        for (int i=0;i<list.length;i++)
+        {
+            list[i] = list[i].replace("&", "＆");
+        }
         String source = String.format(templateContent, list);
         return client.getImage(source, fileName, ImageConfig.getImageProxyIP(), ImageConfig.getImageProxyPort());
     }

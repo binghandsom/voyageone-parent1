@@ -70,7 +70,11 @@ public class LiquidFireClient {
 
     public String getImage(String param, String fileName, String proxyIP, String proxyPort) throws Exception {
         String outFileFullName = this.getSavePath() + "/" + fileName + ".jpg";
+        System.out.println(fileName+":  "+this.getUrl() + "?"+param);
+        param = param.replace("\r\n", "");
+        param = param.replace("\n", "");
         String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
+        System.out.println(fileName+"encode:  "+this.getUrl() + "?"+urlParameter);
         download(this.getUrl() + "?" + urlParameter, outFileFullName, proxyIP, proxyPort);
         return outFileFullName;
     }
@@ -99,6 +103,7 @@ public class LiquidFireClient {
             String lfError= conn.getHeaderField("LF-Error");
             if(!StringUtils.isEmpty(lfError))
             {
+                System.out.println("LF-Error"+lfError);
                 throw new OpenApiException(ImageErrorEnum.LiquidCreateImageExceptionImage);
             }
             // 1K的数据缓冲

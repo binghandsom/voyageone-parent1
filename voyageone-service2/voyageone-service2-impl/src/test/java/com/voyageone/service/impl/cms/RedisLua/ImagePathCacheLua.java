@@ -44,8 +44,8 @@ public class ImagePathCacheLua {
      * @param value    图片路径
      */
     public void set(long key, String value) {
-        hashOperation.put(HashtableName, key, value);
-        ZSetOperation.add(ZSetName, key, System.currentTimeMillis());
+      //  hashOperation.put(HashtableName, key, value);
+      //  ZSetOperation.add(ZSetName, key, System.currentTimeMillis());
 //        if (ZSetOperation.size(ZSetName) > 10000) {
 //            Set<Long> hashCodeList = ZSetOperation.range(ZSetName, 1, 100);
 //            Object[] keys = hashCodeList.toArray();
@@ -53,9 +53,30 @@ public class ImagePathCacheLua {
 //            ZSetOperation.remove(ZSetName,keys);
 //        }
        // redisTemplate.execute()
+        List<Object> KEYS = new ArrayList<>();
+        KEYS.add(HashtableName);
+        KEYS.add(key);
+        KEYS.add(ZSetName);
+        List<Object> ARGV=new ArrayList<>();
+        ARGV.add(value);
+        ARGV.add(System.currentTimeMillis());
+        RedisScript<Long> script;
+        script = new DefaultRedisScript<Long>(
+                "redis.call('HSET',KEYS[1],KEYS[2],ARGV[1]);" +
+                        "redis.call('ZADD',KEYS[3],ARGV[2],KEYS[2]);" +
+                        "local size=redis.call('ZCARD',KEYS[3]);return size;" +
+                        "if size >1000 then\n" +
+                        "local keyList= redis.call('ZRANGE',KEYS[3],1,100)"+
+                        "    redis.call('expire',KEYS[1], ARGV[1])\n" +
+                        "end", Long.class);
+        Long result= redisTemplate.execute(script,KEYS,ARGV.toArray());
+        System.out.println("sha1:" + script.getSha1());
+        System.out.println("Lua:" + script.getScriptAsString());
+        System.out.println("dbsize:" + result);
     }
     public String get(Long key) {
         return hashOperation.get(HashtableName, key);
+
 
     }
 
@@ -78,6 +99,7 @@ public class ImagePathCacheLua {
         script = new DefaultRedisScript<String>(
                 "redis.call('HSET',KEYS[1],KEYS[2],KEYS[3]); ", String.class);
         redisTemplate.execute(script,keys,args.toArray());
+
 //
     }
     public  void testHashSet(long key,String value)

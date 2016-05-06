@@ -30,7 +30,7 @@ public class LuaRedisTest {
 @Test
 public  void  testHash()
 {
-    imagePathCache.testHashSet(123,"8888888888888");
+    imagePathCache.set(123,"8888888888888");
 }
     @Test
     public void test72() {
