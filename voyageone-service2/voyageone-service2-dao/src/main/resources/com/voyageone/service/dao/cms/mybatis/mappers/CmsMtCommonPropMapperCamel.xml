@@ -57,15 +57,11 @@
             <if test="valueType != null">
                 `value_type`,
             </if>
-            <if test="created != null">
-                `created`,
-            </if>
+            `created`,
             <if test="creater != null">
                 `creater`,
             </if>
-            <if test="modified != null">
-                `modified`,
-            </if>
+            `modified`,
             <if test="modifier != null">
                 `modifier`,
             </if>
@@ -110,11 +106,17 @@
             <if test="valueType != null">
                 #{valueType,jdbcType=VARCHAR},
             </if>
+            <if test="created == null">
+                now(),
+            </if>
             <if test="created != null">
                 #{created,jdbcType=TIMESTAMP},
             </if>
             <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null">
+                now(),
             </if>
             <if test="modified != null">
                 #{modified,jdbcType=TIMESTAMP},
@@ -172,6 +174,9 @@
             </if>
             <if test="modified != null">
                 `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null">
+                `modified` = now(),
             </if>
             <if test="modifier != null">
                 `modifier` = #{modifier,jdbcType=VARCHAR},

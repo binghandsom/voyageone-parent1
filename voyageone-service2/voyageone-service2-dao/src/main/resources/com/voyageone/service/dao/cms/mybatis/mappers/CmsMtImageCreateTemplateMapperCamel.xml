@@ -1,140 +1,168 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao">
-    <resultMap id="ResultMap" type="CmsMtImageCreateTemplateModel">
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel"/>
+    <sql id="Base_Column_List">
+        `id`, `channel_id`, `name`, `content`, `created`, `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_image_create_template
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
 
-    <select id="selectList" resultMap="ResultMap">
-
-        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from
-        cms_mt_image_create_template
-        <where>
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel">
+        insert into cms_mt_image_create_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
-                AND `id` = #{id}
+                `id`,
             </if>
             <if test="channelId != null">
-                AND `channel_id` = #{channelId}
+                `channel_id`,
             </if>
             <if test="name != null">
-                AND `name` = #{name}
+                `name`,
             </if>
             <if test="content != null">
-                AND `content` = #{content}
+                `content`,
             </if>
-            <if test="height != null">
-                AND `height` = #{height}
-            </if>
-            <if test="width != null">
-                AND `width` = #{width}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
+            `created`,
             <if test="creater != null">
-                AND `creater` = #{creater}
+                `creater`,
             </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
+            `modified`,
             <if test="modifier != null">
-                AND `modifier` = #{modifier}
+                `modifier`,
             </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from
-        cms_mt_image_create_template
-        <where>
-
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
-                AND `id` = #{id}
+                #{id,jdbcType=INTEGER},
             </if>
-
             <if test="channelId != null">
-                AND `channel_id` = #{channelId}
+                #{channelId,jdbcType=VARCHAR},
             </if>
-
             <if test="name != null">
-                AND `name` = #{name}
+                #{name,jdbcType=VARCHAR},
             </if>
-
             <if test="content != null">
-                AND `content` = #{content}
+                #{content,jdbcType=VARCHAR},
             </if>
-
-            <if test="height != null">
-                AND `height` = #{height}
+            <if test="created == null">
+                now(),
             </if>
-
-            <if test="width != null">
-                AND `width` = #{width}
-            </if>
-
             <if test="created != null">
-                AND `created` = #{created}
+                #{created,jdbcType=TIMESTAMP},
             </if>
-
             <if test="creater != null">
-                AND `creater` = #{creater}
+                #{creater,jdbcType=VARCHAR},
             </if>
-
+            <if test="modified == null">
+                now(),
+            </if>
             <if test="modified != null">
-                AND `modified` = #{modified}
+                #{modified,jdbcType=TIMESTAMP},
             </if>
-
             <if test="modifier != null">
-                AND `modifier` = #{modifier}
+                #{modifier,jdbcType=VARCHAR},
             </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`name`,`content`,`height`,`width`,`created`,`creater`,`modified`,`modifier` from cms_mt_image_create_template where id=#{id}
-    </select>
+        </trim>
+    </insert>
 
-    <update id="update">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel">
         update cms_mt_image_create_template
-        set
+        <set>
+            <if test="channelId != null">
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                `content` = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null">
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null">
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null">
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null">
+                `modified` = now(),
+            </if>
+            <if test="modifier != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `channel_id`=#{channelId}
-            ,`name`=#{name}
-            ,`content`=#{content}
-            ,`height`=#{height}
-            ,`width`=#{width}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_mt_image_create_template
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from cms_mt_image_create_template
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_mt_image_create_template
-        (
-              `channel_id`,
-              `name`,
-              `content`,
-              `height`,
-              `width`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{channelId},
-              #{name},
-              #{content},
-              #{height},
-              #{width},
-              #{created},
-              #{creater},
-              #{modified},
-              #{modifier}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_image_create_template
+        <where>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="content != null">
+                and `content` = #{content,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_image_create_template
+        <where>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="content != null">
+                and `content` = #{content,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

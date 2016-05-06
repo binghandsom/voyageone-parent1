@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
@@ -18,7 +19,6 @@ import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -376,7 +376,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
             if (!StringUtil.isEmpty(modelId)) {
-                model.setModelId(Long.parseLong(modelId));
+                model.setModelId(Integer.parseInt(modelId));
             }
         }
 

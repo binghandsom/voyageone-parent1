@@ -56,11 +56,11 @@ public class SxProductService extends BaseService {
     /**
      * upd_flg=0,需要上传(重新上传)
      */
-    private static final String UPD_FLG_ADD = "0";
+    private static final int UPD_FLG_ADD = 0;
     /**
      * upd_flg=1,已经上传
      */
-    private static final String UPD_FLG_UPLOADED = "1";
+    private static final int UPD_FLG_UPLOADED = 1;
     @Autowired
     private TbPictureService tbPictureService;
     @Autowired
@@ -247,8 +247,8 @@ public class SxProductService extends BaseService {
 //            String decodeSrcUrl = decodeImageUrl(srcUrl);
             CmsBtPlatformImagesModel model = mapImageUrl.get(srcUrl);
             if (model != null) {
-                String updFlg = model.getUpdFlg();
-                if (UPD_FLG_ADD.equals(updFlg)) {
+                int updFlg = model.getUpdFlg();
+                if (UPD_FLG_ADD == updFlg) {
                     // upd_flg=0,需要上传(重新上传)
                     // 上传后,更新cms_bt_platform_images
                     String destUrl = "";
@@ -270,7 +270,7 @@ public class SxProductService extends BaseService {
                     model.setUpdFlg(UPD_FLG_UPLOADED);
 
                     cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
-                } else if (UPD_FLG_UPLOADED.equals(updFlg)) {
+                } else if (UPD_FLG_UPLOADED == updFlg) {
                     // upd_flg=1,已经上传
                     retUrls.put(srcUrl, model.getPlatformImgUrl());
                 }
