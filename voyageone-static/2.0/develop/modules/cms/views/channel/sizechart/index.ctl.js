@@ -4,11 +4,10 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,sizeChartService,confirm) {
+    function sizeChartController($scope,sizeChartService,confirm,notify) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
-            finishFlag:[{name:'',value:'all'},{name:'yes',value:'1'},{name:'no',value:'0'}],
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[],
@@ -42,14 +41,16 @@ define([
         /**
          * 删除尺码表操作
          */
-        $scope.deleteRow = function(){
+        $scope.deleteRow = function(sizeChartId){
             confirm("确认要删除该尺码表吗？").result.then(function () {
-                alert("yes");
+                sizeChartService.delete({sizeChartId:sizeChartId}).then(function(reps){
+                    notify.success ("删除成功！");
+                });
             });
         }
 
     }
 
-    sizeChartController.$inject = ['$scope', 'sizeChartService'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify'];
     return sizeChartController;
 });
