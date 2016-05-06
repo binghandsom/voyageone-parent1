@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.StringUtils;
@@ -10,6 +11,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,5 +34,17 @@ public class ImageGroupService extends BaseService {
 
     public void save(CmsBtImageGroupModel model) {
         cmsBtImageGroupDao.insert(model);
+    }
+
+    public void update(CmsBtImageGroupModel model) {
+        cmsBtImageGroupDao.update(model);
+    }
+
+    public List<CmsBtImageGroupModel> getList(JomgoQuery queryObject) {
+        return cmsBtImageGroupDao.select(queryObject);
+    }
+
+    public CmsBtImageGroupModel getOne(JomgoQuery queryObject) {
+        return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 }

@@ -1,181 +1,181 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtDataAmountDao">
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtDataAmountModel"/>
-    <sql id="Base_Column_List">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtDataAmountDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtDataAmountModel" />
+    <sql id="Base_Column_List" >
         `id`, `channel_id`, `amount_name`, `amount_val`, `comment`, `created`, `creater`, 
         `modified`, `modifier`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_data_amount
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtDataAmountModel">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtDataAmountModel" >
         insert into cms_bt_data_amount
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 `id`,
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 `channel_id`,
             </if>
-            <if test="amountName != null">
+            <if test="amountName != null" >
                 `amount_name`,
             </if>
-            <if test="amountVal != null">
+            <if test="amountVal != null" >
                 `amount_val`,
             </if>
-            <if test="comment != null">
+            <if test="comment != null" >
                 `comment`,
             </if>
             `created`,
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater`,
             </if>
             `modified`,
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier`,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="amountName != null">
+            <if test="amountName != null" >
                 #{amountName,jdbcType=VARCHAR},
             </if>
-            <if test="amountVal != null">
+            <if test="amountVal != null" >
                 #{amountVal,jdbcType=VARCHAR},
             </if>
-            <if test="comment != null">
+            <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
             </if>
-            <if test="created == null">
+            <if test="created == null" >
                 now(),
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 now(),
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtDataAmountModel">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtDataAmountModel" >
         update cms_bt_data_amount
-        <set>
-            <if test="channelId != null">
+        <set >
+            <if test="channelId != null" >
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="amountName != null">
+            <if test="amountName != null" >
                 `amount_name` = #{amountName,jdbcType=VARCHAR},
             </if>
-            <if test="amountVal != null">
+            <if test="amountVal != null" >
                 `amount_val` = #{amountVal,jdbcType=VARCHAR},
             </if>
-            <if test="comment != null">
+            <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
 
-    <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Integer" >
         delete from cms_bt_data_amount
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_data_amount
-        <where>
-            <if test="channelId != null">
+        <where >
+            <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="amountName != null">
+            <if test="amountName != null" >
                 and `amount_name` = #{amountName,jdbcType=VARCHAR}
             </if>
-            <if test="amountVal != null">
+            <if test="amountVal != null" >
                 and `amount_val` = #{amountVal,jdbcType=VARCHAR}
             </if>
-            <if test="comment != null">
+            <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
 
-    <select id="selectList" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_data_amount
-        <where>
-            <if test="channelId != null">
+        <where >
+            <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="amountName != null">
+            <if test="amountName != null" >
                 and `amount_name` = #{amountName,jdbcType=VARCHAR}
             </if>
-            <if test="amountVal != null">
+            <if test="amountVal != null" >
                 and `amount_val` = #{amountVal,jdbcType=VARCHAR}
             </if>
-            <if test="comment != null">
+            <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
