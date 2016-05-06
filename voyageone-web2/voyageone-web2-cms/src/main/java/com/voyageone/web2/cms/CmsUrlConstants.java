@@ -558,6 +558,16 @@ interface CmsBtJmPromotionImportTask{
             String SAVE_CHANNEL_IMAGE_GROUP = "save";
             String DELETE_CHANNEL_IMAGE_GROUP = "delete";
         }
+        interface LISTING{
+            interface SIZE_CHART{
+                String ROOT="/cms/channel/sizeChartList";
+                String INIT_SIZE_CHART = "sizeChartInit";
+                String DELETE_SIZE_CHART="sizeChartDelete";
+                String SEARCH_SIZE_CHART = "sizeChartSearch";
+                String EDIT_SIZE_CHART="sizeChartEdit";
+                String DETAIL_SIZE_CHART="sizeChartDetail";
+            }
+        }
     }
 
 }
