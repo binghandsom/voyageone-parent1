@@ -102,9 +102,7 @@ public class CmsSizeChartService extends BaseAppService {
         //自增主键
         cmsBtSizeChartModel.setSizeChartId((String)searchInfo.get("sizeChartId"));
         //尺码关系一览检索
-        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.sizeChartUpdate(channelId,cmsBtSizeChartModel);
-        //尺码关系一览检索
-        param.put("sizeChartList",sizeChartList);
+        cmsBtSizeChartDao.sizeChartUpdate(channelId,cmsBtSizeChartModel);
         //返回数据的类型
         return data;
     }
