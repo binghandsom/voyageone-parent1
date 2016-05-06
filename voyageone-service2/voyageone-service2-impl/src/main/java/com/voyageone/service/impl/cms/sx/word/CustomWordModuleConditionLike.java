@@ -7,6 +7,7 @@ import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueConditionLike;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +31,7 @@ public class CustomWordModuleConditionLike extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamConditionLike customModuleUserParamConditionLike = ((CustomWordValueConditionLike) customWord.getValue()).getUserParam();
 
