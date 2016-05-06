@@ -403,6 +403,8 @@ define(function() {
         "TXT_SHARE":"Share",
         "TXT_SEPARATE_NEW_TASK":"New Separate Task",
         "TXT_IMAGE_TYPE":"Image Type",
+        "TXT_SIZE_CHART_IMAGE": "Size Chart Image",
+        "TXT_BRAND_STORY_IMAGE": "Brand Story Image",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "Shipping Description Image",
 
 
