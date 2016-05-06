@@ -69,15 +69,15 @@ define(['cms', 'modules/cms/enums/FieldTypes'], function (cms, FieldTypes) {
             /**
              * 将字段值转换为友好的显示名
              */
-            name: function (val) {
+            value: function (mapping) {
                 var field = this.field;
                 var selected;
+                var val = mapping.val;
+                
+                if (mapping.type !== 'text')
+                    return val;
 
                 switch (field.type) {
-                    case FieldTypes.input:
-
-                        return field.value;
-
                     case FieldTypes.singleCheck:
 
                         selected = field.options.find(function (item) {
