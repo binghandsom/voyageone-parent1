@@ -163,6 +163,8 @@ define(function(){
         "TXT_COMMENT": "备注",
         "TXT_UPDATE_BY": "修改折",
         "TXT_PRODUCT_DETAIL": "产品详情",
+        "TXT_PRICE": "价格",
+        "TXT_PRICE_TYPE": "价格种类",
         "TXT_PRICE_HISTORY": "价格履历",
         "TXT_IS_FIX_TRANSLATED": "翻译完成?",
         "TXT_PRODUCT_CODE": "产品Code",
