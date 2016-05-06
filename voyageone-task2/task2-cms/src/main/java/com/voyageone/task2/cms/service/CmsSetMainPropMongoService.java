@@ -593,21 +593,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
-                List<Map<String, Object>> multiComplex = new LinkedList<>();
+                if (newFlg) {
+                    List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                List<String> lstImageOrg = feed.getImage();
-                if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                    for (String imgOrg : lstImageOrg) {
-                        Map<String, Object> multiComplexChildren = new HashMap<>();
-                        // jeff 2016/04 change start
-                        // multiComplexChildren.put("image1", imgOrg);
-                        multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
-                        // jeff 2016/04 add end
-                        multiComplex.add(multiComplexChildren);
+                    List<String> lstImageOrg = feed.getImage();
+                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                        for (String imgOrg : lstImageOrg) {
+                            Map<String, Object> multiComplexChildren = new HashMap<>();
+                            // jeff 2016/04 change start
+                            // multiComplexChildren.put("image1", imgOrg);
+                            multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                            // jeff 2016/04 add end
+                            multiComplex.add(multiComplexChildren);
+                        }
                     }
-                }
 
-                field.put("images1", multiComplex);
+                    field.put("images1", multiComplex);
+                }
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
@@ -1276,7 +1278,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (oldImages.size() > 0) {
                     // 取得图片名最后一部分中的索引的最大值 + 1
                     try {
-                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
+                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 && StringUtils.isDigit(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))
+                                ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
                     } catch (Exception ex) {
                         $error(ex);
                         throw new RuntimeException("ImageName Parse Fail!", ex);
@@ -1290,7 +1293,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
-                String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+                String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
                 cmsBtImageDaoExt.insertImages(newModel);

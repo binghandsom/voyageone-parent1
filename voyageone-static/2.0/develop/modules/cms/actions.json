@@ -293,7 +293,8 @@
       "$addToPromotionService": {
         "root": "/cms/pop/add_to_promotion",
         "getPromotionTags": "getPromotionTags",
-        "addToPromotion": "addToPromotion"
+        "addToPromotion": "addToPromotion",
+        "checkPromotionTags": "checkPromotionTags"
       },
       "$fieldEditService": {
         "root": "/cms/pop/field_edit",
@@ -360,6 +361,23 @@
           "save": "saveTag",
           "del": "delTag",
           "getTagList": "getTagList"
+        }
+      },
+      "imageGroupService": {
+        "root": "/cms/channel/image_group",
+        "init": "init",
+        "search": "search",
+        "save": "save",
+        "delete": "delete"
+      },
+      "sizeChart":{
+        "sizeChartService": {
+          "root": "/cms/channel/sizeChartList",
+          "init": "sizeChartInit",
+          "search": "sizeChartSearch",
+          "delete": "sizeChartDelete",
+          "editSave": "sizeChartEdit",
+          "detailSave": "sizeChartDetail"
         }
       }
     }

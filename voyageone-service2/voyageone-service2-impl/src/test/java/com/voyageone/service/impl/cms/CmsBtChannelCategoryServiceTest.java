@@ -38,8 +38,21 @@ public class CmsBtChannelCategoryServiceTest {
         CmsMtChannelCategoryConfigModel obj = new CmsMtChannelCategoryConfigModel();
         obj.setCategoryId("112233");
         obj.setChannelId("456");
+        obj.setCreater("System");
         lst.add(obj);
 
-        cmsBtChannelCategoryService.saveWithList(lst);
+        obj = new CmsMtChannelCategoryConfigModel();
+        obj.setCategoryId("112234");
+        obj.setChannelId("456");
+        obj.setCreater("System");
+        lst.add(obj);
+
+        obj = new CmsMtChannelCategoryConfigModel();
+        obj.setCategoryId("112235");
+        obj.setChannelId("456");
+        obj.setCreater("System");
+        lst.add(obj);
+
+        cmsBtChannelCategoryService.saveWithListOne(lst);
     }
 }

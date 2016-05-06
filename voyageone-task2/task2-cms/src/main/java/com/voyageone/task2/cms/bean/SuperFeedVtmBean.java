@@ -920,7 +920,6 @@ public class SuperFeedVtmBean {
         temp.append(this.Weight);
         temp.append(this.IsParent);
         temp.append(this.VoyageOnePrice);
-        temp.append(this.Quantity);
         temp.append(this.VoyageOneMSRP);
         return MD5.getMD5(temp.toString());
     }

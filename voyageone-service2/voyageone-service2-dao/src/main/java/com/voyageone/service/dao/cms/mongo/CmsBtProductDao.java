@@ -36,8 +36,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
-
-
     public List<CmsBtProductModel> selectProductByIds( List<Long> ids,String channelId) {
         if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
@@ -47,7 +45,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{prodId:{$in:[" + idsStr + "]}}";
         return select(query, channelId);
     }
-
 
     /**
      * 根据codes返回多条产品数据

@@ -28,7 +28,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -149,6 +149,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+
+        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+        conditionPropValueRepo.init();
 
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
@@ -300,8 +303,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //                cmsBtSizeMapModelList = sxProductService.selectSizeMapList();
 
             // 获取字典表(根据channel_id)上传图片的规格等信息
-            List<CmsMtPlatFormDictModel> cmsMtPlatFormDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
-            if (cmsMtPlatFormDictModelList == null || cmsMtPlatFormDictModelList.size() == 0) {
+            List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
+            if (cmsMtPlatformDictModelList == null || cmsMtPlatformDictModelList.size() == 0) {
                 String errMsg = String.format("获取字典表数据失败！[ChannelId:%s] [CartId:%s]", channelId, cartId);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
@@ -569,7 +572,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         try {
             // 取得描述
             strNotes = sxProductService.resolveDict("京东详情页描述", expressionParser, shopProp, UserId_ClassName, null);
-            jdProductBean.setNotes(strNotes);
         } catch (Exception ex) {
             String errMsg = String.format("京东取得详情页描述信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     channelId, cartId, groupId, platformCategoryId);
@@ -599,8 +601,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 取得图片就推出循环
                 break;
             } catch (Exception ex) {
-                String errMsg = String.format("京东取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
-                        channelId, cartId, groupId, platformCategoryId);
+                String errMsg = String.format("京东取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s] [PicName:%s]",
+                        channelId, cartId, groupId, platformCategoryId, picName);
                 $error(errMsg);
                 // 继续取下一张图片
             }
@@ -657,7 +659,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      *
      * @param platformMappingData CmsMtPlatformMappingModel  主产品对应的平台Mapping数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
-     * @return Map<String, String   Map(包含商品属性列表，用户自行输入的类目属性ID，用户自行输入的类目属性值)
+     * @return Map<String, String> Map(包含商品属性列表，用户自行输入的类目属性ID，用户自行输入的类目属性值)
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformMappingModel platformMappingData, CmsMtPlatformCategorySchemaModel platformSchemaData,
                                            ShopBean shopBean, ExpressionParser expressionParser, String user) {
@@ -1200,7 +1202,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
-        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+        // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
         List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
 
         // 使用运费模板或关联版式条件表达式
@@ -1236,12 +1238,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         CmsBtProductGroupModel mainProductPlatform = mainProduct.getGroups();
         com.voyageone.common.CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-        if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.ToInStock) {
-            // 如果是Instock， 那么offsale
-            retOptionType = OptioinType_offsale;
-        } else if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.ToOnSale) {
+        if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.ToOnSale) {
             // 如果是Onsale， 那么onsale
             retOptionType = OptioinType_onsale;
+        } else {
+            // 如果是Instock， 那么offsale（默认状态为offsale）
+            retOptionType = OptioinType_offsale;
         }
 
         return retOptionType;

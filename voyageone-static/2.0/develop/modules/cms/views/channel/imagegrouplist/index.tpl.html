@@ -1,54 +1,55 @@
-<div class="wrapper-md" ng-init="initialize()" ng-controller="popupCtrl">
+<div class="wrapper-md" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;Imagegrouplist</h4>
                 </div>
-                <div class="container-fluid m-t-xs m-b-xs">
+                <div class="container-fluid m-t-xs m-b-xs" ng-controller="popupCtrl">
 
                     <div class="col-sm-12">
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Platform</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_PLATFORM' | translate}}</label>
                                     <div class="col-sm-6">
-                                        <label class="radio-inline c-radio"><input type="radio" value="option1"><span class="fa fa-check"></span> TM </label>
-                                        <label class="radio-inline c-radio"><input type="radio" value="option2"><span class="fa fa-check"></span> TG </label>
-                                        <label class="radio-inline c-radio"><input type="radio" value="option3"><span class="fa fa-check"></span> JD </label>
-                                        <label class="radio-inline c-radio"><input type="radio" value="option2"><span class="fa fa-check"></span> JG </label>
-                                        <label class="radio-inline c-radio"><input type="radio" value="option3"><span class="fa fa-check"></span> JM </label>
+                                        <label ng-repeat="platform in ctrl.platformList" class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="platform.show" ><span class="fa fa-check"></span>&nbsp;{{platform.name}}</label>
+                                        <!--<label class="radio-inline c-radio"><input type="radio" value="option1"><span class="fa fa-check"></span> TM </label>-->
+                                        <!--<label class="radio-inline c-radio"><input type="radio" value="option2"><span class="fa fa-check"></span> TG </label>-->
+                                        <!--<label class="radio-inline c-radio"><input type="radio" value="option3"><span class="fa fa-check"></span> JD </label>-->
+                                        <!--<label class="radio-inline c-radio"><input type="radio" value="option2"><span class="fa fa-check"></span> JG </label>-->
+                                        <!--<label class="radio-inline c-radio"><input type="radio" value="option3"><span class="fa fa-check"></span> JM </label>-->
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="form-horizontal">
-                                        <label class="col-sm-3 control-label">Image Type</label>
+                                        <label class="col-sm-3 control-label">{{'TXT_IMAGE_TYPE' | translate}}</label>
 
                                         <div class="col-sm-6">
-                                            <select class="form-control">
-                                                <option value="Select...">Select...</option>
-                                                <option value="尺码图">尺码图</option>
-                                                <option value="品牌故事图">品牌故事图</option>
-                                                <option value="物流介绍图">物流介绍图</option>
+                                            <select class="form-control" ng-model="ctrl.imageType">
+                                                <option value="" translate="TXT_SELECT_NO_VALUE" />
+                                                <option value="2" translate="TXT_SIZE_CHART" />
+                                                <option value="3" translate="TXT_BRAND_STORY" />
+                                                <option value="4" translate="TXT_SHIPPING_DESCRIPTION" />
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Update Time</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_UPDATE_TIME' | translate}}</label>
 
                                     <div class="col-sm-9" style="margin-left: -4px;">
                                         <div class="col-sm-10 form-inline">
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.beginModified"
-                                                       max-date="ctrl.searchInfo.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.beginModified"
+                                                       max-date="ctrl.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                             </div>&nbsp;~&nbsp;
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.endModified"
-                                                       min-date="ctrl.searchInfo.beginModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.endModified"
+                                                       min-date="ctrl.beginModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -63,27 +64,30 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Brand Name</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>Adidas</option>
-                                            <option>NewBalance</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="ctrl.brandName"
+                                            ng-options="brand.value as brand.name for brand in ctrl.brandNameList">
+                                            <!--<option>Adidas</option>-->
+                                            <!--<option>NewBalance</option>-->
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Product Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>鞋子</option>
-                                            <option>上衣</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="ctrl.productType"
+                                                ng-options="productType.value as productType.name for productType in ctrl.productTypeList">
+                                            <!--<option>鞋子</option>-->
+                                            <!--<option>上衣</option>-->
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Size Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>男鞋</option>
-                                            <option>女鞋</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="ctrl.sizeType"
+                                                ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList">
+                                            <!--<option>男鞋</option>-->
+                                            <!--<option>女鞋</option>-->
                                         </select>
                                     </div>
                                 </div>
@@ -94,7 +98,7 @@
                         <div class="form-inline">
                             <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清空</button>
                             <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;检索</button>
-                            <button class="btn btn-success" ng-click="openImgGroupList()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                            <button class="btn btn-success" ng-click="openImgGroupAdd(ctrl)"><i class="fa fa-plus"></i>&nbsp;Add</button>
                         </div>
                     </div>
                 </div>
@@ -104,7 +108,7 @@
     <div class="box">
         <div class="box-body">
             <div class="table-responsive">
-                <div class="col-sm-12 dropdown_table_main">
+                <div class="col-sm-12 dropdown_table_main" if-no-rows="ctrl.imageGroupList.length">
                     <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px;table-layout: fixed;">
                         <thead>
                         <tr>
@@ -117,86 +121,87 @@
                             <th class="mfb-xxt text-center">Platform</th>
                             <th class="mfb-xxt text-center">Image Type</th>
                             <th class="mfb-xxt text-center">Image Count</th>
-                            <th class="mfb-xxt text-center">异常说明</th>
                             <th class="mfb-xxt text-center">Update Time</th>
                             <th class="mfb-xx text-center">编辑</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td class="mfb-xt text-center">1</td>
-                            <td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test1</a></td>
-                            <td class="mfb-xxt text-center">BCBG</td>
-                            <td class="mfb-xxt text-center">Apperal</td>
-                            <td class="mfb-xxt text-center">Women</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">JD</td>
-                            <td class="mfb-xxt text-center">尺码图</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">2016-4-29 18:16:39</td>
+                        <tr ng-repeat="imageGroup in ctrl.imageGroupList">
+                            <td class="mfb-xt text-center">{{imageGroup.imageGroupId}}</td>
+                            <td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail/{{imageGroup.imageGroupId}}" target="_blank">{{imageGroup.imageGroupName}}</a></td>
+                            <td class="mfb-xxt text-center">{{imageGroup.brandName}}</td>
+                            <td class="mfb-xxt text-center">{{imageGroup.productType}}</td>
+                            <td class="mfb-xxt text-center">{{imageGroup.sizeType}}</td>
+                            <td class="mfb-xxs text-center">{{imageGroup.viewType}}</td>
+                            <td class="mfb-xxt text-center">{{imageGroup.cartId}}</td>
+                            <td class="mfb-xxt text-center">{{imageGroup.imageType}}</td>
+                            <td class="mfb-xxt text-center">{{imageGroup.image.length}}<</td>
+                            <td class="mfb-xxt text-center">{{imageGroup.modified}}</td>
                             <td class="mfb-xxt text-center">
                                 <button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
                                 <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="mfb-xt text-center">2</td>
-                            <td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test2</a></td>
-                            <td class="mfb-xxt text-center">Prada</td>
-                            <td class="mfb-xxt text-center">Apperal</td>
-                            <td class="mfb-xxt text-center">Men</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">TM</td>
-                            <td class="mfb-xxt text-center">尺码图</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">2016-4-29 18:16:39</td>
-                            <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mfb-xt text-center">3</td>
-                            <td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test3</a></td>
-                            <td class="mfb-xxt text-center">Prada</td>
-                            <td class="mfb-xxt text-center">Shoe</td>
-                            <td class="mfb-xxt text-center">Men</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">JM</td>
-                            <td class="mfb-xxt text-center">尺码图</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">2016-4-29 18:16:39</td>
-                            <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mfb-xt text-center">4</td>
-                            <td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test4</a></td>
-                            <td class="mfb-xxt text-center">BCBG</td>
-                            <td class="mfb-xxt text-center">Shoe</td>
-                            <td class="mfb-xxt text-center">Women</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">TM</td>
-                            <td class="mfb-xxt text-center">品牌故事图</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">...</td>
-                            <td class="mfb-xxt text-center">2016-4-29 18:16:39</td>
-                            <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                            </td>
-                        </tr>
+                        <!--<tr>-->
+                            <!--<td class="mfb-xt text-center">2</td>-->
+                            <!--<td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test2</a></td>-->
+                            <!--<td class="mfb-xxt text-center">Prada</td>-->
+                            <!--<td class="mfb-xxt text-center">Apperal</td>-->
+                            <!--<td class="mfb-xxt text-center">Men</td>-->
+                            <!--<td class="mfb-xxs text-center">1：PC端</td>-->
+                            <!--<td class="mfb-xxt text-center">TM</td>-->
+                            <!--<td class="mfb-xxt text-center">尺码图</td>-->
+                            <!--<td class="mfb-xxt text-center">...</td>-->
+                            <!--<td class="mfb-xxt text-center">...</td>-->
+                            <!--<td class="mfb-xxt text-center">2016-4-29 18:16:39</td>-->
+                            <!--<td class="mfb-xxt text-center">-->
+                                <!--<button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>-->
+                                <!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td class="mfb-xt text-center">3</td>-->
+                            <!--<td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test3</a></td>-->
+                            <!--<td class="mfb-xxt text-center">Prada</td>-->
+                            <!--<td class="mfb-xxt text-center">Shoe</td>-->
+                            <!--<td class="mfb-xxt text-center">Men</td>-->
+                            <!--<td class="mfb-xxs text-center">1：PC端</td>-->
+                            <!--<td class="mfb-xxt text-center">JM</td>-->
+                            <!--<td class="mfb-xxt text-center">尺码图</td>-->
+                            <!--<td class="mfb-xxt text-center">...</td>-->
+                            <!--<td class="mfb-xxt text-center">...</td>-->
+                            <!--<td class="mfb-xxt text-center">2016-4-29 18:16:39</td>-->
+                            <!--<td class="mfb-xxt text-center">-->
+                                <!--<button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>-->
+                                <!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td class="mfb-xt text-center">4</td>-->
+                            <!--<td class="mfb-xxt text-center"><a href="#/channel/imagegrouplist/detail" target="_blank">test4</a></td>-->
+                            <!--<td class="mfb-xxt text-center">BCBG</td>-->
+                            <!--<td class="mfb-xxt text-center">Shoe</td>-->
+                            <!--<td class="mfb-xxt text-center">Women</td>-->
+                            <!--<td class="mfb-xxs text-center">1：PC端</td>-->
+                            <!--<td class="mfb-xxt text-center">TM</td>-->
+                            <!--<td class="mfb-xxt text-center">品牌故事图</td>-->
+                            <!--<td class="mfb-xxt text-center">...</td>-->
+                            <!--<td class="mfb-xxt text-center">...</td>-->
+                            <!--<td class="mfb-xxt text-center">2016-4-29 18:16:39</td>-->
+                            <!--<td class="mfb-xxt text-center">-->
+                                <!--<button title="设置" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>-->
+                                <!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
+                            <!--</td>-->
+                        <!--</tr>-->
                         </tbody>
                     </table>
                 </div>
                 <!-- .table-responsive -->
                 <div class="col-sm-12">
                 </div>
+            </div>
+            <div class="col-sm-12 m-t-md">
+                <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
             </div>
         </div>
         <!-- /.box-body -->

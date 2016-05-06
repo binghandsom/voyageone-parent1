@@ -5,6 +5,8 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 
+import java.util.Date;
+
 /**
  * Created by jonasvlag on 16/2/29.
  *
@@ -29,11 +31,11 @@ public class TaskBean {
 
     private ConfigBean config;
 
-    private String created;
+    private Date created;
 
     private String creater;
 
-    private String modified;
+    private Date modified;
 
     private String modifier;
 
@@ -114,11 +116,11 @@ public class TaskBean {
         this.config = config;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
@@ -130,11 +132,11 @@ public class TaskBean {
         this.creater = creater;
     }
 
-    public String getModified() {
+    public Date getModified() {
         return modified;
     }
 
-    public void setModified(String modified) {
+    public void setModified(Date modified) {
         this.modified = modified;
     }
 

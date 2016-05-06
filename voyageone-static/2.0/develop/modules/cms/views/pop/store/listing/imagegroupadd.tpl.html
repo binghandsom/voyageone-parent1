@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -9,11 +9,12 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">Platform</label>
                 <div class="col-sm-6">
-                    <select class="form-control">
-                        <option value="Select...">Select...</option>
-                        <option value="TM">TM</option>
-                        <option value="JD">JD</option>
-                        <option value="JM">JM</option>
+                    <select class="form-control" ng-model="ctrl.platform"
+                        ng-options="brand.value as brand.name for brand in ctrl.platformList">
+                        <option value="">Select...</option>
+                        <!--<option value="TM">TM</option>-->
+                        <!--<option value="JD">JD</option>-->
+                        <!--<option value="JM">JM</option>-->
                     </select>
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
@@ -21,17 +22,17 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">Image Group Name</label>
                 <div class="col-sm-6">
-                    <input class="form-control"/>
+                    <input class="form-control" ng-model="ctrl.imageGroupName" />
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">View Type</label>
                 <div class="col-sm-6">
-                    <select class="form-control">
-                        <option value="Select...">Select...</option>
-                        <option value="APP端">APP端</option>
-                        <option value="PC端">PC端</option>
+                    <select class="form-control" ng-model="ctrl.viewType">
+                        <option value="">Select...</option>
+                        <option value="1">PC端</option>
+                        <option value="2">APP端</option>
                     </select>
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
@@ -39,13 +40,11 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">Image Type</label>
                 <div class="col-sm-6">
-                    <select class="form-control">
-                        <option value="Select...">Select...</option>
-                        <option value="商品图片模板">商品图片模板</option>
-                        <option value="产品图片模板">产品图片模板</option>
-                        <option value="详情细节模板">详情细节模板</option>
-                        <option value="自定义图片模板">自定义图片模板</option>
-                        <option value="商品包装模板">商品包装模板</option>
+                    <select class="form-control" ng-model="ctrl.imageType">
+                        <option value="">Select...</option>
+                        <option value="2" translate="TXT_SIZE_CHART"></option>
+                        <option value="3" translate="TXT_BRAND_STORY"></option>
+                        <option value="4" translate="TXT_SHIPPING_DESCRIPTION_IMAGE"></option>
                     </select>
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
@@ -53,34 +52,31 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">Related Brand Name</label>
                 <div class="col-sm-8">
-                    <select multiple chosen class="form-control" width="'240px'">
-                        <option>Adidas</option>
-                        <option>NewBalance</option>
+                    <select multiple chosen class="form-control" width="'240px'" ng-model="ctrl.brandName"
+                            ng-options="brand.value as brand.name for brand in ctrl.brandNameList">
                     </select>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label">Related Product Type</label>
                 <div class="col-sm-8">
-                    <select multiple chosen class="form-control" width="'240px'">
-                        <option>鞋子</option>
-                        <option>上衣</option>
+                    <select multiple chosen class="form-control" width="'240px'" ng-model="ctrl.productType"
+                            ng-options="productType.value as productType.name for productType in ctrl.productTypeList">
                     </select>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label">Related Size Type</label>
                 <div class="col-sm-8">
-                    <select multiple chosen class="form-control" width="'240px'">
-                        <option>男鞋</option>
-                        <option>女鞋</option>
+                    <select multiple chosen class="form-control" width="'240px'" ng-model="ctrl.sizeType"
+                            ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList">
                     </select>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div><!-- .vo_modal -->

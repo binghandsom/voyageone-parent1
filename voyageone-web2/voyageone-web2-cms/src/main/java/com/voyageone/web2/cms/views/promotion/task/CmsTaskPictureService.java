@@ -189,8 +189,8 @@ class CmsTaskPictureService extends BaseAppService {
             model.setCreater(user.getUserName());
             model.setModifier(user.getUserName());
             String now = DateTimeUtil.getNow();
-            model.setCreated(now);
-            model.setModified(now);
+            model.setCreatedStr(now);
+            model.setModifiedStr(now);
 
             models.add(model);
         }
@@ -297,8 +297,8 @@ class CmsTaskPictureService extends BaseAppService {
         model.setCreater(user.getUserName());
         model.setModifier(user.getUserName());
         String now = DateTimeUtil.getNow();
-        model.setCreated(now);
-        model.setModified(now);
+        model.setCreatedStr(now);
+        model.setModifiedStr(now);
         List<CmsBtBeatInfoBean> list = new ArrayList<>();
         list.add(model);
         return beatInfoService.addTasks(list);
