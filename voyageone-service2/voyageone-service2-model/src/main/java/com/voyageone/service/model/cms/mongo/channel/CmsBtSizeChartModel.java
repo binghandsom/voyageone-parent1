@@ -18,6 +18,7 @@ public class CmsBtSizeChartModel extends ChannelPartitionModel {
     private List<CmsBtSizeChartModelSizeMap> sizeMap = new ArrayList<>();
     private String active;
 
+
     public String getSizeChartId() {
         return sizeChartId;
     }
