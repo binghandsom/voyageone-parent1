@@ -12,15 +12,16 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Size Chart Name</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="vm.search">
+                                        <input type="text" class="form-control" ng-model="vm.searchInfo.sizeChartName">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Finish</label>
 
                                     <div class="col-sm-7">
-                                        <select class="form-control" ng-model="vm.searchInfo.finishFlag"
-                                                ng-options="tag.value as tag.name for tag in vm.finishFlag">
+                                        <select class="form-control" ng-model="vm.searchInfo.finishFlag">
+                                            <option value="1">yes</option>
+                                            <option value="0">no</option>
                                         </select>
                                     </div>
                                 </div>
@@ -55,27 +56,24 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Brand Name</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>Adidas</option>
-                                            <option>NewBalance</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.brandNameList"
+                                                ng-options="brand.value as brand.name for brand in vm.brandNameList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Product Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>鞋子</option>
-                                            <option>上衣</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.productTypeList"
+                                                ng-options="brand.value as brand.name for brand in vm.productTypeList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Size Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>男鞋</option>
-                                            <option>女鞋</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.sizeTypeList"
+                                                ng-options="brand.value as brand.name for brand in vm.sizeTypeList">
                                         </select>
                                     </div>
                             </div>
@@ -113,13 +111,13 @@
                         <tbody>
                             <tr>
                                 <td class="mfb-xt text-center">1</td>
-                                <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{vm}}" target="_blank"> Nike shoe men chart</a></td>
+                                <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{1}}" target="_blank"> Nike shoe men chart</a></td>
                                 <td class="mfb-xxt text-left">Nike</td>
                                 <td class="mfb-xxt text-center">shoe</td>
                                 <td class="mfb-xxt text-center">Men</td>
                                 <td class="mfb-xxs text-center">2016-04-12 15:32:35</td>
                                 <td class="mfb-xxt text-center">
-                                    <a href="#/channel/sizechart/detail/{{vm}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                    <a href="#/channel/sizechart/detail/{{1}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
                                     <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow()"><i class="fa  fa-trash-o"></i></a>
                                 </td>
                             </tr>

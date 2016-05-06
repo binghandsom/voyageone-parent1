@@ -21,9 +21,9 @@ define([
             this.imageGroupName = "";
             this.viewType = "";
             this.imageType = "";
-            this.brandName = "";
-            this.productType = "";
-            this.sizeType = "";
+            this.brandName = [];
+            this.productType = [];
+            this.sizeType = [];
         }
         PopImageGroupAddCtl.prototype = {
             save: function () {

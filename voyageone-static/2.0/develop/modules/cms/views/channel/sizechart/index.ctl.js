@@ -17,25 +17,19 @@ define([
 
         $scope.initialize  = function () {
             sizeChartService.init().then(function(resp){
-               console.log(resp);
+               $scope.vm.sizeChartList = resp.data.sizeChartList;
+               $scope.vm.brandNameList = resp.data.brandNameList;
+               $scope.vm.productTypeList = resp.data.productTypeList;
+               $scope.vm.sizeTypeList = resp.data.sizeTypeList;
             });
         };
 
         $scope.search = search;
 
         function search() {
-            console.log("搜索条件",$scope.vm.searchInfo);
-/*            systemCategoryService.getCategoryList({
-                "catName":$scope.vm.searchInfo.catName,
-                "catId": $scope.vm.searchInfo.catId,
-                "skip": ($scope.categoryPageOption.curr - 1) * $scope.categoryPageOption.size,
-                "limit": $scope.categoryPageOption.size
-            }).then(function (res) {
-                $scope.categoryPageOption.total = res.data.total;
-                $scope.vm.categoryList = res.data.resultData;
-            }, function (err) {
-
-            })*/
+            sizeChartService.search($scope.vm.searchInfo).then(function(reps){
+                console.log("搜索结果",reps);
+            });
         }
 
         /**

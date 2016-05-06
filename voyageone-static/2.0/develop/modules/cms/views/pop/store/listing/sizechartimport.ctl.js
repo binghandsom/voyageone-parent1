@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartImportCtl', function ($scope, $routeParams,alert) {
+    angularAMD.controller('popSizeChartImportCtl', function ($scope,context, $routeParams,alert) {
 
         $scope.vm = {
             content : ""
@@ -45,11 +45,11 @@ define([
                         return;
                     }
                 }
-                    console.log(resultArr[i]);
                 resultArr[i].index = parseInt(i/3);
             }
 
-           // console.log(resultArr);
+            context.import(resultArr);
+            $scope.$dismiss();
         }
 
     });

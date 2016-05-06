@@ -4,6 +4,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 
 /**
@@ -17,7 +18,7 @@ public abstract class CustomWordModule extends VOAbsLoggable {
         this.moduleName = moduleName;
     }
 
-    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception;
+    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception;
 //    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, Set<String> imageSet);
 
     @Override

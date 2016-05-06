@@ -1,12 +1,17 @@
 package com.voyageone.service.dao.cms.mongo;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gjl on 2016/5/5.
@@ -65,12 +70,25 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
     }
 
     /**
-     *
+     * 根据选中的更新数数据库
      * @param channelId
      * @param cmsBtSizeChartModel
-     * @return List<CmsBtSizeChartModel>
+     * @return WriteResult
      */
-    public List<CmsBtSizeChartModel> sizeChartDelete(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
-        return selectAll(channelId);
+    public WriteResult sizeChartUpdate(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
+        cmsBtSizeChartModel.setActive("0");
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BasicDBObject params = new BasicDBObject();
+        //条件
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("sizeChartId", cmsBtSizeChartModel.getSizeChartId());
+        params.putAll(queryMap);
+        //设置值
+        BasicDBObject result = new BasicDBObject();
+        Map<String, Object> rsMap = new HashMap<>();
+        rsMap.put("active", "1");
+        result.putAll(rsMap);
+        return coll.update(params, new BasicDBObject("$set", result), false, true);
     }
 }
