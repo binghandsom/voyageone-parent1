@@ -22,7 +22,7 @@
             <tbody>
             <tr ng-repeat="mapping in ctrl.fieldMapping.mappings">
                 <td>{{:: mapping.type }}</td>
-                <td>{{:: mapping.val }}</td>
+                <td>{{:: ctrl.name(mapping.val) }}</td>
                 <td>{{:: mapping.condition ? mapping.condition.length : 0 }}</td>
                 <td class="text-center">
                     <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.remove($index)">
