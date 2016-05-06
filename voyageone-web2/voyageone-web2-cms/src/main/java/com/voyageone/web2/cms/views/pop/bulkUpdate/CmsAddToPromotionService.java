@@ -1,16 +1,22 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +37,15 @@ public class CmsAddToPromotionService extends BaseAppService {
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-
+    @Autowired
+    private ProductService productService;
     @Autowired
     private ProductTagService productTagService;
 
     @Autowired
     private PromotionDetailService promotionDetailService;
+    @Autowired
+    private CmsBtTagDaoExt cmsBtTagDaoExt;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
 //        System.out.println(params.get("refTagId"));
@@ -52,6 +61,48 @@ public class CmsAddToPromotionService extends BaseAppService {
     }
 
     /**
+     * 检查所选择的产品是否已存在同级别的promotion tag
+     * 已存在则返回 {'hasTags':true, 'prodCodeListStr':'code1, code2, code3'}
+     * 不存在则返回 {'hasTags':false}
+     */
+    public Map<String, Object> checkPromotionTags(String channelId, Map<String, Object> params) {
+        int tagId = (Integer) params.get("tagId");
+        List<Long> productIds = CommonUtil.changeListType((List<Integer>) params.get("productIds"));
+        CmsBtTagModel tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
+        List<CmsBtTagModel> modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagId);
+
+        Map<String, Object> result = new HashMap<>();
+        List<String> tagList = new ArrayList<>();
+        modelList.forEach(model -> tagList.add(model.getTagPath()));
+        if (tagList.isEmpty()) {
+            result.put("hasTags", false);
+            return result;
+        }
+
+        JomgoQuery queryObject = new JomgoQuery();
+        StringBuilder queryStr = new StringBuilder();
+        queryStr.append("{");
+        queryStr.append( MongoUtils.splicingValue("prodId", productIds.toArray(), "$in"));
+        queryStr.append(",");
+        queryStr.append(MongoUtils.splicingValue("tags", (String[]) tagList.toArray(new String[tagList.size()]), "$in"));
+        queryStr.append("}");
+        queryObject.setQuery(queryStr.toString());
+        queryObject.setProjection("{'fields.code':1,'_id':0}");
+        List<CmsBtProductModel> prodInfoList = productService.getList(channelId, queryObject);
+        if (prodInfoList.isEmpty()) {
+            result.put("hasTags", false);
+            return result;
+        }
+
+        List<String> codeList = new ArrayList<>();
+        prodInfoList.forEach(model -> codeList.add(model.getFields().getCode()));
+
+        result.put("hasTags", true);
+        result.put("prodCodeListStr", StringUtils.join(codeList, ", "));
+        return result;
+    }
+
+    /**
      * addToPromotion
      */
     public void addToPromotion(Map<String, Object> params, UserSessionBean userInfo) {
@@ -63,7 +114,6 @@ public class CmsAddToPromotionService extends BaseAppService {
         Integer cartId = Integer.valueOf(params.get("cartId").toString());
         List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
         List<Map<String, String>> products = (ArrayList<Map<String, String>>) params.get("products");
-
 
         // 获取promotion信息
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
@@ -79,38 +129,21 @@ public class CmsAddToPromotionService extends BaseAppService {
         }
 
         // 给产品数据添加活动标签
-        Map<String, Object> result = addTagProducts(channelId, tagInfo.getTagPath(), productIds, modifier);
-        if ("success".equals(result.get("result"))) {
-
-            products.forEach(item -> {
-
-                PromotionDetailAddBean request=new PromotionDetailAddBean();
-                request.setModifier(modifier);
-                request.setChannelId(promotion.getChannelId());
-                request.setOrgChannelId(channelId);
-                request.setCartId(cartId);
-                request.setProductId(Long.valueOf(String.valueOf(item.get("id"))));
-                request.setProductCode(String.valueOf(item.get("code")));
-                request.setPromotionId(promotionId);
-                request.setPromotionPrice(0.00);
-                request.setTagId(tagInfo.getId());
-                request.setTagPath(tagInfo.getTagPath());
-
-                promotionDetailService.addPromotionDetail(request);
-
-            });
-        }
-    }
-
-    /**
-     * 增加商品的Tag
-     */
-    private Map<String, Object> addTagProducts(String channelId, String tagPath, List<Long> productIds, String modifier) {
-        productTagService.saveTagProducts(channelId, tagPath, productIds, modifier);
-
-        Map<String, Object> ret = new HashMap<>();
-        ret.put("result", "success");
-        return ret;
+        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, "tags", modifier);
+        products.forEach(item -> {
+            PromotionDetailAddBean request=new PromotionDetailAddBean();
+            request.setModifier(modifier);
+            request.setChannelId(promotion.getChannelId());
+            request.setOrgChannelId(channelId);
+            request.setCartId(cartId);
+            request.setProductId(Long.valueOf(String.valueOf(item.get("id"))));
+            request.setProductCode(String.valueOf(item.get("code")));
+            request.setPromotionId(promotionId);
+            request.setPromotionPrice(0.00);
+            request.setTagId(tagInfo.getId());
+            request.setTagPath(tagInfo.getTagPath());
+            promotionDetailService.addPromotionDetail(request);
+        });
     }
 
     /**

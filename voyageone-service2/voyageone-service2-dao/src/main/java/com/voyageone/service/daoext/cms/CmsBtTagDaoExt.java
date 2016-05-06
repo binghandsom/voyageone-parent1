@@ -66,4 +66,13 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
     public List<CmsBtTagModel>  selectCmsBtTagByTagInfo(String channelId,String parentTagId,String tagType) {
         return selectList("select_one_by_tag_info", parameters("channelId", channelId, "parentTagId", parentTagId,"tagType",tagType));
     }
+
+    public List<CmsBtTagModel> selectListBySameLevel(String channelId, int parentTagId, int tagId) {
+        HashMap<String, Object> paraIn = new HashMap<>();
+        paraIn.put("channelId", channelId);
+        paraIn.put("parentTagId", parentTagId);
+        paraIn.put("tagId", tagId);
+
+        return selectList("select_list_by_same_lvl", paraIn);
+    }
 }

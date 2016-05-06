@@ -52,19 +52,31 @@
 						<div class="form-group" ng-repeat="option in vm.custAttrList">
 							<label class="col-sm-3 control-label" ng-if="$index == 0" translate="TXT_CUST_QUERY_ATTR"></label>
 							<label class="col-sm-3 control-label" ng-if="$index != 0" ></label>
-							<div class="col-sm-8 form-inline">
+							<div class="col-sm-3">
 								<select class="form-control" ng-model="option.inputOpts"
 										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+								</select>
+							</div>
+							<div class="col-sm-2">
+								<select class="form-control">
+									<option value="=">=</option>
+									<option value="!=">! =</option>
+									<option value="= null">= null</option>
+									<option value="= null">= null</option>
+									<option value="! = null">! = null</option>
 								</select>
 								<!--<select class="form-control" ng-model="option.inputOpts"-->
 										<!--ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">-->
 									<!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
 								<!--</select>-->
-								<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>
-								<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
-								<button ng-if="$last" id="addCustDiv" class="btn btn-success" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
+								<!--<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>-->
 							</div>
+							<div class="col-sm-2">
+								<input type="text" class="form-control" ng-model="option.inputVal">
+							</div>
+							<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
+							<button ng-if="$last" id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" >查询价格变动</label>
@@ -159,8 +171,8 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
 							<div class="col-sm-3">
-								<select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="getTagList()">
-									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
+								<select class="form-control" ng-model="vm.searchInfo.tagTypeSelectValue" ng-change="getTagList()">
+									<option value="0" translate="TXT_SELECT_NO_VALUE"></option>
 									<option value="1" translate="TXT_TAG_STORE_CLASSIFY"></option>
 									<option value="2" translate="TXT_TAG_PROMOTION"></option>
 									<option value="3" translate="TXT_TAG_GOODS"></option>
@@ -171,9 +183,6 @@
 								<select multiple chosen class="form-control" ng-model="vm.searchInfo.tags"
 										ng-options="tag.tagPath as tag.tagPathName for tag in vm.masterData.tagList">
 								</select>
-								<!--<label class="checkbox-inline c-checkbox" ng-repeat="tag in vm.masterData.tagList">-->
-									<!--<input type="checkbox" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}-->
-								<!--</label>-->
 							</div>
 						</div>
 						<div class="form-group" ng-if="vm.masterData.isminimall == 1">
@@ -201,8 +210,8 @@
 							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label" translate="TXT_SORT_1"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortOneName"
@@ -214,7 +223,7 @@
 										<input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
 									</label>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="checkbox-inline c-radio">
 										<input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
 									</label>
@@ -222,8 +231,8 @@
 							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label" translate="TXT_SORT_2"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortTwoName"
@@ -232,19 +241,19 @@
 								</div>
 								<div class="col-sm-3 text-right">
 									<label class="checkbox-inline c-radio">
-										<input name="sortTwo" type="radio" value="1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+										<input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
 									</label>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="checkbox-inline c-radio">
-										<input name="sortTwo" type="radio" value="-1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+										<input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
 									</label>
 								</div>
 							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label" translate="TXT_SORT_3"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortThreeName"
@@ -256,15 +265,15 @@
 										<input name="sortThree" type="radio" value="1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
 									</label>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="checkbox-inline c-radio">
 										<input name="sortThree" type="radio" value="-1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
 									</label>
 								</div>
 							</div>
 						</div>
-						<div class="form-group"><!-- 查询翻译状态 -->
-							<label class="col-sm-3 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+						<div class="form-group" style="margin-left: -67px;"><!-- 查询翻译状态 -->
+							<label class="col-sm-4 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.transStsFlg">
@@ -513,15 +522,10 @@
 											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
-
-										<span>
-											<button ng-controller="showPopoverCtrl" popover-html="showInfo({{2016101111111}})"
-													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">
-												标签
-											</button>
-											<!--<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>-->
+										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0">&nbsp;&nbsp;
+											<button ng-controller="showPopoverCtrl" popover-html="showTagInfo({{productInfo.freeTags}},showInfo)"
+													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
 										</span>
-
 										<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>
 								</tr>

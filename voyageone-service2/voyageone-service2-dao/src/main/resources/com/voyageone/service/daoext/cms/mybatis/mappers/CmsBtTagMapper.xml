@@ -205,9 +205,12 @@
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
         where
-              parent_tag_id = #{parentTagId}
-          and tag_name = #{tagName}
-          and channel_id = #{channelId}
+            parent_tag_id = #{parentTagId}
+            <if test="tagName != null">
+                and tag_name = #{tagName}
+            </if>
+            and channel_id = #{channelId}
+            and tag.active = 1
     </select>
 
     <!-- Tag信息检索 （根据父tag_id，取得对应子TagList）-->
@@ -298,4 +301,29 @@
         where tag.parent_tag_id = #{parentTagId}
         and tag.tag_type = #{tagType}
     </select>
+
+    <!-- 检索同级别的其它Tag信息 -->
+    <select id="select_list_by_same_lvl" resultMap="TagMap">
+        select
+        tag.id,
+        tag.tag_name,
+        tag.channel_id,
+        tag.tag_path,
+        tag.tag_path_name,
+        tag.tag_type,
+        tag.tag_status,
+        tag.sort_order,
+        tag.parent_tag_id,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where
+        parent_tag_id = #{parentTagId}
+        and channel_id = #{channelId}
+        and id != #{tagId}
+        and tag.active = 1
+    </select>
+
 </mapper>

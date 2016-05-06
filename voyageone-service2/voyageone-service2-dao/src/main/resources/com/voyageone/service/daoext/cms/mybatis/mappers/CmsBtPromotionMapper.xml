@@ -102,6 +102,11 @@
             or a.channel_id = #{orgChannelId}
         </if>
         )
+        and (c.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or c.channel_id = #{orgChannelId}
+        </if>
+        )
         <if test="promotionId != null and promotionId != ''">
             and a.id = #{promotionId}
         </if>

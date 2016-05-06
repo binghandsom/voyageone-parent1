@@ -8,7 +8,7 @@
 package com.voyageone.service.dao.cms;
 
 
-import com.voyageone.service.model.cms.CmsMtImageCreateImport;
+import com.voyageone.service.model.cms.CmsMtImageCreateImportModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,15 +16,15 @@ import java.util.Map;
 
 @Repository
 public interface CmsMtImageCreateImportDao {
-    List<CmsMtImageCreateImport> selectList(Map<String, Object> map);
+    List<CmsMtImageCreateImportModel> selectList(Map<String, Object> map);
 
-    CmsMtImageCreateImport selectOne(Map<String, Object> map);
+    CmsMtImageCreateImportModel selectOne(Map<String, Object> map);
 
-    CmsMtImageCreateImport select(Integer id);
+    CmsMtImageCreateImportModel select(Integer id);
 
-    int insert(CmsMtImageCreateImport record);
+    int insert(CmsMtImageCreateImportModel record);
 
-    int update(CmsMtImageCreateImport record);
+    int update(CmsMtImageCreateImportModel record);
 
     int delete(Integer id);
 }
