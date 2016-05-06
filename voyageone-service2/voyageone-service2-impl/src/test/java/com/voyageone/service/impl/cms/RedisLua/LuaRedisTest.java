@@ -26,15 +26,14 @@ public class LuaRedisTest {
     // 测试Lua脚本
 
 
+    @Test
+    public void testHash() {
+        imagePathCache.set(123, "8888888888888");
+    }
 
-@Test
-public  void  testHash()
-{
-    imagePathCache.set(123,"8888888888888");
-}
     @Test
     public void test72() {
-        StringRedisTemplate stringRedisTemplate=new StringRedisTemplate();
+        StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
         DefaultRedisScript<Boolean> script = new DefaultRedisScript<Boolean>();
         /**
          * isexistskey.lua内容如下：
@@ -48,7 +47,7 @@ public  void  testHash()
 
         System.out.println("script:" + script.getScriptAsString());
         Boolean isExist = stringRedisTemplate.execute(script,
-                Collections.singletonList("k2"), new Object[] {});
+                Collections.singletonList("k2"), new Object[]{});
         Assert.assertTrue(isExist);
     }
 }

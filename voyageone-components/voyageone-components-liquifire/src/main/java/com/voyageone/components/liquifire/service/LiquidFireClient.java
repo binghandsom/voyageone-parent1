@@ -3,6 +3,8 @@ package com.voyageone.components.liquifire.service;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -16,6 +18,8 @@ import java.net.URL;
  * Created by dell on 2016/4/21.
  */
 public class LiquidFireClient {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     //LiquidFire url  "http://voyageone.ma.liquifire.com/voyageone"
     private String url;
 
@@ -70,11 +74,11 @@ public class LiquidFireClient {
 
     public String getImage(String param, String fileName, String proxyIP, String proxyPort) throws Exception {
         String outFileFullName = this.getSavePath() + "/" + fileName + ".jpg";
-        System.out.println(fileName+":  "+this.getUrl() + "?"+param);
+        logger.debug(fileName + ":  " + this.getUrl() + "?" + param);
         param = param.replace("\r\n", "");
         param = param.replace("\n", "");
         String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
-        System.out.println(fileName+"encode:  "+this.getUrl() + "?"+urlParameter);
+        logger.debug(fileName + "encode:  " + this.getUrl() + "?" + urlParameter);
         download(this.getUrl() + "?" + urlParameter, outFileFullName, proxyIP, proxyPort);
         return outFileFullName;
     }
@@ -103,7 +107,7 @@ public class LiquidFireClient {
             String lfError= conn.getHeaderField("LF-Error");
             if(!StringUtils.isEmpty(lfError))
             {
-                System.out.println("LF-Error"+lfError);
+                logger.error("LF-Error"+lfError);
                 throw new OpenApiException(ImageErrorEnum.LiquidCreateImageExceptionImage);
             }
             // 1K的数据缓冲

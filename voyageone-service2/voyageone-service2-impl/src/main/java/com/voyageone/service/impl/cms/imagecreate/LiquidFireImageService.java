@@ -24,7 +24,7 @@ public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
 
-    @Retryable(maxAttempts = 3 )
+    @Retryable(maxAttempts = 3)
     public void createImage(CmsMtImageCreateFileModel modelFile, CmsMtImageCreateTemplateModel modelTemplate) throws Exception {
         try {
             String filePath = createImage(modelTemplate.getContent(), modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
@@ -33,12 +33,9 @@ public class LiquidFireImageService extends BaseService {
             //清楚报错信息
             modelFile.setErrorCode(0);
             modelFile.setErrorMsg("");
-        }
-        catch (OpenApiException ex)
-        {
-            throw  ex;
-        }
-        catch (Exception ex) {
+        } catch (OpenApiException ex) {
+            throw ex;
+        } catch (Exception ex) {
             throw new OpenApiException(ImageErrorEnum.LiquidCreateImageError, ex);
         }
     }
@@ -71,10 +68,8 @@ public class LiquidFireImageService extends BaseService {
     //调用Liquid接口创建图片
     private String createImage(String templateContent, String vparam, String fileName) throws Exception {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
-       // String[] vparamList = vparam.split(",");
-        String[] list= JacksonUtil.ToObjectFromJson(vparam,String [].class);
-        for (int i=0;i<list.length;i++)
-        {
+        String[] list = JacksonUtil.ToObjectFromJson(vparam, String[].class);
+        for (int i = 0; i < list.length; i++) {
             list[i] = list[i].replace("&", "＆");
         }
         String source = String.format(templateContent, list);

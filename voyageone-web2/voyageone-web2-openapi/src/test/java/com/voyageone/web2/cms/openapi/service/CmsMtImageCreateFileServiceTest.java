@@ -29,6 +29,7 @@ import java.util.*;
 public class CmsMtImageCreateFileServiceTest {
     @Autowired
     CmsImageFileService service;
+
     @Test
     public void test() throws Exception {
         // String url = "http://image.voyageone.net/product/getImage?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
@@ -37,9 +38,10 @@ public class CmsMtImageCreateFileServiceTest {
         String file = "nike-air-penny-ii-333886005-1";//"test-test-1";//
         String vparam = "[\"file:bcbg/bcbg-sku.png\",\"file:bcbg/bcbgtupian.jpg\",\"Text String to be rendered\"]";
         String queryString = "cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
-        GetImageResultBean  result= service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
 
     }
+
     ////http://localhost:8081/rest/product/image/get?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=["file:bcbg/bcbg-sku.png","file:bcbg/bcbgtupian.jpg","Text String to be rendered"]
     @Test
     public void testAddList() {
@@ -54,6 +56,7 @@ public class CmsMtImageCreateFileServiceTest {
         System.out.println("total time:" + (System.currentTimeMillis() - start));
         Assert.isTrue(resultBean.getErrorCode() == 0, resultBean.getErrorCode() + "");
     }
+
     CreateImageParameter getCreateImageParameter(int fileIndex) {
         //http://localhost:8081/rest/product/image/get?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=["file:bcbg/bcbg-sku.png","file:bcbg/bcbgtupian.jpg","Text String to be rendered"]
         String cId = "001";
@@ -70,6 +73,7 @@ public class CmsMtImageCreateFileServiceTest {
         parameter.setTemplateId(templateId);
         return parameter;
     }
+
     @Test
     public void testImportCreateImageInfo() throws Exception {
         String filePath = "/usr/ImageCreateImport/ImageInfo.xls";
@@ -94,8 +98,10 @@ public class CmsMtImageCreateFileServiceTest {
         AddListResultBean resultBean = service.addListWithTrans(parameter);
         Assert.isTrue(resultBean.getErrorCode() == 0, "导入错误");
     }
+
     @Autowired
     CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
+
     @Test
     public void textImportImageTemplate() throws Exception {
         //   CmsMtImageCreateTemplateModel template = new CmsMtImageCreateTemplateModel();
@@ -122,8 +128,9 @@ public class CmsMtImageCreateFileServiceTest {
             model.setModifier("system");
             daoCmsMtImageCreateTemplate.insert(model);
         }
-        String str="source=name[icon],url[%s]&source=name[s],url[%s]&scale=height[1100],width[700]&blank=color[white],height[1200],name[bcc],width[1200]&select=name[bcc]&composite=compose[Over],image[s],x[200],y[100]&composite=compose[Over],image[icon],x[100],y[32]&annotate=fill[red],font[VeraSans-Bold],pointsize[18],text[%s],x[923],y[832]&sink";
+        String str = "source=name[icon],url[%s]&source=name[s],url[%s]&scale=height[1100],width[700]&blank=color[white],height[1200],name[bcc],width[1200]&select=name[bcc]&composite=compose[Over],image[s],x[200],y[100]&composite=compose[Over],image[icon],x[100],y[32]&annotate=fill[red],font[VeraSans-Bold],pointsize[18],text[%s],x[923],y[832]&sink";
     }
+
     @Test
     public void testAllTemplate() throws Exception {
         Map<String, Object> map = new HashMap<>();
@@ -132,8 +139,9 @@ public class CmsMtImageCreateFileServiceTest {
             testTemplate(model.getId());
         }
     }
+
     @Test
-    public  void testTemplateOne() throws Exception {
+    public void testTemplateOne() throws Exception {
         //36  &问题  champion_700x700_tg_pc_info
         //35
         //34 编码后%OA
@@ -150,8 +158,9 @@ public class CmsMtImageCreateFileServiceTest {
         testTemplate(34);
         testTemplate(34);
     }
-    public  void  testTemplate(int templateId) throws Exception {
-        System.out.println("templateId:"+templateId);
+
+    public void testTemplate(int templateId) throws Exception {
+        System.out.println("templateId:" + templateId);
         /*
         source=url[ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com/007/%s],name[tupian]
 blank=color[#1c2127],name[color1],height[30],width[250]
@@ -161,26 +170,22 @@ composite=compose[Over],image[tupian],x[25],y[15]
 composite=compose[Over],image[color1],x[250],y[715]
 sink=format[jpg],quality[100]
          */
-       String prefix= "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";
-        CmsMtImageCreateTemplateModel model= daoCmsMtImageCreateTemplate.select(templateId);
-       String content= model.getContent();
-      String[] strList= content.split("%s");
-        String[] paramList=new String[strList.length-1];
-        for (int i=0;i<strList.length-1;i++)
-        {
-                 if(strList[i].indexOf(prefix)>0)
-                 {
-                     paramList[i]="test1.png";
-                 }
-                 else
-                 {
-                     paramList[i]="test中国&"+i;
-                 }
+        String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";
+        CmsMtImageCreateTemplateModel model = daoCmsMtImageCreateTemplate.select(templateId);
+        String content = model.getContent();
+        String[] strList = content.split("%s");
+        String[] paramList = new String[strList.length - 1];
+        for (int i = 0; i < strList.length - 1; i++) {
+            if (strList[i].indexOf(prefix) > 0) {
+                paramList[i] = "test1.png";
+            } else {
+                paramList[i] = "test中国&" + i;
+            }
         }
         String cId = model.getChannelId();
         //int templateId = 15;
-        String file = "nike-air-penny-ii-333886005-1"+System.currentTimeMillis()+"templateId:"+templateId;//"test-test-1";//
-        String vparam =  JacksonUtil.bean2Json(paramList);
-         GetImageResultBean  result= service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        String file = "nike-air-penny-ii-333886005-1" + System.currentTimeMillis() + "templateId:" + templateId;//"test-test-1";//
+        String vparam = JacksonUtil.bean2Json(paramList);
+        GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
     }
 }
