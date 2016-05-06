@@ -88,9 +88,27 @@ public class CmsImageGroupService extends BaseAppService {
         model.setImageGroupName((String)param.get("imageGroupName"));
         model.setImageType(Integer.parseInt((String)param.get("imageType")));
         model.setViewType(Integer.parseInt((String)param.get("viewType")));
-        model.setBrandName((List)param.get("brandName"));
-        model.setProductType((List)param.get("productType"));
-        model.setSizeType((List)param.get("sizeType"));
+        if ((param.get("brandName")) instanceof String) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            model.setBrandName(lst);
+        } else {
+            model.setBrandName((List) param.get("brandName"));
+        }
+        if ((param.get("productType")) instanceof String) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            model.setProductType(lst);
+        } else {
+            model.setProductType((List) param.get("productType"));
+        }
+        if ((param.get("sizeType")) instanceof String) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            model.setSizeType(lst);
+        } else {
+            model.setSizeType((List) param.get("sizeType"));
+        }
         model.setActive(0);
         imageGroupService.save(model);
     }

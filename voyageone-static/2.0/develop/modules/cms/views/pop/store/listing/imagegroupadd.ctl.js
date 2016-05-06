@@ -7,7 +7,9 @@ define([
 ], function (cms) {
     cms.controller('popImageGroupAddCtl', (function () {
 
-        function PopImageGroupAddCtl(data, imageGroupService, confirm, alert, notify, $uibModalInstance) {
+        function PopImageGroupAddCtl(data, imageGroupService, alert, notify, $uibModalInstance) {
+            this.alert = alert;
+            this.notify = notify;
             this.parent = data;
             this.imageGroupService = imageGroupService;
             this.platformList = data.platformList;

@@ -15,7 +15,7 @@ import java.util.Date;
 /**
  * JMBTProductImportTask||商品导入任务
  */
-public class CmsMtImageCreateImportModel extends BaseModel {
+public class CmsMtImageCreateImport extends BaseModel {
     /**
      * 生成图片任务id
      */
