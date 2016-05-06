@@ -12,6 +12,7 @@ public class CmsBtImageGroupBean extends CmsBtImageGroupModel {
 
     private String viewTypeName;
     private String imageTypeName;
+    private String cartName;
 
     public String getViewTypeName() {
         return viewTypeName;
@@ -27,5 +28,13 @@ public class CmsBtImageGroupBean extends CmsBtImageGroupModel {
 
     public void setImageTypeName(String imageTypeName) {
         this.imageTypeName = imageTypeName;
+    }
+
+    public String getCartName() {
+        return cartName;
+    }
+
+    public void setCartName(String cartName) {
+        this.cartName = cartName;
     }
 }

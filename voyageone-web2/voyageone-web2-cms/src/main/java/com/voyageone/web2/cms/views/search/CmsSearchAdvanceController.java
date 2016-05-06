@@ -77,6 +77,7 @@ public class CmsSearchAdvanceController extends CmsController {
         List[] infoArr = searchIndexService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
         resultBean.put("prodOrgChaNameList", infoArr[1]);
+        resultBean.put("freeTagsList", infoArr[2]);
 
         // 获取group列表
         List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession);
@@ -98,7 +99,6 @@ public class CmsSearchAdvanceController extends CmsController {
         resultBean.put("grpProdChgInfoList", infoArr[0]);
         // 获取该组商品的prodId
         resultBean.put("grpProdIdList", infoArr[2]);
-
 
         // 获取该用户自定义显示列设置
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
@@ -176,6 +176,7 @@ public class CmsSearchAdvanceController extends CmsController {
         List[] infoArr = searchIndexService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
         resultBean.put("prodOrgChaNameList", infoArr[1]);
+        resultBean.put("freeTagsList", infoArr[2]);
 
         // 返回用户信息
         return success(resultBean);

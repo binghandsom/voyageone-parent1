@@ -322,6 +322,8 @@ define(function(){
         "TXT_PRODUCT_UPRIGHT_MODEL": "商品竖图模板",
         "TXT_SPECIAL_NOTE": "特殊说明",
         "TXT_ACTIVITY_IMAGE_SETTING": "聚美共通图片设定",
+        "TXT_SIZE_CHART_IMAGE": "尺码图",
+        "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
 
 
