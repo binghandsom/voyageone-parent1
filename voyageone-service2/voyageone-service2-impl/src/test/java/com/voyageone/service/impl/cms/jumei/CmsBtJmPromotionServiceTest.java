@@ -50,7 +50,7 @@ public class CmsBtJmPromotionServiceTest {
 
 
 //    @Resource
-//    CmsBtTagDao dao;
+//    CmsBtTagDao cmsBtJmPromotionImportTaskDao;
 //
 //    @Test
 //    public void testInsert() throws Exception {
@@ -63,7 +63,7 @@ public class CmsBtJmPromotionServiceTest {
 //        tag.setTagType(1);
 //        tag.setModifier("zhao");
 //        tag.setCreater("zhao");
-//        dao.insertCmsBtTag(tag);
+//        cmsBtJmPromotionImportTaskDao.insertCmsBtTag(tag);
 //
 //    }
 
