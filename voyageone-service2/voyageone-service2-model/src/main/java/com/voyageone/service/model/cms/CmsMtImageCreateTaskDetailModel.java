@@ -9,7 +9,6 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-
 import java.util.Date;
 
 /**
