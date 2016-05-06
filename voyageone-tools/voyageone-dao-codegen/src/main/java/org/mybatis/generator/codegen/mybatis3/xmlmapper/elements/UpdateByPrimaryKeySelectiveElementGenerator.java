@@ -79,6 +79,24 @@ public class UpdateByPrimaryKeySelectiveElementGenerator extends
             sb.append(',');
 
             isNotNullElement.addElement(new TextElement(sb.toString()));
+
+            if (introspectedColumn.getJavaProperty().equals("modified")) {
+                XmlElement isNullElement = new XmlElement("if"); //$NON-NLS-1$
+                sb.setLength(0);
+                sb.append(introspectedColumn.getJavaProperty());
+                sb.append(" == null"); //$NON-NLS-1$
+                isNullElement.addAttribute(new Attribute("test", sb.toString())); //$NON-NLS-1$
+                dynamicElement.addElement(isNullElement);
+
+                sb.setLength(0);
+                sb.append(MyBatis3FormattingUtilities
+                        .getEscapedColumnName(introspectedColumn));
+                sb.append(" = "); //$NON-NLS-1$
+                sb.append("now()");
+                sb.append(',');
+
+                isNullElement.addElement(new TextElement(sb.toString()));
+            }
         }
 
         boolean and = false;

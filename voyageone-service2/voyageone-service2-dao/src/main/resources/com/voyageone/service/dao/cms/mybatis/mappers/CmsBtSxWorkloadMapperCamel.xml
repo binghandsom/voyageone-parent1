@@ -1,130 +1,184 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.daoext.CmsBtSxWorkloadDaoExt">
-    <resultMap id="ResultMap" type="CmsBtSxWorkloadModel">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtSxWorkloadDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtSxWorkloadModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `group_id`, `publish_status`, `cart_id`, `creater`, `created`, 
+        `modifier`, `modified`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
-        select `id`,`channel_id`,`group_id`,`publish_status`,`cart_id`,`creater`,`created`,`modifier`,`modified` from
-        cms_bt_sx_workload
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-            <if test="groupId != null">
-                AND `group_id` = #{groupId}
-            </if>
-            <if test="publishStatus != null">
-                AND `publish_status` = #{publishStatus}
-            </if>
-            <if test="cartId != null">
-                AND `cart_id` = #{cartId}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select `id`,`channel_id`,`group_id`,`publish_status`,`cart_id`,`creater`,`created`,`modifier`,`modified` from
-        cms_bt_sx_workload
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-
-            <if test="groupId != null">
-                AND `group_id` = #{groupId}
-            </if>
-
-            <if test="publishStatus != null">
-                AND `publish_status` = #{publishStatus}
-            </if>
-
-            <if test="cartId != null">
-                AND `cart_id` = #{cartId}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`group_id`,`publish_status`,`cart_id`,`creater`,`created`,`modifier`,`modified` from cms_bt_sx_workload where id=#{id}
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_sx_workload
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel" >
+        insert into cms_bt_sx_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                `id`,
+            </if>
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="groupId != null" >
+                `group_id`,
+            </if>
+            <if test="publishStatus != null" >
+                `publish_status`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            `modified`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null" >
+                #{groupId,jdbcType=INTEGER},
+            </if>
+            <if test="publishStatus != null" >
+                #{publishStatus,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel" >
         update cms_bt_sx_workload
-        set
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null" >
+                `group_id` = #{groupId,jdbcType=INTEGER},
+            </if>
+            <if test="publishStatus != null" >
+                `publish_status` = #{publishStatus,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `channel_id`=#{channelId}
-            ,`group_id`=#{groupId}
-            ,`publish_status`=#{publishStatus}
-            ,`cart_id`=#{cartId}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_sx_workload
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_sx_workload
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_sx_workload
-        (
-              `channel_id`,
-              `group_id`,
-              `publish_status`,
-              `cart_id`,
-              `creater`,
-              `created`,
-              `modifier`,
-              `modified`
-        )
-        VALUES(
-              #{channelId},
-              #{groupId},
-              #{publishStatus},
-              #{cartId},
-              #{creater},
-              #{created},
-              #{modifier},
-              #{modified}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_sx_workload
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=INTEGER}
+            </if>
+            <if test="publishStatus != null" >
+                and `publish_status` = #{publishStatus,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_sx_workload
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=INTEGER}
+            </if>
+            <if test="publishStatus != null" >
+                and `publish_status` = #{publishStatus,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
 </mapper>

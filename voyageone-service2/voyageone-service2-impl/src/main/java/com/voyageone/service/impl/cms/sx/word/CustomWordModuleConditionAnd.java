@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.sx.word;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +29,7 @@ public class CustomWordModuleConditionAnd extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamConditionAnd customModuleUserParamConditionAnd = ((CustomWordValueConditionAnd) customWord.getValue()).getUserParam();
 

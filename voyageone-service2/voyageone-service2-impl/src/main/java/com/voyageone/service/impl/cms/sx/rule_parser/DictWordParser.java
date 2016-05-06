@@ -13,10 +13,12 @@ import java.util.Set;
  */
 public class DictWordParser {
      private String order_channel_id;
+     private int cart_id;
      private DictValueFactory dictValueFactory;
 
-     public DictWordParser(SxProductService sxProductService, String order_channel_id) {
+     public DictWordParser(SxProductService sxProductService, String order_channel_id, int cart_id) {
           this.order_channel_id = order_channel_id;
+          this.cart_id = cart_id;
           dictValueFactory = new DictValueFactory(sxProductService);
      }
 
@@ -29,7 +31,7 @@ public class DictWordParser {
           else
           {
                DictWord dictWord = (DictWord) ruleWord;
-               Set<DictWord> dictWords = dictValueFactory.getDictWords(order_channel_id);
+               Set<DictWord> dictWords = dictValueFactory.getDictWords(order_channel_id, cart_id);
                RuleExpression ruleExpression = null;
                if (dictWords != null)
                {
@@ -61,7 +63,7 @@ public class DictWordParser {
           else
           {
                DictWord dictWord = (DictWord) ruleWord;
-               Set<DictWord> dictWords = dictValueFactory.getDictWords(order_channel_id);
+               Set<DictWord> dictWords = dictValueFactory.getDictWords(order_channel_id, cart_id);
                if (dictWords != null)
                {
                     for (DictWord iterDictWord : dictWords)
@@ -83,4 +85,12 @@ public class DictWordParser {
      public void setOrder_channel_id(String order_channel_id) {
           this.order_channel_id = order_channel_id;
      }
+
+    public int getCart_id() {
+        return cart_id;
+    }
+
+    public void setCart_id(int cart_id) {
+        this.cart_id = cart_id;
+    }
 }

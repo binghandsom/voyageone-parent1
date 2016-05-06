@@ -10,7 +10,6 @@ import com.voyageone.ims.rule_expression.TextWord;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,9 +35,9 @@ public class ExpressionParser extends VOAbsLoggable {
     public ExpressionParser(SxProductService sxProductService, SxData sxData) {
         this.sxProductService = sxProductService;
         this.sxData = sxData;
-        this.dictWordParser = new DictWordParser(sxProductService, sxData.getChannelId());
+        this.dictWordParser = new DictWordParser(sxProductService, sxData.getChannelId(), sxData.getCartId());
         this.textWordParser = new TextWordParser();
-        this.customWordParser = new CustomWordParser(this, sxData);
+        this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
         this.masterWordParser = new MasterWordParser(sxData.getMainProduct());
         this.feedCnWordParser = new FeedCnWordParser(sxData.getMainProduct());

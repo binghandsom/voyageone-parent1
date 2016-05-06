@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,10 +64,10 @@ public class CmsMtCommonPropDaoTest {
         cmsMtCommonPropModel.setDefult("1");
         cmsMtCommonPropModel.setIsComm(1);
         cmsMtCommonPropModel.setIsCode(1);
-        cmsMtCommonPropModel.setModified(new Date());
+//        cmsMtCommonPropModel.setModified(new Date());
         cmsMtCommonPropModel.setModifier("test");
         cmsMtCommonPropModel.setCreater("test");
-        cmsMtCommonPropModel.setCreated(new Date());
+//        cmsMtCommonPropModel.setCreated(new Date());
         System.out.println(cmsMtCommonPropDao.insert(cmsMtCommonPropModel));
 
 
@@ -77,16 +76,16 @@ public class CmsMtCommonPropDaoTest {
     @Test
     public void testUpdate() throws Exception {
         CmsMtCommonPropModel cmsMtCommonPropModel = new CmsMtCommonPropModel();
-        cmsMtCommonPropModel.setId(65);
+        cmsMtCommonPropModel.setId(69);
         cmsMtCommonPropModel.setCreater("test-----");
-        cmsMtCommonPropModel.setCreated(new Date());
+//        cmsMtCommonPropModel.setCreated(new Date());
         System.out.println(cmsMtCommonPropDao.update(cmsMtCommonPropModel));
 
     }
 
     @Test
     public void testDelete() throws Exception {
-        cmsMtCommonPropDao.delete(65);
+        cmsMtCommonPropDao.delete(66);
 
     }
 }
