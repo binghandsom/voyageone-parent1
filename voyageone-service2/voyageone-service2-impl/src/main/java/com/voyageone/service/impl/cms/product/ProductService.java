@@ -613,7 +613,7 @@ public class ProductService extends BaseService {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("updFeedInfoCount", updateFeedInfoCount);
         if (result != null) {
-            resultMap.put("updProductCount", result.getModifiedCount());
+            resultMap.put("upodProductCount", result.getModifiedCount());
             resultMap.put("modifiedCount", result.getModifiedCount() + updateFeedInfoCount);
         } else {
             resultMap.put("updProductCount", 0);
@@ -771,8 +771,8 @@ public class ProductService extends BaseService {
             sbQuery.append(",");
         }
 
-        if (!StringUtils.isEmpty(cartId)) {
-            sbQuery.append(MongoUtils.splicingValue("fields.productCarts", Integer.valueOf(cartId)));
+        if (!StringUtils.isEmpty(cartId) && !"1".equals(cartId)) {
+            sbQuery.append(MongoUtils.splicingValue("carts.cartId", Integer.valueOf(cartId)));
             sbQuery.append(",");
         }
 

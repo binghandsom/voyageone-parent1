@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
     <resultMap id="imagesMap" type="com.voyageone.service.model.cms.CmsBtImagesModel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
         <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <id column="code" property="code" jdbcType="VARCHAR" />
         <id column="img_name" property="imgName" jdbcType="VARCHAR" />
@@ -15,6 +16,7 @@
 
     <select id="select_cms_bt_images" resultMap="imagesMap" parameterType="com.voyageone.service.model.cms.CmsBtImagesModel" >
         select
+          id,
           channel_id,
           code,
           img_name,
@@ -70,13 +72,13 @@
                 channel_id = #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="code != null">
-                code = #{code}
+                code = #{code},
             </if>
             <if test="updFlg != null">
-                upd_flg = #{updFlg}
+                upd_flg = #{updFlg},
             </if>
             <if test="originalUrl != null">
-                original_url = #{originalUrl}
+                original_url = #{originalUrl,jdbcType=VARCHAR},
             </if>
             <if test="imgName != null">
                 img_name = #{imgName}
