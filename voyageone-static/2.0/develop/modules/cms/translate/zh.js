@@ -322,6 +322,7 @@ define(function(){
         "TXT_PRODUCT_UPRIGHT_MODEL": "商品竖图模板",
         "TXT_SPECIAL_NOTE": "特殊说明",
         "TXT_ACTIVITY_IMAGE_SETTING": "聚美共通图片设定",
+        "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
 
 
         "TXT_CHANNEL_ID": "渠道ID",
@@ -409,6 +410,7 @@ define(function(){
         "TXT_PC_MODULE_ID": "PC端模块ID",
         "TXT_APP_MODULE_ID": "APP端模块ID",
         "TXT_PROMOTION_DISCOUNT": "是否有活动折扣",
+        "TXT_IMAGE_TYPE":"图片类型",
 
 
         "BTN_CREATE_TASK": "新建任务",

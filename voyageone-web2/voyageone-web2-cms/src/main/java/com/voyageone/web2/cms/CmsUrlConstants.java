@@ -435,7 +435,7 @@ interface CmsBtJmPromotionImportTask{
             String ROOT = "/cms/pop/add_to_promotion/";
 
             String GET_PROM_TAGS = "getPromotionTags";
-
+            String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 
@@ -550,6 +550,23 @@ interface CmsBtJmPromotionImportTask{
             String SAVE_CHANNEL_TAG = "saveTag";
             String DEL_CHANNEL_TAG = "delTag";
             String GET_TAG_LIST = "getTagList";
+        }
+        interface CHANNEL_IMAGE_GROUP {
+            String ROOT="/cms/channel/image_group";
+            String INIT_CHANNEL_IMAGE_GROUP = "init";
+            String SEARCH_CHANNEL_IMAGE_GROUP = "search";
+            String SAVE_CHANNEL_IMAGE_GROUP = "save";
+            String DELETE_CHANNEL_IMAGE_GROUP = "delete";
+        }
+        interface LISTING{
+            interface SIZE_CHART{
+                String ROOT="/cms/channel/sizeChartList";
+                String INIT_SIZE_CHART = "sizeChartInit";
+                String DELETE_SIZE_CHART="sizeChartDelete";
+                String SEARCH_SIZE_CHART = "sizeChartSearch";
+                String EDIT_SIZE_CHART="sizeChartEdit";
+                String DETAIL_SIZE_CHART="sizeChartDetail";
+            }
         }
     }
 

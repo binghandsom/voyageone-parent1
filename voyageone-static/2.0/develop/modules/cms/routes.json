@@ -171,7 +171,7 @@
     "controllerUrl": "modules/cms/views/channel/sizechart/index.ctl"
   },
   "channel_listing_sizechart_detail": {
-    "hash": "/channel/sizechart/detail",
+    "hash": "/channel/sizechart/detail/:sizeChart",
     "templateUrl": "views/channel/sizechart/detail.tpl.html",
     "controllerUrl": "modules/cms/views/channel/sizechart/detail.ctl"
   },
@@ -181,14 +181,18 @@
     "controllerUrl": "modules/cms/views/channel/imagetemplatelist/index.ctl"
   },
   "channel_imagegroup_list": {
-    "hash": "/channel/imagegrouplist",
+    "url": "/channel/imagegrouplist/",
+    "hash": "/channel/imagegrouplist/",
     "templateUrl": "views/channel/imagegrouplist/index.tpl.html",
-    "controllerUrl": "modules/cms/views/channel/imagegrouplist/index.ctl"
+    "controllerUrl": "modules/cms/views/channel/imagegrouplist/index.ctl",
+    "controller": "imageGroupController as ctrl"
   },
   "channel_listing_imagegrouplist_detail": {
-    "hash": "/channel/imagegrouplist/detail",
+    "url": "/channel/imagegrouplist/detail/",
+    "hash": "/channel/imagegrouplist/detail/:imageGroupId",
     "templateUrl": "views/channel/imagegrouplist/detail.tpl.html",
-    "controllerUrl": "modules/cms/views/channel/imagegrouplist/detail.ctl"
+    "controllerUrl": "modules/cms/views/channel/imagegrouplist/detail.ctl",
+    "controller": "imageGroupDetailController as ctrl"
   },
   "translation_index": {
     "hash": "/translation/index",

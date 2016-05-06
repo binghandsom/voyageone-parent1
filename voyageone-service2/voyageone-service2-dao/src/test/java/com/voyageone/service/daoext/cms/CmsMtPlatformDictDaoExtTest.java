@@ -1,6 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,12 @@ public class CmsMtPlatformDictDaoExtTest {
     @Test
     public void testSelectById() throws Exception {
 
-        CmsMtPlatFormDictModel cmsMtPlatFormDictModel = new CmsMtPlatFormDictModel();
+        CmsMtPlatformDictModel cmsMtPlatformDictModel = new CmsMtPlatformDictModel();
 
-        cmsMtPlatFormDictModel.setOrderChannelId("11");
+        cmsMtPlatformDictModel.setOrderChannelId("11");
 
 
-        cmsMtPlatformDictDaoExt.selectById(cmsMtPlatFormDictModel);
+        cmsMtPlatformDictDaoExt.selectById(cmsMtPlatformDictModel);
 
     }
 }

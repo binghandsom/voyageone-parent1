@@ -6,7 +6,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.daoext.cms.CmsMtPlatformDictDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +28,11 @@ public class DictService extends BaseService {
     /**
      * 获取渠道所有字典的简单信息
      */
-    public CmsMtPlatFormDictModel getDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return cmsMtPlatformDictDaoExt.selectById(cmsMtPlatFormDictModel);
+    public CmsMtPlatformDictModel getDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        return cmsMtPlatformDictDaoExt.selectById(cmsMtPlatformDictModel);
     }
 
-    public List<CmsMtPlatFormDictModel> getModesByChannel(CmsDictionaryIndexBean params) {
+    public List<CmsMtPlatformDictModel> getModesByChannel(CmsDictionaryIndexBean params) {
         return cmsMtPlatformDictDaoExt.selectByChannel(params);
     }
 
@@ -47,24 +47,24 @@ public class DictService extends BaseService {
         return resultInfo;
     }
 
-    public List<CmsMtPlatFormDictModel> getModesByChannelCartId(String order_channel_id, int cartId) {
+    public List<CmsMtPlatformDictModel> getModesByChannelCartId(String order_channel_id, int cartId) {
         return cmsMtPlatformDictDaoExt.selectByChannelCartId(order_channel_id, cartId);
     }
 
     /**
      * 检测现有数据是否符合
-     * @param cmsMtPlatFormDictModel CmsMtDictModel
+     * @param cmsMtPlatformDictModel CmsMtDictModel
      */
-    private void checkDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel, boolean isNameCheck) {
+    private void checkDict(CmsMtPlatformDictModel cmsMtPlatformDictModel, boolean isNameCheck) {
 
-        if (StringUtils.isEmpty(cmsMtPlatFormDictModel.getName()))
+        if (StringUtils.isEmpty(cmsMtPlatformDictModel.getName()))
             throw new BusinessException("字典名称不存在!");
 
-        if (StringUtils.isEmpty(cmsMtPlatFormDictModel.getValue()))
+        if (StringUtils.isEmpty(cmsMtPlatformDictModel.getValue()))
             throw new BusinessException("字典定义内容不存在!");
 
         if (isNameCheck) {
-            if (cmsMtPlatformDictDaoExt.selectByName(cmsMtPlatFormDictModel).size() > 1) {
+            if (cmsMtPlatformDictDaoExt.selectByName(cmsMtPlatformDictModel).size() > 1) {
                 throw new BusinessException("该字典名称已经存在,请重新设定字典名称!");
             }
         }
@@ -74,34 +74,34 @@ public class DictService extends BaseService {
      * 添加一个字典项
      */
     @VOTransactional
-    public int addDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
+    public int addDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
         // 检测新字典项数据
-        checkDict(cmsMtPlatFormDictModel, true);
-        return cmsMtPlatformDictDaoExt.insertDict(cmsMtPlatFormDictModel);
+        checkDict(cmsMtPlatformDictModel, true);
+        return cmsMtPlatformDictDaoExt.insertDict(cmsMtPlatformDictModel);
     }
 
     /**
      * 删除一个字典项
      */
     @VOTransactional
-    public int removeDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
+    public int removeDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
 //        cmsMtPlatformDictDaoExt.insertDictLog(cmsMtPlatFormDictModel);
-        return cmsMtPlatformDictDaoExt.deleteDict(cmsMtPlatFormDictModel);
+        return cmsMtPlatformDictDaoExt.deleteDict(cmsMtPlatformDictModel);
     }
 
     /**
      * 更新一个字典项
      */
     @VOTransactional
-    public int saveDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        checkDict(cmsMtPlatFormDictModel, false);
+    public int saveDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        checkDict(cmsMtPlatformDictModel, false);
 
-        CmsMtPlatFormDictModel oldCmsMtPlatFormDictModel = getDict(cmsMtPlatFormDictModel);
-        if (!oldCmsMtPlatFormDictModel.getModified().equals(cmsMtPlatFormDictModel.getModified())) {
+        CmsMtPlatformDictModel oldCmsMtPlatformDictModel = getDict(cmsMtPlatformDictModel);
+        if (!oldCmsMtPlatformDictModel.getModified().equals(cmsMtPlatformDictModel.getModified())) {
             throw new BusinessException("该条数据已经被其他人更新过了,请确认!");
         }
 
 //        cmsMtPlatformDictDaoExt.insertDictLog(oldCmsMtPlatFormDictModel);
-        return cmsMtPlatformDictDaoExt.updateDict(cmsMtPlatFormDictModel);
+        return cmsMtPlatformDictDaoExt.updateDict(cmsMtPlatformDictModel);
     }
 }

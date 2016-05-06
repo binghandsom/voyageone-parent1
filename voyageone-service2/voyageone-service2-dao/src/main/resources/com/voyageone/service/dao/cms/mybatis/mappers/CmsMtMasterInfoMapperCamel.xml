@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtMasterInfoDao">
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtMasterInfoModel"/>
+    <sql id="Base_Column_List">
+        `id`, `platform_id`, `channel_id`, `brand_name`, `product_type`, `size_type`, `data_type`, 
+        `image_index`, `value1`, `value2`, `syn_flg`, `error_message`, `created`, `creater`, 
+        `modified`, `modifier`, `active`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_master_info
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtMasterInfoModel">
+        insert into cms_mt_master_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                `id`,
+            </if>
+            <if test="platformId != null">
+                `platform_id`,
+            </if>
+            <if test="channelId != null">
+                `channel_id`,
+            </if>
+            <if test="brandName != null">
+                `brand_name`,
+            </if>
+            <if test="productType != null">
+                `product_type`,
+            </if>
+            <if test="sizeType != null">
+                `size_type`,
+            </if>
+            <if test="dataType != null">
+                `data_type`,
+            </if>
+            <if test="imageIndex != null">
+                `image_index`,
+            </if>
+            <if test="value1 != null">
+                `value1`,
+            </if>
+            <if test="value2 != null">
+                `value2`,
+            </if>
+            <if test="synFlg != null">
+                `syn_flg`,
+            </if>
+            <if test="errorMessage != null">
+                `error_message`,
+            </if>
+            `created`,
+            <if test="creater != null">
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null">
+                `modifier`,
+            </if>
+            <if test="active != null">
+                `active`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="platformId != null">
+                #{platformId,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null">
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null">
+                #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null">
+                #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="sizeType != null">
+                #{sizeType,jdbcType=VARCHAR},
+            </if>
+            <if test="dataType != null">
+                #{dataType,jdbcType=INTEGER},
+            </if>
+            <if test="imageIndex != null">
+                #{imageIndex,jdbcType=INTEGER},
+            </if>
+            <if test="value1 != null">
+                #{value1,jdbcType=VARCHAR},
+            </if>
+            <if test="value2 != null">
+                #{value2,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null">
+                #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errorMessage != null">
+                #{errorMessage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created == null">
+                now(),
+            </if>
+            <if test="created != null">
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null">
+                now(),
+            </if>
+            <if test="modified != null">
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null">
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null">
+                #{active,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtMasterInfoModel">
+        update cms_mt_master_info
+        <set>
+            <if test="platformId != null">
+                `platform_id` = #{platformId,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null">
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null">
+                `brand_name` = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null">
+                `product_type` = #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="sizeType != null">
+                `size_type` = #{sizeType,jdbcType=VARCHAR},
+            </if>
+            <if test="dataType != null">
+                `data_type` = #{dataType,jdbcType=INTEGER},
+            </if>
+            <if test="imageIndex != null">
+                `image_index` = #{imageIndex,jdbcType=INTEGER},
+            </if>
+            <if test="value1 != null">
+                `value1` = #{value1,jdbcType=VARCHAR},
+            </if>
+            <if test="value2 != null">
+                `value2` = #{value2,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null">
+                `syn_flg` = #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errorMessage != null">
+                `error_message` = #{errorMessage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created != null">
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null">
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null">
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null">
+                `modified` = now(),
+            </if>
+            <if test="modifier != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null">
+                `active` = #{active,jdbcType=BIT},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from cms_mt_master_info
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_master_info
+        <where>
+            <if test="platformId != null">
+                and `platform_id` = #{platformId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="brandName != null">
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null">
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null">
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="dataType != null">
+                and `data_type` = #{dataType,jdbcType=INTEGER}
+            </if>
+            <if test="imageIndex != null">
+                and `image_index` = #{imageIndex,jdbcType=INTEGER}
+            </if>
+            <if test="value1 != null">
+                and `value1` = #{value1,jdbcType=VARCHAR}
+            </if>
+            <if test="value2 != null">
+                and `value2` = #{value2,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlg != null">
+                and `syn_flg` = #{synFlg,jdbcType=INTEGER}
+            </if>
+            <if test="errorMessage != null">
+                and `error_message` = #{errorMessage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null">
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_master_info
+        <where>
+            <if test="platformId != null">
+                and `platform_id` = #{platformId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="brandName != null">
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null">
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null">
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="dataType != null">
+                and `data_type` = #{dataType,jdbcType=INTEGER}
+            </if>
+            <if test="imageIndex != null">
+                and `image_index` = #{imageIndex,jdbcType=INTEGER}
+            </if>
+            <if test="value1 != null">
+                and `value1` = #{value1,jdbcType=VARCHAR}
+            </if>
+            <if test="value2 != null">
+                and `value2` = #{value2,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlg != null">
+                and `syn_flg` = #{synFlg,jdbcType=INTEGER}
+            </if>
+            <if test="errorMessage != null">
+                and `error_message` = #{errorMessage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null">
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+        </where>
+    </select>
+
+</mapper>

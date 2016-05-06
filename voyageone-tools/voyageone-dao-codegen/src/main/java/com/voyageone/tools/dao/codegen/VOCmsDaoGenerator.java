@@ -16,10 +16,10 @@ public class VOCmsDaoGenerator {
     public static void main(String[] arg) throws Exception {
         List<String> warnings = new ArrayList<String>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
-        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("generatorConfig.xml").toURI());
-
-
-        System.out.println(configurationFile.exists());
+        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("cmsGeneratorConfig.xml").toURI());
+//
+//
+//        System.out.println(configurationFile.exists());
 
         Configuration config = cp.parseConfiguration(configurationFile);
 
