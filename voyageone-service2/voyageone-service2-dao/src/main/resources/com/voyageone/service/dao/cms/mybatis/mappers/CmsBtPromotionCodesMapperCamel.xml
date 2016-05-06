@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionCodesDao">
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionCodesModel"/>
-    <sql id="Base_Column_List">
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionCodesDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionCodesModel" />
+    <sql id="Base_Column_List" >
         `id`, `promotion_id`, `org_channel_id`, `product_id`, `model_id`, `product_model`, 
         `product_code`, `product_name`, `cat_path`, `retail_price`, `sale_price`, `msrp`, 
         `msrpUS`, `tag_id`, `promotion_price`, `num_iid`, `image_url_1`, `image_url_2`, `image_url_3`, 
@@ -10,445 +10,445 @@
         `modifier`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_codes
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionCodesModel">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionCodesModel" >
         insert into cms_bt_promotion_codes
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 `id`,
             </if>
-            <if test="promotionId != null">
+            <if test="promotionId != null" >
                 `promotion_id`,
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 `org_channel_id`,
             </if>
-            <if test="productId != null">
+            <if test="productId != null" >
                 `product_id`,
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 `model_id`,
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 `product_model`,
             </if>
-            <if test="productCode != null">
+            <if test="productCode != null" >
                 `product_code`,
             </if>
-            <if test="productName != null">
+            <if test="productName != null" >
                 `product_name`,
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 `cat_path`,
             </if>
-            <if test="retailPrice != null">
+            <if test="retailPrice != null" >
                 `retail_price`,
             </if>
-            <if test="salePrice != null">
+            <if test="salePrice != null" >
                 `sale_price`,
             </if>
-            <if test="msrp != null">
+            <if test="msrp != null" >
                 `msrp`,
             </if>
-            <if test="msrpus != null">
+            <if test="msrpus != null" >
                 `msrpUS`,
             </if>
-            <if test="tagId != null">
+            <if test="tagId != null" >
                 `tag_id`,
             </if>
-            <if test="promotionPrice != null">
+            <if test="promotionPrice != null" >
                 `promotion_price`,
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 `num_iid`,
             </if>
-            <if test="imageUrl1 != null">
+            <if test="imageUrl1 != null" >
                 `image_url_1`,
             </if>
-            <if test="imageUrl2 != null">
+            <if test="imageUrl2 != null" >
                 `image_url_2`,
             </if>
-            <if test="imageUrl3 != null">
+            <if test="imageUrl3 != null" >
                 `image_url_3`,
             </if>
-            <if test="property1 != null">
+            <if test="property1 != null" >
                 `property_1`,
             </if>
-            <if test="property2 != null">
+            <if test="property2 != null" >
                 `property_2`,
             </if>
-            <if test="property3 != null">
+            <if test="property3 != null" >
                 `property_3`,
             </if>
-            <if test="property4 != null">
+            <if test="property4 != null" >
                 `property_4`,
             </if>
             `created`,
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater`,
             </if>
             `modified`,
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier`,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="promotionId != null">
+            <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 #{orgChannelId,jdbcType=VARCHAR},
             </if>
-            <if test="productId != null">
+            <if test="productId != null" >
                 #{productId,jdbcType=INTEGER},
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 #{modelId,jdbcType=INTEGER},
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 #{productModel,jdbcType=VARCHAR},
             </if>
-            <if test="productCode != null">
+            <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
             </if>
-            <if test="productName != null">
+            <if test="productName != null" >
                 #{productName,jdbcType=VARCHAR},
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="retailPrice != null">
+            <if test="retailPrice != null" >
                 #{retailPrice,jdbcType=DOUBLE},
             </if>
-            <if test="salePrice != null">
+            <if test="salePrice != null" >
                 #{salePrice,jdbcType=DOUBLE},
             </if>
-            <if test="msrp != null">
+            <if test="msrp != null" >
                 #{msrp,jdbcType=DOUBLE},
             </if>
-            <if test="msrpus != null">
+            <if test="msrpus != null" >
                 #{msrpus,jdbcType=DOUBLE},
             </if>
-            <if test="tagId != null">
+            <if test="tagId != null" >
                 #{tagId,jdbcType=INTEGER},
             </if>
-            <if test="promotionPrice != null">
+            <if test="promotionPrice != null" >
                 #{promotionPrice,jdbcType=DOUBLE},
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrl1 != null">
+            <if test="imageUrl1 != null" >
                 #{imageUrl1,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrl2 != null">
+            <if test="imageUrl2 != null" >
                 #{imageUrl2,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrl3 != null">
+            <if test="imageUrl3 != null" >
                 #{imageUrl3,jdbcType=VARCHAR},
             </if>
-            <if test="property1 != null">
+            <if test="property1 != null" >
                 #{property1,jdbcType=VARCHAR},
             </if>
-            <if test="property2 != null">
+            <if test="property2 != null" >
                 #{property2,jdbcType=VARCHAR},
             </if>
-            <if test="property3 != null">
+            <if test="property3 != null" >
                 #{property3,jdbcType=VARCHAR},
             </if>
-            <if test="property4 != null">
+            <if test="property4 != null" >
                 #{property4,jdbcType=VARCHAR},
             </if>
-            <if test="created == null">
+            <if test="created == null" >
                 now(),
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 now(),
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionCodesModel">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionCodesModel" >
         update cms_bt_promotion_codes
-        <set>
-            <if test="promotionId != null">
+        <set >
+            <if test="promotionId != null" >
                 `promotion_id` = #{promotionId,jdbcType=INTEGER},
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
             </if>
-            <if test="productId != null">
+            <if test="productId != null" >
                 `product_id` = #{productId,jdbcType=INTEGER},
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 `model_id` = #{modelId,jdbcType=INTEGER},
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 `product_model` = #{productModel,jdbcType=VARCHAR},
             </if>
-            <if test="productCode != null">
+            <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
             </if>
-            <if test="productName != null">
+            <if test="productName != null" >
                 `product_name` = #{productName,jdbcType=VARCHAR},
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 `cat_path` = #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="retailPrice != null">
+            <if test="retailPrice != null" >
                 `retail_price` = #{retailPrice,jdbcType=DOUBLE},
             </if>
-            <if test="salePrice != null">
+            <if test="salePrice != null" >
                 `sale_price` = #{salePrice,jdbcType=DOUBLE},
             </if>
-            <if test="msrp != null">
+            <if test="msrp != null" >
                 `msrp` = #{msrp,jdbcType=DOUBLE},
             </if>
-            <if test="msrpus != null">
+            <if test="msrpus != null" >
                 `msrpUS` = #{msrpus,jdbcType=DOUBLE},
             </if>
-            <if test="tagId != null">
+            <if test="tagId != null" >
                 `tag_id` = #{tagId,jdbcType=INTEGER},
             </if>
-            <if test="promotionPrice != null">
+            <if test="promotionPrice != null" >
                 `promotion_price` = #{promotionPrice,jdbcType=DOUBLE},
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 `num_iid` = #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrl1 != null">
+            <if test="imageUrl1 != null" >
                 `image_url_1` = #{imageUrl1,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrl2 != null">
+            <if test="imageUrl2 != null" >
                 `image_url_2` = #{imageUrl2,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrl3 != null">
+            <if test="imageUrl3 != null" >
                 `image_url_3` = #{imageUrl3,jdbcType=VARCHAR},
             </if>
-            <if test="property1 != null">
+            <if test="property1 != null" >
                 `property_1` = #{property1,jdbcType=VARCHAR},
             </if>
-            <if test="property2 != null">
+            <if test="property2 != null" >
                 `property_2` = #{property2,jdbcType=VARCHAR},
             </if>
-            <if test="property3 != null">
+            <if test="property3 != null" >
                 `property_3` = #{property3,jdbcType=VARCHAR},
             </if>
-            <if test="property4 != null">
+            <if test="property4 != null" >
                 `property_4` = #{property4,jdbcType=VARCHAR},
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
 
-    <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Integer" >
         delete from cms_bt_promotion_codes
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_codes
-        <where>
-            <if test="promotionId != null">
+        <where >
+            <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
             </if>
-            <if test="productId != null">
+            <if test="productId != null" >
                 and `product_id` = #{productId,jdbcType=INTEGER}
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 and `model_id` = #{modelId,jdbcType=INTEGER}
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 and `product_model` = #{productModel,jdbcType=VARCHAR}
             </if>
-            <if test="productCode != null">
+            <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
-            <if test="productName != null">
+            <if test="productName != null" >
                 and `product_name` = #{productName,jdbcType=VARCHAR}
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="retailPrice != null">
+            <if test="retailPrice != null" >
                 and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
             </if>
-            <if test="salePrice != null">
+            <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
-            <if test="msrp != null">
+            <if test="msrp != null" >
                 and `msrp` = #{msrp,jdbcType=DOUBLE}
             </if>
-            <if test="msrpus != null">
+            <if test="msrpus != null" >
                 and `msrpUS` = #{msrpus,jdbcType=DOUBLE}
             </if>
-            <if test="tagId != null">
+            <if test="tagId != null" >
                 and `tag_id` = #{tagId,jdbcType=INTEGER}
             </if>
-            <if test="promotionPrice != null">
+            <if test="promotionPrice != null" >
                 and `promotion_price` = #{promotionPrice,jdbcType=DOUBLE}
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
-            <if test="imageUrl1 != null">
+            <if test="imageUrl1 != null" >
                 and `image_url_1` = #{imageUrl1,jdbcType=VARCHAR}
             </if>
-            <if test="imageUrl2 != null">
+            <if test="imageUrl2 != null" >
                 and `image_url_2` = #{imageUrl2,jdbcType=VARCHAR}
             </if>
-            <if test="imageUrl3 != null">
+            <if test="imageUrl3 != null" >
                 and `image_url_3` = #{imageUrl3,jdbcType=VARCHAR}
             </if>
-            <if test="property1 != null">
+            <if test="property1 != null" >
                 and `property_1` = #{property1,jdbcType=VARCHAR}
             </if>
-            <if test="property2 != null">
+            <if test="property2 != null" >
                 and `property_2` = #{property2,jdbcType=VARCHAR}
             </if>
-            <if test="property3 != null">
+            <if test="property3 != null" >
                 and `property_3` = #{property3,jdbcType=VARCHAR}
             </if>
-            <if test="property4 != null">
+            <if test="property4 != null" >
                 and `property_4` = #{property4,jdbcType=VARCHAR}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
 
-    <select id="selectList" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_codes
-        <where>
-            <if test="promotionId != null">
+        <where >
+            <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="orgChannelId != null">
+            <if test="orgChannelId != null" >
                 and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
             </if>
-            <if test="productId != null">
+            <if test="productId != null" >
                 and `product_id` = #{productId,jdbcType=INTEGER}
             </if>
-            <if test="modelId != null">
+            <if test="modelId != null" >
                 and `model_id` = #{modelId,jdbcType=INTEGER}
             </if>
-            <if test="productModel != null">
+            <if test="productModel != null" >
                 and `product_model` = #{productModel,jdbcType=VARCHAR}
             </if>
-            <if test="productCode != null">
+            <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
-            <if test="productName != null">
+            <if test="productName != null" >
                 and `product_name` = #{productName,jdbcType=VARCHAR}
             </if>
-            <if test="catPath != null">
+            <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="retailPrice != null">
+            <if test="retailPrice != null" >
                 and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
             </if>
-            <if test="salePrice != null">
+            <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
-            <if test="msrp != null">
+            <if test="msrp != null" >
                 and `msrp` = #{msrp,jdbcType=DOUBLE}
             </if>
-            <if test="msrpus != null">
+            <if test="msrpus != null" >
                 and `msrpUS` = #{msrpus,jdbcType=DOUBLE}
             </if>
-            <if test="tagId != null">
+            <if test="tagId != null" >
                 and `tag_id` = #{tagId,jdbcType=INTEGER}
             </if>
-            <if test="promotionPrice != null">
+            <if test="promotionPrice != null" >
                 and `promotion_price` = #{promotionPrice,jdbcType=DOUBLE}
             </if>
-            <if test="numIid != null">
+            <if test="numIid != null" >
                 and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
-            <if test="imageUrl1 != null">
+            <if test="imageUrl1 != null" >
                 and `image_url_1` = #{imageUrl1,jdbcType=VARCHAR}
             </if>
-            <if test="imageUrl2 != null">
+            <if test="imageUrl2 != null" >
                 and `image_url_2` = #{imageUrl2,jdbcType=VARCHAR}
             </if>
-            <if test="imageUrl3 != null">
+            <if test="imageUrl3 != null" >
                 and `image_url_3` = #{imageUrl3,jdbcType=VARCHAR}
             </if>
-            <if test="property1 != null">
+            <if test="property1 != null" >
                 and `property_1` = #{property1,jdbcType=VARCHAR}
             </if>
-            <if test="property2 != null">
+            <if test="property2 != null" >
                 and `property_2` = #{property2,jdbcType=VARCHAR}
             </if>
-            <if test="property3 != null">
+            <if test="property3 != null" >
                 and `property_3` = #{property3,jdbcType=VARCHAR}
             </if>
-            <if test="property4 != null">
+            <if test="property4 != null" >
                 and `property_4` = #{property4,jdbcType=VARCHAR}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
