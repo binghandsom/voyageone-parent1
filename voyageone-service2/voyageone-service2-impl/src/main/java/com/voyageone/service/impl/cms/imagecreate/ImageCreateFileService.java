@@ -70,14 +70,14 @@ public class ImageCreateFileService extends BaseService {
     }
 
     @VOTransactional
-    public CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, CmsMtImageCreateTemplateModel modelTemplate, String file, String vparam, String Creater, long hashCode, boolean isUploadUSCDN) throws OpenApiException {
+    public CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String Creater, long hashCode, boolean isUploadUSCDN) throws OpenApiException {
 
-        final String ossFilePath = getCreateFilePathName(modelTemplate, channelId, file);
+        final String ossFilePath = getCreateFilePathName(templateId, channelId, file);
         final String usCDNFilePath = ImageConfig.getUSCDNWorkingDirectory() + ossFilePath;
         CmsMtImageCreateFileModel modelFile = new CmsMtImageCreateFileModel();
         modelFile.setChannelId(channelId);
         modelFile.setVparam(vparam);
-        modelFile.setTemplateId(modelTemplate.getId());
+        modelFile.setTemplateId(templateId);
         modelFile.setFile(file);//文件名字
         modelFile.setHashCode(hashCode);
         modelFile.setOssFilePath(ossFilePath);
@@ -94,9 +94,9 @@ public class ImageCreateFileService extends BaseService {
         return modelFile;
     }
 
-    public String getCreateFilePathName(CmsMtImageCreateTemplateModel modelTemplate, String channelId, String file) {
+    public String getCreateFilePathName(int templateId, String channelId, String file) {
         //return "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + modelTemplate.getId() + "/" + file + ".jpg";
-        return "products/" + channelId + "/" + modelTemplate.getId() + "/" + file + ".jpg";
+        return "products/" + channelId + "/" +templateId + "/" + file + ".jpg";
     }
 
     public long getHashCode(String channelId, int templateId, String file, String vparam) {
@@ -200,7 +200,6 @@ public class ImageCreateFileService extends BaseService {
     @VOTransactional
     public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
         $info("CmsImageFileService:addList start");
-        Map<Integer, CmsMtImageCreateTemplateModel> cmsMtImageCreateTemplateModelMap = new HashMap<>();
         AddListResultBean result = new AddListResultBean();
         try {
             checkAddListParameter(parameter);
@@ -211,15 +210,7 @@ public class ImageCreateFileService extends BaseService {
                 long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr());
                 modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
-                    if (!cmsMtImageCreateTemplateModelMap.containsKey(imageInfo.getTemplateId())) {
-                        CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateDao.select(imageInfo.getTemplateId());
-                        if (modelTemplate == null) {
-                            throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + imageInfo.getTemplateId());
-                        }
-                        cmsMtImageCreateTemplateModelMap.put(imageInfo.getTemplateId(), modelTemplate);
-                    }
-                    CmsMtImageCreateTemplateModel modelTemplate = cmsMtImageCreateTemplateModelMap.get(imageInfo.getTemplateId());
-                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), modelTemplate, imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
+                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
@@ -269,8 +260,6 @@ public class ImageCreateFileService extends BaseService {
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         }
-
-        cmsMtImageCreateTemplateModelMap.clear();
         $info("CmsImageFileService:addList end");
         return result;
     }

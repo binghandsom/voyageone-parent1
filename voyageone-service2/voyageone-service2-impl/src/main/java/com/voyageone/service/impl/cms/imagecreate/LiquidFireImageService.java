@@ -22,7 +22,7 @@ public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
 
-    @Retryable(maxAttempts = 3)
+    @Retryable(maxAttempts = 3 )
     public void createImage(CmsMtImageCreateFileModel modelFile, CmsMtImageCreateTemplateModel modelTemplate) throws Exception {
         try {
             String filePath = createImage(modelTemplate.getContent(), modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
@@ -31,7 +31,12 @@ public class LiquidFireImageService extends BaseService {
             //清楚报错信息
             modelFile.setErrorCode(0);
             modelFile.setErrorMsg("");
-        } catch (Exception ex) {
+        }
+        catch (OpenApiException ex)
+        {
+            throw  ex;
+        }
+        catch (Exception ex) {
             throw new OpenApiException(ImageErrorEnum.LiquidCreateImageError, ex);
         }
     }

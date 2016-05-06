@@ -1,6 +1,8 @@
 package com.voyageone.components.liquifire.service;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.openapi.OpenApiException;
+import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -94,6 +96,11 @@ public class LiquidFireClient {
             conn.setReadTimeout(this.getReadTimeout());
             // 输入流
             is = conn.getInputStream();
+            String lfError= conn.getHeaderField("LF-Error");
+            if(!StringUtils.isEmpty(lfError))
+            {
+                throw new OpenApiException(ImageErrorEnum.LiquidCreateImageExceptionImage);
+            }
             // 1K的数据缓冲
             byte[] bs = new byte[1024];
             // 读取到的数据长度

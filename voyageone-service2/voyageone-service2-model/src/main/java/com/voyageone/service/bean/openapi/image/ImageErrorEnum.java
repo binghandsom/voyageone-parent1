@@ -9,6 +9,7 @@ public enum ImageErrorEnum implements ErrorEnumInterface {
     FileNotNull(10103, "File  must not be null"),
     VParamNotNull(10104, "VParam template must not be null"),
     LiquidCreateImageError(10201, "Call  liquid interface exception"),
+    LiquidCreateImageExceptionImage(1020101, "liquid create exception image"),
     AliyunOSSUploadError(10202, "Call  aliyun OSS interface exception"),
     USCDNUploadError(10203, "Call  US CDN interface exception"),
     ParametersOutSize(10204, "parameter max size is ."),
