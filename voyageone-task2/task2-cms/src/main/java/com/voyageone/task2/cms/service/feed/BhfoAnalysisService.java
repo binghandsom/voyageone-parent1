@@ -464,6 +464,7 @@ public class BhfoAnalysisService extends BaseAnalysisService {
             if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
                 CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(),cmsBtFeedInfoModel.getAttribute()));
             }else{
                 modelBeans.add(cmsBtFeedInfoModel);
                 codeMap.put(cmsBtFeedInfoModel.getCode(),cmsBtFeedInfoModel);

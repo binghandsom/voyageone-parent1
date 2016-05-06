@@ -18,6 +18,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author james.li on 2016/4/28.
@@ -225,5 +228,21 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
         return categoryPaths;
+    }
+
+    // 合并属性
+    public static Map<String, List<String>> attributeMerge(Map<String, List<String>> attribute1, Map<String, List<String>> attribute2) {
+
+        for (String key : attribute1.keySet()) {
+            if (attribute2.containsKey(key)) {
+                attribute2.put(key, Stream.concat(attribute1.get(key).stream(), attribute2.get(key).stream())
+                        .map(String::trim)
+                        .distinct()
+                        .collect(toList()));
+            } else {
+                attribute2.put(key, attribute1.get(key));
+            }
+        }
+        return attribute2;
     }
 }
