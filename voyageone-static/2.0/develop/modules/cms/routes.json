@@ -171,7 +171,7 @@
     "controllerUrl": "modules/cms/views/channel/sizechart/index.ctl"
   },
   "channel_listing_sizechart_detail": {
-    "hash": "/channel/sizechart/detail",
+    "hash": "/channel/sizechart/detail/:sizeChart",
     "templateUrl": "views/channel/sizechart/detail.tpl.html",
     "controllerUrl": "modules/cms/views/channel/sizechart/detail.ctl"
   },

@@ -1121,6 +1121,12 @@ define([
             return openModel(popActions.system.cartList, context);
         };
         /**
+         *新增店铺管理-Listing-sizechart页,新增操作弹出
+         */
+        $scope.openSizeChartAdd = function (context) {
+            return openModel(popActions.store.listing.sizechart, context);
+        };
+        /**
          * 新增店铺管理-Listing-sizechart页,设置操作弹出
          * */
         $scope.openSizeChartSetting = function (context) {

@@ -12,6 +12,7 @@ return angular.module("voyageone.angular",[
 "voyageone.angular.directives.vpagination",
 "voyageone.angular.directives.validator",
 "voyageone.angular.directives.popoverText",
+"voyageone.angular.directives.tabInTextarea",
 "voyageone.angular.services.ajax",
 "voyageone.angular.services.cookie",
 "voyageone.angular.services.message",

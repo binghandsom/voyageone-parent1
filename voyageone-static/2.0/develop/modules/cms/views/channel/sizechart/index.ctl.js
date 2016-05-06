@@ -4,7 +4,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,systemCategoryService) {
+    function sizeChartController($scope,systemCategoryService,confirm) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
@@ -21,10 +21,6 @@ define([
 
         $scope.search = search;
 
-        $scope.clear = function () {
-            $scope.vm.searchInfo = {catName: "", catId: ""};
-        };
-
         function search() {
             console.log("搜索条件",$scope.vm.searchInfo);
 /*            systemCategoryService.getCategoryList({
@@ -39,8 +35,24 @@ define([
 
             })*/
         }
+
+        /**
+         * 清空操作
+         */
+        $scope.clear = function () {
+            $scope.vm.searchInfo  = {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]};
+        };
+
+        /**
+         * 删除尺码表操作
+         */
+        $scope.deleteRow = function(){
+            confirm("确认要删除该尺码表吗？").result.then(function () {
+                alert("yes");
+            });
+        }
     }
 
-    sizeChartController.$inject = ['$scope', 'systemCategoryService'];
+    sizeChartController.$inject = ['$scope', 'systemCategoryService','confirm'];
     return sizeChartController;
 });

@@ -1,22 +1,20 @@
 /**
- * Created by 123 on 2016/4/28.
+ * Created by tony-piao on 2016/5/5.
  */
 define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartCtl', function ($scope, $routeParams) {
+    angularAMD.controller('popSizeChartCtl', function ($scope, context) {
 
-        /**
-         * 初始化数据.
-         */
         $scope.initialize = function () {
+            console.log(context);
             if ($scope.vm == undefined) {
                 $scope.vm = {};
             }
-            $scope.vm.imageMain = $routeParams.imageMain;
-            $scope.vm.imageList = $routeParams.imageList;
+/*            $scope.vm.imageMain = $routeParams.imageMain;
+            $scope.vm.imageList = $routeParams.imageList;*/
         };
 
     });
