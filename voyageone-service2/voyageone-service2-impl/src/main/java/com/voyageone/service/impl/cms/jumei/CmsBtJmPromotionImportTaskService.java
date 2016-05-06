@@ -204,7 +204,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             mapSkuCodeId.clear();
         }
         for (CmsMtMasterInfoModel model : saveImportInfo.getMapSaveCmsMtMasterInfoModel().values()) {
-            if (model.getId() == 0) {
+            if (model.getId() == null || model.getId() == 0) {
                 daoCmsMtMasterInfo.insert(model);
             } else {
                 daoCmsMtMasterInfo.update(model);
