@@ -40,7 +40,6 @@ public class CmsSizeChartController extends CmsController {
         //返回数据的类型
         return success(resultBean);
     }
-
     /**
      * 尺码关系一览初删除
      */
@@ -48,34 +47,33 @@ public class CmsSizeChartController extends CmsController {
     public AjaxResponse sizeChartDelete(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
-        cmsSizeChartService.sizeChartDelete(channelId, param);
+        cmsSizeChartService.sizeChartUpdate(channelId, param);
         //返回数据的类型
         return success(param);
     }
-
-
     /***
      * 尺码关系一览编辑画面
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.EDIT_SIZE_CHART)
-    public AjaxResponse sizeChartEdit(@RequestBody Map param) {
+    public AjaxResponse sizeChartEditSave(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
+        //创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
         //取得尺码关系一览初始化
-        Map<String, Object> resultBean=cmsSizeChartService.sizeChartEdit(channelId, param);
+        cmsSizeChartService.sizeChartEditInsert(channelId, param);
         //返回数据的类型
-        return success(resultBean);
+        return success(param);
     }
-
     /**
      * 尺码关系一览编辑详情编辑画面
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.DETAIL_SIZE_CHART)
-    public AjaxResponse sizeChartDetail(@RequestBody Map param) {
+    public AjaxResponse sizeChartDetailSave(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
         //取得尺码关系一览初始化
-        Map<String, Object> resultBean=cmsSizeChartService.sizeChartDetail(channelId,param);
+        Map<String, Object> resultBean=cmsSizeChartService.sizeChartDetailUpdate(channelId, param);
         //返回数据的类型
         return success(resultBean);
     }
