@@ -435,7 +435,7 @@ define([
                     "imagedetailadd": {
                         "templateUrl": "views/pop/store/listing/imagedetailadd.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/store/listing/imagedetailadd.ctl",
-                        "controller": 'popImageDetailAddCtl'
+                        "controller": 'popImageDetailAddCtl as ctrl'
                     },
                 },
             },
