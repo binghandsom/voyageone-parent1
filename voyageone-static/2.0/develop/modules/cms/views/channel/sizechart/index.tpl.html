@@ -102,37 +102,33 @@
                                 <th class="mfb-xt text-center">序号</th>
                                 <th class="mfb-xxt text-left">Size Chart Name</th>
                                 <th class="mfb-xxt text-left">Related Brand Name</th>
-                                <th class="mfb-xxt text-center">Related Product Type</th>
-                                <th class="mfb-xxt text-center">Related Size Type</th>
+                                <th class="mfb-xxt text-left">Related Product Type</th>
+                                <th class="mfb-xxt text-left">Related Size Type</th>
                                 <th class="mfb-xxs text-center">Update Time</th>
                                 <th class="mfb-xxt text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="mfb-xt text-center">1</td>
-                                <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{1}}" target="_blank"> Nike shoe men chart</a></td>
-                                <td class="mfb-xxt text-left">Nike</td>
-                                <td class="mfb-xxt text-center">shoe</td>
-                                <td class="mfb-xxt text-center">Men</td>
-                                <td class="mfb-xxs text-center">2016-04-12 15:32:35</td>
-                                <td class="mfb-xxt text-center">
-                                    <a href="#/channel/sizechart/detail/{{1}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
-                                    <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow()"><i class="fa  fa-trash-o"></i></a>
-                                </td>
-                            </tr>
+                                <tr ng-repeat="chartInfo in vm.sizeChartList">
+                                    <td class="mfb-xt text-center">{{$index + 1}}</td>
+                                    <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.brandName.join(' , ')}}</td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.productType.join(' , ')}}</td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.sizeType.join(' , ')}}</td>
+                                    <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
+                                    <td class="mfb-xxt text-center">
+                                        <a href="#/channel/sizechart/detail/{{chartInfo}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
+                                    </td>
+                                </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- .table-responsive -->
-                <div class="col-sm-12">
-                    <!--<vpagination config="vm.groupPageOption"></vpagination>-->
-                </div>
             </div>
         </div>
-        <!-- /.box-body -->
+
         <div class="m-t-xs">
-            <!--<vpagination config="vm.errorPageOption"></vpagination>-->
+            <vpagination config="vm.sizeChartPageOption"></vpagination>
         </div>
     </div>
 </div><!-- end .wrapper-md -->
