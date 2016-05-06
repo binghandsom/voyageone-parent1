@@ -1,6 +1,5 @@
 package com.voyageone.web2.base;
 
-import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -13,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 通用 Controller 的基类
@@ -109,7 +110,7 @@ public abstract class BaseController extends BaseAppComponent {
     /**
      * 获取当前用户的时区，如果没有登录，则返回 0，保持服务器时区
      */
-    public int getUserTimeZone() {
+    protected int getUserTimeZone() {
         UserSessionBean userSessionBean = getUser();
 
         return userSessionBean == null ? 0 : userSessionBean.getTimeZone();
@@ -122,7 +123,7 @@ public abstract class BaseController extends BaseAppComponent {
 
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        $info(JacksonUtil.bean2Json(response));
+        $debug(JacksonUtil.bean2Json(response));
         return response;
     }
 

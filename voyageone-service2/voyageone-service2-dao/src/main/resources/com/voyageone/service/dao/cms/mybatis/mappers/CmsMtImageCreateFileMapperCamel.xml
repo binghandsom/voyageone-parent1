@@ -1,332 +1,332 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateFileDao">
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateFileModel"/>
-    <sql id="Base_Column_List">
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateFileDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateFileModel" />
+    <sql id="Base_Column_List" >
         `id`, `hash_code`, `channel_id`, `template_id`, `file`, `file_path`, `vparam`, `oss_file_path`, 
         `us_cdn_file_path`, `state`, `oss_state`, `uscdn_state`, `error_msg`, `error_code`, 
         `created`, `creater`, `modified`, `modifier`, `is_upload_us_cdn`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_mt_image_create_file
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateFileModel">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateFileModel" >
         insert into cms_mt_image_create_file
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 `id`,
             </if>
-            <if test="hashCode != null">
+            <if test="hashCode != null" >
                 `hash_code`,
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 `channel_id`,
             </if>
-            <if test="templateId != null">
+            <if test="templateId != null" >
                 `template_id`,
             </if>
-            <if test="file != null">
+            <if test="file != null" >
                 `file`,
             </if>
-            <if test="filePath != null">
+            <if test="filePath != null" >
                 `file_path`,
             </if>
-            <if test="vparam != null">
+            <if test="vparam != null" >
                 `vparam`,
             </if>
-            <if test="ossFilePath != null">
+            <if test="ossFilePath != null" >
                 `oss_file_path`,
             </if>
-            <if test="usCdnFilePath != null">
+            <if test="usCdnFilePath != null" >
                 `us_cdn_file_path`,
             </if>
-            <if test="state != null">
+            <if test="state != null" >
                 `state`,
             </if>
-            <if test="ossState != null">
+            <if test="ossState != null" >
                 `oss_state`,
             </if>
-            <if test="uscdnState != null">
+            <if test="uscdnState != null" >
                 `uscdn_state`,
             </if>
-            <if test="errorMsg != null">
+            <if test="errorMsg != null" >
                 `error_msg`,
             </if>
-            <if test="errorCode != null">
+            <if test="errorCode != null" >
                 `error_code`,
             </if>
             `created`,
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater`,
             </if>
             `modified`,
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier`,
             </if>
-            <if test="isUploadUsCdn != null">
+            <if test="isUploadUsCdn != null" >
                 `is_upload_us_cdn`,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="hashCode != null">
+            <if test="hashCode != null" >
                 #{hashCode,jdbcType=BIGINT},
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="templateId != null">
+            <if test="templateId != null" >
                 #{templateId,jdbcType=INTEGER},
             </if>
-            <if test="file != null">
+            <if test="file != null" >
                 #{file,jdbcType=VARCHAR},
             </if>
-            <if test="filePath != null">
+            <if test="filePath != null" >
                 #{filePath,jdbcType=VARCHAR},
             </if>
-            <if test="vparam != null">
+            <if test="vparam != null" >
                 #{vparam,jdbcType=VARCHAR},
             </if>
-            <if test="ossFilePath != null">
+            <if test="ossFilePath != null" >
                 #{ossFilePath,jdbcType=VARCHAR},
             </if>
-            <if test="usCdnFilePath != null">
+            <if test="usCdnFilePath != null" >
                 #{usCdnFilePath,jdbcType=VARCHAR},
             </if>
-            <if test="state != null">
+            <if test="state != null" >
                 #{state,jdbcType=INTEGER},
             </if>
-            <if test="ossState != null">
+            <if test="ossState != null" >
                 #{ossState,jdbcType=INTEGER},
             </if>
-            <if test="uscdnState != null">
+            <if test="uscdnState != null" >
                 #{uscdnState,jdbcType=INTEGER},
             </if>
-            <if test="errorMsg != null">
+            <if test="errorMsg != null" >
                 #{errorMsg,jdbcType=VARCHAR},
             </if>
-            <if test="errorCode != null">
+            <if test="errorCode != null" >
                 #{errorCode,jdbcType=INTEGER},
             </if>
-            <if test="created == null">
+            <if test="created == null" >
                 now(),
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 now(),
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
-            <if test="isUploadUsCdn != null">
+            <if test="isUploadUsCdn != null" >
                 #{isUploadUsCdn,jdbcType=BIT},
             </if>
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateFileModel">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateFileModel" >
         update cms_mt_image_create_file
-        <set>
-            <if test="hashCode != null">
+        <set >
+            <if test="hashCode != null" >
                 `hash_code` = #{hashCode,jdbcType=BIGINT},
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="templateId != null">
+            <if test="templateId != null" >
                 `template_id` = #{templateId,jdbcType=INTEGER},
             </if>
-            <if test="file != null">
+            <if test="file != null" >
                 `file` = #{file,jdbcType=VARCHAR},
             </if>
-            <if test="filePath != null">
+            <if test="filePath != null" >
                 `file_path` = #{filePath,jdbcType=VARCHAR},
             </if>
-            <if test="vparam != null">
+            <if test="vparam != null" >
                 `vparam` = #{vparam,jdbcType=VARCHAR},
             </if>
-            <if test="ossFilePath != null">
+            <if test="ossFilePath != null" >
                 `oss_file_path` = #{ossFilePath,jdbcType=VARCHAR},
             </if>
-            <if test="usCdnFilePath != null">
+            <if test="usCdnFilePath != null" >
                 `us_cdn_file_path` = #{usCdnFilePath,jdbcType=VARCHAR},
             </if>
-            <if test="state != null">
+            <if test="state != null" >
                 `state` = #{state,jdbcType=INTEGER},
             </if>
-            <if test="ossState != null">
+            <if test="ossState != null" >
                 `oss_state` = #{ossState,jdbcType=INTEGER},
             </if>
-            <if test="uscdnState != null">
+            <if test="uscdnState != null" >
                 `uscdn_state` = #{uscdnState,jdbcType=INTEGER},
             </if>
-            <if test="errorMsg != null">
+            <if test="errorMsg != null" >
                 `error_msg` = #{errorMsg,jdbcType=VARCHAR},
             </if>
-            <if test="errorCode != null">
+            <if test="errorCode != null" >
                 `error_code` = #{errorCode,jdbcType=INTEGER},
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modified == null">
+            <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
-            <if test="isUploadUsCdn != null">
+            <if test="isUploadUsCdn != null" >
                 `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
 
-    <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Integer" >
         delete from cms_mt_image_create_file
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_mt_image_create_file
-        <where>
-            <if test="hashCode != null">
+        <where >
+            <if test="hashCode != null" >
                 and `hash_code` = #{hashCode,jdbcType=BIGINT}
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="templateId != null">
+            <if test="templateId != null" >
                 and `template_id` = #{templateId,jdbcType=INTEGER}
             </if>
-            <if test="file != null">
+            <if test="file != null" >
                 and `file` = #{file,jdbcType=VARCHAR}
             </if>
-            <if test="filePath != null">
+            <if test="filePath != null" >
                 and `file_path` = #{filePath,jdbcType=VARCHAR}
             </if>
-            <if test="vparam != null">
+            <if test="vparam != null" >
                 and `vparam` = #{vparam,jdbcType=VARCHAR}
             </if>
-            <if test="ossFilePath != null">
+            <if test="ossFilePath != null" >
                 and `oss_file_path` = #{ossFilePath,jdbcType=VARCHAR}
             </if>
-            <if test="usCdnFilePath != null">
+            <if test="usCdnFilePath != null" >
                 and `us_cdn_file_path` = #{usCdnFilePath,jdbcType=VARCHAR}
             </if>
-            <if test="state != null">
+            <if test="state != null" >
                 and `state` = #{state,jdbcType=INTEGER}
             </if>
-            <if test="ossState != null">
+            <if test="ossState != null" >
                 and `oss_state` = #{ossState,jdbcType=INTEGER}
             </if>
-            <if test="uscdnState != null">
+            <if test="uscdnState != null" >
                 and `uscdn_state` = #{uscdnState,jdbcType=INTEGER}
             </if>
-            <if test="errorMsg != null">
+            <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
-            <if test="errorCode != null">
+            <if test="errorCode != null" >
                 and `error_code` = #{errorCode,jdbcType=INTEGER}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
-            <if test="isUploadUsCdn != null">
+            <if test="isUploadUsCdn != null" >
                 and `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT}
             </if>
         </where>
     </select>
 
-    <select id="selectList" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_mt_image_create_file
-        <where>
-            <if test="hashCode != null">
+        <where >
+            <if test="hashCode != null" >
                 and `hash_code` = #{hashCode,jdbcType=BIGINT}
             </if>
-            <if test="channelId != null">
+            <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="templateId != null">
+            <if test="templateId != null" >
                 and `template_id` = #{templateId,jdbcType=INTEGER}
             </if>
-            <if test="file != null">
+            <if test="file != null" >
                 and `file` = #{file,jdbcType=VARCHAR}
             </if>
-            <if test="filePath != null">
+            <if test="filePath != null" >
                 and `file_path` = #{filePath,jdbcType=VARCHAR}
             </if>
-            <if test="vparam != null">
+            <if test="vparam != null" >
                 and `vparam` = #{vparam,jdbcType=VARCHAR}
             </if>
-            <if test="ossFilePath != null">
+            <if test="ossFilePath != null" >
                 and `oss_file_path` = #{ossFilePath,jdbcType=VARCHAR}
             </if>
-            <if test="usCdnFilePath != null">
+            <if test="usCdnFilePath != null" >
                 and `us_cdn_file_path` = #{usCdnFilePath,jdbcType=VARCHAR}
             </if>
-            <if test="state != null">
+            <if test="state != null" >
                 and `state` = #{state,jdbcType=INTEGER}
             </if>
-            <if test="ossState != null">
+            <if test="ossState != null" >
                 and `oss_state` = #{ossState,jdbcType=INTEGER}
             </if>
-            <if test="uscdnState != null">
+            <if test="uscdnState != null" >
                 and `uscdn_state` = #{uscdnState,jdbcType=INTEGER}
             </if>
-            <if test="errorMsg != null">
+            <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
-            <if test="errorCode != null">
+            <if test="errorCode != null" >
                 and `error_code` = #{errorCode,jdbcType=INTEGER}
             </if>
-            <if test="created != null">
+            <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null">
+            <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null">
+            <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null">
+            <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
-            <if test="isUploadUsCdn != null">
+            <if test="isUploadUsCdn != null" >
                 and `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT}
             </if>
         </where>
