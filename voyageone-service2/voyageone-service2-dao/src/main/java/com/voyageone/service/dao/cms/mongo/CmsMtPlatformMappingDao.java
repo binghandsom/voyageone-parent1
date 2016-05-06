@@ -1,8 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.base.dao.mongodb.BaseMongoCartDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingModel> {
+public class CmsMtPlatformMappingDao extends BaseMongoCartDao<CmsMtPlatformMappingModel> {
 
     public CmsMtPlatformMappingModel selectMapping(String channelId, int cartId, String platformCategoryId) {
         String queryStrTemp = "{" +
@@ -24,7 +23,7 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingMo
                 ",platformCategoryId:'%s'" +
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId, platformCategoryId);
-        return selectOneWithQuery(queryStr);
+        return selectOneWithQuery(queryStr, cartId);
     }
 
     public long isExist(String channelId, int cartId, String platformCategoryId) {
@@ -34,7 +33,7 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingMo
                 ",platformCategoryId:'%s'" +
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId, platformCategoryId);
-        return countByQuery(queryStr);
+        return countByQuery(queryStr, cartId);
     }
 
     public CmsMtPlatformMappingModel selectMappingByMainCatId(String channelId, int cartId, String mainCatId) {
@@ -44,22 +43,24 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingMo
                 ",mainCategoryId:'%s'" +
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId, mainCatId);
-        return selectOneWithQuery(queryStr);
+        return selectOneWithQuery(queryStr, cartId);
     }
 
     public List<CmsMtPlatformMappingModel> selectMappings(String channelId, int catId) {
 
-        return select(String.format("{ channelId: '%s', platformCartId: %s }", channelId, catId));
+        return select(String.format("{ channelId: '%s', platformCartId: %s }", channelId, catId), catId);
     }
 
     public WriteResult insertPlatformMapping(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
         return insert(cmsMtPlatformMappingModel);
     }
 
-    public List<CmsMtPlatformMappingModel> selectMappingByMainCatId(String channelId, String mainCatId) {
-
-        return select(String.format("{ channelId: '%s', mainCategoryId: '%s' }", channelId, mainCatId));
-    }
+    // 20160506 tom 这个功能不需要, 删掉 START
+//    public List<CmsMtPlatformMappingModel> selectMappingByMainCatId(String channelId, String mainCatId) {
+//
+//        return select(String.format("{ channelId: '%s', mainCategoryId: '%s' }", channelId, mainCatId));
+//    }
+    // 20160506 tom 这个功能不需要, 删掉 END
 
     /**
      * 最精确查找平台类目的匹配关系
@@ -74,6 +75,6 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingMo
         return selectOneWithQuery(String.format(
                 "{ channelId: '%s', mainCategoryId: '%s', platformCartId: %s, platformCategoryId: '%s' }",
                 channelId, mainCategoryId, cartId, platformCategoryId
-        ));
+        ), cartId);
     }
 }
