@@ -1,182 +1,260 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtChannelConfigDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtChannelConfigModel"/>
+    <sql id="Base_Column_List">
+        `id`, `channel_id`, `config_key`, `config_code`, `config_value1`, `config_value2`, 
+        `config_value3`, `comment`, `created`, `creater`, `modified`, `modifier`, `status`, 
+        `config_type`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        `id`,`channel_id`,`config_key`,`config_code`,`config_value1`,`config_value2`,`config_value3`,`comment`,`created`,`creater`,`modified`,`modifier`,`status`,`config_type`
+        <include refid="Base_Column_List"/>
         from cms_mt_channel_config
-        <where>
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
+        insert into cms_mt_channel_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
-                AND `id` = #{id}
+                `id`,
             </if>
             <if test="channelId != null">
-                AND `channel_id` = #{channelId}
+                `channel_id`,
             </if>
             <if test="configKey != null">
-                AND `config_key` = #{configKey}
+                `config_key`,
             </if>
             <if test="configCode != null">
-                AND `config_code` = #{configCode}
+                `config_code`,
             </if>
             <if test="configValue1 != null">
-                AND `config_value1` = #{configValue1}
+                `config_value1`,
             </if>
             <if test="configValue2 != null">
-                AND `config_value2` = #{configValue2}
+                `config_value2`,
             </if>
             <if test="configValue3 != null">
-                AND `config_value3` = #{configValue3}
+                `config_value3`,
             </if>
             <if test="comment != null">
-                AND `comment` = #{comment}
+                `comment`,
             </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
+            `created`,
             <if test="creater != null">
-                AND `creater` = #{creater}
+                `creater`,
             </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
+            `modified`,
             <if test="modifier != null">
-                AND `modifier` = #{modifier}
+                `modifier`,
             </if>
             <if test="status != null">
-                AND `status` = #{status}
+                `status`,
             </if>
             <if test="configType != null">
-                AND `config_type` = #{configType}
+                `config_type`,
             </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`channel_id`,`config_key`,`config_code`,`config_value1`,`config_value2`,`config_value3`,`comment`,`created`,`creater`,`modified`,`modifier`,`status`,`config_type`
-        from cms_mt_channel_config
-        <where>
-
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
-                AND `id` = #{id}
+                #{id,jdbcType=INTEGER},
             </if>
-
             <if test="channelId != null">
-                AND `channel_id` = #{channelId}
+                #{channelId,jdbcType=VARCHAR},
             </if>
-
             <if test="configKey != null">
-                AND `config_key` = #{configKey}
+                #{configKey,jdbcType=VARCHAR},
             </if>
-
             <if test="configCode != null">
-                AND `config_code` = #{configCode}
+                #{configCode,jdbcType=VARCHAR},
             </if>
-
             <if test="configValue1 != null">
-                AND `config_value1` = #{configValue1}
+                #{configValue1,jdbcType=VARCHAR},
             </if>
-
             <if test="configValue2 != null">
-                AND `config_value2` = #{configValue2}
+                #{configValue2,jdbcType=VARCHAR},
             </if>
-
             <if test="configValue3 != null">
-                AND `config_value3` = #{configValue3}
+                #{configValue3,jdbcType=VARCHAR},
             </if>
-
             <if test="comment != null">
-                AND `comment` = #{comment}
+                #{comment,jdbcType=VARCHAR},
             </if>
-
+            <if test="created == null">
+                now(),
+            </if>
             <if test="created != null">
-                AND `created` = #{created}
+                #{created,jdbcType=TIMESTAMP},
             </if>
-
             <if test="creater != null">
-                AND `creater` = #{creater}
+                #{creater,jdbcType=VARCHAR},
             </if>
-
+            <if test="modified == null">
+                now(),
+            </if>
             <if test="modified != null">
-                AND `modified` = #{modified}
+                #{modified,jdbcType=TIMESTAMP},
             </if>
-
             <if test="modifier != null">
-                AND `modifier` = #{modifier}
+                #{modifier,jdbcType=VARCHAR},
             </if>
-
             <if test="status != null">
-                AND `status` = #{status}
+                #{status,jdbcType=INTEGER},
             </if>
-
             <if test="configType != null">
-                AND `config_type` = #{configType}
+                #{configType,jdbcType=INTEGER},
             </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`config_key`,`config_code`,`config_value1`,`config_value2`,`config_value3`,`comment`,`created`,`creater`,`modified`,`modifier`,`status`,`config_type` from cms_mt_channel_config where id=#{id}
-    </select>
+        </trim>
+    </insert>
 
-    <update id="update">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigModel">
         update cms_mt_channel_config
-        set
-
-        `channel_id`=#{channelId}
-        ,`config_key`=#{configKey}
-        ,`config_code`=#{configCode}
-        ,`config_value1`=#{configValue1}
-        ,`config_value2`=#{configValue2}
-        ,`config_value3`=#{configValue3}
-        ,`comment`=#{comment}
-        ,`modifier`=#{modifier}
-        ,`status`=#{status}
-        ,`config_type`=#{configType}
-        where id=#{id}
+        <set>
+            <if test="channelId != null">
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="configKey != null">
+                `config_key` = #{configKey,jdbcType=VARCHAR},
+            </if>
+            <if test="configCode != null">
+                `config_code` = #{configCode,jdbcType=VARCHAR},
+            </if>
+            <if test="configValue1 != null">
+                `config_value1` = #{configValue1,jdbcType=VARCHAR},
+            </if>
+            <if test="configValue2 != null">
+                `config_value2` = #{configValue2,jdbcType=VARCHAR},
+            </if>
+            <if test="configValue3 != null">
+                `config_value3` = #{configValue3,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null">
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null">
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null">
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null">
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null">
+                `modified` = now(),
+            </if>
+            <if test="modifier != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="configType != null">
+                `config_type` = #{configType,jdbcType=INTEGER},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
     </update>
 
-    <delete id="delete">
-        delete from  cms_mt_channel_config
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from cms_mt_channel_config
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_mt_channel_config
-        (
-              `channel_id`,
-              `config_key`,
-              `config_code`,
-              `config_value1`,
-              `config_value2`,
-              `config_value3`,
-              `comment`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`,
-              `status`,
-              `config_type`
-        )
-        VALUES(
-              #{channelId},
-              #{configKey},
-              #{configCode},
-              #{configValue1},
-              #{configValue2},
-              #{configValue3},
-              #{comment},
-        now(),
-              #{creater},
-        now(),
-        #{creater}
-              #{status},
-              #{configType}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_channel_config
+        <where>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="configKey != null">
+                and `config_key` = #{configKey,jdbcType=VARCHAR}
+            </if>
+            <if test="configCode != null">
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue1 != null">
+                and `config_value1` = #{configValue1,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue2 != null">
+                and `config_value2` = #{configValue2,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue3 != null">
+                and `config_value3` = #{configValue3,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null">
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="configType != null">
+                and `config_type` = #{configType,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_mt_channel_config
+        <where>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="configKey != null">
+                and `config_key` = #{configKey,jdbcType=VARCHAR}
+            </if>
+            <if test="configCode != null">
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue1 != null">
+                and `config_value1` = #{configValue1,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue2 != null">
+                and `config_value2` = #{configValue2,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue3 != null">
+                and `config_value3` = #{configValue3,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null">
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="configType != null">
+                and `config_type` = #{configType,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
 </mapper>

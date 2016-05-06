@@ -1,172 +1,244 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtTasksDao">
-    <resultMap id="ResultMap" type="CmsBtTasksModel">
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTasksModel"/>
+    <sql id="Base_Column_List">
+        `id`, `task_name`, `task_type`, `promotion_id`, `channel_id`, `config`, `status`, 
+        `activity_start`, `activity_end`, `created`, `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        `id`,`task_name`,`task_type`,`promotion_id`,`channel_id`,`config`,`status`,`activity_start`,`activity_end`,`created`,`creater`,`modified`,`modifier`
+        <include refid="Base_Column_List"/>
         from cms_bt_tasks
-        <where>
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
+        insert into cms_bt_tasks
+        <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
-                AND `id` = #{id}
+                `id`,
             </if>
             <if test="taskName != null">
-                AND `task_name` = #{taskName}
+                `task_name`,
             </if>
             <if test="taskType != null">
-                AND `task_type` = #{taskType}
+                `task_type`,
             </if>
             <if test="promotionId != null">
-                AND `promotion_id` = #{promotionId}
+                `promotion_id`,
             </if>
             <if test="channelId != null">
-                AND `channel_id` = #{channelId}
+                `channel_id`,
             </if>
             <if test="config != null">
-                AND `config` = #{config}
+                `config`,
             </if>
             <if test="status != null">
-                AND `status` = #{status}
+                `status`,
             </if>
             <if test="activityStart != null">
-                AND `activity_start` = #{activityStart}
+                `activity_start`,
             </if>
             <if test="activityEnd != null">
-                AND `activity_end` = #{activityEnd}
+                `activity_end`,
             </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
+            `created`,
             <if test="creater != null">
-                AND `creater` = #{creater}
+                `creater`,
             </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
+            `modified`,
             <if test="modifier != null">
-                AND `modifier` = #{modifier}
+                `modifier`,
             </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`task_name`,`task_type`,`promotion_id`,`channel_id`,`config`,`status`,`activity_start`,`activity_end`,`created`,`creater`,`modified`,`modifier`
-        from cms_bt_tasks
-        <where>
-
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
-                AND `id` = #{id}
+                #{id,jdbcType=INTEGER},
             </if>
-
             <if test="taskName != null">
-                AND `task_name` = #{taskName}
+                #{taskName,jdbcType=VARCHAR},
             </if>
-
             <if test="taskType != null">
-                AND `task_type` = #{taskType}
+                #{taskType,jdbcType=INTEGER},
             </if>
-
             <if test="promotionId != null">
-                AND `promotion_id` = #{promotionId}
+                #{promotionId,jdbcType=INTEGER},
             </if>
-
             <if test="channelId != null">
-                AND `channel_id` = #{channelId}
+                #{channelId,jdbcType=VARCHAR},
             </if>
-
             <if test="config != null">
-                AND `config` = #{config}
+                #{config,jdbcType=VARCHAR},
             </if>
-
             <if test="status != null">
-                AND `status` = #{status}
+                #{status,jdbcType=INTEGER},
             </if>
-
             <if test="activityStart != null">
-                AND `activity_start` = #{activityStart}
+                #{activityStart,jdbcType=VARCHAR},
             </if>
-
             <if test="activityEnd != null">
-                AND `activity_end` = #{activityEnd}
+                #{activityEnd,jdbcType=VARCHAR},
             </if>
-
+            <if test="created == null">
+                now(),
+            </if>
             <if test="created != null">
-                AND `created` = #{created}
+                #{created,jdbcType=TIMESTAMP},
             </if>
-
             <if test="creater != null">
-                AND `creater` = #{creater}
+                #{creater,jdbcType=VARCHAR},
             </if>
-
+            <if test="modified == null">
+                now(),
+            </if>
             <if test="modified != null">
-                AND `modified` = #{modified}
+                #{modified,jdbcType=TIMESTAMP},
             </if>
-
             <if test="modifier != null">
-                AND `modifier` = #{modifier}
+                #{modifier,jdbcType=VARCHAR},
             </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`task_name`,`task_type`,`promotion_id`,`channel_id`,`config`,`status`,`activity_start`,`activity_end`,`created`,`creater`,`modified`,`modifier` from cms_bt_tasks where id=#{id}
-    </select>
+        </trim>
+    </insert>
 
-    <update id="update">
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
         update cms_bt_tasks
-        set
+        <set>
+            <if test="taskName != null">
+                `task_name` = #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="taskType != null">
+                `task_type` = #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="promotionId != null">
+                `promotion_id` = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null">
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="config != null">
+                `config` = #{config,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="activityStart != null">
+                `activity_start` = #{activityStart,jdbcType=VARCHAR},
+            </if>
+            <if test="activityEnd != null">
+                `activity_end` = #{activityEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null">
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null">
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null">
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null">
+                `modified` = now(),
+            </if>
+            <if test="modifier != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `task_name`=#{taskName}
-            ,`task_type`=#{taskType}
-            ,`promotion_id`=#{promotionId}
-            ,`channel_id`=#{channelId}
-            ,`config`=#{config}
-            ,`status`=#{status}
-            ,`activity_start`=#{activityStart}
-            ,`activity_end`=#{activityEnd}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_tasks
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from cms_bt_tasks
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_tasks
-        (
-              `task_name`,
-              `task_type`,
-              `promotion_id`,
-              `channel_id`,
-              `config`,
-              `status`,
-              `activity_start`,
-              `activity_end`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{taskName},
-              #{taskType},
-              #{promotionId},
-              #{channelId},
-              #{config},
-              #{status},
-              #{activityStart},
-              #{activityEnd},
-              #{created},
-              #{creater},
-              #{modified},
-              #{modifier}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_bt_tasks
+        <where>
+            <if test="taskName != null">
+                and `task_name` = #{taskName,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null">
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="promotionId != null">
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="config != null">
+                and `config` = #{config,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="activityStart != null">
+                and `activity_start` = #{activityStart,jdbcType=VARCHAR}
+            </if>
+            <if test="activityEnd != null">
+                and `activity_end` = #{activityEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cms_bt_tasks
+        <where>
+            <if test="taskName != null">
+                and `task_name` = #{taskName,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null">
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="promotionId != null">
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="config != null">
+                and `config` = #{config,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="activityStart != null">
+                and `activity_start` = #{activityStart,jdbcType=VARCHAR}
+            </if>
+            <if test="activityEnd != null">
+                and `activity_end` = #{activityEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null">
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

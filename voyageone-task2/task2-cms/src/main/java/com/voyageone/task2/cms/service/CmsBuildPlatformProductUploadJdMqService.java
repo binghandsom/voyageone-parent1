@@ -28,7 +28,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -303,8 +303,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //                cmsBtSizeMapModelList = sxProductService.selectSizeMapList();
 
             // 获取字典表(根据channel_id)上传图片的规格等信息
-            List<CmsMtPlatFormDictModel> cmsMtPlatFormDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
-            if (cmsMtPlatFormDictModelList == null || cmsMtPlatFormDictModelList.size() == 0) {
+            List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
+            if (cmsMtPlatformDictModelList == null || cmsMtPlatformDictModelList.size() == 0) {
                 String errMsg = String.format("获取字典表数据失败！[ChannelId:%s] [CartId:%s]", channelId, cartId);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
