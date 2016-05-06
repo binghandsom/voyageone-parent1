@@ -4,7 +4,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,systemCategoryService,confirm) {
+    function sizeChartController($scope,sizeChartService,confirm) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
@@ -16,7 +16,9 @@ define([
         };
 
         $scope.initialize  = function () {
-            //search();
+            sizeChartService.init().then(function(resp){
+               console.log(resp);
+            });
         };
 
         $scope.search = search;
@@ -51,8 +53,9 @@ define([
                 alert("yes");
             });
         }
+
     }
 
-    sizeChartController.$inject = ['$scope', 'systemCategoryService','confirm'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService'];
     return sizeChartController;
 });
