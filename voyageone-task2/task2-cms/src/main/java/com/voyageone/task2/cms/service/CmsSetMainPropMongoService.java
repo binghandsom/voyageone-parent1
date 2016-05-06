@@ -222,7 +222,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                         && !StringUtils.isEmpty(typeChannelBean.getName())
                                         && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
                                 ) {
-                            mapBrandMapping.put(typeChannelBean.getAdd_name1(), typeChannelBean.getName());
+                            // key忽略大小写(feed进来的brand不区分大小写)
+                            mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase(), typeChannelBean.getName());
                         }
                     }
                 }
@@ -469,8 +470,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 品牌
             if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getBrand()))) {
-                if (mapBrandMapping.containsKey(feed.getBrand())) {
-                    field.setBrand(mapBrandMapping.get(feed.getBrand()));
+                if (mapBrandMapping.containsKey(feed.getBrand().toLowerCase())) {
+                    field.setBrand(mapBrandMapping.get(feed.getBrand().toLowerCase()));
                 } else {
                     $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
@@ -593,21 +594,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
-                List<Map<String, Object>> multiComplex = new LinkedList<>();
+                if (newFlg) {
+                    List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                List<String> lstImageOrg = feed.getImage();
-                if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                    for (String imgOrg : lstImageOrg) {
-                        Map<String, Object> multiComplexChildren = new HashMap<>();
-                        // jeff 2016/04 change start
-                        // multiComplexChildren.put("image1", imgOrg);
-                        multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
-                        // jeff 2016/04 add end
-                        multiComplex.add(multiComplexChildren);
+                    List<String> lstImageOrg = feed.getImage();
+                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                        for (String imgOrg : lstImageOrg) {
+                            Map<String, Object> multiComplexChildren = new HashMap<>();
+                            // jeff 2016/04 change start
+                            // multiComplexChildren.put("image1", imgOrg);
+                            multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                            // jeff 2016/04 add end
+                            multiComplex.add(multiComplexChildren);
+                        }
                     }
-                }
 
-                field.put("images1", multiComplex);
+                    field.put("images1", multiComplex);
+                }
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
