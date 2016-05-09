@@ -36,7 +36,7 @@ define([
             this.ppService = ppPlatformMappingService;
             this.alert = alert;
 
-            this.property = context.path[0];
+            this.field = angular.copy(context.path[0]);
             /**
              * 是否需要(显示)选择项的匹配
              * @type {boolean}
@@ -87,7 +87,7 @@ define([
 
                 var me = this;
                 var valueFrom = null;
-                var property = me.property;
+                var property = this.field;
 
                 switch (property.type) {
                     case FieldTypes.complex:
@@ -256,7 +256,7 @@ define([
              */
             updateSelectedValue: function () {
                 var values = this.values;
-                var property = this.property;
+                var property = this.field;
 
                 this.selected.value = values[values.length - 1].selected;
 
@@ -278,7 +278,7 @@ define([
                 // 这里是下半边
                 // 固定值,即 TextWord
                 var textWord = new RuleWord(WordTypes.TEXT);
-                var pfProp = this.property;
+                var pfProp = this.field;
 
                 switch (pfProp.type) {
                     case FieldTypes.input:
@@ -294,9 +294,6 @@ define([
                         });
                         textWord.value = values.join(',');
                 }
-
-                // 该函数只有最终确定时使用, 所以在最后返回时, 重置 field 的 value. 防止下次打开画面仍显示这些值
-                pfProp.value = pfProp.values = null;
 
                 return textWord;
             },
@@ -359,9 +356,6 @@ define([
             },
 
             cancel: function () {
-                // 这里同 getTextWord 函数底部的作用相同
-                var prop = this.property;
-                prop.value = prop.values = null;
                 this.$modal.dismiss();
             }
         };
