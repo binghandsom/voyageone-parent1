@@ -13,5 +13,5 @@ node_modules/
 target/
 .externalToolBuilders/
 dependency-reduced-pom.xml
-
-
+npm-debug.log
+rebel.xml

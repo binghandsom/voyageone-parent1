@@ -160,28 +160,26 @@ public class ProductService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductModel> getList(String channelId, String queryStr) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(queryStr);
+    public List<CmsBtProductModel> getList(String channelId, JomgoQuery queryObject) {
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
     /**
      * getList
      */
-    public List<CmsBtProductModel> getList(String channelId, JomgoQuery queryObject) {
-        return cmsBtProductDao.select(queryObject, channelId);
+    public List<CmsBtProductBean> getBeanList(String channelId, JomgoQuery queryObject) {
+        return cmsBtProductDao.selectBean(queryObject, channelId);
     }
 
     // 查询产品信息(合并该产品的组信息)
     // queryObject中必须包含输出项:"fields.code"，否则将查询不到组信息
-    public List<CmsBtProductModel> getListWithGroup(String channelId, int cartId, JomgoQuery queryObject) {
-        List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObject, channelId);
+    public List<CmsBtProductBean> getListWithGroup(String channelId, int cartId, JomgoQuery queryObject) {
+        List<CmsBtProductBean> prodList = cmsBtProductDao.selectBean(queryObject, channelId);
         if (prodList == null || prodList.isEmpty()) {
             return prodList;
         }
 
-        for (CmsBtProductModel prodObj : prodList) {
+        for (CmsBtProductBean prodObj : prodList) {
             // 从group表合并platforms信息
             StringBuilder qurStr = new StringBuilder();
             qurStr.append(MongoUtils.splicingValue("cartId", cartId));
@@ -209,6 +207,7 @@ public class ProductService extends BaseService {
                 platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
                 platformModel.setPlatformActive(groupModelMap.getPlatformActive());
                 prodObj.setGroups(platformModel);
+                prodObj.setGroupBean(platformModel);
             }
         }
         return prodList;
@@ -777,7 +776,7 @@ public class ProductService extends BaseService {
             sbQuery.append(",");
         }
 
-        if (!StringUtils.isEmpty(cartId)) {
+        if (!StringUtils.isEmpty(cartId) && !"1".equals(cartId)) {
             sbQuery.append(MongoUtils.splicingValue("carts.cartId", Integer.valueOf(cartId)));
             sbQuery.append(",");
         }

@@ -13,6 +13,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
 import com.voyageone.components.jd.service.JdShopService;
@@ -259,7 +260,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             skuList.forEach(sku -> strSkuCodeList.add(sku.getSkuCode()));
             // 取得每个SKU的逻辑库存信息
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            skuLogicQtyMap = productService.getLogicQty(channelId, strSkuCodeList);
+            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
+            skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
 
             String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
 
@@ -447,6 +449,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                  // 回写workload表   (成功1)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
 
+                // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
+                updateProductGroupStatus(sxData.getPlatform(), jdProductBean.getOptionType());
+
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
                 updateJdWareTransportId(shopProp, sxData, jdWareId);
@@ -504,8 +509,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
-        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-
         // 渠道id
         String channelId = shopProp.getOrder_channel_id();
         // 平台id
@@ -513,9 +516,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // 京东上新产品共通属性设定
         JdProductBean jdProductBean = new JdProductBean();
-
-        // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
-        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformMappingData, platformSchemaData, shopProp, expressionParser, UserId_ClassName);
 
         // 流水号(非必须)
 //        jdProductBean.setTradeNo(mainProduct.getXXX());                  // 不使用
@@ -567,8 +567,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         jdProductBean.setMarketPrice(String.valueOf(marketPrice));
 //        // 京东价,精确到2位小数，单位:元(必须)
         Double jdPrice = getItemPrice(productList, channelId, cartId, PriceType_jdprice);
+        sxData.setMaxPrice(jdPrice);
         jdProductBean.setJdPrice(String.valueOf(jdPrice));
 
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         // 描述（最多支持3万个英文字符(必须)
         String strNotes = "详情页描述";
         try {
@@ -618,9 +620,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //        jdProductBean.setPackListing(mainProduct.getXXX());               // 不使用
         // 售后服务(非必须)
 //        jdProductBean.setService(mainProduct.getXXX());                   // 不使用
+
+        // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
+        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformMappingData, platformSchemaData, shopProp, expressionParser, UserId_ClassName);
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
         // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值
         jdProductBean.setAttributes(jdProductAttrMap.get(Attrivutes));
+
         // 是否先款后货,false为否，true为是 (非必须)
         jdProductBean.setPayFirst("true");
         // 发票限制：非必须输入，true为限制，false为不限制开增值税发票，FBP、LBP、SOPL、SOP类型商品均可输入(非必须)
@@ -1396,6 +1402,27 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // 调用京东API设置关联板式（取消商品关联版式时，请将commonHtml_Id值设置为空）
         jdWareService.updateWareLayoutId(shop, String.valueOf(wareId), commonHtml_Id);
+    }
+
+    /**
+     * 回写product group表中的platformStatus(Onsale/InStock)
+     *
+     * @param sxProductGroupModel CmsBtProductGroupModel
+     * @param optionType String
+     */
+    private void updateProductGroupStatus(CmsBtProductGroupModel sxProductGroupModel, String optionType) {
+        // 上新成功后回写product group表中的platformStatus
+        sxProductGroupModel.setPublishTime(DateTimeUtil.getNowTimeStamp());
+        // 京东平台的操作类型(在售)
+        if (OptioinType_onsale.equals(optionType)) {
+            // platformStatus更新成"OnSale"
+            sxProductGroupModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.OnSale);
+        } else {
+            // platformStatus更新成"InStock"
+            sxProductGroupModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.InStock);
+        }
+        // 更新ProductGroup表
+        productGroupService.update(sxProductGroupModel);
     }
 
 }

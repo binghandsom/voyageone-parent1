@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
@@ -85,7 +86,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 return parseResult;
             }
         } //padding图片
-        else if (imageIndex >= productImages.size()) {
+        else if (imageIndex >= productImages.size() || StringUtils.isEmpty(productImages.get(imageIndex).getName())) {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, null);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {

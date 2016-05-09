@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
@@ -11,8 +12,10 @@ import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * ImageGroup Service
@@ -31,20 +36,181 @@ import java.util.Map;
 public class ImageGroupService extends BaseService {
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
+    @Autowired
+    MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
-    public void save(CmsBtImageGroupModel model) {
+    public void save(String channelId, Integer cartId, String imageGroupName, Integer imageType, Integer viewType,
+                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+        CmsBtImageGroupModel model = new CmsBtImageGroupModel();
+        model.setChannelId(channelId);
+        model.setCartId(cartId);
+        model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
+        model.setImageGroupName(imageGroupName);
+        model.setImageType(imageType);
+        model.setViewType(viewType);
+        if (brandNameList.size() == 0) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            model.setBrandName(lst);
+        } else {
+            model.setBrandName(brandNameList);
+        }
+        if (productTypeList.size() == 0) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            model.setProductType(lst);
+        } else {
+            model.setProductType(productTypeList);
+        }
+        if (sizeTypeList.size() == 0) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            model.setSizeType(lst);
+        } else {
+            model.setSizeType(sizeTypeList);
+        }
+        model.setActive(1);
         cmsBtImageGroupDao.insert(model);
     }
 
-    public void update(CmsBtImageGroupModel model) {
-        cmsBtImageGroupDao.update(model);
+    public void logicDeleteImage(String imageGroupId, String originUrl) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            List<CmsBtImageGroupModel_Image> images = model.getImage();
+            if(images != null) {
+                for (CmsBtImageGroupModel_Image image : images) {
+                    if (image.getOriginUrl().equals(originUrl)) {
+                        images.remove(image);
+                    }
+                }
+                cmsBtImageGroupDao.update(model);
+            }
+        }
     }
 
-    public List<CmsBtImageGroupModel> getList(JomgoQuery queryObject) {
+    public void update(String imageGroupId, Integer cartId, String imageGroupName, Integer imageType, Integer viewType,
+                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            model.setCartId(cartId);
+            model.setImageGroupName(imageGroupName);
+            model.setImageType(imageType);
+            model.setViewType(viewType);
+            if (brandNameList.size() == 0) {
+                List lst = new ArrayList<String>();
+                lst.add("All");
+                model.setBrandName(lst);
+            } else {
+                model.setBrandName(brandNameList);
+            }
+            if (productTypeList.size() == 0) {
+                List lst = new ArrayList<String>();
+                lst.add("All");
+                model.setProductType(lst);
+            } else {
+                model.setProductType(productTypeList);
+            }
+            if (sizeTypeList.size() == 0) {
+                List lst = new ArrayList<String>();
+                lst.add("All");
+                model.setSizeType(lst);
+            } else {
+                model.setSizeType(sizeTypeList);
+            }
+            cmsBtImageGroupDao.update(model);
+        }
+    }
+
+    public void logicDelete(String imageGroupId) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            model.setActive(0);
+            cmsBtImageGroupDao.update(model);
+        }
+    }
+
+    public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
+                                              String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
+                endModified, brandNameList, productTypeList, sizeTypeList));
         return cmsBtImageGroupDao.select(queryObject);
     }
 
-    public CmsBtImageGroupModel getOne(JomgoQuery queryObject) {
+    public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
+    }
+
+    /**
+     * 返回页面端的检索条件拼装成mongo使用的条件
+     */
+    private String getSearchQuery(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
+                                  String endModified, List brandNameList, List productTypeList, List sizeTypeList) {
+        StringBuilder result = new StringBuilder();
+
+        // 获取Platform
+        if (platFormChangeList.size() > 0) {
+            Integer[] platFormArray = platFormChangeList.toArray(new Integer[platFormChangeList.size()]);
+            result.append(MongoUtils.splicingValue("cartId", platFormArray));
+            result.append(",");
+        }
+
+        // Image Type
+        if (!StringUtils.isEmpty(imageType)) {
+            result.append(MongoUtils.splicingValue("imageType", Integer.parseInt(imageType)));
+            result.append(",");
+        }
+
+        // Update Time
+        if (!StringUtils.isEmpty(beginModified) || !StringUtils.isEmpty(endModified)) {
+            result.append("\"modified\":{" );
+            // 获取Update Time Start
+            if (!StringUtils.isEmpty(beginModified)) {
+                result.append(MongoUtils.splicingValue("$gte", beginModified + " 00.00.00"));
+            }
+            // 获取Update Time End
+            if (!StringUtils.isEmpty(endModified)) {
+                if (!StringUtils.isEmpty(beginModified)) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", endModified + " 23.59.59"));
+            }
+            result.append("},");
+        }
+
+        // brandName
+        if (brandNameList.size() > 0) {
+            // 带上"All"
+            brandNameList.add("All");
+            result.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[brandNameList.size()])));
+            result.append(",");
+        }
+
+        // productType
+        if (productTypeList.size() > 0) {
+            // 带上"All"
+            productTypeList.add("All");
+            result.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[productTypeList.size()])));
+            result.append(",");
+        }
+
+        // sizeType
+        if (sizeTypeList.size() > 0) {
+            // 带上"All"
+            sizeTypeList.add("All");
+            result.append(MongoUtils.splicingValue("sizeType", sizeTypeList.toArray(new String[sizeTypeList.size()])));
+            result.append(",");
+        }
+
+        // channelId
+        result.append(MongoUtils.splicingValue("channelId", channelId));
+        result.append(",");
+
+        // active
+        result.append(MongoUtils.splicingValue("active", 1));
+
+        return "{" + result.toString() + "}";
     }
 }

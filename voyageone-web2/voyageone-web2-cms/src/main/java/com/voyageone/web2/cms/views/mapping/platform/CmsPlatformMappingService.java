@@ -92,13 +92,17 @@ class CmsPlatformMappingService extends BaseAppService {
      */
     List<Map<String, Object>> getOtherPlatformMapping(String mainCategoryId, UserSessionBean user) {
 
-        return platformMappingService.getMappingsByMainCatId(user.getSelChannel().getId(), mainCategoryId)
-                .stream()
-                .map(m -> new HashMap<String, Object>(2) {{
-                    put("platform", m.getPlatformCartId());
-                    put("categoryPath", getPlatformPath(m));
-                }})
-                .collect(toList());
+        // 20160506 tom 这个功能不需要, 删掉 START
+//        return platformMappingService.getMappingsByMainCatId(user.getSelChannel().getId(), mainCategoryId)
+//                .stream()
+//                .map(m -> new HashMap<String, Object>(2) {{
+//                    put("platform", m.getPlatformCartId());
+//                    put("categoryPath", getPlatformPath(m));
+//                }})
+//                .collect(toList());
+
+        return null;
+        // 20160506 tom 这个功能不需要, 删掉 END
     }
 
     /**
