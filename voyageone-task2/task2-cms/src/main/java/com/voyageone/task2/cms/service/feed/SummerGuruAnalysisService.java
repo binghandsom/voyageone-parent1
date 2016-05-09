@@ -197,7 +197,7 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
             vtmModelBean.setProductType(getProducType(vtmModelBean));
             vtmModelBean.setSizeType(getSizeType(vtmModelBean));
 
-            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
             modelBeans.add(cmsBtFeedInfoModel);
 

@@ -457,7 +457,7 @@ public class BhfoAnalysisService extends BaseAnalysisService {
                 attribute.put(key, values);
             }
 
-            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
             modelBeans.add(cmsBtFeedInfoModel);
 
