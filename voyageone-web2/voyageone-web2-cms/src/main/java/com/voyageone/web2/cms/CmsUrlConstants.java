@@ -563,6 +563,7 @@ interface CmsBtJmPromotionImportTask{
             String INIT_CHANNEL_IMAGE_GROUP_DETAIL = "init";
             String SAVE_CHANNEL_IMAGE_GROUP_DETAIL = "save";
             String SEARCH_CHANNEL_IMAGE_GROUP_DETAIL = "search";
+            String SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveUploadImage";
             String SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveImage";
             String DELETE_CHANNEL_IMAGE_GROUP_DETAIL = "delete";
             String REFRESH_CHANNEL_IMAGE_GROUP_DETAIL = "refresh";

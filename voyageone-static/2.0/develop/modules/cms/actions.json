@@ -376,6 +376,7 @@
         "search": "search",
         "save": "save",
         "saveImage": "saveImage",
+        "saveUploadImage": "saveUploadImage",
         "delete": "delete",
         "refresh": "refresh",
         "move": "move"

@@ -15,6 +15,7 @@ import com.voyageone.web2.base.BaseAppService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -74,7 +75,6 @@ public class CmsImageGroupDetailService extends BaseAppService {
     public List<CmsBtImageGroupModel_Image> search(Map<String, Object> param) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{\"imageGroupId\":" + param.get("imageGroupId") + "}");
-        queryObject.setProjection("{'_id':0}");
         CmsBtImageGroupModel imageGroupInfo = imageGroupService.getOne(queryObject);
         editImageModel(imageGroupInfo.getImage(), (String)param.get("lang"));
         return imageGroupInfo.getImage();
@@ -113,132 +113,73 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 返回页面端的检索条件拼装成mongo使用的条件
-     */
-    private String getSearchQuery(Map<String, Object> param) {
-        StringBuilder result = new StringBuilder();
-
-        // 获取Platform
-        List<Map<String, Object>> platFormList = ((List)param.get("platformList"));
-        List<Integer> platFormChangeList = platFormList.stream().filter((platfrom)->((Map) platfrom).get("show") != null && (boolean)((Map) platfrom).get("show") == true).map((platfrom)->Integer.parseInt((String)platfrom.get("value"))).collect(toList());
-        if (platFormChangeList.size() > 0) {
-            Integer[] platFormArray = platFormChangeList.toArray(new Integer[platFormList.size()]);
-            result.append(MongoUtils.splicingValue("cartId", platFormArray));
-            result.append(",");
-        }
-
-        // Image Type
-        if (!StringUtils.isEmpty((String)param.get("imageType"))) {
-            result.append(MongoUtils.splicingValue("imageType", Integer.parseInt((String)param.get("imageType"))));
-            result.append(",");
-        }
-
-        // Update Time
-        if (!StringUtils.isEmpty((String)param.get("beginModified")) || !StringUtils.isEmpty((String)param.get("endModified"))) {
-            result.append("\"modified\":{" );
-            // 获取Update Time Start
-            if (!StringUtils.isEmpty((String)param.get("beginModified"))) {
-                result.append(MongoUtils.splicingValue("$gte", (String)param.get("beginModified") + " 00.00.00"));
-            }
-            // 获取Update Time End
-            if (!StringUtils.isEmpty((String)param.get("endModified"))) {
-                if (!StringUtils.isEmpty((String)param.get("beginModified"))) {
-                    result.append(",");
-                }
-                result.append(MongoUtils.splicingValue("$lte", (String)param.get("endModified") + " 23.59.59"));
-            }
-            result.append("},");
-        }
-
-        // brandName
-        List brandNameList = (List)param.get("brandName");
-        if (brandNameList.size() > 0) {
-            // 带上"All"
-            brandNameList.add("All");
-            result.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[brandNameList.size()])));
-            result.append(",");
-        }
-
-        // productType
-        List productTypeList = (List)param.get("productType");
-        if (productTypeList.size() > 0) {
-            // 带上"All"
-            productTypeList.add("All");
-            result.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[productTypeList.size()])));
-            result.append(",");
-        }
-
-        // sizeType
-        List sizeTypeList = (List)param.get("sizeType");
-        if (sizeTypeList.size() > 0) {
-            // 带上"All"
-            sizeTypeList.add("All");
-            result.append(MongoUtils.splicingValue("sizeType", sizeTypeList.toArray(new String[sizeTypeList.size()])));
-            result.append(",");
-        }
-
-        // channelId
-        result.append(MongoUtils.splicingValue("channelId", param.get("channelId")));
-        result.append(",");
-
-        // active
-        result.append(MongoUtils.splicingValue("active", 1));
-
-        return "{" + result.toString() + "}";
-    }
-
-    /**
-     * 新加/编辑ImageGroup信息
+     * 编辑ImageGroup信息
      *
      * @param param 客户端参数
      * @return 检索结果
      */
     public void save(Map<String, Object> param) {
-        CmsBtImageGroupModel model = new CmsBtImageGroupModel();
-        model.setChannelId((String)param.get("channelId"));
-        model.setCartId(Integer.parseInt((String)param.get("platform")));
-        model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
-        model.setImageGroupName((String)param.get("imageGroupName"));
-        model.setImageType(Integer.parseInt((String)param.get("imageType")));
-        model.setViewType(Integer.parseInt((String)param.get("viewType")));
-        if (((List)param.get("brandName")).size() == 0) {
-            List lst = new ArrayList<String>();
-            lst.add("All");
-            model.setBrandName(lst);
-        } else {
-            model.setBrandName((List) param.get("brandName"));
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"imageGroupId\":" + param.get("imageGroupId") + "}");
+        CmsBtImageGroupModel model = imageGroupService.getOne(queryObject);
+        if (model != null) {
+            model.setCartId(Integer.parseInt((String) param.get("platform")));
+            model.setImageGroupName((String) param.get("imageGroupName"));
+            model.setImageType(Integer.parseInt((String) param.get("imageType")));
+            model.setViewType(Integer.parseInt((String) param.get("viewType")));
+            if (((List) param.get("brandName")).size() == 0) {
+                List lst = new ArrayList<String>();
+                lst.add("All");
+                model.setBrandName(lst);
+            } else {
+                model.setBrandName((List) param.get("brandName"));
+            }
+            if (((List) param.get("productType")).size() == 0) {
+                List lst = new ArrayList<String>();
+                lst.add("All");
+                model.setProductType(lst);
+            } else {
+                model.setProductType((List) param.get("productType"));
+            }
+            if (((List) param.get("sizeType")).size() == 0) {
+                List lst = new ArrayList<String>();
+                lst.add("All");
+                model.setSizeType(lst);
+            } else {
+                model.setSizeType((List) param.get("sizeType"));
+            }
+            imageGroupService.update(model);
         }
-        if (((List)param.get("productType")).size() == 0) {
-            List lst = new ArrayList<String>();
-            lst.add("All");
-            model.setProductType(lst);
-        } else {
-            model.setProductType((List) param.get("productType"));
-        }
-        if (((List)param.get("sizeType")).size() == 0) {
-            List lst = new ArrayList<String>();
-            lst.add("All");
-            model.setSizeType(lst);
-        } else {
-            model.setSizeType((List) param.get("sizeType"));
-        }
-        model.setActive(1);
-        imageGroupService.save(model);
+    }
+
+    /**
+     * 保存ImageGroup信息
+     *
+     * @param param 客户端参数
+     * @param file 导入文件
+     */
+    public void saveImage(Map<String, Object> param, MultipartFile file) {
     }
 
     /**
      * 逻辑删除ImageGroup信息
      *
      * @param param 客户端参数
-     * @return 检索结果
      */
     public void delete(Map<String, Object> param) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{\"imageGroupId\":" + param.get("imageGroupId") + "}");
         CmsBtImageGroupModel model = imageGroupService.getOne(queryObject);
         if (model != null) {
-            model.setActive(0);
-            imageGroupService.update(model);
+            List<CmsBtImageGroupModel_Image> images = model.getImage();
+            if(images != null) {
+                for (CmsBtImageGroupModel_Image image : images) {
+                    if (image.getOriginUrl().equals((String)param.get("originUrl"))) {
+                        images.remove(image);
+                    }
+                }
+                imageGroupService.update(model);
+            }
         }
     }
 
