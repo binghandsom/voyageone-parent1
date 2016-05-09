@@ -4,31 +4,33 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,sizeChartService,confirm) {
+    function sizeChartController($scope,sizeChartService,confirm,notify) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
-            finishFlag:[{name:'',value:'all'},{name:'yes',value:'1'},{name:'no',value:'0'}],
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[],
-            sizeChartPageOption : {curr: 1, total: 198, size: 30, fetch: search}
+            sizeChartPageOption : {curr: 1, total: 0, fetch: search}
         };
 
         $scope.initialize  = function () {
             sizeChartService.init().then(function(resp){
-               $scope.vm.sizeChartList = resp.data.sizeChartList;
                $scope.vm.brandNameList = resp.data.brandNameList;
                $scope.vm.productTypeList = resp.data.productTypeList;
                $scope.vm.sizeTypeList = resp.data.sizeTypeList;
             });
+            search();
         };
 
         $scope.search = search;
 
         function search() {
-            sizeChartService.search($scope.vm.searchInfo).then(function(reps){
-                console.log("搜索结果",reps);
+            var data = $scope.vm.sizeChartPageOption;
+            _.extend(data ,$scope.vm.searchInfo);
+            sizeChartService.search(data).then(function(reps){
+                $scope.vm.sizeChartList = reps.data.sizeChartList;
+                $scope.vm.sizeChartPageOption.total = reps.data.total;
             });
         }
 
@@ -42,14 +44,16 @@ define([
         /**
          * 删除尺码表操作
          */
-        $scope.deleteRow = function(){
+        $scope.deleteRow = function(sizeChartId){
             confirm("确认要删除该尺码表吗？").result.then(function () {
-                alert("yes");
+                sizeChartService.delete({sizeChartId:sizeChartId}).then(function(reps){
+                    notify.success ("删除成功！");
+                });
             });
         }
 
     }
 
-    sizeChartController.$inject = ['$scope', 'sizeChartService'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify'];
     return sizeChartController;
 });

@@ -1,6 +1,6 @@
 package com.voyageone.service.model.cms.mongo.channel;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,29 +8,21 @@ import java.util.List;
 /**
  * Created by gjl on 2016/5/5.
  */
-public class CmsBtSizeChartModel extends BaseMongoModel {
-    private String channelId;
-    private String sizeChartId;
+public class CmsBtSizeChartModel extends ChannelPartitionModel {
+    private int sizeChartId;
     private String sizeChartName;
     private String finish;
     private List<String> brandName;
     private List<String>productType;
     private List<String> sizeType;
-    private List<CmsBtSizeChartModelSizeMap> carts = new ArrayList<>();
-    private String active;
-    public String getChannelId() {
-        return channelId;
-    }
+    private List<CmsBtSizeChartModelSizeMap> sizeMap = new ArrayList<>();
+    private int active;
 
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
-
-    public String getSizeChartId() {
+    public int getSizeChartId() {
         return sizeChartId;
     }
 
-    public void setSizeChartId(String sizeChartId) {
+    public void setSizeChartId(int sizeChartId) {
         this.sizeChartId = sizeChartId;
     }
 
@@ -74,19 +66,19 @@ public class CmsBtSizeChartModel extends BaseMongoModel {
         this.sizeType = sizeType;
     }
 
-    public List<CmsBtSizeChartModelSizeMap> getCarts() {
-        return carts;
+    public List<CmsBtSizeChartModelSizeMap> getSizeMap() {
+        return sizeMap;
     }
 
-    public void setCarts(List<CmsBtSizeChartModelSizeMap> carts) {
-        this.carts = carts;
+    public void setSizeMap(List<CmsBtSizeChartModelSizeMap> sizeMap) {
+        this.sizeMap = sizeMap;
     }
 
-    public String getActive() {
+    public int getActive() {
         return active;
     }
 
-    public void setActive(String active) {
+    public void setActive(int active) {
         this.active = active;
     }
 }

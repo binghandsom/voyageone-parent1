@@ -3,8 +3,9 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtPlatformImagesDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPlatformImagesModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cart_id`, `search_id`, `img_name`, `original_img_url`, `platform_img_url`, 
-        `platform_img_id`, `upd_flg`, `active`, `creater`, `created`, `modifier`, `modified`
+        `id`, `channel_id`, `cart_id`, `search_id`, `img_name`, `template_id`, `original_img_url`, 
+        `platform_img_url`, `platform_img_id`, `upd_flg`, `active`, `creater`, `created`, 
+        `modifier`, `modified`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -31,6 +32,9 @@
             </if>
             <if test="imgName != null" >
                 `img_name`,
+            </if>
+            <if test="templateId != null" >
+                `template_id`,
             </if>
             <if test="originalImgUrl != null" >
                 `original_img_url`,
@@ -71,6 +75,9 @@
             </if>
             <if test="imgName != null" >
                 #{imgName,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null" >
+                #{templateId,jdbcType=INTEGER},
             </if>
             <if test="originalImgUrl != null" >
                 #{originalImgUrl,jdbcType=VARCHAR},
@@ -122,6 +129,9 @@
             </if>
             <if test="imgName != null" >
                 `img_name` = #{imgName,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null" >
+                `template_id` = #{templateId,jdbcType=INTEGER},
             </if>
             <if test="originalImgUrl != null" >
                 `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR},
@@ -179,6 +189,9 @@
             <if test="imgName != null" >
                 and `img_name` = #{imgName,jdbcType=VARCHAR}
             </if>
+            <if test="templateId != null" >
+                and `template_id` = #{templateId,jdbcType=INTEGER}
+            </if>
             <if test="originalImgUrl != null" >
                 and `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR}
             </if>
@@ -225,6 +238,9 @@
             </if>
             <if test="imgName != null" >
                 and `img_name` = #{imgName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateId != null" >
+                and `template_id` = #{templateId,jdbcType=INTEGER}
             </if>
             <if test="originalImgUrl != null" >
                 and `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR}

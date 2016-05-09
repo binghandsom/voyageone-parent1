@@ -7,11 +7,10 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupController", (function () {
-        function ImageGroupController($routeParams, imageGroupService, cActions, confirm, alert, notify) {
+        function ImageGroupController( imageGroupService, confirm, alert, notify) {
             this.confirm = confirm;
             this.alert = alert;
             this.notify = notify;
-
             this.platformList = [];
             this.imageType = "";
             this.beginModified = "";
@@ -58,7 +57,7 @@ define([
                     "productType" : main.productType,
                     "sizeType" : main.sizeType
                 }).then(function (res) {
-                        main.imageGroupList = res.data
+                        main.imageGroupList = res.data;
                         main.pageOption.total = res.data.length;
                         main.pageOption.curr = 1;
                 })

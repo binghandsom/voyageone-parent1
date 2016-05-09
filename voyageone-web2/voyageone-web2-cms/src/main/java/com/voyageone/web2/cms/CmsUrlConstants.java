@@ -558,6 +558,17 @@ interface CmsBtJmPromotionImportTask{
             String SAVE_CHANNEL_IMAGE_GROUP = "save";
             String DELETE_CHANNEL_IMAGE_GROUP = "delete";
         }
+        interface CHANNEL_IMAGE_GROUP_DETAIL {
+            String ROOT="/cms/channel/image_group_detail";
+            String INIT_CHANNEL_IMAGE_GROUP_DETAIL = "init";
+            String SAVE_CHANNEL_IMAGE_GROUP_DETAIL = "save";
+            String SEARCH_CHANNEL_IMAGE_GROUP_DETAIL = "search";
+            String SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveUploadImage";
+            String SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveImage";
+            String DELETE_CHANNEL_IMAGE_GROUP_DETAIL = "delete";
+            String REFRESH_CHANNEL_IMAGE_GROUP_DETAIL = "refresh";
+            String MOVE_CHANNEL_IMAGE_GROUP_DETAIL = "move";
+        }
         interface LISTING{
             interface SIZE_CHART{
                 String ROOT="/cms/channel/sizeChartList";

@@ -370,6 +370,17 @@
         "save": "save",
         "delete": "delete"
       },
+      "imageGroupDetailService": {
+        "root": "/cms/channel/image_group_detail",
+        "init": "init",
+        "search": "search",
+        "save": "save",
+        "saveImage": "saveImage",
+        "saveUploadImage": "saveUploadImage",
+        "delete": "delete",
+        "refresh": "refresh",
+        "move": "move"
+      },
       "sizeChart":{
         "sizeChartService": {
           "root": "/cms/channel/sizeChartList",

@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -189,7 +190,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                     queryObject.setQuery("{'prodId':" + productId + "}");
                     queryObject.setProjection("{'fields.code':1,'carts':{'$elemMatch':{'cartId':" + cartId + "}}}");
 
-                    List<CmsBtProductModel> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
+                    List<CmsBtProductBean> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
                     if (modelList != null && modelList.size() > 0 && modelList.get(0).getCarts().size()>0) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                         map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
@@ -218,12 +219,12 @@ public class CmsPromotionDetailService extends BaseAppService {
                 // 取得Product 数据
                 queryObject.setQuery("{\"prodId\":" + map.getProductId() + "}");
 
-                List<CmsBtProductModel> prodList = productService.getListWithGroup((String) param.get("channelId"), cartId, queryObject);
+                List<CmsBtProductBean> prodList = productService.getListWithGroup((String) param.get("channelId"), cartId, queryObject);
                 if (prodList != null && prodList.size() > 0) {
 //                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
 //                    map.setSkuCount(cmsBtProductModel.getSkus().size());
-                    CmsBtProductModel cmsBtProductModel = prodList.get(0);
-                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatformStatus());
+                    CmsBtProductBean cmsBtProductModel = prodList.get(0);
+                    map.setPlatformStatus(cmsBtProductModel.getGroupBean().getPlatformStatus());
                     map.setInventory(cmsBtProductModel.getBatchField().getCodeQty());
                 }
             });

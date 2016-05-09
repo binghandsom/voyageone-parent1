@@ -73,7 +73,7 @@ define([
 				productInfo.priceSale = _setPriceSale(productInfo.fields);
 
 				// 设置time detail
-				productInfo.groups.timeDetail = _setTimeDetail(productInfo);
+				productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 			});
 
 			var tempProductIds = [];
