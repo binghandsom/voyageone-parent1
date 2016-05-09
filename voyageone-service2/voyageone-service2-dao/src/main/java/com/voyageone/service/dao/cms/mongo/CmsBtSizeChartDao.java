@@ -83,7 +83,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
             sbQuery.append(MongoUtils.splicingValue("sizeType", cmsBtSizeChartModel.getSizeType()));
             sbQuery.append(",");
         }
-        sbQuery.append(MongoUtils.splicingValue("active", 1));
+        sbQuery.append(MongoUtils.splicingValue("active", 0));
         return select("{" + sbQuery.toString() + "}",channelId);
     }
     /**
