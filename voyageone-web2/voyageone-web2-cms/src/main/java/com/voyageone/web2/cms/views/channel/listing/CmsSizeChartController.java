@@ -72,6 +72,8 @@ public class CmsSizeChartController extends CmsController {
     public AjaxResponse sizeChartDetailSave(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
+        //创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
         //取得尺码关系一览初始化
         cmsSizeChartService.sizeChartDetailUpdate(channelId, param);
         //返回数据的类型

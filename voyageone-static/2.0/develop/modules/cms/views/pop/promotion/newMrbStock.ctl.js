@@ -24,6 +24,7 @@ define([
             //updateFlag
             updateFlag:null
         };
+
         if(data){
             //判断隔离任务:1新规的场 2合更新的场合
             if(data.task_id){
@@ -37,13 +38,14 @@ define([
                 );
                 $scope.vm.taskId=data.task_id;
                 $scope.vm.taskName=data.task_name;
-            }else{
+            }
+             else{
                 $scope.vm.promotionType="1";
                 //取得选择的活动ID
                 angular.forEach(data.selFlag, function(val,key) {
                     if(val){
                         $scope.vm.selFlag[key]=val;
-                        $scope.vm.isChoicePromotionIdList.push({key: key, val: val});
+                        $scope.vm.isChoicePromotionIdList.push({key: key,val: val});
                     }
                 });
                 $scope.initialize = function(){

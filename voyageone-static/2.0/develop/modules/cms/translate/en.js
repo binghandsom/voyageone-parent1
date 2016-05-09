@@ -163,6 +163,8 @@ define(function() {
         "TXT_COMMENT": "Comment",
         "TXT_UPDATE_BY": "Update By",
         "TXT_PRODUCT_DETAIL": "Product Detail",
+        "TXT_PRICE": "Price",
+        "TXT_PRICE_TYPE": "Price Type",
         "TXT_PRICE_HISTORY": "Price History",
         "TXT_IS_FIX_TRANSLATED": "Is Translation?",
         "TXT_PRODUCT_CODE": "Product Code",

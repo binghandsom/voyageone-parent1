@@ -10,7 +10,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
- * 
+ *
  */
 public class CmsBtImagesModel extends BaseModel {
     protected String channelId;

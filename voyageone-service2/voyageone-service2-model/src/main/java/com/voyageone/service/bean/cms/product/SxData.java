@@ -21,6 +21,8 @@ public class SxData {
 	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表(product下所有sku都没有当前cartId，则去除)
 	private List<CmsBtProductModel_Sku> skuList;	// 只包含当前group，cart中, 允许使用的sku信息
 
+    private Double maxPrice; // 当前productList的所有sku中，最大的那个价格（销售的价格）
+
 	public String getChannelId() {
 		return channelId;
 	}
@@ -84,4 +86,12 @@ public class SxData {
 	public void setSkuList(List<CmsBtProductModel_Sku> skuList) {
 		this.skuList = skuList;
 	}
+
+    public Double getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(Double maxPrice) {
+        this.maxPrice = maxPrice;
+    }
 }

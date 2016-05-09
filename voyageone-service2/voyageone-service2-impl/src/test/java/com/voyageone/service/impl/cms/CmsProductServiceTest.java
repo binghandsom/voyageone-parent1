@@ -321,7 +321,7 @@ public class CmsProductServiceTest {
         List<String> skuList = new ArrayList<>();
         skuList.add("1FMA3324Y11");
 
-        List<ProductForOmsBean> result = cmsProductService.getOmsProductsInfo("010", null, skuList, null, null, "23", null);
+        List<ProductForOmsBean> result = cmsProductService.getOmsProductsInfo("010", null, skuList, null, null, "1", null);
         System.out.println(result);
     }
 

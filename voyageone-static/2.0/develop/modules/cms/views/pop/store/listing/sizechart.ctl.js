@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartCtl', function ($scope, context,sizeChartService,notify) {
+    angularAMD.controller('popSizeChartCtl', function ($scope, context,sizeChartService,alert) {
         $scope.vm = {
             saveInfo:{sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],sizeTypeList:[]}
         };
