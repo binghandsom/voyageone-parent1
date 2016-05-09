@@ -10,29 +10,25 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label">Platform</label>
+                                        <label class="col-sm-3 control-label">{{'TXT_PLATFORM' | translate}}</label>
                                         <div class="col-sm-6">
-                                            <label class="radio-inline c-radio"><input type="radio" value="option1"><span class="fa fa-check"></span> TM </label>
-                                            <label class="radio-inline c-radio"><input type="radio" value="option2"><span class="fa fa-check"></span> TG </label>
-                                            <label class="radio-inline c-radio"><input type="radio" value="option3"><span class="fa fa-check"></span> JD </label>
-                                            <label class="radio-inline c-radio"><input type="radio" value="option2"><span class="fa fa-check"></span> JG </label>
-                                            <label class="radio-inline c-radio"><input type="radio" value="option3"><span class="fa fa-check"></span> JM </label>
+                                            <label ng-repeat="platform in vm.platformList" class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="platform.show" ><span class="fa fa-check"></span>&nbsp;{{platform.name}}</label>
                                         </div>
                                     </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Update Time</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_UPDATE_TIME' | translate}}</label>
 
                                     <div class="col-sm-9" style="margin-left: -4px;">
                                         <div class="col-sm-10 form-inline">
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.beginModified"
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.beginModified"
                                                        max-date="ctrl.searchInfo.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                             </div>&nbsp;~&nbsp;
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.endModified"
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.endModified"
                                                        min-date="ctrl.searchInfo.beginModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -48,27 +44,24 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Brand Name</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'250px'">
-                                            <option>Adidas</option>
-                                            <option>NewBalance</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="searchInfo.brandName"
+                                                ng-options="brand.value as brand.name for brand in ctrl.brandNameList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Product Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'250px'">
-                                            <option>鞋子</option>
-                                            <option>上衣</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="searchInfo.productType"
+                                                ng-options="productType.value as productType.name for productType in ctrl.productTypeList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Size Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'250px'">
-                                            <option>男鞋</option>
-                                            <option>女鞋</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="searchInfo.sizeType"
+                                                ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList">
                                         </select>
                                     </div>
                                 </div>
@@ -79,30 +72,30 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Template Name</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control">
+                                        <input type="text" ng-model="searchInfo.imageTemplateName" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Template Type</label>
                                     <div class="col-sm-7">
-                                        <select class="form-control">
+                                        <select class="form-control" ng-model="searchInfo.imageTemplateType">
                                             <option value="Select...">Select...</option>
-                                            <option value="商品图片模版">商品图片模版</option>
-                                            <option value="产品图片模版">产品图片模版</option>
-                                            <option value="详情细节模版">详情细节模版</option>
-                                            <option value="参数模版">参数模版</option>
-                                            <option value="自定义图片模版">自定义图片模版</option>
-                                            <option value="商品包装模版">商品包装模版</option>
+                                            <option value="1">商品图片模版</option>
+                                            <option value="2">产品图片模版</option>
+                                            <option value="3">详情细节模版</option>
+                                            <option value="4">参数模版</option>
+                                            <option value="5">自定义图片模版</option>
+                                            <option value="6">商品包装模版</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">View Type</label>
                                     <div class="col-sm-7">
-                                        <select class="form-control">
+                                        <select class="form-control" ng-model="searchInfo.viewType" >
                                             <option value="Select...">Select...</option>
-                                            <option value="APP端">APP端</option>
-                                            <option value="PC端">PC端</option>
+                                            <option value="APP">APP</option>
+                                            <option value="PC">PC</option>
                                         </select>
                                     </div>
                                 </div>

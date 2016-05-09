@@ -1,9 +1,7 @@
 package com.voyageone.service.impl.cms.mongo;
 
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
-import com.voyageone.service.model.cms.mongo.CmsBtImageTemplateModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

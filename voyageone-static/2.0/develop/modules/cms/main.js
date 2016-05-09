@@ -34,9 +34,10 @@ require.config({
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen'
     },
+    waitSeconds:0,
     shim: {
         'voyageone-com': ['jquery'],
-        'voyageone-angular-com': ['angularAMD'],
+        'voyageone-angular-com': ['angular'],
         'angular-sanitize': ['angular'],
         'angular-route': ['angular'],
         'angular-animate': ['angular'],
