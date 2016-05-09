@@ -110,7 +110,7 @@ public class SizeChartService extends BaseService {
         if(sizeMapList.size()>0) {
             cmsBtSizeChartModel.setSizeType((List<String>) param.get("sizeMap"));
         }
-        cmsBtSizeChartModel.setActive(1);
+        cmsBtSizeChartModel.setActive(0);
         cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
     }
 }
