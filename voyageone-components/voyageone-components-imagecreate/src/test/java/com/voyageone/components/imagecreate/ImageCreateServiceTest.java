@@ -8,6 +8,10 @@ import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,25 +23,27 @@ import java.util.List;
  * @version 2.0.1
  * @since 2.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class ImageCreateServiceTest {
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     @Test
     public void testGet() throws Exception {
-        ImageCreateService service = new ImageCreateService();
-
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId("001");
         request.setTemplateId(15);
         request.setFile("testaacc-111");
         request.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
-        ImageCreateGetResponse response = service.getImage(request);
+        ImageCreateGetResponse response = imageCreateService.getImage(request);
         System.out.println(JacksonUtil.bean2Json(response));
     }
 
 
     @Test
     public void testAddList() throws Exception {
-        ImageCreateService service = new ImageCreateService();
 
         List<CreateImageParameter> datas = new ArrayList<>();
         CreateImageParameter createImageParameter = new CreateImageParameter();
@@ -58,7 +64,7 @@ public class ImageCreateServiceTest {
         ImageCreateAddListRequest request = new ImageCreateAddListRequest();
         request.setData(datas);
 
-        ImageCreateAddListResponse response = service.addList(request);
+        ImageCreateAddListResponse response = imageCreateService.addList(request);
 
 
         System.out.println(JacksonUtil.bean2Json(response));
