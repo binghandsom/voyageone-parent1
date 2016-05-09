@@ -56,7 +56,7 @@ public class TargetCartService extends TargetBase {
      */
     public boolean addTenders(TargetCartAddTenderRequest request) {
         try {
-            postApiResponseWithKey(Url + "/v2/shipping_details", request, TargetCartApplyShippingDetailResponse.class, true);
+            postApiResponseWithKey(Url + "/v2/tenders", request, null, true);
             return true;
         } catch (Exception e) {
             return false;
