@@ -9,6 +9,7 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
@@ -29,25 +30,28 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class CmsImageTemplateService extends BaseService {
-
-    @Autowired
-    private ImageTemplateService service;
-
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
     private CmsBtImagesDao cmsBtImagesDao;
 
-    public List<CmsBtImagesModel> getImageList (CmsBtImagesModel model) {
-        return cmsBtImagesDao.selectList(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(model)));
+    @Autowired
+    private CmsBtImageTemplateDao dao;
+
+    public void save(CmsBtImageTemplateModel model) {
+        dao.insert(model);
     }
 
-    public int insert(CmsBtImagesModel model) {
-        return cmsBtImagesDao.insert(model);
+    public void update(CmsBtImageTemplateModel model) {
+        dao.update(model);
     }
 
-    public int update(CmsBtImagesModel model) {
-        return cmsBtImagesDao.update(model);
+    public List<CmsBtImageTemplateModel> getList(JomgoQuery queryObject) {
+        return dao.select(queryObject);
+    }
+
+    public CmsBtImageTemplateModel getOne(JomgoQuery queryObject) {
+        return dao.selectOneWithQuery(queryObject);
     }
     /**
      * 取得检索条件信息
@@ -80,7 +84,7 @@ public class CmsImageTemplateService extends BaseService {
     public List<CmsBtImageTemplateBean> search(Map<String, Object> param) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(param));
-        List<CmsBtImageTemplateModel> list = service.getList(queryObject);
+        List<CmsBtImageTemplateModel> list = getList(queryObject);
         return changeToBeanList(list, (String)param.get("channelId"), (String)param.get("lang"));
     }
 
@@ -244,7 +248,7 @@ public class CmsImageTemplateService extends BaseService {
             model.setSizeType((List) param.get("sizeType"));
         }
         model.setActive(1);
-        service.save(model);
+        save(model);
     }
 
     /**
@@ -256,10 +260,10 @@ public class CmsImageTemplateService extends BaseService {
     public void delete(Map<String, Object> param) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{\"imageTemplateId\":" + param.get("imageTemplateId") + "}");
-        CmsBtImageTemplateModel model = service.getOne(queryObject);
+        CmsBtImageTemplateModel model = getOne(queryObject);
         if (model != null) {
             model.setActive(0);
-            service.update(model);
+            update(model);
         }
     }
 
