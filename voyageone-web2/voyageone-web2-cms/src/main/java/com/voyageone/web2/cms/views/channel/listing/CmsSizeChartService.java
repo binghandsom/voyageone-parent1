@@ -41,16 +41,12 @@ public class CmsSizeChartService extends BaseAppService {
         List<TypeChannelBean> productTypeList= TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, language);
         //取得产品性别
         List<TypeChannelBean> sizeTypeList= TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, language);
-        //取得尺码关系一览数据
-        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.selectInitSizeChartInfo(channelId);
         //取得产品品牌
         data.put("brandNameList",brandNameList);
         //取得产品类型
         data.put("productTypeList",productTypeList);
         //取得产品性别
         data.put("sizeTypeList",sizeTypeList);
-        //取得尺码关系一览数据
-        data.put("sizeChartList",sizeChartList);
         //返回数据的类型
         return data;
     }
@@ -80,9 +76,22 @@ public class CmsSizeChartService extends BaseAppService {
         //产品性别
         cmsBtSizeChartModel.setSizeType((List<String>) param.get("sizeTypeList"));
         //尺码关系一览检索
-        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.selectSearchSizeChartInfo(channelId,cmsBtSizeChartModel);
+        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.selectSearchSizeChartInfo(channelId, cmsBtSizeChartModel);
+        //第一页取得前一页记录
+        int staIdx;
+        if((int)param.get("curr") ==1){
+            staIdx = 0 ;
+        }else{
+            staIdx = (int)param.get("curr") - 1 * (int)param.get("size") - 1 ;
+        }
+        int endIdx = staIdx + (int)param.get("size");
+        int sizeChartListTotal = sizeChartList.size();
+        if (endIdx > sizeChartListTotal) {
+            endIdx = sizeChartListTotal;
+        }
+        List<CmsBtSizeChartModel> pageSizeChartList = sizeChartList.subList(staIdx, endIdx);
         //尺码关系一览检索
-        param.put("sizeChartList",sizeChartList);
+        param.put("sizeChartList",pageSizeChartList);
         //返回数据的类型
         return data;
     }
@@ -120,21 +129,24 @@ public class CmsSizeChartService extends BaseAppService {
         cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(String.valueOf(sizeChartId)));
         cmsBtSizeChartModel.setSizeChartName(param.get("sizeChartName").toString());
         cmsBtSizeChartModel.setFinish("0");
-        if ((param.get("brandNameList")) instanceof String) {
+        List<String> brandNameList= (List<String>) param.get("brandNameList");
+        if (brandNameList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
             cmsBtSizeChartModel.setBrandName((List<String>) param.get("brandNameList"));
         }
-        if ((param.get("productTypeList")) instanceof String) {
+        List<String> productTypeList= (List<String>) param.get("productTypeList");
+        if(productTypeList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setProductType(lst);
         } else {
             cmsBtSizeChartModel.setProductType((List<String>) param.get("productTypeList"));
         }
-        if ((param.get("sizeTypeList")) instanceof String) {
+        List<String> sizeTypeList= (List<String>) param.get("sizeTypeList");
+        if(sizeTypeList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setSizeType(lst);
@@ -151,8 +163,45 @@ public class CmsSizeChartService extends BaseAppService {
      * @param param
      * @return data
      */
-    public Map<String, Object>sizeChartDetailUpdate(String channelId,Map param) {
-        Map<String, Object> data =new HashMap<>();
-        return data;
+    public void sizeChartDetailUpdate(String channelId,Map param) {
+        CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
+        cmsBtSizeChartModel.setModifier(param.get("userName").toString());
+        cmsBtSizeChartModel.setCreater(param.get("userName").toString());
+        cmsBtSizeChartModel.setChannelId(channelId);
+        Long sizeChartId =commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
+        cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(String.valueOf(sizeChartId)));
+        cmsBtSizeChartModel.setSizeChartName(param.get("sizeChartName").toString());
+        cmsBtSizeChartModel.setFinish("0");
+        List<String> brandNameList= (List<String>) param.get("brandNameList");
+        if (brandNameList.size()==0) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            cmsBtSizeChartModel.setBrandName(lst);
+        } else {
+            cmsBtSizeChartModel.setBrandName((List<String>) param.get("brandNameList"));
+        }
+        List<String> productTypeList= (List<String>) param.get("productTypeList");
+        if(productTypeList.size()==0) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            cmsBtSizeChartModel.setProductType(lst);
+        } else {
+            cmsBtSizeChartModel.setProductType((List<String>) param.get("productTypeList"));
+        }
+        List<String> sizeTypeList= (List<String>) param.get("sizeTypeList");
+        if(sizeTypeList.size()==0) {
+            List lst = new ArrayList<String>();
+            lst.add("All");
+            cmsBtSizeChartModel.setSizeType(lst);
+        } else {
+            cmsBtSizeChartModel.setSizeType((List<String>) param.get("sizeTypeList"));
+        }
+        List<String> sizeMapList= (List<String>) param.get("sizeMap");
+        if(sizeMapList.size()>0) {
+            cmsBtSizeChartModel.setSizeType((List<String>) param.get("sizeMap"));
+        }
+        cmsBtSizeChartModel.setActive(1);
+        //插入数据库
+        sizeChartService.insert(cmsBtSizeChartModel);
     }
 }

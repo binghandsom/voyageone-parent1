@@ -73,8 +73,8 @@ public class CmsSizeChartController extends CmsController {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
         //取得尺码关系一览初始化
-        Map<String, Object> resultBean=cmsSizeChartService.sizeChartDetailUpdate(channelId, param);
+        cmsSizeChartService.sizeChartDetailUpdate(channelId, param);
         //返回数据的类型
-        return success(resultBean);
+        return success(param);
     }
 }
