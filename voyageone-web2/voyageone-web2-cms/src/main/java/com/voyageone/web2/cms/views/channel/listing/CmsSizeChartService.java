@@ -82,7 +82,7 @@ public class CmsSizeChartService extends BaseAppService {
         if((int)param.get("curr") ==1){
             staIdx = 0 ;
         }else{
-            staIdx = (int)param.get("curr") - 1 * (int)param.get("size") - 1 ;
+            staIdx = ((int)param.get("curr") - 1)* (int)param.get("size");
         }
         int endIdx = staIdx + (int)param.get("size");
         int sizeChartListTotal = sizeChartList.size();
