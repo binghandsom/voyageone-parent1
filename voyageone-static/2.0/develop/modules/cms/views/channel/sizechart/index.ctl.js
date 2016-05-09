@@ -49,6 +49,7 @@ define([
             confirm("确认要删除该尺码表吗？").result.then(function () {
                 sizeChartService.delete({sizeChartId:sizeChartId}).then(function(reps){
                     notify.success ("删除成功！");
+                    search();
                 });
             });
         }
