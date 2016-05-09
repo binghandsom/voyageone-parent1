@@ -156,6 +156,14 @@ public class ExpressionParser extends VOAbsLoggable {
         return encodedString.split(seperator);
     }
 
+    public SxProductService getSxProductService() {
+        return sxProductService;
+    }
+
+    public void setSxProductService(SxProductService sxProductService) {
+        this.sxProductService = sxProductService;
+    }
+
     public SxData getSxData() {
         return sxData;
     }

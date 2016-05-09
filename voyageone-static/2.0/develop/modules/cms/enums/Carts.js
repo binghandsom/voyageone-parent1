@@ -62,7 +62,7 @@ define(['underscore'], function (_) {
         /**
          * Mini Mall
          */
-        MM: new Cart('MM', 28, 'Mini Mall'),
+        MM: new Cart('US', 99, 'US Joi'),
 
         /**
          * 获取枚举, desc 不支持

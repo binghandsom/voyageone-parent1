@@ -90,6 +90,13 @@
                     <span translate="TXT_ADVANCE_SEARCH"></span>
                 </a>
             </li>
+            <!-- feed检索 -->
+            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
+                <a href="#/search/feedsearch">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span>Feed检索</span>
+                </a>
+            </li>
         </ul>
     </li>
 
@@ -169,12 +176,6 @@
                 </a>
             </li>
             <!-- Feed过滤一览 -->
-            <li ui-sref-active="active" ng-if="menuInfo.isminimall==0">
-                <a href="#/search/feedsearch">
-                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>Feed过滤一览</span>
-                </a>
-            </li>
             <!-- 品牌一览 -->
             <!-- 尺码表一览 -->
             <!-- 共通图片一览 -->

@@ -72,13 +72,12 @@ public class CmsImageGroupDetailController extends CmsController {
      *  保存Image信息
      *
      * @param param 客户端参数
-      * @param file 导入文件
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
-    public AjaxResponse saveImage(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
+    public AjaxResponse saveImage(@RequestParam Map<String, Object> param) {
         param.put("channelId", this.getUser().getSelChannelId());
-        cmsImageGroupDetailService.saveImage(param, file);
+        cmsImageGroupDetailService.saveImage(param, null);
         return success(null);
     }
 
@@ -86,12 +85,13 @@ public class CmsImageGroupDetailController extends CmsController {
      *  保存Image信息
      *
      * @param param 客户端参数
+     * @param file 导入文件
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
-    public AjaxResponse saveUploadImage(@RequestParam Map<String, Object> param) {
+    public AjaxResponse saveUploadImage(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         param.put("channelId", this.getUser().getSelChannelId());
-        cmsImageGroupDetailService.saveImage(param, null);
+        cmsImageGroupDetailService.saveImage(param, file);
         return success(null);
     }
 
