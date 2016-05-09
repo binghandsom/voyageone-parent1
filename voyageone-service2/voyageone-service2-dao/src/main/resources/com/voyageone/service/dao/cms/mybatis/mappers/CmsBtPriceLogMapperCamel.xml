@@ -1,202 +1,290 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtPriceLogDao">
-    <resultMap id="ResultMap" type="CmsBtPriceLogModel">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPriceLogDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPriceLogModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `product_id`, `code`, `sku`, `msrp_price`, `retail_price`, `sale_price`, 
+        `client_msrp_price`, `client_retail_price`, `client_net_price`, `comment`, `created`, 
+        `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
-        select
-        `id`,`channel_id`,`product_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier`
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_price_log
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-            <if test="productId != null">
-                AND `product_id` = #{productId}
-            </if>
-            <if test="code != null">
-                AND `code` = #{code}
-            </if>
-            <if test="sku != null">
-                AND `sku` = #{sku}
-            </if>
-            <if test="msrpPrice != null">
-                AND `msrp_price` = #{msrpPrice}
-            </if>
-            <if test="retailPrice != null">
-                AND `retail_price` = #{retailPrice}
-            </if>
-            <if test="salePrice != null">
-                AND `sale_price` = #{salePrice}
-            </if>
-            <if test="clientMsrpPrice != null">
-                AND `client_msrp_price` = #{clientMsrpPrice}
-            </if>
-            <if test="clientRetailPrice != null">
-                AND `client_retail_price` = #{clientRetailPrice}
-            </if>
-            <if test="clientNetPrice != null">
-                AND `client_net_price` = #{clientNetPrice}
-            </if>
-            <if test="comment != null">
-                AND `comment` = #{comment}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`channel_id`,`product_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier`
-        from cms_bt_price_log
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-
-            <if test="productId != null">
-                AND `product_id` = #{productId}
-            </if>
-
-            <if test="code != null">
-                AND `code` = #{code}
-            </if>
-
-            <if test="sku != null">
-                AND `sku` = #{sku}
-            </if>
-
-            <if test="msrpPrice != null">
-                AND `msrp_price` = #{msrpPrice}
-            </if>
-
-            <if test="retailPrice != null">
-                AND `retail_price` = #{retailPrice}
-            </if>
-
-            <if test="salePrice != null">
-                AND `sale_price` = #{salePrice}
-            </if>
-
-            <if test="clientMsrpPrice != null">
-                AND `client_msrp_price` = #{clientMsrpPrice}
-            </if>
-
-            <if test="clientRetailPrice != null">
-                AND `client_retail_price` = #{clientRetailPrice}
-            </if>
-
-            <if test="clientNetPrice != null">
-                AND `client_net_price` = #{clientNetPrice}
-            </if>
-
-            <if test="comment != null">
-                AND `comment` = #{comment}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`product_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier` from cms_bt_price_log where id=#{id}
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" >
+        insert into cms_bt_price_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                `id`,
+            </if>
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="productId != null" >
+                `product_id`,
+            </if>
+            <if test="code != null" >
+                `code`,
+            </if>
+            <if test="sku != null" >
+                `sku`,
+            </if>
+            <if test="msrpPrice != null" >
+                `msrp_price`,
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price`,
+            </if>
+            <if test="salePrice != null" >
+                `sale_price`,
+            </if>
+            <if test="clientMsrpPrice != null" >
+                `client_msrp_price`,
+            </if>
+            <if test="clientRetailPrice != null" >
+                `client_retail_price`,
+            </if>
+            <if test="clientNetPrice != null" >
+                `client_net_price`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null" >
+                #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="msrpPrice != null" >
+                #{msrpPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="salePrice != null" >
+                #{salePrice,jdbcType=VARCHAR},
+            </if>
+            <if test="clientMsrpPrice != null" >
+                #{clientMsrpPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="clientRetailPrice != null" >
+                #{clientRetailPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="clientNetPrice != null" >
+                #{clientNetPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" >
         update cms_bt_price_log
-        set
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null" >
+                `product_id` = #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="code != null" >
+                `code` = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                `sku` = #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="msrpPrice != null" >
+                `msrp_price` = #{msrpPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="salePrice != null" >
+                `sale_price` = #{salePrice,jdbcType=VARCHAR},
+            </if>
+            <if test="clientMsrpPrice != null" >
+                `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="clientRetailPrice != null" >
+                `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="clientNetPrice != null" >
+                `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `channel_id`=#{channelId}
-            ,`product_id`=#{productId}
-            ,`code`=#{code}
-            ,`sku`=#{sku}
-            ,`msrp_price`=#{msrpPrice}
-            ,`retail_price`=#{retailPrice}
-            ,`sale_price`=#{salePrice}
-            ,`client_msrp_price`=#{clientMsrpPrice}
-            ,`client_retail_price`=#{clientRetailPrice}
-            ,`client_net_price`=#{clientNetPrice}
-            ,`comment`=#{comment}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_price_log
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_price_log
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_price_log
-        (
-              `channel_id`,
-              `product_id`,
-              `code`,
-              `sku`,
-              `msrp_price`,
-              `retail_price`,
-              `sale_price`,
-              `client_msrp_price`,
-              `client_retail_price`,
-              `client_net_price`,
-              `comment`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{channelId},
-              #{productId},
-              #{code},
-              #{sku},
-              #{msrpPrice},
-              #{retailPrice},
-              #{salePrice},
-              #{clientMsrpPrice},
-              #{clientRetailPrice},
-              #{clientNetPrice},
-              #{comment},
-        now(),
-              #{creater},
-        now(),
-        #{creater}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_price_log
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpPrice != null" >
+                and `msrp_price` = #{msrpPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=VARCHAR}
+            </if>
+            <if test="clientMsrpPrice != null" >
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="clientRetailPrice != null" >
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="clientNetPrice != null" >
+                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_price_log
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpPrice != null" >
+                and `msrp_price` = #{msrpPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=VARCHAR}
+            </if>
+            <if test="clientMsrpPrice != null" >
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="clientRetailPrice != null" >
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="clientNetPrice != null" >
+                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

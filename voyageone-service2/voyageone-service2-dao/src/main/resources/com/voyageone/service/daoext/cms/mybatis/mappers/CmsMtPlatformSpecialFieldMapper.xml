@@ -6,9 +6,9 @@
             resultType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel"
             parameterType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel">
         select
-        cartId,
-        catId,
-        fieldId,
+        cart_id,
+        cat_id,
+        field_id,
         type,
         created,
         creater,
@@ -17,13 +17,13 @@
         from voyageone_cms2.cms_mt_platform_special_field
         <where>
             <if test="cartId != null">
-                cartId = #{cartId,jdbcType=INTEGER}
+                cart_id = #{cartId,jdbcType=INTEGER}
             </if>
             <if test="catId != null and catId !=''">
-                AND catId = #{catId,jdbcType=VARCHAR}
+                AND cat_id = #{catId,jdbcType=VARCHAR}
             </if>
             <if test="fieldId != null and fieldId !=''">
-                AND fieldId = #{fieldId,jdbcType=VARCHAR}
+                AND field_id = #{fieldId,jdbcType=VARCHAR}
             </if>
             <if test="type != null and type !=''">
                 AND type = #{type,jdbcType=VARCHAR}
@@ -34,9 +34,9 @@
             parameterType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel">
         insert into voyageone_cms2.cms_mt_platform_special_field
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            cartId,
-            catId,
-            fieldId,
+            cart_id,
+            cat_id,
+            field_id,
             type,
             created,
             <if test="creater != null">
@@ -66,18 +66,18 @@
             parameterType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel">
         delete from voyageone_cms2.cms_mt_platform_special_field
         where
-        cartId = #{cartId,jdbcType=INTEGER}
-        and catId = #{catId,jdbcType=VARCHAR}
-        and fieldId = #{fieldId,jdbcType=VARCHAR}
+        cart_id = #{cartId,jdbcType=INTEGER}
+        and cat_id = #{catId,jdbcType=VARCHAR}
+        and field_id = #{fieldId,jdbcType=VARCHAR}
         and type = #{type,jdbcType=VARCHAR}
     </delete>
     <select id="select_cms_mt_platform_special_field_type"
             parameterType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel" resultType="string">
         SELECT type
         FROM voyageone_cms2.cms_mt_platform_special_field
-        WHERE cartId = #{cartId,jdbcType=INTEGER}
-        AND catId = #{catId,jdbcType=VARCHAR}
-        AND fieldId = #{fieldId,jdbcType=VARCHAR}
+        WHERE cart_id = #{cartId,jdbcType=INTEGER}
+        AND cat_id = #{catId,jdbcType=VARCHAR}
+        AND field_id = #{fieldId,jdbcType=VARCHAR}
     </select>
 
 </mapper>

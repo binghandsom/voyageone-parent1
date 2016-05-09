@@ -1,242 +1,351 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionDao">
-    <resultMap id="ResultMap" type="CmsBtPromotionModel">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `cart_id`, `promotion_status`, `promotion_name`, `pre_sale_end`, 
+        `pre_sale_start`, `pre_period_start`, `pre_period_end`, `activity_start`, `activity_end`, 
+        `tejiabao_id`, `promotion_type`, `ref_tag_id`, `active`, `is_all_promotion`, `created`, 
+        `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
-        select
-        `id`,`channel_id`,`cart_id`,`promotion_status`,`promotion_name`,`pre_sale_end`,`pre_sale_start`,`pre_period_start`,`pre_period_end`,`activity_start`,`activity_end`,`tejiabao_id`,`promotion_type`,`ref_tag_id`,`is_active`,`is_all_promotion`,`created`,`creater`,`modified`,`modifier`
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-            <if test="cartId != null">
-                AND `cart_id` = #{cartId}
-            </if>
-            <if test="promotionStatus != null">
-                AND `promotion_status` = #{promotionStatus}
-            </if>
-            <if test="promotionName != null">
-                AND `promotion_name` = #{promotionName}
-            </if>
-            <if test="preSaleEnd != null">
-                AND `pre_sale_end` = #{preSaleEnd}
-            </if>
-            <if test="preSaleStart != null">
-                AND `pre_sale_start` = #{preSaleStart}
-            </if>
-            <if test="prePeriodStart != null">
-                AND `pre_period_start` = #{prePeriodStart}
-            </if>
-            <if test="prePeriodEnd != null">
-                AND `pre_period_end` = #{prePeriodEnd}
-            </if>
-            <if test="activityStart != null">
-                AND `activity_start` = #{activityStart}
-            </if>
-            <if test="activityEnd != null">
-                AND `activity_end` = #{activityEnd}
-            </if>
-            <if test="tejiabaoId != null">
-                AND `tejiabao_id` = #{tejiabaoId}
-            </if>
-            <if test="promotionType != null">
-                AND `promotion_type` = #{promotionType}
-            </if>
-            <if test="refTagId != null">
-                AND `ref_tag_id` = #{refTagId}
-            </if>
-            <if test="isActive != null">
-                AND `is_active` = #{isActive}
-            </if>
-            <if test="isAllPromotion != null">
-                AND `is_all_promotion` = #{isAllPromotion}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`channel_id`,`cart_id`,`promotion_status`,`promotion_name`,`pre_sale_end`,`pre_sale_start`,`pre_period_start`,`pre_period_end`,`activity_start`,`activity_end`,`tejiabao_id`,`promotion_type`,`ref_tag_id`,`is_active`,`is_all_promotion`,`created`,`creater`,`modified`,`modifier`
-        from cms_bt_promotion
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-
-            <if test="cartId != null">
-                AND `cart_id` = #{cartId}
-            </if>
-
-            <if test="promotionStatus != null">
-                AND `promotion_status` = #{promotionStatus}
-            </if>
-
-            <if test="promotionName != null">
-                AND `promotion_name` = #{promotionName}
-            </if>
-
-            <if test="preSaleEnd != null">
-                AND `pre_sale_end` = #{preSaleEnd}
-            </if>
-
-            <if test="preSaleStart != null">
-                AND `pre_sale_start` = #{preSaleStart}
-            </if>
-
-            <if test="prePeriodStart != null">
-                AND `pre_period_start` = #{prePeriodStart}
-            </if>
-
-            <if test="prePeriodEnd != null">
-                AND `pre_period_end` = #{prePeriodEnd}
-            </if>
-
-            <if test="activityStart != null">
-                AND `activity_start` = #{activityStart}
-            </if>
-
-            <if test="activityEnd != null">
-                AND `activity_end` = #{activityEnd}
-            </if>
-
-            <if test="tejiabaoId != null">
-                AND `tejiabao_id` = #{tejiabaoId}
-            </if>
-
-            <if test="promotionType != null">
-                AND `promotion_type` = #{promotionType}
-            </if>
-
-            <if test="refTagId != null">
-                AND `ref_tag_id` = #{refTagId}
-            </if>
-
-            <if test="isActive != null">
-                AND `is_active` = #{isActive}
-            </if>
-
-            <if test="isAllPromotion != null">
-                AND `is_all_promotion` = #{isAllPromotion}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`cart_id`,`promotion_status`,`promotion_name`,`pre_sale_end`,`pre_sale_start`,`pre_period_start`,`pre_period_end`,`activity_start`,`activity_end`,`tejiabao_id`,`promotion_type`,`ref_tag_id`,`is_active`,`is_all_promotion`,`created`,`creater`,`modified`,`modifier` from cms_bt_promotion where id=#{id}
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel" >
+        insert into cms_bt_promotion
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                `id`,
+            </if>
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="promotionStatus != null" >
+                `promotion_status`,
+            </if>
+            <if test="promotionName != null" >
+                `promotion_name`,
+            </if>
+            <if test="preSaleEnd != null" >
+                `pre_sale_end`,
+            </if>
+            <if test="preSaleStart != null" >
+                `pre_sale_start`,
+            </if>
+            <if test="prePeriodStart != null" >
+                `pre_period_start`,
+            </if>
+            <if test="prePeriodEnd != null" >
+                `pre_period_end`,
+            </if>
+            <if test="activityStart != null" >
+                `activity_start`,
+            </if>
+            <if test="activityEnd != null" >
+                `activity_end`,
+            </if>
+            <if test="tejiabaoId != null" >
+                `tejiabao_id`,
+            </if>
+            <if test="promotionType != null" >
+                `promotion_type`,
+            </if>
+            <if test="refTagId != null" >
+                `ref_tag_id`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            <if test="isAllPromotion != null" >
+                `is_all_promotion`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="promotionStatus != null" >
+                #{promotionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="promotionName != null" >
+                #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleEnd != null" >
+                #{preSaleEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleStart != null" >
+                #{preSaleStart,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodStart != null" >
+                #{prePeriodStart,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodEnd != null" >
+                #{prePeriodEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="activityStart != null" >
+                #{activityStart,jdbcType=VARCHAR},
+            </if>
+            <if test="activityEnd != null" >
+                #{activityEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="tejiabaoId != null" >
+                #{tejiabaoId,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionType != null" >
+                #{promotionType,jdbcType=VARCHAR},
+            </if>
+            <if test="refTagId != null" >
+                #{refTagId,jdbcType=INTEGER},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=INTEGER},
+            </if>
+            <if test="isAllPromotion != null" >
+                #{isAllPromotion,jdbcType=INTEGER},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel" >
         update cms_bt_promotion
-        set
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="promotionStatus != null" >
+                `promotion_status` = #{promotionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="promotionName != null" >
+                `promotion_name` = #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleEnd != null" >
+                `pre_sale_end` = #{preSaleEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleStart != null" >
+                `pre_sale_start` = #{preSaleStart,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodStart != null" >
+                `pre_period_start` = #{prePeriodStart,jdbcType=VARCHAR},
+            </if>
+            <if test="prePeriodEnd != null" >
+                `pre_period_end` = #{prePeriodEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="activityStart != null" >
+                `activity_start` = #{activityStart,jdbcType=VARCHAR},
+            </if>
+            <if test="activityEnd != null" >
+                `activity_end` = #{activityEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="tejiabaoId != null" >
+                `tejiabao_id` = #{tejiabaoId,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionType != null" >
+                `promotion_type` = #{promotionType,jdbcType=VARCHAR},
+            </if>
+            <if test="refTagId != null" >
+                `ref_tag_id` = #{refTagId,jdbcType=INTEGER},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=INTEGER},
+            </if>
+            <if test="isAllPromotion != null" >
+                `is_all_promotion` = #{isAllPromotion,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `channel_id`=#{channelId}
-            ,`cart_id`=#{cartId}
-            ,`promotion_status`=#{promotionStatus}
-            ,`promotion_name`=#{promotionName}
-            ,`pre_sale_end`=#{preSaleEnd}
-            ,`pre_sale_start`=#{preSaleStart}
-            ,`pre_period_start`=#{prePeriodStart}
-            ,`pre_period_end`=#{prePeriodEnd}
-            ,`activity_start`=#{activityStart}
-            ,`activity_end`=#{activityEnd}
-            ,`tejiabao_id`=#{tejiabaoId}
-            ,`promotion_type`=#{promotionType}
-            ,`ref_tag_id`=#{refTagId}
-            ,`is_active`=#{isActive}
-            ,`is_all_promotion`=#{isAllPromotion}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_promotion
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_promotion
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_promotion
-        (
-              `channel_id`,
-              `cart_id`,
-              `promotion_status`,
-              `promotion_name`,
-              `pre_sale_end`,
-              `pre_sale_start`,
-              `pre_period_start`,
-              `pre_period_end`,
-              `activity_start`,
-              `activity_end`,
-              `tejiabao_id`,
-              `promotion_type`,
-              `ref_tag_id`,
-              `is_active`,
-              `is_all_promotion`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{channelId},
-              #{cartId},
-              #{promotionStatus},
-              #{promotionName},
-              #{preSaleEnd},
-              #{preSaleStart},
-              #{prePeriodStart},
-              #{prePeriodEnd},
-              #{activityStart},
-              #{activityEnd},
-              #{tejiabaoId},
-              #{promotionType},
-              #{refTagId},
-              #{isActive},
-              #{isAllPromotion},
-              now(),
-              #{creater},
-              now(),
-              #{creater}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="promotionStatus != null" >
+                and `promotion_status` = #{promotionStatus,jdbcType=INTEGER}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="preSaleEnd != null" >
+                and `pre_sale_end` = #{preSaleEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="preSaleStart != null" >
+                and `pre_sale_start` = #{preSaleStart,jdbcType=VARCHAR}
+            </if>
+            <if test="prePeriodStart != null" >
+                and `pre_period_start` = #{prePeriodStart,jdbcType=VARCHAR}
+            </if>
+            <if test="prePeriodEnd != null" >
+                and `pre_period_end` = #{prePeriodEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="activityStart != null" >
+                and `activity_start` = #{activityStart,jdbcType=VARCHAR}
+            </if>
+            <if test="activityEnd != null" >
+                and `activity_end` = #{activityEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="tejiabaoId != null" >
+                and `tejiabao_id` = #{tejiabaoId,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionType != null" >
+                and `promotion_type` = #{promotionType,jdbcType=VARCHAR}
+            </if>
+            <if test="refTagId != null" >
+                and `ref_tag_id` = #{refTagId,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="isAllPromotion != null" >
+                and `is_all_promotion` = #{isAllPromotion,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="promotionStatus != null" >
+                and `promotion_status` = #{promotionStatus,jdbcType=INTEGER}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="preSaleEnd != null" >
+                and `pre_sale_end` = #{preSaleEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="preSaleStart != null" >
+                and `pre_sale_start` = #{preSaleStart,jdbcType=VARCHAR}
+            </if>
+            <if test="prePeriodStart != null" >
+                and `pre_period_start` = #{prePeriodStart,jdbcType=VARCHAR}
+            </if>
+            <if test="prePeriodEnd != null" >
+                and `pre_period_end` = #{prePeriodEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="activityStart != null" >
+                and `activity_start` = #{activityStart,jdbcType=VARCHAR}
+            </if>
+            <if test="activityEnd != null" >
+                and `activity_end` = #{activityEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="tejiabaoId != null" >
+                and `tejiabao_id` = #{tejiabaoId,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionType != null" >
+                and `promotion_type` = #{promotionType,jdbcType=VARCHAR}
+            </if>
+            <if test="refTagId != null" >
+                and `ref_tag_id` = #{refTagId,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="isAllPromotion != null" >
+                and `is_all_promotion` = #{isAllPromotion,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

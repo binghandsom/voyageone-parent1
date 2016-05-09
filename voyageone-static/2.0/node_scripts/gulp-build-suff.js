@@ -61,7 +61,7 @@ module.exports = function (path) {
     }, function (cb) {
         // 生成最终文件的文件名
         var suff = new File({path: path});
-        suff.contents = new Buffer(`return angular.module("${pref}",[\n"${modules.join('",\n"')}"\n]);`);
+        suff.contents = new Buffer(`angular.module("${pref}",[\n"${modules.join('",\n"')}"\n]);`);
         this.push(suff);
         return cb();
     });

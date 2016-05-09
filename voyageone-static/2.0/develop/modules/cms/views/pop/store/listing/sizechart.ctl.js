@@ -1,23 +1,30 @@
 /**
- * Created by 123 on 2016/4/28.
+ * Created by tony-piao on 2016/5/5.
  */
 define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartCtl', function ($scope, $routeParams) {
+    angularAMD.controller('popSizeChartCtl', function ($scope, context,sizeChartService,alert) {
+        $scope.vm = {
+            saveInfo:{sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],sizeTypeList:[]}
+        };
 
-        /**
-         * 初始化数据.
-         */
+        $scope.dropdown = context;
+
         $scope.initialize = function () {
             if ($scope.vm == undefined) {
                 $scope.vm = {};
             }
-            $scope.vm.imageMain = $routeParams.imageMain;
-            $scope.vm.imageList = $routeParams.imageList;
         };
+
+        $scope.save = function(){
+           sizeChartService.editSave($scope.vm.saveInfo).then(function(){
+                $scope.$close();
+                context.search();
+            });
+        }
 
     });
 });

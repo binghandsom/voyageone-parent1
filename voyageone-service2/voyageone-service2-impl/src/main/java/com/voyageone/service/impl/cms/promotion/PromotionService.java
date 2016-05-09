@@ -114,7 +114,7 @@ public class PromotionService extends BaseService {
     @VOTransactional
     public int saveOrUpdate(CmsBtPromotionBean cmsBtPromotionBean) {
         int result;
-        if (cmsBtPromotionBean.getId() != 0) {
+        if (cmsBtPromotionBean.getId() != null  &&  cmsBtPromotionBean.getId() != 0) {
             result = cmsBtPromotionDaoExt.update(cmsBtPromotionBean);
             cmsBtPromotionBean.getTagList().forEach(cmsBtTagModel -> {
                 cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());

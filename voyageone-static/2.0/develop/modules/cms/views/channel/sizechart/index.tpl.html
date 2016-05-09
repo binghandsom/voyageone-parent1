@@ -12,17 +12,16 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Size Chart Name</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="vm.search">
+                                        <input type="text" class="form-control" ng-model="vm.searchInfo.sizeChartName">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Finish</label>
 
                                     <div class="col-sm-7">
-                                        <select class="form-control">
-                                            <option value="All">All</option>
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
+                                        <select class="form-control" ng-model="vm.searchInfo.finishFlag">
+                                            <option value="1">yes</option>
+                                            <option value="0">no</option>
                                         </select>
                                     </div>
                                 </div>
@@ -31,18 +30,20 @@
 
                                     <div class="col-sm-9" style="margin-left: -4px;">
                                         <div class="col-sm-10 form-inline">
+                                            <!--------------------------------startTime-------------------------------->
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.beginModified"
-                                                       max-date="ctrl.searchInfo.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.startTime"
+                                                       max-date="vm.searchInfo.endTime" date-model-format="yyyy-MM-dd" is-open="vm.datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="vm.datePicker1 = !vm.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                             </div>&nbsp;~&nbsp;
+                                            <!--------------------------------endTime-------------------------------->
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.endModified"
-                                                       min-date="ctrl.searchInfo.beginModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.endTime"
+                                                       min-date="vm.searchInfo.startTime" date-model-format="yyyy-MM-dd" is-open="vm.datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="vm.datePicker2 = !vm.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                             </div>
                                         </div>
@@ -55,44 +56,42 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Brand Name</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>Adidas</option>
-                                            <option>NewBalance</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.brandNameList"
+                                                ng-options="brand.value as brand.name for brand in vm.brandNameList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Product Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>鞋子</option>
-                                            <option>上衣</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.productTypeList"
+                                                ng-options="brand.value as brand.name for brand in vm.productTypeList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Related Size Type</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'">
-                                            <option>男鞋</option>
-                                            <option>女鞋</option>
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.sizeTypeList"
+                                                ng-options="brand.value as brand.name for brand in vm.sizeTypeList">
                                         </select>
                                     </div>
                             </div>
                         </div>
                     </div>
                     </div>
-                    <div class="col-sm-12 text-center m-b-sm">
+                    <div class="col-sm-12 text-center m-b-sm" ng-controller="popupCtrl">
                         <div class="form-inline">
                             <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清空</button>
                             <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;检索</button>
-                            <button class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                            <button class="btn btn-success" ng-click="openSizeChartAdd(vm)"><i class="fa fa-plus"></i>&nbsp;Add</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!---------------------------------------------------show table datas----------------------------------------------------->
     <div class="box" ng-controller="popupCtrl">
         <div class="box-body">
             <div class="table-responsive">
@@ -103,67 +102,33 @@
                                 <th class="mfb-xt text-center">序号</th>
                                 <th class="mfb-xxt text-left">Size Chart Name</th>
                                 <th class="mfb-xxt text-left">Related Brand Name</th>
-                                <th class="mfb-xxt text-center">Related Product Type</th>
-                                <th class="mfb-xxt text-center">Related Size Type</th>
+                                <th class="mfb-xxt text-left">Related Product Type</th>
+                                <th class="mfb-xxt text-left">Related Size Type</th>
                                 <th class="mfb-xxs text-center">Update Time</th>
                                 <th class="mfb-xxt text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="mfb-xt text-center">1</td>
-                                <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail" target="_blank"> Nike shoe men chart</a></td>
-                                <td class="mfb-xxt text-left">Nike</td>
-                                <td class="mfb-xxt text-center">shoe</td>
-                                <td class="mfb-xxt text-center">Men</td>
-                                <td class="mfb-xxs text-center">2016-04-12 15:32:35</td>
-                                <td class="mfb-xxt text-center">
-                                    <button title="修改sizechart" class="btn btn-success btn-xs" ng-click="openSizeChartSetting('')"><i class="fa fa-cog"></i></button>
-                                    <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                                    <!--<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>-->
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="mfb-xt text-center">2</td>
-                                <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail" target="_blank">NewBanalce shoe women chart</a></td>
-                                <td class="mfb-xxt text-left">NewBanlance</td>
-                                <td class="mfb-xxt text-center">shoe</td>
-                                <td class="mfb-xxt text-center">women</td>
-                                <td class="mfb-xxs text-center">2016-04-12 15:32:35</td>
-                                <td class="mfb-xxt text-center">
-                                    <button title="修改sizechart" class="btn btn-success btn-xs" ng-click="openSizeChartSetting('')"><i class="fa fa-cog"></i></button>
-                                    <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                                    <!--<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>-->
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="mfb-xt text-center">3</td>
-                                <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail" target="_blank">bcbg 上装 女装</a></td>
-                                <td class="mfb-xxt text-left">bcbg</td>
-                                <td class="mfb-xxt text-center">Appairs</td>
-                                <td class="mfb-xxt text-center">women</td>
-                                <td class="mfb-xxs text-center">2016-04-12 15:32:35</td>
-                                <td class="mfb-xxt text-center">
-                                    <button title="修改sizechart" class="btn btn-success btn-xs" ng-click="openSizeChartSetting('')"><i class="fa fa-cog"></i></button>
-                                    <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                                    <!--<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>-->
-                                </td>
-                            </tr>
-                            <tr ng-repeat="item in vm.sizeChartList">
-                                <td>{{$index+1+((categoryPageOption.curr - 1) * categoryPageOption.size)}}</td>
-                            </tr>
+                                <tr ng-repeat="chartInfo in vm.sizeChartList">
+                                    <td class="mfb-xt text-center">{{$index + 1}}</td>
+                                    <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.brandName.join(' , ')}}</td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.productType.join(' , ')}}</td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.sizeType.join(' , ')}}</td>
+                                    <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
+                                    <td class="mfb-xxt text-center">
+                                        <a href="#/channel/sizechart/detail/{{chartInfo}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
+                                    </td>
+                                </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- .table-responsive -->
-                <div class="col-sm-12">
-                    <vpagination config="vm.groupPageOption"></vpagination>
-                </div>
             </div>
         </div>
-        <!-- /.box-body -->
+
         <div class="m-t-xs">
-            <vpagination config="vm.errorPageOption"></vpagination>
+            <vpagination config="vm.sizeChartPageOption"></vpagination>
         </div>
     </div>
 </div><!-- end .wrapper-md -->

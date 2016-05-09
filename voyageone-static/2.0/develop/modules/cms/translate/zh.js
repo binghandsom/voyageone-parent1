@@ -163,6 +163,8 @@ define(function(){
         "TXT_COMMENT": "备注",
         "TXT_UPDATE_BY": "修改折",
         "TXT_PRODUCT_DETAIL": "产品详情",
+        "TXT_PRICE": "价格",
+        "TXT_PRICE_TYPE": "价格种类",
         "TXT_PRICE_HISTORY": "价格履历",
         "TXT_IS_FIX_TRANSLATED": "翻译完成?",
         "TXT_PRODUCT_CODE": "产品Code",
@@ -322,6 +324,9 @@ define(function(){
         "TXT_PRODUCT_UPRIGHT_MODEL": "商品竖图模板",
         "TXT_SPECIAL_NOTE": "特殊说明",
         "TXT_ACTIVITY_IMAGE_SETTING": "聚美共通图片设定",
+        "TXT_SIZE_CHART_IMAGE": "尺码图",
+        "TXT_BRAND_STORY_IMAGE": "品牌故事图",
+        "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
 
 
         "TXT_CHANNEL_ID": "渠道ID",
@@ -409,6 +414,7 @@ define(function(){
         "TXT_PC_MODULE_ID": "PC端模块ID",
         "TXT_APP_MODULE_ID": "APP端模块ID",
         "TXT_PROMOTION_DISCOUNT": "是否有活动折扣",
+        "TXT_IMAGE_TYPE":"图片类型",
 
 
         "BTN_CREATE_TASK": "新建任务",

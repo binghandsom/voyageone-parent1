@@ -35,9 +35,17 @@ public class CmsAddToPromotionController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_PROMOTION.ADD_TO_PROMOTION)
     public AjaxResponse addToPromotion(@RequestBody Map<String, Object> params) {
-
         promotionSelectService.addToPromotion(params, getUser());
         return success(true);
     }
 
+    /**
+     * 检查所选择的产品是否已存在同级别的promotion tag
+     * @param params
+     * @return AjaxResponse
+     */
+    @RequestMapping(CmsUrlConstants.POP.ADD_TO_PROMOTION.CHECK_PROM_TAGS)
+    public AjaxResponse checkPromotionTags(@RequestBody Map<String, Object> params){
+        return success(promotionSelectService.checkPromotionTags(getUser().getSelChannelId(), params));
+    }
 }

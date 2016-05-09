@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
-
 /**
  * @author james.li on 2016/4/19.
  * @version 2.0.0
@@ -29,7 +27,7 @@ public class CmsMtChannelValuesServiceTest {
         cmsMtChannelValuesModel.setValue("2222");
         cmsMtChannelValuesModel.setModifier("james");
         cmsMtChannelValuesModel.setCreater("james");
-        cmsMtChannelValuesModel.setCreated(DateTimeUtil.getNow());
+        cmsMtChannelValuesModel.setCreatedStr(DateTimeUtil.getNow());
         cmsMtChannelValuesService.insertCmsMtChannelValues(cmsMtChannelValuesModel);
     }
 }

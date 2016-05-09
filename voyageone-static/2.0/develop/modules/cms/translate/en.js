@@ -163,6 +163,8 @@ define(function() {
         "TXT_COMMENT": "Comment",
         "TXT_UPDATE_BY": "Update By",
         "TXT_PRODUCT_DETAIL": "Product Detail",
+        "TXT_PRICE": "Price",
+        "TXT_PRICE_TYPE": "Price Type",
         "TXT_PRICE_HISTORY": "Price History",
         "TXT_IS_FIX_TRANSLATED": "Is Translation?",
         "TXT_PRODUCT_CODE": "Product Code",
@@ -402,6 +404,10 @@ define(function() {
         "TXT_SEPARATE":"Separate",
         "TXT_SHARE":"Share",
         "TXT_SEPARATE_NEW_TASK":"New Separate Task",
+        "TXT_IMAGE_TYPE":"Image Type",
+        "TXT_SIZE_CHART_IMAGE": "Size Chart Image",
+        "TXT_BRAND_STORY_IMAGE": "Brand Story Image",
+        "TXT_SHIPPING_DESCRIPTION_IMAGE": "Shipping Description Image",
 
 
         "BTN_CREATE_TASK": "New Task",

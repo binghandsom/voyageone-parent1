@@ -8,6 +8,9 @@
     angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", function($scope) {
         $scope.showInfo = showInfo;
         function showInfo(values) {
+            if (values == undefined || values == '') {
+                return '';
+            }
             var tempHtml = "";
             if (values instanceof Array) {
                 angular.forEach(values, function(data, index) {

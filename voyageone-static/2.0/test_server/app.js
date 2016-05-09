@@ -7,7 +7,7 @@ var request = require('request');
 
 var app = express();
 var port = 9090;
-var proxy = 'http://10.0.1.114:8080';
+var proxy = 'http://10.0.1.156:8080';
 
 app.use(logger('dev'));
 

@@ -66,4 +66,24 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
     public List<CmsBtTagModel>  selectCmsBtTagByTagInfo(String channelId,String parentTagId,String tagType) {
         return selectList("select_one_by_tag_info", parameters("channelId", channelId, "parentTagId", parentTagId,"tagType",tagType));
     }
+
+    // 查询同级别的tag信息
+    public List<CmsBtTagModel> selectListBySameLevel(String channelId, int parentTagId, int tagId) {
+        HashMap<String, Object> paraIn = new HashMap<>();
+        paraIn.put("channelId", channelId);
+        paraIn.put("parentTagId", parentTagId);
+        paraIn.put("tagId", tagId);
+
+        return selectList("select_list_by_same_lvl", paraIn);
+    }
+
+    // 根据tag path查询tag path name
+    public List<CmsBtTagBean> getTagPathNameByTagPath(String channelId, List<String> tagPathList) {
+        HashMap<String, Object> paraIn = new HashMap<>();
+        paraIn.put("channelId", channelId);
+        paraIn.put("tagPathList", tagPathList);
+
+        return selectList("select_tagpathname_list_by_tagpath", paraIn);
+    }
+
 }
