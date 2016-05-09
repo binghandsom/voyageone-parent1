@@ -10,6 +10,7 @@ import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.OpenApiResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @version 2.0.1
  * @since 2.0.0
  */
+@Service
 public class ImageCreateService {
 
     //private static final String POST_URL = "http://localhost:8080/rest/product/image/";
