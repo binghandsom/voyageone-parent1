@@ -14,6 +14,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
 import com.voyageone.task2.cms.dao.feed.TargetFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoTargetModel;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
     public boolean insertSuperFeed(List<SuperFeedTargetBean> superfeedlist) {
         boolean isSuccess = true;
 
-        int i=1;
+        int i = 1;
         for (SuperFeedTargetBean superfeed : superfeedlist) {
             if (TargetFeedDao.insertSelective(superfeed) <= 0) {
                 $info("Target产品信息插入失败 InventoryNumber = " + superfeed.getSku());
@@ -71,7 +72,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
         $info("Target产品品牌黑名单读入开始");
         Set<String> blackList = new HashSet<>();
-        Feeds.getConfigs(getChannel().getId(),FeedEnums.Name.blackList).forEach(m -> blackList.add(m.getCfg_val1().toLowerCase().trim()));
+        Feeds.getConfigs(getChannel().getId(), FeedEnums.Name.blackList).forEach(m -> blackList.add(m.getCfg_val1().toLowerCase().trim()));
 
 
         $info("Target产品文件读入开始");
@@ -104,8 +105,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 SuperFeedTargetBean.setManufacturerName(reader.get(i++));
                 SuperFeedTargetBean.setMpn(reader.get(i++));
                 SuperFeedTargetBean.setModelNumber(reader.get(i++));
-                SuperFeedTargetBean.setName(reader.get(i++));
-                SuperFeedTargetBean.setDescription(reader.get(i++));
+                SuperFeedTargetBean.setName(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
+                SuperFeedTargetBean.setDescription(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
                 SuperFeedTargetBean.setShortDescription(reader.get(i++));
                 SuperFeedTargetBean.setRegularPrice(reader.get(i++));
                 SuperFeedTargetBean.setSalePrice(reader.get(i++));
@@ -176,7 +177,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 SuperFeedTargetBean.setSubscription(reader.get(i++));
                 SuperFeedTargetBean.setSecattributes(reader.get(i++));
                 SuperFeedTargetBean.setSecBarcode(reader.get(i++));
-                SuperFeedTargetBean.setAutoBullets(reader.get(i++));
+                SuperFeedTargetBean.setAutoBullets(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
                 SuperFeedTargetBean.setIacAttributes(reader.get(i++));
                 SuperFeedTargetBean.setCategoryIacid(reader.get(i++));
                 SuperFeedTargetBean.setCalloutMsg(reader.get(i++));
@@ -210,7 +211,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
 //                    insertSuperFeed(superfeed);
                     transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
-                    break;
+                    if(cnt > 5000) break;
                 }
             }
 
@@ -241,6 +242,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
     protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String category) {
 
         Map colums = getColumns();
+        Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
         List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
         List<String> attList = new ArrayList<>();
@@ -256,8 +258,10 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
         colums.put("keyword", where);
         colums.put("tableName", table);
-        if(attList.size()>0){
-            colums.put("attr", attList.stream().map(s -> "`" + s + "`").collect(Collectors.joining(",")));
+        if (attList.size() > 0) {
+            colums.put("attr", attList.stream()
+                    .map(s -> "`" + s + "`")
+                    .collect(Collectors.joining(",")));
         }
 
         List<CmsBtFeedInfoTargetModel> vtmModelBeans = TargetFeedDao.selectSuperfeedModel(colums);
@@ -268,17 +272,102 @@ public class TargetAnalysisService extends BaseAnalysisService {
             Map<String, List<String>> attribute = new HashMap<>();
             for (String attr : attList) {
                 String key = CamelUtil.underlineToCamel(attr.toLowerCase());
-                if(temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
+                if (temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
 
                 List<String> values = new ArrayList<>();
                 values.add((String) temp.get(key));
                 attribute.put(key, values);
             }
 
+            if (!StringUtil.isEmpty(vtmModelBean.getSecattributes())) {
+                List<String> keyValue = java.util.Arrays.asList(vtmModelBean.getSecattributes().split("[|]"));
+                if (keyValue.size() % 2 != 0) {
+                    $error("sku:" + vtmModelBean.getSkus() + "Secattributes属性值错误");
+                    continue;
+                }
+                for (int i = 0; i < keyValue.size(); i++) {
+                    if (!StringUtil.isEmpty(keyValue.get(i))) {
+                        List<String> v = new ArrayList<>();
+                        if(!StringUtil.isEmpty(keyValue.get(i+1)))
+                        {
+                            attribute.put(keyValue.get(i), v);
+                            v.add(keyValue.get(i+1));
+                        }
+                    }
+                    i++;
+                }
+            }
+
+            if (!StringUtil.isEmpty(vtmModelBean.getAttributeNames())) {
+                List<String> names = java.util.Arrays.asList(vtmModelBean.getAttributeNames().split("[|]"));
+                List<String> values = java.util.Arrays.asList(vtmModelBean.getAttributeValues().split("[|]"));
+                if (names.size() != values.size()) {
+                    $error("sku:" + vtmModelBean.getSkus() + "属性值错误");
+                    continue;
+                }
+
+
+                for (int i = 0; i < names.size(); i++) {
+                    if (!StringUtil.isEmpty(values.get(i))) {
+                        List<String> v = new ArrayList<>();
+                        v.add(values.get(i));
+                        attribute.put(names.get(i), v);
+                    }
+                }
+            }
+
+
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
-            modelBeans.add(cmsBtFeedInfoModel);
 
+            if (attribute.get("gender") != null) {
+                cmsBtFeedInfoModel.setSizeType(attribute.get("gender").get(0));
+            } else if (attribute.get("age_group") != null) {
+                cmsBtFeedInfoModel.setSizeType(attribute.get("age_group").get(0));
+            } else {
+                cmsBtFeedInfoModel.setSizeType("OneSize");
+            }
+
+            // size
+            if (attribute.get("size") != null) {
+                cmsBtFeedInfoModel.getSkus().get(0).setSize(attribute.get("size").get(0));
+            } else {
+                cmsBtFeedInfoModel.getSkus().get(0).setSize(("OneSize"));
+            }
+
+            // color
+            if(vtmModelBean.getVariationThemes() != null && vtmModelBean.getVariationThemes().toUpperCase().indexOf("VARIATION")>=0){
+                String secat[] = vtmModelBean.getSecattributes().split("[|]");
+                if (!StringUtil.isEmpty(secat[secat.length-1])) {
+                    cmsBtFeedInfoModel.setColor(secat[secat.length-1].replaceAll(" ","").toUpperCase());
+                    cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-"+cmsBtFeedInfoModel.getColor());
+                }
+            }else{
+                if (attribute.get("color") != null) {
+                    cmsBtFeedInfoModel.setColor(attribute.get("color").get(0).replaceAll(" ","").toUpperCase());
+                    cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode()+"-"+cmsBtFeedInfoModel.getColor());
+                }
+            }
+
+
+            // productType
+            cmsBtFeedInfoModel.setCategory(StringEscapeUtils.escapeHtml(cmsBtFeedInfoModel.getCategory()));
+            List<String> categorys = Arrays.asList(cmsBtFeedInfoModel.getCategory().split(Feeds.getVal1(getChannel().getId(), FeedEnums.Name.category_split)));
+            if (categorys.size() >= 2) {
+                cmsBtFeedInfoModel.setProductType(categorys.get(0) + ">" + categorys.get(1));
+            } else if (categorys.size() > 0) {
+                cmsBtFeedInfoModel.setProductType(categorys.get(0));
+            }
+
+
+            if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
+                CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
+                beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
+            } else {
+                modelBeans.add(cmsBtFeedInfoModel);
+                codeMap.put(cmsBtFeedInfoModel.getCode(), cmsBtFeedInfoModel);
+            }
         }
         $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());
 

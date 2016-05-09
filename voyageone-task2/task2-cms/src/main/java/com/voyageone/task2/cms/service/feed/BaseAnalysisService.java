@@ -243,6 +243,9 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
                 attribute2.put(key, attribute1.get(key));
             }
         }
+        for(String key: attribute2.keySet()){
+            attribute2.put(key, attribute2.get(key).stream().distinct().collect(Collectors.toList()));
+        }
         return attribute2;
     }
 }
