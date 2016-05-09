@@ -75,10 +75,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.fields = fields;
     }
 
+    @Deprecated
+    //@see CmsBtProductBean.groupBean
     public CmsBtProductGroupModel getGroups() {
         return groups;
     }
 
+    @Deprecated
+    //@see CmsBtProductBean.groupBean
     public void setGroups(CmsBtProductGroupModel groups) {
         this.groups = groups;
     }

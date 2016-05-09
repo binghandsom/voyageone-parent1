@@ -3,8 +3,8 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.product.ProductTagService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -68,7 +68,7 @@ public class CmsSearchAdvanceController extends CmsController {
             endIdx = productListTotal;
         }
         List<String> currCodeList = prodCodeList.subList(0, endIdx);
-        List<CmsBtProductModel> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
@@ -87,7 +87,7 @@ public class CmsSearchAdvanceController extends CmsController {
             endIdx = groupListTotal;
         }
         List<String> currGrpList = groupCodeList.subList(0, endIdx);
-        List<CmsBtProductModel> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(grpInfoList, getLang());
         resultBean.put("groupList", grpInfoList);
         resultBean.put("groupListTotal", groupListTotal);
@@ -130,7 +130,7 @@ public class CmsSearchAdvanceController extends CmsController {
             endIdx = groupListTotal;
         }
         List<String> currGrpList = groupCodeList.subList(staIdx, endIdx);
-        List<CmsBtProductModel> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(grpInfoList, getLang());
         resultBean.put("groupList", grpInfoList);
         resultBean.put("groupListTotal", groupListTotal);
@@ -168,7 +168,7 @@ public class CmsSearchAdvanceController extends CmsController {
             endIdx = productListTotal;
         }
         List<String> currCodeList = prodCodeList.subList(staIdx, endIdx);
-        List<CmsBtProductModel> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);

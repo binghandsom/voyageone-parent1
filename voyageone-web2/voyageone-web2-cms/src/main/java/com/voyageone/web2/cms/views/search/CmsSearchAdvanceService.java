@@ -13,6 +13,7 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -243,7 +244,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      * @param cmsSessionBean
      * @return
      */
-    public List<CmsBtProductModel> getProductInfoList(List<String> prodCodeList
+    public List<CmsBtProductBean> getProductInfoList(List<String> prodCodeList
             , CmsSearchInfoBean searchValue
             , UserSessionBean userInfo
             , CmsSessionBean cmsSessionBean) {
@@ -255,15 +256,14 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
         StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";")));
-        projStr.insert(projStr.length() - 1, ",'carts':{$elemMatch:{'cartId':" + cartId + "}}");
         queryObject.setProjection(projStr.toString());
         queryObject.setSort(setSortValue(searchValue));
 
-        List<CmsBtProductModel> prodInfoList = productService.getList(userInfo.getSelChannelId(), queryObject);
+        List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
         if (prodInfoList == null || prodInfoList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductInfoList prodInfoList");
+            return new ArrayList<>(0);
         }
-
         return prodInfoList;
     }
 
@@ -273,7 +273,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      * @param productList
      * @param lang
      */
-    public void checkProcStatus(List<CmsBtProductModel> productList, String lang) {
+    public void checkProcStatus(List<CmsBtProductBean> productList, String lang) {
         if (productList == null || productList.isEmpty()) {
             return;
         }
@@ -344,7 +344,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      * @param hasImgFlg
      * @return
      */
-    public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
+    public List[] getGroupExtraInfo(List<CmsBtProductBean> groupsList, String channelId, int cartId, boolean hasImgFlg) {
         List[] rslt;
         List<List<Map<String, String>>> imgList = new ArrayList<>();
         List<Integer> chgFlgList = new ArrayList<>();
@@ -364,7 +364,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             rslt[2] = freeTagsList;
         }
 
-        for (CmsBtProductModel groupObj : groupsList) {
+        for (CmsBtProductBean groupObj : groupsList) {
             CmsBtProductModel_Field fields = groupObj.getFields();
             String prodCode = null;
             if (fields != null) {
@@ -383,21 +383,25 @@ public class CmsSearchAdvanceService extends BaseAppService {
             CmsBtProductGroupModel groupModelMap = null;
             if (grpList == null || grpList.isEmpty()) {
                 $warn("CmsSearchAdvanceService.getGroupExtraInfo prodCode=" + prodCode);
+                groupObj.setGroupBean(new CmsBtProductGroupModel());
             } else {
                 groupModelMap = grpList.get(0);
-                // 设置其group信息，用于画面显示
-                long grpId = groupModelMap.getGroupId();
-                CmsBtProductGroupModel platformModel = new CmsBtProductGroupModel();
-                platformModel.setCartId(cartId);
-                platformModel.setGroupId(grpId);
-                platformModel.setNumIId(groupModelMap.getNumIId());
-                platformModel.setInStockTime(groupModelMap.getInStockTime());
-                platformModel.setOnSaleTime(groupModelMap.getOnSaleTime());
-                platformModel.setPublishTime(groupModelMap.getPublishTime());
-                platformModel.setQty(groupModelMap.getQty());
-                platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
-                platformModel.setPlatformActive(groupModelMap.getPlatformActive());
-                groupObj.setGroups(platformModel);
+                groupObj.setGroups(groupModelMap);
+                groupObj.setGroupBean(groupModelMap);
+            }
+
+            // 设置cart相关信息
+            List<CmsBtProductModel_Carts> cartList = groupObj.getCarts();
+            if (cartList != null && cartList.size() > 0) {
+                for (CmsBtProductModel_Carts cart : cartList) {
+                    if (cart.getCartId() == cartId) {
+                        groupObj.setCartBean(cart);
+                        break;
+                    }
+                }
+            }
+            if (groupObj.getCartBean() == null) {
+                groupObj.setCartBean(new CmsBtProductModel_Carts());
             }
 
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());

@@ -225,6 +225,17 @@
     "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl",
     "controller": "storeOperationController as store"
   },
+  "system_category_setting": {
+    "hash": "/system/categorysetting",
+    "templateUrl": "views/system/categorysetting/maincatunion.tpl.html",
+    "controllerUrl": "modules/cms/views/system/categorysetting/maincatunion.ctl"
+  },
+  "system_category_union": {
+    "hash": "/system/categorysetting/catunion",
+    "templateUrl": "views/system/categorysetting/catunion.tpl.html",
+    "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl",
+    "controller": "CatUnionController as ctrl"
+  },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list/:parentId",
     "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
