@@ -129,21 +129,24 @@ public class CmsSizeChartService extends BaseAppService {
         cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(String.valueOf(sizeChartId)));
         cmsBtSizeChartModel.setSizeChartName(param.get("sizeChartName").toString());
         cmsBtSizeChartModel.setFinish("0");
-        if ((param.get("brandNameList")) instanceof String) {
+        List<String> brandNameList= (List<String>) param.get("brandNameList");
+        if (brandNameList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
             cmsBtSizeChartModel.setBrandName((List<String>) param.get("brandNameList"));
         }
-        if ((param.get("productTypeList")) instanceof String) {
+        List<String> productTypeList= (List<String>) param.get("productTypeList");
+        if(productTypeList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setProductType(lst);
         } else {
             cmsBtSizeChartModel.setProductType((List<String>) param.get("productTypeList"));
         }
-        if ((param.get("sizeTypeList")) instanceof String) {
+        List<String> sizeTypeList= (List<String>) param.get("sizeTypeList");
+        if(sizeTypeList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
             cmsBtSizeChartModel.setSizeType(lst);
