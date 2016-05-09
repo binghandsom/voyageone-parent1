@@ -5,7 +5,7 @@
 
 <generatorConfiguration>
 
-    <classPathEntry location="D:/mysql-connector-java-5.1.30.jar"/>
+    <classPathEntry location="voyageone-tools/voyageone-dao-codegen/src/main/resources/com/voyageone/tools/dao/codegen/mysql-connector-java-5.1.30.jar"/>
 
     <context id="MySQLTables" targetRuntime="MyBatis3">
         <property name="beginningDelimiter" value="`"/>

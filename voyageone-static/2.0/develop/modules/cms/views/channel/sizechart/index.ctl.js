@@ -11,7 +11,7 @@ define([
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[],
-            sizeChartPageOption : {curr: 1, total: 198, size: 30, fetch: search}
+            sizeChartPageOption : {curr: 1, total: 0, fetch: search}
         };
 
         $scope.initialize  = function () {
@@ -26,7 +26,9 @@ define([
         $scope.search = search;
 
         function search() {
-            sizeChartService.search($scope.vm.searchInfo).then(function(reps){
+            var data = $scope.vm.sizeChartPageOption;
+            _.extend(data ,$scope.vm.searchInfo);
+            sizeChartService.search(data).then(function(reps){
                 console.log("搜索结果",reps);
             });
         }

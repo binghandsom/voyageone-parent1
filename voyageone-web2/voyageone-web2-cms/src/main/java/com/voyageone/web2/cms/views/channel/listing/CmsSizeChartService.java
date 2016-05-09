@@ -98,7 +98,7 @@ public class CmsSizeChartService extends BaseAppService {
         //公司平台销售渠道
         cmsBtSizeChartModel.setChannelId(channelId);
         //自增主键
-        cmsBtSizeChartModel.setSizeChartId((String)param.get("sizeChartId"));
+        cmsBtSizeChartModel.setSizeChartId((int)param.get("sizeChartId"));
         //尺码关系一览检索
         cmsBtSizeChartDao.sizeChartUpdate(channelId,cmsBtSizeChartModel);
         //返回数据的类型
@@ -117,7 +117,7 @@ public class CmsSizeChartService extends BaseAppService {
         cmsBtSizeChartModel.setCreater(param.get("userName").toString());
         cmsBtSizeChartModel.setChannelId(channelId);
         Long sizeChartId =commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
-        cmsBtSizeChartModel.setSizeChartId(String.valueOf(sizeChartId));
+        cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(String.valueOf(sizeChartId)));
         cmsBtSizeChartModel.setSizeChartName(param.get("sizeChartName").toString());
         cmsBtSizeChartModel.setFinish("0");
         if ((param.get("brandNameList")) instanceof String) {
@@ -141,7 +141,7 @@ public class CmsSizeChartService extends BaseAppService {
         } else {
             cmsBtSizeChartModel.setSizeType((List<String>) param.get("sizeTypeList"));
         }
-        cmsBtSizeChartModel.setActive("1");
+        cmsBtSizeChartModel.setActive(1);
         //插入数据库
         sizeChartService.insert(cmsBtSizeChartModel);
     }

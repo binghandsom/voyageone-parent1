@@ -435,7 +435,7 @@ define([
                     "imagedetailadd": {
                         "templateUrl": "views/pop/store/listing/imagedetailadd.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/store/listing/imagedetailadd.ctl",
-                        "controller": 'popImageDetailAddCtl as ctrl'
+                        "controller": 'popImageDetailAddCtl'
                     },
                 },
             },
@@ -1182,9 +1182,26 @@ define([
         /**
          * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
          * */
-        $scope.openImgGroupDetail = function (context) {
-            return openModel(popActions.store.listing.imagedetailadd, context);
-        };
+        //$scope.openImgGroupDetail = function (context) {
+        //    return openModel(popActions.store.listing.imagedetailadd, context);
+        //};
+        $scope.openImgGroupDetail = openImgGroupDetail;
+        function openImgGroupDetail(data, originUrl) {
+            require([popActions.store.listing.imagedetailadd.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagedetailadd.templateUrl,
+                    controller: popActions.store.listing.imagedetailadd.controller,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        },
+                        originUrl: function () {
+                            return originUrl;
+                        }
+                    }
+                });
+            });
+        }
 
         /**
          * 弹出自定义属性列

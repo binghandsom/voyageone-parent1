@@ -92,7 +92,7 @@
     <div class="box">
         <div class="box-body">
             <div class="table-responsive" ng-controller="popupCtrl">
-                <div class="col-sm-12 dropdown_table_main">
+                <div class="col-sm-12 dropdown_table_main" if-no-rows="ctrl.imageList.length">
                     <div class="col-sm-12  m-t-sm m-b-xs">
                         <button class="btn pull-right m-r-md m-b-xs btn-success" ng-click="openImgGroupDetail(ctrl)"><i class="fa fa-plus"></i>&nbsp;Add</button>
                     </div>

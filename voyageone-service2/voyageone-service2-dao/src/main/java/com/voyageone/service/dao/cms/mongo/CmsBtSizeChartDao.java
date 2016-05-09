@@ -24,7 +24,9 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
      * @return List<CmsBtSizeChartModel>
      */
     public List<CmsBtSizeChartModel> selectInitSizeChartInfo(String channelId) {
-        return selectAll(channelId);
+        StringBuilder sbQuery = new StringBuilder();
+        sbQuery.append(MongoUtils.splicingValue("active", 0));
+        return select("{" + sbQuery.toString() + "}",channelId);
     }
 
     /**
@@ -42,7 +44,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
             sbQuery.append(",");
         }
         //finish
-        if(!StringUtils.isEmpty(cmsBtSizeChartModel.getFinish())){
+        if(!StringUtils.isEmpty(String.valueOf(cmsBtSizeChartModel.getFinish()))){
             sbQuery.append(MongoUtils.splicingValue("finish", cmsBtSizeChartModel.getFinish()));
             sbQuery.append(",");
         }
@@ -91,7 +93,6 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
      * @return WriteResult
      */
     public WriteResult sizeChartUpdate(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
-        cmsBtSizeChartModel.setActive("0");
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BasicDBObject params = new BasicDBObject();
@@ -102,7 +103,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
         //设置值
         BasicDBObject result = new BasicDBObject();
         Map<String, Object> rsMap = new HashMap<>();
-        rsMap.put("active", "1");
+        rsMap.put("active", "0");
         result.putAll(rsMap);
         return coll.update(params, new BasicDBObject("$set", result), false, true);
     }
