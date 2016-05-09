@@ -28,7 +28,7 @@ define([
   'components/angular/services/translate.service'
 ], function () {
 
-return angular.module("voyageone.angular",[
+angular.module("voyageone.angular",[
 "voyageone.angular.controllers.selectRows",
 "voyageone.angular.controllers.showPopover",
 "voyageone.angular.directives.dateModelFormat",
