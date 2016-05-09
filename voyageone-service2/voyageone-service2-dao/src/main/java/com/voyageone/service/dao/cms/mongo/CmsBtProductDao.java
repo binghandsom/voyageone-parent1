@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
@@ -60,6 +61,10 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         String query = "{prodId:{$in:[" + idsStr + "]}}";
         return select(query, channelId);
+    }
+
+    public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
+        return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }
 
     /**

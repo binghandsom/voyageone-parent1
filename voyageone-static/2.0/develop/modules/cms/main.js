@@ -11,11 +11,11 @@ require.config({
     paths: {
         'voyageone-angular-com': 'components/dist/voyageone.angular.com',
         'voyageone-com': 'components/dist/voyageone.com',
-        'angular-animate': 'libs/angular.js/1.5.0/angular-animate',
-        'angular-route': 'libs/angular.js/1.5.0/angular-route',
-        'angular-sanitize': 'libs/angular.js/1.5.0/angular-sanitize',
-        'angular-cookies': 'libs/angular.js/1.5.0/angular-cookies',
-        'angular': 'libs/angular.js/1.5.0/angular',
+        'angular-animate': 'libs/angular.js/1.5.5/angular-animate',
+        'angular-route': 'libs/angular.js/1.5.5/angular-route',
+        'angular-sanitize': 'libs/angular.js/1.5.5/angular-sanitize',
+        'angular-cookies': 'libs/angular.js/1.5.5/angular-cookies',
+        'angular': 'libs/angular.js/1.5.5/angular',
         'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
         'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
         'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3',
@@ -34,9 +34,10 @@ require.config({
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen'
     },
+    waitSeconds:0,
     shim: {
         'voyageone-com': ['jquery'],
-        'voyageone-angular-com': ['angularAMD'],
+        'voyageone-angular-com': ['angular'],
         'angular-sanitize': ['angular'],
         'angular-route': ['angular'],
         'angular-animate': ['angular'],
