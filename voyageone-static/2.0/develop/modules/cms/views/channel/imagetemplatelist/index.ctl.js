@@ -7,10 +7,8 @@ define([
             "platformList":[],
             "brandNameList":[],
             "productTypeList":[],
-            "sizeTypeList":[],
-            status: {
-                open: true
-            }};
+            "sizeTypeList":[]
+            };
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
         $scope.searchInfo = { };
         $scope.datePicker = [];
