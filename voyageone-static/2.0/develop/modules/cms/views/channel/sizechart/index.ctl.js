@@ -11,7 +11,7 @@ define([
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[],
-            sizeChartPageOption : {curr: 1, total: 198, size: 30, fetch: search}
+            sizeChartPageOption : {curr: 1, total: 0, fetch: search}
         };
 
         $scope.initialize  = function () {

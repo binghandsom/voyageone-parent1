@@ -9,16 +9,19 @@ define([
     angularAMD.controller('popSizeChartCtl', function ($scope, context,sizeChartService,notify) {
         $scope.vm = {
             saveInfo:{sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],sizeTypeList:[]}
-        }
+        };
+
+        $scope.dropdown = context;
+
         $scope.initialize = function () {
-            //console.log(context);
+            console.log(context);
             if ($scope.vm == undefined) {
                 $scope.vm = {};
             }
         };
 
         $scope.save = function(){
-            sizeChartService.editSave($scope.vm.saveInfo).then(function(){
+           sizeChartService.editSave($scope.vm.saveInfo).then(function(){
                 notify.success ("添加成功！");
                 $scope.$close();
             });
