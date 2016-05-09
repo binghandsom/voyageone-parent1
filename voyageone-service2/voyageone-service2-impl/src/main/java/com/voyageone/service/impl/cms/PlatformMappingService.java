@@ -33,9 +33,11 @@ public class PlatformMappingService extends BaseService {
         return platformMappingDao.selectMappings(channelId, cartId);
     }
 
-    public List<CmsMtPlatformMappingModel> getMappingsByMainCatId(String channelId, String mainCatId) {
-        return platformMappingDao.selectMappingByMainCatId(channelId, mainCatId);
-    }
+    // 20160506 tom 这个功能不需要, 删掉 START
+//    public List<CmsMtPlatformMappingModel> getMappingsByMainCatId(String channelId, String mainCatId) {
+//        return platformMappingDao.selectMappingByMainCatId(channelId, mainCatId);
+//    }
+    // 20160506 tom 这个功能不需要, 删掉 END
 
     public CmsMtPlatformMappingModel getMappingByMainCatId(String channelId, int cartId, String mainCatId) {
         return platformMappingDao.selectMappingByMainCatId(channelId, cartId, mainCatId);
