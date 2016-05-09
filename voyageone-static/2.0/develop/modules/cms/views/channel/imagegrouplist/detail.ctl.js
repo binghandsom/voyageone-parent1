@@ -52,7 +52,7 @@ define([
                 var main = this;
                 main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
                     if (res.data != null) {
-                        main.imageList = res.data;
+                    main.imageList = res.data;
                     }
                 })
             },

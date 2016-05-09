@@ -1,4 +1,4 @@
-package com.voyageone.service.model.cms.mongo;
+package com.voyageone.service.model.cms.mongo.channel;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import java.util.List;
 public class CmsBtImageTemplateModel extends BaseMongoModel {

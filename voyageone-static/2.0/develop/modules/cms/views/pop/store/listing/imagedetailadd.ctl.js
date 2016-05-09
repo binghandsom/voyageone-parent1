@@ -58,7 +58,7 @@ define([
             if ($scope.imageType == "1") {
                 uploadIt();
             } else {
-                imageGroupDetailService.saveUploadImage({
+                imageGroupDetailService.saveImage({
                     "key": $scope.key,
                     "originUrl": $scope.originUrl,
                     "imageType": $scope.imageType
