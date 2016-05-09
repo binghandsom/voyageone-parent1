@@ -9,21 +9,20 @@ import java.util.List;
  * Created by gjl on 2016/5/5.
  */
 public class CmsBtSizeChartModel extends ChannelPartitionModel {
-    private String sizeChartId;
+    private int sizeChartId;
     private String sizeChartName;
     private String finish;
     private List<String> brandName;
     private List<String>productType;
     private List<String> sizeType;
     private List<CmsBtSizeChartModelSizeMap> sizeMap = new ArrayList<>();
-    private String active;
+    private int active;
 
-
-    public String getSizeChartId() {
+    public int getSizeChartId() {
         return sizeChartId;
     }
 
-    public void setSizeChartId(String sizeChartId) {
+    public void setSizeChartId(int sizeChartId) {
         this.sizeChartId = sizeChartId;
     }
 
@@ -35,36 +34,20 @@ public class CmsBtSizeChartModel extends ChannelPartitionModel {
         this.sizeChartName = sizeChartName;
     }
 
+    public String getFinish() {
+        return finish;
+    }
+
+    public void setFinish(String finish) {
+        this.finish = finish;
+    }
+
     public List<String> getBrandName() {
         return brandName;
     }
 
     public void setBrandName(List<String> brandName) {
         this.brandName = brandName;
-    }
-
-    public List<String> getSizeType() {
-        return sizeType;
-    }
-
-    public void setSizeType(List<String> sizeType) {
-        this.sizeType = sizeType;
-    }
-
-    public String getActive() {
-        return active;
-    }
-
-    public void setActive(String active) {
-        this.active = active;
-    }
-
-    public List<CmsBtSizeChartModelSizeMap> getSizeMap() {
-        return sizeMap;
-    }
-
-    public void setSizeMap(List<CmsBtSizeChartModelSizeMap> sizeMap) {
-        this.sizeMap = sizeMap;
     }
 
     public List<String> getProductType() {
@@ -75,15 +58,27 @@ public class CmsBtSizeChartModel extends ChannelPartitionModel {
         this.productType = productType;
     }
 
-    public String getFinish() {
-        return finish;
+    public List<String> getSizeType() {
+        return sizeType;
     }
 
-    public void setFinish(String finish) {
-        this.finish = finish;
+    public void setSizeType(List<String> sizeType) {
+        this.sizeType = sizeType;
     }
 
+    public List<CmsBtSizeChartModelSizeMap> getSizeMap() {
+        return sizeMap;
+    }
 
+    public void setSizeMap(List<CmsBtSizeChartModelSizeMap> sizeMap) {
+        this.sizeMap = sizeMap;
+    }
 
+    public int getActive() {
+        return active;
+    }
 
+    public void setActive(int active) {
+        this.active = active;
+    }
 }
