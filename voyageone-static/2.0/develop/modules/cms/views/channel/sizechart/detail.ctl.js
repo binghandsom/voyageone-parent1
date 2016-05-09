@@ -42,7 +42,7 @@ define([
         $scope.saveFinish = function(){
             var upEntity = $scope.vm.saveInfo;
             sizeChartService.editSave({sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
-                                        brandNameList:upEntity.brandName,productTypeList:[],sizeTypeList:[]}).then(function(){
+                                        brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success ("添加成功！");
                 $scope.$close();
             });
