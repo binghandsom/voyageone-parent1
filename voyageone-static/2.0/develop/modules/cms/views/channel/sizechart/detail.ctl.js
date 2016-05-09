@@ -1,5 +1,5 @@
 /**
- * Created by tony-piao on 2016/4/28.
+ * Created by tony-piao on 2016/5/5.
  */
 define([
     'angularAMD',
@@ -41,7 +41,7 @@ define([
          */
         $scope.saveFinish = function(){
             var upEntity = $scope.vm.saveInfo;
-            sizeChartService.editSave({sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
+            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success ("添加成功！");
                 $scope.$close();
@@ -52,7 +52,13 @@ define([
          * 保存导入（输入）的尺码表
          */
         $scope.saveSize = function(){
-            console.log($scope.vm.importList);
+            var upEntity = $scope.vm.saveInfo;
+            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
+                                         finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
+                                         sizeTypeList:upEntity.sizeType,sizeMap:$scope.vm.importList}).then(function(){
+                notify.success ("添加成功！");
+                $scope.$close();
+            });
         }
 
         $scope.delSize = function(index){

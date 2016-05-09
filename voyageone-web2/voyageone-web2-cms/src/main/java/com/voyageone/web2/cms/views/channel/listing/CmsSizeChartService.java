@@ -82,7 +82,7 @@ public class CmsSizeChartService extends BaseAppService {
         if((int)param.get("curr") ==1){
             staIdx = 0 ;
         }else{
-            staIdx = (int)param.get("curr") - 1 * (int)param.get("size") - 1 ;
+            staIdx = ((int)param.get("curr") - 1)* (int)param.get("size");
         }
         int endIdx = staIdx + (int)param.get("size");
         int sizeChartListTotal = sizeChartList.size();
@@ -92,6 +92,7 @@ public class CmsSizeChartService extends BaseAppService {
         List<CmsBtSizeChartModel> pageSizeChartList = sizeChartList.subList(staIdx, endIdx);
         //尺码关系一览检索
         param.put("sizeChartList",pageSizeChartList);
+        param.put("total",sizeChartList.size());
         //返回数据的类型
         return data;
     }

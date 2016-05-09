@@ -12,8 +12,11 @@ public class MongoSequenceService extends BaseService {
      *  Sequence Name
      */
     public enum CommSequenceName {
-        CMS_BT_PRODUCT_PROD_ID("cms_bt_product_prodId"), CMS_BT_PRODUCT_GROUP_ID("cms_bt_product_groupId"),
-        CMS_BT_SIZE_CHART_ID("cms_bt_size_chart_sizeChartId"), CMS_BT_IMAGE_GROUP_ID("cms_bt_image_group_imageGroupId");
+        CMS_BT_PRODUCT_PROD_ID("cms_bt_product_prodId"),
+        CMS_BT_PRODUCT_GROUP_ID("cms_bt_product_groupId"),
+        CMS_BT_SIZE_CHART_ID("cms_bt_size_chart_sizeChartId"),
+        CMS_BT_IMAGE_GROUP_ID("cms_bt_image_group_imageGroupId"),
+        CMS_BT_IMAGE_TEMPLATE_ID("cms_bt_image_group_imageTemplateId");
 
         // 成员变量
         private String name;

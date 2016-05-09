@@ -11,16 +11,17 @@ define([
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[],
-            sizeChartPageOption : {curr: 1, total: 0, fetch: search}
+            sizeChartPageOption : {curr: 1, total: 0, fetch: search},
+            search:search
         };
 
         $scope.initialize  = function () {
             sizeChartService.init().then(function(resp){
-               $scope.vm.sizeChartList = resp.data.sizeChartList;
                $scope.vm.brandNameList = resp.data.brandNameList;
                $scope.vm.productTypeList = resp.data.productTypeList;
                $scope.vm.sizeTypeList = resp.data.sizeTypeList;
             });
+            search();
         };
 
         $scope.search = search;
@@ -29,7 +30,8 @@ define([
             var data = $scope.vm.sizeChartPageOption;
             _.extend(data ,$scope.vm.searchInfo);
             sizeChartService.search(data).then(function(reps){
-                console.log("搜索结果",reps);
+                $scope.vm.sizeChartList = reps.data.sizeChartList;
+                $scope.vm.sizeChartPageOption.total = reps.data.total;
             });
         }
 
