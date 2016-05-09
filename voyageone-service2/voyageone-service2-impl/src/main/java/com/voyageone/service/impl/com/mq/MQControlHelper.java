@@ -1,4 +1,4 @@
-package com.voyageone.common.mq;
+package com.voyageone.service.impl.com.mq;
 
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
  * @since 2.0.0
  */
 @Component
-public class MQHelper {
+public class MQControlHelper {
 
     private static RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
 
     @Autowired
     private void setRabbitListenerEndpointRegistry(RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry) {
-        MQHelper.rabbitListenerEndpointRegistry = rabbitListenerEndpointRegistry;
+        MQControlHelper.rabbitListenerEndpointRegistry = rabbitListenerEndpointRegistry;
     }
 
     public static void start(String beanName){
