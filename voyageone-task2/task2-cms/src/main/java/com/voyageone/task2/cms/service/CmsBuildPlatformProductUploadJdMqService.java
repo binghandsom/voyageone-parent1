@@ -13,6 +13,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
 import com.voyageone.components.jd.service.JdShopService;
@@ -446,6 +447,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 新增或更新商品成功时
                  // 回写workload表   (成功1)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
+
+                // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
+                updateProductGroupStatus(sxData, jdProductBean);
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
@@ -1396,6 +1400,28 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // 调用京东API设置关联板式（取消商品关联版式时，请将commonHtml_Id值设置为空）
         jdWareService.updateWareLayoutId(shop, String.valueOf(wareId), commonHtml_Id);
+    }
+
+    /**
+     * 回写product group表中的platformStatus(Onsale/InStock)
+     *
+     * @param sxData SxData 上新数据
+     * @param jdProductBean JdProductBean
+     */
+    private void updateProductGroupStatus(SxData sxData, JdProductBean jdProductBean) {
+        // 上新成功后回写product group表中的platformStatus
+        CmsBtProductGroupModel sxProductGroupModel = sxData.getPlatform();
+        sxProductGroupModel.setPublishTime(DateTimeUtil.getNowTimeStamp());
+        // 京东平台的操作类型(在售)
+        if (OptioinType_onsale.equals(jdProductBean.getOptionType())) {
+            // platformStatus更新成"OnSale"
+            sxProductGroupModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.OnSale);
+        } else {
+            // platformStatus更新成"InStock"
+            sxProductGroupModel.setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.InStock);
+        }
+        // 更新ProductGroup表
+        productGroupService.update(sxProductGroupModel);
     }
 
 }
