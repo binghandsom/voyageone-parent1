@@ -15,7 +15,7 @@
         </collection>
     </resultMap>
     <select id="cms_promotion_select" resultMap="PromotionMap" parameterType="HashMap">
-     SELECT
+      SELECT
         t2.channel_id,
         t1.promotion_id,
         t1.num_iid,
@@ -30,16 +30,16 @@
                 b.tejiabao_id,
                 a.num_iid
             FROM
-                voyageone_cms2.cms_bt_promotion_task a,
+                voyageone_cms2.cms_bt_task_tejiabao a,
                 (
                     SELECT
-                        promotion_id,
+                        id as promotion_id,
                         tejiabao_id
                     FROM
                         voyageone_cms2.cms_bt_promotion
                     WHERE
                         channel_id = #{channelId,jdbcType=VARCHAR}
-                    AND is_active = 1
+                    AND active = 1
                     AND promotion_status = 0
                     AND cart_id = #{cartId,jdbcType=VARCHAR}
                     AND tejiabao_id != 0
@@ -66,12 +66,12 @@
         voyageone_cms2.cms_bt_promotion_skus sku
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes `code` ON sku.promotion_id = `code`.promotion_id
         AND sku.product_code = `code`.product_code
-        LEFT JOIN voyageone_cms2.cms_bt_promotion prom ON sku.promotion_id = prom.promotion_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion prom ON sku.promotion_id = prom.id
     ) t2 ON t1.promotion_id = t2.promotion_id
     AND t1.num_iid = t2.num_iid
     </select>
     <update id="update_cms_bt_promotion_task" parameterType="HashMap" >
-        update voyageone_cms2.cms_bt_promotion_task
+        update voyageone_cms2.cms_bt_task_tejiabao
         <set >
             <if test="synFlg != null" >
                 syn_flg = #{synFlg,jdbcType=INTEGER},

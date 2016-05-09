@@ -6,6 +6,7 @@ import com.taobao.api.domain.TipPromUnitDTO;
 import com.taobao.api.domain.TipSkuPromUnitDTO;
 import com.taobao.api.response.ItemSkusGetResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.PromotionDao;
@@ -53,14 +54,20 @@ public class CmsPromotrionService extends BaseTaskService {
 
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())) {
-                String channelId  = taskControlBean.getCfg_val1();
-                String cartId  = taskControlBean.getCfg_val2();
-                updatePromotion(channelId,cartId);
+                try {
+                    String channelId = taskControlBean.getCfg_val1();
+                    String cartId = taskControlBean.getCfg_val2();
+                    updatePromotion(channelId, cartId);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
+                }
             }
         }
     }
 
-    private void updatePromotion(String channelId, String cartId) {
+    public void updatePromotion(String channelId, String cartId) {
+
         List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
         if (items.size() == 0) return;
         // 取得shop信息

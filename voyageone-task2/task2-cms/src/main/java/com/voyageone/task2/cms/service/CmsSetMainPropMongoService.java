@@ -631,8 +631,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
 
                     break;
-                case "012":
-                    break;
+                default:
+                    // 产品分类
+                    field.setProductType(feed.getProductType());
+                    // 适用人群
+                    field.setSizeType(feed.getSizeType());
             }
             // jeff 2016/04 change end
 
