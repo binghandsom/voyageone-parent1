@@ -25,6 +25,11 @@ public class CmsBtPlatformImagesModel extends BaseModel {
     protected String imgName;
 
     /**
+     * 显示该图片使用的模板ID
+     */
+    protected Integer templateId;
+
+    /**
      * 模板管理里的cache_url
      */
     protected String originalImgUrl;
@@ -76,6 +81,14 @@ public class CmsBtPlatformImagesModel extends BaseModel {
 
     public void setImgName(String imgName) {
         this.imgName = imgName == null ? null : imgName.trim();
+    }
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
     }
 
     public String getOriginalImgUrl() {
