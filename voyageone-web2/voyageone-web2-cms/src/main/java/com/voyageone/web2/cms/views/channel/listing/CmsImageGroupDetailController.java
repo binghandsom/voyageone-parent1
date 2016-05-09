@@ -6,10 +6,8 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -74,12 +72,26 @@ public class CmsImageGroupDetailController extends CmsController {
      *  保存Image信息
      *
      * @param param 客户端参数
+      * @param file 导入文件
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
-    public AjaxResponse saveImage(@RequestBody Map<String, Object> param){
+    public AjaxResponse saveImage(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         param.put("channelId", this.getUser().getSelChannelId());
-//        cmsImageGroupDetailService.saveImage(param);
+        cmsImageGroupDetailService.saveImage(param, file);
+        return success(null);
+    }
+
+    /**
+     *  保存Image信息
+     *
+     * @param param 客户端参数
+     * @return 结果
+     */
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
+    public AjaxResponse saveUploadImage(@RequestParam Map<String, Object> param) {
+        param.put("channelId", this.getUser().getSelChannelId());
+        cmsImageGroupDetailService.saveImage(param, null);
         return success(null);
     }
 
