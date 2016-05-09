@@ -51,4 +51,10 @@ public class OpenApiException extends Exception {
         this.setErrorCode(enumInterface.getCode());
         this.setMsg(msg + "," + enumInterface.getMsg());
     }
+
+    public OpenApiException(int errorCode, String msg) {
+        super(msg);
+        this.setErrorCode(errorCode);
+        this.setMsg(msg);
+    }
 }

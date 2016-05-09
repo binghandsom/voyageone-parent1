@@ -266,18 +266,7 @@ public class ImageCreateFileService extends BaseService {
 
     public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
         for (CreateImageParameter imageInfo : parameter.getData()) {
-            if (StringUtil.isEmpty(imageInfo.getChannelId())) {
-                throw new OpenApiException(ImageErrorEnum.ChannelIdNotNull);
-            }
-            if (imageInfo.getTemplateId() == 0) {
-                throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull);
-            }
-            if (StringUtil.isEmpty(imageInfo.getFile())) {
-                throw new OpenApiException(ImageErrorEnum.FileNotNull);
-            }
-            if (imageInfo.getVParam() == null) {
-                throw new OpenApiException(ImageErrorEnum.VParamNotNull);
-            }
+            imageInfo.checkInputValue();
         }
     }
 }
