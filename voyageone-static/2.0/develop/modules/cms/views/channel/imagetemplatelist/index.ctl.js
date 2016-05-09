@@ -11,17 +11,23 @@ define([
             status: {
                 open: true
             }};
+        $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
         $scope.searchInfo = { };
         $scope.datePicker = [];
         $scope.initialize = function () {
-            imageTemplateService.imageGroupService.init().then(function (res) {
+            $scope.clear();
+            imageTemplateService.init().then(function (res) {
                 $scope.vm.platformList = res.data.platformList;
                 $scope.vm.brandNameList = res.data.brandNameList;
                 $scope.vm.productTypeList = res.data.productTypeList;
                 $scope.vm.sizeTypeList = res.data.sizeTypeList;
-                $scope.search();
+             //   $scope.search();
             })
         };
+        function goPage()
+        {
+
+        }
         $scope.clear = function () {
             $scope.searchInfo = {brandName:[],sizeType:[],productType:[]};
         };
