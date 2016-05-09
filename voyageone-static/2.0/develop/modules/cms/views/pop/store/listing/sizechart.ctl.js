@@ -14,7 +14,6 @@ define([
         $scope.dropdown = context;
 
         $scope.initialize = function () {
-            console.log(context);
             if ($scope.vm == undefined) {
                 $scope.vm = {};
             }
@@ -22,8 +21,8 @@ define([
 
         $scope.save = function(){
            sizeChartService.editSave($scope.vm.saveInfo).then(function(){
-                notify.success ("添加成功！");
                 $scope.$close();
+                context.search();
             });
         }
 
