@@ -7,7 +7,10 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupController", (function () {
-        function ImageGroupController($routeParams, imageGroupService, cActions, confirm, alert, notify) {
+        function ImageGroupController( imageGroupService, confirm, alert, notify) {
+            this.confirm = confirm;
+            this.alert = alert;
+            this.notify = notify;
             this.platformList = [];
             this.imageType = "";
             this.beginModified = "";
@@ -73,11 +76,16 @@ define([
             delete: function (imageGroupId) {
                 var main = this;
                 main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
-                main.imageGroupService.delete({
-                    "imageGroupId" : imageGroupId
-                }).then(function (res) {
-
-                })
+                    main.imageGroupService.delete({
+                        "imageGroupId" : imageGroupId
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_DELETE_FAIL');
+                        }
+                    })
                 })
             }
         };

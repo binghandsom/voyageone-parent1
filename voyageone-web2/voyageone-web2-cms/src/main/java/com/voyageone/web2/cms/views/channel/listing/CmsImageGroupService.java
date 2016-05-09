@@ -69,7 +69,6 @@ public class CmsImageGroupService extends BaseAppService {
     public List<CmsBtImageGroupBean> search(Map<String, Object> param) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(param));
-        queryObject.setProjection("{'_id':0}");
         List<CmsBtImageGroupModel> imageGroupList = imageGroupService.getList(queryObject);
 
         return changeToBeanList(imageGroupList, (String)param.get("channelId"), (String)param.get("lang"));

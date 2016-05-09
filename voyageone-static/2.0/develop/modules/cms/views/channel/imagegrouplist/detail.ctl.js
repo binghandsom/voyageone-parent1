@@ -51,7 +51,9 @@ define([
             search: function () {
                 var main = this;
                 main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
-                    main.imageList = res.data;
+                    if (res.data != null) {
+                        main.imageList = res.data;
+                    }
                 })
             },
             save: function () {
@@ -66,8 +68,12 @@ define([
                     "imageType":main.imageType,
                     "viewType":main.viewType
                 }).then(function (res) {
-                    main.imageList = res.data;
-                })
+                    main.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                }, function (err) {
+                    if (err.displayType == null) {
+                        main.alert('TXT_MSG_UPDATE_FAIL');
+                    }
+                });
             },
             refresh: function (originUrl) {
                 var main = this;
