@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartCtl', function ($scope, context,sizeChartService,notify) {
+    angularAMD.controller('popSizeChartCtl', function ($scope, context,sizeChartService,alert) {
         $scope.vm = {
             saveInfo:{sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],sizeTypeList:[]}
         };
@@ -14,7 +14,6 @@ define([
         $scope.dropdown = context;
 
         $scope.initialize = function () {
-            console.log(context);
             if ($scope.vm == undefined) {
                 $scope.vm = {};
             }
@@ -22,8 +21,8 @@ define([
 
         $scope.save = function(){
            sizeChartService.editSave($scope.vm.saveInfo).then(function(){
-                notify.success ("添加成功！");
                 $scope.$close();
+                context.search();
             });
         }
 
