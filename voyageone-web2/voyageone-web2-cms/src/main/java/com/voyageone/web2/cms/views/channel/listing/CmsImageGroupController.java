@@ -43,9 +43,9 @@ public class CmsImageGroupController extends CmsController {
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
         // 初始化（取得检索条件信息)
-        Map<String, Object> resultBean  = cmsImageGroupService.init(param);
+        Map<String, Object> result  = cmsImageGroupService.init(param);
         //返回数据的类型
-        return success(resultBean);
+        return success(result);
     }
 
     /**
@@ -56,10 +56,9 @@ public class CmsImageGroupController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.SEARCH_CHANNEL_IMAGE_GROUP)
     public AjaxResponse search(@RequestBody Map<String, Object> param){
-//        Map<String, Object> resultBean = new HashMap<>();
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
-        List<CmsBtImageGroupBean> result = cmsImageGroupService.search(param);
+        Map<String, Object>  result = cmsImageGroupService.search(param);
         return success(result);
     }
 

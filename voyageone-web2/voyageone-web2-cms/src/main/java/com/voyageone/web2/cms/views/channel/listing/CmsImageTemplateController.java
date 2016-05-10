@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.channel.listing;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.impl.cms.CmsImageTemplateService;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -52,19 +53,25 @@ public class CmsImageTemplateController extends CmsController {
 //        Map<String, Object> resultBean = new HashMap<>();
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
-        List<CmsBtImageTemplateBean> result = service.search(param);
+        Object result = service.getPage(param);
+        return success(result);
+    }
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetCount)
+    public AjaxResponse getCount(@RequestBody Map<String, Object> param) {
+        param.put("channelId", this.getUser().getSelChannelId());
+        Object result = service.getCount(param);
         return success(result);
     }
     /**
      * 新加ImageTemplate信息
      *
-     * @param param 客户端参数
+     * @param model 客户端参数
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
-    public AjaxResponse save(@RequestBody Map<String, Object> param) {
-        param.put("channelId", this.getUser().getSelChannelId());
-        service.save(param);
+    public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
+        model.setChannelId(this.getUser().getSelChannelId());
+       service.save(model,this.getUser().getUserName());
         return success(null);
     }
     /**
@@ -74,8 +81,8 @@ public class CmsImageTemplateController extends CmsController {
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
-    public AjaxResponse delete(@RequestBody Map<String, Object> param) {
-        service.delete(param);
+    public AjaxResponse delete(@RequestBody Long imageTemplateId) {
+        service.delete(imageTemplateId);
         return success(null);
     }
 }

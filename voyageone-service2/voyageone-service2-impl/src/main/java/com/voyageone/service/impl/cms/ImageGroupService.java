@@ -39,15 +39,19 @@ public class ImageGroupService extends BaseService {
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
-    public void save(String channelId, Integer cartId, String imageGroupName, Integer imageType, Integer viewType,
+    /**
+     * 新建ImageGroupInfo
+     */
+    public void save(String channelId, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
-        model.setCartId(cartId);
+        model.setCartId(Integer.parseInt(cartId));
         model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
         model.setImageGroupName(imageGroupName);
-        model.setImageType(imageType);
-        model.setViewType(viewType);
+        model.setImageType(Integer.parseInt(imageType));
+        model.setViewType(Integer.parseInt(viewType));
+        // 什么都不选的情况下，要设置成"All"
         if (brandNameList.size() == 0) {
             List lst = new ArrayList<String>();
             lst.add("All");
@@ -73,6 +77,9 @@ public class ImageGroupService extends BaseService {
         cmsBtImageGroupDao.insert(model);
     }
 
+    /**
+     * 逻辑删除Image项目
+     */
     public void logicDeleteImage(String imageGroupId, String originUrl) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
@@ -88,14 +95,17 @@ public class ImageGroupService extends BaseService {
         }
     }
 
-    public void update(String imageGroupId, Integer cartId, String imageGroupName, Integer imageType, Integer viewType,
+    /**
+     * 更新ImageGroupInfo
+     */
+    public void update(String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
-            model.setCartId(cartId);
+            model.setCartId(Integer.parseInt(cartId));
             model.setImageGroupName(imageGroupName);
-            model.setImageType(imageType);
-            model.setViewType(viewType);
+            model.setImageType(Integer.parseInt(imageType));
+            model.setViewType(Integer.parseInt(viewType));
             if (brandNameList.size() == 0) {
                 List lst = new ArrayList<String>();
                 lst.add("All");
@@ -121,6 +131,9 @@ public class ImageGroupService extends BaseService {
         }
     }
 
+    /**
+     * 逻辑删除ImageGroupInfo
+     */
     public void logicDelete(String imageGroupId) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
@@ -129,6 +142,9 @@ public class ImageGroupService extends BaseService {
         }
     }
 
+    /**
+     * 根据检索条件取得ImageGroupInfo
+     */
     public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
                                               String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -137,6 +153,9 @@ public class ImageGroupService extends BaseService {
         return cmsBtImageGroupDao.select(queryObject);
     }
 
+    /**
+     * 根据imageGroupId取得ImageGroupInfo
+     */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "}");

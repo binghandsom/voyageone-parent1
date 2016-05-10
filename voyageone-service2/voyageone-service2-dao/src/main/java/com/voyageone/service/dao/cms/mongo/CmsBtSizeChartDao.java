@@ -19,23 +19,11 @@ import java.util.Map;
 @Repository
 public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> {
     /**
-     * 尺码关系一览初始化画面
-     * @param channelId
-     * @return List<CmsBtSizeChartModel>
-     */
-    public List<CmsBtSizeChartModel> selectInitSizeChartInfo(String channelId) {
-        StringBuilder sbQuery = new StringBuilder();
-        sbQuery.append(MongoUtils.splicingValue("active", 0));
-        return select("{" + sbQuery.toString() + "}",channelId);
-    }
-
-    /**
      * 尺码关系一览检索画面
-     * @param channelId
      * @param cmsBtSizeChartModel
      * @return List<CmsBtSizeChartModel>
      */
-    public List<CmsBtSizeChartModel> selectSearchSizeChartInfo(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
+    public List<CmsBtSizeChartModel> selectSearchSizeChartInfo(CmsBtSizeChartModel cmsBtSizeChartModel) {
 
         StringBuilder sbQuery = new StringBuilder();
         //sizeChartName
@@ -65,36 +53,49 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
             sbQuery.append("},");
         }
         //BrandName
-        if(cmsBtSizeChartModel.getBrandName().size()>0){
-            // 带上"All"
-            cmsBtSizeChartModel.getBrandName().add("All");
-            sbQuery.append(MongoUtils.splicingValue("brandName", cmsBtSizeChartModel.getBrandName()));
+        List brandNameList = cmsBtSizeChartModel.getBrandName();
+        if(brandNameList.size()>0){
+            sbQuery.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[cmsBtSizeChartModel.getBrandName().size()])));
             sbQuery.append(",");
         }
         //ProductType
-        if(cmsBtSizeChartModel.getProductType().size()>0){
+        List productTypeList = cmsBtSizeChartModel.getProductType();
+        if(productTypeList.size()>0){
             cmsBtSizeChartModel.getProductType().add("All");
-            sbQuery.append(MongoUtils.splicingValue("productType", cmsBtSizeChartModel.getProductType()));
+            sbQuery.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[cmsBtSizeChartModel.getProductType().size()])));
             sbQuery.append(",");
         }
         //SizeType
-        if(cmsBtSizeChartModel.getSizeType().size()>0){
+        List sizeTypeList = cmsBtSizeChartModel.getSizeType();
+        if(sizeTypeList.size()>0){
             cmsBtSizeChartModel.getSizeType().add("All");
-            sbQuery.append(MongoUtils.splicingValue("sizeType", cmsBtSizeChartModel.getSizeType()));
+            sbQuery.append(MongoUtils.splicingValue("sizeType",  sizeTypeList.toArray(new String[cmsBtSizeChartModel.getSizeType().size()])));
             sbQuery.append(",");
         }
         sbQuery.append(MongoUtils.splicingValue("active", 1));
-        return select("{" + sbQuery.toString() + "}",channelId);
+        return select("{" + sbQuery.toString() + "}",cmsBtSizeChartModel.getChannelId());
     }
     /**
-     * gen
-     * @param channelId
+     * 尺码关系一览编辑检索画面
+     * @return List<CmsBtSizeChartModel>
+     */
+    public List<CmsBtSizeChartModel> initSizeChartDetailSearch(CmsBtSizeChartModel cmsBtSizeChartModel) {
+        StringBuilder sbQuery = new StringBuilder();
+        sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartId()));
+        sbQuery.append(",");
+        sbQuery.append(MongoUtils.splicingValue("channelId", cmsBtSizeChartModel.getChannelId()));
+        sbQuery.append(",");
+        return select("{" + sbQuery.toString() + "}", cmsBtSizeChartModel.getChannelId());
+    }
+
+    /**
+     * 逻辑删除选中的记录
      * @param cmsBtSizeChartModel
      * @return WriteResult
      */
-    public WriteResult sizeChartUpdate(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
+    public WriteResult sizeChartUpdate(CmsBtSizeChartModel cmsBtSizeChartModel) {
         //获取集合名
-        DBCollection coll = getDBCollection(channelId);
+        DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
         BasicDBObject params = new BasicDBObject();
         //条件
         Map<String, Object> queryMap = new HashMap<>();
@@ -103,7 +104,34 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
         //设置值
         BasicDBObject result = new BasicDBObject();
         Map<String, Object> rsMap = new HashMap<>();
-        rsMap.put("active", "0");
+        rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
+        result.putAll(rsMap);
+        return coll.update(params, new BasicDBObject("$set", result), false, true);
+    }
+
+    /**
+     * 跟据尺码关系一览编辑详情编辑的数据更新数据库
+     * @param cmsBtSizeChartModel
+     * @return
+     */
+    public WriteResult sizeChartDetailUpdate(CmsBtSizeChartModel cmsBtSizeChartModel,String sizeMapList) {
+        //获取集合名
+        DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
+        BasicDBObject params = new BasicDBObject();
+        //条件
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("sizeChartId", cmsBtSizeChartModel.getSizeChartId());
+        params.putAll(queryMap);
+        //设置值
+        BasicDBObject result = new BasicDBObject();
+        Map<String, Object> rsMap = new HashMap<>();
+        rsMap.put("sizeChartName", String.valueOf(cmsBtSizeChartModel.getSizeChartName()));
+        rsMap.put("finish", String.valueOf(cmsBtSizeChartModel.getFinish()));
+        rsMap.put("brandName", String.valueOf(cmsBtSizeChartModel.getBrandName()));
+        rsMap.put("productType", String.valueOf(cmsBtSizeChartModel.getProductType()));
+        rsMap.put("sizeType", String.valueOf(cmsBtSizeChartModel.getSizeType()));
+        rsMap.put("sizeMap", String.valueOf(sizeMapList));
+        rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
         result.putAll(rsMap);
         return coll.update(params, new BasicDBObject("$set", result), false, true);
     }

@@ -106,28 +106,27 @@ define([
              */
             getDictList: function (cartId) {
 
-                var defer = this.$q.defer();
-
-                var channelId = this.cookieService.channel();
-
-                var dictList = this.dictMap[channelId];
+                var self = this;
+                var defer = self.$q.defer();
+                var channelId = self.cookieService.channel();
+                var dictList = self.dictMap[channelId];
 
                 if (dictList && dictList.length) {
                     defer.resolve(dictList);
                 } else {
-                    this.pmService.getDictList({
+                    self.pmService.getDictList({
                         cartId: cartId
                     }).then(function (res) {
 
                         var dictList = res.data;
                         var first = dictList[0];
 
-                        this.dictMap[first ? first.order_channel_id : channelId] = dictList;
+                        self.dictMap[channelId] = dictList;
 
                         // 最终返回的以前台为准
-                        defer.resolve(this.dictMap[channelId]);
+                        defer.resolve(self.dictMap[channelId]);
 
-                    }.bind(this));
+                    });
                 }
 
                 return defer.promise;
@@ -146,7 +145,7 @@ define([
                     .then(function (mainCategorySchema) {
                         var fields = _.clone(mainCategorySchema.fields);
                         if (withSku) fields.push(mainCategorySchema.sku);
-                        return this.$searchProperty(fields, propertyId);
+                        return this.searchProperty(fields, propertyId);
                     }.bind(this));
             },
 
@@ -156,7 +155,7 @@ define([
              * @param {string} propertyId 属性 ID
              * @returns {Field[]}
              */
-            $searchProperty: function (properties, propertyId) {
+            searchProperty: function (properties, propertyId) {
 
                 var result = null;
 
@@ -173,7 +172,7 @@ define([
                         return true;
 
                     // 在子属性内查找
-                    var childResult = this.$searchProperty(property.fields, propertyId);
+                    var childResult = this.searchProperty(property.fields, propertyId);
 
                     // 子属性没找到, 继续下一个
                     if (!childResult) return true;
