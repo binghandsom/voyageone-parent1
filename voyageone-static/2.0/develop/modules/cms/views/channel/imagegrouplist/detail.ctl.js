@@ -14,6 +14,7 @@ define([
             this.imageGroupId = $routeParams['imageGroupId'];
             this.platformList = [];
             this.platform = "";
+            this.cartId = "";
             this.brandNameList = [];
             this.brandName = [];
             this.productTypeList = [];
@@ -39,6 +40,7 @@ define([
                     main.productTypeList = res.data.productTypeList;
                     main.sizeTypeList = res.data.sizeTypeList;
                     main.platform = res.data.imageGroupInfo.cartId + "";
+                    main.cartId = res.data.imageGroupInfo.cartId + "";
                     main.brandName = res.data.imageGroupInfo.brandName;
                     main.productType = res.data.imageGroupInfo.productType;
                     main.sizeType = res.data.imageGroupInfo.sizeType;
@@ -69,6 +71,7 @@ define([
                     "viewType":main.viewType
                 }).then(function (res) {
                     main.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                    main.cartId = main.platform;
                 }, function (err) {
                     if (err.displayType == null) {
                         main.alert('TXT_MSG_UPDATE_FAIL');
