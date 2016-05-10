@@ -29,6 +29,7 @@ public class CacheHelper {
         CacheHelper.template = template;
     }
 
+    @SuppressWarnings("unchecked")
     public static RedisTemplate<String, Map<String, Object>> getCacheTemplate() {
         return template;
     }

@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.openapi.service;
 
-import com.voyageone.common.Snowflake.FactoryIdWorker;
+import com.voyageone.common.idsnowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -17,7 +17,6 @@ import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateImportModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
