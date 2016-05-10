@@ -261,20 +261,26 @@ define([
             }
 
             path.find(function (_field) {
+                
                 result = mappingInfo[_field.id];
-                if (_.isBoolean(result)) return true;
+                
+                if (_.isBoolean(result))
+                    return true;
+                
                 if (_.isArray(result)) {
                     result = !!result.length;
                     return true;
                 }
+                
                 if (_.isObject(result)) {
                     mappingInfo = result;
                     result = !!_.keys(result).length;
                 }
+                
                 return false;
             });
 
-            return result;
+            return !!result;
         },
 
         /**

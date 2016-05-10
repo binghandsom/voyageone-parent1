@@ -54,6 +54,7 @@ define([
                     '未匹配': false
                 }
             },
+
             init: function () {
                 var $ = this;
                 var $service = this.dataService;
@@ -68,48 +69,58 @@ define([
                     $.maindata.category.schema = mainCategory;
                 });
             },
+
             filteringData: function () {
                 _.each(this.platform.properties, function (property) {
                     this.setHide(property);
                 }.bind(this));
             },
+
             clear: function () {
                 this.selected = {
-                    required: true,
-                    matched: false,
+                    required: null,
+                    matched: null,
                     keyWord: null
                 };
+                this.filteringData();
             },
-            setHide: function (property) {
 
-                var keyWord = this.selected.keyWord;
+            setHide: function (field) {
+
+                var self = this;
+                var keyWord = self.selected.keyWord;
+                var matched = self.selected.matched;
+                var required = self.selected.required;
+                var hide = false;
 
                 // 如果是简单类型
                 // 如果强制显示, 则直接显示, 否则计算显示
-                if (property.isSimple) {
+                if (field.isSimple) {
 
-                    if (keyWord && property.name.indexOf(keyWord) < 0) {
-                        return property.hide = true;
-                    }
+                    if (required !== null)
+                        hide = field.required !== required;
 
-                    property.hide = (
-                        this.selected.required !== null && this.selected.required !== (property.required || property.parentRequired)
-                    );
+                    if (!hide && matched !== null)
+                        hide = field.matched !== matched;
 
-                    return property.hide;
+                    if (!hide && keyWord)
+                        hide = field.name.indexOf(keyWord) < 0;
+
+                    return field.hide = hide;
                 }
 
-
                 // 复杂类型计算前, 默认其不显示
-                property.hide = true;
+                hide = true;
 
-                _.each(property.fieldList, function (child) {
+                field.fieldList.forEach(function (child) {
 
                     // 如果子级有需要显示, 则父级跟随显示
-                    if (!this.setHide(child))
-                        property.hide = false;
+                    if (!self.setHide(child))
+                        hide = false;
 
-                }.bind(this));
+                });
+
+                return field.hide = hide;
             },
             /**
              * 更具属性类型,选择打开 Mapping 弹出框
