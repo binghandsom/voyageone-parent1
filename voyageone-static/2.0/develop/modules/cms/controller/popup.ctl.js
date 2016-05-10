@@ -3,40 +3,6 @@
  * Created by LinAn.Bin on 15/12/7.
  */
 
-/**
- * @class
- * @name Field
- * @property {string} type
- * @property {object[]} options
- * @property {object[]} rules
- * @property {string} name
- * @property {string} id
- */
-
-/**
- * @typedef {object} FieldBean
- */
-
-/**
- * Simple Mapping List 设定弹出框的上下文参数
- * @name SimpleListMappingPopupContext
- * @class
- * @property {string} platformCategoryPath 平台类目路径
- * @property {string} platformCategoryId 平台类目 ID
- * @property {string} mainCategoryId 主数据类目 ID
- * @property {Array} path
- * @property {number} cartId 平台 ID
- * @property {Field} property 平台属性
- * @property {number|null} valueIndex
- */
-
-/**
- * @name SimpleItemMappingPopupContext
- * @class
- * @extends SimpleListMappingPopupContext
- * @property {RuleWord|null} ruleWord
- */
-
 define([
     'cms',
     'underscore',
@@ -490,7 +456,6 @@ define([
 
         /**
          * 新增属性值
-         * @type {openAddattributevalueNew}
          */
         $scope.openAddattributevaluenew = openAddattributevaluenew;
         function openAddattributevaluenew(viewSize, data) {
@@ -558,7 +523,6 @@ define([
 
         /**
          * pop出properties变更页面,用于批量更新产品属性
-         * @type {openupdateProperties}
          */
         $scope.openFieldEdit = function (selList) {
             if (selList && selList.length) {
@@ -660,6 +624,7 @@ define([
         //        }
         //    });
         //}
+        
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
