@@ -2,6 +2,7 @@ package com.voyageone.common.util;
 
 import com.jcraft.jsch.*;
 import com.voyageone.common.configs.beans.FtpBean;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.*;
 import org.slf4j.Logger;
 
@@ -45,21 +46,18 @@ public class SFtpUtil {
                 }
             }
             if (fileInputStream != null) {
-                String remoteFile = ftpBean.getUpload_filename();
+                //String remoteFile = ftpBean.getUpload_filename();
+                String uploadPath = seperator;
                 if (!StringUtils.isEmpty(ftpBean.getUpload_path())) {
-                    if (remoteFile.endsWith(this.seperator)) {
-                        remoteFile = ftpBean.getUpload_path() + ftpBean.getUpload_filename();
-                    } else {
-                        remoteFile = ftpBean.getUpload_path() + this.seperator + ftpBean.getUpload_filename();
+                    uploadPath = FilenameUtils.separatorsToUnix(ftpBean.getUpload_path());
+                    if (!uploadPath.startsWith(seperator)) {
+                        uploadPath = seperator + uploadPath;
                     }
                 }
 
-                File rfile = new File(remoteFile);
-                String rpath = rfile.getParent();
                 try {
-                    if (!StringUtils.isEmpty(rpath)) {
-                        rpath = rpath.replaceAll("\\\\", "/");
-                        createDir(rpath, ftpClient);
+                    if (!StringUtils.isEmpty(uploadPath)) {
+                        createDir(uploadPath, ftpClient);
                     }
 
                     ftpClient.put(fileInputStream, ftpBean.getUpload_filename());
@@ -81,14 +79,19 @@ public class SFtpUtil {
      */
     private void createDir(String filepath, ChannelSftp sftp) throws SftpException {
         try {
-            if (!StringUtils.isEmpty(filepath)) {
-                sftp.cd(filepath);
-            }
+            sftp.cd(filepath);
         } catch (SftpException e1) {
-            sftp.mkdir(filepath);
-            try {
-                sftp.cd(filepath);
-            } catch (SftpException ignored) {}
+            String[] folders = filepath.split("/");
+            for (String folder : folders) {
+                if (folder.length() > 0) {
+                    try {
+                        sftp.cd(folder);
+                    } catch (SftpException e) {
+                        sftp.mkdir(folder);
+                        sftp.cd(folder);
+                    }
+                }
+            }
         }
     }
 
