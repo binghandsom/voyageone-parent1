@@ -6,23 +6,28 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     function sizeDetailController($scope,$routeParams,sizeChartService,alert) {
+
         $scope.vm = {
-            originCondition : JSON.parse($routeParams.sizeChart),    //保存初始状态
-            saveInfo : JSON.parse($routeParams.sizeChart),
+            originCondition : [],    //保存初始状态
+            saveInfo : [],
             importList:[],
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[]
 
-        }
+        };
 
         function sizeChartTr(){
             this.originSize = "";
             this.plateFormSize = "";
             this.customSize = false;
-        }
+        };
 
         $scope.initialize  = function () {
+            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
+                $scope.vm.saveInfo  = resp.data.sizeChartList[0];
+                $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
+            });
             sizeChartService.init().then(function(resp){
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList,"value");
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList,"value");
@@ -33,7 +38,11 @@ define([
 
         $scope.addSize = function(){
             $scope.vm.importList.push(new sizeChartTr());
-        }
+        };
+
+        $scope.reset = function(){
+            $scope.vm.saveInfo = angular.copy($scope.vm.originCondition);
+        };
 
         /**
          * 保存修改后的尺码表
@@ -51,7 +60,7 @@ define([
                 notify.success ("添加成功！");
                 $scope.$close();
             });
-        }
+        };
 
         /**
          * 保存导入（输入）的尺码表
@@ -69,11 +78,11 @@ define([
                 notify.success ("添加成功！");
                 $scope.$close();
             });
-        }
+        };
 
         $scope.delSize = function(index){
             $scope.vm.importList.splice(index,1);
-        }
+        };
 
 
         $scope.import = function(result){
@@ -104,7 +113,7 @@ define([
                  }
              }
             $scope.vm.importList.push(obj);
-        }
+        };
 
 
     }
