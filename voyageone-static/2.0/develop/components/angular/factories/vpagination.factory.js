@@ -50,7 +50,7 @@
                     config.curr = page;
                 //保留上次每页条数
                 defaultPage = config.size;
-                config.fetch();
+                config.fetch(config.curr, config.size);
             }
             /**
              * 初始化page列表

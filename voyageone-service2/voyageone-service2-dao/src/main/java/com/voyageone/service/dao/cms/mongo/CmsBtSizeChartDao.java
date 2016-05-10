@@ -81,7 +81,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
      */
     public List<CmsBtSizeChartModel> initSizeChartDetailSearch(CmsBtSizeChartModel cmsBtSizeChartModel) {
         StringBuilder sbQuery = new StringBuilder();
-        sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartName()));
+        sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartId()));
         sbQuery.append(",");
         sbQuery.append(MongoUtils.splicingValue("channelId", cmsBtSizeChartModel.getChannelId()));
         sbQuery.append(",");
@@ -89,14 +89,13 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
     }
 
     /**
-     *
-     * @param channelId
+     * 逻辑删除选中的记录
      * @param cmsBtSizeChartModel
      * @return WriteResult
      */
-    public WriteResult sizeChartUpdate(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
+    public WriteResult sizeChartUpdate(CmsBtSizeChartModel cmsBtSizeChartModel) {
         //获取集合名
-        DBCollection coll = getDBCollection(channelId);
+        DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
         BasicDBObject params = new BasicDBObject();
         //条件
         Map<String, Object> queryMap = new HashMap<>();
@@ -105,6 +104,33 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
         //设置值
         BasicDBObject result = new BasicDBObject();
         Map<String, Object> rsMap = new HashMap<>();
+        rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
+        result.putAll(rsMap);
+        return coll.update(params, new BasicDBObject("$set", result), false, true);
+    }
+
+    /**
+     * 跟据尺码关系一览编辑详情编辑的数据更新数据库
+     * @param cmsBtSizeChartModel
+     * @return
+     */
+    public WriteResult sizeChartDetailUpdate(CmsBtSizeChartModel cmsBtSizeChartModel,String sizeMapList) {
+        //获取集合名
+        DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
+        BasicDBObject params = new BasicDBObject();
+        //条件
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("sizeChartId", cmsBtSizeChartModel.getSizeChartId());
+        params.putAll(queryMap);
+        //设置值
+        BasicDBObject result = new BasicDBObject();
+        Map<String, Object> rsMap = new HashMap<>();
+        rsMap.put("sizeChartName", String.valueOf(cmsBtSizeChartModel.getSizeChartName()));
+        rsMap.put("finish", String.valueOf(cmsBtSizeChartModel.getFinish()));
+        rsMap.put("brandName", String.valueOf(cmsBtSizeChartModel.getBrandName()));
+        rsMap.put("productType", String.valueOf(cmsBtSizeChartModel.getProductType()));
+        rsMap.put("sizeType", String.valueOf(cmsBtSizeChartModel.getSizeType()));
+        rsMap.put("sizeMap", String.valueOf(sizeMapList));
         rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
         result.putAll(rsMap);
         return coll.update(params, new BasicDBObject("$set", result), false, true);

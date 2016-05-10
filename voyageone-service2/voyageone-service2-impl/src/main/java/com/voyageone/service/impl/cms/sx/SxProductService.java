@@ -4,10 +4,12 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -45,6 +47,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 上新相关共通逻辑
@@ -499,6 +503,10 @@ public class SxProductService extends BaseService {
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
                 // TODO:特殊字段处理
+
+            } else if (resolveJdPriceSection_before(shopBean, field)) {
+                // 设置京东属性 - [价格][价位]
+                return resolveJdPriceSection(field, expressionParser.getSxData());
             } else {
                 MappingBean mappingBean = mapProp.get(field.getId());
                 if (mappingBean == null) {
@@ -511,6 +519,135 @@ public class SxProductService extends BaseService {
                     }
                     retMap.putAll(resolveField);
                 }
+            }
+        }
+
+        return retMap;
+    }
+
+	/**
+     * [ 预判断 ] 设置京东属性 - [价格][价位]
+     * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
+     * @param field 字段的内容
+     * @return 返回的字段
+     */
+    public boolean resolveJdPriceSection_before(ShopBean shopBean, Field field) {
+        String strRex1 = "\\s*\\d+-\\d+\\s*元*";
+        String strRex2 = "\\s*\\d+\\s*元*以上";
+
+        // 如果不是京东京东国际的话, 返回false
+        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+            return false;
+        }
+
+        // 属性名字必须是指定内容
+        if (!"价格".equals(field.getName())
+                && !"价位".equals(field.getName())
+                ) {
+            return false;
+        }
+
+        // 判断类型
+        if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+            return false;
+        }
+
+        // 遍历所有可选项, 判断是否符合规则
+        SingleCheckField singleCheckField = (SingleCheckField) field;
+        for (Option option : singleCheckField.getOptions()) {
+            // 判断一下当前可选项属于哪类
+            boolean blnError = false;
+            String optionDisplayName = option.getDisplayName();
+
+            {
+                Pattern pattern = Pattern.compile(strRex1, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(optionDisplayName);
+                if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                Pattern pattern = Pattern.compile(strRex2, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(optionDisplayName);
+                if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    /**
+     * 设置京东属性 - [价格][价位]
+     * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
+     * @param field 字段的内容
+     * @param sxData 商品信息之类的
+     * @return 返回的字段
+     */
+    public Map<String, Field> resolveJdPriceSection(Field field, SxData sxData) {
+        Map<String, Field> retMap = new HashMap<>();
+
+        // 使用最大的那个价格进行判断
+        Double jdPrice = sxData.getMaxPrice();
+
+        // 遍历所有可选项进行判断
+        SingleCheckField singleCheckField = (SingleCheckField) field;
+        for (Option option : singleCheckField.getOptions()) {
+            // 判断一下当前可选项属于哪类
+            String optionDisplayName = option.getDisplayName();
+            if (optionDisplayName.contains("-")) {
+                // 专门处理这类的内容: 100-199元
+                optionDisplayName = optionDisplayName.replace("元", "");
+                optionDisplayName = optionDisplayName.trim();
+
+                String[] splitOption = optionDisplayName.split("-");
+                splitOption[0] = splitOption[0].trim();
+                splitOption[1] = splitOption[1].trim();
+
+                Double minPrice = Double.parseDouble(splitOption[0]);
+                Double maxPrice = Double.parseDouble(splitOption[1]);
+
+                if (Double.compare(minPrice, jdPrice) > 0) {
+                    // 不符合
+                    continue;
+                }
+                if (Double.compare(maxPrice, jdPrice) < 0) {
+                    // 不符合
+                    continue;
+                }
+
+                // 符合的场合
+                singleCheckField.setValue(option.getValue());
+                retMap.put(field.getId(), singleCheckField);
+
+                break;
+            } else if (optionDisplayName.contains("以上")) {
+                // 专门处理这类的内容: 500以上
+                // 专门处理这类的内容: 500元以上
+                optionDisplayName = optionDisplayName.replace("以上", "");
+                optionDisplayName = optionDisplayName.replace("元", "");
+                optionDisplayName = optionDisplayName.trim();
+
+                Double minPrice = Double.parseDouble(optionDisplayName);
+                if (Double.compare(minPrice, jdPrice) < 0) {
+                    // 不符合
+                    continue;
+                }
+
+                // 符合的场合
+                singleCheckField.setValue(option.getValue());
+                retMap.put(field.getId(), singleCheckField);
+
+                break;
+            } else {
+                // 按理说没有其他的场合了, 如果有的话就有问题了, 这个在预处理里就应该判断掉
             }
         }
 

@@ -66,7 +66,9 @@ public class CmsImageGroupService extends BaseAppService {
      * @param param 客户端参数
      * @return 检索结果
      */
-    public List<CmsBtImageGroupBean> search(Map<String, Object> param) {
+    public Map<String, Object> search(Map<String, Object> param) {
+
+        Map<String, Object> result = new HashMap<>();
 
         List<Map<String, Object>> platFormList = ((List)param.get("platformList"));
         // 取得check的平台列表
@@ -81,6 +83,7 @@ public class CmsImageGroupService extends BaseAppService {
         // 根据条件取得检索结果
         List<CmsBtImageGroupModel> imageGroupList = imageGroupService.getList(channelId , platFormChangeList, imageType,
                                                         beginModified, endModified,brandNameList, productTypeList, sizeTypeList);
+        result.put("total",imageGroupList.size());
         if (imageGroupList.size() > 0) {
             int staIdx = ((int) param.get("curr") - 1) * (int) param.get("size");
             int endIdx = staIdx + (int) param.get("size");
@@ -92,7 +95,10 @@ public class CmsImageGroupService extends BaseAppService {
         }
 
         // 检索结果转换
-        return changeToBeanList(imageGroupList, (String)param.get("channelId"), (String)param.get("lang"));
+        result.put("imageGroupList",  changeToBeanList(imageGroupList, (String)param.get("channelId"), (String)param.get("lang")));
+
+        return result;
+
     }
 
     /**
@@ -160,26 +166,75 @@ public class CmsImageGroupService extends BaseAppService {
          // ViewType
          if (bean.getViewType() == 1) {
              bean.setViewTypeName("PC");
-         } else if (bean.getImageType() == 2) {
+         } else if (bean.getViewType() == 2) {
              bean.setViewTypeName("APP");
          }
+
+        // Related Brand Name
+        List<String> brandNameTrans = new ArrayList<>();
+        for (String brandName : bean.getBrandName()) {
+            if ("All".equals(brandName)) {
+                brandNameTrans.add("All");
+            } else {
+                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                if (typeChannelBean != null) {
+                    brandNameTrans.add(typeChannelBean.getName());
+                }
+            }
+        }
+        bean.setBrandNameTrans(brandNameTrans);
+
+        // Related Product Type
+        List<String> productTypeTrans = new ArrayList<>();
+        for (String productType : bean.getProductType()) {
+            if ("All".equals(productType)) {
+                productTypeTrans.add("All");
+            } else {
+                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
+                if (typeChannelBean != null) {
+                    productTypeTrans.add(typeChannelBean.getName());
+                }
+            }
+        }
+        bean.setProductTypeTrans(productTypeTrans);
+
+        // Related Size Type
+        List<String> sizeTypeTrans = new ArrayList<>();
+        for (String sizeType : bean.getSizeType()) {
+            if ("All".equals(sizeType)) {
+                sizeTypeTrans.add("All");
+            } else {
+                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
+                if (typeChannelBean != null) {
+                    sizeTypeTrans.add(typeChannelBean.getName());
+                }
+            }
+        }
+        bean.setSizeTypeTrans(sizeTypeTrans);
     }
 
     /**
-     * 新加/编辑ImageGroup信息
+     * 新加ImageGroup信息
      *
      * @param param 客户端参数
      * @return 检索结果
      */
     public void save(Map<String, Object> param) {
         String channelId = (String)param.get("channelId");
-        int cartId = Integer.parseInt((String)param.get("platform"));
+        String cartId = (String)param.get("platform");
         String imageGroupName = (String)param.get("imageGroupName");
-        int imageType = Integer.parseInt((String)param.get("imageType"));
-        int viewType = Integer.parseInt((String)param.get("viewType"));
+        String imageType = (String)param.get("imageType");
+        String viewType = (String)param.get("viewType");
         List<String> brandNameList = (List<String>)param.get("brandName");
         List<String> productTypeList = (List<String>)param.get("productType");
         List<String> sizeTypeList = (List<String>)param.get("sizeType");
+
+        // 必须输入check
+        if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
+                || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
+            throw new BusinessException("7000080");
+        }
+
         imageGroupService.save(channelId, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
     }

@@ -1,8 +1,10 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
@@ -127,6 +129,10 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        // 必须输入check
+        if (StringUtils.isEmpty(sizeChartName)) {
+            throw new BusinessException("7000080");
+        }
         //根据尺码关系一览编辑的数据插入数据库
         sizeChartService.insert(channelId,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList);
     }
@@ -168,9 +174,13 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
-        List<String> sizeMapList=(List<String>) param.get("sizeMap");
+        String sizeMap=(String) param.get("sizeMap");
+        // 必须输入check
+        if (StringUtils.isEmpty(sizeChartName)) {
+            throw new BusinessException("7000080");
+        }
         //插入数据库
         sizeChartService.sizeChartDetailUpdate(channelId,
-                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMapList);
+                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMap);
     }
 }

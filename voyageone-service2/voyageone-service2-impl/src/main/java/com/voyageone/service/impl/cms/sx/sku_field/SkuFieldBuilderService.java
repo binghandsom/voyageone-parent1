@@ -10,6 +10,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl1;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl2;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl3;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -36,7 +37,7 @@ public class SkuFieldBuilderService extends BaseService {
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl1.class);
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl2.class);
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl3.class);
-//        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_3.class);
+        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl4.class);
         skuFieldBuilderClazzsMap.put(CartEnums.Cart.TG.getId(), tmallGjSkuFieldBuilderClazzs);
     }
 

@@ -1,11 +1,11 @@
 package com.voyageone.service.model.cms.mongo.channel;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 /**
  * Created by gjl on 2016/5/5.
  */
-public class CmsBtSizeChartModelSizeMap extends BaseMongoMap<String, Object> {
+public class CmsBtSizeChartModelSizeMap extends ChannelPartitionModel {
     private String originalSize;
     private String adjustSize;
     private String usual;

@@ -7,10 +7,9 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.modelbean.DictWordBean;
@@ -30,6 +29,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl1;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl2;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl3;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl4;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -116,143 +116,215 @@ public class SxGetProductInfoTest {
             skuPro = "<itemRule>\n" +
                     "\t<field id=\"sku\" name=\"SKU\" type=\"multiComplex\">\n" +
                     "\t\t<rules>\n" +
-                    "\t\t<rule name=\"1026894095_1\" value=\"SKU与类目销售属性必须匹配\"/>\n" +
-                    "\t\t<rule name=\"1830467373_1\" value=\"如果销售属性存在套餐且存在官方标配，官方标配必选\"/>\n" +
+                    "\t\t\t<rule name=\"950280534_1\" value=\"SKU与类目销售属性必须匹配\"/>\n" +
+                    "\t\t\t<rule name=\"529052199_1\" value=\"如果销售属性存在套餐且存在官方标配，官方标配必选\"/>\n" +
                     "\t\t</rules>\n" +
                     "\t\t<fields>\n" +
-                    "\t\t\t<field id=\"prop_20509\" name=\"尺码\" type=\"singleCheck\">\n" +
+                    "\t\t\t<field id=\"prop_1627207\" name=\"颜色\" type=\"singleCheck\">\n" +
                     "\t\t\t\t<options>\n" +
-                    "\t\t\t\t<option displayName=\"S（54-56cm）\" value=\"12430609\"/>\n" +
-                    "\t\t\t\t<option displayName=\"M（56-58cm）\" value=\"12430610\"/>\n" +
-                    "\t\t\t\t<option displayName=\"L（58-60cm）\" value=\"12430611\"/>\n" +
-                    "\t\t\t\t<option displayName=\"XL（60cm以上）\" value=\"12430612\"/>\n" +
-                    "\t\t\t\t<option displayName=\"可调节\" value=\"4054751\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"军绿色\" value=\"3232483\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"天蓝色\" value=\"3232484\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"巧克力色\" value=\"3232481\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"桔色\" value=\"90554\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅灰色\" value=\"28332\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅绿色\" value=\"30156\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅黄色\" value=\"60092\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深卡其布色\" value=\"3232482\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深灰色\" value=\"3232478\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深紫色\" value=\"3232479\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深蓝色\" value=\"28340\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫罗兰\" value=\"80882\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"褐色\" value=\"132069\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"酒红色\" value=\"28327\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
                     "\t\t\t\t</options>\n" +
                     "\t\t\t</field>\n" +
-                    "\t\t\t<field id=\"prop_1627207\" name=\"颜色分类\" type=\"singleCheck\">\n" +
-                    "\t\t\t\t<options>\n" +
-                    "\t\t\t\t<option displayName=\"军绿色\" value=\"3232483\"/>\n" +
-                    "\t\t\t\t<option displayName=\"天蓝色\" value=\"3232484\"/>\n" +
-                    "\t\t\t\t<option displayName=\"巧克力色\" value=\"3232481\"/>\n" +
-                    "\t\t\t\t<option displayName=\"桔色\" value=\"90554\"/>\n" +
-                    "\t\t\t\t<option displayName=\"浅灰色\" value=\"28332\"/>\n" +
-                    "\t\t\t\t<option displayName=\"浅绿色\" value=\"30156\"/>\n" +
-                    "\t\t\t\t<option displayName=\"浅黄色\" value=\"60092\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深卡其布色\" value=\"3232482\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深灰色\" value=\"3232478\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深紫色\" value=\"3232479\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深蓝色\" value=\"28340\"/>\n" +
-                    "\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
-                    "\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
-                    "\t\t\t\t<option displayName=\"紫罗兰\" value=\"80882\"/>\n" +
-                    "\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
-                    "\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
-                    "\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
-                    "\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
-                    "\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
-                    "\t\t\t\t<option displayName=\"褐色\" value=\"132069\"/>\n" +
-                    "\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
-                    "\t\t\t\t<option displayName=\"酒红色\" value=\"28327\"/>\n" +
-                    "\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
-                    "\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
-                    "\t\t\t\t</options>\n" +
+                    "\t\t\t<field id=\"std_size_prop_20518_-1\" name=\"“自定义”尺码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"tipRule\" value=\"自定义尺码值只能输入以下格式：【数字/字母/数字；字母/字母，字母+数字 字母/数字；数字/字母；数字+字母；数字/数字；数字/数字/字母；字母；数字/数字+字母/字母；数字/数字+字母；数字】，并支持在上述格式前添加性别如“男/女/男童/女童”。若无支持的格式，可最多新增一个不在上述格式范围内的尺码值\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_group\" value=\"-1:自定义:-1\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"sku_price\" name=\"价格\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"decimal\"/>\n" +
-                    "\t\t\t\t<rule name=\"minValueRule\" value=\"0.00\" exProperty=\"not include\"/>\n" +
-                    "\t\t\t\t<rule name=\"maxValueRule\" value=\"100000000.00\" exProperty=\"not include\"/>\n" +
-                    "\t\t\t\t<rule name=\"1370739466_1\" value=\"SKU价格受类目限制\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"decimal\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"minValueRule\" value=\"0.00\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxValueRule\" value=\"100000000.00\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"86848434_1\" value=\"SKU价格受类目限制\"/>\n" +
                     "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"sku_quantity\" name=\"库存\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
-                    "\t\t\t\t<rule name=\"minValueRule\" value=\"0\" exProperty=\"include\"/>\n" +
-                    "\t\t\t\t<rule name=\"maxValueRule\" value=\"1000000\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"minValueRule\" value=\"0\" exProperty=\"include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxValueRule\" value=\"1000000\" exProperty=\"not include\"/>\n" +
                     "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"sku_outerId\" name=\"商家编码\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
-                    "\t\t\t\t<rule name=\"maxLengthRule\" value=\"64\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxLengthRule\" value=\"64\" exProperty=\"include\" unit=\"byte\"/>\n" +
                     "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"sku_barcode\" name=\"条形码\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
-                    "\t\t\t\t<rule name=\"527827168_1\" value=\"条形码必须符合EAN和UPC编码规则\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"1958629116_1\" value=\"条形码必须符合EAN和UPC编码规则\"/>\n" +
                     "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"hscode\" name=\"HS海关代码\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
-                    "\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
                     "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t</fields>\n" +
                     "\t</field>\n" +
-                    "\t<field id=\"prop_extend_20509\" name=\"尺码扩展\" type=\"multiComplex\">\n" +
+                    "\t<field id=\"prop_extend_1627207\" name=\"颜色扩展\" type=\"multiComplex\">\n" +
                     "\t\t<fields>\n" +
-                    "\t\t\t<field id=\"prop_20509\" name=\"尺码\" type=\"singleCheck\">\n" +
+                    "\t\t\t<field id=\"prop_1627207\" name=\"颜色\" type=\"singleCheck\">\n" +
                     "\t\t\t\t<options>\n" +
-                    "\t\t\t\t<option displayName=\"S（54-56cm）\" value=\"12430609\"/>\n" +
-                    "\t\t\t\t<option displayName=\"M（56-58cm）\" value=\"12430610\"/>\n" +
-                    "\t\t\t\t<option displayName=\"L（58-60cm）\" value=\"12430611\"/>\n" +
-                    "\t\t\t\t<option displayName=\"XL（60cm以上）\" value=\"12430612\"/>\n" +
-                    "\t\t\t\t<option displayName=\"可调节\" value=\"4054751\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"军绿色\" value=\"3232483\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"天蓝色\" value=\"3232484\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"巧克力色\" value=\"3232481\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"桔色\" value=\"90554\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅灰色\" value=\"28332\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅绿色\" value=\"30156\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅黄色\" value=\"60092\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深卡其布色\" value=\"3232482\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深灰色\" value=\"3232478\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深紫色\" value=\"3232479\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深蓝色\" value=\"28340\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫罗兰\" value=\"80882\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"褐色\" value=\"132069\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"酒红色\" value=\"28327\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
                     "\t\t\t\t</options>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"alias_name\" name=\"别名\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
-                    "\t\t\t\t<rule name=\"minLengthRule\" value=\"0\" exProperty=\"include\" unit=\"byte\"/>\n" +
-                    "\t\t\t\t<rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/>\n" +
-                    "\t\t\t\t</rules>\n" +
-                    "\t\t\t</field>\n" +
-                    "\t\t</fields>\n" +
-                    "\t</field>\n" +
-                    "\t<field id=\"prop_extend_1627207\" name=\"颜色分类扩展\" type=\"multiComplex\">\n" +
-                    "\t\t<fields>\n" +
-                    "\t\t\t<field id=\"prop_1627207\" name=\"颜色分类\" type=\"singleCheck\">\n" +
-                    "\t\t\t\t<options>\n" +
-                    "\t\t\t\t<option displayName=\"军绿色\" value=\"3232483\"/>\n" +
-                    "\t\t\t\t<option displayName=\"天蓝色\" value=\"3232484\"/>\n" +
-                    "\t\t\t\t<option displayName=\"巧克力色\" value=\"3232481\"/>\n" +
-                    "\t\t\t\t<option displayName=\"桔色\" value=\"90554\"/>\n" +
-                    "\t\t\t\t<option displayName=\"浅灰色\" value=\"28332\"/>\n" +
-                    "\t\t\t\t<option displayName=\"浅绿色\" value=\"30156\"/>\n" +
-                    "\t\t\t\t<option displayName=\"浅黄色\" value=\"60092\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深卡其布色\" value=\"3232482\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深灰色\" value=\"3232478\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深紫色\" value=\"3232479\"/>\n" +
-                    "\t\t\t\t<option displayName=\"深蓝色\" value=\"28340\"/>\n" +
-                    "\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
-                    "\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
-                    "\t\t\t\t<option displayName=\"紫罗兰\" value=\"80882\"/>\n" +
-                    "\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
-                    "\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
-                    "\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
-                    "\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
-                    "\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
-                    "\t\t\t\t<option displayName=\"褐色\" value=\"132069\"/>\n" +
-                    "\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
-                    "\t\t\t\t<option displayName=\"酒红色\" value=\"28327\"/>\n" +
-                    "\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
-                    "\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
-                    "\t\t\t\t</options>\n" +
-                    "\t\t\t</field>\n" +
-                    "\t\t\t<field id=\"alias_name\" name=\"别名\" type=\"input\">\n" +
-                    "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
-                    "\t\t\t\t<rule name=\"minLengthRule\" value=\"0\" exProperty=\"include\" unit=\"byte\"/>\n" +
-                    "\t\t\t\t<rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"minLengthRule\" value=\"0\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/>\n" +
                     "\t\t\t\t</rules>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t\t<field id=\"prop_image\" name=\"属性图片\" type=\"input\">\n" +
                     "\t\t\t\t<rules>\n" +
-                    "\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
                     "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"basecolor\" name=\"色系\" type=\"multiCheck\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"minInputNumRule\" value=\"0\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxInputNumRule\" value=\"3\" exProperty=\"include\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"橙色\" value=\"90554\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"灰色\" value=\"28332\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"棕色\" value=\"132069\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
+                    "\t\t\t\t</options>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t</fields>\n" +
+                    "\t</field>\n" +
+                    "\t<field id=\"std_size_extends_20518\" name=\"尺码扩展\" type=\"multiComplex\">\n" +
+                    "\t\t<rules>\n" +
+                    "\t\t\t<rule name=\"tipRule\" value=\"尺码表中的字段至少两个维度必填。\"/>\n" +
+                    "\t\t\t<rule name=\"tipRule\" value=\"尺码表中的字段若选择填写某个字段，则所有尺码对应的该字段信息均需填写。\"/>\n" +
+                    "\t\t\t<rule name=\"tipRule\" value=\"因尺码表结构调整，您填写的数据项可能被调整为自定义项，不影响信息展示。\"/>\n" +
+                    "\t\t</rules>\n" +
+                    "\t\t<fields>\n" +
+                    "\t\t\t<field id=\"std_size_prop_20518_-1\" name=\"“自定义”尺码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"tipRule\" value=\"自定义尺码值只能输入以下格式：【数字/字母/数字；字母/字母，字母+数字 字母/数字；数字/字母；数字+字母；数字/数字；数字/数字/字母；字母；数字/数字+字母/字母；数字/数字+字母；数字】，并支持在上述格式前添加性别如“男/女/男童/女童”。若无支持的格式，可最多新增一个不在上述格式范围内的尺码值\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_group\" value=\"-1:自定义:-1\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_tip\" name=\"尺码备注\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"minLengthRule\" value=\"1\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxLengthRule\" value=\"30\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_shengao\" name=\"身高（cm）\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"or\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"==\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_shengao_range\" name=\"身高（cm）\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_shengao_from\" name=\"最小值\" type=\"input\"/>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_shengao_to\" name=\"最大值\" type=\"input\"/>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_yaowei\" name=\"腰围（cm）\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"or\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"==\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_yaowei_range\" name=\"腰围（cm）\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_yaowei_from\" name=\"最小值\" type=\"input\"/>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_yaowei_to\" name=\"最大值\" type=\"input\"/>\n" +
+                    "\t\t\t\t</fields>\n" +
                     "\t\t\t</field>\n" +
                     "\t\t</fields>\n" +
                     "\t</field>\n" +
@@ -261,7 +333,8 @@ public class SxGetProductInfoTest {
 
 //        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid003"); // 模板1
 //        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid002"); // 模板2
-        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
+//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
+        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid005"); // 模板4
 
         Map<String, Integer> skuInventoryMap = new HashMap<>();
         skuInventoryMap.put("c001-1", 1100);
@@ -282,7 +355,6 @@ public class SxGetProductInfoTest {
                 put("cartId", 23);
                 put("name", "属性图片模板");
             }});
-            skuFieldService.setCodeImageTemplate(cmsMtPlatformDictModel.getValue());
 
             if (skuFieldService == null) {
                 System.out.println("null");
@@ -294,8 +366,9 @@ public class SxGetProductInfoTest {
             } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl3) {
                 skuFieldService.setCodeImageTemplate(cmsMtPlatformDictModel.getValue());
                 System.out.println("TmallGjSkuFieldBuilderImpl3");
-//            } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl_3) {
-//                System.out.println("TmallGjSkuFieldBuilderImpl_3");
+            } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl4) {
+                skuFieldService.setCodeImageTemplate(cmsMtPlatformDictModel.getValue());
+                System.out.println("TmallGjSkuFieldBuilderImpl4");
             } else {
                 System.out.println("not exists");
             }
@@ -318,6 +391,13 @@ public class SxGetProductInfoTest {
 //            List<com.taobao.top.schema.field.Field> allSkuFields = new ArrayList<>();
 //            recursiveGetTaobaoFields(fields, allSkuFields);
 //            com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder skuFieldBuilder = null;
+//
+//            CmsMtPlatformDictModel cmsMtPlatformDictModel = cmsMtPlatformDictDao.selectOne(new HashMap<String, Object>(){{
+//                put("orderChannelId", "066");
+//                put("cartId", 23);
+//                put("name", "属性图片模板");
+//            }});
+//
 //            try {
 //                skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(23, allSkuFields);
 //            } catch (TaskSignal taskSignal) {
@@ -326,18 +406,15 @@ public class SxGetProductInfoTest {
 //            if (skuFieldBuilder == null) {
 //                System.out.println("null");
 //            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_0) {
-//                CmsMtPlatformDictModel cmsMtPlatformDictModel = cmsMtPlatformDictDao.selectOne(new HashMap<String, Object>(){{
-//                    put("orderChannelId", "066");
-//                    put("cartId", 23);
-//                    put("name", "属性图片模板");
-//                }});
 //                skuFieldBuilder.setCodeImageTemplete(cmsMtPlatformDictModel.getValue());
 //                System.out.println("TmallGjSkuFieldBuilderImpl_0");
 //            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_1) {
 //                System.out.println("TmallGjSkuFieldBuilderImpl_1");
 //            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_2) {
+//                skuFieldBuilder.setCodeImageTemplete(cmsMtPlatformDictModel.getValue());
 //                System.out.println("TmallGjSkuFieldBuilderImpl_2");
 //            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_3) {
+//                skuFieldBuilder.setCodeImageTemplete(cmsMtPlatformDictModel.getValue());
 //                System.out.println("TmallGjSkuFieldBuilderImpl_3");
 //            } else {
 //                System.out.println("not exists");
@@ -762,6 +839,32 @@ public class SxGetProductInfoTest {
 
         // 店铺种类
         System.out.println(builder.toString());
+
+    }
+
+    @Test
+    public void testJdPriceSection() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+
+        SxData sxData = new SxData();
+        sxData.setMaxPrice(499D);
+
+        SingleCheckField field = new SingleCheckField();
+        field.setId("13479");
+        field.setName("价格");
+        field.addOption("0-99元", "178345");
+        field.addOption(" 100-199  ", "178346");
+        field.addOption(" 200-299", "178347");
+        field.addOption(" 300-499 ", "178348");
+        field.addOption("500元以上", "178349");
+
+        boolean blnRet = sxProductService.resolveJdPriceSection_before(shopBean, field);
+        System.out.println(blnRet);
+
+        Map<String, Field> mapRet = sxProductService.resolveJdPriceSection(field, sxData);
+        Value value = (Value)mapRet.get(field.getId()).getValue();
+        System.out.println(value.getValue());
 
     }
 

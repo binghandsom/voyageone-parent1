@@ -13,6 +13,9 @@ public class CmsBtImageGroupBean extends CmsBtImageGroupModel {
     private String viewTypeName;
     private String imageTypeName;
     private String cartName;
+    private List<String> brandNameTrans;
+    private List<String> productTypeTrans;
+    private List<String> sizeTypeTrans;
 
     public String getViewTypeName() {
         return viewTypeName;
@@ -36,5 +39,29 @@ public class CmsBtImageGroupBean extends CmsBtImageGroupModel {
 
     public void setCartName(String cartName) {
         this.cartName = cartName;
+    }
+
+    public List<String> getBrandNameTrans() {
+        return brandNameTrans;
+    }
+
+    public void setBrandNameTrans(List<String> brandNameTrans) {
+        this.brandNameTrans = brandNameTrans;
+    }
+
+    public List<String> getProductTypeTrans() {
+        return productTypeTrans;
+    }
+
+    public void setProductTypeTrans(List<String> productTypeTrans) {
+        this.productTypeTrans = productTypeTrans;
+    }
+
+    public List<String> getSizeTypeTrans() {
+        return sizeTypeTrans;
+    }
+
+    public void setSizeTypeTrans(List<String> sizeTypeTrans) {
+        this.sizeTypeTrans = sizeTypeTrans;
     }
 }
