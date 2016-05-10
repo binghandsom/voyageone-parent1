@@ -8,7 +8,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -175,13 +174,13 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
-        List<CmsBtSizeChartModelSizeMap> sizeMapList=(List<CmsBtSizeChartModelSizeMap>) param.get("sizeMap");
+        String sizeMap=(String) param.get("sizeMap");
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
         //插入数据库
         sizeChartService.sizeChartDetailUpdate(channelId,
-                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMapList);
+                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMap);
     }
 }

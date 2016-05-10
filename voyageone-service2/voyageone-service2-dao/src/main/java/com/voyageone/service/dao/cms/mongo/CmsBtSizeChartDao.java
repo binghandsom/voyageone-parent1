@@ -114,7 +114,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
      * @param cmsBtSizeChartModel
      * @return
      */
-    public WriteResult sizeChartDetailUpdate(CmsBtSizeChartModel cmsBtSizeChartModel) {
+    public WriteResult sizeChartDetailUpdate(CmsBtSizeChartModel cmsBtSizeChartModel,String sizeMapList) {
         //获取集合名
         DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
         BasicDBObject params = new BasicDBObject();
@@ -130,7 +130,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
         rsMap.put("brandName", String.valueOf(cmsBtSizeChartModel.getBrandName()));
         rsMap.put("productType", String.valueOf(cmsBtSizeChartModel.getProductType()));
         rsMap.put("sizeType", String.valueOf(cmsBtSizeChartModel.getSizeType()));
-        rsMap.put("sizeMap", String.valueOf(cmsBtSizeChartModel.getSizeMap()));
+        rsMap.put("sizeMap", String.valueOf(sizeMapList));
         rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
         result.putAll(rsMap);
         return coll.update(params, new BasicDBObject("$set", result), false, true);
