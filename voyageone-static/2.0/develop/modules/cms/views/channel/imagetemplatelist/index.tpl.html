@@ -117,108 +117,48 @@
         <div class="box-body">
             <div class="table-responsive">
                 <div class="col-sm-12 dropdown_table_main">
-                    <!--<div class="col-sm-12 text-center  m-t-sm m-b-xs">-->
-                        <!--<div class="col-sm-4"></div>-->
-                        <!--<div class="form-inline pull-right">-->
-                            <!--&lt;!&ndash;<button title="导入" class="btn btn-dangers ng-binding m-r-sm"><i class="fa fa-reply-all"></i>&nbsp;import</button>&ndash;&gt;-->
-                            <!--<button title="添加" class="btn btn-success ng-binding m-r-sm"><i class="fa fa-plus"></i>&nbsp;add</button>-->
-                            <!--&lt;!&ndash;<button title="保存" class="btn btn-vo m-r-sm"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>&ndash;&gt;-->
-                        <!--</div>-->
-                    <!--</div>-->
                     <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px;table-layout: fixed"
                            ng-controller="popupCtrl">
                         <thead>
                         <tr>
-                            <th class="mfb-xt3 text-center">序号</th>
+                            <th class="mfb-xt text-center">{{'TXT_SEQ' | translate}}</th>
                             <th class="mfb-xxt text-center">Template Name</th>
-                            <th class="mfb-xxt text-center">Related Brand Name</th>
-                            <th class="mfb-xxt text-center">Related Product Type</th>
-                            <th class="mfb-xxt text-center">Related Size Type</th>
-                            <th class="mfb-xt text-center">View Type</th>
+                            <th class="mfb-xxs text-center">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
+                            <th class="mfb-xxs text-center">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
+                            <th class="mfb-xxs text-center">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_VIEW_TYPE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_PLATFORM' | translate}}</th>
                             <th class="mfb-xxt text-center">Template Type</th>
-                            <th class="mfb-xt text-center">Platform</th>
                             <th class="mfb-xxt text-center">Template Content</th>
-                            <th class="mfb-xxt text-center">Update Time</th>
-                            <th class="mfb-xt text-center">编辑</th>
+                            <th class="mfb-xxx text-center">{{'TXT_UPDATE_TIME' | translate}}</th>
+                            <th class="mfb-xx text-center">{{'BTN_EDIT' | translate}}</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td class="mfb-xt text-center">1</td>
-                            <td class="mfb-xxt text-center">test1</td>
-                            <td class="mfb-xxt text-center">BCBG</td>
-                            <td class="mfb-xxt text-center">Apperal</td>
-                            <td class="mfb-xxt text-center">Women</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">1：商品图片模板</td>
-                            <td class="mfb-xxt text-center">TM</td>
-                            <td class="mfb-xxt text-center">URL...</td>
-                            <td class="mfb-xxt text-center">2016年4月29日18:16:39</td>
+                        <tr ng-repeat="model in vm.modelList">
+                            <td class="mfb-xt text-center">{{model.imageTemplateId}}</td>
+                            <td class="mfb-xx text-center">{{model.imageTemplateName}}</td>
+                            <td class="mfb-xxs text-center">{{model.brandNameTrans.join(' , ')}}</td>
+                            <td class="mfb-xxs text-center">{{model.productTypeTrans.join(' , ')}}</td>
+                            <td class="mfb-xxs text-center">{{model.sizeTypeTrans.join(' , ')}}</td>
+                            <td class="mfb-xxt text-center">{{model.viewTypeName}}</td>
+                            <td class="mfb-xxt text-center">{{model.cartName}}</td>
+                            <td class="mfb-xxt text-center">{{model.imageTemplateType}}</td>
+                            <td class="mfb-xxt text-center">{{model.templateContent}}</td>
+                            <td class="mfb-xxx text-center">{{imageGroup.modified}}</td>
                             <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing()"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mfb-xt text-center">2</td>
-                            <td class="mfb-xxt text-center">test2</td>
-                            <td class="mfb-xxt text-center">Prada</td>
-                            <td class="mfb-xxt text-center">Apperal</td>
-                            <td class="mfb-xxt text-center">Men</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">2：产品图片模板</td>
-                            <td class="mfb-xxt text-center">TM</td>
-                            <td class="mfb-xxt text-center">URL...</td>
-                            <td class="mfb-xxt text-center">2016年4月29日18:16:39</td>
-                            <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing()"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mfb-xt text-center">3</td>
-                            <td class="mfb-xxt text-center">test3</td>
-                            <td class="mfb-xxt text-center">Prada</td>
-                            <td class="mfb-xxt text-center">Shoe</td>
-                            <td class="mfb-xxt text-center">Men</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">3：详情细节模板</td>
-                            <td class="mfb-xxt text-center">TM</td>
-                            <td class="mfb-xxt text-center">URL...</td>
-                            <td class="mfb-xxt text-center">2016年4月29日18:16:39</td>
-                            <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing()"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mfb-xt text-center">4</td>
-                            <td class="mfb-xxt text-center">test4</td>
-                            <td class="mfb-xxt text-center">BCBG</td>
-                            <td class="mfb-xxt text-center">Shoe</td>
-                            <td class="mfb-xxt text-center">Women</td>
-                            <td class="mfb-xxs text-center">1：PC端</td>
-                            <td class="mfb-xxt text-center">3：参数模板</td>
-                            <td class="mfb-xxt text-center">TM</td>
-                            <td class="mfb-xxt text-center">URL...</td>
-                            <td class="mfb-xxt text-center">2016年4月29日18:16:39</td>
-                            <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing()"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing({{model.imageTemplateId}})"><i class="fa fa-cog"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs" ng-click="del({{model.imageTemplateId}})"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- .table-responsive -->
                 <div class="col-sm-12">
                     <vpagination config="dataPageOption"></vpagination>
                 </div>
             </div>
         </div>
-        <!-- /.box-body -->
-        <!--<div class="m-t-xs">-->
-            <!--<vpagination config="vm.errorPageOption"></vpagination>-->
-        <!--</div>-->
+
     </div>
-</div><!-- end .wrapper-md -->
+</div>

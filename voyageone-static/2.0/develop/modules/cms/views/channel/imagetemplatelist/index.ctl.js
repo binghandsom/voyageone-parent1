@@ -22,18 +22,25 @@ define([
              //   $scope.search();
             })
         };
-        function goPage()
-        {
-
+        $scope.search = function () {
+            var data = angular.copy($scope.searchInfo);
+            goPage(1,10)
+            imageTemplateService.getCount(data).then(function (res) {
+                $scope.dataPageOption.total = res.data;
+            }, function (res) {
+            });
+        };
+        function  goPage(pageIndex,pageSize) {
+            var data = angular.copy($scope.searchInfo);
+            data.pageIndex = pageIndex;
+            data.pageSize = pageSize;
+            imageTemplateService.getPage(data).then(function (res) {
+                $scope.vm.modelList = res.data;
+            }, function (res) {
+            });
         }
         $scope.clear = function () {
             $scope.searchInfo = {brandName:[],sizeType:[],productType:[]};
-        };
-        $scope.search = function () {
-            imageTemplateService.getPage($scope.searchInfo).then(function (res) {
-                $scope.vm.modelList = res.data;
-            }, function (res) {
-            })
         };
         $scope.del = function (data) {
             confirm($translate.instant('TXT_MSG_DO_DELETE') + data.name).result.then(function () {
