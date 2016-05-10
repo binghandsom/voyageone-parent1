@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -36,6 +37,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
     @Autowired
     TargetFeedDao TargetFeedDao;
+    private Map<String, Map<String, String>> retailPriceList;
 
     @Override
     public SubSystem getSubSystem() {
@@ -70,13 +72,12 @@ public class TargetAnalysisService extends BaseAnalysisService {
     public int superFeedImport() {
 
 
-        $info("Target产品品牌黑名单读入开始");
-        Set<String> blackList = new HashSet<>();
-        Feeds.getConfigs(getChannel().getId(), FeedEnums.Name.blackList).forEach(m -> blackList.add(m.getCfg_val1().toLowerCase().trim()));
+        $info("Target产品白名单读入开始");
+        Map<String, SuperFeedTargetBean> retail = getRetailPriceList();
+        if(retail == null || retail.isEmpty()) return 0;
 
 
         $info("Target产品文件读入开始");
-
         List<SuperFeedTargetBean> superfeed = new ArrayList<>();
         int cnt = 0;
 
@@ -96,122 +97,123 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
             // Body读入
             while (reader.readRecord()) {
-                SuperFeedTargetBean SuperFeedTargetBean = new SuperFeedTargetBean();
-
                 int i = 0;
+                String sku = reader.get(i++);
+                if (retail.isEmpty()) break;
+                if(!retail.containsKey(sku)) continue;
+                SuperFeedTargetBean superFeedTargetBean = retail.get(sku);
+                superFeedTargetBean.setParentSku(reader.get(i++));
+                superFeedTargetBean.setManufacturerName(reader.get(i++));
+                superFeedTargetBean.setMpn(reader.get(i++));
+                superFeedTargetBean.setModelNumber(reader.get(i++));
+                superFeedTargetBean.setName(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
+                superFeedTargetBean.setDescription(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
+                superFeedTargetBean.setShortDescription(reader.get(i++));
+                superFeedTargetBean.setRegularPrice(reader.get(i++));
+                superFeedTargetBean.setSalePrice(reader.get(i++));
+                superFeedTargetBean.setMap(reader.get(i++));
+                superFeedTargetBean.setBuyUrl(reader.get(i++));
+                superFeedTargetBean.setCategory(reader.get(i++));
+                superFeedTargetBean.setAvailability(reader.get(i++));
+                superFeedTargetBean.setLargeImageUrl(reader.get(i++));
+                superFeedTargetBean.setSwatchImage(reader.get(i++));
+                superFeedTargetBean.setBrand(reader.get(i++));
+                superFeedTargetBean.setUpc(reader.get(i++));
+                superFeedTargetBean.setIsbn(reader.get(i++));
+                superFeedTargetBean.setCurrency(reader.get(i++));
+                superFeedTargetBean.setKeywords(reader.get(i++));
+                superFeedTargetBean.setSpecifications(reader.get(i++));
+                superFeedTargetBean.setShippingWeight(reader.get(i++));
+                superFeedTargetBean.setVariationThemes(reader.get(i++));
+                superFeedTargetBean.setAttributeNames(reader.get(i++));
+                superFeedTargetBean.setAttributeValues(reader.get(i++));
+                superFeedTargetBean.setMargin(reader.get(i++));
+                superFeedTargetBean.setMarginPercent(reader.get(i++));
+                superFeedTargetBean.setCatentryid(reader.get(i++));
+                superFeedTargetBean.setWebclass(reader.get(i++));
+                superFeedTargetBean.setSubclass(reader.get(i++));
+                superFeedTargetBean.setMozartVendorId(reader.get(i++));
+                superFeedTargetBean.setMozartVendorName(reader.get(i++));
+                superFeedTargetBean.setDpci(reader.get(i++));
+                superFeedTargetBean.setDivision(reader.get(i++));
+                superFeedTargetBean.setSellingChannel(reader.get(i++));
+                superFeedTargetBean.setItemStatus(reader.get(i++));
+                superFeedTargetBean.setItemKind(reader.get(i++));
+                superFeedTargetBean.setStreetdate(reader.get(i++));
+                superFeedTargetBean.setLaunchdate(reader.get(i++));
+                superFeedTargetBean.setAvailabilitydate(reader.get(i++));
+                superFeedTargetBean.setAverageOverallRating(reader.get(i++));
+                superFeedTargetBean.setTotalItemReviews(reader.get(i++));
+                superFeedTargetBean.setRatableAttribute(reader.get(i++));
+                superFeedTargetBean.setWebclassName(reader.get(i++));
+                superFeedTargetBean.setSubclassName(reader.get(i++));
+                superFeedTargetBean.setManufacturingBrand(reader.get(i++));
+                superFeedTargetBean.setContributorType(reader.get(i++));
+                superFeedTargetBean.setContributor(reader.get(i++));
+                superFeedTargetBean.setMediaFormat(reader.get(i++));
+                superFeedTargetBean.setBarcodeType(reader.get(i++));
+                superFeedTargetBean.setSpecialitemsource(reader.get(i++));
+                superFeedTargetBean.setEsrbagerating(reader.get(i++));
+                superFeedTargetBean.setTvrating(reader.get(i++));
+                superFeedTargetBean.setBopoFlag(reader.get(i++));
+                superFeedTargetBean.setSoiPriceDisplay(reader.get(i++));
+                superFeedTargetBean.setPricecode(reader.get(i++));
+                superFeedTargetBean.setListprice(reader.get(i++));
+                superFeedTargetBean.setListPriceRange(reader.get(i++));
+                superFeedTargetBean.setSalePriceRange(reader.get(i++));
+                superFeedTargetBean.setSalesCategory(reader.get(i++));
+                superFeedTargetBean.setLargeImageAlternate(reader.get(i++));
+                superFeedTargetBean.setSizingChart(reader.get(i++));
+                superFeedTargetBean.setSizeChart(reader.get(i++));
+                superFeedTargetBean.setShippingService(reader.get(i++));
+                superFeedTargetBean.setPackageLength(reader.get(i++));
+                superFeedTargetBean.setPackageWidth(reader.get(i++));
+                superFeedTargetBean.setPackageHeight(reader.get(i++));
+                superFeedTargetBean.setTaxCategory(reader.get(i++));
+                superFeedTargetBean.setFacility(reader.get(i++));
+                superFeedTargetBean.setBulky(reader.get(i++));
+                superFeedTargetBean.setExpertReviewFlag(reader.get(i++));
+                superFeedTargetBean.setThirdpartyhostedlink(reader.get(i++));
+                superFeedTargetBean.setPickupinstore(reader.get(i++));
+                superFeedTargetBean.setSubscription(reader.get(i++));
+                superFeedTargetBean.setSecattributes(reader.get(i++));
+                superFeedTargetBean.setSecBarcode(reader.get(i++));
+                superFeedTargetBean.setAutoBullets(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
+                superFeedTargetBean.setIacAttributes(reader.get(i++));
+                superFeedTargetBean.setCategoryIacid(reader.get(i++));
+                superFeedTargetBean.setCalloutMsg(reader.get(i++));
+                superFeedTargetBean.setBuyable(reader.get(i++));
+                superFeedTargetBean.setBackorderType(reader.get(i++));
+                superFeedTargetBean.setMaxOrderQty(reader.get(i++));
+                superFeedTargetBean.setIsHazmat(reader.get(i++));
+                superFeedTargetBean.setIsFood(reader.get(i++));
+                superFeedTargetBean.setWheneverShippingEligible(reader.get(i++));
+                superFeedTargetBean.setShipToRestriction(reader.get(i++));
+                superFeedTargetBean.setPoBoxProhibited(reader.get(i++));
+                superFeedTargetBean.setNutritionFactsFlag(reader.get(i++));
+                superFeedTargetBean.setDrugFactsFlag(reader.get(i++));
+                superFeedTargetBean.setEnergyGuideCms(reader.get(i++));
+                superFeedTargetBean.setVideoCount(reader.get(i++));
+                superFeedTargetBean.setFfPickupinstoreRushdeliveryShiptostoreShipfromstore(reader.get(i++));
+                superFeedTargetBean.setSaveStory(reader.get(i++));
+                superFeedTargetBean.setGiftWrapable(reader.get(i++));
+                superFeedTargetBean.setSignRequired(reader.get(i++));
+                superFeedTargetBean.setReturnMethod(reader.get(i++));
+                superFeedTargetBean.setDefaultReturnPolicy(reader.get(i++));
+                superFeedTargetBean.setNormalReturnPolicy(reader.get(i++));
+                superFeedTargetBean.setBestReturnPolicy(reader.get(i++));
+                superFeedTargetBean.setDisplayEligibility(reader.get(i++));
+                superFeedTargetBean.setAgeRestriction(reader.get(i++));
+                superFeedTargetBean.setHasWarranty(reader.get(i++));
 
-                SuperFeedTargetBean.setSku(reader.get(i++));
-                SuperFeedTargetBean.setParentSku(reader.get(i++));
-                SuperFeedTargetBean.setManufacturerName(reader.get(i++));
-                SuperFeedTargetBean.setMpn(reader.get(i++));
-                SuperFeedTargetBean.setModelNumber(reader.get(i++));
-                SuperFeedTargetBean.setName(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
-                SuperFeedTargetBean.setDescription(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
-                SuperFeedTargetBean.setShortDescription(reader.get(i++));
-                SuperFeedTargetBean.setRegularPrice(reader.get(i++));
-                SuperFeedTargetBean.setSalePrice(reader.get(i++));
-                SuperFeedTargetBean.setMap(reader.get(i++));
-                SuperFeedTargetBean.setBuyUrl(reader.get(i++));
-                SuperFeedTargetBean.setCategory(reader.get(i++));
-                SuperFeedTargetBean.setAvailability(reader.get(i++));
-                SuperFeedTargetBean.setLargeImageUrl(reader.get(i++));
-                SuperFeedTargetBean.setSwatchImage(reader.get(i++));
-                SuperFeedTargetBean.setBrand(reader.get(i++));
-                SuperFeedTargetBean.setUpc(reader.get(i++));
-                SuperFeedTargetBean.setIsbn(reader.get(i++));
-                SuperFeedTargetBean.setCurrency(reader.get(i++));
-                SuperFeedTargetBean.setKeywords(reader.get(i++));
-                SuperFeedTargetBean.setSpecifications(reader.get(i++));
-                SuperFeedTargetBean.setShippingWeight(reader.get(i++));
-                SuperFeedTargetBean.setVariationThemes(reader.get(i++));
-                SuperFeedTargetBean.setAttributeNames(reader.get(i++));
-                SuperFeedTargetBean.setAttributeValues(reader.get(i++));
-                SuperFeedTargetBean.setMargin(reader.get(i++));
-                SuperFeedTargetBean.setMarginPercent(reader.get(i++));
-                SuperFeedTargetBean.setCatentryid(reader.get(i++));
-                SuperFeedTargetBean.setWebclass(reader.get(i++));
-                SuperFeedTargetBean.setSubclass(reader.get(i++));
-                SuperFeedTargetBean.setMozartVendorId(reader.get(i++));
-                SuperFeedTargetBean.setMozartVendorName(reader.get(i++));
-                SuperFeedTargetBean.setDpci(reader.get(i++));
-                SuperFeedTargetBean.setDivision(reader.get(i++));
-                SuperFeedTargetBean.setSellingChannel(reader.get(i++));
-                SuperFeedTargetBean.setItemStatus(reader.get(i++));
-                SuperFeedTargetBean.setItemKind(reader.get(i++));
-                SuperFeedTargetBean.setStreetdate(reader.get(i++));
-                SuperFeedTargetBean.setLaunchdate(reader.get(i++));
-                SuperFeedTargetBean.setAvailabilitydate(reader.get(i++));
-                SuperFeedTargetBean.setAverageOverallRating(reader.get(i++));
-                SuperFeedTargetBean.setTotalItemReviews(reader.get(i++));
-                SuperFeedTargetBean.setRatableAttribute(reader.get(i++));
-                SuperFeedTargetBean.setWebclassName(reader.get(i++));
-                SuperFeedTargetBean.setSubclassName(reader.get(i++));
-                SuperFeedTargetBean.setManufacturingBrand(reader.get(i++));
-                SuperFeedTargetBean.setContributorType(reader.get(i++));
-                SuperFeedTargetBean.setContributor(reader.get(i++));
-                SuperFeedTargetBean.setMediaFormat(reader.get(i++));
-                SuperFeedTargetBean.setBarcodeType(reader.get(i++));
-                SuperFeedTargetBean.setSpecialitemsource(reader.get(i++));
-                SuperFeedTargetBean.setEsrbagerating(reader.get(i++));
-                SuperFeedTargetBean.setTvrating(reader.get(i++));
-                SuperFeedTargetBean.setBopoFlag(reader.get(i++));
-                SuperFeedTargetBean.setSoiPriceDisplay(reader.get(i++));
-                SuperFeedTargetBean.setPricecode(reader.get(i++));
-                SuperFeedTargetBean.setListprice(reader.get(i++));
-                SuperFeedTargetBean.setListPriceRange(reader.get(i++));
-                SuperFeedTargetBean.setSalePriceRange(reader.get(i++));
-                SuperFeedTargetBean.setSalesCategory(reader.get(i++));
-                SuperFeedTargetBean.setLargeImageAlternate(reader.get(i++));
-                SuperFeedTargetBean.setSizingChart(reader.get(i++));
-                SuperFeedTargetBean.setSizeChart(reader.get(i++));
-                SuperFeedTargetBean.setShippingService(reader.get(i++));
-                SuperFeedTargetBean.setPackageLength(reader.get(i++));
-                SuperFeedTargetBean.setPackageWidth(reader.get(i++));
-                SuperFeedTargetBean.setPackageHeight(reader.get(i++));
-                SuperFeedTargetBean.setTaxCategory(reader.get(i++));
-                SuperFeedTargetBean.setFacility(reader.get(i++));
-                SuperFeedTargetBean.setBulky(reader.get(i++));
-                SuperFeedTargetBean.setExpertReviewFlag(reader.get(i++));
-                SuperFeedTargetBean.setThirdpartyhostedlink(reader.get(i++));
-                SuperFeedTargetBean.setPickupinstore(reader.get(i++));
-                SuperFeedTargetBean.setSubscription(reader.get(i++));
-                SuperFeedTargetBean.setSecattributes(reader.get(i++));
-                SuperFeedTargetBean.setSecBarcode(reader.get(i++));
-                SuperFeedTargetBean.setAutoBullets(StringEscapeUtils.unescapeHtml(reader.get(i++).replaceAll("&amp;", "&")));
-                SuperFeedTargetBean.setIacAttributes(reader.get(i++));
-                SuperFeedTargetBean.setCategoryIacid(reader.get(i++));
-                SuperFeedTargetBean.setCalloutMsg(reader.get(i++));
-                SuperFeedTargetBean.setBuyable(reader.get(i++));
-                SuperFeedTargetBean.setBackorderType(reader.get(i++));
-                SuperFeedTargetBean.setMaxOrderQty(reader.get(i++));
-                SuperFeedTargetBean.setIsHazmat(reader.get(i++));
-                SuperFeedTargetBean.setIsFood(reader.get(i++));
-                SuperFeedTargetBean.setWheneverShippingEligible(reader.get(i++));
-                SuperFeedTargetBean.setShipToRestriction(reader.get(i++));
-                SuperFeedTargetBean.setPoBoxProhibited(reader.get(i++));
-                SuperFeedTargetBean.setNutritionFactsFlag(reader.get(i++));
-                SuperFeedTargetBean.setDrugFactsFlag(reader.get(i++));
-                SuperFeedTargetBean.setEnergyGuideCms(reader.get(i++));
-                SuperFeedTargetBean.setVideoCount(reader.get(i++));
-                SuperFeedTargetBean.setFfPickupinstoreRushdeliveryShiptostoreShipfromstore(reader.get(i++));
-                SuperFeedTargetBean.setSaveStory(reader.get(i++));
-                SuperFeedTargetBean.setGiftWrapable(reader.get(i++));
-                SuperFeedTargetBean.setSignRequired(reader.get(i++));
-                SuperFeedTargetBean.setReturnMethod(reader.get(i++));
-                SuperFeedTargetBean.setDefaultReturnPolicy(reader.get(i++));
-                SuperFeedTargetBean.setNormalReturnPolicy(reader.get(i++));
-                SuperFeedTargetBean.setBestReturnPolicy(reader.get(i++));
-                SuperFeedTargetBean.setDisplayEligibility(reader.get(i++));
-                SuperFeedTargetBean.setAgeRestriction(reader.get(i++));
-                SuperFeedTargetBean.setHasWarranty(reader.get(i++));
-
-                superfeed.add(SuperFeedTargetBean);
+                superfeed.add(superFeedTargetBean);
                 cnt++;
+                retail.remove(sku);
                 if (superfeed.size() > 1000) {
 //                    insertSuperFeed(superfeed);
                     transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
-                    if(cnt > 5000) break;
+                    if (cnt > 5000) break;
                 }
             }
 
@@ -288,10 +290,9 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 for (int i = 0; i < keyValue.size(); i++) {
                     if (!StringUtil.isEmpty(keyValue.get(i))) {
                         List<String> v = new ArrayList<>();
-                        if(!StringUtil.isEmpty(keyValue.get(i+1)))
-                        {
+                        if (!StringUtil.isEmpty(keyValue.get(i + 1))) {
                             attribute.put(keyValue.get(i), v);
-                            v.add(keyValue.get(i+1));
+                            v.add(keyValue.get(i + 1));
                         }
                     }
                     i++;
@@ -336,16 +337,16 @@ public class TargetAnalysisService extends BaseAnalysisService {
             }
 
             // color
-            if(vtmModelBean.getVariationThemes() != null && vtmModelBean.getVariationThemes().toUpperCase().indexOf("VARIATION")>=0){
+            if (vtmModelBean.getVariationThemes() != null && vtmModelBean.getVariationThemes().toUpperCase().indexOf("VARIATION") >= 0) {
                 String secat[] = vtmModelBean.getSecattributes().split("[|]");
-                if (!StringUtil.isEmpty(secat[secat.length-1])) {
-                    cmsBtFeedInfoModel.setColor(secat[secat.length-1].replaceAll(" ","").toUpperCase());
-                    cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-"+cmsBtFeedInfoModel.getColor());
+                if (!StringUtil.isEmpty(secat[secat.length - 1])) {
+                    cmsBtFeedInfoModel.setColor(secat[secat.length - 1].replaceAll(" ", "").toUpperCase());
+                    cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-" + cmsBtFeedInfoModel.getColor());
                 }
-            }else{
+            } else {
                 if (attribute.get("color") != null) {
-                    cmsBtFeedInfoModel.setColor(attribute.get("color").get(0).replaceAll(" ","").toUpperCase());
-                    cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode()+"-"+cmsBtFeedInfoModel.getColor());
+                    cmsBtFeedInfoModel.setColor(attribute.get("color").get(0).replaceAll(" ", "").toUpperCase());
+                    cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-" + cmsBtFeedInfoModel.getColor());
                 }
             }
 
@@ -388,5 +389,41 @@ public class TargetAnalysisService extends BaseAnalysisService {
     @Override
     protected void zzWorkClear() {
         TargetFeedDao.delete();
+    }
+
+    public Map<String, SuperFeedTargetBean> getRetailPriceList() {
+
+        Map<String, SuperFeedTargetBean> retailPriceList = new HashMap<>();
+        CsvReader reader;
+        String fileName = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id_import_sku);
+        String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
+        String fileFullName = String.format("%s/%s", filePath, fileName);
+
+        String encode = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_file_coding);
+
+        try {
+            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
+            // Head读入
+            reader.readHeaders();
+            reader.getHeaders();
+
+            // Body读入
+            while (reader.readRecord()) {
+                SuperFeedTargetBean superFeedTargetBean = new SuperFeedTargetBean();
+                int i = 0;
+                superFeedTargetBean.setSku(reader.get(i++));
+                superFeedTargetBean.setMarketprice(reader.get(i++));
+                retailPriceList.put(superFeedTargetBean.getSku(),superFeedTargetBean);
+            }
+        } catch (FileNotFoundException e) {
+            $info("Target价格列表不存在");
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+            return null;
+        }
+        return retailPriceList;
     }
 }

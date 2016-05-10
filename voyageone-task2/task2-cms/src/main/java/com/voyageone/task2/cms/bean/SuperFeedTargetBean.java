@@ -221,6 +221,8 @@ public class SuperFeedTargetBean extends  SuperFeedBean{
 
     private String hasWarranty;
 
+    private String marketprice;
+
     public String getDescription() {
         return description;
     }
@@ -1052,6 +1054,14 @@ public class SuperFeedTargetBean extends  SuperFeedBean{
         this.totalItemReviews = totalItemReviews == null ? null : totalItemReviews.trim();
     }
 
+    public String getMarketprice() {
+        return marketprice;
+    }
+
+    public void setMarketprice(String marketprice) {
+        this.marketprice = marketprice;
+    }
+
     public String getMd5() {
         StringBuffer temp = new StringBuffer();
         Set<String> noMd5Fields = new HashSet<>();
@@ -1074,4 +1084,5 @@ public class SuperFeedTargetBean extends  SuperFeedBean{
     public void setUpdateflag(Integer updateflag) {
         this.updateflag = updateflag;
     }
+
 }

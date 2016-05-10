@@ -108,13 +108,14 @@
     <result column="display_eligibility" property="displayEligibility" jdbcType="LONGVARCHAR" />
     <result column="age_restriction" property="ageRestriction" jdbcType="LONGVARCHAR" />
     <result column="has_warranty" property="hasWarranty" jdbcType="LONGVARCHAR" />
+    <result column="marketprice" property="marketprice" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     sku, parent_sku, manufacturer_name, mpn, model_number, name, regular_price, sale_price, 
     map, category, availability, brand, upc, isbn, currency, shipping_weight, margin, 
     margin_percent, catentryid, webclass, subclass, mozart_vendor_id, selling_channel, 
     item_status, launchdate, availabilitydate, average_overall_rating, total_item_reviews, 
-    md5, updateFlag
+    marketprice,md5, updateFlag
   </sql>
   <sql id="Blob_Column_List" >
     description, short_description, buy_url, large_image_url, swatch_image, keywords, 
@@ -187,7 +188,7 @@
       return_method, default_return_policy, 
       normal_return_policy, best_return_policy, 
       display_eligibility, age_restriction, 
-      has_warranty)
+      has_warranty,marketprice)
     values (#{sku,jdbcType=VARCHAR}, #{parentSku,jdbcType=VARCHAR}, #{manufacturerName,jdbcType=VARCHAR}, 
       #{mpn,jdbcType=VARCHAR}, #{modelNumber,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{regularPrice,jdbcType=VARCHAR}, #{salePrice,jdbcType=VARCHAR}, #{map,jdbcType=VARCHAR}, 
@@ -227,7 +228,7 @@
       #{returnMethod,jdbcType=LONGVARCHAR}, #{defaultReturnPolicy,jdbcType=LONGVARCHAR}, 
       #{normalReturnPolicy,jdbcType=LONGVARCHAR}, #{bestReturnPolicy,jdbcType=LONGVARCHAR}, 
       #{displayEligibility,jdbcType=LONGVARCHAR}, #{ageRestriction,jdbcType=LONGVARCHAR}, 
-      #{hasWarranty,jdbcType=LONGVARCHAR})
+      #{hasWarranty,jdbcType=LONGVARCHAR},#{marketprice,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
     insert into cms_zz_feed_target_product_temp
@@ -548,7 +549,10 @@
         age_restriction,
       </if>
       <if test="hasWarranty != null" >
-        has_warranty,
+      has_warranty,
+    </if>
+      <if test="marketprice != null" >
+        marketprice
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -870,6 +874,9 @@
       <if test="hasWarranty != null" >
         #{hasWarranty,jdbcType=LONGVARCHAR},
       </if>
+      <if test="marketprice != null" >
+        #{marketprice,jdbcType=VARCHAR}
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
@@ -1190,6 +1197,9 @@
       <if test="hasWarranty != null" >
         has_warranty = #{hasWarranty,jdbcType=LONGVARCHAR},
       </if>
+      <if test="marketprice != null" >
+        marketprice = #{marketprice,jdbcType=VARCHAR}
+      </if>
     </set>
     where sku = #{sku,jdbcType=VARCHAR}
   </update>
@@ -1299,7 +1309,7 @@
       best_return_policy = #{bestReturnPolicy,jdbcType=LONGVARCHAR},
       display_eligibility = #{displayEligibility,jdbcType=LONGVARCHAR},
       age_restriction = #{ageRestriction,jdbcType=LONGVARCHAR},
-      has_warranty = #{hasWarranty,jdbcType=LONGVARCHAR}
+      has_warranty = #{hasWarranty,jdbcType=LONGVARCHAR},
     where sku = #{sku,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
@@ -1331,6 +1341,7 @@
       availabilitydate = #{availabilitydate,jdbcType=VARCHAR},
       average_overall_rating = #{averageOverallRating,jdbcType=VARCHAR},
       total_item_reviews = #{totalItemReviews,jdbcType=VARCHAR},
+      marketprice = #{marketprice,jdbcType=VARCHAR}
       md5 = #{md5,jdbcType=VARCHAR},
       updateFlag = #{updateflag,jdbcType=INTEGER}
     where sku = #{sku,jdbcType=VARCHAR}
