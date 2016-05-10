@@ -1,12 +1,8 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.FtpBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.SFtpUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
@@ -30,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -38,6 +33,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class CmsImageGroupDetailService extends BaseAppService {
+
+    private final String URL_PREFIX = "http://image.voyageone.com.cn/cms";
 
     @Autowired
     private ImageGroupService imageGroupService;
@@ -96,19 +93,23 @@ public class CmsImageGroupDetailService extends BaseAppService {
                 if ("cn".equals(lang)) {
                     // ImageStatusName
                     if (image.getStatus() == 1) {
-                        image.setStatusName("等待上传");
+                        image.setStatusName("未上传");
                     } else if (image.getStatus() == 2) {
-                        image.setStatusName("上传成功");
+                        image.setStatusName("等待上传");
                     } else if (image.getStatus() == 3) {
+                        image.setStatusName("上传成功");
+                    } else if (image.getStatus() == 4) {
                         image.setStatusName("上传失败");
                     }
                 } else {
                     // ImageStatusName
                     if (image.getStatus() == 1) {
-                        image.setStatusName("Waiting Upload");
+                        image.setStatusName("Not Upload");
                     } else if (image.getStatus() == 2) {
-                        image.setStatusName("Upload Success");
+                        image.setStatusName("Waiting Upload");
                     } else if (image.getStatus() == 3) {
+                        image.setStatusName("Upload Success");
+                    } else if (image.getStatus() == 4) {
                         image.setStatusName("Upload Fail");
                     }
                 }
@@ -123,6 +124,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
      * @return 检索结果
      */
     public void save(Map<String, Object> param) {
+        String userName = (String)param.get("userName");
         String imageGroupId = (String)param.get("imageGroupId");
         String cartId = (String)param.get("platform");
         String imageGroupName = (String)param.get("imageGroupName");
@@ -136,7 +138,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
                 || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
             throw new BusinessException("7000080");
         }
-        imageGroupService.update(imageGroupId, cartId, imageGroupName, imageType, viewType,
+        imageGroupService.update(userName,imageGroupId, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
     }
 
@@ -148,16 +150,95 @@ public class CmsImageGroupDetailService extends BaseAppService {
      */
     public void saveImage(Map<String, Object> param, MultipartFile file) {
 
+        String userName = (String)param.get("userName");
+        String imageGroupId = (String) param.get("imageGroupId");
+        String key = (String) param.get("key");
+        String originUrl = (String) param.get("originUrl");
+        String imageType = (String) param.get("imageType");
+        // 编辑的场合，并且没有发生任何变化
+        if (!StringUtils.isEmpty(key) && key.equals(originUrl) && file == null) {
+            return;
+        }
+        // check
+        String suffix = doSaveImageCheck(imageGroupId, originUrl, file);
+
+        boolean uploadFlg = true;
+        // 网络上传的场合
+        if (file == null) {
+            // 指定URL开头的场合，不进行FTP上传
+            if (originUrl.indexOf(URL_PREFIX) == 0) {
+                uploadFlg =false;
+            }
+        }
+
+        // 上传文件名
+        String uploadUrl = originUrl;
+
+        if (uploadFlg) {
+            // 上传文件流
+            InputStream inputStream = null;
+            try {
+                // 本地上传的场合
+                if (file != null) {
+                    inputStream = file.getInputStream();
+                } else {
+                    // 网络URL的场合
+                    URL url = new URL(originUrl);
+                    inputStream = url.openStream();
+                }
+            } catch (IOException e) {
+            }
+
+            // 上传文件
+            uploadUrl = imageGroupService.uploadFile((String) param.get("channelId"), imageType, suffix, inputStream);
+        }
+
+        //更新cms_bt_image_group表
+        if (StringUtils.isEmpty(key)) {
+            // 新建的场合
+            imageGroupService.addImage(userName, imageGroupId, uploadUrl);
+        } else {
+            // 编辑的场合
+            imageGroupService.updateImage(userName, imageGroupId, key, uploadUrl);
+        }
+
+
+
+    }
+
+    /**
+     * check
+     *
+     * @param imageGroupId 主键ID
+     * @param originUrl 原始URL
+     * @param file 导入文件
+     * return 图片扩展名
+     */
+    public String doSaveImageCheck(String imageGroupId, String originUrl, MultipartFile file) {
+
         // ImageIO 支持的图片类型 : [BMP, bmp, jpg, JPG, wbmp, jpeg, png, PNG, JPEG, WBMP, GIF, gif]
         String types = Arrays.toString(ImageIO.getReaderFormatNames());
-        String originUrl = (String) param.get("originUrl");
-
+        // 文件名
         String fileName = "";
         InputStream inputStream = null;
+        // 网络上传的场合
         if (file == null) {
-            if(originUrl.lastIndexOf("/") > -1) {
-                fileName = originUrl.substring(originUrl.lastIndexOf("/") +1);
+            // 必须输入
+            if (StringUtils.isEmpty(originUrl)) {
+                throw new BusinessException("7000080");
             }
+            // Group里存在check
+            CmsBtImageGroupModel model = imageGroupService.getImageGroupModel(imageGroupId);
+            if (model != null) {
+                if (model.getImage() != null) {
+                    for (CmsBtImageGroupModel_Image image : model.getImage()) {
+                        if (originUrl.equals(image.getOriginUrl())) {
+                            throw new BusinessException("7000082");
+                        }
+                    }
+                }
+            }
+
             try {
                 // 网络文件的场合
                 URL url = new URL(originUrl);
@@ -165,10 +246,14 @@ public class CmsImageGroupDetailService extends BaseAppService {
                 httpUrl.connect();
                 inputStream = new BufferedInputStream(httpUrl.getInputStream());
             } catch (Exception e) {
-                throw new BusinessException("Sorry, the url image is illegal.");
+                throw new BusinessException("7000083");
+            }
+            if(originUrl.lastIndexOf("/") > -1) {
+                fileName = originUrl.substring(originUrl.lastIndexOf("/") +1);
             }
         } else {
-                fileName = file.getOriginalFilename();
+            // 本地上传的场合
+            fileName = file.getOriginalFilename();
             try {
                 inputStream = file.getInputStream();
             } catch (IOException e) {
@@ -178,64 +263,21 @@ public class CmsImageGroupDetailService extends BaseAppService {
         // 获取图片后缀
         if(fileName.lastIndexOf(".") > -1) {
             suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-        }// 类型和图片后缀全部小写，然后判断后缀是否合法
-        if(suffix == null || types.toLowerCase().indexOf(suffix.toLowerCase()) < 0){
-            throw new BusinessException("Sorry, the image suffix is illegal.");
         }
-
-
+        // 类型和图片后缀全部小写，然后判断后缀是否合法
+        if(suffix == null || types.toLowerCase().indexOf(suffix.toLowerCase()) < 0){
+            throw new BusinessException("7000084");
+        }
         try {
             BufferedImage bufferedImage = ImageIO.read(inputStream);
             if (bufferedImage == null) {
-                throw new BusinessException("Sorry, the image content is illegal.");
+                throw new BusinessException("7000085");
             }
-        } catch (IOException e) {
-            throw new BusinessException("Sorry, the image content is illegal.");
+        } catch (Exception e) {
+            throw new BusinessException("7000085");
         }
 
-
-        if (file != null) {
-            FtpBean ftpBean = formatFtpBean();
-            ftpBean.setUpload_filename(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + "jpg");
-            ftpBean.setUpload_path("/size/");
-            try {
-                ftpBean.setUpload_input(file.getInputStream());
-                //File uploadFile = new File("d:/snusa-detail_20.png");
-                //ftpBean.setUpload_input(new FileInputStream(uploadFile));
-
-                SFtpUtil ftpUtil = new SFtpUtil();
-                //建立连接
-                ChannelSftp ftpClient = ftpUtil.linkFtp(ftpBean);
-                boolean isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
-                if (!isSuccess) {
-                    throw new Exception("upload error");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            FtpBean ftpBean = formatFtpBean();
-            ftpBean.setUpload_filename("test22.jpg");
-            ftpBean.setUpload_path("/size/");
-            try {
-                URL url = new URL("http://www.sinaimg.cn/dy/slidenews/2_img/2016_18/789_1781785_209090.jpg");
-                ftpBean.setUpload_input(url.openStream());
-                //File uploadFile = new File("d:/snusa-detail_20.png");
-                //ftpBean.setUpload_input(new FileInputStream(uploadFile));
-
-                SFtpUtil ftpUtil = new SFtpUtil();
-                //建立连接
-                ChannelSftp ftpClient = ftpUtil.linkFtp(ftpBean);
-                boolean isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
-                if (!isSuccess) {
-                    throw new Exception("upload error");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        return suffix;
     }
 
     /**
@@ -244,28 +286,37 @@ public class CmsImageGroupDetailService extends BaseAppService {
      * @param param 客户端参数
      */
     public void delete(Map<String, Object> param) {
+        String userName = (String)param.get("userName");
         String imageGroupId = (String)param.get("imageGroupId");
         String originUrl = (String)param.get("originUrl");
-        imageGroupService.logicDeleteImage(imageGroupId, originUrl);
+        imageGroupService.logicDeleteImage(userName, imageGroupId, originUrl);
     }
 
-    private FtpBean formatFtpBean(){
-
-        String url = "image.voyageone.com.cn";
-        // ftp连接port
-        String port = "22";
-        // ftp连接usernmae
-        String username = "voyageone-cms-sftp";
-        // ftp连接password
-        String password = "Li48I-22aBz";
-
-        FtpBean ftpBean = new FtpBean();
-        ftpBean.setPort(port);
-        ftpBean.setUrl(url);
-        ftpBean.setUsername(username);
-        ftpBean.setPassword(password);
-        ftpBean.setFile_coding("iso-8859-1");
-        return ftpBean;
+    /**
+     * 移动Image
+     *
+     * @param param 客户端参数
+     */
+    public void move(Map<String, Object> param) {
+        String userName = (String)param.get("userName");
+        String imageGroupId = (String)param.get("imageGroupId");
+        String originUrl = (String)param.get("originUrl");
+        String direction = (String)param.get("direction");
+        imageGroupService.move(userName, imageGroupId, originUrl, direction);
     }
+
+    /**
+     * 重刷Image
+     *
+     * @param param 客户端参数
+     */
+    public void refresh(Map<String, Object> param) {
+        String userName = (String)param.get("userName");
+        String imageGroupId = (String)param.get("imageGroupId");
+        String originUrl = (String)param.get("originUrl");
+        imageGroupService.refresh(userName, imageGroupId, originUrl);
+    }
+
+
 
 }
