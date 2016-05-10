@@ -72,12 +72,12 @@ define([
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success("添加成功！");
                 //获取保存后的当前对象
-/*                console.log("sizeChartId",$routeParams.sizeChartId);
+                console.log("sizeChartId",$routeParams.sizeChartId);
                 sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
 
                     $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                     $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-                });*/
+                });
                 $scope.$close();
             });
         };
@@ -112,13 +112,12 @@ define([
                             return item;
                         });
             if(!flag) return;
-            console.log(sizeMaps);
-/*            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
+            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
                                          finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
-                                         sizeTypeList:upEntity.sizeType,sizeMap:JSON.stringify(sizeMaps)}).then(function(){
+                                         sizeTypeList:upEntity.sizeType,sizeMap:sizeMaps}).then(function(){
                 notify.success ("添加成功！");
                 $scope.$close();
-            });*/
+            });
         };
 
         /**
