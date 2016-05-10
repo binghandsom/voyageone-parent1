@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt">
+    <resultMap id="ResultMap" type="CmsMtImageCreateTaskDetailModel">
+
+    </resultMap>
+
+    <insert id="insertList">
+        INSERT INTO cms_mt_image_create_task_detail
+        (
+              `cms_mt_image_create_task_id`,
+              `cms_mt_image_create_file_id`,
+              `begin_time`,
+              `end_time`,
+              `status`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES
+        <foreach item="item" index="i" collection="list"
+                 open="" separator="," close="">
+            (#{item.cmsMtImageCreateTaskId},
+            #{item.cmsMtImageCreateFileId},
+            #{item.beginTime},
+            #{item.endTime},
+            #{item.status},
+            now(),
+            #{item.creater},
+            now(),
+            #{item.modifier})
+        </foreach>
+    </insert>
+</mapper>

@@ -71,10 +71,12 @@ define([
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success("添加成功！");
                 //获取保存后的当前对象
+/*                console.log("sizeChartId",$routeParams.sizeChartId);
                 sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
+
                     $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                     $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-                });
+                });*/
                 $scope.$close();
             });
         };
@@ -88,8 +90,15 @@ define([
                 return;
             }
 
-            var upEntity = $scope.vm.saveInfo,sizeMaps = angular.copy($scope.vm.importList) , flag = true;
+            var upEntity = $scope.vm.saveInfo,sizeMaps = angular.copy($scope.vm.importList) , flag = true , tmpOriginalSize = "";
             _.map(sizeMaps, function(item){
+                            if(item.originalSize == tmpOriginalSize){
+                                alert("originalSize不能重复");
+                                flag = false;
+                                return;
+                            }
+                            else
+                                tmpOriginalSize = item.originalSize;
                             if(item.originalSize == "" || item.adjustSize == ""){
                                 alert("Origin Size或者Platform Size不能为空");
                                 flag = false;

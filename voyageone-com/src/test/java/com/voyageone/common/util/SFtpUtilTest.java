@@ -46,9 +46,9 @@ public class SFtpUtilTest {
     @Test
     public void testUploadFile() throws Exception {
         FtpBean ftpBean = formatFtpBean();
-        ftpBean.setUpload_filename("test13.jpg");
+        ftpBean.setUpload_filename("test11.jpg");
         //ftpBean.setUpload_path("/");
-        File uploadFile = new File("d:/aaa.jpg");
+        File uploadFile = new File("d:/snusa-detail_20.png");
         ftpBean.setUpload_input(new FileInputStream(uploadFile));
 
         SFtpUtil ftpUtil = new SFtpUtil();

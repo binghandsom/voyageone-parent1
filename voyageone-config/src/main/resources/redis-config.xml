@@ -64,10 +64,14 @@
     <bean id="genericJackson2JsonRedisSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
 
     <bean id="redisTemplate" class="com.voyageone.common.redis.VoCacheTemplate">
-        <property name="local" value="true"/>
+        <property name="local" value="false"/>
         <property name="connectionFactory" ref="jedisConnectionFactory"/>
         <property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />
         <property name="hashValueSerializer" ref="genericJackson2JsonRedisSerializer" />
     </bean>
-
+    <!--<bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">-->
+        <!--<property name="connectionFactory" ref="jedisConnectionFactory"/>-->
+        <!--<property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />-->
+        <!--<property name="hashValueSerializer" ref="genericJackson2JsonRedisSerializer" />-->
+    <!--</bean>-->
 </beans>
