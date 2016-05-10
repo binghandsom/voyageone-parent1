@@ -87,7 +87,7 @@ public class ImageCreateFileService extends BaseService {
         modelFile.setOssState(0);
         modelFile.setErrorCode(0);
         modelFile.setErrorMsg("");
-        modelFile.setUploadUsCdn(isUploadUSCDN);
+        modelFile.setIsUploadUsCdn(isUploadUSCDN);
         modelFile.setCreater(Creater);
         modelFile.setModifier(Creater);
         cmsMtImageCreateFileDao.insert(modelFile);
@@ -189,7 +189,7 @@ public class ImageCreateFileService extends BaseService {
             serviceAliYunOSSFile.upload(modelFile);
             $info("CmsImageFileService:getImage upload oss image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
         }
-        if (modelFile.isUploadUsCdn() && modelFile.getUscdnState() == 0) {
+        if (modelFile.getIsUploadUsCdn() && modelFile.getUscdnState() == 0) {
             //4.上传 uscdn
             serviceUSCDNFile.upload(modelFile);
             $info("CmsImageFileService:getImage upload uscnd image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
