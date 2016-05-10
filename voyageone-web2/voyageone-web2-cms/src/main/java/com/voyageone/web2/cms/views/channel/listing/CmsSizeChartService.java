@@ -1,8 +1,10 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
@@ -68,16 +70,18 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        //按照填写的条件去数据库检索记录
         List<CmsBtSizeChartModel> sizeChartList=sizeChartService.getSizeChartSearch(channelId
                 ,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList);
-        //第一页取得前一页记录
         int staIdx;
         if((int)param.get("curr") ==1){
             staIdx = 0 ;
         }else{
             staIdx = ((int)param.get("curr") - 1)* (int)param.get("size");
         }
+        //每页多少条记录
         int endIdx = staIdx + (int)param.get("size");
+        //检索的总共记录
         int sizeChartListTotal = sizeChartList.size();
         if (endIdx > sizeChartListTotal) {
             endIdx = sizeChartListTotal;
@@ -98,6 +102,7 @@ public class CmsSizeChartService extends BaseAppService {
     public void sizeChartUpdate(String channelId,Map param) {
         //取得自增键
         int sizeChartId=(int) param.get("sizeChartId");
+        //逻辑删除选中的记录
         sizeChartService.sizeChartUpdate(channelId,sizeChartId);
     }
 
@@ -124,9 +129,26 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
-        //插入数据库
-        sizeChartService.insert(channelId
-                ,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList);
+        // 必须输入check
+        if (StringUtils.isEmpty(sizeChartName)) {
+            throw new BusinessException("7000080");
+        }
+        //根据尺码关系一览编辑的数据插入数据库
+        sizeChartService.insert(channelId,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList);
+    }
+
+    /**
+     * 尺码关系一览编辑详情检索画面
+     * @param channelId
+     * @param param
+     */
+    public void sizeChartDetailSearch(String channelId,Map param) {
+        //取得自增键
+        int sizeChartId = (int) param.get("sizeChartId");
+        //尺码表自增键取得当前的记录
+        List<CmsBtSizeChartModel> sizeChartList =sizeChartService.sizeChartDetailSearch(channelId, sizeChartId);
+        //尺码关系一览检索
+        param.put("sizeChartList", sizeChartList);
     }
     /**
      * 尺码关系一览编辑详情编辑画面
@@ -152,9 +174,13 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
-        List<String> sizeMapList=(List<String>) param.get("sizeMap");
+        String sizeMap=(String) param.get("sizeMap");
+        // 必须输入check
+        if (StringUtils.isEmpty(sizeChartName)) {
+            throw new BusinessException("7000080");
+        }
         //插入数据库
         sizeChartService.sizeChartDetailUpdate(channelId,
-                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMapList);
+                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMap);
     }
 }

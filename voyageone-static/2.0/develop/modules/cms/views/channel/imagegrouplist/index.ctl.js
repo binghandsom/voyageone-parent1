@@ -28,9 +28,7 @@ define([
                 curr: 1,
                 total: 0,
                 size: 20,
-                fetch: function () {
-                    this.search();
-                }
+                fetch: this.getImageGroupList.bind(this)
             };
             this.imageGroupService = imageGroupService;
         }
@@ -46,7 +44,7 @@ define([
                     main.search();
                 })
             },
-            search: function () {
+            getImageGroupList: function () {
                 var main = this;
                 main.imageGroupService.search({
                     "platformList" : main.platformList,
@@ -55,12 +53,17 @@ define([
                     "endModified" : main.endModified,
                     "brandName" : main.brandName,
                     "productType" : main.productType,
-                    "sizeType" : main.sizeType
+                    "sizeType" : main.sizeType,
+                    "curr" : main.pageOption.curr,
+                    "size" : main.pageOption.size
                 }).then(function (res) {
-                        main.imageGroupList = res.data;
-                        main.pageOption.total = res.data.length;
-                        main.pageOption.curr = 1;
+                    main.imageGroupList = res.data.imageGroupList;
+                    main.pageOption.total = res.data.total;
                 })
+            },
+            search: function () {
+                this.pageOption.curr = 1;
+                this.getImageGroupList();
             },
             clear: function () {
                 this.imageType = "";

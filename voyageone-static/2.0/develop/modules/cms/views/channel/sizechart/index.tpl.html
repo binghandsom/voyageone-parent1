@@ -111,13 +111,13 @@
                         <tbody>
                                 <tr ng-repeat="chartInfo in vm.sizeChartList">
                                     <td class="mfb-xt text-center">{{$index + 1}}</td>
-                                    <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
+                                    <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
                                     <td class="mfb-xxt text-left">{{chartInfo.brandName.join(' , ')}}</td>
                                     <td class="mfb-xxt text-left">{{chartInfo.productType.join(' , ')}}</td>
                                     <td class="mfb-xxt text-left">{{chartInfo.sizeType.join(' , ')}}</td>
                                     <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
                                     <td class="mfb-xxt text-center">
-                                        <a href="#/channel/sizechart/detail/{{chartInfo}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                        <a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
                                         <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
                                     </td>
                                 </tr>

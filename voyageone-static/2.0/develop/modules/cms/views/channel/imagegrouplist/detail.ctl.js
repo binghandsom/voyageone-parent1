@@ -43,8 +43,8 @@ define([
                     main.productType = res.data.imageGroupInfo.productType;
                     main.sizeType = res.data.imageGroupInfo.sizeType;
                     main.imageGroupName = res.data.imageGroupInfo.imageGroupName;
-                    main.imageType = res.data.imageGroupInfo.imageType + "";;
-                    main.viewType = res.data.imageGroupInfo.viewType + "";;
+                    main.imageType = res.data.imageGroupInfo.imageType + "";
+                    main.viewType = res.data.imageGroupInfo.viewType + "";
                     main.search();
                 })
             },

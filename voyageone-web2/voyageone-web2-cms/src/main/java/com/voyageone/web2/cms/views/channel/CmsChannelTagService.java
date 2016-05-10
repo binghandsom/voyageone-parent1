@@ -186,7 +186,7 @@ public class CmsChannelTagService extends BaseAppService {
         //标签名称小于50字节
         for (CmsBtTagModel aCategoryList : categoryList) {
             if (aCategoryList.getTagPathName().equals(tagPathNameValue)) {
-                throw new BusinessException("7000080");
+                throw new BusinessException("7000081");
             }
         }
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
