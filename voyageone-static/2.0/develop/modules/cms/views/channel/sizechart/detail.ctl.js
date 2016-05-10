@@ -20,7 +20,7 @@ define([
         function sizeChartTr(){
             this.originSize = "";
             this.plateFormSize = "";
-            this.customSize = false;
+            this.usual = false;
         };
 
         $scope.initialize  = function () {
@@ -32,6 +32,7 @@ define([
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList,"value");
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList,"value");
                 $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList,"value");
+                $scope.vm.importList = resp.data.sizeMap;
             });
 
         };
@@ -98,7 +99,7 @@ define([
                              obj.plateFormSize = result[i].value;
                              break;
                          case 2:
-                             obj.customSize = result[i].value == 1?true:false;
+                             obj.usual = result[i].value == 1?true:false;
                              break;
                          default:
                              break;
