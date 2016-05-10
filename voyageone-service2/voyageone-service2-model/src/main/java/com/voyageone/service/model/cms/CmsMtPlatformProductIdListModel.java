@@ -23,6 +23,8 @@ public class CmsMtPlatformProductIdListModel extends BaseModel {
 
     protected Boolean active;
 
+    protected String comment;
+
     public String getChannelId() {
         return channelId;
     }
@@ -61,5 +63,13 @@ public class CmsMtPlatformProductIdListModel extends BaseModel {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment == null ? null : comment.trim();
     }
 }
