@@ -63,7 +63,7 @@
                     </div>
                     <div class="col-sm-12 text-center m-b-sm">
                         <div class="form-inline">
-                            <button title="重置" class="btn btn-default ng-binding" ng-click="vm.saveInfo = vm.originCondition"><i class="fa fa-remove"></i>&nbsp;Reset</button>
+                            <button title="重置" class="btn btn-default ng-binding" ng-click="reset()"><i class="fa fa-remove"></i>&nbsp;Reset</button>
                             <button title="保存" class="btn btn-vo m-r-sm" ng-click="saveFinish()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save</button>
                         </div>
                     </div>
@@ -103,8 +103,8 @@
                             <tr ng-repeat="sizeInfo in vm.importList">
                                 <td class="mfb-xt text-center">{{$index + 1}}</td>
                                 <td class="mfb-xxt text-center-xs"><input type="text" class="form-control" style="width:100px;margin: 0px auto;" ng-model="sizeInfo.originSize"></td>
-                                <td class="mfb-xxt text-center-xs"><input type="text" class="form-control" style="width:100px;margin: 0px auto;" ng-model="sizeInfo.plateFormSize"></td>
-                                <td class="mfb-xxt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="sizeInfo.customSize"><span class="fa fa-check"></span></label></td>
+                                <td class="mfb-xxt text-center-xs"><input type="text" class="form-control" style="width:100px;margin: 0px auto;" ng-model="sizeInfo.adjustSize"></td>
+                                <td class="mfb-xxt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="sizeInfo.usual"><span class="fa fa-check"></span></label></td>
                                 <td class="mfb-xxt text-center">
                                     <button title="删除" class="btn btn-danger btn-xs" ng-click="delSize()"><i class="fa  fa-trash-o"></i></button>
                                 </td>

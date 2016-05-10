@@ -4,9 +4,11 @@ import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsMtPlatformProductIdListModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.beanutils.BeanUtils;
@@ -28,6 +30,9 @@ public class PlatformCategoryService extends BaseService {
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
+
+    @Autowired
+    private CmsMtPlatformProductIdListDao platformCategoryProductIdListDao;
 
     public List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(String channelId, Integer cartId) {
         return platformCategoryDao.selectByChannel_CartId(channelId, cartId);
@@ -163,5 +168,16 @@ public class PlatformCategoryService extends BaseService {
         WriteResult insResult = platformCategorySchemaDao.insert(schemaModel);
         return insResult.getN();
     }
+
+    /**
+     * 获取指定active状态的平台产品ID列表
+     */
+    public List<CmsMtPlatformProductIdListModel> getPlatformProductIdList(int active) {
+        Map<String, Object> paramsMap = new HashMap<>();
+        paramsMap.put("active", active);
+
+        return platformCategoryProductIdListDao.selectList(paramsMap);
+    }
+
 
 }

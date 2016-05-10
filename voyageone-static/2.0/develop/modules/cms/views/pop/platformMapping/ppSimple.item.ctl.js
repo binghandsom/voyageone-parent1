@@ -6,8 +6,8 @@
 
 /**
  * @typedef {object} PropGroup
- * @property {object|Field} selected 选中值
- * @property {object[]|Field[]} props 可选值, 必须包含 id 和 name
+ * @property {object} selected 选中值
+ * @property {object[]} props 可选值, 必须包含 id 和 name
  */
 
 define([
@@ -23,7 +23,7 @@ define([
 
         /**
          * Simple Mapping 弹出框的 Controller
-         * @param {SimpleItemMappingPopupContext} context
+         * @param context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
          * @param alert
@@ -56,7 +56,6 @@ define([
                 valueFrom: this.valueFromOptions.MASTER,
                 /**
                  * 当前选中的内容
-                 * @type {Field|null}
                  */
                 value: null,
                 /**

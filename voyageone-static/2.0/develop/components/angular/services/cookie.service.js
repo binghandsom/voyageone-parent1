@@ -21,24 +21,24 @@
             return this.get(key);
         };
     }
-    function CookieService($cookieStore) {
-        this.$cookieStore = $cookieStore;
+    function CookieService($cookies) {
+        this.$cookies = $cookies;
     }
     CookieService.prototype.get = function(key) {
-        var result = this.$cookieStore.get(key);
-        return result == undefined || result == null ? "" : this.$cookieStore.get(key);
+        var result = this.$cookies.get(key);
+        return result == undefined || result == null ? "" : this.$cookies.get(key);
     };
     CookieService.prototype.set = function(key, value) {
-        return this.$cookieStore.put(key, value);
+        return this.$cookies.put(key, value);
     };
     CookieService.prototype.language = gentProps(keys.language);
     CookieService.prototype.company = gentProps(keys.company);
     CookieService.prototype.channel = gentProps(keys.channel);
     CookieService.prototype.application = gentProps(keys.application);
     CookieService.prototype.removeAll = function() {
-        this.$cookieStore.remove(keys.language);
-        this.$cookieStore.remove(keys.company);
-        this.$cookieStore.remove(keys.channel);
-        this.$cookieStore.remove(keys.application);
+        this.$cookies.remove(keys.language);
+        this.$cookies.remove(keys.company);
+        this.$cookies.remove(keys.channel);
+        this.$cookies.remove(keys.application);
     };
 })();
