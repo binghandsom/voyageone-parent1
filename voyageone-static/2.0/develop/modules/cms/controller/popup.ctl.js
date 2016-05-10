@@ -419,7 +419,7 @@ define([
 
         function openModel(config, context) {
 
-            if (context)
+           // if (context)
                 config.resolve = {
                     context: function () {
                         return context;
