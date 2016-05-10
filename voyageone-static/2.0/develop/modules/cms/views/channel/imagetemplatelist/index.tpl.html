@@ -147,12 +147,13 @@
                             <td class="mfb-xxt text-center">{{model.templateContent}}</td>
                             <td class="mfb-xxx text-center">{{imageGroup.modified}}</td>
                             <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing({{model.imageTemplateId}})"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs" ng-click="del({{model.imageTemplateId}})"><i class="fa  fa-trash-o"></i></button>
+                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing('{{model.imageTemplateId}}')"><i class="fa fa-cog"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs" ng-click="del('{{model.imageTemplateId}}')"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                    <div if-no-rows="vm.modelList.length"></div>
                 </div>
                 <div class="col-sm-12">
                     <vpagination config="dataPageOption"></vpagination>

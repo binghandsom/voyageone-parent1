@@ -9,7 +9,7 @@ define([
             "productTypeList":[],
             "sizeTypeList":[]
             };
-        $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
+        $scope.dataPageOption = {curr: 0, total: 0, size: 10, fetch: goPage.bind(this)}
         $scope.searchInfo = { };
         $scope.datePicker = [];
         $scope.initialize = function () {
@@ -24,7 +24,8 @@ define([
         };
         $scope.search = function () {
             var data = angular.copy($scope.searchInfo);
-            goPage(1,10)
+           // goPage(1,10)
+            $scope.dataPageOption.curr=1;
             imageTemplateService.getCount(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
             }, function (res) {
