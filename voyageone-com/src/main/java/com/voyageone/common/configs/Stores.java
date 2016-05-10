@@ -110,10 +110,12 @@ public class Stores {
 
         List<StoreBean> channelStoreList = new ArrayList<>();
         // 是否有ALL选项
-        if (defaultAll) channelStoreList.add(new StoreBean() {{
-            setStore_id(0);
-            setStore_name("ALL");
-        }});
+        if (defaultAll) {
+            StoreBean bean = new StoreBean();
+            bean.setStore_id(0);
+            bean.setStore_name("ALL");
+            channelStoreList.add(bean);
+        }
 
         beans.forEach(bean -> {
             if (includeVirtual || (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())))
@@ -144,10 +146,12 @@ public class Stores {
 
         List<StoreBean> storeList = new ArrayList<>();
         // 是否有ALL选项
-        if (defaultAll) storeList.add(new StoreBean() {{
-            setStore_id(0);
-            setStore_name("ALL");
-        }});
+        if (defaultAll) {
+            StoreBean bean = new StoreBean();
+            bean.setStore_id(0);
+            bean.setStore_name("ALL");
+            storeList.add(bean);
+        }
 
         beans.forEach(bean -> {
             if (includeVirtual || (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())))

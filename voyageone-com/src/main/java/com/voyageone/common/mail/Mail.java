@@ -68,11 +68,11 @@ public final class Mail {
      * @throws MessagingException
      */
     public static void sendAlert(String receiverName, String subject, String content, List<String> fileAffix, boolean priority) throws MessagingException {
-        subject = Constants.MAIL.SUBJECT_REQUIRED + subject;
+        String subjectTmp = Constants.MAIL.SUBJECT_REQUIRED + subject;
 
         String receiver = getReceiver(receiverName);
 
-        send(receiver, subject, content, fileAffix, priority);
+        send(receiver, subjectTmp, content, fileAffix, priority);
     }
 
     /**

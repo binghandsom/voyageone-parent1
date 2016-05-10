@@ -101,7 +101,7 @@ public class SFtpUtil {
      * @param ftpBean FtpBean
      * @return ChannelSftp        ChannelSftp
      */
-    public ChannelSftp linkFtp(FtpBean ftpBean) throws IOException, JSchException {
+    public ChannelSftp linkFtp(FtpBean ftpBean) throws JSchException {
         ChannelSftp ftpClient = new ChannelSftp();
         logger.info(ftpBean.getUrl() + "  Ftp 连接开始");
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
@@ -125,7 +125,10 @@ public class SFtpUtil {
             logger.info("Connected to " + ftpBean.getUrl() + ".");
 
         } catch (Exception e) {
-            disconnectFtp(ftpClient);
+            try {
+                disconnectFtp(ftpClient);
+            } catch (IOException ignored) {
+            }
             throw e;
         }
         logger.info(ftpBean.getUrl() + " Ftp 连接成功");
@@ -230,12 +233,10 @@ public class SFtpUtil {
      * @return list 文件名列表
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
     public List<String> listFiles(String directory, ChannelSftp ftpClient) throws Exception {
-        Vector fileList;
         List<String> fileNameList = new ArrayList<>();
 
-        fileList = ftpClient.ls(directory);
+        Vector fileList = ftpClient.ls(directory);
 
         for (Object aFileList : fileList) {
             ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry) aFileList;
