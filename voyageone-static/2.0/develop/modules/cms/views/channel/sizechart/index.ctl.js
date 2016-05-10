@@ -26,6 +26,9 @@ define([
 
         $scope.search = search;
 
+        /**
+         * 检索
+         */
         function search() {
             var data = $scope.vm.sizeChartPageOption;
             _.extend(data ,$scope.vm.searchInfo);

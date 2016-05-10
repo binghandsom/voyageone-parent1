@@ -59,12 +59,11 @@
             <map>
                 <entry key="voyageone_mq_error_handle_testing">
                     <list>
-                        <value>10_0_1_190</value>
-                        <value>10_0_1_191</value>
-                        <value>10_0_1_192</value>
+                        <!--<value>10_0_1_190</value>-->
                     </list>
                 </entry>
             </map>
         </property>
     </bean>
+
 </beans>
