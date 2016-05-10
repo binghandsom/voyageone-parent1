@@ -118,9 +118,9 @@
                         <tr ng-repeat="imageGroup in ctrl.imageGroupList">
                             <td class="mfb-xt text-center">{{imageGroup.imageGroupId}}</td>
                             <td class="mfb-xx text-center"><a href="#/channel/imagegrouplist/detail/{{imageGroup.imageGroupId}}" target="_blank">{{imageGroup.imageGroupName}}</a></td>
-                            <td class="mfb-xxs text-center">{{imageGroup.brandName}}</td>
-                            <td class="mfb-xxs text-center">{{imageGroup.productType}}</td>
-                            <td class="mfb-xxs text-center">{{imageGroup.sizeType}}</td>
+                            <td class="mfb-xxs text-center">{{imageGroup.brandName.join(' , ')}}</td>
+                            <td class="mfb-xxs text-center">{{imageGroup.productType.join(' , ')}}</td>
+                            <td class="mfb-xxs text-center">{{imageGroup.sizeType.join(' , ')}}</td>
                             <td class="mfb-xxt text-center">{{imageGroup.viewTypeName}}</td>
                             <td class="mfb-xxt text-center">{{imageGroup.cartName}}</td>
                             <td class="mfb-xxt text-center">{{imageGroup.imageTypeName}}</td>

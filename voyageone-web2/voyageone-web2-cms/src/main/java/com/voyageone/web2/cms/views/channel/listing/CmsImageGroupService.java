@@ -81,6 +81,15 @@ public class CmsImageGroupService extends BaseAppService {
         // 根据条件取得检索结果
         List<CmsBtImageGroupModel> imageGroupList = imageGroupService.getList(channelId , platFormChangeList, imageType,
                                                         beginModified, endModified,brandNameList, productTypeList, sizeTypeList);
+        if (imageGroupList.size() > 0) {
+            int staIdx = ((int) param.get("curr") - 1) * (int) param.get("size");
+            int endIdx = staIdx + (int) param.get("size");
+            int groupListTotal = imageGroupList.size();
+            if (endIdx > groupListTotal) {
+                endIdx = groupListTotal;
+            }
+            imageGroupList = imageGroupList.subList(staIdx, endIdx);
+        }
 
         // 检索结果转换
         return changeToBeanList(imageGroupList, (String)param.get("channelId"), (String)param.get("lang"));
