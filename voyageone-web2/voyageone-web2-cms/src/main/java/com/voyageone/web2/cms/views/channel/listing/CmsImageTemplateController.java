@@ -56,8 +56,9 @@ public class CmsImageTemplateController extends CmsController {
         Object result = service.getPage(param);
         return success(result);
     }
-
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetCount)
     public AjaxResponse getCount(@RequestBody Map<String, Object> param) {
+        param.put("channelId", this.getUser().getSelChannelId());
         Object result = service.getCount(param);
         return success(result);
     }
