@@ -18,7 +18,7 @@ define([
         };
 
         function sizeChartTr(){
-            this.originSize = "";
+            this.originalSize = "";
             this.adjustSize = "";
             this.usual = false;
         };
@@ -32,7 +32,13 @@ define([
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
                 $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList,"value");
-                $scope.vm.importList = resp.data.sizeMap == null ?[]:resp.data.sizeMap;
+                $scope.vm.importList = _.map(resp.data.sizeMap == null ?[]:resp.data.sizeMap, function(item){
+                                                if(item.usual == "0")
+                                                    item.usual = false;
+                                                else
+                                                    item.usual = true;
+                                                return item;
+                                                })
             });
 
         };
@@ -72,10 +78,18 @@ define([
                 return;
             }
 
-            var upEntity = $scope.vm.saveInfo;
+            var upEntity = $scope.vm.saveInfo,sizeMaps = angular.copy($scope.vm.importList);
+            _.map(sizeMaps, function(item){
+                            if(item.usual == true)
+                                item.usual = "1";
+                            else
+                                item.usual = "0";
+                            return item;
+                        });
+
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
                                          finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
-                                         sizeTypeList:upEntity.sizeType,sizeMap:$scope.vm.importList}).then(function(){
+                                         sizeTypeList:upEntity.sizeType,sizeMap:JSON.stringify(sizeMaps)}).then(function(){
                 notify.success ("添加成功！");
                 $scope.$close();
             });
@@ -93,7 +107,7 @@ define([
                  if(tmp == result[i].index){
                      switch(count){
                          case 0:
-                             obj.originSize = result[i].value;
+                             obj.originalSize = result[i].value;
                              break;
                          case 1:
                              obj.adjustSize = result[i].value;
@@ -108,7 +122,7 @@ define([
                  }else{
                      $scope.vm.importList.push(obj);
                      obj = new sizeChartTr();
-                     obj.originSize = result[i].value;
+                     obj.originalSize = result[i].value;
                      tmp = result[i].index;
                      count = 1;
                  }
