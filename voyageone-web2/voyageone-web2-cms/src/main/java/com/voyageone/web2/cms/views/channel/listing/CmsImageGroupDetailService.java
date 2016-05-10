@@ -39,9 +39,6 @@ public class CmsImageGroupDetailService extends BaseAppService {
     @Autowired
     private ImageGroupService imageGroupService;
 
-    @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
-
     /**
      * 取得检索条件信息
      *
@@ -121,7 +118,6 @@ public class CmsImageGroupDetailService extends BaseAppService {
      * 编辑ImageGroup信息
      *
      * @param param 客户端参数
-     * @return 检索结果
      */
     public void save(Map<String, Object> param) {
         String userName = (String)param.get("userName");
@@ -201,20 +197,17 @@ public class CmsImageGroupDetailService extends BaseAppService {
             // 编辑的场合
             imageGroupService.updateImage(userName, imageGroupId, key, uploadUrl);
         }
-
-
-
     }
 
     /**
-     * check
+     *  图片保存check
      *
-     * @param imageGroupId 主键ID
+     * @param imageGroupId 图片组ID
      * @param originUrl 原始URL
      * @param file 导入文件
      * return 图片扩展名
      */
-    public String doSaveImageCheck(String imageGroupId, String originUrl, MultipartFile file) {
+    private String doSaveImageCheck(String imageGroupId, String originUrl, MultipartFile file) {
 
         // ImageIO 支持的图片类型 : [BMP, bmp, jpg, JPG, wbmp, jpeg, png, PNG, JPEG, WBMP, GIF, gif]
         String types = Arrays.toString(ImageIO.getReaderFormatNames());
@@ -281,7 +274,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 逻辑删除ImageGroup信息
+     * 删除Image信息
      *
      * @param param 客户端参数
      */
@@ -289,7 +282,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
         String userName = (String)param.get("userName");
         String imageGroupId = (String)param.get("imageGroupId");
         String originUrl = (String)param.get("originUrl");
-        imageGroupService.logicDeleteImage(userName, imageGroupId, originUrl);
+        imageGroupService.deleteImage(userName, imageGroupId, originUrl);
     }
 
     /**
@@ -316,7 +309,5 @@ public class CmsImageGroupDetailService extends BaseAppService {
         String originUrl = (String)param.get("originUrl");
         imageGroupService.refresh(userName, imageGroupId, originUrl);
     }
-
-
 
 }

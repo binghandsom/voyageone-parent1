@@ -49,7 +49,17 @@ public class ImageGroupService extends BaseService {
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
     /**
-     * 新建ImageGroupInfo
+     * 新建ImageGroup信息
+     * @param channelId 渠道id
+     * @param userName 新建/更新用户名
+     * @param cartId 平台id
+     * @param imageGroupName 图片组名称
+     * @param imageType 图片类型
+     * @param viewType 客户端类型
+     * @param brandNameList 相关品牌名称列表
+     * @param productTypeList 相关产品类型列表
+     * @param sizeTypeList 相关尺码列表
+     *
      */
     public void save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
@@ -89,9 +99,12 @@ public class ImageGroupService extends BaseService {
     }
 
     /**
-     * 逻辑删除Image项目
+     * 删除Image项目
+     * @param userName 新建/更新用户名
+     * @param imageGroupId 图片组id
+     * @param originUrl 原始Url
      */
-    public void logicDeleteImage(String userName, String imageGroupId, String originUrl) {
+    public void deleteImage(String userName, String imageGroupId, String originUrl) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             List<CmsBtImageGroupModel_Image> images = model.getImage();
@@ -111,7 +124,15 @@ public class ImageGroupService extends BaseService {
     }
 
     /**
-     * 更新ImageGroupInfo
+     * 更新ImageGroup信息
+     * @param userName 新建/更新用户名
+     * @param cartId 平台id
+     * @param imageGroupName 图片组名称
+     * @param imageType 图片类型
+     * @param viewType 客户端类型
+     * @param brandNameList 相关品牌名称列表
+     * @param productTypeList 相关产品类型列表
+     * @param sizeTypeList 相关尺码列表
      */
     public void update(String userName, String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
@@ -152,6 +173,9 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 逻辑删除ImageGroupInfo
+     * @param imageGroupId 图片组id
+     * @param userName 新建/更新用户名
+
      */
     public void logicDelete(String imageGroupId, String userName) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
@@ -165,6 +189,14 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 根据检索条件取得ImageGroupInfo
+     * @param channelId 渠道id
+     * @param platFormChangeList 平台id列表
+     * @param imageType 图片类型
+     * @param beginModified 更新开始时间
+     * @param endModified 更新结束时间
+     * @param brandNameList 相关品牌名称列表
+     * @param productTypeList 相关产品类型列表
+     * @param sizeTypeList 相关尺码列表
      */
     public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
                                               String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
@@ -176,6 +208,7 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 根据imageGroupId取得ImageGroupInfo
+     * @param imageGroupId 图片组id
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -185,6 +218,14 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
+     * @param channelId 渠道id
+     * @param platFormChangeList 平台id列表
+     * @param imageType 图片类型
+     * @param beginModified 更新开始时间
+     * @param endModified 更新结束时间
+     * @param brandNameList 相关品牌名称列表
+     * @param productTypeList 相关产品类型列表
+     * @param sizeTypeList 相关尺码列表
      */
     private String getSearchQuery(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
                                   String endModified, List brandNameList, List productTypeList, List sizeTypeList) {
@@ -257,6 +298,9 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 新建一个Image插入到cms_bt_image_group表
+     * @param userName 新建/更新用户名
+     * @param imageGroupId 图片组id
+     * @param uploadUrl 上传到图片空间的Url
      */
     public void addImage(String userName, String imageGroupId, String uploadUrl) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
@@ -281,6 +325,9 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 新建一个Image插入到cms_bt_image_group表
+     * @param userName 新建/更新用户名
+     * @param imageGroupId 图片组id
+     * @param uploadUrl 上传到图片空间的Url
      */
     public void updateImage(String userName, String imageGroupId, String key,String uploadUrl) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
@@ -305,6 +352,10 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 移动Image
+     * @param userName 新建/更新用户名
+     * @param imageGroupId 图片组id
+     * @param originUrl 原始Url
+     * @param direction 移动方向 up:往上移，move:往下移
      */
     public void move(String userName, String imageGroupId, String originUrl, String direction) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
@@ -340,14 +391,17 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 重刷Image
+     * @param userName 新建/更新用户名
+     * @param imageGroupId 图片组id
+     * @param originUrl 原始Url
      */
-    public void refresh(String userName, String imageGroupId, String uploadUrl) {
+    public void refresh(String userName, String imageGroupId, String originUrl) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             List<CmsBtImageGroupModel_Image> images = model.getImage();
             if (images != null && images.size() > 0) {
                 for (CmsBtImageGroupModel_Image image : images) {
-                    if (image.getOriginUrl().equals(uploadUrl)) {
+                    if (image.getOriginUrl().equals(originUrl)) {
                         image.setStatus(2);
                         model.setModifier(userName);
                         model.setModified(DateTimeUtil.getNowTimeStamp());
@@ -363,6 +417,10 @@ public class ImageGroupService extends BaseService {
 
     /**
      * 文件上传到FTP
+     * @param channelId 渠道id
+     * @param imageType 图片类型
+     * @param suffix 图片文件名后缀
+     * @param inputStream 图片流
      */
     public String uploadFile(String channelId, String imageType, String suffix, InputStream inputStream) {
 

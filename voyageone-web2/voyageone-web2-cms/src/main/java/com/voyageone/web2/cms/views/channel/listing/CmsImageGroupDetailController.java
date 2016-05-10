@@ -70,7 +70,7 @@ public class CmsImageGroupDetailController extends CmsController {
     }
 
     /**
-     *  保存Image信息
+     *  保存Image信息（网络Url）
      *
      * @param param 客户端参数
      * @return 结果
@@ -84,7 +84,7 @@ public class CmsImageGroupDetailController extends CmsController {
     }
 
     /**
-     *  保存Image信息
+     *  保存Image信息（本地文件上传）
      *
      * @param param 客户端参数
      * @param file 导入文件
