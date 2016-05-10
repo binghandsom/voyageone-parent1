@@ -98,11 +98,9 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(sizeChartId));
         cmsBtSizeChartModel.setSizeChartName(sizeChartName);
         cmsBtSizeChartModel.setFinish(finishFlag);
-
         if (brandNameList.size()>0) {
             cmsBtSizeChartModel.setBrandName(brandNameList);
         }
-
         if(productTypeList.size()>0) {
             cmsBtSizeChartModel.setProductType(productTypeList);
         }
