@@ -19,23 +19,11 @@ import java.util.Map;
 @Repository
 public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> {
     /**
-     * 尺码关系一览初始化画面
-     * @param channelId
-     * @return List<CmsBtSizeChartModel>
-     */
-    public List<CmsBtSizeChartModel> selectInitSizeChartInfo(String channelId) {
-        StringBuilder sbQuery = new StringBuilder();
-        sbQuery.append(MongoUtils.splicingValue("active", 0));
-        return select("{" + sbQuery.toString() + "}", channelId);
-    }
-
-    /**
      * 尺码关系一览检索画面
-     * @param channelId
      * @param cmsBtSizeChartModel
      * @return List<CmsBtSizeChartModel>
      */
-    public List<CmsBtSizeChartModel> selectSearchSizeChartInfo(String channelId, CmsBtSizeChartModel cmsBtSizeChartModel) {
+    public List<CmsBtSizeChartModel> selectSearchSizeChartInfo(CmsBtSizeChartModel cmsBtSizeChartModel) {
 
         StringBuilder sbQuery = new StringBuilder();
         //sizeChartName
@@ -85,10 +73,23 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
             sbQuery.append(",");
         }
         sbQuery.append(MongoUtils.splicingValue("active", 1));
-        return select("{" + sbQuery.toString() + "}",channelId);
+        return select("{" + sbQuery.toString() + "}",cmsBtSizeChartModel.getChannelId());
     }
     /**
-     * gen
+     * 尺码关系一览编辑检索画面
+     * @return List<CmsBtSizeChartModel>
+     */
+    public List<CmsBtSizeChartModel> initSizeChartDetailSearch(CmsBtSizeChartModel cmsBtSizeChartModel) {
+        StringBuilder sbQuery = new StringBuilder();
+        sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartName()));
+        sbQuery.append(",");
+        sbQuery.append(MongoUtils.splicingValue("channelId", cmsBtSizeChartModel.getChannelId()));
+        sbQuery.append(",");
+        return select("{" + sbQuery.toString() + "}", cmsBtSizeChartModel.getChannelId());
+    }
+
+    /**
+     *
      * @param channelId
      * @param cmsBtSizeChartModel
      * @return WriteResult

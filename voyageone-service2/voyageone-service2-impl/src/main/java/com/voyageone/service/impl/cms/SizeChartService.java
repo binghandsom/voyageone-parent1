@@ -18,11 +18,22 @@ public class SizeChartService extends BaseService {
     private CmsBtSizeChartDao cmsBtSizeChartDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService;
-
+    /**
+     * 按照填写的条件去数据库检索记录
+     * @param channelId
+     * @param sizeChartName
+     * @param finishFlag
+     * @param startTime
+     * @param endTime
+     * @param brandNameList
+     * @param productTypeList
+     * @param sizeTypeList
+     * @return sizeChartList
+     */
     public List<CmsBtSizeChartModel> getSizeChartSearch(
             String channelId,String sizeChartName,String finishFlag,String startTime,String endTime
             ,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList){
-        //取得数据bean
+        //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
         //公司平台销售渠道
         cmsBtSizeChartModel.setChannelId(channelId);
@@ -41,10 +52,17 @@ public class SizeChartService extends BaseService {
         //产品性别
         cmsBtSizeChartModel.setSizeType(sizeTypeList);
         //尺码关系一览检索
-        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.selectSearchSizeChartInfo(channelId, cmsBtSizeChartModel);
+        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.selectSearchSizeChartInfo(cmsBtSizeChartModel);
+        //返回数据的类型
         return  sizeChartList;
     }
+    /**
+     * 逻辑删除选中的记录
+     * @param channelId
+     * @param sizeChartId
+     */
     public void sizeChartUpdate(String channelId,int sizeChartId){
+        //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
         //公司平台销售渠道
         cmsBtSizeChartModel.setChannelId(channelId);
@@ -55,16 +73,35 @@ public class SizeChartService extends BaseService {
         //尺码关系一览检索
         cmsBtSizeChartDao.sizeChartUpdate(channelId,cmsBtSizeChartModel);
     }
+
+    /**
+     * 根据尺码关系一览编辑的数据插入数据库
+     * @param channelId
+     * @param userName
+     * @param sizeChartName
+     * @param brandNameList
+     * @param productTypeList
+     * @param sizeTypeList
+     */
     public void insert(String channelId,String userName,String sizeChartName
             ,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList) {
+        //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
+        //更新者
         cmsBtSizeChartModel.setModifier(userName);
+        //创建者
         cmsBtSizeChartModel.setCreater(userName);
+        //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
+        //尺码表自增键取得
         Long sizeChartId =commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
+        //尺码自增键
         cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(String.valueOf(sizeChartId)));
+        //尺码名称
         cmsBtSizeChartModel.setSizeChartName(sizeChartName);
+        //是否编辑
         cmsBtSizeChartModel.setFinish("0");
+        //产品品牌
         if (brandNameList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
@@ -72,6 +109,7 @@ public class SizeChartService extends BaseService {
         } else {
             cmsBtSizeChartModel.setBrandName(brandNameList);
         }
+        //产品类型
         if(productTypeList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
@@ -79,6 +117,7 @@ public class SizeChartService extends BaseService {
         } else {
             cmsBtSizeChartModel.setProductType(productTypeList);
         }
+        //产品性别
         if(sizeTypeList.size()==0) {
             List lst = new ArrayList<String>();
             lst.add("All");
@@ -86,34 +125,78 @@ public class SizeChartService extends BaseService {
         } else {
             cmsBtSizeChartModel.setSizeType(sizeTypeList);
         }
+        //是否逻辑删除
         cmsBtSizeChartModel.setActive(1);
+        //根据尺码关系一览编辑的数据插入数据库
         cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
     }
+
+    /**
+     * 尺码关系一览编辑详情检索画面
+     * @param channelId
+     * @param sizeChartId
+     * @return sizeChartList
+     */
+    public List<CmsBtSizeChartModel> sizeChartDetailSearch(String channelId,int sizeChartId){
+        //取得数据Model
+        CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
+        //店铺渠道
+        cmsBtSizeChartModel.setChannelId(channelId);
+        //尺码表自增键
+        cmsBtSizeChartModel.setSizeChartId(sizeChartId);
+        //尺码表自增键取得当前的记录
+        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.initSizeChartDetailSearch(cmsBtSizeChartModel);
+        //返回数据的类型
+        return  sizeChartList;
+    }
+
+    /**
+     * 尺码关系一览编辑详情编辑画面
+     * @param channelId
+     * @param userName
+     * @param sizeChartId
+     * @param sizeChartName
+     * @param finishFlag
+     * @param brandNameList
+     * @param productTypeList
+     * @param sizeTypeList
+     * @param sizeMapList
+     */
     public void sizeChartDetailUpdate(String channelId, String userName,String sizeChartId, String sizeChartName, String finishFlag
             , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, List<String> sizeMapList){
+        //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
+        //更新者
         cmsBtSizeChartModel.setModifier(userName);
+        //创建者
         cmsBtSizeChartModel.setCreater(userName);
+        //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
+        //尺码自增键
         cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(sizeChartId));
+        //尺码名称
         cmsBtSizeChartModel.setSizeChartName(sizeChartName);
+        //是否编辑
         cmsBtSizeChartModel.setFinish(finishFlag);
-
+        //产品品牌
         if (brandNameList.size()>0) {
             cmsBtSizeChartModel.setBrandName(brandNameList);
         }
-
+        //产品类型
         if(productTypeList.size()>0) {
             cmsBtSizeChartModel.setProductType(productTypeList);
         }
-
+        //产品性别
         if(sizeTypeList.size()>0) {
             cmsBtSizeChartModel.setSizeType(sizeTypeList);
         }
+        //尺码表
         if(sizeMapList.size()>0) {
             cmsBtSizeChartModel.setSizeType(sizeMapList);
         }
+        //是否逻辑删除
         cmsBtSizeChartModel.setActive(0);
+        //跟据尺码关系一览编辑详情编辑的数据插入数据库
         cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
     }
 }
