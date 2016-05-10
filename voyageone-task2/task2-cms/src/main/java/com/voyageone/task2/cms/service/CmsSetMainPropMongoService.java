@@ -322,6 +322,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 修改商品数据
                 // 一般只改改价格神马的
                 cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, mapBrandMapping);
+
+                // tom 20160510 追加 START
+                // 更新wms_bt_item_details表的数据
+                if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
+                    // 如果出错了的话, 就跳出去
+                    return;
+                }
+                // tom 20160510 追加 END
+
                 // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
 
                 // 清除一些batch的标记 // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
@@ -371,6 +380,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     return;
                 }
 
+                // tom 20160510 追加 START
+                // 更新wms_bt_item_details表的数据
+                if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
+                    // 如果出错了的话, 就跳出去
+                    return;
+                }
+                // tom 20160510 追加 END
+
                 productService.createProduct(channelId, cmsProduct, getTaskName());
 
                 $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
@@ -405,8 +422,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             // jeff 2016/04 change end
 
-            // 更新wms_bt_item_details表的数据
-            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
+            // tom 20160510 删除 START
+            // 这里不要了, 放到最前面去做, 如果出错了, 那么就跳过当前记录
+//            // 更新wms_bt_item_details表的数据
+//            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
+            // tom 20160510 删除 END
 
             // 更新price_log信息
             // 更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
@@ -1844,11 +1864,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param productId product id
          * @param feed      feed信息
          */
-        private void doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
+        private boolean doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
 
             // 如果feed里,没有sku的数据的话,那么就不需要做下去了
             if (feed.getSkus() == null || feed.getSkus().size() == 0) {
-                return;
+                // 也认为是正常
+                return true;
             }
 
             // 根据product id, 获取现有的item details表的数据
@@ -1872,20 +1893,33 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 itemDetailsBean.setClient_sku(feedSku.getClientSku());
                 itemDetailsBean.setActive(1);
 
-                // 判断这个sku是否已经存在
-                if (skuList.contains(feedSku.getSku())) {
-                    // 已经存在的场合: 更新数据库
-                    itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
-                } else {
-                    // 不存在的场合: 插入数据库
-                    itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
+                try {
+                    // 判断这个sku是否已经存在
+                    if (skuList.contains(feedSku.getSku())) {
+                        // 已经存在的场合: 更新数据库
+                        itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
+                    } else {
+                        // 不存在的场合: 插入数据库
+                        itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
 
-                    // 添加到判断列表中
-                    skuList.add(feedSku.getSku());
+                        // 添加到判断列表中
+                        skuList.add(feedSku.getSku());
+                    }
+                } catch (Exception e) {
+                    logIssue(getTaskName(),
+                            String.format("[CMS2.0]无法插入或更新item detail表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
+                                    channelId,
+                                    itemDetailsBean.getSku(),
+                                    itemDetailsBean.getItemcode(),
+                                    itemDetailsBean.getBarcode(),
+                                    itemDetailsBean.getSize()
+                            ));
+                    return false;
                 }
 
             }
 
+            return true;
 
         }
 
