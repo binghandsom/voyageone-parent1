@@ -28,23 +28,12 @@ define([
                 })
         };
         $scope.ok = function(){
-            //console.log("save");
-            //console.log($scope.model);
-            if(!$scope.model.id) {
-                imageTemplateService.insert($scope.model).then(function (res) {
+                imageTemplateService.save($scope.model).then(function (res) {
 
                     $scope.$close();
                 }, function (res) {
                 })
-            }else{
-                imageTemplateService.update($scope.model).then(function (res) {
-                    for (key in $scope.promotion) {
-                        items[key] = $scope.promotion[key];
-                    }
-                    $scope.$close();
-                }, function (res) {
-                })
-            }
+
         }
 
     });
