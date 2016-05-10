@@ -24,8 +24,6 @@ define([
         };
         $scope.search = function () {
             var data = angular.copy($scope.searchInfo);
-             //goPage(1, $scope.dataPageOption.size);
-            // $scope.dataPageOption.curr=1;
             $scope.dataPageOption.setPageIndex(1);//跳转首页
             imageTemplateService.getCount(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
@@ -45,10 +43,10 @@ define([
             $scope.searchInfo = {brandName:[],sizeType:[],productType:[]};
         };
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.name).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.imageTemplateName).result.then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
                 data.active = 0;
-                imageTemplateService.update(data).then(function () {
+                imageTemplateService.delete(data.imageTemplateId).then(function () {
                     $scope.vm.modelList.splice(index, 1);
                 }, function (res) {
                 })

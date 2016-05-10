@@ -1,5 +1,7 @@
 package com.voyageone.common.util.excel;
 
+import com.voyageone.common.util.JacksonUtil;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -47,6 +49,17 @@ public class ReflectUtil {
             field.set(o, BigDecimal.valueOf(v1));
         } else if (Date.class == fieldType) {
             field.set(o, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(fieldValue.toString()));
+        } else if (boolean.class == fieldType) {
+            if (fieldValue.equals("1")) {
+                field.set(o, true);
+            }
+            if (fieldValue.equals("0")) {
+                field.set(o, false);
+            }
+            field.set(o, Boolean.valueOf(fieldValue.toString()));
+        } else if (String[].class == fieldType) {
+            String[] arr = JacksonUtil.ToObjectFromJson(fieldValue.toString(), String[].class);
+            field.set(o, arr);
         } else {
             field.set(o, fieldValue);
         }

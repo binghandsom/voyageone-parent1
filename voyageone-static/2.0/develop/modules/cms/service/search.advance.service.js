@@ -301,7 +301,9 @@ define([
             _.forEach(skus, function (sku) {
                 var cartInfo = "";
                 _.forEach(sku.skuCarts, function (skuCart) {
-                    cartInfo += Carts.valueOf(parseInt(skuCart)).name + ",";
+                    var CartInfo = Carts.valueOf(parseInt(skuCart));
+                    if (!_.isUndefined(CartInfo))
+                        cartInfo += CartInfo.name + ",";
                 });
                 result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
             });

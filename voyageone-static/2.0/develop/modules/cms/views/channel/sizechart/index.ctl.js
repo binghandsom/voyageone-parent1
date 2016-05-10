@@ -4,7 +4,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,sizeChartService,confirm,notify) {
+    function sizeChartController($scope,sizeChartService,confirm,notify,$translate) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
@@ -26,6 +26,9 @@ define([
 
         $scope.search = search;
 
+        /**
+         * 检索
+         */
         function search() {
             var data = $scope.vm.sizeChartPageOption;
             _.extend(data ,$scope.vm.searchInfo);

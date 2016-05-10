@@ -106,7 +106,7 @@
                         <div class="form-inline">
                             <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清空</button>
                             <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;检索</button>
-                            <button class="btn btn-success" ng-click="openImgTplEditing()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                            <button class="btn btn-success" ng-click="openImgTplEditing(null)"><i class="fa fa-plus"></i>&nbsp;Add</button>
                         </div>
                     </div>
                 </div>
@@ -144,11 +144,11 @@
                             <td class="mfb-xxt text-center">{{model.viewTypeName}}</td>
                             <td class="mfb-xxt text-center">{{model.cartName}}</td>
                             <td class="mfb-xxt text-center">{{model.imageTemplateType}}</td>
-                            <td class="mfb-xxt text-center">{{model.templateContent}}</td>
-                            <td class="mfb-xxx text-center">{{imageGroup.modified}}</td>
+                            <td class="mfb-xxt text-center">{{model.imageTemplateContent}}</td>
+                            <td class="mfb-xxx text-center">{{model.modified}}</td>
                             <td class="mfb-xxt text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing('{{model.imageTemplateId}}')"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs" ng-click="del('{{model.imageTemplateId}}')"><i class="fa  fa-trash-o"></i></button>
+                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing(model)"><i class="fa fa-cog"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
                         </tbody>

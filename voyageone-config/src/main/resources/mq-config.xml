@@ -53,5 +53,17 @@
     <!-- 致命异常判定策略 -->
     <bean id="voExceptionStrategy" class="com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy" />
 
+    <!-- mq 队列不允许消费者的ip 映射关系配置 -->
+    <bean id="mqDisAllowConsumerIpConfig" class="com.voyageone.service.impl.com.mq.config.MqDisAllowConsumerIpConfig">
+        <property name="mqDisallowConsumerIpMap">
+            <map>
+                <entry key="voyageone_mq_error_handle_testing">
+                    <list>
+                        <!--<value>10_0_1_190</value>-->
+                    </list>
+                </entry>
+            </map>
+        </property>
+    </bean>
 
 </beans>

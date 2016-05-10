@@ -9,9 +9,11 @@ define([
 
     angularAMD.controller('popImageDetailAddCtl', function (data,originUrl,$scope,FileUploader,alert,imageGroupDetailService,notify,blockUI) {
         $scope.parent = data;
+        $scope.imageGroupId = data.imageGroupId;
+        $scope.imageType = data.imageType;
         $scope.key = originUrl;
         $scope.originUrl = originUrl;
-        $scope.imageType = "2";
+        $scope.uploadType = "2";
 
         var uploader = $scope.uploader = new FileUploader({
             url: '/cms/channel/image_group_detail/saveUploadImage'
@@ -20,7 +22,7 @@ define([
         $scope.upload = function() {
             var uploadQueue = uploader.queue;
             var uploadItem = uploadQueue[uploadQueue.length - 1];
-            if (!uploadItem &&  $scope.imageType == "1") {
+            if (!uploadItem &&  $scope.uploadType == "1") {
                 return alert('TXT_MSG_NO_UPLOAD');
             }
             var uploadIt = function () {
@@ -44,20 +46,24 @@ define([
                     alert('TXT_MSG_UPDATE_FAIL');
                 };
                 uploadItem.formData = [{
+                    "imageGroupId": $scope.imageGroupId,
                     "key": $scope.key,
                     "originUrl": $scope.originUrl,
-                    "imageType": $scope.imageType
+                    "imageType": $scope.imageType,
+                    "uploadType": $scope.uploadType
                 }];
                 uploadItem.upload();
                 blockUI.start();
             };
-            if ($scope.imageType == "1") {
+            if ($scope.uploadType == "1") {
                 uploadIt();
             } else {
                 imageGroupDetailService.saveImage({
+                    "imageGroupId": $scope.imageGroupId,
                     "key": $scope.key,
                     "originUrl": $scope.originUrl,
-                    "imageType": $scope.imageType
+                    "imageType": $scope.imageType,
+                    "uploadType": $scope.uploadType
                 }).then(function (res) {
                     notify.success('TXT_MSG_UPDATE_SUCCESS');
                     $scope.$close();

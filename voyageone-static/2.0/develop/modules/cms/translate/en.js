@@ -423,6 +423,9 @@ define(function() {
         "TXT_IMAGE_GROUP_ADD":"Image Group Add",
         "TXT_COMMON_IMAGE_SET":"Common Image Set",
         "TXT_ORIGIN_IMAGE":"Origin Image",
+        "TXT_MSG_DO_REFRESH_IMAGE": "Do you want refresh image",
+        "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
+        "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
 
 
 
@@ -484,6 +487,7 @@ define(function() {
         "BTN_GET_TASK": "Get Tasks",
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
+        "BTN_RESET":"reset",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
@@ -501,6 +505,19 @@ define(function() {
         "CANT_BEAT": "Info Error",
 
         /**分页显示*/
-        "TXT_PAGER_SIZE": "page-size"
+        "TXT_PAGER_SIZE": "page-size",
+        /**尺码表*/
+        "TXT_SIZE_CHART":"SizeChart",
+        "TXT_SIZE_CHART_DETAIL":"Sizechartdetail",
+        "TXT_SIZE_CHART_NAME":"Size Chart Name",
+        "TXT_SIZE_CHART_FINISH":"Finish",
+        "TXT_SIZE_CHART_UPDATE_TIME":"Update Time",
+        "TXT_SIZE_CHART_BRAND_NAME":"Related Brand Name",
+        "TXT_SIZE_CHART_PRODUCT_TYPE":"Related Product Type",
+        "TXT_SIZE_CHART_SIZE_TYPE":"Related Size Type",
+        "TXT_SIZE_CHART_ORIGINAL_SIZE":"originalSize",
+        "TXT_SIZE_CHART_ADJUST_SIZE":"Platform Size",
+        "TXT_SIZE_CHART_COMMON_SIZE":"common Size Type",
+        "TXT_SIZE_CHART_NOTICE":"Please select No if Size chart is in doubt,renewwill still use this size chart"
     };
 });

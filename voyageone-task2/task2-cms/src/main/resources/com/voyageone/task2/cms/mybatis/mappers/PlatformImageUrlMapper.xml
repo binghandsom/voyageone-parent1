@@ -23,7 +23,7 @@
             channel_id,
             search_id,
             original_img_url,
-            platform_image_url,
+            platform_img_url,
             created,
             creater,
             modified,

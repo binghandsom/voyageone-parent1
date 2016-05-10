@@ -171,6 +171,13 @@
         "addExport": "addExport"
       }
     },
+    "cmsMtImageCreate":{
+      "cmsMtImageCreateService":{
+        "root":"/cms/imagecreate/index",
+        "getPageByWhere":"getPageByWhere",
+        "getCountByWhere":"getCountByWhere"
+      }
+},
     "imageManager": {
       "$CmsMtMasterInfoService": {
         "root": "/cms/cmsmtmasterinfo/index",
@@ -369,7 +376,8 @@
         "getPage": "getPage",
         "getCount": "getCount",
         "save": "save",
-        "delete": "delete"
+        "delete": "delete",
+        "get":"get"
        },
       "imageGroupService": {
         "root": "/cms/channel/image_group",
