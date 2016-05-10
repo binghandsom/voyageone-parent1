@@ -12,9 +12,7 @@ import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by gjl on 2016/5/5.
@@ -172,9 +170,26 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        //sizeMapList
         List<CmsBtSizeChartModelSizeMap> sizeMapList=(List<CmsBtSizeChartModelSizeMap>) param.get("sizeMap");
-        //sizeMap
-        String sizeMap=String.valueOf(param.get("sizeMap"));
+        if(sizeMapList.size()>0){
+            //取得sizeMapList对象
+            Set<String> originalSizeSet = new HashSet<>();
+            for(int i=0;i<sizeMapList.size();i++){
+                Map sizeMap = (Map)sizeMapList.get(i);
+                String originalSize=(String)sizeMap.get("originalSize");
+                String adjustSize=(String)sizeMap.get("adjustSize");
+                //判断是否为空check
+                if (StringUtils.isEmpty(originalSize)||StringUtils.isEmpty(adjustSize)) {
+                    throw new BusinessException("7000080");
+                }
+                originalSizeSet.add(originalSize);
+            }
+            //重复check
+            if(originalSizeSet.size() != sizeMapList.size()){
+                throw new BusinessException("originSize重复");
+            }
+        }
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
