@@ -81,8 +81,8 @@ public class CmsImageTemplateController extends CmsController {
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
-    public AjaxResponse delete(@RequestBody Map<String, Object> param) {
-        service.delete(param);
+    public AjaxResponse delete(@RequestBody Long imageTemplateId) {
+        service.delete(imageTemplateId);
         return success(null);
     }
 }
