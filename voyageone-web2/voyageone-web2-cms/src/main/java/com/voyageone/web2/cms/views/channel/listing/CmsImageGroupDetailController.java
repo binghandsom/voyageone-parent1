@@ -75,7 +75,7 @@ public class CmsImageGroupDetailController extends CmsController {
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
-    public AjaxResponse saveImage(@RequestParam Map<String, Object> param) {
+    public AjaxResponse saveImage(@RequestBody Map<String, Object> param){
         param.put("channelId", this.getUser().getSelChannelId());
         cmsImageGroupDetailService.saveImage(param, null);
         return success(null);
