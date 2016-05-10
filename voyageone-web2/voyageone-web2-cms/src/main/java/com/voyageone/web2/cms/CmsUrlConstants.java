@@ -583,8 +583,9 @@ interface CmsBtJmPromotionImportTask{
                 String INIT_SIZE_CHART = "sizeChartInit";
                 String DELETE_SIZE_CHART="sizeChartDelete";
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
-                String EDIT_SIZE_CHART="sizeChartEdit";
-                String DETAIL_SIZE_CHART="sizeChartDetail";
+                String SAVE_EDIT_SIZE_CHART="sizeChartEditSave";
+                String SEARCH_DETAIL_SIZE_CHART="sizeChartDetailSearch";
+                String SAVE_DETAIL_SIZE_CHART="sizeChartDetailSave";
             }
         }
     }
