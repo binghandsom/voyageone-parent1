@@ -42,7 +42,7 @@
         <!-- 连超时设置. -->
         <property name="timeout" value="15000" />
         <!-- 是否使用连接池. -->
-        <!--<property name="usePool" value="true" />-->
+        <property name="usePool" value="true" />
     </bean>
 
     <!-- aliyun test -->

@@ -1,9 +1,7 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.PostResponse;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
