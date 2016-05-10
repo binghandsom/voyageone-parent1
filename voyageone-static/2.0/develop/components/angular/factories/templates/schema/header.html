@@ -1,11 +1,11 @@
 <div class="form-group">
     <label class="col-sm-2 control-label" ng-class="{'vo_reqfield': header.isRequired}"
            ng-bind="$data.name"></label>
-    <div class="col-sm-8"
+    <div class="col-sm-9"
          ng-class="{'modal-open' : header.isMultiComplex, 'hierarchy_main': header.isComplex, 'ng-invalid': $data.$valid === false}" title="{{$data.$valid}}"
          ng-transclude></div>
-    <div class="col-sm-2" ng-if="header.isMultiComplex">
-        <button class="btn btn-success" ng-click="addField($data)"><i class="fa fa-plus"></i>{{'BTN_ADD' | translate}}
+    <div class="col-sm-1" ng-if="header.isMultiComplex" style="margin-left: -38px;margin-top: 5px;">
+        <button class="btn btn-success" ng-click="addField($data)" title="{{'BTN_ADD' | translate}}"><i class="fa fa-plus"></i>
         </button>
     </div>
     <div class="row" ng-repeat="tipMsg in header.tipMsg">
