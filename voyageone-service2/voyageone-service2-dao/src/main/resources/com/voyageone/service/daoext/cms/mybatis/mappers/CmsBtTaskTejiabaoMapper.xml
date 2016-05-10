@@ -198,7 +198,7 @@
         from voyageone_cms2.cms_bt_task_tejiabao a,
               voyageone_cms2.cms_bt_promotion b
         where
-            a.promotion_id = b.promotion_id
+            a.promotion_id = b.id
             and b.promotion_status = 0
             and b.is_all_promotion = 0
             and task_type = 0

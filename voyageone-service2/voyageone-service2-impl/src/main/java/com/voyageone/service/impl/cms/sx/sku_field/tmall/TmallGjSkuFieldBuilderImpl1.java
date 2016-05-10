@@ -250,6 +250,7 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {
                         $warn("图片模板url未设置");
+                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
                     } else {
                         String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);

@@ -327,17 +327,16 @@ public class CmsImageTemplateService extends BaseService {
     /**
      * 逻辑删除ImageGroup信息
      *
-     * @param param 客户端参数
+     * @param imageTemplateId 客户端参数
      * @return 检索结果
      */
-    public void delete(Map<String, Object> param) {
+    public void delete(long imageTemplateId) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageTemplateId\":" + param.get("imageTemplateId") + "}");
+        queryObject.setQuery("{\"imageTemplateId\":" + imageTemplateId + "}");
         CmsBtImageTemplateModel model = getOne(queryObject);
         if (model != null) {
             model.setActive(0);
-            update(model);
+            dao.update(model);
         }
     }
-
 }

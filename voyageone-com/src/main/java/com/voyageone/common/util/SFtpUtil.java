@@ -58,7 +58,7 @@ public class SFtpUtil {
                 String rpath = rfile.getParent();
                 try {
                     if (!StringUtils.isEmpty(rpath)) {
-                        rpath = rpath.replace("\\\\", "/");
+                        rpath = rpath.replaceAll("\\\\", "/");
                         createDir(rpath, ftpClient);
                     }
 

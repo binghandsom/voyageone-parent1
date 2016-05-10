@@ -1,9 +1,13 @@
 package com.voyageone.service.impl.cms;
 
+import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.beans.FtpBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.common.util.SFtpUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
@@ -19,10 +23,9 @@ import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -34,6 +37,12 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class ImageGroupService extends BaseService {
+
+    private final String URL_PREFIX = "http://image.voyageone.com.cn/cms";
+    private final String DIRECTORY_SIZE_CHART_IMAGE = "/size/";
+    private final String DIRECTORY_BRAND_STORY_IMAGE = "/brand/";
+    private final String DIRECTORY_SHIPPING_DESCRIPTION_IMAGE = "/shipping/";
+
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
@@ -42,10 +51,12 @@ public class ImageGroupService extends BaseService {
     /**
      * 新建ImageGroupInfo
      */
-    public void save(String channelId, String cartId, String imageGroupName, String imageType, String viewType,
+    public void save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
+        model.setCreater(userName);
+        model.setModifier(userName);
         model.setCartId(Integer.parseInt(cartId));
         model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
         model.setImageGroupName(imageGroupName);
@@ -80,7 +91,7 @@ public class ImageGroupService extends BaseService {
     /**
      * 逻辑删除Image项目
      */
-    public void logicDeleteImage(String imageGroupId, String originUrl) {
+    public void logicDeleteImage(String userName, String imageGroupId, String originUrl) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             List<CmsBtImageGroupModel_Image> images = model.getImage();
@@ -88,20 +99,26 @@ public class ImageGroupService extends BaseService {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(originUrl)) {
                         images.remove(image);
+                        model.setModifier(userName);
+                        model.setModified(DateTimeUtil.getNowTimeStamp());
                     }
                 }
                 cmsBtImageGroupDao.update(model);
             }
+        } else {
+            throw new RuntimeException();
         }
     }
 
     /**
      * 更新ImageGroupInfo
      */
-    public void update(String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
+    public void update(String userName, String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
+            model.setModifier(userName);
+            model.setModified(DateTimeUtil.getNowTimeStamp());
             model.setCartId(Integer.parseInt(cartId));
             model.setImageGroupName(imageGroupName);
             model.setImageType(Integer.parseInt(imageType));
@@ -128,15 +145,19 @@ public class ImageGroupService extends BaseService {
                 model.setSizeType(sizeTypeList);
             }
             cmsBtImageGroupDao.update(model);
+        } else {
+            throw new RuntimeException();
         }
     }
 
     /**
      * 逻辑删除ImageGroupInfo
      */
-    public void logicDelete(String imageGroupId) {
+    public void logicDelete(String imageGroupId, String userName) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
+            model.setModifier(userName);
+            model.setModified(DateTimeUtil.getNowTimeStamp());
             model.setActive(0);
             cmsBtImageGroupDao.update(model);
         }
@@ -158,7 +179,7 @@ public class ImageGroupService extends BaseService {
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "}");
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "},{\"active\":1}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 
@@ -231,5 +252,160 @@ public class ImageGroupService extends BaseService {
         result.append(MongoUtils.splicingValue("active", 1));
 
         return "{" + result.toString() + "}";
+    }
+
+
+    /**
+     * 新建一个Image插入到cms_bt_image_group表
+     */
+    public void addImage(String userName, String imageGroupId, String uploadUrl) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            CmsBtImageGroupModel_Image imageModel = new CmsBtImageGroupModel_Image();
+            imageModel.setOriginUrl(uploadUrl);
+            imageModel.setStatus(1);
+            List<CmsBtImageGroupModel_Image> images = model.getImage();
+            if (images == null) {
+                images = new ArrayList<>();
+            }
+            images.add(imageModel);
+            model.setImage(images);
+            model.setModifier(userName);
+            model.setModified(DateTimeUtil.getNowTimeStamp());
+
+            cmsBtImageGroupDao.update(model);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * 新建一个Image插入到cms_bt_image_group表
+     */
+    public void updateImage(String userName, String imageGroupId, String key,String uploadUrl) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            List<CmsBtImageGroupModel_Image> images = model.getImage();
+            if (images != null && images.size() > 0) {
+                for (CmsBtImageGroupModel_Image image : images) {
+                    if (image.getOriginUrl().equals(key)) {
+                        image.setOriginUrl(uploadUrl);
+                        image.setStatus(1);
+                        model.setModifier(userName);
+                        model.setModified(DateTimeUtil.getNowTimeStamp());
+                        break;
+                    }
+                }
+            }
+            cmsBtImageGroupDao.update(model);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * 移动Image
+     */
+    public void move(String userName, String imageGroupId, String originUrl, String direction) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            int index = -1;
+            List<CmsBtImageGroupModel_Image> images = model.getImage();
+            if (images != null && images.size() > 0) {
+                for (int i = 0; i < images.size(); i++) {
+                    if (images.get(i).getOriginUrl().equals(originUrl)) {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+            // 找不到或者第一条往上移或者最后一条往下移，那么什么都不操作
+            if (index == -1 || (index == 0 && "up".equals(direction)) || ((index == images.size() -1) && "down".equals(direction))) {
+                return;
+            }
+
+            // 往上移
+            if ("up".equals(direction)) {
+                Collections.swap(images, index, index - 1);
+            } else {
+                //往下移
+                Collections.swap(images, index, index + 1);
+            }
+
+            model.setModifier(userName);
+            model.setModified(DateTimeUtil.getNowTimeStamp());
+            cmsBtImageGroupDao.update(model);
+        }
+    }
+
+    /**
+     * 重刷Image
+     */
+    public void refresh(String userName, String imageGroupId, String uploadUrl) {
+        CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
+        if (model != null) {
+            List<CmsBtImageGroupModel_Image> images = model.getImage();
+            if (images != null && images.size() > 0) {
+                for (CmsBtImageGroupModel_Image image : images) {
+                    if (image.getOriginUrl().equals(uploadUrl)) {
+                        image.setStatus(2);
+                        model.setModifier(userName);
+                        model.setModified(DateTimeUtil.getNowTimeStamp());
+                        break;
+                    }
+                }
+            }
+            cmsBtImageGroupDao.update(model);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * 文件上传到FTP
+     */
+    public String uploadFile(String channelId, String imageType, String suffix, InputStream inputStream) {
+
+        FtpBean ftpBean = formatFtpBean();
+        ftpBean.setUpload_filename(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix);
+        if ("2".equals(imageType)) {
+            ftpBean.setUpload_path(DIRECTORY_SIZE_CHART_IMAGE + channelId);
+        } else if ("3".equals(imageType)) {
+            ftpBean.setUpload_path(DIRECTORY_BRAND_STORY_IMAGE  + channelId);
+        } else if ("4".equals(imageType)) {
+            ftpBean.setUpload_path(DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId);
+        }
+        ftpBean.setUpload_input(inputStream);
+
+        try {
+            SFtpUtil ftpUtil = new SFtpUtil();
+            //建立连接
+            ChannelSftp ftpClient = ftpUtil.linkFtp(ftpBean);
+            boolean isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
+            if (!isSuccess) {
+                throw new BusinessException("upload error");
+            }
+        } catch (Exception e) {
+            throw new BusinessException("upload error");
+        }
+         return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
+    }
+
+    private FtpBean formatFtpBean(){
+        String url = "image.voyageone.com.cn";
+        // ftp连接port
+        String port = "22";
+        // ftp连接usernmae
+        String username = "voyageone-cms-sftp";
+        // ftp连接password
+        String password = "Li48I-22aBz";
+
+        FtpBean ftpBean = new FtpBean();
+        ftpBean.setPort(port);
+        ftpBean.setUrl(url);
+        ftpBean.setUsername(username);
+        ftpBean.setPassword(password);
+        ftpBean.setFile_coding("iso-8859-1");
+        return ftpBean;
     }
 }

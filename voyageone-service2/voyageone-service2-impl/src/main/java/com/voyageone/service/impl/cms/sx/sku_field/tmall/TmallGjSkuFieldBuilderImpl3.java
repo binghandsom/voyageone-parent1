@@ -10,6 +10,7 @@ import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.ComplexMappingBean;
 import com.voyageone.service.bean.cms.MappingBean;
@@ -294,15 +295,20 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             if (colorExtend_imageField != null) {
                 String propImage = sxProduct.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
                 if (propImage != null && !"".equals(propImage)) {
-                    String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+                    if (StringUtils.isEmpty(getCodeImageTemplate())) {
+                        $warn("图片模板url未设置");
+                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
+                    } else {
+                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
-                    complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
+                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
-                    if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-                        Set<String> url = new HashSet<>();
-                        url.add(codePropFullImageUrl);
-                        // 上传图片到天猫图片空间
-                        expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                        if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                            Set<String> url = new HashSet<>();
+                            url.add(codePropFullImageUrl);
+                            // 上传图片到天猫图片空间
+                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                        }
                     }
                 }
             }

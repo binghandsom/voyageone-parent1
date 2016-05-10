@@ -424,12 +424,15 @@ define(function(){
         "TXT_IMAGE_COUNT":"图片数",
         "TXT_IMAGE_DETAIL":"图片详细",
         "TXT_IMAGE":"图片",
-        "TXT_ORIGIN_URL":"原始URL",
-        "TXT_PLATFORM_URL":"平台URL",
+        "TXT_ORIGIN_URL":"原始Url",
+        "TXT_PLATFORM_URL":"平台Url",
         "TXT_SEQUENCE":"顺序",
         "TXT_IMAGE_GROUP_ADD":"增加图片组保存",
         "TXT_COMMON_IMAGE_SET":"图片设定",
         "TXT_ORIGIN_IMAGE":"原始图片",
+        "TXT_MSG_DO_REFRESH_IMAGE": "您确定要刷图",
+        "TXT_MSG_REFRESH_IMAGE_SUCCESS": "刷图操作成功",
+        "TXT_MSG_REFRESH_IMAGE_FAIL": "刷图操作失败",
 
 
         "BTN_CREATE_TASK": "新建任务",

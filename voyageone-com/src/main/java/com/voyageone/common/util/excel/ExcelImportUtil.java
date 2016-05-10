@@ -21,6 +21,9 @@ import java.util.Map;
  * Created by dell on 2016/3/24.
  */
 public class ExcelImportUtil {
+    public static  <TModel> void importSheet(HSSFSheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass) throws Exception {
+        importSheet(productSheet,listProductColumn,listTModel,listErrorMap,entityClass,1);
+    }
     /**
      *
      * @param productSheet  listTModel
@@ -30,9 +33,9 @@ public class ExcelImportUtil {
      * @param <TModel>
      * @throws Exception
      */
-    public static  <TModel> void importSheet(HSSFSheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass) throws Exception {
+    public static  <TModel> void importSheet(HSSFSheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass,int columnRowIndex) throws Exception {
         int LastCellNum = productSheet.getRow(0).getLastCellNum();//列数量
-        Row rowColumn = productSheet.getRow(1);//excel列所在行
+        Row rowColumn = productSheet.getRow(columnRowIndex);//excel列所在行
         Map<String, Integer> mapExcelColumn = new HashMap<>();//excel 列名字和列索引对应  key:excel列名字 value:excel列索引
         for (int i = 0; i < LastCellNum; i++) {
             mapExcelColumn.put(ExcelUtils.getString(rowColumn, i), i);
@@ -41,7 +44,7 @@ public class ExcelImportUtil {
         int LastRowNum = productSheet.getLastRowNum();//excel最后一行
         TModel model = null;
         String errorMsg = null;
-        for (int i = 2; i <= LastRowNum; i++) {
+        for (int i = columnRowIndex+1; i <= LastRowNum; i++) {
             HSSFRow row = productSheet.getRow(i);//获取行
             model = entityClass.newInstance();
             errorMsg = rowToModel(mapExcelColumn, listProductColumn, row, model,mapFiled);//行转model

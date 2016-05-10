@@ -221,6 +221,7 @@ public class CmsImageGroupService extends BaseAppService {
      */
     public void save(Map<String, Object> param) {
         String channelId = (String)param.get("channelId");
+        String userName = (String)param.get("userName");
         String cartId = (String)param.get("platform");
         String imageGroupName = (String)param.get("imageGroupName");
         String imageType = (String)param.get("imageType");
@@ -235,7 +236,7 @@ public class CmsImageGroupService extends BaseAppService {
             throw new BusinessException("7000080");
         }
 
-        imageGroupService.save(channelId, cartId, imageGroupName, imageType, viewType,
+        imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
     }
 
@@ -246,8 +247,9 @@ public class CmsImageGroupService extends BaseAppService {
      * @return 检索结果
      */
     public void delete(Map<String, Object> param) {
+        String userName = (String)param.get("userName");
         String imageGroupId = String.valueOf(param.get("imageGroupId"));
-        imageGroupService.logicDelete(imageGroupId);
+        imageGroupService.logicDelete(imageGroupId, userName);
     }
 
 }

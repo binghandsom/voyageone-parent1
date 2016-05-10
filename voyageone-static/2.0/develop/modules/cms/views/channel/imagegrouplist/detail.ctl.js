@@ -77,16 +77,16 @@ define([
             },
             refresh: function (originUrl) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_REFRESH_IMAGE').result.then(function () {
                     main.imageGroupDetailService.refresh({
                         "imageGroupId" : main.imageGroupId,
                         "originUrl" : originUrl
                     }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.notify.success('TXT_MSG_REFRESH_IMAGE_SUCCESS');
                         main.search();
                     }, function (err) {
                         if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
+                            main.alert('TXT_MSG_REFRESH_IMAGE_FAIL');
                         }
                     })
                 })
@@ -111,18 +111,22 @@ define([
                 var main = this;
                 main.imageGroupDetailService.move({
                     "imageGroupId" : main.imageGroupId,
-                    "originUrl" : originUrl
+                    "originUrl" : originUrl,
+                    "direction" : "up"
                 }).then(function (res) {
                     main.imageList = res.data;
+                    main.search();
                 })
             },
             moveDown: function (originUrl) {
                 var main = this;
                 main.imageGroupDetailService.move({
                     "imageGroupId" : main.imageGroupId,
-                    "originUrl" : originUrl
+                    "originUrl" : originUrl,
+                    "direction" : "down"
                 }).then(function (res) {
                     main.imageList = res.data;
+                    main.search();
                 })
             }
         };
