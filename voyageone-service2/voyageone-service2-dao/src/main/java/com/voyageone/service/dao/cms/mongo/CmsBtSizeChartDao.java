@@ -81,7 +81,7 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
      */
     public List<CmsBtSizeChartModel> initSizeChartDetailSearch(CmsBtSizeChartModel cmsBtSizeChartModel) {
         StringBuilder sbQuery = new StringBuilder();
-        sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartName()));
+        sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartId()));
         sbQuery.append(",");
         sbQuery.append(MongoUtils.splicingValue("channelId", cmsBtSizeChartModel.getChannelId()));
         sbQuery.append(",");
