@@ -54,7 +54,22 @@ public class CmsSizeChartService extends BaseAppService {
      */
     public Map<String, Object>sizeChartSearch(String channelId,Map param) {
         Map<String, Object> data =new HashMap<>();
-        List<CmsBtSizeChartModel> sizeChartList=sizeChartService.getSizeChartSearch(channelId, param);
+        //尺码名称
+        String sizeChartName=(String) param.get("sizeChartName");
+        //尺码标志
+        String finishFlag=(String) param.get("finishFlag");
+        //更新开始时间
+        String startTime=(String) param.get("startTime");
+        //更新结束时间
+        String endTime=(String) param.get("endTime");
+        //产品品牌
+        List<String> brandNameList=(List<String>) param.get("brandNameList");
+        //产品类型
+        List<String> productTypeList=(List<String>) param.get("productTypeList");
+        //产品性别
+        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        List<CmsBtSizeChartModel> sizeChartList=sizeChartService.getSizeChartSearch(channelId
+                ,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList);
         //第一页取得前一页记录
         int staIdx;
         if((int)param.get("curr") ==1){
@@ -81,7 +96,9 @@ public class CmsSizeChartService extends BaseAppService {
      * @return data
      */
     public void sizeChartUpdate(String channelId,Map param) {
-        sizeChartService.sizeChartUpdate(channelId,param);
+        //取得自增键
+        int sizeChartId=(int) param.get("sizeChartId");
+        sizeChartService.sizeChartUpdate(channelId,sizeChartId);
     }
 
     /**
@@ -91,8 +108,25 @@ public class CmsSizeChartService extends BaseAppService {
      * @return data
      */
     public void sizeChartEditInsert(String channelId,Map param) {
+        //用户名称
+        String userName =param.get("userName").toString();
+        //尺码名称
+        String sizeChartName=(String) param.get("sizeChartName");
+        //尺码标志
+        String finishFlag=(String) param.get("finishFlag");
+        //更新开始时间
+        String startTime=(String) param.get("startTime");
+        //更新结束时间
+        String endTime=(String) param.get("endTime");
+        //产品品牌
+        List<String> brandNameList=(List<String>) param.get("brandNameList");
+        //产品类型
+        List<String> productTypeList=(List<String>) param.get("productTypeList");
+        //产品性别
+        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
         //插入数据库
-        sizeChartService.insert(channelId,param);
+        sizeChartService.insert(channelId
+                ,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList);
     }
     /**
      * 尺码关系一览编辑详情编辑画面
@@ -101,7 +135,26 @@ public class CmsSizeChartService extends BaseAppService {
      * @return data
      */
     public void sizeChartDetailUpdate(String channelId,Map param) {
+        String sizeChartId =param.get("sizeChartId").toString();
+        //用户名称
+        String userName =param.get("userName").toString();
+        //尺码名称
+        String sizeChartName=(String) param.get("sizeChartName");
+        //尺码标志
+        String finishFlag=(String) param.get("finishFlag");
+        //更新开始时间
+        String startTime=(String) param.get("startTime");
+        //更新结束时间
+        String endTime=(String) param.get("endTime");
+        //产品品牌
+        List<String> brandNameList=(List<String>) param.get("brandNameList");
+        //产品类型
+        List<String> productTypeList=(List<String>) param.get("productTypeList");
+        //产品性别
+        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        List<String> sizeMapList=(List<String>) param.get("sizeMap");
         //插入数据库
-        sizeChartService.sizeChartDetailUpdate(channelId,param);
+        sizeChartService.sizeChartDetailUpdate(channelId,
+                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMapList);
     }
 }
