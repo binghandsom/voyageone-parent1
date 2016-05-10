@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.SheetUtil;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -43,7 +44,7 @@ public class ExportResponseExcelUtil {
             sheetSize = 65535;
         }
         //创建工作簿并发送到OutputStream指定的地方
-        HSSFWorkbook wwb;
+        HSSFWorkbook wwb = null;
         try {
             wwb = new HSSFWorkbook();
 
@@ -72,6 +73,13 @@ public class ExportResponseExcelUtil {
                 //否则将其它异常包装成ExcelException再抛出
             } else {
                 throw new ExcelException("导出Excel失败");
+            }
+        } finally {
+            if (wwb != null) {
+                try {
+                    wwb.close();
+                } catch (IOException ignored) {
+                }
             }
         }
 
