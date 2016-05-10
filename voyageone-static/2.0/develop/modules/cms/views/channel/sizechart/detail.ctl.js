@@ -19,7 +19,7 @@ define([
 
         function sizeChartTr(){
             this.originSize = "";
-            this.plateFormSize = "";
+            this.adjustSize = "";
             this.usual = false;
         };
 
@@ -29,10 +29,10 @@ define([
                 $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
             });
             sizeChartService.init().then(function(resp){
-                $scope.vm.brandNameList = _.pluck(resp.data.brandNameList,"value");
-                $scope.vm.productTypeList = _.pluck(resp.data.productTypeList,"value");
-                $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList,"value");
-                $scope.vm.importList = resp.data.sizeMap;
+                $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
+                $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
+                $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList,"value");
+                $scope.vm.importList = resp.data.sizeMap == null ?[]:resp.data.sizeMap;
             });
 
         };
@@ -96,7 +96,7 @@ define([
                              obj.originSize = result[i].value;
                              break;
                          case 1:
-                             obj.plateFormSize = result[i].value;
+                             obj.adjustSize = result[i].value;
                              break;
                          case 2:
                              obj.usual = result[i].value == 1?true:false;
