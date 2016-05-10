@@ -145,7 +145,7 @@ define([
                     .then(function (mainCategorySchema) {
                         var fields = _.clone(mainCategorySchema.fields);
                         if (withSku) fields.push(mainCategorySchema.sku);
-                        return this.$searchProperty(fields, propertyId);
+                        return this.searchProperty(fields, propertyId);
                     }.bind(this));
             },
 
@@ -155,7 +155,7 @@ define([
              * @param {string} propertyId 属性 ID
              * @returns {Field[]}
              */
-            $searchProperty: function (properties, propertyId) {
+            searchProperty: function (properties, propertyId) {
 
                 var result = null;
 
@@ -172,7 +172,7 @@ define([
                         return true;
 
                     // 在子属性内查找
-                    var childResult = this.$searchProperty(property.fields, propertyId);
+                    var childResult = this.searchProperty(property.fields, propertyId);
 
                     // 子属性没找到, 继续下一个
                     if (!childResult) return true;
