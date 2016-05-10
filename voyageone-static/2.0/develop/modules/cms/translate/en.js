@@ -423,6 +423,9 @@ define(function() {
         "TXT_IMAGE_GROUP_ADD":"Image Group Add",
         "TXT_COMMON_IMAGE_SET":"Common Image Set",
         "TXT_ORIGIN_IMAGE":"Origin Image",
+        "TXT_MSG_DO_REFRESH_IMAGE": "Do you want refresh image",
+        "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
+        "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
 
 
 
