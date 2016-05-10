@@ -12,6 +12,10 @@
     }
     $Ajax.prototype.post = function(url, data) {
         var defer = this.$q.defer();
+        if(data===undefined)
+        {
+            data={};
+        }
         this.$http.post(url, data).then(function(response) {
             var res = response.data;
             if (!res) {
@@ -36,6 +40,10 @@
     }
     AjaxService.prototype.post = function(url, data) {
         var defer = this.$q.defer();
+        if(data===undefined)
+        {
+            data={};
+        }
         this.$ajax.post(url, data).then(function(res) {
             // 成功
             defer.resolve(res);
