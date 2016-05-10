@@ -70,6 +70,7 @@ define([
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success("添加成功！");
+                //获取保存后的当前对象
                 sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
                     $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                     $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
