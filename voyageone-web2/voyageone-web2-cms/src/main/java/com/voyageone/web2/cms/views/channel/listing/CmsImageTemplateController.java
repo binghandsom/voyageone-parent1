@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.channel.listing;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.impl.cms.CmsImageTemplateService;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -58,13 +59,13 @@ public class CmsImageTemplateController extends CmsController {
     /**
      * 新加ImageTemplate信息
      *
-     * @param param 客户端参数
+     * @param model 客户端参数
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
-    public AjaxResponse save(@RequestBody Map<String, Object> param) {
-        param.put("channelId", this.getUser().getSelChannelId());
-        service.save(param);
+    public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
+        model.setChannelId(this.getUser().getSelChannelId());
+       service.save(model,this.getUser().getUserName());
         return success(null);
     }
     /**

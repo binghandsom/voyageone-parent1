@@ -38,9 +38,9 @@ public class CmsImageTemplateService extends BaseService {
     @Autowired
     private CmsBtImageTemplateDao dao;
 
-    public void save(CmsBtImageTemplateModel model) {
-        dao.insert(model);
-    }
+//    public void save(CmsBtImageTemplateModel model) {
+//        dao.insert(model);
+//    }
 
     public void update(CmsBtImageTemplateModel model) {
         dao.update(model);
@@ -213,42 +213,33 @@ public class CmsImageTemplateService extends BaseService {
         return "{" + result.toString() + "}";
     }
 
+    public boolean isNull(List list) {
+        return list == null || list.size() == 0;
+    }
     /**
      * 新加/编辑ImageGroup信息
      *
-     * @param param 客户端参数
+     * @param model 客户端参数
      * @return 检索结果
      */
-    public void save(Map<String, Object> param) {
-        CmsBtImageTemplateModel model = new CmsBtImageTemplateModel();
-        model.setChannelId((String)param.get("channelId"));
-        model.setCartId(Integer.parseInt((String)param.get("platform")));
-        model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
-        model.setImageTemplateName((String)param.get("imageTemplateName"));
-        model.setViewType(Integer.parseInt((String)param.get("viewType")));
-        if (((List)param.get("brandName")).size() == 0) {
+    public void save(CmsBtImageTemplateModel model,String userName) {
+        if (isNull(model.getBrandName())) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setBrandName(lst);
-        } else {
-            model.setBrandName((List) param.get("brandName"));
         }
-        if (((List)param.get("productType")).size() == 0) {
+        if (isNull(model.getProductType())) {
             List lst = new ArrayList<String>();
             lst.add("All");
-            model.setProductType(lst);
-        } else {
-            model.setProductType((List) param.get("productType"));
+            model.setBrandName(lst);
         }
-        if (((List)param.get("sizeType")).size() == 0) {
+        if (isNull(model.getSizeType())) {
             List lst = new ArrayList<String>();
             lst.add("All");
-            model.setSizeType(lst);
-        } else {
-            model.setSizeType((List) param.get("sizeType"));
+            model.setBrandName(lst);
         }
         model.setActive(1);
-        save(model);
+        dao.insert(model);
     }
 
     /**
