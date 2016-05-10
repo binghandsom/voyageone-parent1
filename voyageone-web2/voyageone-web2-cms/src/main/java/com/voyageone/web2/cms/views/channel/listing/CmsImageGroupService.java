@@ -35,9 +35,6 @@ public class CmsImageGroupService extends BaseAppService {
     @Autowired
     private ImageGroupService imageGroupService;
 
-    @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
-
     /**
      * 取得检索条件信息
      *
@@ -130,12 +127,11 @@ public class CmsImageGroupService extends BaseAppService {
     }
 
     /**
-     * 检索结果转换
+     * 检索结果编辑
      *
      * @param bean 检索结果（Bean）
      * @param channelId 渠道id
      * @param lang 语言
-     * @return 检索结果（Bean）
      */
     private void editImageGroupBean(CmsBtImageGroupBean bean, String channelId, String lang) {
         if ("cn".equals(lang)) {
@@ -214,10 +210,9 @@ public class CmsImageGroupService extends BaseAppService {
     }
 
     /**
-     * 新加ImageGroup信息
+     * 新建ImageGroup信息
      *
      * @param param 客户端参数
-     * @return 检索结果
      */
     public void save(Map<String, Object> param) {
         String channelId = (String)param.get("channelId");
@@ -244,7 +239,6 @@ public class CmsImageGroupService extends BaseAppService {
      * 逻辑删除ImageGroup信息
      *
      * @param param 客户端参数
-     * @return 检索结果
      */
     public void delete(Map<String, Object> param) {
         String userName = (String)param.get("userName");

@@ -376,7 +376,8 @@
         "getPage": "getPage",
         "getCount": "getCount",
         "save": "save",
-        "delete": "delete"
+        "delete": "delete",
+        "get":"get"
        },
       "imageGroupService": {
         "root": "/cms/channel/image_group",
