@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,7 @@ public class SizeChartService extends BaseService {
         //标志位
         cmsBtSizeChartModel.setActive(Integer.valueOf("0"));
         //尺码关系一览检索
-        cmsBtSizeChartDao.sizeChartUpdate(channelId,cmsBtSizeChartModel);
+        cmsBtSizeChartDao.sizeChartUpdate(cmsBtSizeChartModel);
     }
 
     /**
@@ -163,7 +164,7 @@ public class SizeChartService extends BaseService {
      * @param sizeMapList
      */
     public void sizeChartDetailUpdate(String channelId, String userName,String sizeChartId, String sizeChartName, String finishFlag
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, List<String> sizeMapList){
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, List<CmsBtSizeChartModelSizeMap> sizeMapList){
         //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
         //更新者
@@ -192,11 +193,12 @@ public class SizeChartService extends BaseService {
         }
         //尺码表
         if(sizeMapList.size()>0) {
-            cmsBtSizeChartModel.setSizeType(sizeMapList);
+            cmsBtSizeChartModel.setSizeMap(sizeMapList);
         }
         //是否逻辑删除
         cmsBtSizeChartModel.setActive(0);
-        //跟据尺码关系一览编辑详情编辑的数据插入数据库
-        cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
+
+        //跟据尺码关系一览编辑详情编辑的数据更新数据库
+         cmsBtSizeChartDao.sizeChartDetailUpdate(cmsBtSizeChartModel);
     }
 }
