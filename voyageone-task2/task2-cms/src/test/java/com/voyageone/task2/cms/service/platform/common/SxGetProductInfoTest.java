@@ -7,10 +7,9 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.modelbean.DictWordBean;
@@ -762,6 +761,32 @@ public class SxGetProductInfoTest {
 
         // 店铺种类
         System.out.println(builder.toString());
+
+    }
+
+    @Test
+    public void testJdPriceSection() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+
+        SxData sxData = new SxData();
+        sxData.setMaxPrice(499D);
+
+        SingleCheckField field = new SingleCheckField();
+        field.setId("13479");
+        field.setName("价格");
+        field.addOption("0-99元", "178345");
+        field.addOption(" 100-199  ", "178346");
+        field.addOption(" 200-299", "178347");
+        field.addOption(" 300-499 ", "178348");
+        field.addOption("500元以上", "178349");
+
+        boolean blnRet = sxProductService.resolveJdPriceSection_before(shopBean, field);
+        System.out.println(blnRet);
+
+        Map<String, Field> mapRet = sxProductService.resolveJdPriceSection(field, sxData);
+        Value value = (Value)mapRet.get(field.getId()).getValue();
+        System.out.println(value.getValue());
 
     }
 
