@@ -12,7 +12,7 @@
         WHERE
             cart_id = #{cartId}
             AND channel_id = #{channelId}
-            AND group_id = #{groupId}
+            AND search_id = #{groupId}
     </select>
 
     <!-- insert the image url -->
@@ -23,7 +23,7 @@
             channel_id,
             search_id,
             original_img_url,
-            platform_image_url,
+            platform_img_url,
             created,
             creater,
             modified,

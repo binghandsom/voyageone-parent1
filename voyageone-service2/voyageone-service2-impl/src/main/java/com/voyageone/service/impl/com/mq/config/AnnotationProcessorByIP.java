@@ -31,6 +31,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.*;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
 import org.springframework.core.Ordered;
@@ -95,6 +96,8 @@ public class AnnotationProcessorByIP
         this.amqpAdmin = amqpAdmin;
     }
 
+    @Autowired
+    private MqDisAllowConsumerIpConfig mqDisAllowConsumerIpConfig;
 
     @Override
     public int getOrder() {
@@ -199,6 +202,16 @@ public class AnnotationProcessorByIP
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
         final RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
+
+        /**
+         * mq 不允许消费的ip过滤
+         */
+        if(classLevelListener != null&&!StringUtils.isEmpty(classLevelListener.queues())){
+            Map<String,List<String>> mqDisallowConsumerIpMap=mqDisAllowConsumerIpConfig.getMqDisallowConsumerIpMap();
+            for(String queue:classLevelListener.queues())
+                if(mqDisallowConsumerIpMap.containsKey(queue)&&mqDisallowConsumerIpMap.get(queue).contains(MQConfigUtils.getIP()))
+                    return bean;
+        }
         /**
          * add VOMQRunnable aooer start
          */
@@ -297,7 +310,7 @@ public class AnnotationProcessorByIP
                                  Object adminTarget, String beanName) {
         endpoint.setBean(bean);
         endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
-        endpoint.setId(getEndpointId(rabbitListener));
+        endpoint.setId(AopUtils.getTargetClass(bean).getName());
 
         /**
          * add ip to quenes key aooer start

@@ -4,43 +4,61 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,systemCategoryService) {
+    function sizeChartController($scope,sizeChartService,confirm,notify) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
-            finishFlag:[{name:'',value:'all'},{name:'yes',value:'1'},{name:'no',value:'0'}],
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[],
-            sizeChartPageOption : {curr: 1, total: 198, size: 30, fetch: search}
+            sizeChartPageOption : {curr: 1, total: 0, fetch: search},
+            search:search
         };
 
         $scope.initialize  = function () {
-            //search();
+            sizeChartService.init().then(function(resp){
+               $scope.vm.brandNameList = resp.data.brandNameList;
+               $scope.vm.productTypeList = resp.data.productTypeList;
+               $scope.vm.sizeTypeList = resp.data.sizeTypeList;
+            });
+            search();
         };
 
         $scope.search = search;
 
+        /**
+         * 检索
+         */
+        function search() {
+            var data = $scope.vm.sizeChartPageOption;
+            _.extend(data ,$scope.vm.searchInfo);
+            sizeChartService.search(data).then(function(reps){
+                $scope.vm.sizeChartList = reps.data.sizeChartList;
+                $scope.vm.sizeChartPageOption.total = reps.data.total;
+            });
+        }
+
+        /**
+         * 清空操作
+         */
         $scope.clear = function () {
-            $scope.vm.searchInfo = {catName: "", catId: ""};
+            $scope.vm.searchInfo  = {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]};
         };
 
-        function search() {
-            console.log("搜索条件",$scope.vm.searchInfo);
-/*            systemCategoryService.getCategoryList({
-                "catName":$scope.vm.searchInfo.catName,
-                "catId": $scope.vm.searchInfo.catId,
-                "skip": ($scope.categoryPageOption.curr - 1) * $scope.categoryPageOption.size,
-                "limit": $scope.categoryPageOption.size
-            }).then(function (res) {
-                $scope.categoryPageOption.total = res.data.total;
-                $scope.vm.categoryList = res.data.resultData;
-            }, function (err) {
-
-            })*/
+        /**
+         * 删除尺码表操作
+         */
+        $scope.deleteRow = function(sizeChartId){
+            confirm("确认要删除该尺码表吗？").result.then(function () {
+                sizeChartService.delete({sizeChartId:sizeChartId}).then(function(reps){
+                    notify.success ("删除成功！");
+                    search();
+                });
+            });
         }
+
     }
 
-    sizeChartController.$inject = ['$scope', 'systemCategoryService'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify'];
     return sizeChartController;
 });

@@ -37,7 +37,8 @@
             curr: 1,
             total: 0,
             size: 20,
-            showPageNo: 5
+            showPageNo: 5,
+            fetch:null
         };
         return {
             restrict: "AE",
@@ -54,6 +55,14 @@
                 // 将用户配置覆盖到默认配置后，在重新覆盖到用户配置上，用于补全配置属性
                 var userWithDefConfig = angular.extend({}, defConfig, userConfig);
                 scope.config = angular.extend(userConfig, userWithDefConfig);
+                scope.config.setPageIndex=function(pageIndex) {
+                    if (scope.config.curr == pageIndex) {
+                        scope.config.fetch(scope.config.curr, scope.config.size);
+                    }
+                    else {
+                        scope.goPage(pageIndex);
+                    }
+                };
                 var p = new vpagination(scope.config);
                 // 监视配置变动
                 scope.$parent.$watch(userConfigName, function() {

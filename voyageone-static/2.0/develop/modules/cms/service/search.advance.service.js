@@ -206,12 +206,12 @@ define([
                 //groupInfo.inventoryDetail = _setInventoryDetail(groupInfo.skus);
 
                 // 设置price detail
-                groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups);
+                groupInfo.groupBean.priceDetail = _setPriceDetail(groupInfo.groupBean);
 
-                groupInfo.groups.priceSale = _setPriceSale(groupInfo.groups);
+                groupInfo.groupBean.priceSale = _setPriceSale(groupInfo.groupBean);
 
                 // 设置time detail
-                groupInfo.groups.timeDetail = _setTimeDetail(groupInfo);
+                groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
 
                 groupInfo.grpImgList = data.grpImgList[index];
 
@@ -266,7 +266,7 @@ define([
                 productInfo.priceSale = _setPriceSale(productInfo.fields);
 
                 // 设置time detail
-                productInfo.groups.timeDetail = _setTimeDetail(productInfo);
+                productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 
                 productInfo._prodChgInfo = data.prodChgInfoList[index];
                 productInfo._prodOrgChaName = data.prodOrgChaNameList[index];
@@ -301,7 +301,9 @@ define([
             _.forEach(skus, function (sku) {
                 var cartInfo = "";
                 _.forEach(sku.skuCarts, function (skuCart) {
-                    cartInfo += Carts.valueOf(parseInt(skuCart)).name + ",";
+                    var CartInfo = Carts.valueOf(parseInt(skuCart));
+                    if (!_.isUndefined(CartInfo))
+                        cartInfo += CartInfo.name + ",";
                 });
                 result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
             });
@@ -377,7 +379,7 @@ define([
             if(!_.isEmpty(product.created))
                 result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
-            var platforms = product.groups;
+            var platforms = product.groupBean;
             if(!_.isEmpty(platforms.publishTime))
                 result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 

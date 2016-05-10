@@ -560,6 +560,43 @@ public interface CmsUrlConstants {
             String DEL_CHANNEL_TAG = "delTag";
             String GET_TAG_LIST = "getTagList";
         }
+        interface CHANNEL_IMAGE_GROUP {
+            String ROOT="/cms/channel/image_group";
+            String INIT_CHANNEL_IMAGE_GROUP = "init";
+            String SEARCH_CHANNEL_IMAGE_GROUP = "search";
+            String SAVE_CHANNEL_IMAGE_GROUP = "save";
+            String DELETE_CHANNEL_IMAGE_GROUP = "delete";
+        }
+        interface CHANNEL_IMAGE_TEMPLATE {
+            String ROOT = "/cms/channel/image_template";
+            String Init = "init";
+            String GetPage = "getPage";
+            String GetCount = "getCount";
+            String Save = "save";
+            String Delete = "delete";
+        }
+        interface CHANNEL_IMAGE_GROUP_DETAIL {
+            String ROOT="/cms/channel/image_group_detail";
+            String INIT_CHANNEL_IMAGE_GROUP_DETAIL = "init";
+            String SAVE_CHANNEL_IMAGE_GROUP_DETAIL = "save";
+            String SEARCH_CHANNEL_IMAGE_GROUP_DETAIL = "search";
+            String SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveUploadImage";
+            String SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveImage";
+            String DELETE_CHANNEL_IMAGE_GROUP_DETAIL = "delete";
+            String REFRESH_CHANNEL_IMAGE_GROUP_DETAIL = "refresh";
+            String MOVE_CHANNEL_IMAGE_GROUP_DETAIL = "move";
+        }
+        interface LISTING{
+            interface SIZE_CHART{
+                String ROOT="/cms/channel/sizeChartList";
+                String INIT_SIZE_CHART = "sizeChartInit";
+                String DELETE_SIZE_CHART="sizeChartDelete";
+                String SEARCH_SIZE_CHART = "sizeChartSearch";
+                String SAVE_EDIT_SIZE_CHART="sizeChartEditSave";
+                String SEARCH_DETAIL_SIZE_CHART="sizeChartDetailSearch";
+                String SAVE_DETAIL_SIZE_CHART="sizeChartDetailSave";
+            }
+        }
 
     }
 

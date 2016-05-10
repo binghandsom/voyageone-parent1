@@ -7,7 +7,7 @@ import com.voyageone.service.bean.cms.DictionaryMasterPropBean;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.impl.cms.CustomWordService;
 import com.voyageone.service.impl.cms.DictService;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.enums.DictionaryMasterProp;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -39,9 +39,9 @@ public class CmsDictManageService extends BaseAppService {
     /**
      * 获取渠道所有字典的简单信息
      */
-    public CmsMtPlatFormDictModel getDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel, UserSessionBean user) {
-        cmsMtPlatFormDictModel.setOrderChannelId(user.getSelChannelId());
-        return dictService.getDict(cmsMtPlatFormDictModel);
+    public CmsMtPlatformDictModel getDict(CmsMtPlatformDictModel cmsMtPlatformDictModel, UserSessionBean user) {
+        cmsMtPlatformDictModel.setOrderChannelId(user.getSelChannelId());
+        return dictService.getDict(cmsMtPlatformDictModel);
     }
 
     /**
@@ -75,16 +75,16 @@ public class CmsDictManageService extends BaseAppService {
     /**
      * 添加一个字典项
      *
-     * @param cmsMtPlatFormDictModel 字典项
+     * @param cmsMtPlatformDictModel 字典项
      * @param user           当前用户
      * @return 更新的字典项
      */
-    public void addDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel, UserSessionBean user) {
-        cmsMtPlatFormDictModel.setOrderChannelId(user.getSelChannelId());
-        cmsMtPlatFormDictModel.setCreater(user.getUserName());
-        cmsMtPlatFormDictModel.setModifier(user.getUserName());
+    public void addDict(CmsMtPlatformDictModel cmsMtPlatformDictModel, UserSessionBean user) {
+        cmsMtPlatformDictModel.setOrderChannelId(user.getSelChannelId());
+        cmsMtPlatformDictModel.setCreater(user.getUserName());
+        cmsMtPlatformDictModel.setModifier(user.getUserName());
 
-        if (dictService.addDict(cmsMtPlatFormDictModel) < 1) {
+        if (dictService.addDict(cmsMtPlatformDictModel) < 1) {
             // TODO 以后所有的异常msg统一修改
             throw new BusinessException("插入一条新的字典数据失败!");
         }
@@ -93,26 +93,26 @@ public class CmsDictManageService extends BaseAppService {
     /**
      * 删除一个字典项
      *
-     * @param cmsMtPlatFormDictModel 字典项
+     * @param cmsMtPlatformDictModel 字典项
      * @return 更新结果
      */
-    public int delDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel, UserSessionBean userInfo) {
-        cmsMtPlatFormDictModel.setOrderChannelId(userInfo.getSelChannelId());
-        cmsMtPlatFormDictModel.setModifier(userInfo.getUserName());
-        return dictService.removeDict(cmsMtPlatFormDictModel);
+    public int delDict(CmsMtPlatformDictModel cmsMtPlatformDictModel, UserSessionBean userInfo) {
+        cmsMtPlatformDictModel.setOrderChannelId(userInfo.getSelChannelId());
+        cmsMtPlatformDictModel.setModifier(userInfo.getUserName());
+        return dictService.removeDict(cmsMtPlatformDictModel);
     }
 
     /**
      * 更新一个字典项
      *
-     * @param cmsMtPlatFormDictModel 字典项
+     * @param cmsMtPlatformDictModel 字典项
      * @param user         当前用户
      * @return 更新结果
      */
-    public int setDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel, UserSessionBean user) {
-        cmsMtPlatFormDictModel.setOrderChannelId(user.getSelChannelId());
-        cmsMtPlatFormDictModel.setModifier(user.getUserName());
-        return dictService.saveDict(cmsMtPlatFormDictModel);
+    public int setDict(CmsMtPlatformDictModel cmsMtPlatformDictModel, UserSessionBean user) {
+        cmsMtPlatformDictModel.setOrderChannelId(user.getSelChannelId());
+        cmsMtPlatformDictModel.setModifier(user.getUserName());
+        return dictService.saveDict(cmsMtPlatformDictModel);
     }
 
     /**

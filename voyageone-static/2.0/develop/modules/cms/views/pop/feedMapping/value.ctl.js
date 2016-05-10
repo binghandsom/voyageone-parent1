@@ -26,7 +26,7 @@ define([
              * 当前处理的主类目属性
              * @type {Field}
              */
-            this.field = context.field;
+            this.field = angular.copy(context.field);
             /**
              * feed 类目的所有属性
              * @type {object[]}
@@ -133,10 +133,6 @@ define([
                     return;
                 }
 
-                // value 会保存在 field 中. 取出后,需要清空
-                ttt.field.value = null;
-                ttt.field.values = null;
-                
                 ttt.$uibModalInstance.close({
                     type: type,
                     val: value,
@@ -144,8 +140,6 @@ define([
                 });
             },
             cancel: function () {
-                this.field.value = null;
-                this.field.values = null;
                 this.$uibModalInstance.dismiss();
             }
         };

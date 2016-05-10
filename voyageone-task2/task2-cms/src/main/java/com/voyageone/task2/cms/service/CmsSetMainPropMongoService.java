@@ -222,7 +222,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                         && !StringUtils.isEmpty(typeChannelBean.getName())
                                         && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
                                 ) {
-                            mapBrandMapping.put(typeChannelBean.getAdd_name1(), typeChannelBean.getName());
+                            // key忽略大小写(feed进来的brand不区分大小写)
+                            mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase(), typeChannelBean.getName());
                         }
                     }
                 }
@@ -469,8 +470,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 品牌
             if (newFlg || (!newFlg && StringUtils.isEmpty(productField.getBrand()))) {
-                if (mapBrandMapping.containsKey(feed.getBrand())) {
-                    field.setBrand(mapBrandMapping.get(feed.getBrand()));
+                if (mapBrandMapping.containsKey(feed.getBrand().toLowerCase())) {
+                    field.setBrand(mapBrandMapping.get(feed.getBrand().toLowerCase()));
                 } else {
                     $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
@@ -593,21 +594,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
-                List<Map<String, Object>> multiComplex = new LinkedList<>();
+                if (newFlg) {
+                    List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                List<String> lstImageOrg = feed.getImage();
-                if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                    for (String imgOrg : lstImageOrg) {
-                        Map<String, Object> multiComplexChildren = new HashMap<>();
-                        // jeff 2016/04 change start
-                        // multiComplexChildren.put("image1", imgOrg);
-                        multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
-                        // jeff 2016/04 add end
-                        multiComplex.add(multiComplexChildren);
+                    List<String> lstImageOrg = feed.getImage();
+                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                        for (String imgOrg : lstImageOrg) {
+                            Map<String, Object> multiComplexChildren = new HashMap<>();
+                            // jeff 2016/04 change start
+                            // multiComplexChildren.put("image1", imgOrg);
+                            multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                            // jeff 2016/04 add end
+                            multiComplex.add(multiComplexChildren);
+                        }
                     }
-                }
 
-                field.put("images1", multiComplex);
+                    field.put("images1", multiComplex);
+                }
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
@@ -628,8 +631,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
 
                     break;
-                case "012":
-                    break;
+                default:
+                    // 产品分类
+                    field.setProductType(feed.getProductType());
+                    // 适用人群
+                    field.setSizeType(feed.getSizeType());
             }
             // jeff 2016/04 change end
 
@@ -940,6 +946,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping) {
 
+            // jeff 2016/05 add start
+            boolean numIdNoSet = doSetGroup(feed);
+            if (numIdNoSet) {
+                String catPath = mapping.getMainCategoryPath();
+                product.setCatId(MD5.getMD5(catPath)); // 主类目id
+                product.setCatPath(catPath); // 主类目path
+            }
+            // jeff 2016/04 add end
+
             // 注意: 价格是在外面共通方法更新的, 这里不需要更新
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
@@ -1019,7 +1034,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/04 change start
 //            CmsBtProductGroupModel group = doSetGroup(feed, product);
 //            product.setGroups(group);
-            doSetGroup(feed);
+//            doSetGroup(feed);
             // jeff 2016/04 change end
 
             // TOM 20160413 这是一个错误, 这段话不应该要的 START
@@ -1037,20 +1052,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * 设置group
          *
          * @param feed 品牌方提供的数据
-         * @return 设置好了的group
+         * @return NumID是否都是空 1：是 2：否
          */
         // jeff 2016/04 change start
         // private CmsBtProductGroupModel doSetGroup(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
-        private void doSetGroup(CmsBtFeedInfoModel feed) {
+//        private void doSetGroup(CmsBtFeedInfoModel feed) {
+        private boolean doSetGroup(CmsBtFeedInfoModel feed) {
 //            CmsBtProductGroupModel group = product.getGroups();
 //            if (group == null) {
 //                group = new CmsBtProductGroupModel();
 //            }
 
+            boolean result = true;
+
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
-                return;
+                return result;
             }
 
             // 根据code, 到group表中去查找所有的group信息
@@ -1063,6 +1081,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 for (CmsBtProductGroupModel group : existGroups) {
                     if (group.getCartId() == Integer.parseInt(shop.getValue())) {
                         blnFound = true;
+                        // NumId有值
+                        if (!StringUtils.isEmpty(group.getNumIId())) {
+                            result = false;
+                        }
                     }
                 }
                 if (blnFound) {
@@ -1137,6 +1159,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
 
             }
+
+            return result;
         }
 
         // jeff 2016/04 change end
@@ -1276,7 +1300,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (oldImages.size() > 0) {
                     // 取得图片名最后一部分中的索引的最大值 + 1
                     try {
-                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
+                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 && StringUtils.isDigit(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))
+                                ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
                     } catch (Exception ex) {
                         $error(ex);
                         throw new RuntimeException("ImageName Parse Fail!", ex);
@@ -1290,7 +1315,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
-                String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+                String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
                 cmsBtImageDaoExt.insertImages(newModel);

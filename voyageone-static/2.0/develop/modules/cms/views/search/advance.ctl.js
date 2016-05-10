@@ -16,7 +16,8 @@ define([
                 brand: null,
                 tags:[],
                 priceChgFlg: '0',
-                priceDiffFlg: '0'
+                priceDiffFlg: '0',
+                tagTypeSelectValue: '0'
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -82,9 +83,10 @@ define([
                 brand: null,
                 tags:[],
                 priceChgFlg: '0',
-                priceDiffFlg: '0'
+                priceDiffFlg: '0',
+                tagTypeSelectValue: '0'
             };
-            $scope.vm.tagTypeSelectValue = '';
+            $scope.vm.masterData.tagList = [];
             $scope.vm.custAttrList = [{ inputVal: "", inputOpts: "" }];
         }
 
@@ -160,6 +162,10 @@ define([
 
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
+                for (idx in res.data.freeTagsList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj._freeTagsInfo = res.data.freeTagsList[idx];
+                }
 
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
@@ -247,6 +253,10 @@ define([
                 //    prodObj._prodChgInfo = res.data.prodChgInfoList[idx];
                 //    prodObj._prodOrgChaName = res.data.prodOrgChaNameList[idx];
                 //}
+                for (idx in res.data.freeTagsList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj._freeTagsInfo = res.data.freeTagsList[idx];
+                }
             });
         }
 
@@ -381,11 +391,11 @@ define([
          * 查询指定标签类型下的所有标签(list形式)
          */
         function getTagList () {
-            if ($scope.vm.tagTypeSelectValue == '') {
+            if ($scope.vm.searchInfo.tagTypeSelectValue == '0' || $scope.vm.searchInfo.tagTypeSelectValue == '' || $scope.vm.searchInfo.tagTypeSelectValue == undefined) {
                 $scope.vm.masterData.tagList = [];
                 return;
             }
-            channelTagService.getTagList({'tagTypeSelectValue':$scope.vm.tagTypeSelectValue})
+            channelTagService.getTagList({'tagTypeSelectValue':$scope.vm.searchInfo.tagTypeSelectValue})
                 .then(function (res) {
                     $scope.vm.masterData.tagList = res.data;
                 });
@@ -424,6 +434,7 @@ define([
                 return;
             }
         }
+
     };
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];

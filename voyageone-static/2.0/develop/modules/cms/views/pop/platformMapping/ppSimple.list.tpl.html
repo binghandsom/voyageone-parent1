@@ -29,7 +29,7 @@
                 <tbody>
                 <tr ng-repeat="ruleWord in ctrl.ruleWords" ng-init="endLine = ctrl.lineEnds[$index]">
                     <td>{{ruleWord.type}}</td>
-                    <td>{{ruleWord.value}}</td>
+                    <td>{{ctrl.value(ruleWord)}}</td>
                     <td class="form-inline">
                         <label><input type="radio"
                                       ng-change="ctrl.updateLineEnd($index)"

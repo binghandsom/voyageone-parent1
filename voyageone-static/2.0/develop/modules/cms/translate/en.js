@@ -163,6 +163,8 @@ define(function() {
         "TXT_COMMENT": "Comment",
         "TXT_UPDATE_BY": "Update By",
         "TXT_PRODUCT_DETAIL": "Product Detail",
+        "TXT_PRICE": "Price",
+        "TXT_PRICE_TYPE": "Price Type",
         "TXT_PRICE_HISTORY": "Price History",
         "TXT_IS_FIX_TRANSLATED": "Is Translation?",
         "TXT_PRODUCT_CODE": "Product Code",
@@ -402,6 +404,28 @@ define(function() {
         "TXT_SEPARATE":"Separate",
         "TXT_SHARE":"Share",
         "TXT_SEPARATE_NEW_TASK":"New Separate Task",
+        "TXT_IMAGE_TYPE":"Image Type",
+        "TXT_SIZE_CHART_IMAGE": "Size Chart Image",
+        "TXT_BRAND_STORY_IMAGE": "Brand Story Image",
+        "TXT_SHIPPING_DESCRIPTION_IMAGE": "Shipping Description Image",
+        "TXT_IMAGE_GROUP_LIST":"Image Group List",
+        "TXT_RELATED_BRAND_NAME":"Related Brand Name",
+        "TXT_RELATED_PRODUCT_TYPE":"Related Product Type",
+        "TXT_RELATED_SIZE_TYPE":"Related Size Type",
+        "TXT_IMAGE_GROUP_NAME":"Image Group Name",
+        "TXT_VIEW_TYPE":"View Type",
+        "TXT_IMAGE_COUNT":"Image Count",
+        "TXT_IMAGE_DETAIL":"Image Detail",
+        "TXT_IMAGE":"Image",
+        "TXT_ORIGIN_URL":"Origin Url",
+        "TXT_PLATFORM_URL":"Platform Url",
+        "TXT_SEQUENCE":"Sequence",
+        "TXT_IMAGE_GROUP_ADD":"Image Group Add",
+        "TXT_COMMON_IMAGE_SET":"Common Image Set",
+        "TXT_ORIGIN_IMAGE":"Origin Image",
+
+
+
 
 
         "BTN_CREATE_TASK": "New Task",

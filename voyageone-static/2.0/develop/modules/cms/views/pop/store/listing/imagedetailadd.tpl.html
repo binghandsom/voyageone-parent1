@@ -1,37 +1,31 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;Common Image Set</h5>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_COMMON_IMAGE_SET' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" id="uploadForm">
             <div class="form-group">
-                <label class="col-sm-3 control-label">Image Name</label>
-                <div class="col-sm-7">
-                    <input type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Origin Image</label>
+                <label class="col-sm-3 control-label">{{'TXT_ORIGIN_IMAGE' | translate}}</label>
                 <div class="col-sm-7" style="margin-left: -4px;">
-                    <label class="radio-inline c-radio pull-left"><input type="radio" value="option1"><span class="fa fa-check"></span></label>
+                    <label class="radio-inline c-radio pull-left"><input name="type" type="radio" value="1" ng-model="imageType"><span class="fa fa-check"></span></label>
                     <div class="col-sm-8">
-                        <input type="file" file-style nv-file-select="" uploader="uploader" accept=".jpeg">
+                        <input type="file" file-style nv-file-select="" uploader="uploader" accept=".jpg">
                     </div>
-                    <label class="radio-inline c-radio"><input type="radio" value="option1"><span class="fa fa-check"></span> Url </label>
+                    <label class="radio-inline c-radio"><input name="type" type="radio" value="2" ng-model="imageType"><span class="fa fa-check"></span> Url </label>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">Origin Url</label>
+                <label class="col-sm-3 control-label">{{'TXT_ORIGIN_URL' | translate}}</label>
                 <div class="col-sm-7">
-                    <textarea class="form-control no-resize" ng-model="search.codesString" rows="3" placeholder="Https：//..............."></textarea>
+                    <textarea class="form-control no-resize" ng-model="originUrl" rows="3" placeholder="http://image.voyageone.com.cn/cms/..."></textarea>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="upload()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->

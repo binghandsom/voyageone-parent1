@@ -205,9 +205,12 @@
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
         where
-              parent_tag_id = #{parentTagId}
-          and tag_name = #{tagName}
-          and channel_id = #{channelId}
+            parent_tag_id = #{parentTagId}
+            <if test="tagName != null">
+                and tag_name = #{tagName}
+            </if>
+            and channel_id = #{channelId}
+            and tag.active = 1
     </select>
 
     <!-- Tag信息检索 （根据父tag_id，取得对应子TagList）-->
@@ -276,7 +279,7 @@
         channel_id = #{channelId}
         and tag_type = #{tagType}
         and tag.active=1
-        order by tag.parent_tag_id, tag.id
+        order by tag.id
     </select>
     <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
     <select id="select_one_by_tag_info" resultMap="TagMap" parameterType="String">
@@ -298,4 +301,56 @@
         where tag.parent_tag_id = #{parentTagId}
         and tag.tag_type = #{tagType}
     </select>
+
+    <!-- 检索同级别的其它Tag信息 -->
+    <select id="select_list_by_same_lvl" resultMap="TagMap">
+        select
+        tag.id,
+        tag.tag_name,
+        tag.channel_id,
+        tag.tag_path,
+        tag.tag_path_name,
+        tag.tag_type,
+        tag.tag_status,
+        tag.sort_order,
+        tag.parent_tag_id,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where
+        parent_tag_id = #{parentTagId}
+        and channel_id = #{channelId}
+        and id != #{tagId}
+        and tag.active = 1
+    </select>
+
+    <!-- 根据条件查询 -->
+    <select id="select_tagpathname_list_by_tagpath" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map" >
+        SELECT
+        tag.id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid
+        from voyageone_cms2.cms_bt_tag tag
+        WHERE
+        tag.channel_id = #{channelId}
+        and tag.active = 1
+        <if test="tagPathList != null and tagPathList.size() > 0">
+            and (tag.tag_path in
+            <foreach collection="tagPathList" item="tagPathItem" open="(" separator="," close=")">
+                #{tagPathItem}
+            </foreach>
+            )
+        </if>
+        order by tag.id
+    </select>
+
 </mapper>

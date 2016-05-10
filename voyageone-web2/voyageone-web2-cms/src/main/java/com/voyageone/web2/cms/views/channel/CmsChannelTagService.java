@@ -56,16 +56,41 @@ public class CmsChannelTagService extends BaseAppService {
         String tagTypeSelectValue = (String) param.get("tagTypeSelectValue");
         //取得所有的标签类型
         List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(channelId, tagTypeSelectValue);
+
+        //返回数据类型
+        return convertToTree(categoryList);
+    }
+
+    /**
+     * 查询指定标签类型下的所有标签(list形式)
+     *
+     * @param param Map
+     * @return List<CmsBtTagModel>
+     */
+    public List<CmsBtTagModel> getTagInfoList(Map param) {
+        // 取得所有的标签类型
+        List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
+        //返回数据类型
+        return convertToList(tagsList);
+    }
+
+    /**
+     * 将数据转换为树型结构
+     *
+     * @param valueList
+     * @return List<CmsBtTagBean>
+     */
+    public List<CmsBtTagBean> convertToTree(List<CmsBtTagBean> valueList) {
         //循环取得标签并对其进行分类
         List<CmsBtTagBean> ret = new ArrayList<>();
-        for (CmsBtTagBean each : categoryList) {
+        for (CmsBtTagBean each : valueList) {
             //取得一级标签
             if (each.getParentTagId() == 0) {
                 ret.add(each);
             }
-            for (CmsBtTagBean inner : categoryList) {
+            for (CmsBtTagBean inner : valueList) {
                 //取得子标签
-                if (each.getId() == inner.getParentTagId()) {
+                if (each.getId().intValue() == inner.getParentTagId().intValue()) {
                     if (each.getChildren() == null) {
                         //添加一个子标签
                         each.setChildren(new ArrayList<>());
@@ -93,14 +118,12 @@ public class CmsChannelTagService extends BaseAppService {
     }
 
     /**
-     * 查询指定标签类型下的所有标签(list形式)
+     * 将数据转换为list结构
      *
-     * @param param Map
+     * @param tagsList
      * @return List<CmsBtTagModel>
      */
-    public List<CmsBtTagModel> getTagInfoList(Map param) {
-        // 取得所有的标签类型
-        List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
+    public List<CmsBtTagModel> convertToList(List<CmsBtTagBean> tagsList) {
         //循环取得标签并对其进行分类
         List<CmsBtTagModel> ret = new ArrayList<>();
         tagsList.forEach(item -> ret.addAll(treeToList(item)));
@@ -163,7 +186,7 @@ public class CmsChannelTagService extends BaseAppService {
         //标签名称小于50字节
         for (CmsBtTagModel aCategoryList : categoryList) {
             if (aCategoryList.getTagPathName().equals(tagPathNameValue)) {
-                throw new BusinessException("7000080");
+                throw new BusinessException("7000081");
             }
         }
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();

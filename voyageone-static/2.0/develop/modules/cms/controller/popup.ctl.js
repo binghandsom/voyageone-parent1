@@ -3,40 +3,6 @@
  * Created by LinAn.Bin on 15/12/7.
  */
 
-/**
- * @class
- * @name Field
- * @property {string} type
- * @property {object[]} options
- * @property {object[]} rules
- * @property {string} name
- * @property {string} id
- */
-
-/**
- * @typedef {object} FieldBean
- */
-
-/**
- * Simple Mapping List 设定弹出框的上下文参数
- * @name SimpleListMappingPopupContext
- * @class
- * @property {string} platformCategoryPath 平台类目路径
- * @property {string} platformCategoryId 平台类目 ID
- * @property {string} mainCategoryId 主数据类目 ID
- * @property {Array} path
- * @property {number} cartId 平台 ID
- * @property {Field} property 平台属性
- * @property {number|null} valueIndex
- */
-
-/**
- * @name SimpleItemMappingPopupContext
- * @class
- * @extends SimpleListMappingPopupContext
- * @property {RuleWord|null} ruleWord
- */
-
 define([
     'cms',
     'underscore',
@@ -425,7 +391,7 @@ define([
                     "imagegroupadd": {
                         "templateUrl": "views/pop/store/listing/imagegroupadd.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/store/listing/imagegroupadd.ctl",
-                        "controller": 'popImageGroupAddCtl'
+                        "controller": 'popImageGroupAddCtl as ctrl'
                     },
                     "imagegroupimg": {
                         "templateUrl": "views/pop/store/listing/imagegroupimg.tpl.html",
@@ -490,7 +456,6 @@ define([
 
         /**
          * 新增属性值
-         * @type {openAddattributevalueNew}
          */
         $scope.openAddattributevaluenew = openAddattributevaluenew;
         function openAddattributevaluenew(viewSize, data) {
@@ -558,7 +523,6 @@ define([
 
         /**
          * pop出properties变更页面,用于批量更新产品属性
-         * @type {openupdateProperties}
          */
         $scope.openFieldEdit = function (selList) {
             if (selList && selList.length) {
@@ -660,6 +624,7 @@ define([
         //        }
         //    });
         //}
+        
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
@@ -1121,6 +1086,12 @@ define([
             return openModel(popActions.system.cartList, context);
         };
         /**
+         *新增店铺管理-Listing-sizechart页,新增操作弹出
+         */
+        $scope.openSizeChartAdd = function (context) {
+            return openModel(popActions.store.listing.sizechart, context);
+        };
+        /**
          * 新增店铺管理-Listing-sizechart页,设置操作弹出
          * */
         $scope.openSizeChartSetting = function (context) {
@@ -1147,9 +1118,26 @@ define([
         /**
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
-        $scope.openImgGroupList = function (context) {
-            return openModel(popActions.store.listing.imagegroupadd, context);
-        };
+        //$scope.openImgGroupAdd = function (context) {
+        //    return openModel(popActions.store.listing.imagegroupadd, context);
+        //};
+        $scope.openImgGroupAdd = openImgGroupAdd;
+        function openImgGroupAdd(data) {
+            require([popActions.store.listing.imagegroupadd.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagegroupadd.templateUrl,
+                    controller: popActions.store.listing.imagegroupadd.controller,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+
+
         /**
          * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
          * */
@@ -1159,9 +1147,26 @@ define([
         /**
          * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
          * */
-        $scope.openImgGroupDetail = function (context) {
-            return openModel(popActions.store.listing.imagedetailadd, context);
-        };
+        //$scope.openImgGroupDetail = function (context) {
+        //    return openModel(popActions.store.listing.imagedetailadd, context);
+        //};
+        $scope.openImgGroupDetail = openImgGroupDetail;
+        function openImgGroupDetail(data, originUrl) {
+            require([popActions.store.listing.imagedetailadd.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagedetailadd.templateUrl,
+                    controller: popActions.store.listing.imagedetailadd.controller,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        },
+                        originUrl: function () {
+                            return originUrl;
+                        }
+                    }
+                });
+            });
+        }
 
         /**
          * 弹出自定义属性列

@@ -7,26 +7,52 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.modelbean.DictWordBean;
+import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
+import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl1;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl2;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl3;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl4;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.ims.ImsBtProductModel;
+import com.voyageone.task2.cms.bean.SkuTemplateSchema;
+import com.voyageone.task2.cms.bean.SxProductBean;
+import com.voyageone.task2.cms.bean.TmallUploadRunState;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
+import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
+import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
+//import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
+import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
+import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_0;
+import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_1;
+import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_2;
+import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_3;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +72,16 @@ import java.util.*;
 public class SxGetProductInfoTest {
 
     @Autowired
+    private SkuFieldBuilderFactory skuFieldBuilderFactory;
+
+    @Autowired
     private ProductService productService;
 
     @Autowired
     private SxProductService sxProductService;
+
+    @Autowired
+    private SkuFieldBuilderService skuFieldBuilderService;
 
     @Autowired
     private SxGetProductInfo sxGetProductInfo;
@@ -63,73 +95,442 @@ public class SxGetProductInfoTest {
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
 
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+
+    @Autowired
+    protected PlatformSkuInfoDao platformSkuInfoDao;
+
+    @Autowired
+    private CmsMtPlatformDictDao cmsMtPlatformDictDao;
+
     @Test
     public void testFuc() throws Exception {
         System.out.println();
         System.out.println("start:"+ DateTimeUtil.getNow());
         System.out.println(getInstance().format(new Date()));
 
-        // constructMappingPlatformProps start
-        String schema = "<itemRule>\n" +
-                "<field id=\"infos\" name=\"品牌信息\" type=\"input\">\n" +
-                "\t<rules>\n" +
-                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t</rules>\n" +
-                "</field>\n" +
-                "<field id=\"title\" name=\"牌\" type=\"singleCheck\">\n" +
-                "\t<rules>\n" +
-                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t</rules>\n" +
-                "</field>\n" +
-                "<field id=\"product_s_s\" name=\"商品\" type=\"multiComplex\">\n" +
-                "<fields>\n" +
-                "\t<field id=\"code_f\" name=\"Code\" type=\"input\">\n" +
-                "\t</field>\n" +
-                "\t<field id=\"orgin_f\" name=\"Code\" type=\"input\">\n" +
-                "\t</field>\n" +
-                "\t<field id=\"product_s\" name=\"商品\" type=\"multiComplex\">\t\t\n" +
-                "\t\t<fields>\n" +
-                "\t\t\t<field id=\"code_sf\" name=\"Code\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t\t<field id=\"orgin_sf\" name=\"产地\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t</fields>\n" +
-                "\t</field>\n" +
-                "\t<field id=\"sell_p_s\" name=\"卖点\" type=\"complex\">\n" +
-                "\t\t<fields>\n" +
-                "\t\t\t<field id=\"sell_p_0\" name=\"卖点1\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t\t<field id=\"sell_p_1\" name=\"卖点2\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t\t<field id=\"sell_p_2\" name=\"卖点3\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t</fields>\n" +
-                "\t</field>\n" +
-                "\t<field id=\"col\" name=\"颜色\" type=\"multiCheck\">\n" +
-                "\t\t<rules>\n" +
-                "\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t\t</rules>\n" +
-                "\t\t<options>\n" +
-                "\t\t<option displayName=\"蓝\" value=\"b\"/>\n" +
-                "\t\t<option displayName=\"红\" value=\"r\"/>\n" +
-                "\t\t</options>\n" +
-                "\t</field>\n" +
-                "</fields>\n" +
-                "</field>\n" +
-                "</itemRule>";
-        List<Field> fields = SchemaReader.readXmlForList(schema);
-//        Map<String, Field> fieldMap = schemaToIdPropMap(schema);
-        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
+        // sku属性设置 start
+        String skuPro;
+        {
+            skuPro = "<itemRule>\n" +
+                    "\t<field id=\"sku\" name=\"SKU\" type=\"multiComplex\">\n" +
+                    "\t\t<rules>\n" +
+                    "\t\t\t<rule name=\"950280534_1\" value=\"SKU与类目销售属性必须匹配\"/>\n" +
+                    "\t\t\t<rule name=\"529052199_1\" value=\"如果销售属性存在套餐且存在官方标配，官方标配必选\"/>\n" +
+                    "\t\t</rules>\n" +
+                    "\t\t<fields>\n" +
+                    "\t\t\t<field id=\"prop_1627207\" name=\"颜色\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t<option displayName=\"军绿色\" value=\"3232483\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"天蓝色\" value=\"3232484\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"巧克力色\" value=\"3232481\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"桔色\" value=\"90554\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅灰色\" value=\"28332\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅绿色\" value=\"30156\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅黄色\" value=\"60092\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深卡其布色\" value=\"3232482\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深灰色\" value=\"3232478\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深紫色\" value=\"3232479\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深蓝色\" value=\"28340\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫罗兰\" value=\"80882\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"褐色\" value=\"132069\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"酒红色\" value=\"28327\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
+                    "\t\t\t\t</options>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"std_size_prop_20518_-1\" name=\"“自定义”尺码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"tipRule\" value=\"自定义尺码值只能输入以下格式：【数字/字母/数字；字母/字母，字母+数字 字母/数字；数字/字母；数字+字母；数字/数字；数字/数字/字母；字母；数字/数字+字母/字母；数字/数字+字母；数字】，并支持在上述格式前添加性别如“男/女/男童/女童”。若无支持的格式，可最多新增一个不在上述格式范围内的尺码值\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_group\" value=\"-1:自定义:-1\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"sku_price\" name=\"价格\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"decimal\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"minValueRule\" value=\"0.00\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxValueRule\" value=\"100000000.00\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"86848434_1\" value=\"SKU价格受类目限制\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"sku_quantity\" name=\"库存\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"minValueRule\" value=\"0\" exProperty=\"include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxValueRule\" value=\"1000000\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"sku_outerId\" name=\"商家编码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxLengthRule\" value=\"64\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"sku_barcode\" name=\"条形码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"1958629116_1\" value=\"条形码必须符合EAN和UPC编码规则\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"hscode\" name=\"HS海关代码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t</fields>\n" +
+                    "\t</field>\n" +
+                    "\t<field id=\"prop_extend_1627207\" name=\"颜色扩展\" type=\"multiComplex\">\n" +
+                    "\t\t<fields>\n" +
+                    "\t\t\t<field id=\"prop_1627207\" name=\"颜色\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t<option displayName=\"军绿色\" value=\"3232483\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"天蓝色\" value=\"3232484\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"巧克力色\" value=\"3232481\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"桔色\" value=\"90554\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅灰色\" value=\"28332\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅绿色\" value=\"30156\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"浅黄色\" value=\"60092\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深卡其布色\" value=\"3232482\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深灰色\" value=\"3232478\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深紫色\" value=\"3232479\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"深蓝色\" value=\"28340\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫罗兰\" value=\"80882\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"褐色\" value=\"132069\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"酒红色\" value=\"28327\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
+                    "\t\t\t\t</options>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"alias_name\" name=\"别名\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"text\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"minLengthRule\" value=\"0\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"prop_image\" name=\"属性图片\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"basecolor\" name=\"色系\" type=\"multiCheck\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"minInputNumRule\" value=\"0\" exProperty=\"not include\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxInputNumRule\" value=\"3\" exProperty=\"include\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t<option displayName=\"蓝色\" value=\"28338\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黑色\" value=\"28341\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"透明\" value=\"107121\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"粉红色\" value=\"3232480\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"白色\" value=\"28320\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"花色\" value=\"130164\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"橙色\" value=\"90554\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"黄色\" value=\"28324\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"红色\" value=\"28326\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"紫色\" value=\"28329\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"灰色\" value=\"28332\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"棕色\" value=\"132069\"/>\n" +
+                    "\t\t\t\t\t<option displayName=\"绿色\" value=\"28335\"/>\n" +
+                    "\t\t\t\t</options>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t</fields>\n" +
+                    "\t</field>\n" +
+                    "\t<field id=\"std_size_extends_20518\" name=\"尺码扩展\" type=\"multiComplex\">\n" +
+                    "\t\t<rules>\n" +
+                    "\t\t\t<rule name=\"tipRule\" value=\"尺码表中的字段至少两个维度必填。\"/>\n" +
+                    "\t\t\t<rule name=\"tipRule\" value=\"尺码表中的字段若选择填写某个字段，则所有尺码对应的该字段信息均需填写。\"/>\n" +
+                    "\t\t\t<rule name=\"tipRule\" value=\"因尺码表结构调整，您填写的数据项可能被调整为自定义项，不影响信息展示。\"/>\n" +
+                    "\t\t</rules>\n" +
+                    "\t\t<fields>\n" +
+                    "\t\t\t<field id=\"std_size_prop_20518_-1\" name=\"“自定义”尺码\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"tipRule\" value=\"自定义尺码值只能输入以下格式：【数字/字母/数字；字母/字母，字母+数字 字母/数字；数字/字母；数字+字母；数字/数字；数字/数字/字母；字母；数字/数字+字母/字母；数字/数字+字母；数字】，并支持在上述格式前添加性别如“男/女/男童/女童”。若无支持的格式，可最多新增一个不在上述格式范围内的尺码值\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_group\" value=\"-1:自定义:-1\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_tip\" name=\"尺码备注\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"minLengthRule\" value=\"1\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t\t<rule name=\"maxLengthRule\" value=\"30\" exProperty=\"include\" unit=\"byte\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_shengao\" name=\"身高（cm）\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"or\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"==\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_shengao_range\" name=\"身高（cm）\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_shengao_from\" name=\"最小值\" type=\"input\"/>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_shengao_to\" name=\"最大值\" type=\"input\"/>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_yaowei\" name=\"腰围（cm）\" type=\"input\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"or\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"==\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"size_mapping_yaowei_range\" name=\"腰围（cm）\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t<depend-express fieldId=\"std_size_prop_20518_-1\" value=\"均码\" symbol=\"!=\"/>\n" +
+                    "\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_yaowei_from\" name=\"最小值\" type=\"input\"/>\n" +
+                    "\t\t\t\t\t<field id=\"size_mapping_yaowei_to\" name=\"最大值\" type=\"input\"/>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t</fields>\n" +
+                    "\t</field>\n" +
+                    "</itemRule>";
+        }
 
-        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
-        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid003"); // 模板1
+//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid002"); // 模板2
+//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
+        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid005"); // 模板4
 
-        ShopBean shopBean = new ShopBean();
+        Map<String, Integer> skuInventoryMap = new HashMap<>();
+        skuInventoryMap.put("c001-1", 1100);
+        skuInventoryMap.put("c001-2", 1200);
+        skuInventoryMap.put("c001-4", 1400);
+        skuInventoryMap.put("c004-1", 4100);
+
+        // sku属性设置 new Src start
+        List<Field> skuInfoFields;
+        {
+            List<Field> fields = SchemaReader.readXmlForList(skuPro);
+            List<Field> allSkuFields = new ArrayList<>();
+            recursiveGetFields(fields, allSkuFields);
+            AbstractSkuFieldBuilder skuFieldService = skuFieldBuilderService.getSkuFieldBuilder(23, allSkuFields);
+
+            CmsMtPlatformDictModel cmsMtPlatformDictModel = cmsMtPlatformDictDao.selectOne(new HashMap<String, Object>(){{
+                put("orderChannelId", "066");
+                put("cartId", 23);
+                put("name", "属性图片模板");
+            }});
+
+            if (skuFieldService == null) {
+                System.out.println("null");
+            } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl1) {
+                skuFieldService.setCodeImageTemplate(cmsMtPlatformDictModel.getValue());
+                System.out.println("TmallGjSkuFieldBuilderImpl1");
+            } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl2) {
+                System.out.println("TmallGjSkuFieldBuilderImpl2");
+            } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl3) {
+                skuFieldService.setCodeImageTemplate(cmsMtPlatformDictModel.getValue());
+                System.out.println("TmallGjSkuFieldBuilderImpl3");
+            } else if (skuFieldService instanceof TmallGjSkuFieldBuilderImpl4) {
+                skuFieldService.setCodeImageTemplate(cmsMtPlatformDictModel.getValue());
+                System.out.println("TmallGjSkuFieldBuilderImpl4");
+            } else {
+                System.out.println("not exists");
+            }
+
+            SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+
+            ShopBean shopBean = new ShopBean();
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
-        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+            shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
-        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse");
-        res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
+            skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, exp, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, "morse");
+        }
+        // sku属性设置 new Src end
+
+        // sku属性设置 old Src start
+//        List<com.taobao.top.schema.field.Field> skuInfoFields;
+//        {
+//            List<com.taobao.top.schema.field.Field> fields = com.taobao.top.schema.factory.SchemaReader.readXmlForList(skuPro);
+//            List<com.taobao.top.schema.field.Field> allSkuFields = new ArrayList<>();
+//            recursiveGetTaobaoFields(fields, allSkuFields);
+//            com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder skuFieldBuilder = null;
+//
+//            CmsMtPlatformDictModel cmsMtPlatformDictModel = cmsMtPlatformDictDao.selectOne(new HashMap<String, Object>(){{
+//                put("orderChannelId", "066");
+//                put("cartId", 23);
+//                put("name", "属性图片模板");
+//            }});
+//
+//            try {
+//                skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(23, allSkuFields);
+//            } catch (TaskSignal taskSignal) {
+//                taskSignal.printStackTrace();
+//            }
+//            if (skuFieldBuilder == null) {
+//                System.out.println("null");
+//            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_0) {
+//                skuFieldBuilder.setCodeImageTemplete(cmsMtPlatformDictModel.getValue());
+//                System.out.println("TmallGjSkuFieldBuilderImpl_0");
+//            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_1) {
+//                System.out.println("TmallGjSkuFieldBuilderImpl_1");
+//            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_2) {
+//                skuFieldBuilder.setCodeImageTemplete(cmsMtPlatformDictModel.getValue());
+//                System.out.println("TmallGjSkuFieldBuilderImpl_2");
+//            } else if (skuFieldBuilder instanceof TmallGjSkuFieldBuilderImpl_3) {
+//                skuFieldBuilder.setCodeImageTemplete(cmsMtPlatformDictModel.getValue());
+//                System.out.println("TmallGjSkuFieldBuilderImpl_3");
+//            } else {
+//                System.out.println("not exists");
+//            }
+//
+//            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId("066", 333L, false);
+//            List<SxProductBean> sxProductBeans = new ArrayList<>();
+//            CmsBtProductModel mainProductModel = null;
+//            CmsBtProductGroupModel mainProductPlatform = null;
+//            SxProductBean mainSxProduct = null;
+//
+//            for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
+//                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+//                String prodCode = cmsBtProductModel.getFields().getCode();
+//                // tom 获取feed info的数据 START
+//                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode("066", prodCode);
+//                // tom 获取feed info的数据 END
+//                SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, feedInfo);
+//                if (filtProductsByPlatform(sxProductBean)) {
+//                    sxProductBeans.add(sxProductBean);
+//                    if (prodCode.equals(productPlatform.getMainProductCode())) {
+//                        mainProductModel = cmsBtProductModel;
+//                        mainProductPlatform = productPlatform;
+//                        mainSxProduct = sxProductBean;
+//                    }
+//                }
+//            }
+//
+//            Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap = new HashMap<>();
+//            for (SxProductBean sxProductBean : sxProductBeans) {
+//                for (CmsBtProductModel_Sku sku : sxProductBean.getCmsBtProductModel().getSkus()) {
+//                    skuProductMap.put(sku, sxProductBean);
+//                }
+//            }
+//
+//            TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = new TmallUploadRunState(null).new TmallContextBuildCustomFields();
+//
+//            skuFieldBuilder.setExpressionParser(new com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser("066", 23, mainSxProduct, sxProductBeans));
+//
+//            try {
+//                skuInfoFields = skuFieldBuilder.buildSkuInfoField(23, null, allSkuFields, sxProductBeans, skuProductMap, cmsMtPlatformMappingModel, skuInventoryMap, tmallContextBuildCustomFields, new HashSet<>());
+//            } catch (TaskSignal taskSignal) {
+//                return;
+//            }
+//        }
+        // sku属性设置 old Src end
+        // sku属性设置 end
+
+//        List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfoByCartId(23);
+//        tmallSkuInfos.forEach(model->{
+//            System.out.print(model.getSeq());
+//            System.out.print("\t");
+//            System.out.print(model.getCart_id());
+//            System.out.print("\t");
+//            System.out.print(model.getProp_id());
+//            System.out.print("\t");
+//            System.out.print(SkuTemplateSchema.decodeFieldTypes(model.getSku_type()));
+//            System.out.print("\t");
+//            System.out.print(Long.toBinaryString(model.getSku_type()));
+//            System.out.println();
+//        });
+
+
+        // constructMappingPlatformProps start
+//        String schema = "<itemRule>\n" +
+//                "<field id=\"infos\" name=\"品牌信息\" type=\"input\">\n" +
+//                "\t<rules>\n" +
+//                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t</rules>\n" +
+//                "</field>\n" +
+//                "<field id=\"title\" name=\"牌\" type=\"singleCheck\">\n" +
+//                "\t<rules>\n" +
+//                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t</rules>\n" +
+//                "</field>\n" +
+//                "<field id=\"product_s\" name=\"商品\" type=\"multiComplex\">\n" +
+//                "<fields>\n" +
+//                "\t<field id=\"code_f\" name=\"Code\" type=\"input\">\n" +
+//                "\t</field>\n" +
+//                "\t<field id=\"orgin_f\" name=\"产地\" type=\"input\">\n" +
+//                "\t</field>\n" +
+//                "\t<field id=\"sell_p_s\" name=\"卖点\" type=\"complex\">\n" +
+//                "\t\t<fields>\n" +
+//                "\t\t\t<field id=\"sell_p_0\" name=\"卖点1\" type=\"input\">\n" +
+//                "\t\t\t</field>\n" +
+//                "\t\t\t<field id=\"sell_p_1\" name=\"卖点2\" type=\"input\">\n" +
+//                "\t\t\t</field>\n" +
+//                "\t\t\t<field id=\"sell_p_2\" name=\"卖点3\" type=\"input\">\n" +
+//                "\t\t\t</field>\n" +
+//                "\t\t</fields>\n" +
+//                "\t</field>\n" +
+//                "\t<field id=\"col\" name=\"颜色\" type=\"multiCheck\">\n" +
+//                "\t\t<rules>\n" +
+//                "\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t\t</rules>\n" +
+//                "\t\t<options>\n" +
+//                "\t\t<option displayName=\"蓝\" value=\"b\"/>\n" +
+//                "\t\t<option displayName=\"红\" value=\"r\"/>\n" +
+//                "\t\t</options>\n" +
+//                "\t</field>\n" +
+//                "</fields>\n" +
+//                "</field>\n" +
+//                "</itemRule>";
+//        List<Field> fields = SchemaReader.readXmlForList(schema);
+////        Map<String, Field> fieldMap = schemaToIdPropMap(schema);
+//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
+//
+//        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+//        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//
+//        ShopBean shopBean = new ShopBean();
+////        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
+//        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+//
+//        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse");
+//        res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
 //        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse", null);
 //        System.out.println(res);
         // constructMappingPlatformProps end
@@ -319,6 +720,64 @@ public class SxGetProductInfoTest {
         return fieldsMap;
     }
 
+    private void recursiveGetTaobaoFields(List<com.taobao.top.schema.field.Field> fields, List<com.taobao.top.schema.field.Field> resultFields) {
+        for (com.taobao.top.schema.field.Field field : fields) {
+            switch (field.getType()) {
+                case COMPLEX:
+                    recursiveGetTaobaoFields(((com.taobao.top.schema.field.ComplexField)field).getFieldList(), resultFields);
+                    resultFields.add(field);
+                    break;
+                case MULTICOMPLEX:
+                    recursiveGetTaobaoFields(((com.taobao.top.schema.field.MultiComplexField)field).getFieldList(), resultFields);
+                    resultFields.add(field);
+                    break;
+                default:
+                    resultFields.add(field);
+            }
+        }
+    }
+
+    private void recursiveGetFields(List<Field> fields, List<Field> resultFields) {
+        for (Field field : fields) {
+            switch (field.getType()) {
+                case COMPLEX:
+                    recursiveGetFields(((ComplexField)field).getFields(), resultFields);
+                    resultFields.add(field);
+                    break;
+                case MULTICOMPLEX:
+                    recursiveGetFields(((MultiComplexField)field).getFields(), resultFields);
+                    resultFields.add(field);
+                    break;
+                default:
+                    resultFields.add(field);
+            }
+        }
+    }
+
+    /**
+     * 如果sxProductBean中含有要在该平台中上新的sku, 返回true
+     * 如果没有sku要上新，那么返回false
+     */
+    private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
+        CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
+        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
+        int cartId = cmsBtProductModelGroupPlatform.getCartId();
+
+        if (cmsBtProductModelSkus == null) {
+            return false;
+        }
+
+        for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
+            CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
+            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
+                productSkuIterator.remove();
+            }
+        }
+        return !cmsBtProductModelSkus.isEmpty();
+    }
+
+
     @Test
     public void testDict() throws Exception {
         SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
@@ -380,6 +839,32 @@ public class SxGetProductInfoTest {
 
         // 店铺种类
         System.out.println(builder.toString());
+
+    }
+
+    @Test
+    public void testJdPriceSection() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+
+        SxData sxData = new SxData();
+        sxData.setMaxPrice(499D);
+
+        SingleCheckField field = new SingleCheckField();
+        field.setId("13479");
+        field.setName("价格");
+        field.addOption("0-99元", "178345");
+        field.addOption(" 100-199  ", "178346");
+        field.addOption(" 200-299", "178347");
+        field.addOption(" 300-499 ", "178348");
+        field.addOption("500元以上", "178349");
+
+        boolean blnRet = sxProductService.resolveJdPriceSection_before(shopBean, field);
+        System.out.println(blnRet);
+
+        Map<String, Field> mapRet = sxProductService.resolveJdPriceSection(field, sxData);
+        Value value = (Value)mapRet.get(field.getId()).getValue();
+        System.out.println(value.getValue());
 
     }
 

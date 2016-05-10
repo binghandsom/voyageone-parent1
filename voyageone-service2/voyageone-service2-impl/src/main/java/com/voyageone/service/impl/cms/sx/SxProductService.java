@@ -4,10 +4,12 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -17,19 +19,20 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
-import com.voyageone.service.dao.cms.CmsMtDictPlatformDao;
+import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -44,6 +47,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 上新相关共通逻辑
@@ -56,11 +61,11 @@ public class SxProductService extends BaseService {
     /**
      * upd_flg=0,需要上传(重新上传)
      */
-    private static final String UPD_FLG_ADD = "0";
+    private static final int UPD_FLG_ADD = 0;
     /**
      * upd_flg=1,已经上传
      */
-    private static final String UPD_FLG_UPLOADED = "1";
+    private static final int UPD_FLG_UPLOADED = 1;
     @Autowired
     private TbPictureService tbPictureService;
     @Autowired
@@ -78,7 +83,9 @@ public class SxProductService extends BaseService {
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
-    private CmsMtDictPlatformDao cmsMtDictPlatformDao;
+    private CmsMtPlatformDictDao cmsMtPlatformDictDao;
+    @Autowired
+    private PaddingImageDaoExt paddingImageDaoExt;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -247,8 +254,8 @@ public class SxProductService extends BaseService {
 //            String decodeSrcUrl = decodeImageUrl(srcUrl);
             CmsBtPlatformImagesModel model = mapImageUrl.get(srcUrl);
             if (model != null) {
-                String updFlg = model.getUpdFlg();
-                if (UPD_FLG_ADD.equals(updFlg)) {
+                int updFlg = model.getUpdFlg();
+                if (UPD_FLG_ADD == updFlg) {
                     // upd_flg=0,需要上传(重新上传)
                     // 上传后,更新cms_bt_platform_images
                     String destUrl = "";
@@ -270,7 +277,7 @@ public class SxProductService extends BaseService {
                     model.setUpdFlg(UPD_FLG_UPLOADED);
 
                     cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
-                } else if (UPD_FLG_UPLOADED.equals(updFlg)) {
+                } else if (UPD_FLG_UPLOADED == updFlg) {
                     // upd_flg=1,已经上传
                     retUrls.put(srcUrl, model.getPlatformImgUrl());
                 }
@@ -496,6 +503,10 @@ public class SxProductService extends BaseService {
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
                 // TODO:特殊字段处理
+
+            } else if (resolveJdPriceSection_before(shopBean, field)) {
+                // 设置京东属性 - [价格][价位]
+                return resolveJdPriceSection(field, expressionParser.getSxData());
             } else {
                 MappingBean mappingBean = mapProp.get(field.getId());
                 if (mappingBean == null) {
@@ -508,6 +519,135 @@ public class SxProductService extends BaseService {
                     }
                     retMap.putAll(resolveField);
                 }
+            }
+        }
+
+        return retMap;
+    }
+
+	/**
+     * [ 预判断 ] 设置京东属性 - [价格][价位]
+     * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
+     * @param field 字段的内容
+     * @return 返回的字段
+     */
+    public boolean resolveJdPriceSection_before(ShopBean shopBean, Field field) {
+        String strRex1 = "\\s*\\d+-\\d+\\s*元*";
+        String strRex2 = "\\s*\\d+\\s*元*以上";
+
+        // 如果不是京东京东国际的话, 返回false
+        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+            return false;
+        }
+
+        // 属性名字必须是指定内容
+        if (!"价格".equals(field.getName())
+                && !"价位".equals(field.getName())
+                ) {
+            return false;
+        }
+
+        // 判断类型
+        if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+            return false;
+        }
+
+        // 遍历所有可选项, 判断是否符合规则
+        SingleCheckField singleCheckField = (SingleCheckField) field;
+        for (Option option : singleCheckField.getOptions()) {
+            // 判断一下当前可选项属于哪类
+            boolean blnError = false;
+            String optionDisplayName = option.getDisplayName();
+
+            {
+                Pattern pattern = Pattern.compile(strRex1, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(optionDisplayName);
+                if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                Pattern pattern = Pattern.compile(strRex2, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(optionDisplayName);
+                if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    /**
+     * 设置京东属性 - [价格][价位]
+     * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
+     * @param field 字段的内容
+     * @param sxData 商品信息之类的
+     * @return 返回的字段
+     */
+    public Map<String, Field> resolveJdPriceSection(Field field, SxData sxData) {
+        Map<String, Field> retMap = new HashMap<>();
+
+        // 使用最大的那个价格进行判断
+        Double jdPrice = sxData.getMaxPrice();
+
+        // 遍历所有可选项进行判断
+        SingleCheckField singleCheckField = (SingleCheckField) field;
+        for (Option option : singleCheckField.getOptions()) {
+            // 判断一下当前可选项属于哪类
+            String optionDisplayName = option.getDisplayName();
+            if (optionDisplayName.contains("-")) {
+                // 专门处理这类的内容: 100-199元
+                optionDisplayName = optionDisplayName.replace("元", "");
+                optionDisplayName = optionDisplayName.trim();
+
+                String[] splitOption = optionDisplayName.split("-");
+                splitOption[0] = splitOption[0].trim();
+                splitOption[1] = splitOption[1].trim();
+
+                Double minPrice = Double.parseDouble(splitOption[0]);
+                Double maxPrice = Double.parseDouble(splitOption[1]);
+
+                if (Double.compare(minPrice, jdPrice) > 0) {
+                    // 不符合
+                    continue;
+                }
+                if (Double.compare(maxPrice, jdPrice) < 0) {
+                    // 不符合
+                    continue;
+                }
+
+                // 符合的场合
+                singleCheckField.setValue(option.getValue());
+                retMap.put(field.getId(), singleCheckField);
+
+                break;
+            } else if (optionDisplayName.contains("以上")) {
+                // 专门处理这类的内容: 500以上
+                // 专门处理这类的内容: 500元以上
+                optionDisplayName = optionDisplayName.replace("以上", "");
+                optionDisplayName = optionDisplayName.replace("元", "");
+                optionDisplayName = optionDisplayName.trim();
+
+                Double minPrice = Double.parseDouble(optionDisplayName);
+                if (Double.compare(minPrice, jdPrice) < 0) {
+                    // 不符合
+                    continue;
+                }
+
+                // 符合的场合
+                singleCheckField.setValue(option.getValue());
+                retMap.put(field.getId(), singleCheckField);
+
+                break;
+            } else {
+                // 按理说没有其他的场合了, 如果有的话就有问题了, 这个在预处理里就应该判断掉
             }
         }
 
@@ -689,8 +829,12 @@ public class SxProductService extends BaseService {
         return expressionParser.parse(ruleExpression, shopBean, user, extParameter);
     }
 
-    public List<CmsMtPlatFormDictModel> searchDictList(Map<String, Object> map) {
-        return cmsMtDictPlatformDao.selectList(map);
+    public List<CmsMtPlatformDictModel> searchDictList(Map<String, Object> map) {
+        return cmsMtPlatformDictDao.selectList(map);
+    }
+
+    public String searchDictList(String channelId, int cartId, String paddingPropName, int imageIndex) {
+        return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }
 
     private enum SkuSort {
