@@ -568,8 +568,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 List<String> transBaiduCn; // 百度翻译 - 输出参数
                 try {
-                    if ("017".equals(feed.getChannelId())) {
-                        // lucky vitamin 不做翻译
+                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
+                        // lucky vitamin 和 BHFO不做翻译
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                             field.setOriginalTitleCn(""); // 标题
                         }
