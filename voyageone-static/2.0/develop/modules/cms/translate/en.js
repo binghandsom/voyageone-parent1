@@ -408,6 +408,24 @@ define(function() {
         "TXT_SIZE_CHART_IMAGE": "Size Chart Image",
         "TXT_BRAND_STORY_IMAGE": "Brand Story Image",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "Shipping Description Image",
+        "TXT_IMAGE_GROUP_LIST":"Image Group List",
+        "TXT_RELATED_BRAND_NAME":"Related Brand Name",
+        "TXT_RELATED_PRODUCT_TYPE":"Related Product Type",
+        "TXT_RELATED_SIZE_TYPE":"Related Size Type",
+        "TXT_IMAGE_GROUP_NAME":"Image Group Name",
+        "TXT_VIEW_TYPE":"View Type",
+        "TXT_IMAGE_COUNT":"Image Count",
+        "TXT_IMAGE_DETAIL":"Image Detail",
+        "TXT_IMAGE":"Image",
+        "TXT_ORIGIN_URL":"Origin Url",
+        "TXT_PLATFORM_URL":"Platform Url",
+        "TXT_SEQUENCE":"Sequence",
+        "TXT_IMAGE_GROUP_ADD":"Image Group Add",
+        "TXT_COMMON_IMAGE_SET":"Common Image Set",
+        "TXT_ORIGIN_IMAGE":"Origin Image",
+
+
+
 
 
         "BTN_CREATE_TASK": "New Task",

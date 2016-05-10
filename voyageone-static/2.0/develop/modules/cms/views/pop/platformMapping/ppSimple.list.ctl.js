@@ -37,6 +37,11 @@ define([
              * @type {RuleWord[]}
              */
             this.lineEnds = null;
+
+            this.mainCategory = {
+                fields: null,
+                skuField: null
+            };
         }
 
         SimpleListMappingPopupController.prototype = {
@@ -63,33 +68,54 @@ define([
                         return;
                 }
 
-                // 加载原有的匹配
-                self.ppService.getPlatformPropertyMapping(
-                    self.context.path,
-                    $mainCate.id,
-                    $pfCate.id,
-                    self.context.cartId
-                ).then(function (simpleMapping) {
+                // 加载主数据类目
+                // 页面呈现时, 需要使用其字段信息
+                self.ppService.getMainCategoryProps($mainCate.id)
 
-                    // 如果没拿到, 则创建新的 SimpleMapping
-                    if (!simpleMapping) {
-                        simpleMapping = new SimpleMappingBean();
-                        simpleMapping.platformPropId = property.id;
-                    }
+                    .then(function (fields) {
+                        self.mainCategory.fields = fields;
+                    })
 
-                    if (!simpleMapping.expression)
-                        simpleMapping.expression = new RuleExpression();
+                    // 加载 SKU 级别的字段
+                    .then(function () {
+                        return self.ppService.getMainCategorySkuProp($mainCate.id);
+                    })
 
-                    if (!simpleMapping.expression.ruleWordList)
-                        simpleMapping.expression.ruleWordList = [];
+                    .then(function (skuField) {
+                        self.mainCategory.skuField = skuField;
+                    })
 
-                    self.simpleMapping = simpleMapping;
-                    self.ruleWords = simpleMapping.expression.ruleWordList;
+                    // 最终加载当前平台类目字段对应的匹配关系
+                    .then(function () {
+                        return self.ppService.getPlatformPropertyMapping(
+                            self.context.path,
+                            $mainCate.id,
+                            $pfCate.id,
+                            self.context.cartId
+                        );
+                    })
 
-                    // 加载完数据之后, 进行对 end line 的数据包装
-                    self.wrapRuleList();
+                    .then(function (simpleMapping) {
 
-                });
+                        // 如果没拿到, 则创建新的 SimpleMapping
+                        if (!simpleMapping) {
+                            simpleMapping = new SimpleMappingBean();
+                            simpleMapping.platformPropId = property.id;
+                        }
+
+                        if (!simpleMapping.expression)
+                            simpleMapping.expression = new RuleExpression();
+
+                        if (!simpleMapping.expression.ruleWordList)
+                            simpleMapping.expression.ruleWordList = [];
+
+                        self.simpleMapping = simpleMapping;
+                        self.ruleWords = simpleMapping.expression.ruleWordList;
+
+                        // 加载完数据之后, 进行对 end line 的数据包装
+                        self.wrapRuleList();
+
+                    });
             },
             /**
              * 为 Line End 包装 List
@@ -199,6 +225,53 @@ define([
                 this.ruleWords[$index + 1] = temp;
             },
 
+            /**
+             * 将字段值转换为友好的显示名
+             */
+            value: function (ruleWord) {
+                var val = ruleWord.value;
+                var field = this.property;
+                var mainCategoryId = this.context.maindata.category.id;
+                var mainFields = this.mainCategory;
+                var service = this.ppService;
+                var selected, selectedVals;
+
+                switch (ruleWord.type) {
+                    case WordTypes.TEXT:
+
+                        switch (field.type) {
+                            case FieldTypes.singleCheck:
+                                selected = field.options.find(function (item) {
+                                    return item.value === val;
+                                });
+                                return selected ? selected.displayName : val;
+                            case FieldTypes.multiCheck:
+                                selectedVals = val.split(',');
+                                selected = field.options.filter(function (item) {
+                                    return selectedVals.indexOf(item.value) > -1;
+                                });
+                                return selected.length ? selected.join(',') : val;
+                        }
+
+                        return val;
+
+                    case WordTypes.SKU:
+
+                        selected = mainFields.skuField.fields.find(function(field) {
+                            return field.id === val;
+                        });
+
+                        return selected ? selected.name : val;
+
+                    case WordTypes.MASTER:
+
+                        selectedVals = service.searchProperty(mainFields.fields, val);
+
+                        return selectedVals.length ? selectedVals[0].name : val;
+                }
+                return val;
+            },
+
             ok: function () {
 
                 var self = this;
@@ -215,16 +288,16 @@ define([
                         self.context.cartId,
                         simpleMapping,
                         self.context.path)
-                .then(function(updated){
-                    if (updated)
-                        notify.success('已更新');
-                    else
-                        notify.warning('没有更新任何数据');
+                    .then(function (updated) {
+                        if (updated)
+                            notify.success('已更新');
+                        else
+                            notify.warning('没有更新任何数据');
 
-                    // 维护 Context 中的 Path, 让对应的属性和窗口同时结束生命周期
-                    self.context.path.shift();
-                    self.$modal.close(updated);
-                });
+                        // 维护 Context 中的 Path, 让对应的属性和窗口同时结束生命周期
+                        self.context.path.shift();
+                        self.$modal.close(updated);
+                    });
             },
 
             cancel: function () {

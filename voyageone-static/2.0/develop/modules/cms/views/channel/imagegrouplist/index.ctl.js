@@ -28,9 +28,7 @@ define([
                 curr: 1,
                 total: 0,
                 size: 20,
-                fetch: function () {
-                    this.getImageGroupList();
-                }
+                fetch: this.getImageGroupList.bind(this)
             };
             this.imageGroupService = imageGroupService;
         }
@@ -59,8 +57,8 @@ define([
                     "curr" : main.pageOption.curr,
                     "size" : main.pageOption.size
                 }).then(function (res) {
-                    main.imageGroupList = res.data;
-                    main.pageOption.total = res.data.length;
+                    main.imageGroupList = res.data.imageGroupList;
+                    main.pageOption.total = res.data.total;
                 })
             },
             search: function () {

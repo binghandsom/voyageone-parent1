@@ -3,7 +3,7 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;imagedetail</h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_IMAGE_DETAIL' | translate}}</h4>
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
 
@@ -11,7 +11,7 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Platform</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_PLATFORM' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select class="form-control" ng-model="ctrl.platform"
                                                 ng-options="platform.value as platform.name for platform in ctrl.platformList">
@@ -25,7 +25,7 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Brand Name</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'250px'" ng-model="ctrl.brandName"
                                                 ng-options="brand.value as brand.name for brand in ctrl.brandNameList">
@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Product Type</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'250px'" ng-model="ctrl.productType"
                                                 ng-options="productType.value as productType.name for productType in ctrl.productTypeList">
@@ -41,7 +41,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Size Type</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'250px'" ng-model="ctrl.sizeType"
                                                 ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList">
@@ -53,7 +53,7 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Image Group Name</label>
+                                    <label class="col-sm-4 control-label">{{'TXT_IMAGE_GROUP_NAME' | translate}}</label>
                                     <div class="col-sm-7">
                                         <input type="text" class="form-control" ng-model="ctrl.imageGroupName">
                                     </div>
@@ -69,11 +69,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">View Type</label>
+                                    <label class="col-sm-4 control-label">{{'TXT_VIEW_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select class="form-control" ng-model="ctrl.viewType">
-                                            <option value="2">APP</option>
                                             <option value="1">PC</option>
+                                            <option value="2">APP</option>
                                         </select>
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@
                     </div>
                     <div class="col-sm-12 text-center m-b-sm">
                         <div class="form-inline">
-                            <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                            <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -94,19 +94,19 @@
             <div class="table-responsive" ng-controller="popupCtrl">
                 <div class="col-sm-12 dropdown_table_main" if-no-rows="ctrl.imageList.length">
                     <div class="col-sm-12  m-t-sm m-b-xs">
-                        <button class="btn pull-right m-r-md m-b-xs btn-success" ng-click="openImgGroupDetail(ctrl,'')"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                        <button class="btn pull-right m-r-md m-b-xs btn-success" ng-click="openImgGroupDetail(ctrl,'')"><i class="fa fa-plus"></i>&nbsp;{{'BTN_ADD' | translate}}</button>
                     </div>
                     <table class="table table-hover-new vo_table vo_tableforimggrouplist tableWordBreak" style="margin-bottom:0px;table-layout: fixed;" ng-controller="popupCtrl">
                         <thead>
                         <tr>
-                            <th class="mfb-xt3 text-center">序号</th>
-                            <th class="mfb-xxt text-center">Image</th>
-                            <th class="mfb-xxt text-center">Origin Url</th>
-                            <th class="mfb-xxt text-center">Platform Url</th>
-                            <th class="mfb-x text-center">顺序</th>
-                            <th class="mfb-x text-center">Status</th>
-                            <th class="mfb-xxs text-center">ErrorMsg</th>
-                            <th class="mfb-xxt text-center">编辑</th>
+                            <th class="mfb-xt3 text-center">{{'TXT_SEQ' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_IMAGE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_ORIGIN_URL' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_PLATFORM_URL' | translate}}</th>
+                            <th class="mfb-x text-center">{{'TXT_SEQUENCE' | translate}}</th>
+                            <th class="mfb-x text-center">{{'TXT_STATUS' | translate}}</th>
+                            <th class="mfb-xxs text-center">{{'TXT_ERROR_MESSAGE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'BTN_EDIT' | translate}}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -119,42 +119,10 @@
                             <td class="mfb-xxs text-center">{{image.statusName}}</td>
                             <td class="mfb-xxt text-center">{{image.errorMsg}}</td>
                             <td class="mfb-xxt text-center">
-                                <button title="重刷" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>
-                                <button title="编辑" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+                                <button title="{{'BTN_REFRESH' | translate}}" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>
+                                <button title="{{'BTN_EDIT' | translate}}" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
+                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
                             </td>
-                        </tr>
-                        <!--<tr>-->
-                            <!--<td class="mfb-xt text-center">2</td>-->
-                            <!--<td class="mfb-xxt text-center"><img alt="05-61794" class="img-circle" src="http://image.sneakerhead.com/is/image/sneakerhead/prod_1582309212" ng-click="openImgGroupListImg()"></td>-->
-                            <!--<td class="mfb-xxt text-left">http://xxxxx.com/sneakerhead/sss/xxx.jpg</td>-->
-                            <!--<td class="mfb-xxt text-left">http/image.tmall.com/xxxx/xxx.jpg</td>-->
-                            <!--<td class="mfb-xxt text-center"><i class="glyphicon glyphicon-arrow-up up"></i><i class="glyphicon glyphicon-arrow-down down"></i> </td>-->
-                            <!--<td class="mfb-xxs text-center">上传成功</td>-->
-                            <!--<td class="mfb-xxt text-center"></td>-->
-                            <!--<td class="mfb-xxs text-center">2016-04-14 15:32:35</td>-->
-                            <!--<td class="mfb-xxs text-center">neil</td>-->
-                            <!--<td class="mfb-xxt text-center">-->
-                                <!--<button title="重刷" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>-->
-                                <!--<button title="编辑" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>-->
-                                <!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td class="mfb-xt text-center">3</td>-->
-                            <!--<td class="mfb-xxt text-center"><img alt="05-61794" class="img-circle" src="http://image.sneakerhead.com/is/image/sneakerhead/prod_1582309212" ng-click="openImgGroupListImg()"></td>-->
-                            <!--<td class="mfb-xxt text-left">http://xxxxx.com/sneakerhead/sss/xxx.jpg</td>-->
-                            <!--<td class="mfb-xxt text-left">http/image.tmall.com/xxxx/xxx.jpg</td>-->
-                            <!--<td class="mfb-xxt text-center"><i class="glyphicon glyphicon-arrow-up up"></i><i class="glyphicon glyphicon-arrow-down down"></i> </td>-->
-                            <!--<td class="mfb-xxs text-center">上传失败</td>-->
-                            <!--<td class="mfb-xxt text-center">链接超时</td>-->
-                            <!--<td class="mfb-xxs text-center">2016-04-18 15:32:35</td>-->
-                            <!--<td class="mfb-xxs text-center">neil</td>-->
-                            <!--<td class="mfb-xxt text-center">-->
-                                <!--<button title="重刷" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>-->
-                                <!--<button title="编辑" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>-->
-                                <!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-                            <!--</td>-->
                         </tr>
                         </tbody>
                     </table>

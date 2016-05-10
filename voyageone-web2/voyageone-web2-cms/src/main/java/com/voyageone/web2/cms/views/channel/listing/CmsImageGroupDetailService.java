@@ -7,6 +7,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.SFtpUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
@@ -123,13 +124,18 @@ public class CmsImageGroupDetailService extends BaseAppService {
      */
     public void save(Map<String, Object> param) {
         String imageGroupId = (String)param.get("imageGroupId");
-        int cartId = Integer.parseInt((String)param.get("platform"));
+        String cartId = (String)param.get("platform");
         String imageGroupName = (String)param.get("imageGroupName");
-        int imageType = Integer.parseInt((String)param.get("imageType"));
-        int viewType = Integer.parseInt((String)param.get("viewType"));
+        String imageType = (String)param.get("imageType");
+        String viewType = (String)param.get("viewType");
         List<String> brandNameList = (List<String>)param.get("brandName");
         List<String> productTypeList = (List<String>)param.get("productType");
         List<String> sizeTypeList = (List<String>)param.get("sizeType");
+        // 必须输入check
+        if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
+                || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
+            throw new BusinessException("7000080");
+        }
         imageGroupService.update(imageGroupId, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
     }
