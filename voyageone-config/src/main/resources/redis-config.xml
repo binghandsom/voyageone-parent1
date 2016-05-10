@@ -47,18 +47,18 @@
 
     <!-- aliyun test -->
     <!--<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">-->
-        <!--&lt;!&ndash; 连接池配置. &ndash;&gt;-->
-        <!--<property name="poolConfig" ref="jedisPoolConfig" />-->
-        <!--&lt;!&ndash; Redis服务主机. &ndash;&gt;-->
-        <!--<property name="hostName" value="121.41.58.229" />-->
-        <!--&lt;!&ndash; Redis服务端口号. &ndash;&gt;-->
-        <!--<property name="port" value="6379" />-->
-        <!--&lt;!&ndash; Redis服务连接密码. &ndash;&gt;-->
-        <!--<property name="password" value="tYdce3Ot7" />-->
-        <!--&lt;!&ndash; 连超时设置. &ndash;&gt;-->
-        <!--<property name="timeout" value="15000" />-->
-        <!--&lt;!&ndash; 是否使用连接池. &ndash;&gt;-->
-        <!--<property name="usePool" value="true" />-->
+    <!--&lt;!&ndash; 连接池配置. &ndash;&gt;-->
+    <!--<property name="poolConfig" ref="jedisPoolConfig" />-->
+    <!--&lt;!&ndash; Redis服务主机. &ndash;&gt;-->
+    <!--<property name="hostName" value="121.41.58.229" />-->
+    <!--&lt;!&ndash; Redis服务端口号. &ndash;&gt;-->
+    <!--<property name="port" value="6379" />-->
+    <!--&lt;!&ndash; Redis服务连接密码. &ndash;&gt;-->
+    <!--<property name="password" value="tYdce3Ot7" />-->
+    <!--&lt;!&ndash; 连超时设置. &ndash;&gt;-->
+    <!--<property name="timeout" value="15000" />-->
+    <!--&lt;!&ndash; 是否使用连接池. &ndash;&gt;-->
+    <!--<property name="usePool" value="true" />-->
     <!--</bean>-->
 
     <bean id="genericJackson2JsonRedisSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
