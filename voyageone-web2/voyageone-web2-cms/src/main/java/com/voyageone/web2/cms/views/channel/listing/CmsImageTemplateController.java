@@ -53,7 +53,12 @@ public class CmsImageTemplateController extends CmsController {
 //        Map<String, Object> resultBean = new HashMap<>();
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
-        List<CmsBtImageTemplateBean> result = service.search(param);
+        Object result = service.getPage(param);
+        return success(result);
+    }
+
+    public AjaxResponse getCount(@RequestBody Map<String, Object> param) {
+        Object result = service.getCount(param);
         return success(result);
     }
     /**
