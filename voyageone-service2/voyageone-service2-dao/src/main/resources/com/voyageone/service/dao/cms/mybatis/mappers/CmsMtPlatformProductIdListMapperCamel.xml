@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPlatformProductIdListModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cart_id`, `category_id`, `platform_product_id`, `active`, `created`, 
-        `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `cart_id`, `category_id`, `platform_product_id`, `active`, `comment`, 
+        `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -35,6 +35,9 @@
             <if test="active != null" >
                 `active`,
             </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
             `created`,
             <if test="creater != null" >
                 `creater`,
@@ -62,6 +65,9 @@
             </if>
             <if test="active != null" >
                 #{active,jdbcType=BIT},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
             </if>
             <if test="created == null" >
                 now(),
@@ -101,6 +107,9 @@
             </if>
             <if test="active != null" >
                 `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -146,6 +155,9 @@
             <if test="active != null" >
                 and `active` = #{active,jdbcType=BIT}
             </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -180,6 +192,9 @@
             </if>
             <if test="active != null" >
                 and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
