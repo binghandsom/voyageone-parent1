@@ -23,7 +23,7 @@ public class CmsPromotrionServiceTest  {
 
     @Test
     public void testOnStartup() throws Exception {
-        cmsPromotrionService.onStartup(new ArrayList<TaskControlBean>());
+        cmsPromotrionService.updatePromotion("010","23");
 
     }
 }
