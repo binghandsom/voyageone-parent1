@@ -37,12 +37,12 @@ define([
                     "productType" : main.productType,
                     "sizeType" : main.sizeType
                 }).then(function (res) {
-                    main.notify.success('TXT_MSG_INSERT_SUCCESS');
+                    main.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     main.$uibModalInstance.close();
                     main.parent.search();
                 }, function (err) {
                     if (err.displayType == null) {
-                        main.alert('TXT_MSG_INSERT_FAIL');
+                        main.alert('TXT_MSG_UPDATE_FAIL');
                     }
                 });
             },

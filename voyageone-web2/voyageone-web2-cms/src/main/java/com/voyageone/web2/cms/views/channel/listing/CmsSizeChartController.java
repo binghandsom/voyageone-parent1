@@ -47,6 +47,7 @@ public class CmsSizeChartController extends CmsController {
     public AjaxResponse sizeChartDelete(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
+        //逻辑删除选中的记录
         cmsSizeChartService.sizeChartUpdate(channelId, param);
         //返回数据的类型
         return success(param);
@@ -54,7 +55,7 @@ public class CmsSizeChartController extends CmsController {
     /***
      * 尺码关系一览编辑画面
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.EDIT_SIZE_CHART)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.SAVE_EDIT_SIZE_CHART)
     public AjaxResponse sizeChartEditSave(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
@@ -66,15 +67,29 @@ public class CmsSizeChartController extends CmsController {
         return success(param);
     }
     /**
-     * 尺码关系一览编辑详情编辑画面
+     * 尺码关系一览编辑检索画面
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.DETAIL_SIZE_CHART)
-    public AjaxResponse sizeChartDetailSave(@RequestBody Map param) {
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.SEARCH_DETAIL_SIZE_CHART)
+    public AjaxResponse sizeChartDetailSearch(@RequestBody Map param) {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         //取得尺码关系一览初始化
+        cmsSizeChartService.sizeChartDetailSearch(channelId, param);
+        //返回数据的类型
+        return success(param);
+    }
+    /**
+     * 尺码关系一览编辑详情编辑画面
+     */
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.SAVE_DETAIL_SIZE_CHART)
+    public AjaxResponse sizeChartDetailSave(@RequestBody Map param) {
+        //店铺渠道取得
+        String channelId=this.getUser().getSelChannelId();
+        //创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+        //取得尺码关系一览保存
         cmsSizeChartService.sizeChartDetailUpdate(channelId, param);
         //返回数据的类型
         return success(param);

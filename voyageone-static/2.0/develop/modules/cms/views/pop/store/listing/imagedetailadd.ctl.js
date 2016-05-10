@@ -7,13 +7,12 @@ define([
     'modules/cms/views/promotion/task/stock.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popImageDetailAddCtl', function ($scope,FileUploader,confirm,alert,cActions,data,originUrl,imageGroupDetailService,notify,blockUI) {
+    angularAMD.controller('popImageDetailAddCtl', function (data,originUrl,$scope,FileUploader,alert,imageGroupDetailService,notify,blockUI) {
         $scope.parent = data;
         $scope.key = originUrl;
         $scope.originUrl = originUrl;
         $scope.imageType = "2";
 
-        $scope.vm={"messager":""};
         var uploader = $scope.uploader = new FileUploader({
             url: '/cms/channel/image_group_detail/saveUploadImage'
         });
@@ -29,22 +28,20 @@ define([
                 uploadItem.onSuccess = function (res) {
                     blockUI.stop();
                     if (res.message) {
-                        $scope.vm.messager = res.message;
                         alert(res.message);
                         return;
                     }
-                    notify.success('TXT_MSG_INSERT_SUCCESS');
+                    notify.success('TXT_MSG_UPDATE_SUCCESS');
                     $scope.$close();
                     $scope.parent.search();
                 };
                 uploadItem.onError = function (res) {
                     blockUI.stop();
                     if (res.message) {
-                        $scope.vm.messager = res.message;
                         alert(res.message);
                         return;
                     }
-                    alert('TXT_MSG_INSERT_FAIL');
+                    alert('TXT_MSG_UPDATE_FAIL');
                 };
                 uploadItem.formData = [{
                     "key": $scope.key,
@@ -52,7 +49,6 @@ define([
                     "imageType": $scope.imageType
                 }];
                 uploadItem.upload();
-                $scope.vm.messager = "reading...";
                 blockUI.start();
             };
             if ($scope.imageType == "1") {
@@ -63,18 +59,15 @@ define([
                     "originUrl": $scope.originUrl,
                     "imageType": $scope.imageType
                 }).then(function (res) {
-                    notify.success('TXT_MSG_INSERT_SUCCESS');
+                    notify.success('TXT_MSG_UPDATE_SUCCESS');
                     $scope.$close();
                     $scope.parent.search();
                 }, function (err) {
                     if (err.displayType == null) {
-                        alert('TXT_MSG_INSERT_FAIL');
+                        alert('TXT_MSG_UPDATE_FAIL');
                     }
                 })
             }
         }
-
-        uploader.onProgressItem = function(fileItem, progress) {
-        };
     })
 });
