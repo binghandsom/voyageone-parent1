@@ -45,7 +45,6 @@ public class CmsImageTemplateService extends BaseService {
         int pageIndex = Integer.parseInt(map.get("pageIndex").toString());
         int pageSize = Integer.parseInt(map.get("pageSize").toString());
         String parameter = getSearchQuery(map);
-        long count = dao.countByQuery("");
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("");
         queryObject.setQuery(parameter);
