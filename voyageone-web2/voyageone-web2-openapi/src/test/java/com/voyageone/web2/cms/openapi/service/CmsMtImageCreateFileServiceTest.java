@@ -59,13 +59,14 @@ public class CmsMtImageCreateFileServiceTest {
         AddListResultBean resultBean = service.addListWithTrans(parameter);
         // AddListResultBean resultBean = service.addList(parameter);
         System.out.println("total time:" + (System.currentTimeMillis() - start));
+        System.out.println(resultBean.getErrorCode()+resultBean.getErrorMsg());
         Assert.isTrue(resultBean.getErrorCode() == 0, resultBean.getErrorCode() + "");
     }
 
     CreateImageParameter getCreateImageParameter(int fileIndex) {
         //http://localhost:8081/rest/product/image/get?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=["file:bcbg/bcbg-sku.png","file:bcbg/bcbgtupian.jpg","Text String to be rendered"]
         String cId = "001";
-        int templateId = 15;
+        int templateId = 31;
         String file = "nike-air-penny-ii-333886005-1" + fileIndex;//"test-test-1";//
         String[] vparam = {"file:bcbg/bcbg-sku.png", "file:bcbg/bcbgtupian.jpg", "Text String to be rendered"};
         String queryString = "cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";

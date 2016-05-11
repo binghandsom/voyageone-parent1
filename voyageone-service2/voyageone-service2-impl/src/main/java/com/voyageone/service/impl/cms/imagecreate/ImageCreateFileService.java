@@ -235,6 +235,7 @@ public class ImageCreateFileService extends BaseService {
             }
             for (CmsMtImageCreateTaskDetailModel detailModel : listTaskDetail) {
                 detailModel.setCmsMtImageCreateTaskId(modelTask.getId());
+                detailModel.setStatus(0);
             }
             daoExtCmsMtImageCreateTaskDetail.insertList(listTaskDetail);
             $info("CmsImageFileService:daoExtCmsMtImageCreateTaskDetail.insertList end");
@@ -250,6 +251,7 @@ public class ImageCreateFileService extends BaseService {
                 $error("AddList requestId:" + requestId, ex);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             long requestId = FactoryIdWorker.nextId();//生成错误请求唯一id
             $error("AddList requestId:" + requestId, ex);
             result.setRequestId(requestId);

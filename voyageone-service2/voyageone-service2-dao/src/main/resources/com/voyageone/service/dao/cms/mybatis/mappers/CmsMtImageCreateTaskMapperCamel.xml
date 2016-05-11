@@ -14,7 +14,7 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateTaskModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateTaskModel" useGeneratedKeys="true" keyProperty="id">
         insert into cms_mt_image_create_task
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="id != null" >
