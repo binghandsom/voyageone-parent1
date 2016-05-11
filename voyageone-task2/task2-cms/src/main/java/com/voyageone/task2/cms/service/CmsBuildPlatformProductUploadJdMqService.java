@@ -103,10 +103,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private final static String Separtor_Semicolon = ";";
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
-    // work_load表publish_status会(1:成功)
-    private final static int WorkLoad_status_1 = 1;
-    // work_load表publish_status会(2:失败)
-    private final static int WorkLoad_status_2 = 2;
     // 商品主图颜色值Id(0000000000)
     private final static String ColorId_MinPic = "0000000000";
     // 用户名（当前类名）
@@ -444,7 +440,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             if (retStatus) {
                 // 新增或更新商品成功时
                  // 回写workload表   (成功1)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_1, UserId_ClassName);
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_OK, UserId_ClassName);
 
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
                 updateProductGroupStatus(sxData, jdProductBean.getOptionType());
@@ -459,7 +455,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                         channelId, cartId, groupId, jdWareId));
                 // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
 
                 // 更新商品出错时，也要设置运费模板和关联板式
                 if (updateWare) {
@@ -475,7 +471,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 正常结束
             $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                     channelId, cartId, groupId, jdWareId));
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, WorkLoad_status_2, UserId_ClassName);
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
             throw ex;
         }
 
