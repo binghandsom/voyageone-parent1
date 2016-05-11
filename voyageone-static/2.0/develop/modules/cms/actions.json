@@ -403,12 +403,17 @@
           "init": "sizeChartInit",
           "search": "sizeChartSearch",
           "delete": "sizeChartDelete",
-          "editSave": "sizeChartEditSave",
-          "detailSearch": "sizeChartDetailSearch",
+          "editSave": "sizeChartEditSave"
+        }
+    },
+      "sizeChartDetail":{
+        "sizeChartDetailService": {
+          "root": "/cms/channel/sizeChartDetail",
+          "init": "sizeChartDetailSearch",
           "detailSave": "sizeChartDetailSave",
           "detailSizeMapSave": "sizeChartDetailSizeMapSave"
         }
-    }
+      }
     }
   }
 }

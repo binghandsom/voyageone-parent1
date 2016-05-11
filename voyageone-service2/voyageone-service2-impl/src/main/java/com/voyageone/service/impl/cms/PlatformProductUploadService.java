@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Service
-public class PlatformProductUploadJdService extends BaseService {
+public class PlatformProductUploadService extends BaseService {
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;

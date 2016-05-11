@@ -4,29 +4,24 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
-import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -37,15 +32,12 @@ public class CmsImageTemplateService extends BaseService {
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
-    private CmsBtImagesDao cmsBtImagesDao;
-    @Autowired
     private CmsBtImageTemplateDao dao;
 
     public Object getPage(Map<String, Object> map) {
         int pageIndex = Integer.parseInt(map.get("pageIndex").toString());
         int pageSize = Integer.parseInt(map.get("pageSize").toString());
         String parameter = getSearchQuery(map);
-        long count = dao.countByQuery("");
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("");
         queryObject.setQuery(parameter);

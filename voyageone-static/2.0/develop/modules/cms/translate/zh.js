@@ -367,9 +367,9 @@ define(function(){
         "TXT_MSG_STARTUP_ITEM": "您确定要全部启动吗?",
         "TXT_MSG_DELETE_SUCCESS": "删除操作成功",
         "TXT_MSG_DELETE_FAIL": "删除操作失败.",
-        "TXT_MSG_ADD_ITEM": "您确定要新增这条数据吗?",
-        "TXT_MSG_ADD_SUCCESS": "新增操作成功",
-        "TXT_MSG_ADD_FAIL": "新增操作失败.",
+        "TXT_MSG_ADD_ITEM": "您确定要更新这条数据吗?",
+        "TXT_MSG_ADD_SUCCESS": "更新操作成功",
+        "TXT_MSG_ADD_FAIL": "更新操作失败.",
         "TXT_MSG_NO_DATA_WITH_SAVE": "请确保必填项,以及列表中不为空",
         "TXT_MSG_NO_PLATFORM_CATEGORY": "没有取到任何平台类目... 尝试换一个平台试试 ?",
         "TXT_MSG_VALUE_SETTING_COMMENT": "值设定说明：",
@@ -406,6 +406,7 @@ define(function(){
         "TXT_MSG_IMPORT_ADD": "增量方式",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
         "TXT_MSG_IMPORT_STATUS_ERROR": "存在正在处理中的数据，这些没有被更新",
+        "TXT_MSG_IMPORT":"请输入",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_ACTIVITIES": "请选择对应的活动!",
         "TXT_MSG_TAG": "请正确选择和填写标签!",
@@ -522,6 +523,9 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE":" 尺码表存在疑问请选择No，上新依然会使用这个尺码表",
         "TXT_SIZE_CHART_NOTICE_REQUIED":"请输入尺码表名称",
         "TXT_SIZE_CHART_NOTICE_REPEAT":"原始尺码不能重复",
-        "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空"
+        "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
+        "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
+        "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
     };
 });

@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.cms.CmsImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
@@ -28,8 +27,8 @@ public class CmsImageTemplateTest {
     @Autowired
     private CmsBtImageTemplateDao dao;
 
-    @Autowired
-    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
+//    @Autowired
+//    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
 
     @Test
     public void loadCmsImageTemplate() {
