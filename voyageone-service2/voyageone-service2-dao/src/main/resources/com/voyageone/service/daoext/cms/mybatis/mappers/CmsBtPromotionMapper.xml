@@ -64,7 +64,7 @@
         select
         <include refid="promotion_fields"/>
         b.name as cartName,
-        c.id,
+        c.id as tag_id,,
         c.channel_id as tag_channel_id,
         c.tag_name,
         c.tag_path,
