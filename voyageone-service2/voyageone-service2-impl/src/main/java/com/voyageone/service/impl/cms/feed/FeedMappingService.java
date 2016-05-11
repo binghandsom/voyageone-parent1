@@ -29,20 +29,12 @@ public class FeedMappingService extends BaseService {
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;
 
-    private CmsBtFeedMappingModel getDefault(Channel channel, String feedCategory) {
-        return getDefault(channel, feedCategory, true);
-    }
-
     public CmsBtFeedMappingModel getDefault(Channel channel, String feedCategory, boolean withProps) {
         return feedMappingDao.findDefault(channel.getId(), feedCategory, withProps);
     }
 
     public CmsBtFeedMappingModel getDefaultMain(Channel channel, String mainCategoryPath) {
         return feedMappingDao.findDefaultMainMapping(channel.getId(), mainCategoryPath);
-    }
-
-    private CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {
-        return feedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
     }
 
     public CmsBtFeedMappingModel getMapping(Channel channel, ObjectId objectId) {
@@ -55,13 +47,6 @@ public class FeedMappingService extends BaseService {
 
     public List<CmsBtFeedMappingModel> getMappingWithoutProps(String selChannelId) {
         return feedMappingDao.findMappingWithoutProps(selChannelId);
-    }
-
-    private boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
-
-        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeService.getCategoryNote(channel.getId(), topCategoryPath);
-
-        return treeModel != null && treeModel.getIsParent() == 0;
     }
 
     public CmsBtFeedMappingModel getMappingWithoutProps(Channel channel, ObjectId mappingId) {
@@ -136,5 +121,20 @@ public class FeedMappingService extends BaseService {
         updateMapping(defaultMapping);
 
         return defaultMapping;
+    }
+
+    private CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {
+        return feedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
+    }
+
+    private boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
+
+        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeService.getCategoryNote(channel.getId(), topCategoryPath);
+
+        return treeModel != null && treeModel.getIsParent() == 0;
+    }
+
+    private CmsBtFeedMappingModel getDefault(Channel channel, String feedCategory) {
+        return getDefault(channel, feedCategory, true);
     }
 }
