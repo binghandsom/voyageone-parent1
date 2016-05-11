@@ -28,6 +28,11 @@ public class ExcelColumn<T> {
         this.tableName=tableName;
         this.text=text;
     }
+    public ExcelColumn(String columnName, int orderIndex, String tableName, String text,boolean isNull)
+    {
+        this(columnName,orderIndex,tableName,text);
+        this.isNull=isNull;
+    }
     public ExcelColumn(String columnName, int orderIndex, String tableName, String text,EnumExcelColumnType columnType,boolean isNull)
     {
         this(columnName,orderIndex,tableName,text);

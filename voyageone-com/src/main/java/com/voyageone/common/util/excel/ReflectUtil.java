@@ -1,20 +1,15 @@
 package com.voyageone.common.util.excel;
 
+import com.voyageone.common.util.JacksonUtil;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by dell on 2016/3/23.
- */
 public class ReflectUtil {
-    public static void setFieldValueByName(String fieldName, Object fieldValue, Object o) throws Exception {
-        Field field = getFieldByName(fieldName, o.getClass());
-    }
+
     public static void setFieldValueByName(Field field, Object fieldValue, Object o) throws Exception {
         field.setAccessible(true);
         //获取字段类型
@@ -39,21 +34,31 @@ public class ReflectUtil {
             field.set(o, Double.valueOf(fieldValue.toString()));
         } else if (Character.TYPE == fieldType) {
             if ((fieldValue != null) && (fieldValue.toString().length() > 0)) {
-                field.set(o, Character
-                        .valueOf(fieldValue.toString().charAt(0)));
+                field.set(o, fieldValue.toString().charAt(0));
             }
-        } else if ((BigDecimal.class == fieldType)) {
+        } else if (BigDecimal.class == fieldType) {
             Long v1 = Long.valueOf(fieldValue.toString());
             field.set(o, BigDecimal.valueOf(v1));
         } else if (Date.class == fieldType) {
             field.set(o, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(fieldValue.toString()));
+        } else if (boolean.class == fieldType) {
+            if ("1".equals(fieldValue)) {
+                field.set(o, true);
+            }
+            if ("0".equals(fieldValue)) {
+                field.set(o, false);
+            }
+            field.set(o, Boolean.valueOf(fieldValue.toString()));
+        } else if (String[].class == fieldType) {
+            String[] arr = JacksonUtil.ToObjectFromJson(fieldValue.toString(), String[].class);
+            field.set(o, arr);
         } else {
             field.set(o, fieldValue);
         }
     }
     public static List<Field>  getListField(Class<?> clazz) {
         Field[] selfFields = clazz.getDeclaredFields();
-        List<Field> list = new ArrayList(Arrays.asList(selfFields));
+        List<Field> list = Arrays.asList(selfFields);
         Class<?> superClazz = clazz.getSuperclass();
         if (superClazz != null && superClazz != Object.class) {
             List<Field> listSuperField = getListField(superClazz);
@@ -64,11 +69,10 @@ public class ReflectUtil {
         return list;
     }
     /**
+     * 根据字段名获取字段
      * @param fieldName 字段名
      * @param clazz     包含该字段的类
      * @return 字段
-     * @MethodName : getFieldByName
-     * @Description : 根据字段名获取字段
      */
     public static Field getFieldByName(String fieldName, Class<?> clazz) {
         //拿到本类的所有字段
@@ -88,19 +92,16 @@ public class ReflectUtil {
         return null;
     }
     /**
+     * getFieldValueByNameSequence
      * @param fieldNameSequence 带路径的属性名或简单属性名
      * @param o                 对象
      * @return 属性值
      * @throws Exception
-     * @MethodName : getFieldValueByNameSequence
-     * @Description :
      * 根据带路径或不带路径的属性名获取属性值
      * 即接受简单属性名，如userName等，又接受带路径的属性名，如student.department.name等
      */
     public static Object getFieldValueByNameSequence(String fieldNameSequence, Object o) throws Exception {
-
-        Object value = null;
-
+        Object value;
         //将fieldNameSequence进行拆分
         String[] attributes = fieldNameSequence.split("\\.");
         if (attributes.length == 1) {
@@ -117,14 +118,14 @@ public class ReflectUtil {
  /*<-------------------------辅助的私有方法----------------------------------------------->*/
 
     /**
+     * 根据字段名获取字段值
+     *
      * @param fieldName 字段名
      * @param o         对象
      * @return 字段值
-     * @MethodName : getFieldValueByName
-     * @Description : 根据字段名获取字段值
      */
     public static Object getFieldValueByName(String fieldName, Object o) throws Exception {
-        Object value = null;
+        Object value;
         Field field = getFieldByName(fieldName, o.getClass());
 
         if (field != null) {

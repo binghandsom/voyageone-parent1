@@ -6,6 +6,24 @@ package com.voyageone.service.bean.cms;
 public class CallResult {
      boolean result;
     String msg;
+    String errorCode;
+    Object resultData;
+
+    public Object getResultData() {
+        return resultData;
+    }
+
+    public void setResultData(Object resultData) {
+        this.resultData = resultData;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
 
     public  CallResult()
     {

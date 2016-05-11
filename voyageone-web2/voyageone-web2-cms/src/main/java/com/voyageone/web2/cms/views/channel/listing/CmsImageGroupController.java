@@ -71,6 +71,7 @@ public class CmsImageGroupController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.SAVE_CHANNEL_IMAGE_GROUP)
     public AjaxResponse save(@RequestBody Map<String, Object> param){
         param.put("channelId", this.getUser().getSelChannelId());
+        param.put("userName", this.getUser().getUserName());
         cmsImageGroupService.save(param);
         return success(null);
     }
@@ -83,6 +84,7 @@ public class CmsImageGroupController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.DELETE_CHANNEL_IMAGE_GROUP)
     public AjaxResponse delete(@RequestBody Map<String, Object> param){
+        param.put("userName", this.getUser().getUserName());
         cmsImageGroupService.delete(param);
         return success(null);
     }

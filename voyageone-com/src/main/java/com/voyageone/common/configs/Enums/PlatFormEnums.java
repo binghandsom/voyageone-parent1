@@ -54,9 +54,9 @@ public class PlatFormEnums {
                     return CN;
                 case "4":
                     return JM;
+                default:
+                    return null;
             }
-
-            return null;
         }
 
         public String getId() {

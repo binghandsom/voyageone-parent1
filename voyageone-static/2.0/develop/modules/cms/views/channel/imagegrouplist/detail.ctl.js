@@ -14,6 +14,7 @@ define([
             this.imageGroupId = $routeParams['imageGroupId'];
             this.platformList = [];
             this.platform = "";
+            this.cartId = "";
             this.brandNameList = [];
             this.brandName = [];
             this.productTypeList = [];
@@ -22,6 +23,7 @@ define([
             this.sizeType = [];
 
             this.imageGroupName = "";
+            this.imageTypeList = [];
             this.imageType = "";
             this.viewType = "";
 
@@ -39,10 +41,12 @@ define([
                     main.productTypeList = res.data.productTypeList;
                     main.sizeTypeList = res.data.sizeTypeList;
                     main.platform = res.data.imageGroupInfo.cartId + "";
+                    main.cartId = res.data.imageGroupInfo.cartId + "";
                     main.brandName = res.data.imageGroupInfo.brandName;
                     main.productType = res.data.imageGroupInfo.productType;
                     main.sizeType = res.data.imageGroupInfo.sizeType;
                     main.imageGroupName = res.data.imageGroupInfo.imageGroupName;
+                    main.imageTypeList = res.data.imageTypeList;
                     main.imageType = res.data.imageGroupInfo.imageType + "";
                     main.viewType = res.data.imageGroupInfo.viewType + "";
                     main.search();
@@ -69,6 +73,7 @@ define([
                     "viewType":main.viewType
                 }).then(function (res) {
                     main.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                    main.cartId = main.platform;
                 }, function (err) {
                     if (err.displayType == null) {
                         main.alert('TXT_MSG_UPDATE_FAIL');
@@ -77,16 +82,16 @@ define([
             },
             refresh: function (originUrl) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_REFRESH_IMAGE').result.then(function () {
                     main.imageGroupDetailService.refresh({
                         "imageGroupId" : main.imageGroupId,
                         "originUrl" : originUrl
                     }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.notify.success('TXT_MSG_REFRESH_IMAGE_SUCCESS');
                         main.search();
                     }, function (err) {
                         if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
+                            main.alert('TXT_MSG_REFRESH_IMAGE_FAIL');
                         }
                     })
                 })
@@ -111,18 +116,22 @@ define([
                 var main = this;
                 main.imageGroupDetailService.move({
                     "imageGroupId" : main.imageGroupId,
-                    "originUrl" : originUrl
+                    "originUrl" : originUrl,
+                    "direction" : "up"
                 }).then(function (res) {
                     main.imageList = res.data;
+                    main.search();
                 })
             },
             moveDown: function (originUrl) {
                 var main = this;
                 main.imageGroupDetailService.move({
                     "imageGroupId" : main.imageGroupId,
-                    "originUrl" : originUrl
+                    "originUrl" : originUrl,
+                    "direction" : "down"
                 }).then(function (res) {
                     main.imageList = res.data;
+                    main.search();
                 })
             }
         };

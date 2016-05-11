@@ -177,7 +177,7 @@ define([
                  */
                 this.show = {
                     hasRequired: true,
-                    matched: null,
+                    matched: false,
                     keyWord: null
                 };
 

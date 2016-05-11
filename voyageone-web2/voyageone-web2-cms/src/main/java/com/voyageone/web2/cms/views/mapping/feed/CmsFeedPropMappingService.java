@@ -18,14 +18,11 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
-import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FieldBean;
@@ -36,8 +33,12 @@ import com.voyageone.web2.core.bean.UserSessionBean;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -51,9 +52,6 @@ import static java.util.stream.Collectors.*;
  */
 @Service
 class CmsFeedPropMappingService extends BaseAppService {
-
-    @Autowired
-    private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
     private FeedCategoryAttributeService feedCategoryAttributeService;
@@ -183,7 +181,11 @@ class CmsFeedPropMappingService extends BaseAppService {
         CmsMtFeedAttributesModel cmsMtFeedAttributesModel = feedCategoryAttributeService.getCategoryAttributeByCategory(userSessionBean.getSelChannelId(),feedCategoryPath);
 
         // 从 type/value 中取得 Feed 通用的属性
-        Map<String, List<String>> attributes = Types.getTypeList(49, lang)
+        List<TypeBean> typeList = Types.getTypeList(49, lang);
+
+        Assert.notNull(typeList);
+
+        Map<String, List<String>> attributes = typeList
                 .stream()
                 .collect(toMap(TypeBean::getValue, t -> new ArrayList<>(0)));
 
@@ -232,7 +234,7 @@ class CmsFeedPropMappingService extends BaseAppService {
 
         prop.setMappings(submitted.getMappings());
 
-        WriteResult result = feedMappingService.setMapping(feedMappingModel);
+        WriteResult result = feedMappingService.updateMapping(feedMappingModel);
 
         return result.getN() > 0;
     }
@@ -336,33 +338,8 @@ class CmsFeedPropMappingService extends BaseAppService {
         return children == null ? stream : Stream.concat(stream, children);
     }
 
-    private CmsMtFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModelx treeModel) {
-
-        String[] fromPath = path.split("-");
-
-        Stream<CmsMtFeedCategoryModel> feedCategoryModelStream = treeModel.getCategoryTree().stream();
-
-        for (int i = 0; i < fromPath.length; i++) {
-
-            String name = fromPath[i];
-
-            feedCategoryModelStream = feedCategoryModelStream
-                    .filter(c -> c.getName().equals(name));
-
-            if (i == fromPath.length - 1) {
-                break;
-            }
-
-            feedCategoryModelStream = feedCategoryModelStream
-                    .map(CmsMtFeedCategoryModel::getChild)
-                    .flatMap(Collection::stream);
-        }
-
-        return feedCategoryModelStream.findFirst().orElse(null);
-    }
-
     private List<Field> getCommonSchema() {
-        List list = commonSchemaService.getAll();
+        List<Map<String, Object>> list = commonSchemaService.getAll();
         return SchemaJsonReader.readJsonForList(list);
     }
 

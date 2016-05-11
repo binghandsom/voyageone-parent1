@@ -37,8 +37,9 @@ public enum ActionType {
                 return REMOVE;
             case 2:
                 return UPDATE;
+            default:
+                return null;
         }
-        return null;
     }
 
 

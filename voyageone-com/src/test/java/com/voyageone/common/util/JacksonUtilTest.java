@@ -52,4 +52,10 @@ public class JacksonUtilTest {
         System.out.println(list.get(0).get("appKey")+";"+list.get(0).get("sessionKey"));
     }
 
+    @Test
+    public void test111() {
+        String[] aa = new String[0];
+        System.out.println(JacksonUtil.bean2Json(aa));
+    }
+
 }
