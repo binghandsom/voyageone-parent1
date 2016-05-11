@@ -53,7 +53,7 @@
         where log.code = #{code} and log.sku = #{sku} and log.channel_id = #{channelId}
     </select>
 
-    <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="seq">
+    <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into voyageone_cms2.cms_bt_price_log (
         channel_id,
         product_id,
