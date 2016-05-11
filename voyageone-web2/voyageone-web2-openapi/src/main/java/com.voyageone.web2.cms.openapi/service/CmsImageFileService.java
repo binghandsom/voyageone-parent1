@@ -12,11 +12,13 @@ import com.voyageone.common.util.excel.ExportFileExcelUtil;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsImageTemplateService;
 import com.voyageone.service.impl.cms.imagecreate.ImageConfig;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import com.voyageone.service.model.cms.CmsMtImageCreateImportModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +44,11 @@ public class CmsImageFileService extends BaseService {
     @Autowired
     private ImageCreateFileService imageCreateFileService;
     @Autowired
+    CmsImageTemplateService serviceCmsImageTemplate;
+    @Autowired
     private ImagePathCache imagePathCache;
 
-    public GetImageResultBean checkGetImageParameter(String channelId, int templateId, String file, String vparam) {
+    public GetImageResultBean checkGetImageParameter(String channelId, long templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
         if (StringUtils.isEmpty(channelId)) {
             resultBean.setSubEnumError(ImageErrorEnum.ChannelIdNotNull);
@@ -64,8 +68,8 @@ public class CmsImageFileService extends BaseService {
         return resultBean;
     }
 
-    public GetImageResultBean getImage(String channelId, int templateId, String file, boolean isUploadUSCDN, String vparam, String creater) throws Exception {
-        GetImageResultBean result = null;
+    public GetImageResultBean getImage(String channelId, long templateId, String file, boolean isUploadUSCDN, String vparam, String creater) throws Exception {
+        GetImageResultBean result = new GetImageResultBean();
         CmsMtImageCreateFileModel modelFile = null;
         boolean isCreateNewFile = false;
         try {
@@ -73,10 +77,19 @@ public class CmsImageFileService extends BaseService {
             if (result.getErrorCode() > 0) {
                 return result;
             }
+           CmsBtImageTemplateModel modelTemplate=serviceCmsImageTemplate.get(templateId);
+            if(modelTemplate==null) {
+                //模板不存在
+                result.setEnumError(ImageErrorEnum.ParametersRequired);
+                result.setSubEnumError(ImageErrorEnum.ImageTemplateNotNull);
+                return result;
+            }
             //hashCode做缓存key
-            long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam);
+            long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam,modelTemplate.getTemplateModified());
+
             String ossFilePath = imagePathCache.get(hashCode);
             if (!StringUtil.isEmpty(ossFilePath)) {
+                //图片已经生成 返回
                 GetImageResultData resultData = new GetImageResultData();
                 resultData.setFilePath(ossFilePath);
                 result.setResultData(resultData);
@@ -104,6 +117,7 @@ public class CmsImageFileService extends BaseService {
             }
         } catch (Exception ex) {
             //5.未知异常
+            ex.printStackTrace();
             long requestId = FactoryIdWorker.nextId();
             $error("getImage requestId:" + requestId, ex);
             if (result != null) {
@@ -192,6 +206,7 @@ public class CmsImageFileService extends BaseService {
 
     public AddListResultBean addListWithTrans(AddListParameter parameter) {
         if (parameter.getData().size() > ImageConfig.getMaxSize()) {
+            //限制条数
             AddListResultBean resultBean = new AddListResultBean();
             resultBean.setErrorCode(ImageErrorEnum.ParametersOutSize.getCode());
             resultBean.setErrorMsg(ImageErrorEnum.ParametersOutSize.getMsg() + ImageConfig.getMaxSize());

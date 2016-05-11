@@ -5,9 +5,6 @@ import com.voyageone.cacheable.service.TCacheableBean1Service;
 import com.voyageone.cacheable.service.TCacheableBean2Service;
 import com.voyageone.cacheable.service.TCacheableBeanService;
 import com.voyageone.cacheable.service.TCacheableService;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,28 +150,28 @@ public class TCacheableServiceTest {
         System.out.println("\n");
     }
 
-    @Autowired
-    private CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
+//    @Autowired
+//    private CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
 
     @Test
     public void testQueryImageCreateTemplate() throws Exception {
         System.out.println("测试 CmsMtImageCreateTemplateDao 缓存：");
         for (int i = 0; i < 3; i++) {
-            CmsMtImageCreateTemplateModel model = cmsMtImageCreateTemplateDao.select(15);
-            System.out.println(JacksonUtil.bean2Json(model));
+           // CmsMtImageCreateTemplateModel model = cmsMtImageCreateTemplateDao.select(15);
+          //  System.out.println(JacksonUtil.bean2Json(model));
         }
 
     }
 
     @Test
     public void testUpdateImageCreateTemplate() throws Exception {
-        CmsMtImageCreateTemplateModel model = cmsMtImageCreateTemplateDao.select(15);
-        model.setModifier("ccc3");
-        cmsMtImageCreateTemplateDao.update(model);
+       // CmsMtImageCreateTemplateModel model = cmsMtImageCreateTemplateDao.select(15);
+      //  model.setModifier("ccc3");
+      //  cmsMtImageCreateTemplateDao.update(model);
 
         System.out.println("测试 CmsMtImageCreateTemplateDao 缓存：");
-        model = cmsMtImageCreateTemplateDao.select(15);
-        System.out.println(JacksonUtil.bean2Json(model));
+       // model = cmsMtImageCreateTemplateDao.select(15);
+       // System.out.println(JacksonUtil.bean2Json(model));
     }
 
 }
