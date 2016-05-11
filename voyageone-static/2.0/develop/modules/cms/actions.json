@@ -405,7 +405,8 @@
           "delete": "sizeChartDelete",
           "editSave": "sizeChartEditSave",
           "detailSearch": "sizeChartDetailSearch",
-          "detailSave": "sizeChartDetailSave"
+          "detailSave": "sizeChartDetailSave",
+          "detailSizeMapSave": "sizeChartDetailSizeMapSave"
         }
     }
     }

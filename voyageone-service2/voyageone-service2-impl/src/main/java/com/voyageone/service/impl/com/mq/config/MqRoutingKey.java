@@ -31,4 +31,9 @@ public class MqRoutingKey {
 
     public static final String CMS_BATCH_PlatformProductUploadJdJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadJdJob_queue";
 
+    /**
+     * tmall mq task
+     */
+    public static final String CMS_BATCH_PlatformProductUploadTmJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadTmJob_queue";
+
 }

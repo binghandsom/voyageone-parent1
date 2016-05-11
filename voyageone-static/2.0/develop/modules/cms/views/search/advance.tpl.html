@@ -322,6 +322,7 @@
 					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
 						<!--<span class="caret"></span>-->
 					<!--</button>-->
+					<!-----------------------------参加活动------------------------------>
 					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
 						<li ng-repeat="promotion in vm.masterData.promotionList">
 							<a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
