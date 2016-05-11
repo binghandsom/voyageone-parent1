@@ -1,6 +1,11 @@
 package com.voyageone.common.idsnowflake;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IdWorker {
+    private final static Logger logger = LoggerFactory.getLogger(IdWorker.class);
+
     public final static long Twepoch = 1288834974657L;
 
     final static int WorkerIdBits = 5;
@@ -65,16 +70,10 @@ public class IdWorker {
         if (datacenterId > MaxDatacenterId || datacenterId < 0) {
             throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", MaxDatacenterId));
         }
-
-        //log.info(
-        //    String.Format("worker starting. timestamp left shift {0}, datacenter id bits {1}, worker id bits {2}, sequence bits {3}, workerid {4}",
-        //                  TimestampLeftShift, DatacenterIdBits, WorkerIdBits, SequenceBits, workerId)
-        //    );
     }
 
     public synchronized long NextId() {
         long timestamp = this.timeGen();
-        // var timestamp = TimeGen();
 
         if (timestamp < _lastTimestamp) {
             try {
@@ -83,7 +82,7 @@ public class IdWorker {
                                 "Clock moved backwards.  Refusing to generate id for %d milliseconds",
                                 this._lastTimestamp - timestamp));
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
 
@@ -112,8 +111,6 @@ public class IdWorker {
     }
 
     private long timeGen() {
-
         return System.currentTimeMillis();
-
     }
 }

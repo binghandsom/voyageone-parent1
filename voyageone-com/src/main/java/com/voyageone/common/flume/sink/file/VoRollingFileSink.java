@@ -132,7 +132,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                         }
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
                 }
 
 
@@ -170,16 +170,6 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
 
                     logFileBean.serializer.flush();
                     logFileBean.outputStream.flush();
-                    //logFileBean.outputStream.close();
-                    /*
-                    * FIXME: Feature: Rotate on size and time by checking bytes written and
-                    * setting shouldRotate = true if we're past a threshold.
-                    */
-
-                    /*
-                    * FIXME: Feature: Control flush interval based on time or number of
-                    * events. For now, we're super-conservative and flush on each write.
-                    */
                 }
             } else {
                 // No events found, request back-off semantics from runner
@@ -261,19 +251,19 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
             Date curDate = dateFormat.parse(dayFormat.format(new Date()) + " " + time);
             return curDate.getTime();
         } catch (ParseException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
         return 0;
     }
 
     private class LogFileBean {
-        public File currentFile;
+        File currentFile;
 
-        public VoPathManagerForFile pathController;
+        VoPathManagerForFile pathController;
 
-        public OutputStream outputStream;
+        OutputStream outputStream;
 
-        public EventSerializer serializer;
+        EventSerializer serializer;
 
         public LogFileBean(String projectFile) throws Exception {
             pathController = new VoPathManagerForFile();

@@ -18,8 +18,8 @@
     <context:annotation-config/>
     <mvc:annotation-driven conversion-service="conversionService">
         <mvc:message-converters register-defaults="true">
-            <ref bean="stringHttpMessageConverter"></ref>
-            <ref bean="jsonHttpMessageConverter"></ref>
+            <ref bean="stringHttpMessageConverter"/>
+            <ref bean="jsonHttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
     <!-- 静态资源 -->
@@ -29,8 +29,7 @@
 
     <bean id="jsonHttpMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-        <property name="objectMapper" ref="cMappingJacksonObjectMapper"></property>
-
+        <property name="objectMapper" ref="cMappingJacksonObjectMapper"/>
     </bean>
     <bean id="stringHttpMessageConverter"
           class="org.springframework.http.converter.StringHttpMessageConverter">
@@ -47,7 +46,7 @@
     <mvc:interceptors>
         <!-- 共通检查及处理拦截器 -->
         <mvc:interceptor>
-            <mvc:mapping path="/"/>
+            <mvc:mapping path="/**"/>
             <!-- 例外 -->
             <mvc:exclude-mapping path="/core/access/user/login"/>
             <mvc:exclude-mapping path="/rest/**"/>

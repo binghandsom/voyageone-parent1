@@ -125,7 +125,7 @@
                             <th class="mfb-xxt text-center">{{'TXT_VIEW_TYPE' | translate}}</th>
                             <th class="mfb-xxt text-center">{{'TXT_PLATFORM' | translate}}</th>
                             <th class="mfb-xxt text-center">Template Type</th>
-                            <th class="mfb-xxt text-center">Template Content</th>
+                            <th class="mfb-xxt text-center" style="width: 100px">Template Content</th>
                             <th class="mfb-xxx text-center">{{'TXT_UPDATE_TIME' | translate}}</th>
                             <th class="mfb-xx text-center">{{'BTN_EDIT' | translate}}</th>
                         </tr>
@@ -140,7 +140,7 @@
                             <td class="mfb-xxt text-center">{{model.viewTypeName}}</td>
                             <td class="mfb-xxt text-center">{{model.cartName}}</td>
                             <td class="mfb-xxt text-center">{{model.imageTemplateTypeName}}</td>
-                            <td class="mfb-xxt text-center">{{model.imageTemplateContent}}</td>
+                            <td class="mfb-xxt text-center"><textarea  rows="3" readonly>{{model.imageTemplateContent}}</textarea></td>
                             <td class="mfb-xxx text-center">{{model.modified}}</td>
                             <td class="mfb-xxt text-center">
                                 <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing(model)"><i class="fa fa-cog"></i></button>

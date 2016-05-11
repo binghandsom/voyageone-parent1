@@ -94,6 +94,20 @@ public class CmsConstants {
         String FEED_TO_MASTER_UPDATE = "FEED_TO_MASTER_UPDATE";
     }
 
+    public interface ImageUploadStatus {
+        String NOT_UPLOAD = "1";
+        String WAITING_UPLOAD = "2";
+        String UPLOAD_SUCCESS = "3";
+        String UPLOAD_FAIL = "4";
+    }
+
+    public interface ImageType {
+        String SIZE_CHART_IMAGE = "2";
+        String BRAND_STORY_IMAGE = "3";
+        String SHIPPING_DESCRIPTION_IMAGE = "4";
+        String STORE_DESCRIPTION_IMAGE = "5";
+    }
+
     public interface JmMasterPlatCode {
         String BRND = "0";
         String PRICE_UNIT = "1";
