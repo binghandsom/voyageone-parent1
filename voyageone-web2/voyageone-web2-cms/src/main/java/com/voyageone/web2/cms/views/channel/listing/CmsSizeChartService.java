@@ -253,6 +253,7 @@ public class CmsSizeChartService extends BaseAppService {
      */
     private void editCmsBtSizeChartBean(CmsBtSizeChartBean bean, String channelId, String lang) {
         List<String> brandNameTrans = new ArrayList<>();
+        List<TypeChannelBean> brandNameBean = new ArrayList<>();
         for (String brandName : bean.getBrandName()) {
             if ("All".equals(brandName)) {
                 brandNameTrans.add("All");
@@ -260,13 +261,16 @@ public class CmsSizeChartService extends BaseAppService {
                 TypeChannelBean  typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
                 if (typeChannelBean != null) {
                     brandNameTrans.add(typeChannelBean.getName());
+                    brandNameBean.add(typeChannelBean);
                 }
             }
         }
         bean.setBrandNameTrans(brandNameTrans);
+        bean.setBrandNameTransBean(brandNameBean);
 
         // Related Product Type
         List<String> productTypeTrans = new ArrayList<>();
+        List<TypeChannelBean> productTypeBean = new ArrayList<>();
         for (String productType : bean.getProductType()) {
             if ("All".equals(productType)) {
                 productTypeTrans.add("All");
@@ -274,13 +278,15 @@ public class CmsSizeChartService extends BaseAppService {
                 TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
                 if (typeChannelBean != null) {
                     productTypeTrans.add(typeChannelBean.getName());
+                    productTypeBean.add(typeChannelBean);
                 }
             }
         }
         bean.setProductTypeTrans(productTypeTrans);
-
+        bean.setProductTypeTransBean(productTypeBean);
         // Related Size Type
         List<String> sizeTypeTrans = new ArrayList<>();
+        List<TypeChannelBean> sizeTypeBean = new ArrayList<>();
         for (String sizeType : bean.getSizeType()) {
             if ("All".equals(sizeType)) {
                 sizeTypeTrans.add("All");
@@ -288,9 +294,11 @@ public class CmsSizeChartService extends BaseAppService {
                 TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
                 if (typeChannelBean != null) {
                     sizeTypeTrans.add(typeChannelBean.getName());
+                    sizeTypeBean.add(typeChannelBean);
                 }
             }
         }
         bean.setSizeTypeTrans(sizeTypeTrans);
+        bean.setSizeTypeTransBean(sizeTypeBean);
     }
 }
