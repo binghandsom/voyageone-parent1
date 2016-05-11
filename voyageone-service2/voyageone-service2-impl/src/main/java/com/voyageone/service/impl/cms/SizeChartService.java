@@ -66,7 +66,7 @@ public class SizeChartService extends BaseService {
     public void sizeChartUpdate(String channelId,int sizeChartId){
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
         //标志位
-        cmsBtSizeChartModel.setActive(0);
+        cmsBtSizeChartModel.setActive(1);
         //尺码关系一览检索
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
