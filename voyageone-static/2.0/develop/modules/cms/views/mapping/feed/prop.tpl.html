@@ -48,42 +48,43 @@
         </div>
     </div>
     <div class="container-fluid" ng-controller="popupCtrl">
-        <div class="col-sm-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><b>{{'TXT_NORMAL_ATTRIBUTE' | translate}}</b></h4>
-                </div>
-                <form class="form-horizontal clearfix">
-                    <div class="col-sm-12 platform_mapping_bg_list"
-                         ng-repeat="bean in ctrl.dataSources.fields track by bean.seq"
-                         ng-if="ctrl.shown(bean)" field-bean>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><b>{{'TXT_NORMAL_ATTRIBUTE' | translate}}</b></h4>
                     </div>
-                </form>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><b>{{'TXT_COMMON_ATTRIBUTE' | translate}}</b></h4>
+                    <form class="form-horizontal clearfix">
+                        <div class="col-sm-12 platform_mapping_bg_list"
+                             ng-repeat="bean in ctrl.dataSources.fields track by bean.seq"
+                             ng-if="ctrl.shown(bean)" field-bean>
+                        </div>
+                    </form>
                 </div>
-                <form class="form-horizontal clearfix">
-                    <div class="col-sm-12 platform_mapping_bg_list"
-                         ng-repeat="bean in ctrl.dataSources.common track by bean.seq"
-                         ng-if="ctrl.shown(bean)" field-bean></div>
-                </form>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><b>{{'TXT_SKU_ATTRIBUTE' | translate}}</b></h4>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><b>{{'TXT_COMMON_ATTRIBUTE' | translate}}</b></h4>
+                    </div>
+                    <form class="form-horizontal clearfix">
+                        <div class="col-sm-12 platform_mapping_bg_list"
+                             ng-repeat="bean in ctrl.dataSources.common track by bean.seq"
+                             ng-if="ctrl.shown(bean)" field-bean></div>
+                    </form>
                 </div>
-                <form class="form-horizontal clearfix">
-                    <div class="col-sm-12 platform_mapping_bg_list"
-                         ng-repeat="bean in ctrl.dataSources.sku track by bean.seq"
-                         ng-include="'feedMapping.fieldBean.html'"
-                         ng-if="ctrl.shown(bean)" field-bean></div>
-                </form>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><b>{{'TXT_SKU_ATTRIBUTE' | translate}}</b></h4>
+                    </div>
+                    <form class="form-horizontal clearfix">
+                        <div class="col-sm-12 platform_mapping_bg_list"
+                             ng-repeat="bean in ctrl.dataSources.sku track by bean.seq"
+                             ng-include="'feedMapping.fieldBean.html'"
+                             ng-if="ctrl.shown(bean)" field-bean></div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

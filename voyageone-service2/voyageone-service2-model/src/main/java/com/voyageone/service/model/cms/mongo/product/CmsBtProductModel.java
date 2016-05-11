@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * {@link CmsBtProductModel} 的商品Model
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
@@ -29,7 +30,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public String getOrgChannelId() {
 
-        return orgChannelId == null?this.channelId:orgChannelId;
+        return orgChannelId == null ? this.channelId : orgChannelId;
     }
 
     public void setOrgChannelId(String orgChannelId) {
@@ -75,14 +76,18 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.fields = fields;
     }
 
+    /**
+     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
+     */
     @Deprecated
-    //@see CmsBtProductBean.groupBean
     public CmsBtProductGroupModel getGroups() {
         return groups;
     }
 
+    /**
+     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
+     */
     @Deprecated
-    //@see CmsBtProductBean.groupBean
     public void setGroups(CmsBtProductGroupModel groups) {
         this.groups = groups;
     }
@@ -97,7 +102,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public CmsBtProductModel_Sku getSku(String skuCode) {
         if (skuCode != null && this.skus != null) {
-            for(CmsBtProductModel_Sku sku : skus) {
+            for (CmsBtProductModel_Sku sku : skus) {
                 if (skuCode.equals(sku.getSkuCode())) {
                     return sku;
                 }

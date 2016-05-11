@@ -78,14 +78,9 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Template Type</label>
                                     <div class="col-sm-7">
-                                        <select class="form-control" ng-model="searchInfo.imageTemplateType">
+                                        <select class="form-control" ng-model="searchInfo.imageTemplateType" width="'416px'"
+                                                ng-options="m.value as m.name for m in vm.imageTemplateList">
                                             <option value="">Select...</option>
-                                            <option value="1">商品图片模版</option>
-                                            <option value="2">产品图片模版</option>
-                                            <option value="3">详情细节模版</option>
-                                            <option value="4">参数模版</option>
-                                            <option value="5">自定义图片模版</option>
-                                            <option value="6">商品包装模版</option>
                                         </select>
                                     </div>
                                 </div>
@@ -130,7 +125,7 @@
                             <th class="mfb-xxt text-center">{{'TXT_VIEW_TYPE' | translate}}</th>
                             <th class="mfb-xxt text-center">{{'TXT_PLATFORM' | translate}}</th>
                             <th class="mfb-xxt text-center">Template Type</th>
-                            <th class="mfb-xxt text-center">Template Content</th>
+                            <th class="mfb-xxt text-center" style="width: 100px">Template Content</th>
                             <th class="mfb-xxx text-center">{{'TXT_UPDATE_TIME' | translate}}</th>
                             <th class="mfb-xx text-center">{{'BTN_EDIT' | translate}}</th>
                         </tr>
@@ -144,8 +139,8 @@
                             <td class="mfb-xxs text-center">{{model.sizeTypeTrans.join(' , ')}}</td>
                             <td class="mfb-xxt text-center">{{model.viewTypeName}}</td>
                             <td class="mfb-xxt text-center">{{model.cartName}}</td>
-                            <td class="mfb-xxt text-center">{{model.imageTemplateType}}</td>
-                            <td class="mfb-xxt text-center">{{model.imageTemplateContent}}</td>
+                            <td class="mfb-xxt text-center">{{model.imageTemplateTypeName}}</td>
+                            <td class="mfb-xxt text-center"><textarea  rows="3" readonly>{{model.imageTemplateContent}}</textarea></td>
                             <td class="mfb-xxx text-center">{{model.modified}}</td>
                             <td class="mfb-xxt text-center">
                                 <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing(model)"><i class="fa fa-cog"></i></button>

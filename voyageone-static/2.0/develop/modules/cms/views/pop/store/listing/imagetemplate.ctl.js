@@ -10,7 +10,8 @@ define([
         $scope.vm = {"platformList":[],
             "brandNameList":[],
             "productTypeList":[],
-            "sizeTypeList":[]
+            "sizeTypeList":[],
+            "imageTemplateList":[]
         };
         $scope.model = {};
         $scope.datePicker = [];
@@ -21,6 +22,7 @@ define([
                     $scope.vm.brandNameList = res.data.brandNameList;
                     $scope.vm.productTypeList = res.data.productTypeList;
                     $scope.vm.sizeTypeList = res.data.sizeTypeList;
+                    $scope.vm.imageTemplateList=res.data.imageTemplateList;
                     //   $scope.search();
                     if(context)
                     {

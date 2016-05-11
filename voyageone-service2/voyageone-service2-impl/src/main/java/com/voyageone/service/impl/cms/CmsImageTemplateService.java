@@ -3,6 +3,8 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -53,12 +55,10 @@ public class CmsImageTemplateService extends BaseService {
         List<CmsBtImageTemplateModel> list = dao.select(queryObject);
         return changeToBeanList(list, (String) map.get("channelId"), (String) map.get("lang"));
     }
-
     public Object getCount(Map<String, Object> mapQuery) {
         String parameter = getSearchQuery(mapQuery);
         return dao.countByQuery(parameter);
     }
-
     public void update(CmsBtImageTemplateModel model) {
         dao.update(model);
     }
@@ -70,7 +70,6 @@ public class CmsImageTemplateService extends BaseService {
     public CmsBtImageTemplateModel getOne(JomgoQuery queryObject) {
         return dao.selectOneWithQuery(queryObject);
     }
-
     /**
      * 取得检索条件信息
      *
@@ -78,9 +77,7 @@ public class CmsImageTemplateService extends BaseService {
      * @return 检索条件信息
      */
     public Map<String, Object> init(Map<String, Object> param) {
-
         Map<String, Object> result = new HashMap<>();
-
         // 取得当前channel, 有多少个platform(Approve平台)
         result.put("platformList", TypeChannels.getTypeListSkuCarts((String) param.get("channelId"), "A", (String) param.get("lang")));
         // 品牌下拉列表
@@ -90,9 +87,9 @@ public class CmsImageTemplateService extends BaseService {
         // 尺寸类型下拉列表
         result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String) param.get("channelId"), (String) param.get("lang")));
 
+        result.put("imageTemplateList",Types.getTypeList(Constants.comMtTypeChannel.Image_Template_Type.toString(), (String) param.get("lang")));
         return result;
     }
-
 
     /**
      * 检索结果转换
@@ -104,7 +101,6 @@ public class CmsImageTemplateService extends BaseService {
      */
     private List<CmsBtImageTemplateBean> changeToBeanList(List<CmsBtImageTemplateModel> imageGroupList, String channelId, String lang) {
         List<CmsBtImageTemplateBean> imageGroupBeanList = new ArrayList<>();
-
         for (CmsBtImageTemplateModel imageGroup : imageGroupList) {
             CmsBtImageTemplateBean dest = new CmsBtImageTemplateBean();
             try {
@@ -117,11 +113,8 @@ public class CmsImageTemplateService extends BaseService {
             editImageGroupBean(dest, channelId, lang);
             imageGroupBeanList.add(dest);
         }
-
-
         return imageGroupBeanList;
     }
-
     /**
      * 检索结果转换
      *
@@ -131,26 +124,6 @@ public class CmsImageTemplateService extends BaseService {
      * @return 检索结果（Bean）
      */
     private void editImageGroupBean(CmsBtImageTemplateBean bean, String channelId, String lang) {
-//        if ("cn".equals(lang)) {
-//            // ImageType
-//            if (bean.getImageType() == 2) {
-//                bean.setImageTypeName("尺码图");
-//            } else if (bean.getImageType() == 3) {
-//                bean.setImageTypeName("品牌故事图");
-//            } else if (bean.getImageType() == 4) {
-//                bean.setImageTypeName("物流介绍图");
-//            }
-//
-//        } else {
-//            // ImageType
-//            if (bean.getImageType() == 2) {
-//                bean.setImageTypeName("Size Chart Image");
-//            } else if (bean.getImageType() == 3) {
-//                bean.setImageTypeName("Brand Story Image");
-//            } else if (bean.getImageType() == 4) {
-//                bean.setImageTypeName("Shipping Description Image");
-//            }
-//        }
         // Platform
         TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, String.valueOf(bean.getCartId()), lang);
         if (typeChannelBean != null) {
@@ -178,7 +151,7 @@ public class CmsImageTemplateService extends BaseService {
         bean.setBrandNameTrans(brandNameTrans);
 
         // Related Product Type
-        if(bean.getProductType()!=null) {
+        if (bean.getProductType() != null) {
             List<String> productTypeTrans = new ArrayList<>();
             for (String productType : bean.getProductType()) {
                 if ("All".equals(productType)) {
@@ -193,7 +166,7 @@ public class CmsImageTemplateService extends BaseService {
             bean.setProductTypeTrans(productTypeTrans);
         }
         // Related Size Type
-        if(bean.getSizeType()!=null) {
+        if (bean.getSizeType() != null) {
             List<String> sizeTypeTrans = new ArrayList<>();
             for (String sizeType : bean.getSizeType()) {
                 if ("All".equals(sizeType)) {
@@ -207,6 +180,10 @@ public class CmsImageTemplateService extends BaseService {
             }
             bean.setSizeTypeTrans(sizeTypeTrans);
         }
+        if (bean.getImageTemplateType() != 0) {
+            String name = Types.getTypeName(73, lang, bean.getImageTemplateType().toString());
+            bean.setImageTemplateTypeName(name);
+        }
     }
 
     /**
@@ -214,17 +191,6 @@ public class CmsImageTemplateService extends BaseService {
      */
     private String getSearchQuery(Map<String, Object> param) {
         StringBuilder result = new StringBuilder();
-
-        // 获取Platform
-//        if (param.containsKey("platformList")) {
-//            List<Map<String, Object>> platFormList = ((List) param.get("platformList"));
-//            List<Integer> platFormChangeList = platFormList.stream().filter((platfrom) -> ((Map) platfrom).get("show") != null && (boolean) ((Map) platfrom).get("show") == true).map((platfrom) -> Integer.parseInt((String) platfrom.get("value"))).collect(toList());
-//            if (platFormChangeList.size() > 0) {
-//                Integer[] platFormArray = platFormChangeList.toArray(new Integer[platFormList.size()]);
-//                result.append(MongoUtils.splicingValue("cartId", platFormArray));
-//                result.append(",");
-//            }
-//        }
         List cartIdList = (List) param.get("cartIdList");
         if (cartIdList!=null&&cartIdList.size() > 0) {
             result.append(MongoUtils.splicingValue("cartId", cartIdList.toArray(new Integer[cartIdList.size()])));
@@ -317,12 +283,12 @@ public class CmsImageTemplateService extends BaseService {
         if (isNull(model.getProductType())) {
             List lst = new ArrayList<String>();
             lst.add("All");
-            model.setBrandName(lst);
+            model.setProductType(lst);
         }
         if (isNull(model.getSizeType())) {
             List lst = new ArrayList<String>();
             lst.add("All");
-            model.setBrandName(lst);
+            model.setSizeType(lst);
         }
 
         if (model.getImageTemplateId() != null && model.getImageTemplateId() > 0) {
@@ -335,7 +301,7 @@ public class CmsImageTemplateService extends BaseService {
         } else {
             //新增
             model.setActive(1);
-            model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
+           model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
             model.setCreater(userName);
             model.setTemplateModified(DateTimeUtil.getNow());
             model.setModifier(userName);

@@ -115,12 +115,6 @@ public class CmsSizeChartService extends BaseAppService {
         String userName =param.get("userName").toString();
         //尺码名称
         String sizeChartName=(String) param.get("sizeChartName");
-        //尺码标志
-        String finishFlag=(String) param.get("finishFlag");
-        //更新开始时间
-        String startTime=(String) param.get("startTime");
-        //更新结束时间
-        String endTime=(String) param.get("endTime");
         //产品品牌
         List<String> brandNameList=(List<String>) param.get("brandNameList");
         //产品类型
@@ -210,7 +204,7 @@ public class CmsSizeChartService extends BaseAppService {
             }
             //重复check
             if(originalSizeSet.size() != sizeMapList.size()){
-                throw new BusinessException("originSize重复");
+                throw new BusinessException("7000086");
             }
         }
         //插入数据库
@@ -253,44 +247,48 @@ public class CmsSizeChartService extends BaseAppService {
      */
     private void editCmsBtSizeChartBean(CmsBtSizeChartBean bean, String channelId, String lang) {
         List<String> brandNameTrans = new ArrayList<>();
+        List<TypeChannelBean> brandNameBean = new ArrayList<>();
         for (String brandName : bean.getBrandName()) {
             if ("All".equals(brandName)) {
                 brandNameTrans.add("All");
             } else {
                 TypeChannelBean  typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
                 if (typeChannelBean != null) {
-                    brandNameTrans.add(typeChannelBean.getName());
+                    brandNameBean.add(typeChannelBean);
                 }
             }
         }
         bean.setBrandNameTrans(brandNameTrans);
+        bean.setBrandNameTransBean(brandNameBean);
 
         // Related Product Type
         List<String> productTypeTrans = new ArrayList<>();
+        List<TypeChannelBean> productTypeBean = new ArrayList<>();
         for (String productType : bean.getProductType()) {
             if ("All".equals(productType)) {
                 productTypeTrans.add("All");
             } else {
                 TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
                 if (typeChannelBean != null) {
-                    productTypeTrans.add(typeChannelBean.getName());
+                    productTypeBean.add(typeChannelBean);
                 }
             }
         }
         bean.setProductTypeTrans(productTypeTrans);
-
+        bean.setProductTypeTransBean(productTypeBean);
         // Related Size Type
         List<String> sizeTypeTrans = new ArrayList<>();
+        List<TypeChannelBean> sizeTypeBean = new ArrayList<>();
         for (String sizeType : bean.getSizeType()) {
             if ("All".equals(sizeType)) {
                 sizeTypeTrans.add("All");
             } else {
                 TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
                 if (typeChannelBean != null) {
-                    sizeTypeTrans.add(typeChannelBean.getName());
+                    sizeTypeBean.add(typeChannelBean);
                 }
             }
         }
-        bean.setSizeTypeTrans(sizeTypeTrans);
+        bean.setSizeTypeTransBean(sizeTypeBean);
     }
 }
