@@ -367,9 +367,9 @@ define(function(){
         "TXT_MSG_STARTUP_ITEM": "您确定要全部启动吗?",
         "TXT_MSG_DELETE_SUCCESS": "删除操作成功",
         "TXT_MSG_DELETE_FAIL": "删除操作失败.",
-        "TXT_MSG_ADD_ITEM": "您确定要新增这条数据吗?",
-        "TXT_MSG_ADD_SUCCESS": "新增操作成功",
-        "TXT_MSG_ADD_FAIL": "新增操作失败.",
+        "TXT_MSG_ADD_ITEM": "您确定要更新这条数据吗?",
+        "TXT_MSG_ADD_SUCCESS": "更新操作成功",
+        "TXT_MSG_ADD_FAIL": "更新操作失败.",
         "TXT_MSG_NO_DATA_WITH_SAVE": "请确保必填项,以及列表中不为空",
         "TXT_MSG_NO_PLATFORM_CATEGORY": "没有取到任何平台类目... 尝试换一个平台试试 ?",
         "TXT_MSG_VALUE_SETTING_COMMENT": "值设定说明：",
@@ -522,6 +522,8 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE":" 尺码表存在疑问请选择No，上新依然会使用这个尺码表",
         "TXT_SIZE_CHART_NOTICE_REQUIED":"请输入尺码表名称",
         "TXT_SIZE_CHART_NOTICE_REPEAT":"原始尺码不能重复",
-        "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空"
+        "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
+        "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
     };
 });
