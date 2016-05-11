@@ -12,7 +12,7 @@ public class CmsBtImageGroupModel_Image {
 
     private String originUrl;
     private String platformUrl;
-    private String platformImageId;
+    private Long platformImageId;
     private Integer status;
     private String errorMsg;
     private String statusName;
@@ -33,11 +33,11 @@ public class CmsBtImageGroupModel_Image {
         this.platformUrl = platformUrl;
     }
 
-    public String getPlatformImageId() {
+    public Long getPlatformImageId() {
         return platformImageId;
     }
 
-    public void setPlatformImageId(String platformImageId) {
+    public void setPlatformImageId(Long platformImageId) {
         this.platformImageId = platformImageId;
     }
 

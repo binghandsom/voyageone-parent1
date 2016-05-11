@@ -37,15 +37,12 @@ public class CmsImageTemplateService extends BaseService {
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
-    private CmsBtImagesDao cmsBtImagesDao;
-    @Autowired
     private CmsBtImageTemplateDao dao;
 
     public Object getPage(Map<String, Object> map) {
         int pageIndex = Integer.parseInt(map.get("pageIndex").toString());
         int pageSize = Integer.parseInt(map.get("pageSize").toString());
         String parameter = getSearchQuery(map);
-        long count = dao.countByQuery("");
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("");
         queryObject.setQuery(parameter);

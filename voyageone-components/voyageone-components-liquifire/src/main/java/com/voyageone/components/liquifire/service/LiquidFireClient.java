@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -74,15 +75,19 @@ public class LiquidFireClient {
 
     public String getImage(String param, String fileName, String proxyIP, String proxyPort) throws Exception {
         String outFileFullName = this.getSavePath() + "/" + fileName + ".jpg";
+        String downloadUrl = getDownloadUrl(param, fileName);
+        download(downloadUrl, outFileFullName, proxyIP, proxyPort);
+        return outFileFullName;
+    }
+    //获取下载地址
+    public String getDownloadUrl(String param,String fileName) throws UnsupportedEncodingException {
         logger.debug(fileName + ":  " + this.getUrl() + "?" + param);
         param = param.replace("\r\n", "");
         param = param.replace("\n", "");
         String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
         logger.debug(fileName + "encode:  " + this.getUrl() + "?" + urlParameter);
-        download(this.getUrl() + "?" + urlParameter, outFileFullName, proxyIP, proxyPort);
-        return outFileFullName;
+        return this.getUrl() + "?" + urlParameter;
     }
-
     private void download(String urlString, String filename, String proxyIP, String proxyPort) throws Exception {
         InputStream is = null;
         OutputStream os = null;
