@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.joining;
+
 /**
  * Created by james.li on 2015/11/27.
  *
@@ -60,5 +62,20 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
         WriteResult updateRes = mongoTemplate.updateMulti("{}", String.format("{ $set: {updFlg: %d}}", updFlg),
                 getCollectionName(channelId));
         return updateRes.getN();
+    }
+
+    /**
+     * 查询 feed category 的 id 和 path
+     *
+     * @param models    指定查询的 model
+     * @param channelId 查询的渠道
+     * @return 只包含 feed category 的 id 和 path 的数据模型
+     */
+    public List<CmsBtFeedInfoModel> selectCategoryByModel(List<String> models, String channelId) {
+
+        // param => 51A0HC13E1-00LCNB0', '16189
+        String param = models.stream().collect(joining("\",\""));
+
+        return selectWithProjection("{model:{$in:[\"" + param + "\"]}}", "{category:1, catId:1}", channelId);
     }
 }

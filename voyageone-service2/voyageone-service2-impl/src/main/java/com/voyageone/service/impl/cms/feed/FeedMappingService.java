@@ -42,6 +42,8 @@ public class FeedMappingService extends BaseService {
     }
 
     public WriteResult updateMapping(CmsBtFeedMappingModel feedMappingModel) {
+        if (StringUtils.isEmpty(feedMappingModel.get_id()))
+            feedMappingDao.insert(feedMappingModel);
         return feedMappingDao.update(feedMappingModel);
     }
 
@@ -63,64 +65,82 @@ public class FeedMappingService extends BaseService {
 
     /**
      * 为类目更新 Mapping
-     * 
+     *
      * @return 变动后的 Feed 类目的 Mapping 关系
      */
-    public CmsBtFeedMappingModel setMapping(String feedCategoryPath, String mainCategoryPath, Channel channel) {
+    public CmsBtFeedMappingModel setMapping(String feedCategoryPath, String mainCategoryPath, Channel channel, boolean replace) {
 
         if (StringUtils.isAnyEmpty(feedCategoryPath, mainCategoryPath))
             throw new BusinessException("木有参数");
 
-        // 尝试查询 Mapping
+        // 先检查 main mapping 是否存在
+        CmsBtFeedMappingModel mainCategoryMapping =
+                getMapping(channel, feedCategoryPath, mainCategoryPath);
 
         CmsBtFeedMappingModel defaultMapping = getDefault(channel, feedCategoryPath);
+
+        // 如果有 main mapping
+        if (mainCategoryMapping != null) {
+
+            // 如果有 main mapping, 有 default mapping, 同时 main mapping 不是 default mapping。 则切换双方的 default 标识
+            if (defaultMapping != null) {
+
+                // 如果有 default mapping, 同时 main mapping 就是 default mapping, 则直接返回
+                if (defaultMapping.get_id().equals(mainCategoryMapping.get_id()))
+                    return defaultMapping;
+                else
+                    defaultMapping.setDefaultMapping(0);
+
+            }
+
+            // 如果没有 default mapping 则直接更新 main 为 default
+            mainCategoryMapping.setDefaultMapping(1);
+
+        } else {
+
+            // 如果没有 main mapping 并且有 default mapping
+            // 则如果 replace 为 true, 则替换 default mapping 的信息, 并清空 field mapping
+            if (defaultMapping != null && replace) {
+
+                defaultMapping.setMainCategoryPath(mainCategoryPath);
+                defaultMapping.setMatchOver(0);
+                defaultMapping.setProps(new ArrayList<>());
+
+                mainCategoryMapping = defaultMapping;
+
+            } else {
+
+                // 如果 default mapping 也没有, 则创建新的 main mapping
+                // 如果 replace 为 false, 则创建新的 main mapping
+                mainCategoryMapping = new CmsBtFeedMappingModel();
+                mainCategoryMapping.setChannelId(channel.getId());
+                mainCategoryMapping.setFeedCategoryPath(feedCategoryPath);
+                mainCategoryMapping.setMainCategoryPath(mainCategoryPath);
+                mainCategoryMapping.setMatchOver(0);
+                mainCategoryMapping.setDefaultMapping(1);
+
+                if (defaultMapping != null)
+                    defaultMapping.setDefaultMapping(0);
+
+            }
+
+        }
+
+        // 最终检查 main mapping 是否可以作为 default main mapping
 
         CmsBtFeedMappingModel defaultMainMapping = getDefaultMain(channel, mainCategoryPath);
 
         boolean canBeDefaultMain = isCanBeDefaultMain(channel, feedCategoryPath);
 
-        // 如果当前 Feed 类目已经有了默认的 Mapping
-        // 如果当前的默认 Mapping 就是这次给的主类目的话, 就不用继续了
-        // 如果不是当前的主类目, 就清空属性的 Mapping, 更换主类目路径
-        if (defaultMapping != null) {
+        mainCategoryMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
 
-            if (!defaultMapping.getMainCategoryPath().equals(mainCategoryPath)) {
-                defaultMapping.setMainCategoryPath(mainCategoryPath);
-                defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
-                defaultMapping.setMatchOver(0);
-                defaultMapping.setProps(new ArrayList<>());
+        // 更新或保存
+        if (defaultMapping != null && defaultMapping != defaultMainMapping)
+            updateMapping(defaultMapping);
 
-                updateMapping(defaultMapping);
-            }
+        updateMapping(mainCategoryMapping);
 
-            return defaultMapping;
-        }
-
-        // 如果当前 Feed 类目已经 Mapping 到这个主类目, 只是不是默认 Mapping, 则只更新默认标识位
-        CmsBtFeedMappingModel mainCategoryMapping =
-                getMapping(channel, feedCategoryPath, mainCategoryPath);
-
-        if (mainCategoryMapping != null) {
-            mainCategoryMapping.setDefaultMapping(1);
-            updateMapping(defaultMainMapping);
-
-            return mainCategoryMapping;
-        }
-
-        // 如果上面的全部不成立, 就需要全新创建 Mapping
-
-        defaultMapping = new CmsBtFeedMappingModel();
-
-        defaultMapping.setChannelId(channel.getId());
-        defaultMapping.setFeedCategoryPath(feedCategoryPath);
-        defaultMapping.setMainCategoryPath(mainCategoryPath);
-        defaultMapping.setMatchOver(0);
-        defaultMapping.setDefaultMapping(1);
-        defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
-        defaultMapping.setChannelId(channel.getId());
-        updateMapping(defaultMapping);
-
-        return defaultMapping;
+        return mainCategoryMapping;
     }
 
     private CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {

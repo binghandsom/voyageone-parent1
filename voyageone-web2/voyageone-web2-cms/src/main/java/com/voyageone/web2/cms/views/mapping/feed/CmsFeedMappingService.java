@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.*;
  * @version 2.0.0
  */
 @Service("web2.cms.CmsFeedMappingService")
-public class CmsFeedMappingService extends BaseAppService {
+class CmsFeedMappingService extends BaseAppService {
 
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;
@@ -104,7 +104,11 @@ public class CmsFeedMappingService extends BaseAppService {
 
         SetMappingBean setMappingBean = new SetMappingBean(path, feedMappingModel.getMainCategoryPath());
 
-        return feedMappingService.setMapping(setMappingBean.getFrom(), setMappingBean.getTo(), user.getSelChannel());
+        return setMapping(setMappingBean, user);
+    }
+
+    CmsBtFeedMappingModel setMapping(SetMappingBean setMappingBean, UserSessionBean user) {
+        return feedMappingService.setMapping(setMappingBean.getFrom(), setMappingBean.getTo(), user.getSelChannel(), true);
     }
 
     /**
