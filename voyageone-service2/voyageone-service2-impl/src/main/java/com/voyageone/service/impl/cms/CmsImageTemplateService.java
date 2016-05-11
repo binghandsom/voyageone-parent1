@@ -216,21 +216,33 @@ public class CmsImageTemplateService extends BaseService {
         StringBuilder result = new StringBuilder();
 
         // 获取Platform
-        if (param.containsKey("platformList")) {
-            List<Map<String, Object>> platFormList = ((List) param.get("platformList"));
-            List<Integer> platFormChangeList = platFormList.stream().filter((platfrom) -> ((Map) platfrom).get("show") != null && (boolean) ((Map) platfrom).get("show") == true).map((platfrom) -> Integer.parseInt((String) platfrom.get("value"))).collect(toList());
-            if (platFormChangeList.size() > 0) {
-                Integer[] platFormArray = platFormChangeList.toArray(new Integer[platFormList.size()]);
-                result.append(MongoUtils.splicingValue("cartId", platFormArray));
-                result.append(",");
-            }
-        }
-        // Image Type
-        if (!StringUtils.isEmpty((String) param.get("imageType"))) {
-            result.append(MongoUtils.splicingValue("imageType", Integer.parseInt((String) param.get("imageType"))));
+//        if (param.containsKey("platformList")) {
+//            List<Map<String, Object>> platFormList = ((List) param.get("platformList"));
+//            List<Integer> platFormChangeList = platFormList.stream().filter((platfrom) -> ((Map) platfrom).get("show") != null && (boolean) ((Map) platfrom).get("show") == true).map((platfrom) -> Integer.parseInt((String) platfrom.get("value"))).collect(toList());
+//            if (platFormChangeList.size() > 0) {
+//                Integer[] platFormArray = platFormChangeList.toArray(new Integer[platFormList.size()]);
+//                result.append(MongoUtils.splicingValue("cartId", platFormArray));
+//                result.append(",");
+//            }
+//        }
+        List cartIdList = (List) param.get("cartIdList");
+        if (cartIdList!=null&&cartIdList.size() > 0) {
+            result.append(MongoUtils.splicingValue("cartId", cartIdList.toArray(new Integer[cartIdList.size()])));
             result.append(",");
         }
 
+        if (!StringUtils.isEmpty((String) param.get("imageTemplateType"))) {
+            result.append(MongoUtils.splicingValue("imageTemplateType", Integer.parseInt((String) param.get("imageTemplateType"))));
+            result.append(",");
+        }
+        if (!StringUtils.isEmpty((String) param.get("viewType"))) {
+            result.append(MongoUtils.splicingValue("viewType", Integer.parseInt((String) param.get("viewType"))));
+            result.append(",");
+        }
+        if (!StringUtils.isEmpty((String) param.get("imageTemplateName"))) {
+            result.append("imageTemplateName:"+"{ $regex:\"" + (String) param.get("imageTemplateName") +"\"}");  //Regex."/"+ (String) param.get("imageTemplateName")+"/"));
+            result.append(",");
+        }
         // Update Time
         if (!StringUtils.isEmpty((String) param.get("beginModified")) || !StringUtils.isEmpty((String) param.get("endModified"))) {
             result.append("\"modified\":{");
