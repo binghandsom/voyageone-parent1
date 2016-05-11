@@ -167,13 +167,34 @@ public class CmsSizeChartService extends BaseAppService {
         //更新结束时间
         String endTime=(String) param.get("endTime");
         //产品品牌
-        List<String> brandNameList=(List<String>) param.get("brandNameList");
+        List<String> brandNameList=(List<String>) param.get("brandNameListTrans");
         //产品类型
-        List<String> productTypeList=(List<String>) param.get("productTypeList");
+        List<String> productTypeList=(List<String>) param.get("productTypeListTrans");
         //产品性别
-        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        List<String> sizeTypeList=(List<String>) param.get("sizeTypeListTrans");
+        // 必须输入check
+        if (StringUtils.isEmpty(sizeChartName)) {
+            throw new BusinessException("7000080");
+        }
+        //插入数据库
+        sizeChartService.sizeChartDetailUpdate(channelId,
+                userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList);
+    }
+    /**
+     * 尺码关系一览编辑详情编辑画面
+     * @param channelId
+     * @param param
+     * @return data
+     */
+    public void sizeChartDetailSizeMapSave(String channelId,Map param) {
+        int sizeChartId =(int)param.get("sizeChartId");
+        //用户名称
+        String userName =param.get("userName").toString();
         //sizeMapList
         List<CmsBtSizeChartModelSizeMap> sizeMapList=(List<CmsBtSizeChartModelSizeMap>) param.get("sizeMap");
+        if(sizeMapList==null){
+            sizeMapList = new ArrayList<>();
+        }
         if(sizeMapList.size()>0){
             //取得sizeMapList对象
             Set<String> originalSizeSet = new HashSet<>();
@@ -192,14 +213,10 @@ public class CmsSizeChartService extends BaseAppService {
                 throw new BusinessException("originSize重复");
             }
         }
-        // 必须输入check
-        if (StringUtils.isEmpty(sizeChartName)) {
-            throw new BusinessException("7000080");
-        }
         //插入数据库
-        sizeChartService.sizeChartDetailUpdate(channelId,
-                userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList, sizeMapList);
+        sizeChartService.sizeChartDetailSizeMapSave(channelId,userName,sizeChartId, sizeMapList);
     }
+
     /**
      * 检索结果转换
      *
