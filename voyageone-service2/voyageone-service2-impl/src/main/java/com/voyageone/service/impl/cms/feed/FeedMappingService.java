@@ -3,11 +3,9 @@ package com.voyageone.service.impl.cms.feed;
 import com.mongodb.WriteResult;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +22,6 @@ public class FeedMappingService extends BaseService {
 
     @Autowired
     private CmsBtFeedMappingDao feedMappingDao;
-
-    @Autowired
-    private CmsMtFeedCategoryTreeDao feedCategoryTreeDao;
 
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;
@@ -47,8 +42,8 @@ public class FeedMappingService extends BaseService {
         return feedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
     }
 
-    public CmsBtFeedMappingModel getMapping(Channel channel,ObjectId objectId) {
-        return feedMappingDao.findOne(objectId,channel.getId());
+    public CmsBtFeedMappingModel getMapping(Channel channel, ObjectId objectId) {
+        return feedMappingDao.findOne(objectId, channel.getId());
     }
 
     public WriteResult setMapping(CmsBtFeedMappingModel feedMappingModel) {
@@ -66,8 +61,8 @@ public class FeedMappingService extends BaseService {
         return treeModel != null && treeModel.getIsParent() == 0;
     }
 
-    public CmsBtFeedMappingModel getMappingWithoutProps(Channel channel,ObjectId mappingId) {
-        return feedMappingDao.findOneWithoutProps(mappingId,channel.getId());
+    public CmsBtFeedMappingModel getMappingWithoutProps(Channel channel, ObjectId mappingId) {
+        return feedMappingDao.findOneWithoutProps(mappingId, channel.getId());
     }
 
     public List<CmsBtFeedMappingModel> getMappingsWithoutProps(String feedCategoryPath, String selChannelId) {

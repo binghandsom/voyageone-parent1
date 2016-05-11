@@ -58,7 +58,7 @@ public class CmsFeedMappingService extends BaseAppService {
         // 第一波, 先筛选出所有 DefaultMain
         Map<String, CmsBtFeedMappingModel> defaultMainMap = feedMappingModels.stream()
                 .filter(i -> i.getDefaultMain() == 1)
-                .collect(toMap(i -> i.getMainCategoryPath(), i -> i));
+                .collect(toMap(CmsBtFeedMappingModel::getMainCategoryPath, i -> i));
 
         Map<String, List<FeedCategoryBean.MappingBean>> mappingMap = feedMappingModels.stream()
                 .map(i -> new FeedCategoryBean.MappingBean(i, defaultMainMap.get(i.getMainCategoryPath())))
@@ -141,10 +141,6 @@ public class CmsFeedMappingService extends BaseAppService {
         }
 
         // 如果上面的全部不成立, 就需要全新创建 Mapping
-//        Scope scope = new Scope();
-//        scope.setChannelId(user.getSelChannelId());
-//        scope.setFeedCategoryPath(setMappingBean.getFrom());
-//        scope.setMainCategoryPath(setMappingBean.getTo());
 
         defaultMapping = new CmsBtFeedMappingModel();
 
