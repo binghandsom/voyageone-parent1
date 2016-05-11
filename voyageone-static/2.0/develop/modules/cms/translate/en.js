@@ -399,6 +399,7 @@ define(function() {
         "TXT_MSG_IMPORT_ADD": "Add Mode",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "Reset Mode",
         "TXT_MSG_IMPORT_STATUS_ERROR": "Exist being processed data, these are not saved.",
+        "TXT_MSG_IMPORT":"Please input",
         "TXT_SEPARATE_PROPORTION":"Separation ratio",
         "TXT_REVERT_TIME":"Revert time",
         "TXT_INCREASING_PRIORITY":"Increase priority",
@@ -526,6 +527,7 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE_REPEAT":"originalSize can't repeat",
         "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
         "TXT_SIZE_CHART_COMMON_ADD":"Common Size Chart Edit"
     };
 });

@@ -406,6 +406,7 @@ define(function(){
         "TXT_MSG_IMPORT_ADD": "增量方式",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
         "TXT_MSG_IMPORT_STATUS_ERROR": "存在正在处理中的数据，这些没有被更新",
+        "TXT_MSG_IMPORT":"请输入",
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_ACTIVITIES": "请选择对应的活动!",
         "TXT_MSG_TAG": "请正确选择和填写标签!",
@@ -524,6 +525,7 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_REPEAT":"原始尺码不能重复",
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
+        "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
         "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
     };
 });
