@@ -128,7 +128,7 @@ public class FileWriteUtils {
         boolean ret = false;
 
         if (!StringUtils.isEmpty(inputString)) {
-            float inputContent = Float.valueOf(inputString);
+            float inputContent = Float.parseFloat(inputString);
 
             if (inputContent < 0) {
                 ret = true;
@@ -182,9 +182,5 @@ public class FileWriteUtils {
         if(this.closed) {
             throw new IOException("This instance of the CsvWriter class has already been closed.");
         }
-    }
-
-    protected void finalize() {
-        this.close(false);
     }
 }

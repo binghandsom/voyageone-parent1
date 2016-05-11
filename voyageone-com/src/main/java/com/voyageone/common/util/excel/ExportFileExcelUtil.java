@@ -49,7 +49,7 @@ public class ExportFileExcelUtil {
     ) throws ExcelException {
         int sheetSize = 65535;
         //创建工作簿并发送到OutputStream指定的地方
-        HSSFWorkbook wwb;
+        HSSFWorkbook wwb = null;
         try {
             wwb = new HSSFWorkbook();
             //因为2003的Excel一个工作表最多可以有65536条记录，除去列头剩下65535条
@@ -69,6 +69,13 @@ public class ExportFileExcelUtil {
                 //否则将其它异常包装成ExcelException再抛出
             } else {
                 throw new ExcelException("导出Excel失败");
+            }
+        } finally {
+            if (wwb != null) {
+                try {
+                    wwb.close();
+                } catch (IOException ignored) {
+                }
             }
         }
 
@@ -163,9 +170,8 @@ public class ExportFileExcelUtil {
             ExcelColumn column;
             //填充内容
 
-            for (int index = 0; index < list.size(); index++) {
+            for (T item : list) {
                 //获取单个对象
-                T item = list.get(index);
                 hssfRow = sheet.createRow(rowNo);
                 for (int i = 0; i < listColumn.size(); i++) {
                     column = listColumn.get(i);

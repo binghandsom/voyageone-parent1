@@ -36,7 +36,7 @@ public class CmsSizeChartController extends CmsController {
         //店铺渠道取得
         String channelId=this.getUser().getSelChannelId();
         //取得尺码关系一览初始化
-        cmsSizeChartService.sizeChartSearch(channelId,param);
+        cmsSizeChartService.sizeChartSearch(channelId,param,getLang());
         //返回数据的类型
         return success(param);
     }
@@ -76,7 +76,7 @@ public class CmsSizeChartController extends CmsController {
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         //取得尺码关系一览初始化
-        cmsSizeChartService.sizeChartDetailSearch(channelId, param);
+        cmsSizeChartService.sizeChartDetailSearch(channelId, param,getLang());
         //返回数据的类型
         return success(param);
     }

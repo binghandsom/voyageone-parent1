@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,16 +64,11 @@ public class SizeChartService extends BaseService {
      * @param sizeChartId
      */
     public void sizeChartUpdate(String channelId,int sizeChartId){
-        //取得数据Model
-        CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
-        //公司平台销售渠道
-        cmsBtSizeChartModel.setChannelId(channelId);
-        //自增主键
-        cmsBtSizeChartModel.setSizeChartId(sizeChartId);
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
         //标志位
-        cmsBtSizeChartModel.setActive(Integer.valueOf("0"));
+        cmsBtSizeChartModel.setActive(1);
         //尺码关系一览检索
-        cmsBtSizeChartDao.sizeChartUpdate(cmsBtSizeChartModel);
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
 
     /**
@@ -126,7 +123,7 @@ public class SizeChartService extends BaseService {
             cmsBtSizeChartModel.setSizeType(sizeTypeList);
         }
         //是否逻辑删除
-        cmsBtSizeChartModel.setActive(1);
+        cmsBtSizeChartModel.setActive(0);
         //根据尺码关系一览编辑的数据插入数据库
         cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
     }
@@ -162,10 +159,9 @@ public class SizeChartService extends BaseService {
      * @param sizeTypeList
      * @param sizeMapList
      */
-    public void sizeChartDetailUpdate(String channelId, String userName,String sizeChartId, String sizeChartName, String finishFlag
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, String sizeMapList){
-        //取得数据Model
-        CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
+    public void sizeChartDetailUpdate(String channelId, String userName,int sizeChartId, String sizeChartName, String finishFlag
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, List<CmsBtSizeChartModelSizeMap> sizeMapList){
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
         //更新者
         cmsBtSizeChartModel.setModifier(userName);
         //创建者
@@ -173,7 +169,7 @@ public class SizeChartService extends BaseService {
         //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
         //尺码自增键
-        cmsBtSizeChartModel.setSizeChartId(Integer.parseInt(sizeChartId));
+        cmsBtSizeChartModel.setSizeChartId(sizeChartId);
         //尺码名称
         cmsBtSizeChartModel.setSizeChartName(sizeChartName);
         //是否编辑
@@ -190,10 +186,22 @@ public class SizeChartService extends BaseService {
         if(sizeTypeList.size()>0) {
             cmsBtSizeChartModel.setSizeType(sizeTypeList);
         }
+        //产品性别
+        if(sizeMapList.size()>0) {
+            cmsBtSizeChartModel.setSizeMap(sizeMapList);
+        }
         //是否逻辑删除
         cmsBtSizeChartModel.setActive(0);
-
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
-         cmsBtSizeChartDao.sizeChartDetailUpdate(cmsBtSizeChartModel,sizeMapList);
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+    }
+    /**
+     * 根据sizeChartId取得sizeChartInfo
+     * @param sizeChartId
+     */
+    public CmsBtSizeChartModel getCmsBtSizeChartModel(int sizeChartId) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"active\":0}");
+        return cmsBtSizeChartDao.selectOneWithQuery(queryObject);
     }
 }

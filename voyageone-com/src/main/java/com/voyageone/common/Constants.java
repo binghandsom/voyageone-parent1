@@ -140,6 +140,12 @@ public final class Constants {
         public static final String DYNAMIC_PROPERTY = "dynamicProperty";
     }
 
+    public static final class comMtTypeValue {
+
+        public static final String IMAGE_TYPE = "imageType";
+
+    }
+
     public static final class productForOtherSystemInfo {
         public static final String IMG_URL = "http://image.sneakerhead.com/is/image/sneakerhead/";
 

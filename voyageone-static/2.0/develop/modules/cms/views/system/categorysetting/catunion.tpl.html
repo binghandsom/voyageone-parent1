@@ -73,8 +73,7 @@
                             </div>
                             <div class="form-group">
                                 <div ng-repeat="item in ctrl.property.fields">
-                                    <div ng-include="'fieldView'"
-                                         ng-init="field = item; level = 0; parent = vm.property.fields">
+                                    <div ng-include="'fieldView'" ng-init="field = item; level = 0; parent = vm.property.fields">
                                     </div>
                                 </div>
                             </div>
@@ -85,14 +84,16 @@
         </div>
     </div><!-- .col-lg-12 -->
     <div class="text-right" style="position: fixed;z-index:3000; bottom:0;right:10%">
-        <button class="btn btn-danger"ng-if="vm.isEditFlg == true" ng-click="update(vm.category)"><i class="fa fa-save"></i>&nbsp;{{'BTN_SAVE_ALL' | translate}}</button>
+        <button class="btn btn-danger" ng-if="vm.isEditFlg == true" ng-click="update(vm.category)"><i class="fa fa-save"></i>&nbsp;{{'BTN_SAVE_ALL' | translate}}</button>
     </div>
 </div><!-- end .wrapper-md -->
 
 <script id="fieldView" type="text/ng-template">
     <!-- input -->
-    <div class="col-sm-12 "
-         ng-class="{'category_mapping_bg_one':level==0 && (field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'),'category_mapping_bg':level==0 && field.type!='MULTICOMPLEX'&& field.type!='COMPLEX','category_mapping_bg_list':level>0}">
+    <div class="col-sm-12"
+         ng-class="{'category_mapping_bg_one':level==0 && (field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'),
+                        'category_mapping_bg':level==0 && field.type!='MULTICOMPLEX'&& field.type!='COMPLEX',
+                   'category_mapping_bg_list':level>0}">
         <div class="form-horizontal">
             <div class="form-group">
                 <div class="col-sm-4 text-left m-l-sm"

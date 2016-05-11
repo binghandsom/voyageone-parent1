@@ -8,7 +8,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtImageGroupModel_Image extends BaseMongoModel {
+public class CmsBtImageGroupModel_Image {
 
     private String originUrl;
     private String platformUrl;

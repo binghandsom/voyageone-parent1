@@ -1,4 +1,4 @@
-package com.voyageone.common.spring;
+package com.voyageone.common.spring.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

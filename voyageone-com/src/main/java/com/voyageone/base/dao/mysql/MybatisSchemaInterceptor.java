@@ -24,7 +24,7 @@ import java.util.Properties;
         @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class})})
 public class MybatisSchemaInterceptor implements Interceptor, Serializable {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private Properties properties;
 

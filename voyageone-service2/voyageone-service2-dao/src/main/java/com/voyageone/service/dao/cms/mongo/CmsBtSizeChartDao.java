@@ -1,23 +1,18 @@
 package com.voyageone.service.dao.cms.mongo;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by gjl on 2016/5/5.
  */
 @Repository
-public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> {
+public class CmsBtSizeChartDao extends BaseMongoDao<CmsBtSizeChartModel> {
     /**
      * 尺码关系一览检索画面
      * @param cmsBtSizeChartModel
@@ -72,8 +67,8 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
             sbQuery.append(MongoUtils.splicingValue("sizeType",  sizeTypeList.toArray(new String[cmsBtSizeChartModel.getSizeType().size()])));
             sbQuery.append(",");
         }
-        sbQuery.append(MongoUtils.splicingValue("active", 1));
-        return select("{" + sbQuery.toString() + "}",cmsBtSizeChartModel.getChannelId());
+        sbQuery.append(MongoUtils.splicingValue("active", 0));
+        return select("{" + sbQuery.toString() + "}");
     }
     /**
      * 尺码关系一览编辑检索画面
@@ -84,55 +79,6 @@ public class CmsBtSizeChartDao extends BaseMongoChannelDao<CmsBtSizeChartModel> 
         sbQuery.append(MongoUtils.splicingValue("sizeChartId", cmsBtSizeChartModel.getSizeChartId()));
         sbQuery.append(",");
         sbQuery.append(MongoUtils.splicingValue("channelId", cmsBtSizeChartModel.getChannelId()));
-        sbQuery.append(",");
-        return select("{" + sbQuery.toString() + "}", cmsBtSizeChartModel.getChannelId());
-    }
-
-    /**
-     * 逻辑删除选中的记录
-     * @param cmsBtSizeChartModel
-     * @return WriteResult
-     */
-    public WriteResult sizeChartUpdate(CmsBtSizeChartModel cmsBtSizeChartModel) {
-        //获取集合名
-        DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
-        BasicDBObject params = new BasicDBObject();
-        //条件
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("sizeChartId", cmsBtSizeChartModel.getSizeChartId());
-        params.putAll(queryMap);
-        //设置值
-        BasicDBObject result = new BasicDBObject();
-        Map<String, Object> rsMap = new HashMap<>();
-        rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
-        result.putAll(rsMap);
-        return coll.update(params, new BasicDBObject("$set", result), false, true);
-    }
-
-    /**
-     * 跟据尺码关系一览编辑详情编辑的数据更新数据库
-     * @param cmsBtSizeChartModel
-     * @return
-     */
-    public WriteResult sizeChartDetailUpdate(CmsBtSizeChartModel cmsBtSizeChartModel,String sizeMapList) {
-        //获取集合名
-        DBCollection coll = getDBCollection(cmsBtSizeChartModel.getChannelId());
-        BasicDBObject params = new BasicDBObject();
-        //条件
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("sizeChartId", cmsBtSizeChartModel.getSizeChartId());
-        params.putAll(queryMap);
-        //设置值
-        BasicDBObject result = new BasicDBObject();
-        Map<String, Object> rsMap = new HashMap<>();
-        rsMap.put("sizeChartName", String.valueOf(cmsBtSizeChartModel.getSizeChartName()));
-        rsMap.put("finish", String.valueOf(cmsBtSizeChartModel.getFinish()));
-        rsMap.put("brandName", String.valueOf(cmsBtSizeChartModel.getBrandName()));
-        rsMap.put("productType", String.valueOf(cmsBtSizeChartModel.getProductType()));
-        rsMap.put("sizeType", String.valueOf(cmsBtSizeChartModel.getSizeType()));
-        rsMap.put("sizeMap", String.valueOf(sizeMapList));
-        rsMap.put("active", String.valueOf(cmsBtSizeChartModel.getActive()));
-        result.putAll(rsMap);
-        return coll.update(params, new BasicDBObject("$set", result), false, true);
+        return select("{" + sbQuery.toString() + "}");
     }
 }

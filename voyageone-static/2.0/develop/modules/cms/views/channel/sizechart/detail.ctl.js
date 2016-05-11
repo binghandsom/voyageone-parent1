@@ -5,7 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    function sizeDetailController($scope,$routeParams,sizeChartService,alert,notify) {
+    function sizeDetailController($scope,$routeParams,sizeChartService,alert,notify,$translate) {
 
         $scope.vm = {
             originCondition : [],    //保存初始状态
@@ -24,10 +24,7 @@ define([
         };
 
         $scope.initialize  = function () {
-            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
-                $scope.vm.saveInfo  = resp.data.sizeChartList[0];
-                $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-            });
+            getItemById();
             sizeChartService.init().then(function(resp){
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
@@ -42,6 +39,13 @@ define([
             });
 
         };
+
+        function getItemById(){
+            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
+                $scope.vm.saveInfo  = resp.data.sizeChartList[0];
+                $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
+            });
+        }
 
         /**
          * 添加尺码表
@@ -62,6 +66,7 @@ define([
          */
         $scope.saveFinish = function(){
             if($scope.vm.saveInfo.sizeChartName == ""){
+                //$translate.instant('TXT_MSG_DELETE_SUCCESS')
                 alert("请输入尺码表名称");
                 return;
             }
@@ -69,14 +74,8 @@ define([
             var upEntity = $scope.vm.saveInfo;
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
-                notify.success("添加成功！");
-                //获取保存后的当前对象
-/*                console.log("sizeChartId",$routeParams.sizeChartId);
-                sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
-
-                    $scope.vm.saveInfo  = resp.data.sizeChartList[0];
-                    $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-                });*/
+                notify.success($translate.instant('TXT_MSG_ADD_SUCCESS'));
+                getItemById();
                 $scope.$close();
             });
         };
@@ -86,21 +85,21 @@ define([
          */
         $scope.saveSize = function(){
             if($scope.vm.saveInfo.sizeChartName == ""){
-                alert("请输入尺码表名称");
+                alert($translate.instant('TXT_SIZE_CHART_NOTICE_REQUIED'));
                 return;
             }
 
             var upEntity = $scope.vm.saveInfo,sizeMaps = angular.copy($scope.vm.importList) , flag = true , tmpOriginalSize = "";
             _.map(sizeMaps, function(item){
                             if(item.originalSize == tmpOriginalSize){
-                                alert("originalSize不能重复");
+                                alert($translate.instant('TXT_SIZE_CHART_NOTICE_REPEAT'));
                                 flag = false;
                                 return;
                             }
                             else
                                 tmpOriginalSize = item.originalSize;
                             if(item.originalSize == "" || item.adjustSize == ""){
-                                alert("Origin Size或者Platform Size不能为空");
+                                alert($translate.instant('TXT_SIZE_CHART_NOTICE_NULL'));
                                 flag = false;
                                 return;
                             }
@@ -113,8 +112,9 @@ define([
             if(!flag) return;
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
                                          finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
-                                         sizeTypeList:upEntity.sizeType,sizeMap:JSON.stringify(sizeMaps)}).then(function(){
-                notify.success ("添加成功！");
+                                         sizeTypeList:upEntity.sizeType,sizeMap:sizeMaps}).then(function(){
+                notify.success ($translate.instant('TXT_MSG_ADD_SUCCESS'));
+                getItemById();
                 $scope.$close();
             });
         };
@@ -164,6 +164,6 @@ define([
 
     }
 
-    sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','alert','notify'];
+    sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','alert','notify','$translate'];
     return sizeDetailController;
 });

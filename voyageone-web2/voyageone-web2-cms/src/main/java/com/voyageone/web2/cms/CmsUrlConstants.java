@@ -574,6 +574,7 @@ public interface CmsUrlConstants {
             String GetCount = "getCount";
             String Save = "save";
             String Delete = "delete";
+            String Get="get";
         }
         interface CHANNEL_IMAGE_GROUP_DETAIL {
             String ROOT="/cms/channel/image_group_detail";

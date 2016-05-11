@@ -26,7 +26,6 @@ public class Types {
 
     private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
-
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_Type.toString();
 
@@ -136,12 +135,12 @@ public class Types {
         });
         Collections.sort(keyList);
         List<TypeBean> typeList = CacheHelper.getBeans(KEY, keyList, selfClass);
-        typeList.forEach(bean ->
-            ret.add(new HashMap<String, String>() {{
-                        put("id", String.valueOf(bean.getValue()));
-                        put("name", bean.getName());
-                    }}
-            )
+        typeList.forEach(bean -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("id", String.valueOf(bean.getValue()));
+                    map.put("name", bean.getName());
+                    ret.add(map);
+                }
         );
         return ret;
     }
@@ -171,13 +170,15 @@ public class Types {
         });
         Collections.sort(keyList);
         List<TypeBean> typeList = CacheHelper.getBeans(KEY, keyList, selfClass);
-        typeList.forEach(bean ->
-            ret.add(new MasterInfoBean() {{
-                setType(typeId);
-                setId(String.valueOf(bean.getValue()));
-                setName(String.valueOf(bean.getName()));
-            }})
+        typeList.forEach(bean -> {
+                    MasterInfoBean masterInfoBean = new MasterInfoBean();
+                    masterInfoBean.setType(typeId);
+                    masterInfoBean.setId(String.valueOf(bean.getValue()));
+                    masterInfoBean.setName(String.valueOf(bean.getName()));
+                    ret.add(masterInfoBean);
+                }
         );
+
         return ret;
     }
 

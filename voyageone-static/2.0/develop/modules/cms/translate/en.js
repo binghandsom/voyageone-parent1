@@ -353,6 +353,9 @@ define(function() {
         "TXT_MSG_STARTUP_ITEM": "Are you sure you want to start all?",
         "TXT_MSG_DELETE_SUCCESS": "Delete is successful.",
         "TXT_MSG_DELETE_FAIL": "Delete is fail.",
+        "TXT_MSG_ADD_ITEM": "Are you sure to add this item?",
+        "TXT_MSG_ADD_SUCCESS": "Add is successful.",
+        "TXT_MSG_ADD_FAIL": "Add is fail.",
         "TXT_MSG_NO_DATA_WITH_SAVE": "Please make sure these required items and the table are not empty.",
         "TXT_MSG_NO_PLATFORM_CATEGORY": "Do not get any platform category, please change to another platform, and try again.",
         "TXT_MSG_VALUE_SETTING_COMMENT": "值设定说明：",
@@ -487,6 +490,7 @@ define(function() {
         "BTN_GET_TASK": "Get Tasks",
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
+        "BTN_RESET":"reset",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
@@ -504,6 +508,22 @@ define(function() {
         "CANT_BEAT": "Info Error",
 
         /**分页显示*/
-        "TXT_PAGER_SIZE": "page-size"
+        "TXT_PAGER_SIZE": "page-size",
+        /**尺码表*/
+        "TXT_SIZE_CHART":"SizeChart",
+        "TXT_SIZE_CHART_DETAIL":"Sizechartdetail",
+        "TXT_SIZE_CHART_NAME":"Size Chart Name",
+        "TXT_SIZE_CHART_FINISH":"Finish",
+        "TXT_SIZE_CHART_UPDATE_TIME":"Update Time",
+        "TXT_SIZE_CHART_BRAND_NAME":"Related Brand Name",
+        "TXT_SIZE_CHART_PRODUCT_TYPE":"Related Product Type",
+        "TXT_SIZE_CHART_SIZE_TYPE":"Related Size Type",
+        "TXT_SIZE_CHART_ORIGINAL_SIZE":"originalSize",
+        "TXT_SIZE_CHART_ADJUST_SIZE":"Platform Size",
+        "TXT_SIZE_CHART_COMMON_SIZE":"common Size Type",
+        "TXT_SIZE_CHART_NOTICE":"Please select No if Size chart is in doubt,renewwill still use this size chart",
+        "TXT_SIZE_CHART_NOTICE_REQUIED":"Please input sizeChart name",
+        "TXT_SIZE_CHART_NOTICE_REPEAT":"originalSize can't repeat",
+        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null"
     };
 });

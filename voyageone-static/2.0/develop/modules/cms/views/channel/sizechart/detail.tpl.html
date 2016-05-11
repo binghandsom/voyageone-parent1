@@ -3,7 +3,7 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;Sizechartdetail</h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_SIZE_CHART_DETAIL' | translate}}</h4>
                 </div>
                 <div class="container-fluid m-t-xs">
 
@@ -11,13 +11,13 @@
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Import Text</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_NAME' | translate}}</label>
                                     <div class="col-sm-7">
                                         <input type="text" class="form-control" ng-model="vm.saveInfo.sizeChartName">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Confirm</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_FINISH' | translate}}</label>
 
                                     <div class="col-sm-7">
                                         <label class="radio-inline c-radio"><input type="radio" name="finish" value="1"  ng-model="vm.saveInfo.finish"><span class="fa fa-check"></span> Yes </label>
@@ -27,7 +27,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="text-warnings col-sm-6">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;尺码表存在疑问请选择No，上新依然会使用这个尺码表
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_SIZE_CHART_NOTICE' | translate}}
                                     </div>
                                 </div>
                             </div>
@@ -35,25 +35,25 @@
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Brand Name</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.saveInfo.brandName"
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.saveInfo.brandNameTrans"
                                                 ng-options="brand for brand in vm.brandNameList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Product Type</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.saveInfo.productType"
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.saveInfo.productTypeTrans"
                                                 ng-options="product for product in vm.productTypeList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Size Type</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.saveInfo.sizeType"
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.saveInfo.sizeTypeTrans"
                                                 ng-options="size for size in vm.sizeTypeList">
                                         </select>
                                     </div>
@@ -63,8 +63,8 @@
                     </div>
                     <div class="col-sm-12 text-center m-b-sm">
                         <div class="form-inline">
-                            <button title="重置" class="btn btn-default ng-binding" ng-click="reset()"><i class="fa fa-remove"></i>&nbsp;Reset</button>
-                            <button title="保存" class="btn btn-vo m-r-sm" ng-click="saveFinish()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save</button>
+                            <button title="重置" class="btn btn-default ng-binding" ng-click="reset()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_RESET' | translate}}</button>
+                            <button title="保存" class="btn btn-vo m-r-sm" ng-click="saveFinish()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -83,20 +83,20 @@
                             </div>
                         </div>
                         <div class="form-inline pull-right">
-                            <button title="导入" class="btn btn-dangers ng-binding" ng-click="openSizeChartImport({import:import})"><i class="fa fa-reply-all"></i>&nbsp;import</button>
-                            <button title="添加" class="btn btn-success ng-binding" ng-click="addSize()"><i class="fa fa-plus"></i>&nbsp;add</button>
-                            <button title="保存" class="btn btn-vo m-r-xs" ng-click="saveSize()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                            <button title="导入" class="btn btn-dangers ng-binding" ng-click="openSizeChartImport({import:import})"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
+                            <button title="添加" class="btn btn-success ng-binding" ng-click="addSize()"><i class="fa fa-plus"></i>&nbsp;{{'BTN_ADD' | translate}}</button>
+                            <button title="保存" class="btn btn-vo m-r-xs" ng-click="saveSize()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
                         </div>
                     </div>
                     <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px"
                            ng-controller="popupCtrl">
                         <thead>
                         <tr>
-                            <th class="mfb-xt text-center">序号</th>
-                            <th class="mfb-xxt text-center">Origin Size</th>
-                            <th class="mfb-xxt text-center">Platform Size</th>
-                            <th class="mfb-xxt text-center">是否常用尺码</th>
-                            <th class="mfb-xxt text-center">编辑</th>
+                            <th class="mfb-xt text-center">{{'TXT_INDEX' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_SIZE_CHART_ORIGINAL_SIZE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_SIZE_CHART_ADJUST_SIZE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_SIZE_CHART_COMMON_SIZE' | translate}}</th>
+                            <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
                         </tr>
                         </thead>
                         <tbody>

@@ -2,10 +2,12 @@ package com.voyageone.common.util;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.common.configs.beans.FtpBean;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Created by DELL on 2016/5/6.
@@ -47,7 +49,7 @@ public class SFtpUtilTest {
     public void testUploadFile() throws Exception {
         FtpBean ftpBean = formatFtpBean();
         ftpBean.setUpload_filename("test11.jpg");
-        //ftpBean.setUpload_path("/");
+        ftpBean.setUpload_path("test/bb/cc/dd/");
         File uploadFile = new File("d:/snusa-detail_20.png");
         ftpBean.setUpload_input(new FileInputStream(uploadFile));
 
@@ -58,5 +60,21 @@ public class SFtpUtilTest {
         if (!isSuccess) {
             throw new Exception("upload error");
         }
+    }
+
+    @Test
+    public void testFilePath() throws IOException {
+        System.out.println(FilenameUtils.getFullPath("/da/ff"));
+        System.out.println(FilenameUtils.getFullPath("/ff"));
+        System.out.println(FilenameUtils.getFullPath("ff"));
+        System.out.println(FilenameUtils.getFullPath("ff/aa/bb"));
+        System.out.println(FilenameUtils.getFullPath("/aa/bb/cc/ff"));
+        System.out.println(FilenameUtils.separatorsToUnix("aa\\bb\\cc\\ff"));
+
+        // the folders "000/111/222" don't exist initially
+        File dir = new File("/Users/al/tmp/000/111/222");
+
+        // create multiple directories at one time
+        boolean successful = dir.mkdirs();
     }
 }

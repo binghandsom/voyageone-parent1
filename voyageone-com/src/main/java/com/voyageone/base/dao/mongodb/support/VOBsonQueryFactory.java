@@ -52,10 +52,12 @@ public class VOBsonQueryFactory implements QueryFactory {
             this.dbo = dbo;
         }
 
+        @Override
         public DBObject toDBObject() {
             return dbo;
         }
     }
+
 
     public VOBsonQueryFactory(Marshaller marshaller) {
         this(marshaller, DEFAULT_TOKEN);
@@ -66,10 +68,11 @@ public class VOBsonQueryFactory implements QueryFactory {
         this.marshaller = marshaller;
     }
 
+    @Override
     public Query createQuery(final String query, Object... parameters) {
 
         if (query == null) {
-            return new BsonQuery((DBObject) JSON.parse(query));
+            return new BsonQuery((DBObject) JSON.parse(null));
         }
         if (parameters == null) {
             parameters = new Object[]{null};
@@ -162,10 +165,6 @@ public class VOBsonQueryFactory implements QueryFactory {
                         }
                     }
 
-                    if (isStackEmpty()) {
-                        // End of object
-                    }
-
                     return o;
                 }
             });
@@ -224,8 +223,8 @@ public class VOBsonQueryFactory implements QueryFactory {
 
     private DBObject marshallArray(Object[] parameters) {
         BasicDBList list = new BasicDBList();
-        for (int i = 0; i < parameters.length; i++) {
-            list.add(marshallParameter(parameters[i]));
+        for (Object parameter : parameters) {
+            list.add(marshallParameter(parameter));
         }
         return list;
     }
