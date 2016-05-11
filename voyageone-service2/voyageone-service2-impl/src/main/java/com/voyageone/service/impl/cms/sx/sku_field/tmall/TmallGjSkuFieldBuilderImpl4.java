@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by Leo on 15-7-14.
+ * Created by morse.lu 2016/05/06 (copy and modified from task2 / TmallGjSkuFieldBuilderImpl_3)
  * 参考天猫分类: 121412004  女装/女士精品>背心吊带
  * 线程安全: 否
  */

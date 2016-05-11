@@ -2,6 +2,7 @@ package com.voyageone.common.redis;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisOperations;
@@ -41,7 +42,10 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
 
     @Override
     public HV get(K key, Object hashKey) {
-        return localCache.get(key).get(hashKey);
+        Map<HK, HV> map = getCache(key);;
+        if(map==null) return null;
+       return map.get(hashKey);
+       // return localCache.get(key).get(hashKey);
     }
 
     @Override
@@ -68,7 +72,23 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
 
     @Override
     public void put(K key, HK hashKey, HV value) {
-        localCache.get(key).put(hashKey, value);
+        Map<HK, HV> map = getCache(key);
+        map.put(hashKey, value);
+       // localCache.get(key).put(hashKey,value);
+    }
+    Map<HK, HV>   getCache(K key) {
+        Map<HK, HV> map = localCache.get(key);
+        if (map == null) {
+            createCache(key);
+            map = localCache.get(key);
+        }
+        return map;
+    }
+    synchronized  void createCache(K key) {
+        if (!localCache.containsKey(key)) {
+            Map<HK, HV> map = new HashedMap();
+            localCache.put(key, map);
+        }
     }
 
     @Override

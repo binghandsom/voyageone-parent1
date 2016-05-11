@@ -10,7 +10,7 @@ import com.voyageone.service.bean.openapi.OpenApiException;
  */
 public class CreateImageParameter {
     protected String channelId;//
-    protected int templateId;
+    protected long templateId;
     protected String file;
     protected String[] vParam;
     protected boolean isUploadUsCdn = false;
@@ -31,11 +31,11 @@ public class CreateImageParameter {
         this.channelId = channelId;
     }
 
-    public int getTemplateId() {
+    public long getTemplateId() {
         return templateId;
     }
 
-    public void setTemplateId(int templateId) {
+    public void setTemplateId(long templateId) {
         this.templateId = templateId;
     }
 

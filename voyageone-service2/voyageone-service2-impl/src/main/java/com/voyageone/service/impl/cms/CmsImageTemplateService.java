@@ -32,8 +32,6 @@ public class CmsImageTemplateService extends BaseService {
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
-    private CmsBtImagesDao cmsBtImagesDao;
-    @Autowired
     private CmsBtImageTemplateDao dao;
 
     public Object getPage(Map<String, Object> map) {
