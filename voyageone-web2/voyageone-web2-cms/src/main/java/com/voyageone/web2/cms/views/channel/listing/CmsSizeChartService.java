@@ -167,11 +167,11 @@ public class CmsSizeChartService extends BaseAppService {
         //更新结束时间
         String endTime=(String) param.get("endTime");
         //产品品牌
-        List<String> brandNameList=(List<String>) param.get("brandNameList");
+        List<String> brandNameList=(List<String>) param.get("brandNameListTrans");
         //产品类型
-        List<String> productTypeList=(List<String>) param.get("productTypeList");
+        List<String> productTypeList=(List<String>) param.get("productTypeListTrans");
         //产品性别
-        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        List<String> sizeTypeList=(List<String>) param.get("sizeTypeListTrans");
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");

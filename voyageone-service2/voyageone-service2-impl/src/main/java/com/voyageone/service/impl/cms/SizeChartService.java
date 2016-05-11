@@ -210,6 +210,7 @@ public class SizeChartService extends BaseService {
      */
     public void sizeChartDetailSizeMapSave(String channelId, String userName ,int sizeChartId,List<CmsBtSizeChartModelSizeMap> sizeMapList ){
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
+        cmsBtSizeChartModel.setChannelId(channelId);
         //更新者
         cmsBtSizeChartModel.setModifier(userName);
         //创建者
