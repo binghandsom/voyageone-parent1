@@ -140,13 +140,13 @@ public class CmsSizeChartService extends BaseAppService {
      * @param channelId
      * @param param
      */
-    public void sizeChartDetailSearch(String channelId,Map param) {
+    public void sizeChartDetailSearch(String channelId,Map param,String lang) {
         //取得自增键
         int sizeChartId = (int) param.get("sizeChartId");
         //尺码表自增键取得当前的记录
         List<CmsBtSizeChartModel> sizeChartList =sizeChartService.sizeChartDetailSearch(channelId, sizeChartId);
         //尺码关系一览检索
-        param.put("sizeChartList", changeToBeanList(sizeChartList, (String) param.get("channelId"), (String) param.get("lang")));
+        param.put("sizeChartList", changeToBeanList(sizeChartList, channelId, lang));
     }
     /**
      * 尺码关系一览编辑详情编辑画面
