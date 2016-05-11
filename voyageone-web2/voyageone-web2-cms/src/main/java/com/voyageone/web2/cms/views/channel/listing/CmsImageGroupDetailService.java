@@ -90,29 +90,8 @@ public class CmsImageGroupDetailService extends BaseAppService {
     private void editImageModel(List<CmsBtImageGroupModel_Image> images, String lang) {
         if (images != null) {
             for (CmsBtImageGroupModel_Image image : images) {
-                if ("cn".equals(lang)) {
-                    // ImageStatusName
-                    if (image.getStatus() == 1) {
-                        image.setStatusName("未上传");
-                    } else if (image.getStatus() == 2) {
-                        image.setStatusName("等待上传");
-                    } else if (image.getStatus() == 3) {
-                        image.setStatusName("上传成功");
-                    } else if (image.getStatus() == 4) {
-                        image.setStatusName("上传失败");
-                    }
-                } else {
-                    // ImageStatusName
-                    if (image.getStatus() == 1) {
-                        image.setStatusName("Not Upload");
-                    } else if (image.getStatus() == 2) {
-                        image.setStatusName("Waiting Upload");
-                    } else if (image.getStatus() == 3) {
-                        image.setStatusName("Upload Success");
-                    } else if (image.getStatus() == 4) {
-                        image.setStatusName("Upload Fail");
-                    }
-                }
+                // ImageType
+                image.setStatusName(Types.getTypeName(72, lang, String.valueOf(image.getStatus())));
             }
         }
     }

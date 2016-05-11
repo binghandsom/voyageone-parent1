@@ -137,26 +137,6 @@ public class CmsImageGroupService extends BaseAppService {
      * @param lang 语言
      */
     private void editImageGroupBean(CmsBtImageGroupBean bean, String channelId, String lang) {
-//        if ("cn".equals(lang)) {
-//            // ImageType
-//            if (bean.getImageType() == 2) {
-//                bean.setImageTypeName("尺码图");
-//            } else if (bean.getImageType() == 3) {
-//                bean.setImageTypeName("品牌故事图");
-//            } else if (bean.getImageType() == 4) {
-//                bean.setImageTypeName("物流介绍图");
-//            }
-//
-//        } else {
-//            // ImageType
-//            if (bean.getImageType() == 2) {
-//                bean.setImageTypeName("Size Chart Image");
-//            } else if (bean.getImageType() == 3) {
-//                bean.setImageTypeName("Brand Story Image");
-//            } else if (bean.getImageType() == 4) {
-//                bean.setImageTypeName("Shipping Description Image");
-//            }
-//        }
 
         // ImageType
         bean.setImageTypeName(Types.getTypeName(71, lang, String.valueOf(bean.getImageType())));

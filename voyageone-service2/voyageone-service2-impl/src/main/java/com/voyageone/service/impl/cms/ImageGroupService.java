@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -214,7 +215,7 @@ public class ImageGroupService extends BaseService {
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "},{\"active\":1}");
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 
@@ -428,13 +429,13 @@ public class ImageGroupService extends BaseService {
 
         FtpBean ftpBean = formatFtpBean();
         ftpBean.setUpload_filename(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix);
-        if ("2".equals(imageType)) {
+        if (CmsConstants.ImageType.SIZE_CHART_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_SIZE_CHART_IMAGE + channelId);
-        } else if ("3".equals(imageType)) {
+        } else if (CmsConstants.ImageType.BRAND_STORY_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_BRAND_STORY_IMAGE  + channelId);
-        } else if ("4".equals(imageType)) {
+        } else if (CmsConstants.ImageType.SHIPPING_DESCRIPTION_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId);
-        } else if ("5".equals(imageType)) {
+        } else if (CmsConstants.ImageType.STORE_DESCRIPTION_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_STORE_DESCRIPTION_IMAGE + channelId);
         }
 
