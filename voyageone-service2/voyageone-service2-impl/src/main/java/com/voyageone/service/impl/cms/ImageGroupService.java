@@ -310,7 +310,7 @@ public class ImageGroupService extends BaseService {
         if (model != null) {
             CmsBtImageGroupModel_Image imageModel = new CmsBtImageGroupModel_Image();
             imageModel.setOriginUrl(uploadUrl);
-            imageModel.setStatus(1);
+            imageModel.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
             List<CmsBtImageGroupModel_Image> images = model.getImage();
             if (images == null) {
                 images = new ArrayList<>();
