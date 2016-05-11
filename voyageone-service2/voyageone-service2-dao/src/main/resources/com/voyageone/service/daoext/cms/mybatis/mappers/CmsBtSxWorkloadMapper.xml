@@ -45,7 +45,7 @@
         UPDATE
         voyageone_cms2.cms_bt_sx_workload
         SET
-        publish_status=#{publish_status},
+        publish_status=#{publishStatus},
         modifier=#{modifier},
         modified=now()
         WHERE
