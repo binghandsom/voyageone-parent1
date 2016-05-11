@@ -67,15 +67,11 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield">Image Template Type</label>
                 <div class="col-sm-7">
-                    <select class="form-control" ng-model="model.imageTemplateType">
-                        <option value="Select...">Select...</option>
-                        <option value="1">商品图片模版</option>
-                        <option value="2">产品图片模版</option>
-                        <option value="3">详情细节模版</option>
-                        <option value="4">参数模版</option>
-                        <option value="5">自定义图片模版</option>
-                        <option value="6">商品包装模版</option>
+                    <select class="form-control" ng-model="model.imageTemplateType" width="'416px'"
+                            ng-options="m.value as m.name for m in vm.imageTemplateList">
+                        <option value="">Select...</option>
                     </select>
+
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
