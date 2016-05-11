@@ -116,7 +116,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     @Autowired
     DictService dictService;
     @Autowired
-    private PlatformProductUploadJdService jdProductUploadService;
+    private PlatformProductUploadService platformProductUploadService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
@@ -159,13 +159,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-                doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JD.getId()));
+                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JD.getId()));
                 // 京东国际商品信息新增或更新(京东国际)
-                doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JG.getId()));
+                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JG.getId()));
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
-                doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JGJ.getId()));
+                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGJ.getId()));
                 // 京东国际商品信息新增或更新(京东国际 悦境)
-                doProductUploadJd(channelId, Integer.parseInt(CartEnums.Cart.JGY.getId()));
+                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGY.getId()));
             }
         }
 
@@ -174,11 +174,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     }
 
     /**
-     * 京东平台产品每个平台的上新主处理
+     * 平台产品上新主处理
      *
      * @param channelId String 渠道ID
+     * @param cartId String 平台ID
      */
-    private void doProductUploadJd(String channelId, int cartId) throws Exception {
+    private void doProductUpload(String channelId, int cartId) throws Exception {
 
         // 默认线程池最大线程数
         int threadPoolCnt = 5;
@@ -191,7 +192,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         }
 
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = jdProductUploadService.getSxWorkloadWithChannelIdCartId(
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdCartId(
                 CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channelId, cartId);
         if (sxWorkloadModels == null || sxWorkloadModels.size() == 0) {
             $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channelId, cartId);
@@ -203,7 +204,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 根据上新任务列表中的groupid循环上新处理
         for(CmsBtSxWorkloadModel cmsBtSxWorkloadModel:sxWorkloadModels) {
             // 启动多线程
-            executor.execute(() -> uploadProductJd(cmsBtSxWorkloadModel, shopProp));
+            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -216,12 +217,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     }
 
     /**
-     * 每个平台的京东产品上新处理
+     * 平台产品上新处理
      *
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp ShopBean 店铺信息
      */
-    private void uploadProductJd(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
+    private void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
