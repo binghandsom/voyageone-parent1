@@ -7,7 +7,8 @@ define([
             "platformList":[],
             "brandNameList":[],
             "productTypeList":[],
-            "sizeTypeList":[]
+            "sizeTypeList":[],
+            "imageTemplateList":[]
             };
         $scope.dataPageOption = {curr: 0, total: 0, size: 10, fetch: goPage.bind(this)}
         $scope.searchInfo = { };
@@ -19,6 +20,7 @@ define([
                 $scope.vm.brandNameList = res.data.brandNameList;
                 $scope.vm.productTypeList = res.data.productTypeList;
                 $scope.vm.sizeTypeList = res.data.sizeTypeList;
+                $scope.vm.imageTemplateList=res.data.imageTemplateList;
              //   $scope.search();
             })
         };
