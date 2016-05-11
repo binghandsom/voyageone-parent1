@@ -44,6 +44,28 @@ public class TbPictureService extends TbBase {
     }
 
     /**
+     * 替换图片
+     * <p>
+     * 淘宝接口名：taobao.picture.replace
+     * 文档地址：http://open.taobao.com/doc2/apiDetail.htm?spm=a219a.7395905.0.0.Ik1I5r&apiId=10910
+     *
+     * @param shopBean    店铺
+     * @param title       图片标题
+     * @param pictureId 图片ID
+     * @return 淘宝结果，包含图片信息
+     * @throws ApiException
+     */
+    public PictureReplaceResponse replacePicture(ShopBean shopBean, byte[] file, String title, Long pictureId) throws ApiException {
+
+        FileItem image = new FileItem(title, file);
+
+        PictureReplaceRequest request = new PictureReplaceRequest();
+        request.setPictureId(pictureId);
+        request.setImageData(image);
+        return reqTaobaoApi(shopBean, request);
+    }
+
+    /**
      * 获取图片信息
      * 淘宝接口名：taobao.picture.get
      * 文档地址：http://open.taobao.com/apidoc/api.htm?path=cid:10122-apiId:138
