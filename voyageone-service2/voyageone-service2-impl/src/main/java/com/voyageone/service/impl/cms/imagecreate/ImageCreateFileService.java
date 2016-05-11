@@ -15,9 +15,11 @@ import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsImageTemplateService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +33,6 @@ import java.util.*;
 public class ImageCreateFileService extends BaseService {
     @Autowired
     CmsMtImageCreateFileDao cmsMtImageCreateFileDao;
-
-    @Autowired
-    CmsMtImageCreateTemplateDao cmsMtImageCreateTemplateDao;
     @Autowired
     private AliYunOSSFileService serviceAliYunOSSFile;
     @Autowired
@@ -53,7 +52,8 @@ public class ImageCreateFileService extends BaseService {
     CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
     @Autowired
     CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
-
+@Autowired
+    CmsImageTemplateService serviceCmsImageTemplate;
     public CmsMtImageCreateFileModel getModel(int id) {
         return cmsMtImageCreateFileDao.select(id);
     }
@@ -69,7 +69,7 @@ public class ImageCreateFileService extends BaseService {
     }
 
     @VOTransactional
-    public CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, int templateId, String file, String vparam, String Creater, long hashCode, boolean isUploadUSCDN) throws OpenApiException {
+    public CmsMtImageCreateFileModel createCmsMtImageCreateFile(String channelId, long templateId, String file, String vparam, String Creater, long hashCode, boolean isUploadUSCDN) throws OpenApiException {
 
         final String ossFilePath = getCreateFilePathName(templateId, channelId, file);
         final String usCDNFilePath = ImageConfig.getUSCDNWorkingDirectory() + ossFilePath;
@@ -86,6 +86,7 @@ public class ImageCreateFileService extends BaseService {
         modelFile.setOssState(0);
         modelFile.setErrorCode(0);
         modelFile.setErrorMsg("");
+        modelFile.setUscdnState(0);
         modelFile.setIsUploadUsCdn(isUploadUSCDN);
         modelFile.setCreater(Creater);
         modelFile.setModifier(Creater);
@@ -93,24 +94,19 @@ public class ImageCreateFileService extends BaseService {
         return modelFile;
     }
 
-    public String getCreateFilePathName(int templateId, String channelId, String file) {
+    public String getCreateFilePathName(long templateId, String channelId, String file) {
         //return "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + modelTemplate.getId() + "/" + file + ".jpg";
         return "products/" + channelId + "/" +templateId + "/" + file + ".jpg";
     }
 
-    public long getHashCode(String channelId, int templateId, String file, String vparam) {
-        String parameter = channelId + templateId + file + vparam;
+    public long getHashCode(String channelId, long templateId, String file, String vparam,String templateModified) {
+        String parameter = channelId + templateId + file + vparam+templateModified;
         return HashCodeUtil.getHashCode(parameter);
     }
 
     @VOTransactional
     public int changeModel(CmsMtImageCreateFileModel entity) {
         return cmsMtImageCreateFileDao.update(entity);
-    }
-
-    //获取模板
-    public CmsMtImageCreateTemplateModel getCmsMtImageCreateTemplate(int templateId) {
-        return cmsMtImageCreateTemplateDao.select(templateId);
     }
 
     //CmsMtImageCreateTaskDetailModel
@@ -173,13 +169,13 @@ public class ImageCreateFileService extends BaseService {
     public boolean createAndUploadImage(CmsMtImageCreateFileModel modelFile) throws Exception {
         boolean isCreateNewFile = false;
         if (modelFile.getState() == 0) {
-            CmsMtImageCreateTemplateModel modelTemplate = this.getCmsMtImageCreateTemplate(modelFile.getTemplateId());//获取模板
+          CmsBtImageTemplateModel   modelTemplate = serviceCmsImageTemplate.get(modelFile.getTemplateId());//获取模板
             if (modelTemplate == null) {
                 throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
             }
             $info("CmsImageFileService:getImage get template end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
             //2.生成图片 from LiquidFire
-            serviceLiquidFireImage.createImage(modelFile, modelTemplate);
+            serviceLiquidFireImage.createImage(modelFile, modelTemplate.getImageTemplateContent());
             $info("CmsImageFileService:getImage create image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
             isCreateNewFile = true;
         }
@@ -195,18 +191,19 @@ public class ImageCreateFileService extends BaseService {
         }
         return isCreateNewFile;
     }
-
     @VOTransactional
     public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
         $info("CmsImageFileService:addList start");
+        Map<Long,CmsBtImageTemplateModel> mapTemplate=new HashMap<>();
         AddListResultBean result = new AddListResultBean();
         try {
-            checkAddListParameter(parameter);
+            checkAddListParameter(parameter,mapTemplate);
             CmsMtImageCreateTaskModel modelTask = new CmsMtImageCreateTaskModel();
             List<CmsMtImageCreateTaskDetailModel> listTaskDetail = new ArrayList<>();
             CmsMtImageCreateFileModel modelCmsMtImageCreateFile;
             for (CreateImageParameter imageInfo : parameter.getData()) {
-                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr());
+                String templateModified=mapTemplate.get(imageInfo.getTemplateId()).getTemplateModified();//
+                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(),templateModified);
                 modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
                     modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
@@ -259,13 +256,27 @@ public class ImageCreateFileService extends BaseService {
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         }
+        finally {
+            mapTemplate.clear();
+            mapTemplate=null;
+        }
         $info("CmsImageFileService:addList end");
         return result;
     }
 
-    public void checkAddListParameter(AddListParameter parameter) throws OpenApiException {
+    public void checkAddListParameter(AddListParameter parameter,Map<Long,CmsBtImageTemplateModel> mapTemplate) throws OpenApiException {
+
         for (CreateImageParameter imageInfo : parameter.getData()) {
             imageInfo.checkInputValue();
+            //判断模板是否存在
+            if (!mapTemplate.containsKey(imageInfo.getTemplateId())) {
+                CmsBtImageTemplateModel modelTemplate = serviceCmsImageTemplate.get(imageInfo.getTemplateId());
+                if (modelTemplate == null) {
+                    throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull);
+                } else {
+                    mapTemplate.put(modelTemplate.getImageTemplateId(), modelTemplate);
+                }
+            }
         }
     }
 }

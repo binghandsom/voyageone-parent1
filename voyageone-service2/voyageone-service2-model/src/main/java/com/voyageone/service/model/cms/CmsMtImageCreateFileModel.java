@@ -26,7 +26,7 @@ public class CmsMtImageCreateFileModel extends BaseModel {
     /**
      * 模板id
      */
-    protected Integer templateId;
+    protected Long templateId;
 
     /**
      * 上传oss的的文件名
@@ -99,11 +99,11 @@ public class CmsMtImageCreateFileModel extends BaseModel {
         this.channelId = channelId == null ? null : channelId.trim();
     }
 
-    public Integer getTemplateId() {
+    public Long getTemplateId() {
         return templateId;
     }
 
-    public void setTemplateId(Integer templateId) {
+    public void setTemplateId(Long templateId) {
         this.templateId = templateId;
     }
 

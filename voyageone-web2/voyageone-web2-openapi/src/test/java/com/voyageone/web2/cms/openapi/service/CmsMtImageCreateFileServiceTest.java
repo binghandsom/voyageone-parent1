@@ -8,10 +8,12 @@ import com.voyageone.service.bean.openapi.image.AddListParameter;
 import com.voyageone.service.bean.openapi.image.AddListResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.GetImageResultBean;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
+import com.voyageone.service.impl.cms.CmsImageTemplateService;
 import com.voyageone.service.impl.cms.jumei.enumjm.EnumCount;
 import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMProductImportColumn;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
@@ -29,7 +31,10 @@ import java.util.*;
 public class CmsMtImageCreateFileServiceTest {
     @Autowired
     CmsImageFileService service;
-
+    @Autowired
+    private CmsBtImageTemplateDao dao;
+    @Autowired
+    private CmsImageTemplateService serviceCmsImageTemplate;
     @Test
     public void test() throws Exception {
         // String url = "http://image.voyageone.net/product/getImage?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
@@ -99,8 +104,8 @@ public class CmsMtImageCreateFileServiceTest {
         Assert.isTrue(resultBean.getErrorCode() == 0, "导入错误");
     }
 
-    @Autowired
-    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
+//    @Autowired
+//    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
 
     @Test
     public void textImportImageTemplate() throws Exception {
@@ -126,7 +131,7 @@ public class CmsMtImageCreateFileServiceTest {
             model.setCreated(new Date());
             model.setCreater("system");
             model.setModifier("system");
-            daoCmsMtImageCreateTemplate.insert(model);
+           // daoCmsMtImageCreateTemplate.insert(model);
         }
         String str = "source=name[icon],url[%s]&source=name[s],url[%s]&scale=height[1100],width[700]&blank=color[white],height[1200],name[bcc],width[1200]&select=name[bcc]&composite=compose[Over],image[s],x[200],y[100]&composite=compose[Over],image[icon],x[100],y[32]&annotate=fill[red],font[VeraSans-Bold],pointsize[18],text[%s],x[923],y[832]&sink";
     }
@@ -134,9 +139,13 @@ public class CmsMtImageCreateFileServiceTest {
     @Test
     public void testAllTemplate() throws Exception {
         Map<String, Object> map = new HashMap<>();
-        List<CmsMtImageCreateTemplateModel> modelList = daoCmsMtImageCreateTemplate.selectList(map);
-        for (CmsMtImageCreateTemplateModel model : modelList) {
-            testTemplate(model.getId());
+       // List<CmsMtImageCreateTemplateModel> modelList = daoCmsMtImageCreateTemplate.selectList(map);
+//        for (CmsMtImageCreateTemplateModel model : modelList) {
+//            testTemplate(model.getId());
+//        }
+         List<CmsBtImageTemplateModel> modelList =  dao.selectAll();// daoCmsMtImageCreateTemplate.selectList(map);
+        for (CmsBtImageTemplateModel model : modelList) {
+            testTemplate(model.getImageTemplateId());
         }
     }
 
@@ -149,17 +158,16 @@ public class CmsMtImageCreateFileServiceTest {
         //32 &问题   编码后%OA
         //31
         //30 编码后%OA
-        testTemplate(30);
         testTemplate(31);
-        testTemplate(32);
-        testTemplate(34);
-        testTemplate(34);
-        testTemplate(34);
-        testTemplate(34);
-        testTemplate(34);
-    }
+       // testTemplate(31);
+       // testTemplate(32);
+       // testTemplate(34);
+       // testTemplate(35);
+       // testTemplate(36);
 
-    public void testTemplate(int templateId) throws Exception {
+    }
+//shenzhen-vo.oss-cn-shenzhen.aliyuncs.com
+    public void testTemplate(long templateId) throws Exception {
         System.out.println("templateId:" + templateId);
         /*
         source=url[ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com/007/%s],name[tupian]
@@ -171,21 +179,23 @@ composite=compose[Over],image[color1],x[250],y[715]
 sink=format[jpg],quality[100]
          */
         String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";
-        CmsMtImageCreateTemplateModel model = daoCmsMtImageCreateTemplate.select(templateId);
-        String content = model.getContent();
+        CmsBtImageTemplateModel model= serviceCmsImageTemplate.get(templateId);
+        String content =  model.getImageTemplateContent();
         String[] strList = content.split("%s");
         String[] paramList = new String[strList.length - 1];
         for (int i = 0; i < strList.length - 1; i++) {
             if (strList[i].indexOf(prefix) > 0) {
                 paramList[i] = "test1.png";
             } else {
-                paramList[i] = "test中国&" + i;
+                paramList[i] =templateId+ "test中国&" + i;
             }
         }
         String cId = model.getChannelId();
         //int templateId = 15;
-        String file = "nike-air-penny-ii-333886005-1" + System.currentTimeMillis() + "templateId:" + templateId;//"test-test-1";//
+        String file = "nike-air-penny-ii-333886005-1";// + System.currentTimeMillis() + "templateId:" + templateId;//"test-test-1";//
         String vparam = JacksonUtil.bean2Json(paramList);
         GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        System.out.println(result.getErrorCode()+""+result.getErrorMsg());
+       // Assert.isTrue(result.getErrorCode()==0,"有错误");
     }
 }
