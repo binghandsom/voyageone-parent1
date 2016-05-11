@@ -24,7 +24,10 @@ define([
             search();
         };
 
-        $scope.search = search;
+        $scope.search = function(){
+            $scope.vm.sizeChartPageOption.curr = 1;
+            search();
+        };
 
         /**
          * 检索
@@ -49,9 +52,9 @@ define([
          * 删除尺码表操作
          */
         $scope.deleteRow = function(sizeChartId){
-            confirm("确认要删除该尺码表吗？").result.then(function () {
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result.then(function () {
                 sizeChartService.delete({sizeChartId:sizeChartId}).then(function(reps){
-                    notify.success ("删除成功！");
+                    notify.success ($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     search();
                 });
             });
@@ -59,6 +62,6 @@ define([
 
     }
 
-    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify','$translate'];
     return sizeChartController;
 });

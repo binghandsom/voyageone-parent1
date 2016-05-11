@@ -11,6 +11,16 @@ import java.util.List;
 public class CmsBtImageTemplateBean extends CmsBtImageTemplateModel {
     private String viewTypeName;
     private String cartName;
+    private String imageTemplateTypeName;
+
+    public String getImageTemplateTypeName() {
+        return imageTemplateTypeName;
+    }
+
+    public void setImageTemplateTypeName(String imageTemplateTypeName) {
+        this.imageTemplateTypeName = imageTemplateTypeName;
+    }
+
     private List<String> brandNameTrans;
     private List<String> productTypeTrans;
     private List<String> sizeTypeTrans;

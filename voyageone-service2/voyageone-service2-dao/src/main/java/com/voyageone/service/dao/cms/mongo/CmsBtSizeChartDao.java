@@ -67,7 +67,7 @@ public class CmsBtSizeChartDao extends BaseMongoDao<CmsBtSizeChartModel> {
             sbQuery.append(MongoUtils.splicingValue("sizeType",  sizeTypeList.toArray(new String[cmsBtSizeChartModel.getSizeType().size()])));
             sbQuery.append(",");
         }
-        sbQuery.append(MongoUtils.splicingValue("active", 0));
+        sbQuery.append(MongoUtils.splicingValue("active", 1));
         return select("{" + sbQuery.toString() + "}");
     }
     /**
