@@ -1347,7 +1347,7 @@
     where sku = #{sku,jdbcType=VARCHAR}
   </update>
   <update id="updateFlagBySku"  parameterType="java.util.List">
-    UPDATE voyageone_cms2.cms_zz_feed_target_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    UPDATE voyageone_cms2.cms_zz_feed_target_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `catentryid` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>
@@ -1356,7 +1356,7 @@
 
   <insert id="insertFullBySku"  parameterType="java.util.List">
     INSERT INTO voyageone_cms2.cms_zz_feed_target_product_full SELECT * from
-    voyageone_cms2.cms_zz_feed_target_product_temp where `sku` in
+    voyageone_cms2.cms_zz_feed_target_product_temp where `catentryid` in
     (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
@@ -1368,7 +1368,7 @@
     DELETE
     FROM
     voyageone_cms2.cms_zz_feed_target_product_full
-    where `sku` in (
+    where `catentryid` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>
