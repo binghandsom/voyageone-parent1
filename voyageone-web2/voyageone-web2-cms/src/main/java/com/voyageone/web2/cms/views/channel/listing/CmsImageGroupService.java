@@ -5,6 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -53,6 +54,8 @@ public class CmsImageGroupService extends BaseAppService {
         result.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, (String)param.get("channelId"), (String)param.get("lang")));
         // 尺寸类型下拉列表
         result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String)param.get("channelId"), (String)param.get("lang")));
+        // 图片类型
+        result.put("imageTypeList", Types.getTypeList(71, (String)param.get("lang")));
 
         return result;
     }
@@ -134,26 +137,30 @@ public class CmsImageGroupService extends BaseAppService {
      * @param lang 语言
      */
     private void editImageGroupBean(CmsBtImageGroupBean bean, String channelId, String lang) {
-        if ("cn".equals(lang)) {
-            // ImageType
-            if (bean.getImageType() == 2) {
-                bean.setImageTypeName("尺码图");
-            } else if (bean.getImageType() == 3) {
-                bean.setImageTypeName("品牌故事图");
-            } else if (bean.getImageType() == 4) {
-                bean.setImageTypeName("物流介绍图");
-            }
+//        if ("cn".equals(lang)) {
+//            // ImageType
+//            if (bean.getImageType() == 2) {
+//                bean.setImageTypeName("尺码图");
+//            } else if (bean.getImageType() == 3) {
+//                bean.setImageTypeName("品牌故事图");
+//            } else if (bean.getImageType() == 4) {
+//                bean.setImageTypeName("物流介绍图");
+//            }
+//
+//        } else {
+//            // ImageType
+//            if (bean.getImageType() == 2) {
+//                bean.setImageTypeName("Size Chart Image");
+//            } else if (bean.getImageType() == 3) {
+//                bean.setImageTypeName("Brand Story Image");
+//            } else if (bean.getImageType() == 4) {
+//                bean.setImageTypeName("Shipping Description Image");
+//            }
+//        }
 
-        } else {
-            // ImageType
-            if (bean.getImageType() == 2) {
-                bean.setImageTypeName("Size Chart Image");
-            } else if (bean.getImageType() == 3) {
-                bean.setImageTypeName("Brand Story Image");
-            } else if (bean.getImageType() == 4) {
-                bean.setImageTypeName("Shipping Description Image");
-            }
-        }
+        // ImageType
+        bean.setImageTypeName(Types.getTypeName(71, lang, String.valueOf(bean.getImageType())));
+
         // Platform
         TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, String.valueOf(bean.getCartId()), lang);
         if (typeChannelBean != null) {

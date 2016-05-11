@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.channel.listing;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
@@ -57,6 +58,8 @@ public class CmsImageGroupDetailService extends BaseAppService {
         result.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, (String)param.get("channelId"), (String)param.get("lang")));
         // 尺寸类型下拉列表
         result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String)param.get("channelId"), (String)param.get("lang")));
+        // 图片类型
+        result.put("imageTypeList", Types.getTypeList(71, (String)param.get("lang")));
 
         String imageGroupId = (String)param.get("imageGroupId");
         CmsBtImageGroupModel imageGroupInfo = imageGroupService.getImageGroupModel(imageGroupId);

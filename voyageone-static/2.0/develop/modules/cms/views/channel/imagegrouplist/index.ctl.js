@@ -12,6 +12,7 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.platformList = [];
+            this.imageTypeList = [];
             this.imageType = "";
             this.beginModified = "";
             this.endModified = "";
@@ -38,6 +39,7 @@ define([
                 var main = this;
                 main.imageGroupService.init().then(function (res) {
                     main.platformList = res.data.platformList;
+                    main.imageTypeList = res.data.imageTypeList;
                     main.brandNameList = res.data.brandNameList;
                     main.productTypeList = res.data.productTypeList;
                     main.sizeTypeList = res.data.sizeTypeList;
