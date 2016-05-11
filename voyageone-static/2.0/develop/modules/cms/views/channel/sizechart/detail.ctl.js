@@ -29,7 +29,6 @@ define([
                 $scope.vm.brandNameList = resp.data.brandNameList == null?[]:resp.data.brandNameList;
                 $scope.vm.productTypeList = resp.data.productTypeList == null?[]:resp.data.productTypeList;
                 $scope.vm.sizeTypeList = resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList;
-                console.log($scope.vm.sizeTypeList);
             });
 
         };
@@ -74,7 +73,7 @@ define([
 
             var upEntity = $scope.vm.saveInfo;
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
-                                        brandNameTrans:upEntity.brandNameTrans,productTypeTrans:upEntity.productTypeTrans,sizeTypeTrans:upEntity.sizeTypeTrans}).then(function(){
+                                        brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success($translate.instant('TXT_MSG_ADD_SUCCESS'));
                 getItemById();
                 $scope.$close();
