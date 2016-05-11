@@ -29,21 +29,21 @@ define([
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
                 $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList,"value");
-                $scope.vm.importList = _.map(resp.data.sizeMap == null ?[]:resp.data.sizeMap, function(item){
-                                                if(item.usual == "0")
-                                                    item.usual = false;
-                                                else
-                                                    item.usual = true;
-                                                return item;
-                                                })
             });
 
         };
 
         function getItemById(){
             sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
-                $scope.vm.saveInfo  = resp.data.sizeChartList[0];
+                var item = $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                 $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
+                $scope.vm.importList = _.map(item.sizeMap == null ?[]:item.sizeMap, function(item){
+                    if(item.usual == "0")
+                        item.usual = false;
+                    else
+                        item.usual = true;
+                    return item;
+                });
             });
         }
 
@@ -110,9 +110,7 @@ define([
                             return item;
                         });
             if(!flag) return;
-            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
-                                         finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
-                                         sizeTypeList:upEntity.sizeType,sizeMap:sizeMaps}).then(function(){
+            sizeChartService.detailSizeMapSave({sizeChartId:upEntity.sizeChartId,sizeMap:sizeMaps}).then(function(){
                 notify.success ($translate.instant('TXT_MSG_ADD_SUCCESS'));
                 getItemById();
                 $scope.$close();
