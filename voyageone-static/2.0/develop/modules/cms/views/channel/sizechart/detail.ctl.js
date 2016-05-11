@@ -26,9 +26,10 @@ define([
         $scope.initialize  = function () {
             getItemById();
             sizeChartService.init().then(function(resp){
-                $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
-                $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
-                $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList,"value");
+                $scope.vm.brandNameList = resp.data.brandNameList == null?[]:resp.data.brandNameList;
+                $scope.vm.productTypeList = resp.data.productTypeList == null?[]:resp.data.productTypeList;
+                $scope.vm.sizeTypeList = resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList;
+                console.log($scope.vm.sizeTypeList);
             });
 
         };
@@ -73,7 +74,7 @@ define([
 
             var upEntity = $scope.vm.saveInfo;
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
-                                        brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
+                                        brandNameTrans:upEntity.brandNameTrans,productTypeTrans:upEntity.productTypeTrans,sizeTypeTrans:upEntity.sizeTypeTrans}).then(function(){
                 notify.success($translate.instant('TXT_MSG_ADD_SUCCESS'));
                 getItemById();
                 $scope.$close();
