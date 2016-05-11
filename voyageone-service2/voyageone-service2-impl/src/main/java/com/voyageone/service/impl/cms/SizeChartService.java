@@ -193,7 +193,7 @@ public class SizeChartService extends BaseService {
         //是否逻辑删除
         cmsBtSizeChartModel.setActive(0);
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
-         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
     /**
      * 根据sizeChartId取得sizeChartInfo
