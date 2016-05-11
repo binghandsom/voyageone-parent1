@@ -274,7 +274,7 @@ public final class CommonUtil {
             Formatter formatter = new Formatter();
 
             for (int i = 0; i < mac.length; i++)
-                formatter.format("%s%X", (i > 0) ? ":" : "", (mac[i] & 0xFF));
+                formatter.format("%s%X", (i > 0) ? ":" : "", mac[i] & 0xFF);
 
             infoMap.put(MAC, formatter.toString());
 

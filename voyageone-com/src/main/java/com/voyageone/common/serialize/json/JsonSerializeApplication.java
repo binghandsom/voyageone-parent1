@@ -10,35 +10,27 @@ import com.voyageone.common.serialize.SerializerFactory;
 
 public class JsonSerializeApplication {
 
-	public static Field constructTmallField()
-	{
-		InputField inputField = (InputField) FieldTypeEnum
-				.createField(FieldTypeEnum.INPUT);
-		inputField.setId("prop_13021751");
-		inputField.setName("款号");
-		Rule rule = RuleTypeEnum.createRule(RuleTypeEnum.REQUIRED_RULE);
-		rule.setValue("true");
-		inputField.addRule(RuleTypeEnum.REQUIRED_RULE, "true");
-		inputField.setValue("123456");
-		return inputField;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		
-		JsonSerializer serializer = SerializerFactory.getSerializer(SerializeType.JSON);
-		
-		Field inputField = constructTmallField();
+    public static Field constructTmallField() {
+        InputField inputField = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+        inputField.setId("prop_13021751");
+        inputField.setName("款号");
+        Rule rule = RuleTypeEnum.createRule(RuleTypeEnum.REQUIRED_RULE);
+        rule.setValue("true");
+        inputField.addRule(RuleTypeEnum.REQUIRED_RULE, "true");
+        inputField.setValue("123456");
+        return inputField;
+    }
 
-		if (serializer != null) {
-			String jsonStr = serializer.serialize(inputField);
-
-			System.out.println(jsonStr);
-
-			Field f = (Field) serializer.deserialize(jsonStr);
-			System.out.println(f);
-
-			System.out.println(serializer.serialize(f));
-		}
-	}
+//    public static void main(String[] args) throws Exception {
+//
+//        JsonSerializer serializer = SerializerFactory.getSerializer(SerializeType.JSON);
+//
+//        Field inputField = constructTmallField();
+//
+//        if (serializer != null) {
+//            String jsonStr = serializer.serialize(inputField);
+//            Field f = (Field) serializer.deserialize(jsonStr);
+//        }
+//    }
 
 }
