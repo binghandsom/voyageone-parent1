@@ -287,10 +287,11 @@ public final class DateTimeUtil {
      * @return 日期时间字符串
      */
     public static String format(Date date, String pattern) {
-        if (null == pattern || "".equals(pattern)) {
-            pattern = DEFAULT_DATETIME_FORMAT;
+        String patternTmp = pattern;
+        if (null == patternTmp || "".equals(patternTmp)) {
+            patternTmp = DEFAULT_DATETIME_FORMAT;
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(patternTmp);
         return dateFormat.format(date);
     }
 
@@ -303,20 +304,22 @@ public final class DateTimeUtil {
      * @return 解析后的日期
      */
     public static String parseStr(String dateSting, String pattern) {
-        if (dateSting == null || dateSting.trim().length() == 0) {
+        String dateStingTmp = dateSting;
+        String patternTmp = pattern;
+        if (dateStingTmp == null || dateStingTmp.trim().length() == 0) {
             return null;
         }
 
-        if (null == pattern || "".equals(pattern)) {
-            pattern = DEFAULT_DATE_FORMAT;
+        if (null == patternTmp || "".equals(patternTmp)) {
+            patternTmp = DEFAULT_DATE_FORMAT;
         }
 
-        if (dateSting.length() == 10) {
-            dateSting = dateSting + " 00:00:00";
+        if (dateStingTmp.length() == 10) {
+            dateStingTmp = dateStingTmp + " 00:00:00";
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-        return dateFormat.format(parse(dateSting, DEFAULT_DATETIME_FORMAT));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(patternTmp);
+        return dateFormat.format(parse(dateStingTmp, DEFAULT_DATETIME_FORMAT));
     }
 
     /**
@@ -660,15 +663,16 @@ public final class DateTimeUtil {
      * 格式化java.sql.Timestamp 对象成字符串
      */
     public static String parseSqlTimeStamp(Object obj) {
-        if (obj instanceof java.sql.Date) {
-            String result = obj.toString().trim();
+        Object objTmp = obj;
+        if (objTmp instanceof java.sql.Date) {
+            String result = objTmp.toString().trim();
             if (result.length() == 10) {
                 result = result + " 00:00:00";
             }
-            obj = Timestamp.valueOf(result);
+            objTmp = Timestamp.valueOf(result);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
-        return dateFormat.format((Timestamp) obj);
+        return dateFormat.format((Timestamp) objTmp);
     }
 
     /**
@@ -683,15 +687,16 @@ public final class DateTimeUtil {
      * 格式化java.sql.Date对象成字符串
      */
     public static String parseSqlDate(Object obj) {
-        if (obj instanceof Timestamp) {
-            String result = obj.toString().trim();
+        Object objTmp = obj;
+        if (objTmp instanceof Timestamp) {
+            String result = objTmp.toString().trim();
             if (result.length() > 10) {
                 result = result.substring(0, 10);
             }
-            obj = java.sql.Date.valueOf(result);
+            objTmp = java.sql.Date.valueOf(result);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATE_FORMAT);
-        return dateFormat.format((java.sql.Date) obj);
+        return dateFormat.format((java.sql.Date) objTmp);
     }
 
     /**
@@ -858,7 +863,7 @@ public final class DateTimeUtil {
             DateFormat df = DateFormat.getDateTimeInstance();
             return df.parse(date1).before(df.parse(date2));
         } catch (ParseException e) {
-            System.out.print("[SYS] " + e.getMessage());
+            logger.error("[SYS] " + e.getMessage());
             return false;
         }
     }
@@ -921,7 +926,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getLocalTime :date format error");
+            return "getLocalTime :date format error";
         }
     }
 
@@ -976,7 +981,7 @@ public final class DateTimeUtil {
 
             return format(toDate, format);
         } catch (ParseException e) {
-            return ("getLocalTime :date format error");
+            return "getLocalTime :date format error";
         }
     }
 
@@ -992,11 +997,11 @@ public final class DateTimeUtil {
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
 
-            Date toDate = DateTimeUtil.addHours(fromDate, (timezone * -1));
+            Date toDate = DateTimeUtil.addHours(fromDate, timezone * -1);
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTime :date format error");
+            return "getGMTTime :date format error";
         }
     }
 
@@ -1020,7 +1025,7 @@ public final class DateTimeUtil {
      * @return 格式化后的GMT时间
      */
     public static String getGMTTime(Date date, int timezone, String format) {
-        Date toDate = DateTimeUtil.addHours(date, (timezone * -1));
+        Date toDate = DateTimeUtil.addHours(date, timezone * -1);
         return format(toDate, format);
     }
 
@@ -1085,7 +1090,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
 
@@ -1107,7 +1112,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
 
@@ -1128,7 +1133,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
 
@@ -1149,7 +1154,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
 
@@ -1172,7 +1177,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeFrom :date format error");
+            return "getGMTTimeFrom :date format error";
         }
     }
 
@@ -1195,7 +1200,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
     
@@ -1230,7 +1235,7 @@ public final class DateTimeUtil {
      * 
      * @return long
      */
-	public static long getInterVal(String startDateTime, String endDateTime, int flag) throws ParseException{
+	public static long getInterVal(String startDateTime, String endDateTime, int inputFlag) throws ParseException{
 		long intervale = 0;
 		
 		SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
@@ -1239,7 +1244,8 @@ public final class DateTimeUtil {
 		
 		// 除以1000是为了转换成秒  
 		long between = (end.getTime() - begin.getTime()) / 1000;
-		
+
+        int flag = inputFlag;
 		if (flag != 0 && flag != 1 && flag != 2 && flag != 3) {
 			flag = 0;
 		}
@@ -1257,7 +1263,7 @@ public final class DateTimeUtil {
             intervale = between / 60;
 			
 		// 秒
-		} else if (flag == 3) {
+		} else {
             intervale = between;
 		}
 		
@@ -1319,11 +1325,12 @@ public final class DateTimeUtil {
      * @return String
      */
     public static String getDateTime(Date dateTime, String pattern) {
-		if (StringUtils.isNullOrBlank2(pattern)) {
-			pattern = DEFAULT_DATETIME_FORMAT;
+        String patternTmp = pattern;
+		if (StringUtils.isNullOrBlank2(patternTmp)) {
+            patternTmp = DEFAULT_DATETIME_FORMAT;
 		}
 		
-		SimpleDateFormat sf = new SimpleDateFormat(pattern);
+		SimpleDateFormat sf = new SimpleDateFormat(patternTmp);
 		return sf.format(dateTime);
 	}
 
@@ -1382,7 +1389,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
 
@@ -1404,7 +1411,7 @@ public final class DateTimeUtil {
 
             return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         } catch (ParseException e) {
-            return ("getGMTTimeTo :date format error");
+            return "getGMTTimeTo :date format error";
         }
     }
 	

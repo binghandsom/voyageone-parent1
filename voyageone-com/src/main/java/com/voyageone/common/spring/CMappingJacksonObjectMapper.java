@@ -51,7 +51,7 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
         } catch (IOException ex) {
             // ServletContext
             String msg = "反序列化错误:" + ex.getMessage();
-            logger.error(msg);
+            logger.error(msg, ex);
             throw ex;
         }
     }

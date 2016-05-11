@@ -408,7 +408,7 @@ public final class FileUtils {
             File file = new File(fullPath.toString());
             if (!file.exists()) {
                 file.mkdir();
-                System.out.println("创建目录为：" + fullPath.toString());
+                logger.info("创建目录为：" + fullPath.toString());
             }
         }
     }

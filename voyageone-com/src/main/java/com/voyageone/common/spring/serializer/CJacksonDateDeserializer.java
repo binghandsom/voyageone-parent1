@@ -17,11 +17,10 @@ import java.util.Date;
 public class CJacksonDateDeserializer extends JsonDeserializer<Date> {
 
     @Override
-    public Date deserialize(JsonParser parser, DeserializationContext context)
-            throws IOException, JsonProcessingException {
+    public Date deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         String fieldData = parser.getText();
         //Timestamp
-        if (fieldData == null || fieldData.equals("")) {
+        if (fieldData == null || "".equals(fieldData)) {
             return DateTimeUtil.getCreatedDefaultDate();
         }
         if (fieldData.length() < 19) {

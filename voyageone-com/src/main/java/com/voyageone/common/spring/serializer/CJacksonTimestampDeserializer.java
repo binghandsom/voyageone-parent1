@@ -20,15 +20,14 @@ import java.util.Date;
 public class CJacksonTimestampDeserializer extends JsonDeserializer<Timestamp> {
 
     @Override
-    public Timestamp deserialize(JsonParser parser, DeserializationContext context)
-            throws IOException, JsonProcessingException {
+    public Timestamp deserialize(JsonParser parser, DeserializationContext context) throws IOException{
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         try {
             String fieldData = parser.getText();
 
             //Timestamp
-            if (fieldData == null || fieldData.equals("")) {
+            if (fieldData == null || "".equals(fieldData)) {
                 return new Timestamp(DateTimeUtil.getCreatedDefaultDate().getTime());
             }
             if (fieldData.length() < 19) {
@@ -37,9 +36,7 @@ public class CJacksonTimestampDeserializer extends JsonDeserializer<Timestamp> {
 
             return new Timestamp(sdf.parse(fieldData).getTime());
         } catch (Exception e) {
-            //return DateHelp.getDefaultDate();
-            e.printStackTrace();
-            throw new IOException(e.getMessage());
+            throw new IOException(e);
         }
     }
 }

@@ -84,6 +84,7 @@ public class ImageCreateFileService extends BaseService {
         modelFile.setFilePath("");
         modelFile.setState(0);
         modelFile.setOssState(0);
+        modelFile.setUscdnState(0);
         modelFile.setErrorCode(0);
         modelFile.setErrorMsg("");
         modelFile.setIsUploadUsCdn(isUploadUSCDN);
