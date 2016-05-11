@@ -419,7 +419,7 @@ define([
 
         function openModel(config, context) {
 
-            if (context)
+           // if (context)
                 config.resolve = {
                     context: function () {
                         return context;
@@ -1118,9 +1118,6 @@ define([
         /**
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
-        //$scope.openImgGroupAdd = function (context) {
-        //    return openModel(popActions.store.listing.imagegroupadd, context);
-        //};
         $scope.openImgGroupAdd = openImgGroupAdd;
         function openImgGroupAdd(data) {
             require([popActions.store.listing.imagegroupadd.controllerUrl], function () {
@@ -1141,15 +1138,25 @@ define([
         /**
          * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
          * */
-        $scope.openImgGroupListImg = function (context) {
-            return openModel(popActions.store.listing.imagegroupimg, context);
-        };
+        $scope.openImgGroupListImg = openImgGroupListImg;
+        function openImgGroupListImg(originUrl) {
+            require([popActions.store.listing.imagegroupimg.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagegroupimg.templateUrl,
+                    controller: popActions.store.listing.imagegroupimg.controller,
+                    resolve: {
+                        originUrl: function () {
+                            return originUrl;
+                        }
+                    }
+                });
+            });
+        }
+
+
         /**
          * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
          * */
-        //$scope.openImgGroupDetail = function (context) {
-        //    return openModel(popActions.store.listing.imagedetailadd, context);
-        //};
         $scope.openImgGroupDetail = openImgGroupDetail;
         function openImgGroupDetail(data, originUrl) {
             require([popActions.store.listing.imagedetailadd.controllerUrl], function () {

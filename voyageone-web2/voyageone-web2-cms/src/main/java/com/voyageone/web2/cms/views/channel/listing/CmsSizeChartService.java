@@ -5,24 +5,20 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by gjl on 2016/5/5.
  */
 @Service
 public class CmsSizeChartService extends BaseAppService {
-    @Autowired
-    private CmsBtSizeChartDao cmsBtSizeChartDao;
     @Autowired
     private SizeChartService sizeChartService;
     /**
@@ -174,13 +170,32 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
-        String sizeMap=(String) param.get("sizeMap");
+        //sizeMapList
+        List<CmsBtSizeChartModelSizeMap> sizeMapList=(List<CmsBtSizeChartModelSizeMap>) param.get("sizeMap");
+        if(sizeMapList.size()>0){
+            //取得sizeMapList对象
+            Set<String> originalSizeSet = new HashSet<>();
+            for(int i=0;i<sizeMapList.size();i++){
+                Map sizeMap = (Map)sizeMapList.get(i);
+                String originalSize=(String)sizeMap.get("originalSize");
+                String adjustSize=(String)sizeMap.get("adjustSize");
+                //判断是否为空check
+                if (StringUtils.isEmpty(originalSize)||StringUtils.isEmpty(adjustSize)) {
+                    throw new BusinessException("7000080");
+                }
+                originalSizeSet.add(originalSize);
+            }
+            //重复check
+            if(originalSizeSet.size() != sizeMapList.size()){
+                throw new BusinessException("originSize重复");
+            }
+        }
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
         //插入数据库
         sizeChartService.sizeChartDetailUpdate(channelId,
-                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMap);
+                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMapList);
     }
 }

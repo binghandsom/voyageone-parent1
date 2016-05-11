@@ -27,6 +27,7 @@ import java.util.Map;
 public class CmsImageTemplateController extends CmsController {
     @Autowired
     private CmsImageTemplateService service;
+
     /**
      * 初始化
      *
@@ -42,6 +43,7 @@ public class CmsImageTemplateController extends CmsController {
         //返回数据的类型
         return success(resultBean);
     }
+
     /**
      * 检索
      *
@@ -56,12 +58,14 @@ public class CmsImageTemplateController extends CmsController {
         Object result = service.getPage(param);
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetCount)
     public AjaxResponse getCount(@RequestBody Map<String, Object> param) {
         param.put("channelId", this.getUser().getSelChannelId());
         Object result = service.getCount(param);
         return success(result);
     }
+
     /**
      * 新加ImageTemplate信息
      *
@@ -71,18 +75,25 @@ public class CmsImageTemplateController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
         model.setChannelId(this.getUser().getSelChannelId());
-       service.save(model,this.getUser().getUserName());
+        service.save(model, this.getUser().getUserName());
         return success(null);
     }
+
     /**
      * 逻辑删除ImageTemplate信息
      *
-     * @param param 客户端参数
+     * @param imageTemplateId 客户端参数
      * @return 结果
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
     public AjaxResponse delete(@RequestBody Long imageTemplateId) {
         service.delete(imageTemplateId);
         return success(null);
+    }
+
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Get)
+    public AjaxResponse get(@RequestBody Long imageTemplateId) {
+        CmsBtImageTemplateModel model = service.get(imageTemplateId);
+        return success(model);
     }
 }

@@ -23,18 +23,22 @@ public class VOJacksonMapper implements Mapper {
         this.objectIdUpdater = objectIdUpdater;
     }
 
+    @Override
     public Marshaller getMarshaller() {
         return engine;
     }
 
+    @Override
     public Unmarshaller getUnmarshaller() {
         return engine;
     }
 
+    @Override
     public ObjectIdUpdater getObjectIdUpdater() {
         return objectIdUpdater;
     }
 
+    @Override
     public QueryFactory getQueryFactory() {
         return queryFactory;
     }

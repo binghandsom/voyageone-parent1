@@ -81,7 +81,7 @@ public class ShopConfigs {
      */
     public static String getVal1(String order_channel_id, String cart_id, ShopConfigEnums.Name name) {
         List<ShopConfigBean> beans = getConfigs(order_channel_id, cart_id, name);
-        return (CollectionUtils.isEmpty(beans)) ? "" : beans.get(0).getCfg_val1();
+        return CollectionUtils.isEmpty(beans) ? "" : beans.get(0).getCfg_val1();
     }
 
     /**

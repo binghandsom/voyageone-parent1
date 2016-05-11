@@ -15,10 +15,12 @@
     <modules>
         <module>task2-base</module>
         <module>task2-cms</module>
+        <module>task2-imagecreate</module>
     </modules>
     <properties>
         <voyageone.task2.base.version>2.0.0-SNAPSHOT</voyageone.task2.base.version>
         <voyageone.task2.cms.version>2.0.0-SNAPSHOT</voyageone.task2.cms.version>
+        <voyageone.task2.imagecreate.version>2.0.0-SNAPSHOT</voyageone.task2.imagecreate.version>
     </properties>
 </project>
 
