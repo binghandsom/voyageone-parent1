@@ -4,14 +4,14 @@
         <span>{{::property.name||property.id}}</span>
         <span ng-if="::property.required">&nbsp;(&nbsp;<i>{{::'TXT_REQUIRED'|translate}}</i>&nbsp;)</span>
     </div>
-    <div class="col-sm-3 pull-center" ng-if="!isChildOfMulti()">
+    <div class="col-sm-3 pull-center" ng-if="!property.mapping.isChildOfMulti()">
         <button class="btn btn-default btn-xs"
                 ng-click="popup({property: property})"><i class="fa fa-pencil"></i>&nbsp;<span>{{::'TXT_MAPPING_VALUE'|translate}}</span>
         </button>
     </div>
     <div class="col-sm-1 pull-right text-right">
         <span ng-class="{'badge':property.matched, 'badge badge-failure': !property.matched}"
-              ng-if="!isChildOfMulti()">{{property.matched ? 'TXT_COMPLETE' : 'TXT_INCOMPLETE' | translate}}</span>
+              ng-if="!property.mapping.isChildOfMulti()">{{property.matched ? 'TXT_COMPLETE' : 'TXT_INCOMPLETE' | translate}}</span>
     </div>
     <div class="pull-right">
         <span class="{{::property.iconClass}}">{{::property.type}}</span>
@@ -21,5 +21,4 @@
      ng-repeat="child in property.fieldList track by child.id"
      ng-if="!child.hide"
      platform-prop="child"
-     platform-prop-parent="property"
      platform-prop-popup="popup({property: property})"></div>
