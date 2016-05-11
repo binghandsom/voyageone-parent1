@@ -5,13 +5,16 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.task.CmsBtSizeChartBean;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import com.voyageone.web2.base.BaseAppService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -50,8 +53,7 @@ public class CmsSizeChartService extends BaseAppService {
      * @param param
      * @return
      */
-    public Map<String, Object>sizeChartSearch(String channelId,Map param) {
-        Map<String, Object> data =new HashMap<>();
+    public Map<String, Object>sizeChartSearch(String channelId,Map param,String lang) {
         //尺码名称
         String sizeChartName=(String) param.get("sizeChartName");
         //尺码标志
@@ -84,10 +86,10 @@ public class CmsSizeChartService extends BaseAppService {
         }
         List<CmsBtSizeChartModel> pageSizeChartList = sizeChartList.subList(staIdx, endIdx);
         //尺码关系一览检索
-        param.put("sizeChartList",pageSizeChartList);
+        param.put("sizeChartList", changeToBeanList(pageSizeChartList, channelId, lang));
         param.put("total",sizeChartList.size());
         //返回数据的类型
-        return data;
+        return param;
     }
     /**
      * 尺码关系一览初删除
@@ -144,7 +146,7 @@ public class CmsSizeChartService extends BaseAppService {
         //尺码表自增键取得当前的记录
         List<CmsBtSizeChartModel> sizeChartList =sizeChartService.sizeChartDetailSearch(channelId, sizeChartId);
         //尺码关系一览检索
-        param.put("sizeChartList", sizeChartList);
+        param.put("sizeChartList", changeToBeanList(sizeChartList, (String) param.get("channelId"), (String) param.get("lang")));
     }
     /**
      * 尺码关系一览编辑详情编辑画面
@@ -153,7 +155,7 @@ public class CmsSizeChartService extends BaseAppService {
      * @return data
      */
     public void sizeChartDetailUpdate(String channelId,Map param) {
-        String sizeChartId =param.get("sizeChartId").toString();
+        int sizeChartId =(int)param.get("sizeChartId");
         //用户名称
         String userName =param.get("userName").toString();
         //尺码名称
@@ -196,6 +198,82 @@ public class CmsSizeChartService extends BaseAppService {
         }
         //插入数据库
         sizeChartService.sizeChartDetailUpdate(channelId,
-                userName,sizeChartId,sizeChartName,finishFlag,brandNameList,productTypeList,sizeTypeList,sizeMapList);
+                userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList, sizeMapList);
+    }
+    /**
+     * 检索结果转换
+     *
+     * @param imageGroupList 检索结果（Model）
+     * @param channelId 渠道id
+     * @param lang 语言
+     * @return 检索结果（Bean）
+     */
+    private List<CmsBtSizeChartBean> changeToBeanList(List<CmsBtSizeChartModel> imageGroupList, String channelId, String lang) {
+        List<CmsBtSizeChartBean> CmsBtSizeChartBeanList = new ArrayList<>();
+
+        for (CmsBtSizeChartModel imageGroup : imageGroupList) {
+            CmsBtSizeChartBean dest = new CmsBtSizeChartBean();
+            try {
+                BeanUtils.copyProperties(dest, imageGroup);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            editCmsBtSizeChartBean(dest, channelId, lang);
+            CmsBtSizeChartBeanList.add(dest);
+        }
+
+
+        return CmsBtSizeChartBeanList;
+    }
+    /**
+     * 检索结果编辑
+     *
+     * @param bean 检索结果（Bean）
+     * @param channelId 渠道id
+     * @param lang 语言
+     */
+    private void editCmsBtSizeChartBean(CmsBtSizeChartBean bean, String channelId, String lang) {
+        List<String> brandNameTrans = new ArrayList<>();
+        for (String brandName : bean.getBrandName()) {
+            if ("All".equals(brandName)) {
+                brandNameTrans.add("All");
+            } else {
+                TypeChannelBean  typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                if (typeChannelBean != null) {
+                    brandNameTrans.add(typeChannelBean.getName());
+                }
+            }
+        }
+        bean.setBrandNameTrans(brandNameTrans);
+
+        // Related Product Type
+        List<String> productTypeTrans = new ArrayList<>();
+        for (String productType : bean.getProductType()) {
+            if ("All".equals(productType)) {
+                productTypeTrans.add("All");
+            } else {
+                TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
+                if (typeChannelBean != null) {
+                    productTypeTrans.add(typeChannelBean.getName());
+                }
+            }
+        }
+        bean.setProductTypeTrans(productTypeTrans);
+
+        // Related Size Type
+        List<String> sizeTypeTrans = new ArrayList<>();
+        for (String sizeType : bean.getSizeType()) {
+            if ("All".equals(sizeType)) {
+                sizeTypeTrans.add("All");
+            } else {
+                TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
+                if (typeChannelBean != null) {
+                    sizeTypeTrans.add(typeChannelBean.getName());
+                }
+            }
+        }
+        bean.setSizeTypeTrans(sizeTypeTrans);
     }
 }
