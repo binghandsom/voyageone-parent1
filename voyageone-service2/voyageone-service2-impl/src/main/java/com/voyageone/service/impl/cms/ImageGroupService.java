@@ -42,6 +42,7 @@ public class ImageGroupService extends BaseService {
     private final String DIRECTORY_SIZE_CHART_IMAGE = "/size/";
     private final String DIRECTORY_BRAND_STORY_IMAGE = "/brand/";
     private final String DIRECTORY_SHIPPING_DESCRIPTION_IMAGE = "/shipping/";
+    private final String DIRECTORY_STORE_DESCRIPTION_IMAGE = "/store/";
 
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
@@ -112,10 +113,11 @@ public class ImageGroupService extends BaseService {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(originUrl)) {
                         images.remove(image);
-                        model.setModifier(userName);
-                        model.setModified(DateTimeUtil.getNowTimeStamp());
+                        break;
                     }
                 }
+                model.setModifier(userName);
+                model.setModified(DateTimeUtil.getNowTimeStamp());
                 cmsBtImageGroupDao.update(model);
             }
         } else {
@@ -338,12 +340,12 @@ public class ImageGroupService extends BaseService {
                     if (image.getOriginUrl().equals(key)) {
                         image.setOriginUrl(uploadUrl);
                         image.setStatus(1);
-                        model.setModifier(userName);
-                        model.setModified(DateTimeUtil.getNowTimeStamp());
                         break;
                     }
                 }
             }
+            model.setModifier(userName);
+            model.setModified(DateTimeUtil.getNowTimeStamp());
             cmsBtImageGroupDao.update(model);
         } else {
             throw new RuntimeException();
@@ -403,12 +405,12 @@ public class ImageGroupService extends BaseService {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(originUrl)) {
                         image.setStatus(2);
-                        model.setModifier(userName);
-                        model.setModified(DateTimeUtil.getNowTimeStamp());
                         break;
                     }
                 }
             }
+            model.setModifier(userName);
+            model.setModified(DateTimeUtil.getNowTimeStamp());
             cmsBtImageGroupDao.update(model);
         } else {
             throw new RuntimeException();
@@ -432,7 +434,10 @@ public class ImageGroupService extends BaseService {
             ftpBean.setUpload_path(DIRECTORY_BRAND_STORY_IMAGE  + channelId);
         } else if ("4".equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId);
+        } else if ("5".equals(imageType)) {
+            ftpBean.setUpload_path(DIRECTORY_STORE_DESCRIPTION_IMAGE + channelId);
         }
+
         ftpBean.setUpload_input(inputStream);
 
         try {

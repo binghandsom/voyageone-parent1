@@ -97,13 +97,12 @@ public final class CommonUtil {
      * @return 所有异常信息的叠加
      */
     public static String getMessages(Throwable throwable) {
-
         StringBuilder builder = new StringBuilder();
-
-        while (throwable != null) {
-            builder.append(throwable.toString());
+        Throwable throwableTmp = throwable;
+        while (throwableTmp != null) {
+            builder.append(throwableTmp.toString());
             builder.append("\r\n");
-            throwable = throwable.getCause();
+            throwableTmp = throwableTmp.getCause();
         }
 
         return builder.toString();

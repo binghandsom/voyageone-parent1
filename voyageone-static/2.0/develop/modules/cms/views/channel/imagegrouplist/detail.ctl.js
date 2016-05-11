@@ -23,6 +23,7 @@ define([
             this.sizeType = [];
 
             this.imageGroupName = "";
+            this.imageTypeList = [];
             this.imageType = "";
             this.viewType = "";
 
@@ -45,6 +46,7 @@ define([
                     main.productType = res.data.imageGroupInfo.productType;
                     main.sizeType = res.data.imageGroupInfo.sizeType;
                     main.imageGroupName = res.data.imageGroupInfo.imageGroupName;
+                    main.imageTypeList = res.data.imageTypeList;
                     main.imageType = res.data.imageGroupInfo.imageType + "";
                     main.viewType = res.data.imageGroupInfo.viewType + "";
                     main.search();

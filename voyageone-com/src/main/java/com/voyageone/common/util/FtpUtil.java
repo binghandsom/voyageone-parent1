@@ -37,8 +37,6 @@ public class FtpUtil {
         logger.info("  uploadFileName=" + ftpBean.getUpload_filename());
         boolean result = false;
 
-//        try {
-        //int reply;
         // 转移工作目录至指定目录下
         boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
         // 设置PassiveMode传输
@@ -46,35 +44,14 @@ public class FtpUtil {
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         if (change) {
             File f = new File(ftpBean.getUpload_localpath() + "/" + ftpBean.getUpload_filename());
-            //InputStream in = new FileInputStream(f);
             try (InputStream in = new FileInputStream(f);) {
                 result = ftpClient.storeFile(ftpBean.getUpload_filename(), in);
-
-                // 文件编码格式没有指定的情况，转换为iso-8859-1格式
-//                if (StringUtils.isNullOrBlank2(ftpBean.getFile_coding())) {
-//                    result = ftpClient.storeFile(new String(ftpBean.getUpload_filename().getBytes(encoding),basCoding), ftpBean.getUpload_input());
-//                }else{
-//                    // 文件编码格式有指定的情况，转换为指定格式
-//                    result = ftpClient.storeFile(new String(ftpBean.getUpload_filename().getBytes(encoding),ftpBean.getFile_coding()), ftpBean.getUpload_input());
-//                }
-
             }
-            //in.close();
-
-            // 文件编码格式没有指定的情况，转换为iso-8859-1格式
-//            if (StringUtils.isNullOrBlank2(ftpBean.getFile_coding())) {
-//                result = ftpClient.storeFile(new String(ftpBean.getUpload_filename().getBytes(encoding),basCoding), ftpBean.getUpload_input());
-//            }else{
-//                // 文件编码格式有指定的情况，转换为指定格式
-//                result = ftpClient.storeFile(new String(ftpBean.getUpload_filename().getBytes(encoding),ftpBean.getFile_coding()), ftpBean.getUpload_input());
-//            }
 
             if (result) {
                 logger.info("上传成功!");
             }
         }
-        //ftpBean.getUpload_input().close();
-        //ftpClient.logout();
 
         logger.info(ftpBean.getUpload_filename()  + " Ftp 上传文件结束");
         return result;
@@ -162,7 +139,7 @@ public class FtpUtil {
 
         int result;
         //定位FTP目录夹
-        ftpClient = changeFolder(ftpBean,ftpClient);
+        changeFolder(ftpBean,ftpClient);
         // 获取文件列表
         FTPFile[] fs = ftpClient.listFiles(ftpBean.getDown_remotepath());
         logger.info("  fs.length=" +fs.length);
@@ -212,7 +189,7 @@ public class FtpUtil {
         int result;
 
         //定位FTP目录夹
-        ftpClient = changeFolder(ftpBean,ftpClient);
+        changeFolder(ftpBean,ftpClient);
         // 获取文件列表
         FTPFile[] fs = ftpClient.listFiles();
         int fileCount = 0;
@@ -247,7 +224,7 @@ public class FtpUtil {
      * 定位FTP目录夹
      *
      */
-    private FTPClient changeFolder(FtpBean ftpBean , FTPClient ftpClient) throws IOException {
+    private void changeFolder(FtpBean ftpBean , FTPClient ftpClient) throws IOException {
         logger.info(ftpBean.getDown_remotepath() + "  Ftp 定位FTP目录夹开始");
         // 转移到FTP服务器目录至指定的目录下
         // 文件编码格式没有指定的情况，转换为iso-8859-1格式
@@ -258,7 +235,6 @@ public class FtpUtil {
             ftpClient.changeWorkingDirectory(new String(ftpBean.getDown_remotepath().getBytes(encoding), ftpBean.getFile_coding()));
         }
         logger.info(ftpBean.getDown_remotepath() + "  Ftp 定位FTP目录夹结束");
-        return ftpClient;
     }
 
 
@@ -291,17 +267,9 @@ public class FtpUtil {
         String filePathName = ftpBean.getDown_remotepath() + "/" +  ftpBean.getDown_filename();
         logger.info(filePathName  + " 删除Ftp下载文件开始");
 
-        //删除目录夹下所有文件
-        //if (StringUtils.isNullOrBlank2(ftpBean.getDown_filename())){
-            //定位FTP目录夹
-            ftpClient = changeFolder(ftpBean,ftpClient);
-//            // 文件编码格式没有指定的情况，转换为iso-8859-1格式
-//            if (StringUtils.isNullOrBlank2(ftpBean.getFile_coding())) {
-//                ftpClient.changeWorkingDirectory(new String(ftpBean.getDown_remotepath().getBytes(encoding), basCoding));
-//            }else{
-//                // 文件编码格式有指定的情况，转换为指定格式
-//                ftpClient.changeWorkingDirectory(new String(ftpBean.getDown_remotepath().getBytes(encoding), ftpBean.getFile_coding()));
-//            }
+        //定位FTP目录夹
+        changeFolder(ftpBean,ftpClient);
+
         // 获取文件列表
         FTPFile[] fs = ftpClient.listFiles();
         for (FTPFile ff : fs) {
@@ -381,7 +349,7 @@ public class FtpUtil {
         logger.info(folderPath  + " 读取目标目录夹下所有文件名开始");
         List<String> fileNames = new ArrayList<>();
         //定位FTP目录夹
-        ftpClient = changeFolder(ftpBean, ftpClient);
+        changeFolder(ftpBean, ftpClient);
         // 获取文件列表
         FTPFile[] fs = ftpClient.listFiles();
         for (FTPFile ff : fs) {

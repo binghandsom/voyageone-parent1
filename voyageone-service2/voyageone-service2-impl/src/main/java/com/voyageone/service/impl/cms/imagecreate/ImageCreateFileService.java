@@ -1,10 +1,9 @@
 package com.voyageone.service.impl.cms.imagecreate;
 
-import com.voyageone.common.Snowflake.FactoryIdWorker;
+import com.voyageone.common.idsnowflake.FactoryIdWorker;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.HashCodeUtil;

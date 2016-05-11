@@ -218,22 +218,18 @@ public class TypeChannels {
         String type = Constants.comMtTypeChannel.SKU_CARTS_53;
         int charIndex;
         switch (strDAO) {
-            case Constants.comMtTypeChannel.SKU_CARTS_53_D: {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_D:
                 charIndex = 0;
                 break;
-            }
-            case Constants.comMtTypeChannel.SKU_CARTS_53_A: {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_A:
                 charIndex = 1;
                 break;
-            }
-            case Constants.comMtTypeChannel.SKU_CARTS_53_O: {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_O:
                 charIndex = 2;
                 break;
-            }
-            default: {
+            default:
                 // 不合法的输入参数
                 return null;
-            }
         }
         List<TypeChannelBean> typeChannelBeanList = getTypeList(type, channel_id);
         List<TypeChannelBean> resultList = new ArrayList<>();

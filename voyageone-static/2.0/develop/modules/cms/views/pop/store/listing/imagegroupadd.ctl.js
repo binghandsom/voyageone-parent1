@@ -13,6 +13,7 @@ define([
             this.parent = data;
             this.imageGroupService = imageGroupService;
             this.platformList = data.platformList;
+            this.imageTypeList = data.imageTypeList;
             this.brandNameList = data.brandNameList;
             this.productTypeList = data.productTypeList;
             this.sizeTypeList = data.sizeTypeList;
