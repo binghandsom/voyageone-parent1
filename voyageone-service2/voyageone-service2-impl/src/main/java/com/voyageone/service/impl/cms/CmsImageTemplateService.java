@@ -55,12 +55,10 @@ public class CmsImageTemplateService extends BaseService {
         List<CmsBtImageTemplateModel> list = dao.select(queryObject);
         return changeToBeanList(list, (String) map.get("channelId"), (String) map.get("lang"));
     }
-
     public Object getCount(Map<String, Object> mapQuery) {
         String parameter = getSearchQuery(mapQuery);
         return dao.countByQuery(parameter);
     }
-
     public void update(CmsBtImageTemplateModel model) {
         dao.update(model);
     }
@@ -72,7 +70,6 @@ public class CmsImageTemplateService extends BaseService {
     public CmsBtImageTemplateModel getOne(JomgoQuery queryObject) {
         return dao.selectOneWithQuery(queryObject);
     }
-
     /**
      * 取得检索条件信息
      *
@@ -286,12 +283,12 @@ public class CmsImageTemplateService extends BaseService {
         if (isNull(model.getProductType())) {
             List lst = new ArrayList<String>();
             lst.add("All");
-            model.setBrandName(lst);
+            model.setProductType(lst);
         }
         if (isNull(model.getSizeType())) {
             List lst = new ArrayList<String>();
             lst.add("All");
-            model.setBrandName(lst);
+            model.setSizeType(lst);
         }
 
         if (model.getImageTemplateId() != null && model.getImageTemplateId() > 0) {
@@ -304,7 +301,7 @@ public class CmsImageTemplateService extends BaseService {
         } else {
             //新增
             model.setActive(1);
-            model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
+           model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
             model.setCreater(userName);
             model.setTemplateModified(DateTimeUtil.getNow());
             model.setModifier(userName);
