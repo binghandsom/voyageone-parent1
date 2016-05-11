@@ -24,10 +24,7 @@ define([
         };
 
         $scope.initialize  = function () {
-            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
-                $scope.vm.saveInfo  = resp.data.sizeChartList[0];
-                $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-            });
+            getItemById();
             sizeChartService.init().then(function(resp){
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
@@ -42,6 +39,13 @@ define([
             });
 
         };
+
+        function getItemById(){
+            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
+                $scope.vm.saveInfo  = resp.data.sizeChartList[0];
+                $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
+            });
+        }
 
         /**
          * 添加尺码表
@@ -71,12 +75,7 @@ define([
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success($translate.instant('TXT_MSG_ADD_SUCCESS'));
-                //获取保存后的当前对象
-                sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
-
-                    $scope.vm.saveInfo  = resp.data.sizeChartList[0];
-                    $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-                });
+                getItemById();
                 $scope.$close();
             });
         };
@@ -115,6 +114,7 @@ define([
                                          finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
                                          sizeTypeList:upEntity.sizeType,sizeMap:sizeMaps}).then(function(){
                 notify.success ($translate.instant('TXT_MSG_ADD_SUCCESS'));
+                getItemById();
                 $scope.$close();
             });
         };
