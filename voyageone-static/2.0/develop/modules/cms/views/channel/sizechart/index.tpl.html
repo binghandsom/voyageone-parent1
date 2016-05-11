@@ -3,20 +3,20 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;Sizechart</h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_SIZE_CHART' | translate}}</h4>
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Size Chart Name</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_NAME' | translate}}</label>
                                     <div class="col-sm-7">
                                         <input type="text" class="form-control" ng-model="vm.searchInfo.sizeChartName">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Finish</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_FINISH' | translate}}</label>
 
                                     <div class="col-sm-7">
                                         <select class="form-control" ng-model="vm.searchInfo.finishFlag">
@@ -26,7 +26,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Update Time</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</label>
 
                                     <div class="col-sm-9" style="margin-left: -4px;">
                                         <div class="col-sm-10 form-inline">
@@ -54,7 +54,7 @@
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Brand Name</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.brandNameList"
                                                 ng-options="brand.value as brand.name for brand in vm.brandNameList">
@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Product Type</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.productTypeList"
                                                 ng-options="brand.value as brand.name for brand in vm.productTypeList">
@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Related Size Type</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.sizeTypeList"
                                                 ng-options="brand.value as brand.name for brand in vm.sizeTypeList">
@@ -82,9 +82,9 @@
                     </div>
                     <div class="col-sm-12 text-center m-b-sm" ng-controller="popupCtrl">
                         <div class="form-inline">
-                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清空</button>
-                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;检索</button>
-                            <button class="btn btn-success" ng-click="openSizeChartAdd(vm)"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                            <button class="btn btn-success" ng-click="openSizeChartAdd(vm)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_ADD' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -99,13 +99,13 @@
                     <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px">
                         <thead>
                             <tr>
-                                <th class="mfb-xt text-center">序号</th>
-                                <th class="mfb-xxt text-left">Size Chart Name</th>
-                                <th class="mfb-xxt text-left">Related Brand Name</th>
-                                <th class="mfb-xxt text-left">Related Product Type</th>
-                                <th class="mfb-xxt text-left">Related Size Type</th>
-                                <th class="mfb-xxs text-center">Update Time</th>
-                                <th class="mfb-xxt text-center">Action</th>
+                                <th class="mfb-xt text-center">{{'TXT_INDEX' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_NAME' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</th>
+                                <th class="mfb-xxs text-center">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</th>
+                                <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
                             </tr>
                         </thead>
                         <tbody>

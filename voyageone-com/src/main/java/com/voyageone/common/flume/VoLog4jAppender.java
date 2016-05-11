@@ -50,29 +50,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * Appends Log4j Events to an external Flume client which is decribed by
  * the Log4j configuration file. The appender takes two required parameters:
- *<p>
- *<strong>Hostname</strong> : This is the hostname of the first hop
- *at which Flume (through an AvroSource) is listening for events.
- *</p>
- *<p>
- *<strong>Port</strong> : This the port on the above host where the Flume
- *Source is listening for events.
- *</p>
- *A sample log4j properties file which appends to a source would look like:
- *<pre><p>
- *log4j.appender.out2 = org.apache.flume.clients.log4jappender.Log4jAppender
- *log4j.appender.out2.Port = 25430
- *log4j.appender.out2.Hostname = foobarflumesource.com
- *log4j.logger.org.apache.flume.clients.log4jappender = DEBUG,out2</p></pre>
- *<p><i>Note: Change the last line to the package of the class(es), that will
- *do the appending.For example if classes from the package
- *com.bar.foo are appending, the last line would be:</i></p>
- *<pre><p>log4j.logger.com.bar.foo = DEBUG,out2</p></pre>
- *
- *
+ * <p>
+ * <strong>Hostname</strong> : This is the hostname of the first hop
+ * at which Flume (through an AvroSource) is listening for events.
+ * </p>
+ * <p>
+ * <strong>Port</strong> : This the port on the above host where the Flume
+ * Source is listening for events.
+ * </p>
+ * A sample log4j properties file which appends to a source would look like:
+ * <pre><p>
+ * log4j.appender.out2 = org.apache.flume.clients.log4jappender.Log4jAppender
+ * log4j.appender.out2.Port = 25430
+ * log4j.appender.out2.Hostname = foobarflumesource.com
+ * log4j.logger.org.apache.flume.clients.log4jappender = DEBUG,out2</p></pre>
+ * <p><i>Note: Change the last line to the package of the class(es), that will
+ * do the appending.For example if classes from the package
+ * com.bar.foo are appending, the last line would be:</i></p>
+ * <pre><p>log4j.logger.com.bar.foo = DEBUG,out2</p></pre>
  */
 public class VoLog4jAppender extends AppenderSkeleton {
 
@@ -81,7 +78,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
     // liang chang true
     private boolean unsafeMode = true;
     // liang change 5L
-    private long timeout =  TimeUnit.MILLISECONDS.convert(5L, TimeUnit.SECONDS);
+    private long timeout = TimeUnit.MILLISECONDS.convert(5L, TimeUnit.SECONDS);
     private boolean avroReflectionEnabled;
     private String avroSchemaUrl;
     RpcClient rpcClient = null;
@@ -90,9 +87,11 @@ public class VoLog4jAppender extends AppenderSkeleton {
     private static ExecutorService threadPool = Executors.newFixedThreadPool(1);
     // liang add projectFile
     private String projectFile = "";
+
     public String getProjectFile() {
         return projectFile;
     }
+
     public void setProjectFile(String projectFile) {
         this.projectFile = projectFile;
     }
@@ -104,44 +103,45 @@ public class VoLog4jAppender extends AppenderSkeleton {
      * you must set the <tt>port</tt> and <tt>hostname</tt> and then call
      * <tt>activateOptions()</tt> before calling <tt>append()</tt>.
      */
-    public VoLog4jAppender(){
+    public VoLog4jAppender() {
     }
 
     /**
      * Sets the hostname and port. Even if these are passed the
      * <tt>activateOptions()</tt> function must be called before calling
      * <tt>append()</tt>, else <tt>append()</tt> will throw an Exception.
-     * @param hostname The first hop where the client should connect to.
-     * @param port The port to connect on the host.
      *
+     * @param hostname The first hop where the client should connect to.
+     * @param port     The port to connect on the host.
      */
-    public VoLog4jAppender(String hostname, int port){
+    public VoLog4jAppender(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
     }
 
     /**
      * Append the LoggingEvent, to send to the first Flume hop.
+     *
      * @param event The LoggingEvent to be appended to the flume.
      * @throws FlumeException if the appender was closed,
-     * or the hostname and port were not setup, there was a timeout, or there
-     * was a connection error.
+     *                        or the hostname and port were not setup, there was a timeout, or there
+     *                        was a connection error.
      */
     @Override
     // liang change metho
-    public synchronized void append(LoggingEvent event) throws FlumeException{
+    public synchronized void append(LoggingEvent event) throws FlumeException {
         threadPool.execute(new LogAppThread(event));
     }
 
     // liang change append
-    public synchronized void appendEvent(LoggingEvent event) throws FlumeException{
+    public synchronized void appendEvent(LoggingEvent event) throws FlumeException {
         //If rpcClient is null, it means either this appender object was never
         //setup by setting hostname and port and then calling activateOptions
         //or this appender object was closed by calling close(), so we throw an
         //exception to show the appender is no longer accessible.
 
         // liang add
-        if(rpcClient == null){
+        if (rpcClient == null) {
             reconnect();
         }
 
@@ -155,12 +155,12 @@ public class VoLog4jAppender extends AppenderSkeleton {
             throw new FlumeException(errorMsg);
         }
 
-        if(!rpcClient.isActive()){
+        if (!rpcClient.isActive()) {
             reconnect();
         }
 
         //liang add
-        if(!rpcClient.isActive()){
+        if (!rpcClient.isActive()) {
             return;
         }
 
@@ -252,10 +252,12 @@ public class VoLog4jAppender extends AppenderSkeleton {
     //This function should be synchronized to make sure one thread
     //does not close an appender another thread is using, and hence risking
     //a null pointer exception.
+
     /**
      * Closes underlying client.
      * If <tt>append()</tt> is called after this function is called,
      * it will throw an exception.
+     *
      * @throws FlumeException if errors occur during close
      */
     @Override
@@ -278,7 +280,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
             String errorMsg = "Flume log4jappender already closed!";
             // liang change
             //LogLog.error(errorMsg);
-            if(unsafeMode) {
+            if (unsafeMode) {
                 return;
             }
             throw new FlumeException(errorMsg);
@@ -296,17 +298,19 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     /**
      * Set the first flume hop hostname.
+     *
      * @param hostname The first hop where the client should connect to.
      */
-    public void setHostname(String hostname){
+    public void setHostname(String hostname) {
         this.hostname = hostname;
     }
 
     /**
      * Set the port on the hostname to connect to.
+     *
      * @param port The port to connect on the host.
      */
-    public void setPort(int port){
+    public void setPort(int port) {
         this.port = port;
     }
 
@@ -369,6 +373,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     /**
      * Make it easy to reconnect on failure
+     *
      * @throws FlumeException
      */
     private void reconnect() throws FlumeException {
@@ -378,6 +383,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
     }
 
     private class ReconnectThread implements Runnable {
+        @Override
         public void run() {
             isReconnect = true;
             close();
@@ -388,9 +394,12 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     private class LogAppThread implements Runnable {
         private LoggingEvent event;
+
         public LogAppThread(LoggingEvent event) {
             this.event = event;
         }
+
+        @Override
         public void run() {
             appendEvent(event);
         }

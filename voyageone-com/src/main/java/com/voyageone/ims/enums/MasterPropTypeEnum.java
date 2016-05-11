@@ -73,8 +73,9 @@ public enum MasterPropTypeEnum {
                 return "组合属性组";
             case MULTIINPUT:
                 return "文本组";
+            default:
+                return null;
         }
-        return null;
     }
 }
 

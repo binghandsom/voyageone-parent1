@@ -491,7 +491,7 @@ define(function(){
         "BTN_REVERT_ALL": "还原所有",
         "BTN_START_INCREMENT_ALL": "启动增量所有",
         "BTN_SET_DEFAULT_VALUE": "设定默认项",
-
+        "BTN_RESET":"重置",
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
         "BEATING": "正在执行",
@@ -503,6 +503,19 @@ define(function(){
         "CANT_BEAT": "信息错误",
 
         /**分页显示*/
-        "TXT_PAGER_SIZE": "每页显示"
+        "TXT_PAGER_SIZE": "每页显示",
+        /**尺码表*/
+        "TXT_SIZE_CHART":"尺码表",
+        "TXT_SIZE_CHART_DETAIL":"尺码表明细",
+        "TXT_SIZE_CHART_NAME":"尺码表名称",
+        "TXT_SIZE_CHART_FINISH":"是否完成",
+        "TXT_SIZE_CHART_UPDATE_TIME":"更新时间",
+        "TXT_SIZE_CHART_BRAND_NAME":"品牌名称",
+        "TXT_SIZE_CHART_PRODUCT_TYPE":"品牌类别",
+        "TXT_SIZE_CHART_SIZE_TYPE":"适用型号",
+        "TXT_SIZE_CHART_ORIGINAL_SIZE":"原始型号",
+        "TXT_SIZE_CHART_ADJUST_SIZE":"平台型号",
+        "TXT_SIZE_CHART_COMMON_SIZE":"是否普通型号",
+        "TXT_SIZE_CHART_NOTICE":" 尺码表存在疑问请选择No，上新依然会使用这个尺码表"
     };
 });

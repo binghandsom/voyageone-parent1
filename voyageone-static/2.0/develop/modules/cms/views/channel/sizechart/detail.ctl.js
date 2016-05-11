@@ -5,7 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    function sizeDetailController($scope,$routeParams,sizeChartService,alert,notify) {
+    function sizeDetailController($scope,$routeParams,sizeChartService,alert,notify,$translate) {
 
         $scope.vm = {
             originCondition : [],    //保存初始状态
@@ -30,6 +30,7 @@ define([
             });
             sizeChartService.init().then(function(resp){
                 $scope.vm.brandNameList = _.pluck(resp.data.brandNameList == null?[]:resp.data.brandNameList,"value");
+                console.log($scope.vm.brandNameList);
                 $scope.vm.productTypeList = _.pluck(resp.data.productTypeList == null?[]:resp.data.productTypeList,"value");
                 $scope.vm.sizeTypeList = _.pluck(resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList,"value");
                 $scope.vm.importList = _.map(resp.data.sizeMap == null ?[]:resp.data.sizeMap, function(item){
@@ -71,12 +72,12 @@ define([
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
                 notify.success("添加成功！");
                 //获取保存后的当前对象
-/*                console.log("sizeChartId",$routeParams.sizeChartId);
+                console.log("sizeChartId",$routeParams.sizeChartId);
                 sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
 
                     $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                     $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
-                });*/
+                });
                 $scope.$close();
             });
         };
@@ -113,7 +114,7 @@ define([
             if(!flag) return;
             sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName,
                                          finishFlag:upEntity.finish,brandNameList:upEntity.brandName,productTypeList:upEntity.productType,
-                                         sizeTypeList:upEntity.sizeType,sizeMap:JSON.stringify(sizeMaps)}).then(function(){
+                                         sizeTypeList:upEntity.sizeType,sizeMap:sizeMaps}).then(function(){
                 notify.success ("添加成功！");
                 $scope.$close();
             });

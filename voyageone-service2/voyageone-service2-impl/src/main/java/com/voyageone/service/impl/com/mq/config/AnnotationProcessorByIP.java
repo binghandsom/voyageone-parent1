@@ -204,7 +204,7 @@ public class AnnotationProcessorByIP
         final RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
 
         /**
-         * mq 不允许消费的ip过滤
+         * mq 涓嶅厑璁告秷璐圭殑ip杩囨护
          */
         if(classLevelListener != null&&!StringUtils.isEmpty(classLevelListener.queues())){
             Map<String,List<String>> mqDisallowConsumerIpMap=mqDisAllowConsumerIpConfig.getMqDisallowConsumerIpMap();

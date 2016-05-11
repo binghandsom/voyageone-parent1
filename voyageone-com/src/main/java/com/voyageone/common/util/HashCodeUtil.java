@@ -1,13 +1,14 @@
 package com.voyageone.common.util;
+
 /**
  * Created by dell on 2016/4/20.
  */
 public class HashCodeUtil {
-    static final long[] byteTable = createLookupTable();
-    static final long HSTART = 0xBB40E64DA205B064L;
-    static final long HMULT = 7664345821815920749L;
+    private static final long[] byteTable = createLookupTable();
+    private static final long HSTART = 0xBB40E64DA205B064L;
+    private static final long HMULT = 7664345821815920749L;
 
-    private static final long[] createLookupTable() {
+    private static long[] createLookupTable() {
         long[] byteTable = new long[256];
         long h = 0x544B2FBACAAF1684L;
         for (int i = 0; i < 256; i++) {
@@ -20,6 +21,7 @@ public class HashCodeUtil {
         }
         return byteTable;
     }
+
     public static long getHashCode(CharSequence cs) {
         long h = HSTART;
         final long hmult = HMULT;
