@@ -24,7 +24,10 @@ define([
             search();
         };
 
-        $scope.search = search;
+        $scope.search = function(){
+            $scope.vm.sizeChartPageOption.curr = 1;
+            search();
+        };
 
         /**
          * 检索
