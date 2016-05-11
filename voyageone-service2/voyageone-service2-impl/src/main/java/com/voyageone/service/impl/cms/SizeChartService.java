@@ -60,11 +60,12 @@ public class SizeChartService extends BaseService {
     }
     /**
      * 逻辑删除选中的记录
-     * @param channelId
      * @param sizeChartId
      */
-    public void sizeChartUpdate(String channelId,int sizeChartId){
-        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
+    public void sizeChartUpdate(int sizeChartId,String userName,String channelId){
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId,channelId);
+        //更新者
+        cmsBtSizeChartModel.setModifier(userName);
         //标志位
         cmsBtSizeChartModel.setActive(0);
         //尺码关系一览检索
@@ -129,25 +130,6 @@ public class SizeChartService extends BaseService {
     }
 
     /**
-     * 尺码关系一览编辑详情检索画面
-     * @param channelId
-     * @param sizeChartId
-     * @return sizeChartList
-     */
-    public List<CmsBtSizeChartModel> sizeChartDetailSearch(String channelId,int sizeChartId){
-        //取得数据Model
-        CmsBtSizeChartModel cmsBtSizeChartModel= new CmsBtSizeChartModel();
-        //店铺渠道
-        cmsBtSizeChartModel.setChannelId(channelId);
-        //尺码表自增键
-        cmsBtSizeChartModel.setSizeChartId(sizeChartId);
-        //尺码表自增键取得当前的记录
-        List<CmsBtSizeChartModel> sizeChartList=cmsBtSizeChartDao.initSizeChartDetailSearch(cmsBtSizeChartModel);
-        //返回数据的类型
-        return  sizeChartList;
-    }
-
-    /**
      * 尺码关系一览编辑详情编辑画面
      * @param channelId
      * @param userName
@@ -160,11 +142,9 @@ public class SizeChartService extends BaseService {
      */
     public void sizeChartDetailUpdate(String channelId, String userName,int sizeChartId, String sizeChartName, String finishFlag
             , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList){
-        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId,channelId);
         //更新者
         cmsBtSizeChartModel.setModifier(userName);
-        //创建者
-        cmsBtSizeChartModel.setCreater(userName);
         //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
         //尺码自增键
@@ -209,12 +189,10 @@ public class SizeChartService extends BaseService {
      * @param sizeMapList
      */
     public void sizeChartDetailSizeMapSave(String channelId, String userName ,int sizeChartId,List<CmsBtSizeChartModelSizeMap> sizeMapList ){
-        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId);
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId,channelId);
         cmsBtSizeChartModel.setChannelId(channelId);
         //更新者
         cmsBtSizeChartModel.setModifier(userName);
-        //创建者
-        cmsBtSizeChartModel.setCreater(userName);
         //SizeMap
         cmsBtSizeChartModel.setSizeMap(sizeMapList);
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
@@ -224,9 +202,9 @@ public class SizeChartService extends BaseService {
      * 根据sizeChartId取得sizeChartInfo
      * @param sizeChartId
      */
-    public CmsBtSizeChartModel getCmsBtSizeChartModel(int sizeChartId) {
+    public CmsBtSizeChartModel getCmsBtSizeChartModel(int sizeChartId,String channelId) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"active\":1}");
+        queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"channelId\":" + channelId +"},{\"active\":1}");
         return cmsBtSizeChartDao.selectOneWithQuery(queryObject);
     }
 }

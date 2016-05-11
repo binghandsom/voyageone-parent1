@@ -19,12 +19,10 @@ public class CmsBtSizeChartDao extends BaseMongoDao<CmsBtSizeChartModel> {
      * @return List<CmsBtSizeChartModel>
      */
     public List<CmsBtSizeChartModel> selectSearchSizeChartInfo(CmsBtSizeChartModel cmsBtSizeChartModel) {
-
         StringBuilder sbQuery = new StringBuilder();
         //sizeChartName
         if(!StringUtils.isEmpty(cmsBtSizeChartModel.getSizeChartName())){
-            sbQuery.append(MongoUtils.splicingValue("sizeChartName", cmsBtSizeChartModel.getSizeChartName()));
-            sbQuery.append(",");
+            sbQuery.append("\"sizeChartName\":{$regex:\"").append(cmsBtSizeChartModel.getSizeChartName()).append("\"},");
         }
         //finish
         if(!StringUtils.isEmpty(String.valueOf(cmsBtSizeChartModel.getFinish()))){
@@ -40,7 +38,7 @@ public class CmsBtSizeChartDao extends BaseMongoDao<CmsBtSizeChartModel> {
             }
             // 获取Update Time End
             if (!StringUtils.isEmpty(cmsBtSizeChartModel.getModified())) {
-                if (!StringUtils.isEmpty(cmsBtSizeChartModel.getModified())) {
+                if (!StringUtils.isEmpty(cmsBtSizeChartModel.getCreated())) {
                     sbQuery.append(",");
                 }
                 sbQuery.append(MongoUtils.splicingValue("$lte", cmsBtSizeChartModel.getModified() + " 23.59.59"));
@@ -50,6 +48,7 @@ public class CmsBtSizeChartDao extends BaseMongoDao<CmsBtSizeChartModel> {
         //BrandName
         List brandNameList = cmsBtSizeChartModel.getBrandName();
         if(brandNameList.size()>0){
+            cmsBtSizeChartModel.getBrandName().add("All");
             sbQuery.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[cmsBtSizeChartModel.getBrandName().size()])));
             sbQuery.append(",");
         }
