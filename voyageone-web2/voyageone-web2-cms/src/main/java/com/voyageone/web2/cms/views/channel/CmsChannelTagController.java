@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -32,10 +31,10 @@ public class CmsChannelTagController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.INIT_CHANNEL_TAG)
     public AjaxResponse init(@RequestBody Map param) {
         //公司平台销售渠道
-        param.put("channel_id", this.getUser().getSelChannelId());
+        param.put("channelId", this.getUser().getSelChannelId());
+        param.put("lang", getLang());
         //取得标签初始化的数据
-        List<CmsBtTagBean> resultMap = cmsChannelTagService.getTagInfoByChannelId(param);
-
+        Map<String, Object> resultMap = cmsChannelTagService.getInitTagInfo(param,getLang());
         //返回数据的类型
         return success(resultMap);
     }
@@ -49,7 +48,7 @@ public class CmsChannelTagController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.GET_TAG_LIST)
     public AjaxResponse getTagList(@RequestBody Map param) {
         // 公司平台销售渠道
-        param.put("channel_id", this.getUser().getSelChannelId());
+        param.put("channelId", this.getUser().getSelChannelId());
         // 取得标签初始化的数据
         List<CmsBtTagModel> resultMap = cmsChannelTagService.getTagInfoList(param);
         // 返回数据

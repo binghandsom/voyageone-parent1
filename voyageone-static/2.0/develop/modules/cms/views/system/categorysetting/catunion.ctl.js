@@ -26,6 +26,9 @@ define([
 
             // 取得所选主数据类目的属性数据
             systemCategoryService.getCategoryDetail({"id": catvmdata.curMCatId}).then(function (res) {
+                if (res.data == null || res.data == undefined) {
+                    return;
+                }
                 $scope.vm.category = res.data;
                 $scope.vm.category.fields.push($scope.vm.category.sku);
                 $scope.vm.isEditFlg = false;
@@ -40,6 +43,9 @@ define([
                 categoryId: catvmdata.curPCatId,
                 cartId: parseInt(catvmdata.selCart)
             }).then(function (res) {
+                if (res.data == null || res.data == undefined) {
+                    return;
+                }
                 $scope.vm.platform = res.data;
 
                 // 往fields中添加索引，以确定查找路径

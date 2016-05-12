@@ -83,6 +83,11 @@ public class CmsSizeChartDetailService extends BaseService {
                 Map sizeMap = (Map)sizeMapList.get(i);
                 String originalSize=(String)sizeMap.get("originalSize");
                 String adjustSize=(String)sizeMap.get("adjustSize");
+                //如果两个字段都是空，删除当前记录
+                if (StringUtils.isEmpty(originalSize)&&StringUtils.isEmpty(adjustSize)) {
+                    sizeMapList.remove(i);
+                    continue;
+                }
                 //判断是否为空check
                 if (StringUtils.isEmpty(originalSize)||StringUtils.isEmpty(adjustSize)) {
                     throw new BusinessException("7000080");

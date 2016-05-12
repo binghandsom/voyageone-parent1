@@ -4,6 +4,7 @@ import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -15,10 +16,14 @@ import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.dao.CmsMtImageCategoryDao;
+import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
+import com.voyageone.task2.cms.service.promotion.beat.ImageCategoryService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +49,12 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
 
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
+
+    @Autowired
+    private CmsMtImageCategoryDao imageCategoryDao;
+
+    @Autowired
+    private ImageCategoryService imageCategoryService;
 
     @Autowired
     private JumeiImageFileService jumeiImageFileService;
@@ -82,14 +93,31 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         }
     }
 
+    /**
+     * 图片上传到平台
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param imageType 图片类型
+     * @param image ImageModel
+     */
     private void uploadImageToPlatform(String channelId, String cartId, int imageType, CmsBtImageGroupModel_Image image) {
         if (cartId.equals(CartEnums.Cart.TM.getId()) || cartId.equals(CartEnums.Cart.TB.getId()) ||cartId.equals(CartEnums.Cart.TG.getId())) {
             uploadImageToTB(channelId, cartId, imageType, image);
         } else if (cartId.equals(CartEnums.Cart.JM.getId())) {
             uploadImageToJM(channelId, imageType, image);
         }
+        // TODO 天猫和聚美以外 以后往这里加
     }
 
+    /**
+     * 图片上传到淘宝/天猫/天猫国际
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param imageType 图片类型
+     * @param image ImageModel
+     */
     private void uploadImageToTB(String channelId, String cartId, int imageType, CmsBtImageGroupModel_Image image) {
         String originUrl = image.getOriginUrl();
         String platformUrl = image.getPlatformUrl();
@@ -103,20 +131,37 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             inputStream = new BufferedInputStream(httpUrl.getInputStream());
             bytes = IOUtils.toByteArray(inputStream);
         } catch (Exception e) {
+            $error("原始Url非法");
             // 设置返回的错误信息
-            image.setErrorMsg("Origin Url is illegal");
+            image.setErrorMsg("原始Url非法");
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+            return;
         }
         ShopBean shopBean = null;
         String imageName = "";
         TaobaoResponse uploadResponse = null;
         try {
             shopBean = Shops.getShop(channelId, cartId);
+            if (shopBean == null) {
+                $error("appkey信息取得失败");
+                throw new BusinessException("appkey信息取得失败");
+            }
+            // 取得类目id
+            String categoryId = "0";
+            ImageCategoryType imageCategoryType = getImageCategoryType(String.valueOf(imageType));
+            if (imageCategoryType != null) {
+                CmsMtImageCategoryModel model = imageCategoryDao.select(shopBean, imageCategoryType);
+                if (model == null) {
+                    model = imageCategoryService.createImageCategory(shopBean, imageCategoryType, getTaskName());
+                }
+                categoryId = model.getCategory_tid();
+            }
+
             if (StringUtils.isEmpty(platformUrl)) {
                 // 新建的场合
                 imageName = originUrl.substring(originUrl.lastIndexOf("/") + 1);
-                uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageName, "0");
+                uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageName, categoryId);
 
             } else {
                 // 更新的场合
@@ -126,12 +171,14 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             if (uploadResponse == null || !uploadResponse.isSuccess()) {
                 // 设置返回的错误信息
                 if (uploadResponse == null) {
+                    $error("上传图片到天猫时，超时, response为空");
                     image.setErrorMsg("上传图片到天猫时，超时, response为空");
                 } else{
                     String msg = "上传图片到天猫时，错误:" + uploadResponse.getErrorCode() + ", " + uploadResponse.getMsg();
                     if (!StringUtils.isEmpty(uploadResponse.getSubMsg())) {
                         msg += uploadResponse.getSubMsg();
                     }
+                    $error(msg);
                     image.setErrorMsg(msg);
                 }
                 // 设置图片上传状态为上传成功
@@ -165,6 +212,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             }
 
         } catch (Exception e) {
+            $error(e.getMessage());
             // 设置返回的错误信息
             image.setErrorMsg(e.getMessage());
             // 设置图片上传状态为上传成功
@@ -172,6 +220,13 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         }
     }
 
+    /**
+     * 图片上传到聚美
+     *
+     * @param channelId 渠道id
+     * @param imageType 图片类型
+     * @param image ImageModel
+     */
     private void uploadImageToJM(String channelId, int imageType, CmsBtImageGroupModel_Image image) {
         String originUrl = image.getOriginUrl();
         String platformUrl = image.getPlatformUrl();
@@ -183,8 +238,9 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             httpUrl.connect();
             inputStream = new BufferedInputStream(httpUrl.getInputStream());
         } catch (Exception e) {
+            $error("原始Url非法");
             // 设置返回的错误信息
-            image.setErrorMsg("Origin Url is illegal");
+            image.setErrorMsg("原始Url非法");
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }
@@ -207,6 +263,10 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             jmImageFileBean.setExtName("jpg");
 
             shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());
+            if (shopBean == null) {
+                $error("appkey信息取得失败");
+                throw new BusinessException("appkey信息取得失败");
+            }
             String platFormUrl = jumeiImageFileService.imageFileUpload(shopBean, jmImageFileBean);
             // 设置平台返回的Url
             image.setPlatformUrl(platFormUrl);
@@ -223,11 +283,31 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                     errMsg = errMsg.substring(0, errMsg.lastIndexOf("}") + 1);
                 }
             }
+            $error(errMsg);
             // 设置返回的错误信息
             image.setErrorMsg(errMsg);
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }
     }
-}
 
+    /**
+     * 根据图片类型取得平台上目录类型
+     *
+     * @param imageType 图片类型
+     * @return 平台上目录类型
+     */
+    private ImageCategoryType getImageCategoryType(String imageType) {
+        ImageCategoryType imageCategoryType = null;
+        if (CmsConstants.ImageType.SIZE_CHART_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.SizeChart;
+        } else if (CmsConstants.ImageType.BRAND_STORY_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.BrandStory;
+        } else if (CmsConstants.ImageType.SHIPPING_DESCRIPTION_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.Shipping;
+        } else if (CmsConstants.ImageType.STORE_DESCRIPTION_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.Store;
+        }
+        return imageCategoryType;
+    }
+}

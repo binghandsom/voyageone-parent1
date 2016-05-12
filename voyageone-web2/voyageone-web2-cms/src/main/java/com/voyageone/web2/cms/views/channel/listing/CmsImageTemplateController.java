@@ -64,12 +64,15 @@ public class CmsImageTemplateController extends CmsController {
         CmsBtImageTemplateModel model = service.get(imageTemplateId);
         return success(model);
     }
+
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetTemplateParameter)
     public AjaxResponse getTemplateParameter(@RequestBody String templateContent) {
+        //更具模板获取动态生成模板参数
         return success(service.getTemplateParameter(templateContent));
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetDownloadUrl)
     public AjaxResponse getDownloadUrl(@RequestBody GetDownloadUrlParamter paramter) throws Exception {
+        //根据模板内容 和模板参数获取图片下载地址
         String str = service.getDownloadUrl(paramter);
         return success(str);
     }

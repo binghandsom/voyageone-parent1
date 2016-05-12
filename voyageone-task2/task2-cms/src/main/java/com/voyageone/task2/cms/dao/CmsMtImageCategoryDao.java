@@ -37,6 +37,13 @@ public class CmsMtImageCategoryDao extends BaseDao {
         return update("cms_mt_image_category_updateTid", category);
     }
 
+    /**
+     * 新建 category
+     */
+    public int insert(CmsMtImageCategoryModel category) {
+        return insert("cms_mt_image_category_insert", category);
+    }
+
     public CmsMtImageCategoryModel select(ShopBean shopBean, ImageCategoryType type) {
         return selectOne("cms_mt_image_category_select_byCart", parameters(
                 "cart_id", shopBean.getCart_id(),

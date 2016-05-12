@@ -5,6 +5,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.SYSTEM;
 import net.minidev.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,10 +44,14 @@ public class CmsCategoryListController extends CmsController {
 
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_DETAIL)
     public AjaxResponse getCategoryById(@RequestBody Map<String ,String> id) {
-
+        String categoryId = StringUtils.trimToNull(id.get("id"));
+        if (categoryId == null) {
+            $warn("getCategoryById 缺少参数");
+            return success(null);
+        }
 //        JSONObject resultBean = cmsCategoryListService.getMasterSchemaJsonObjectByCatId(id);
 
-        CmsMtCategorySchemaModel resultBean = cmsCategoryListService.getMasterSchemaModelByCatId(id.get("id"));
+        CmsMtCategorySchemaModel resultBean = cmsCategoryListService.getMasterSchemaModelByCatId(categoryId);
 
         // 返回用户信息
         return success(resultBean);
