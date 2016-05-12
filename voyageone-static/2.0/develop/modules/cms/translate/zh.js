@@ -327,6 +327,7 @@ define(function(){
         "TXT_SIZE_CHART_IMAGE": "尺码图",
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
+        "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
 
 
         "TXT_CHANNEL_ID": "渠道ID",
@@ -526,6 +527,7 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
+        "TXT_SIZE_CHART_NOTICE_COMPETE":"请输入完整"
     };
 });

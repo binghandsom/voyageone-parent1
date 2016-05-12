@@ -5,7 +5,6 @@ import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -29,8 +28,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**

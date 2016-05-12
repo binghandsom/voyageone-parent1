@@ -4,7 +4,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeDetailController($scope,$routeParams,sizeChartService,alert,notify,$translate) {
+    function sizeDetailController($scope,$routeParams,sizeChartService,sizeChartDetailService,alert,notify,$translate) {
 
         $scope.vm = {
             originCondition : [],    //保存初始状态
@@ -26,7 +26,7 @@ define([
         };
 
         function getItemById(){
-            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
+            sizeChartDetailService.init({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
                 var item = $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                 $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
                 $scope.vm.importList = _.map(item.sizeMap == null ?[]:item.sizeMap, function(item){
@@ -60,9 +60,9 @@ define([
             }
 
             var upEntity = $scope.vm.saveInfo;
-            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
+            sizeChartDetailService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
-                notify.success($translate.instant('TXT_MSG_ADD_SUCCESS'));
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 getItemById();
                 $scope.$close();
             });
@@ -97,8 +97,8 @@ define([
                             return item;
                         });
             if(!flag) return;
-            sizeChartService.detailSizeMapSave({sizeChartId:upEntity.sizeChartId,sizeMap:sizeMaps}).then(function(){
-                notify.success ($translate.instant('TXT_MSG_ADD_SUCCESS'));
+            sizeChartDetailService.detailSizeMapSave({sizeChartId:upEntity.sizeChartId,sizeMap:sizeMaps}).then(function(){
+                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 getItemById();
                 $scope.$close();
             });
@@ -147,6 +147,6 @@ define([
 
     }
 
-    sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','alert','notify','$translate'];
+    sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','sizeChartDetailService','alert','notify','$translate'];
     return sizeDetailController;
 });
