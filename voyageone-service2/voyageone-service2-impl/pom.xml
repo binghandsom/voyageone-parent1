@@ -71,6 +71,11 @@
             <artifactId>voyageone-components-uscdn</artifactId>
             <version>${voyageone.components.uscdn.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-sftp_ftp</artifactId>
+            <version>${voyageone.components.sftp_ftp.version}</version>
+        </dependency>
 
 
     </dependencies>

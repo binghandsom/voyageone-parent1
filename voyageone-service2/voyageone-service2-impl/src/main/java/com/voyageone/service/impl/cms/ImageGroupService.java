@@ -1,34 +1,24 @@
 package com.voyageone.service.impl.cms;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.SFtpUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsBtTasksBean;
-import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
-import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
+import com.voyageone.components.service.SFtpService;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
-import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.io.InputStream;
-import java.net.URL;
-import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * ImageGroup Service
@@ -49,6 +39,9 @@ public class ImageGroupService extends BaseService {
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
+
+    @Autowired
+    private SFtpService sFtpService;
 
     /**
      * 新建ImageGroup信息
@@ -427,49 +420,35 @@ public class ImageGroupService extends BaseService {
      */
     public String uploadFile(String channelId, String imageType, String suffix, InputStream inputStream) {
 
-        FtpBean ftpBean = formatFtpBean();
-        ftpBean.setUpload_filename(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix);
+        String uploadPath=null;
         if (CmsConstants.ImageType.SIZE_CHART_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_SIZE_CHART_IMAGE + channelId);
+            uploadPath=DIRECTORY_SIZE_CHART_IMAGE ;
         } else if (CmsConstants.ImageType.BRAND_STORY_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_BRAND_STORY_IMAGE  + channelId);
+            uploadPath=DIRECTORY_BRAND_STORY_IMAGE ;
         } else if (CmsConstants.ImageType.SHIPPING_DESCRIPTION_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId);
+            uploadPath=DIRECTORY_SHIPPING_DESCRIPTION_IMAGE;
         } else if (CmsConstants.ImageType.STORE_DESCRIPTION_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_STORE_DESCRIPTION_IMAGE + channelId);
+            uploadPath=DIRECTORY_STORE_DESCRIPTION_IMAGE;
         }
-
-        ftpBean.setUpload_input(inputStream);
-
+        Assert.notNull(uploadPath);
+        String fileName=DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix;
         try {
-            SFtpUtil ftpUtil = new SFtpUtil();
-            //建立连接
-            ChannelSftp ftpClient = ftpUtil.linkFtp(ftpBean);
-            boolean isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
+            boolean isSuccess = sFtpService.storeFile(
+                    "image.voyageone.com.cn",
+                    "22",
+                    "voyageone-cms-sftp",
+                    "Li48I-22aBz",
+                    fileName,
+                    uploadPath+channelId,
+                    inputStream,
+                    "iso-8859-1");
             if (!isSuccess) {
                 throw new BusinessException("upload error");
             }
         } catch (Exception e) {
             throw new BusinessException("upload error");
         }
-         return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
+         return URL_PREFIX + uploadPath+channelId + "/" + fileName;
     }
 
-    private FtpBean formatFtpBean(){
-        String url = "image.voyageone.com.cn";
-        // ftp连接port
-        String port = "22";
-        // ftp连接usernmae
-        String username = "voyageone-cms-sftp";
-        // ftp连接password
-        String password = "Li48I-22aBz";
-
-        FtpBean ftpBean = new FtpBean();
-        ftpBean.setPort(port);
-        ftpBean.setUrl(url);
-        ftpBean.setUsername(username);
-        ftpBean.setPassword(password);
-        ftpBean.setFile_coding("iso-8859-1");
-        return ftpBean;
-    }
 }
