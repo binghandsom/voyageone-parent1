@@ -81,12 +81,24 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformPropMappingService.getPlatformCategory(categoryId, cartId, getUser()));
     }
 
+    // 根据主类目与平台类目的匹配关系查询平台类目属性，查询参数为主类目catId
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAIN_CATEGORY_SCHEMA)
     public AjaxResponse getMainCategorySchema(@RequestBody Map<String, String> params) {
 
         String mainCategoryId = params.get("mainCategoryId");
 
         return success(platformPropMappingService.getMainCategorySchema(mainCategoryId));
+    }
+
+    // 直接查询平台类目属性，查询参数为平台类目catId
+    // ！！使用的时候必须注意：这里返回的对象已由CmsMtPlatformCategorySchemaModel转换为CmsMtCategorySchemaModel
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY_SCHEMA)
+    public AjaxResponse getPlatformCategorySchema(@RequestBody Map<String, Object> params) {
+
+        String categoryId = (String) params.get("categoryId");
+        Integer cartId = (Integer) params.get("cartId");
+
+        return success(platformPropMappingService.getPlatformCategorySchema(categoryId, cartId, getUser()));
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_DICT_LIST)

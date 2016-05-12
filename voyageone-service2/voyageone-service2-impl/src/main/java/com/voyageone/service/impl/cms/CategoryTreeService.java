@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
@@ -230,10 +231,21 @@ public class CategoryTreeService extends BaseService {
     }
 
     /**
+     * 取得一级类目列表（主数据）
+     *
+     * @return CmsMtCategoryTreeModel
+     */
+    public List<CmsMtCategoryTreeModel> getFstLvlMasterCategory() {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("{'catId':1,'catName':1,'catPath':1,'isParent':1}");
+        queryObject.setSort("{'catName':1}");
+        return cmsMtCategoryTreeDao.select(queryObject);
+    }
+
+    /**
      * 根据category从tree中找到节点
      */
     public CmsMtCategoryTreeModel findCategory(CmsMtCategoryTreeModel tree, String catPath) {
-
         for (CmsMtCategoryTreeModel CmsMtCategoryTreeModel : tree.getChildren()) {
             if (CmsMtCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return CmsMtCategoryTreeModel;
@@ -246,4 +258,36 @@ public class CategoryTreeService extends BaseService {
         return null;
     }
 
+    /**
+     * 根据category从tree中找到节点
+     */
+    public List<CmsMtCategoryTreeModel> findCategoryListByCatId(String rootCatId, int catLevel, String catId) {
+        CmsMtCategoryTreeModel treeModel = cmsMtCategoryTreeDao.selectByCatId(rootCatId == null ? catId : rootCatId);
+        if (catLevel > 0) {
+            treeModel = findCategoryByCatId(treeModel, catId);
+        }
+        if (treeModel == null) {
+            return new ArrayList<>(0);
+        }
+        return treeModel.getChildren();
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public CmsMtCategoryTreeModel findCategoryByCatId(CmsMtCategoryTreeModel tree, String catId) {
+        if (tree == null) {
+            return null;
+        }
+        for (CmsMtCategoryTreeModel catTreeModel : tree.getChildren()) {
+            if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
+                return catTreeModel;
+            }
+            if (catTreeModel.getChildren().size() > 0) {
+                CmsMtCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
+                if (category != null) return category;
+            }
+        }
+        return null;
+    }
 }
