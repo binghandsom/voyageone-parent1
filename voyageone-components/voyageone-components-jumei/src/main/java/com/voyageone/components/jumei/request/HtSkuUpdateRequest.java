@@ -7,20 +7,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dell on 2016/3/29.
+ * HtSkuUpdateRequest
+ *
+ * @author peitao.sun, 2016/3/29
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtSkuUpdateRequest implements JMRequest {
-    public String Url = "/v1/htSku/update";
+public class HtSkuUpdateRequest implements BaseJMRequest {
+    private String url = "/v1/htSku/update";
 
+    //聚美Sku Id.
+    private String jumei_sku_id;
+    //update_data	Json修改数据.参数范围: 只传需要修改的字段
+
+    // 可选	Number 海关备案商品编码 //参数范围: 注:(发货仓库为保税区仓库时，此处必填) 获取仓库接口返回bonded_area_id字段 大于０表示保税区仓库
+    private int customs_product_number;
+
+    //可选	Number  商家商品编码 参数范围: 注:确保唯一
+    private String businessman_num;
+
+    @Override
     public String getUrl() {
-        return Url;
+        return url;
     }
 
-    String jumei_sku_id;    //Number;//聚美Sku Id.
-    //update_data	Json修改数据.参数范围: 只传需要修改的字段
-    int customs_product_number;// 可选	Number 海关备案商品编码 //参数范围: 注:(发货仓库为保税区仓库时，此处必填) 获取仓库接口返回bonded_area_id字段 大于０表示保税区仓库
-
-    String businessman_num;  //可选	Number  商家商品编码 参数范围: 注:确保唯一
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getJumei_sku_id() {
         return jumei_sku_id;
@@ -45,6 +58,8 @@ public class HtSkuUpdateRequest implements JMRequest {
     public void setBusinessman_num(String businessman_num) {
         this.businessman_num = businessman_num;
     }
+
+    @Override
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_sku_id", this.getJumei_sku_id());

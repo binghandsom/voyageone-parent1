@@ -13,12 +13,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_store_operation_history
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="operationType != null" >
                 `operation_type`,
             </if>
@@ -32,9 +29,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="operationType != null" >
                 #{operationType,jdbcType=VARCHAR},
             </if>

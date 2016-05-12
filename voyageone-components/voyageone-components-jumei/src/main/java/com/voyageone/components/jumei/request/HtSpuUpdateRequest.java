@@ -7,33 +7,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dell on 2016/3/29.
+ * HtSpuUpdateRequest
+ *
+ * @author peitao.sun, 2016/3/29
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtSpuUpdateRequest implements JMRequest {
-    public String Url = "/v1/htSpu/update";
-    public String getUrl() {
-        return Url;
-    }
-    String  jumei_spu_id;	//Number  聚美spu ID.
-
+public class HtSpuUpdateRequest implements BaseJMRequest {
+    private String url = "/v1/htSpu/update";
+    private String jumei_spu_id;    //Number  聚美spu ID.
     //update_data	Json  修改数据.参数范围: 只传需要修改的字段
+    private String upc_code;// 可选	Number 商品自带条码
+    private String propery; // 可选	Number   规格 :FORMAL 正装 MS 中小样 OTHER 其他
+    private String size;// 可选	String 容量/尺码
+    private String attribute; //可选	String  型号/颜色
+    private double abroad_price;// 可选	Number   海外官网价
+    private int area_code;// 可选	Number  货币符号Id
+    private String abroad_url;// 可选	Number  海外地址
+    // 白底方图(全量修改).  参数范围: 注：可不传,最多10张，1000*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
+    // verticalImage 可选	竖图 (全量修改) // 参数范围: 注：可不传,最多10张，750*1000jpg,jpeg,单张不超过1m，多张图片以","隔开
+    private String normalImage;
 
-   String  upc_code;// 可选	Number 商品自带条码
-   String  propery; // 可选	Number   规格 :FORMAL 正装 MS 中小样 OTHER 其他
-   String  size;// 可选	String 容量/尺码
-   String  attribute; //可选	String  型号/颜色
-
-    double  abroad_price;// 可选	Number   海外官网价
-
-   int  area_code;// 可选	Number  货币符号Id
-
-   String  abroad_url;// 可选	Number  海外地址
-    //选	String  白底方图(全量修改).  参数范围: 注：可不传,最多10张，1000*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
-    //  verticalImage 可选	String     竖图 (全量修改) // 参数范围: 注：可不传,最多10张，750*1000jpg,jpeg,单张不超过1m，多张图片以","隔开
-   String  normalImage;
+    @Override
+    public String getUrl() {
+        return url;
+    }
 
     public void setUrl(String url) {
-        Url = url;
+        this.url = url;
     }
 
     public String getJumei_spu_id() {
@@ -108,7 +109,7 @@ public class HtSpuUpdateRequest implements JMRequest {
         this.normalImage = normalImage;
     }
 
-
+    @Override
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_spu_id", this.getJumei_spu_id());

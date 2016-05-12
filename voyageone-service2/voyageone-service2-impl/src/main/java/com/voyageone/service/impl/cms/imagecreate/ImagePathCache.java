@@ -14,7 +14,7 @@ import java.util.Set;
 @Component
 public class ImagePathCache {
     private static HashOperations<String, Long, String> hashOperation;
-    private static ZSetOperations<String, Long> ZSetOperation;
+    //private static ZSetOperations<String, Long> ZSetOperation;
     public static final String HashtableName = "voyageone_image_create_hashcode_file";
     // public static final String ZSetName = "voyageone_image_create_hashcode_zset";
 

@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.channel.listing;
 
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
+import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.impl.cms.CmsImageTemplateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -16,9 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by jeff.duan on 2016/5/5.
- */
 @RestController
 @RequestMapping(
         value = CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.ROOT,
@@ -28,12 +26,6 @@ public class CmsImageTemplateController extends CmsController {
     @Autowired
     private CmsImageTemplateService service;
 
-    /**
-     * 初始化
-     *
-     * @param param 客户端参数
-     * @return 结果
-     */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Init)
     public AjaxResponse init(@RequestBody Map<String, Object> param) {
         param.put("channelId", this.getUser().getSelChannelId());
@@ -43,57 +35,42 @@ public class CmsImageTemplateController extends CmsController {
         //返回数据的类型
         return success(resultBean);
     }
-
-    /**
-     * 检索
-     *
-     * @param param 客户端参数
-     * @return 结果
-     */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetPage)
     public AjaxResponse getPage(@RequestBody Map<String, Object> param) {
-//        Map<String, Object> resultBean = new HashMap<>();
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
         Object result = service.getPage(param);
         return success(result);
     }
-
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetCount)
     public AjaxResponse getCount(@RequestBody Map<String, Object> param) {
         param.put("channelId", this.getUser().getSelChannelId());
         Object result = service.getCount(param);
         return success(result);
     }
-
-    /**
-     * 新加ImageTemplate信息
-     *
-     * @param model 客户端参数
-     * @return 结果
-     */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
         model.setChannelId(this.getUser().getSelChannelId());
         service.save(model, this.getUser().getUserName());
         return success(null);
     }
-
-    /**
-     * 逻辑删除ImageTemplate信息
-     *
-     * @param imageTemplateId 客户端参数
-     * @return 结果
-     */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
     public AjaxResponse delete(@RequestBody Long imageTemplateId) {
         service.delete(imageTemplateId);
         return success(null);
     }
-
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Get)
     public AjaxResponse get(@RequestBody Long imageTemplateId) {
         CmsBtImageTemplateModel model = service.get(imageTemplateId);
         return success(model);
+    }
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetTemplateParameter)
+    public AjaxResponse getTemplateParameter(@RequestBody String templateContent) {
+        return success(service.getTemplateParameter(templateContent));
+    }
+    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetDownloadUrl)
+    public AjaxResponse getDownloadUrl(@RequestBody GetDownloadUrlParamter paramter) throws Exception {
+        String str = service.getDownloadUrl(paramter);
+        return success(str);
     }
 }

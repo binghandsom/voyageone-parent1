@@ -15,7 +15,6 @@ import java.util.Map;
 
 /**
  * 用于调用处理库存 API 的服务类
- * <p/>
  * Created by jonas on 15/6/4.
  */
 @Component
@@ -58,10 +57,10 @@ public class TbInventoryService extends TbBase {
         // 根据信息拼接更新的 SKU 和数量
         StringBuilder builder = new StringBuilder();
 
-        for (String sku : skusQuantities.keySet()) {
-            builder.append(sku);
+        for (Map.Entry<String, Integer> entry : skusQuantities.entrySet()) {
+            builder.append(entry.getKey());
             builder.append(":");
-            builder.append(skusQuantities.get(sku));
+            builder.append(entry.getValue());
             builder.append(";");
         }
 

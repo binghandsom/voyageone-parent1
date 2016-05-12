@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -199,13 +200,39 @@ public class ImageGroupService extends BaseService {
      * @param brandNameList 相关品牌名称列表
      * @param productTypeList 相关产品类型列表
      * @param sizeTypeList 相关尺码列表
+     * @param curr 当前页Index
+     * @param size 每页件数
+     * @return 检索结果
      */
     public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
-                                              String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                                              String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,
+                                              int  curr, int size) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList));
+        queryObject.setSort("{imageGroupId:-1}");
+        queryObject.setLimit(size);
+        queryObject.setSkip((curr - 1) * size);
         return cmsBtImageGroupDao.select(queryObject);
+    }
+
+    /**
+     * 根据检索条件取得ImageGroupInfo件数
+     * @param channelId 渠道id
+     * @param platFormChangeList 平台id列表
+     * @param imageType 图片类型
+     * @param beginModified 更新开始时间
+     * @param endModified 更新结束时间
+     * @param brandNameList 相关品牌名称列表
+     * @param productTypeList 相关产品类型列表
+     * @param sizeTypeList 相关尺码列表
+     * @return 检索结果件数
+     */
+    public long getCount(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
+                           String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+        String parameter = getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
+                endModified, brandNameList, productTypeList, sizeTypeList);
+        return cmsBtImageGroupDao.countByQuery(parameter);
     }
 
     /**
@@ -214,7 +241,7 @@ public class ImageGroupService extends BaseService {
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "},{\"active\":1}");
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 
@@ -309,7 +336,8 @@ public class ImageGroupService extends BaseService {
         if (model != null) {
             CmsBtImageGroupModel_Image imageModel = new CmsBtImageGroupModel_Image();
             imageModel.setOriginUrl(uploadUrl);
-            imageModel.setStatus(1);
+            imageModel.setErrorMsg(null);
+            imageModel.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
             List<CmsBtImageGroupModel_Image> images = model.getImage();
             if (images == null) {
                 images = new ArrayList<>();
@@ -339,7 +367,8 @@ public class ImageGroupService extends BaseService {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(key)) {
                         image.setOriginUrl(uploadUrl);
-                        image.setStatus(1);
+                        image.setErrorMsg(null);
+                        image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
                         break;
                     }
                 }
@@ -428,13 +457,13 @@ public class ImageGroupService extends BaseService {
 
         FtpBean ftpBean = formatFtpBean();
         ftpBean.setUpload_filename(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix);
-        if ("2".equals(imageType)) {
+        if (CmsConstants.ImageType.SIZE_CHART_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_SIZE_CHART_IMAGE + channelId);
-        } else if ("3".equals(imageType)) {
+        } else if (CmsConstants.ImageType.BRAND_STORY_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_BRAND_STORY_IMAGE  + channelId);
-        } else if ("4".equals(imageType)) {
+        } else if (CmsConstants.ImageType.SHIPPING_DESCRIPTION_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId);
-        } else if ("5".equals(imageType)) {
+        } else if (CmsConstants.ImageType.STORE_DESCRIPTION_IMAGE.equals(imageType)) {
             ftpBean.setUpload_path(DIRECTORY_STORE_DESCRIPTION_IMAGE + channelId);
         }
 

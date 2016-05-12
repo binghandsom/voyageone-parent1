@@ -39,4 +39,9 @@ public class CmsBtBusinessLogDaoExtTest {
 
         System.out.println(JacksonUtil.bean2Json(cmsBtBusinessLogDaoExt.selectByConditionCnt(map)));
     }
+
+    @Test
+    public void testUpdateStatusFinish() throws Exception {
+
+    }
 }

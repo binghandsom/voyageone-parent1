@@ -14,12 +14,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_tag
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="channelId != null" >
                 `channel_id`,
             </if>
@@ -57,9 +54,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
             </if>

@@ -14,12 +14,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPlatformConfigModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPlatformConfigModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_mt_platform_config
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="channelId != null" >
                 `channel_id`,
             </if>
@@ -45,9 +42,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
             </if>

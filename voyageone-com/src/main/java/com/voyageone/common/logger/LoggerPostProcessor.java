@@ -21,6 +21,7 @@ public class LoggerPostProcessor implements BeanPostProcessor {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
         return bean;
     }
@@ -28,14 +29,13 @@ public class LoggerPostProcessor implements BeanPostProcessor {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object postProcessBeforeInitialization(final Object bean, String beanName) {
-        ReflectionUtils.doWithFields(bean.getClass(), new FieldCallback() {
-            public void doWith(Field field) throws IllegalAccessException {
-                if (field.getAnnotation(Log.class) != null) {
-                    Logger log = LoggerFactory.getLogger(bean.getClass());
-                    ReflectionUtils.makeAccessible(field);
-                    field.set(bean, log);
-                }
+        ReflectionUtils.doWithFields(bean.getClass(), field -> {
+            if (field.getAnnotation(Log.class) != null) {
+                Logger log = LoggerFactory.getLogger(bean.getClass());
+                ReflectionUtils.makeAccessible(field);
+                field.set(bean, log);
             }
         });
         return bean;

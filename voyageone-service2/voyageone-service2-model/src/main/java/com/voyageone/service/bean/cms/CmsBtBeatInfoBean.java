@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.Constants;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
@@ -72,10 +73,11 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
         this.syn_flag = syn_flag;
     }
 
+    @JsonIgnore
     public BeatFlag getBeatFlag() {
         return BeatFlag.valueOf(getSynFlag());
     }
-
+    @JsonIgnore
     public void setBeatFlag(BeatFlag flag) {
         setSynFlag(flag.getFlag());
     }

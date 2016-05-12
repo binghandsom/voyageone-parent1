@@ -8,21 +8,23 @@ import com.voyageone.common.serialize.Serializer;
 
 public class JsonSerializer implements Serializer {
 
-	private ObjectMapper objectMapper;
-	
-	public JsonSerializer() {
-		objectMapper = new ObjectMapper();
-		
-		new JsonBeanSerializeModule().attach(objectMapper);
-		new TmallSerializeModule().attach(objectMapper);
-	}
-	
-	public String serialize(Object obj) throws JsonProcessingException {
-		return objectMapper.writeValueAsString(new JsonBean(obj));
-	}
+    private ObjectMapper objectMapper;
 
-	public Object deserialize(String str) throws IOException {
-		return objectMapper.readValue(str, JsonBean.class).getObj();
-	}
+    public JsonSerializer() {
+        objectMapper = new ObjectMapper();
+
+        new JsonBeanSerializeModule().attach(objectMapper);
+        new TmallSerializeModule().attach(objectMapper);
+    }
+
+    @Override
+    public String serialize(Object obj) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(new JsonBean(obj));
+    }
+
+    @Override
+    public Object deserialize(String str) throws IOException {
+        return objectMapper.readValue(str, JsonBean.class).getObj();
+    }
 
 }

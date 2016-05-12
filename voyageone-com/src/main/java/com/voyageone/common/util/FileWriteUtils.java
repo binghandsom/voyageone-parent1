@@ -68,7 +68,8 @@ public class FileWriteUtils {
         outputStream.write(getFormattedString(var, outputFormat));
     }
 
-    private String getFormattedString(String inputString, String outputFormat) {
+    private String getFormattedString(String input, String outputFormat) {
+        String inputString = input;
         String outputString = "";
 
         String[] formatList = outputFormat.split(",");

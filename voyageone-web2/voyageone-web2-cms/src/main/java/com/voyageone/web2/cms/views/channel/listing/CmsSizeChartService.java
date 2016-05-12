@@ -8,14 +8,16 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.CmsBtSizeChartBean;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import com.voyageone.web2.base.BaseAppService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gjl on 2016/5/5.
@@ -68,40 +70,32 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        //当前页数
+        int curr = (int) param.get("curr");
+        //每页显示显示记录
+        int size = (int) param.get("size");
         //按照填写的条件去数据库检索记录
         List<CmsBtSizeChartModel> sizeChartList=sizeChartService.getSizeChartSearch(channelId
-                ,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList);
-        int staIdx;
-        if((int)param.get("curr") ==1){
-            staIdx = 0 ;
-        }else{
-            staIdx = ((int)param.get("curr") - 1)* (int)param.get("size");
-        }
-        //每页多少条记录
-        int endIdx = staIdx + (int)param.get("size");
-        //检索的总共记录
-        int sizeChartListTotal = sizeChartList.size();
-        if (endIdx > sizeChartListTotal) {
-            endIdx = sizeChartListTotal;
-        }
-        List<CmsBtSizeChartModel> pageSizeChartList = sizeChartList.subList(staIdx, endIdx);
+                ,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList,curr,size);
         //尺码关系一览检索
-        param.put("sizeChartList", changeToBeanList(pageSizeChartList, channelId, lang));
-        param.put("total",sizeChartList.size());
+        param.put("sizeChartList", changeToBeanList(sizeChartList, channelId, lang));
+        //取得总件数
+        param.put("total",sizeChartService.getCount(channelId,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList));
         //返回数据的类型
         return param;
     }
     /**
      * 尺码关系一览初删除
-     * @param channelId
      * @param param
      * @return data
      */
     public void sizeChartUpdate(String channelId,Map param) {
+        //用户名称
+        String userName =param.get("userName").toString();
         //取得自增键
         int sizeChartId=(int) param.get("sizeChartId");
         //逻辑删除选中的记录
-        sizeChartService.sizeChartUpdate(channelId,sizeChartId);
+        sizeChartService.sizeChartUpdate(sizeChartId,userName,channelId);
     }
 
     /**
@@ -115,12 +109,6 @@ public class CmsSizeChartService extends BaseAppService {
         String userName =param.get("userName").toString();
         //尺码名称
         String sizeChartName=(String) param.get("sizeChartName");
-        //尺码标志
-        String finishFlag=(String) param.get("finishFlag");
-        //更新开始时间
-        String startTime=(String) param.get("startTime");
-        //更新结束时间
-        String endTime=(String) param.get("endTime");
         //产品品牌
         List<String> brandNameList=(List<String>) param.get("brandNameList");
         //产品类型
@@ -136,19 +124,6 @@ public class CmsSizeChartService extends BaseAppService {
     }
 
     /**
-     * 尺码关系一览编辑详情检索画面
-     * @param channelId
-     * @param param
-     */
-    public void sizeChartDetailSearch(String channelId,Map param,String lang) {
-        //取得自增键
-        int sizeChartId = (int) param.get("sizeChartId");
-        //尺码表自增键取得当前的记录
-        List<CmsBtSizeChartModel> sizeChartList =sizeChartService.sizeChartDetailSearch(channelId, sizeChartId);
-        //尺码关系一览检索
-        param.put("sizeChartList", changeToBeanList(sizeChartList, channelId, lang));
-    }
-    /**
      * 尺码关系一览编辑详情编辑画面
      * @param channelId
      * @param param
@@ -162,16 +137,12 @@ public class CmsSizeChartService extends BaseAppService {
         String sizeChartName=(String) param.get("sizeChartName");
         //尺码标志
         String finishFlag=(String) param.get("finishFlag");
-        //更新开始时间
-        String startTime=(String) param.get("startTime");
-        //更新结束时间
-        String endTime=(String) param.get("endTime");
         //产品品牌
-        List<String> brandNameList=(List<String>) param.get("brandNameListTrans");
+        List<String> brandNameList=(List<String>) param.get("brandNameList");
         //产品类型
-        List<String> productTypeList=(List<String>) param.get("productTypeListTrans");
+        List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
-        List<String> sizeTypeList=(List<String>) param.get("sizeTypeListTrans");
+        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
@@ -180,42 +151,7 @@ public class CmsSizeChartService extends BaseAppService {
         sizeChartService.sizeChartDetailUpdate(channelId,
                 userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList);
     }
-    /**
-     * 尺码关系一览编辑详情编辑画面
-     * @param channelId
-     * @param param
-     * @return data
-     */
-    public void sizeChartDetailSizeMapSave(String channelId,Map param) {
-        int sizeChartId =(int)param.get("sizeChartId");
-        //用户名称
-        String userName =param.get("userName").toString();
-        //sizeMapList
-        List<CmsBtSizeChartModelSizeMap> sizeMapList=(List<CmsBtSizeChartModelSizeMap>) param.get("sizeMap");
-        if(sizeMapList==null){
-            sizeMapList = new ArrayList<>();
-        }
-        if(sizeMapList.size()>0){
-            //取得sizeMapList对象
-            Set<String> originalSizeSet = new HashSet<>();
-            for(int i=0;i<sizeMapList.size();i++){
-                Map sizeMap = (Map)sizeMapList.get(i);
-                String originalSize=(String)sizeMap.get("originalSize");
-                String adjustSize=(String)sizeMap.get("adjustSize");
-                //判断是否为空check
-                if (StringUtils.isEmpty(originalSize)||StringUtils.isEmpty(adjustSize)) {
-                    throw new BusinessException("7000080");
-                }
-                originalSizeSet.add(originalSize);
-            }
-            //重复check
-            if(originalSizeSet.size() != sizeMapList.size()){
-                throw new BusinessException("originSize重复");
-            }
-        }
-        //插入数据库
-        sizeChartService.sizeChartDetailSizeMapSave(channelId,userName,sizeChartId, sizeMapList);
-    }
+
 
     /**
      * 检索结果转换
@@ -225,7 +161,7 @@ public class CmsSizeChartService extends BaseAppService {
      * @param lang 语言
      * @return 检索结果（Bean）
      */
-    private List<CmsBtSizeChartBean> changeToBeanList(List<CmsBtSizeChartModel> imageGroupList, String channelId, String lang) {
+    public List<CmsBtSizeChartBean> changeToBeanList(List<CmsBtSizeChartModel> imageGroupList, String channelId, String lang) {
         List<CmsBtSizeChartBean> CmsBtSizeChartBeanList = new ArrayList<>();
 
         for (CmsBtSizeChartModel imageGroup : imageGroupList) {
@@ -251,9 +187,8 @@ public class CmsSizeChartService extends BaseAppService {
      * @param channelId 渠道id
      * @param lang 语言
      */
-    private void editCmsBtSizeChartBean(CmsBtSizeChartBean bean, String channelId, String lang) {
+    public void editCmsBtSizeChartBean(CmsBtSizeChartBean bean, String channelId, String lang) {
         List<String> brandNameTrans = new ArrayList<>();
-        List<TypeChannelBean> brandNameBean = new ArrayList<>();
         for (String brandName : bean.getBrandName()) {
             if ("All".equals(brandName)) {
                 brandNameTrans.add("All");
@@ -261,16 +196,12 @@ public class CmsSizeChartService extends BaseAppService {
                 TypeChannelBean  typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
                 if (typeChannelBean != null) {
                     brandNameTrans.add(typeChannelBean.getName());
-                    brandNameBean.add(typeChannelBean);
                 }
             }
         }
         bean.setBrandNameTrans(brandNameTrans);
-        bean.setBrandNameTransBean(brandNameBean);
-
         // Related Product Type
         List<String> productTypeTrans = new ArrayList<>();
-        List<TypeChannelBean> productTypeBean = new ArrayList<>();
         for (String productType : bean.getProductType()) {
             if ("All".equals(productType)) {
                 productTypeTrans.add("All");
@@ -278,15 +209,12 @@ public class CmsSizeChartService extends BaseAppService {
                 TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
                 if (typeChannelBean != null) {
                     productTypeTrans.add(typeChannelBean.getName());
-                    productTypeBean.add(typeChannelBean);
                 }
             }
         }
         bean.setProductTypeTrans(productTypeTrans);
-        bean.setProductTypeTransBean(productTypeBean);
         // Related Size Type
         List<String> sizeTypeTrans = new ArrayList<>();
-        List<TypeChannelBean> sizeTypeBean = new ArrayList<>();
         for (String sizeType : bean.getSizeType()) {
             if ("All".equals(sizeType)) {
                 sizeTypeTrans.add("All");
@@ -294,11 +222,9 @@ public class CmsSizeChartService extends BaseAppService {
                 TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
                 if (typeChannelBean != null) {
                     sizeTypeTrans.add(typeChannelBean.getName());
-                    sizeTypeBean.add(typeChannelBean);
                 }
             }
         }
         bean.setSizeTypeTrans(sizeTypeTrans);
-        bean.setSizeTypeTransBean(sizeTypeBean);
     }
 }

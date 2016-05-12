@@ -356,6 +356,7 @@ public interface CmsUrlConstants {
             String SET_PLATFORM_MAPPING = "setPlatformMapping";
 
             String GET_MAIN_CATEGORY_SCHEMA = "getMainCategorySchema";
+            String GET_PLATFORM_CATEGORY_SCHEMA = "getPlatformCategorySchema";
 
             String GET_DICT_LIST = "getDictList";
 
@@ -575,6 +576,8 @@ public interface CmsUrlConstants {
             String Save = "save";
             String Delete = "delete";
             String Get="get";
+            String GetDownloadUrl="getDownloadUrl";
+            String GetTemplateParameter="getTemplateParameter";
         }
         interface CHANNEL_IMAGE_GROUP_DETAIL {
             String ROOT="/cms/channel/image_group_detail";
@@ -594,6 +597,9 @@ public interface CmsUrlConstants {
                 String DELETE_SIZE_CHART="sizeChartDelete";
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
                 String SAVE_EDIT_SIZE_CHART="sizeChartEditSave";
+            }
+            interface SIZE_CHART_DETAIL{
+                String ROOT="/cms/channel/sizeChartDetail";
                 String SEARCH_DETAIL_SIZE_CHART="sizeChartDetailSearch";
                 String SAVE_DETAIL_SIZE_CHART="sizeChartDetailSave";
                 String SAVE_DETAIL_SIZE_MAP_CHART ="sizeChartDetailSizeMapSave";
