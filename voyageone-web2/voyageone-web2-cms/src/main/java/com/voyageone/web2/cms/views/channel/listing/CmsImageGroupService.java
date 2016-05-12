@@ -80,19 +80,13 @@ public class CmsImageGroupService extends BaseAppService {
         List<String> brandNameList = (List<String>)param.get("brandName");
         List<String> productTypeList = (List<String>)param.get("productType");
         List<String> sizeTypeList = (List<String>)param.get("sizeType");
+        int curr = (int) param.get("curr");
+        int size = (int) param.get("size");
         // 根据条件取得检索结果
         List<CmsBtImageGroupModel> imageGroupList = imageGroupService.getList(channelId , platFormChangeList, imageType,
-                                                        beginModified, endModified,brandNameList, productTypeList, sizeTypeList);
-        result.put("total",imageGroupList.size());
-        if (imageGroupList.size() > 0) {
-            int staIdx = ((int) param.get("curr") - 1) * (int) param.get("size");
-            int endIdx = staIdx + (int) param.get("size");
-            int groupListTotal = imageGroupList.size();
-            if (endIdx > groupListTotal) {
-                endIdx = groupListTotal;
-            }
-            imageGroupList = imageGroupList.subList(staIdx, endIdx);
-        }
+                                                        beginModified, endModified,brandNameList, productTypeList, sizeTypeList, curr, size);
+        result.put("total", imageGroupService.getCount(channelId , platFormChangeList, imageType,
+                beginModified, endModified,brandNameList, productTypeList, sizeTypeList));
 
         // 检索结果转换
         result.put("imageGroupList",  changeToBeanList(imageGroupList, (String)param.get("channelId"), (String)param.get("lang")));
@@ -215,6 +209,7 @@ public class CmsImageGroupService extends BaseAppService {
         // 必须输入check
         if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
                 || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
+            // 请输入必填项目
             throw new BusinessException("7000080");
         }
 

@@ -6,11 +6,11 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartImportCtl', function ($scope,context, $routeParams,alert) {
+    angularAMD.controller('popSizeChartImportCtl', function ($scope,context, $routeParams,alert,$translate) {
 
         $scope.vm = {
             content : ""
-        }
+        };
 
         $scope.initialize = function () {
             if ($scope.vm == undefined) {
@@ -23,31 +23,30 @@ define([
         $scope.importSize = function(){
             var importArr = $scope.vm.content.split(/\t/g),resultArr = [];
 
-            for(var i=0,length=importArr.length;i<length;i++) {
-                var tmp = importArr[i].split(/\n/g);
+            angular.forEach(importArr, function(data,index){
+                var tmp = data.split(/\n/g);
                 if(tmp.length <= 1){
-                    var tmpObj = new Object();
-                    tmpObj.value = tmp[0]
+                    var tmpObj = {};
+                    tmpObj.value = data;
                     resultArr.push(tmpObj);
                 } else{
-                    for (var j = 0, length2 = tmp.length; j < length2; j++) {
-                        var tmpObj = new Object();
-                        tmpObj.value = tmp[j]
+                    angular.forEach(tmp, function(data,index){
+                        var tmpObj = {};
+                        tmpObj.value = data;
                         resultArr.push(tmpObj);
-                    }
+                    });
                 }
-            }
-
-            for(var i=0,length=resultArr.length;i<length;i++){
+            });
+           if(resultArr.length % 3 != 0) return;
+           for(var i=0,length=resultArr.length;i<length;i++){
                 if((i+1)%3 == 0){
                     if(Number(resultArr[i].value) > 1 || Number(resultArr[i].value) < 0){
-                        alert("请检查导入格式，第三位数据为0或者1");
+                        alert($translate.instant("TXT_SIZE_CHART_NOTICE_third"));
                         return;
                     }
                 }
                 resultArr[i].index = parseInt(i/3);
             }
-
             context.import(resultArr);
             $scope.$dismiss();
         }

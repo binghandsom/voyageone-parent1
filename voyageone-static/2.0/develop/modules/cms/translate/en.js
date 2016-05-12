@@ -353,9 +353,9 @@ define(function() {
         "TXT_MSG_STARTUP_ITEM": "Are you sure you want to start all?",
         "TXT_MSG_DELETE_SUCCESS": "Delete is successful.",
         "TXT_MSG_DELETE_FAIL": "Delete is fail.",
-        "TXT_MSG_ADD_ITEM": "Are you sure to add this item?",
-        "TXT_MSG_ADD_SUCCESS": "Add is successful.",
-        "TXT_MSG_ADD_FAIL": "Add is fail.",
+        "TXT_MSG_UPDATE_ITEM": "Are you sure to update this item?",
+        "TXT_MSG_UPDATE_SUCCESS": "Update is successful.",
+        "TXT_MSG_UPDATE_FAIL": "Update is fail.",
         "TXT_MSG_NO_DATA_WITH_SAVE": "Please make sure these required items and the table are not empty.",
         "TXT_MSG_NO_PLATFORM_CATEGORY": "Do not get any platform category, please change to another platform, and try again.",
         "TXT_MSG_VALUE_SETTING_COMMENT": "值设定说明：",
@@ -399,6 +399,7 @@ define(function() {
         "TXT_MSG_IMPORT_ADD": "Add Mode",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "Reset Mode",
         "TXT_MSG_IMPORT_STATUS_ERROR": "Exist being processed data, these are not saved.",
+        "TXT_MSG_IMPORT":"Please input",
         "TXT_SEPARATE_PROPORTION":"Separation ratio",
         "TXT_REVERT_TIME":"Revert time",
         "TXT_INCREASING_PRIORITY":"Increase priority",
@@ -524,6 +525,9 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE":"Please select No if Size chart is in doubt,renewwill still use this size chart",
         "TXT_SIZE_CHART_NOTICE_REQUIED":"Please input sizeChart name",
         "TXT_SIZE_CHART_NOTICE_REPEAT":"originalSize can't repeat",
-        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null"
+        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null",
+        "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
+        "TXT_SIZE_CHART_COMMON_ADD":"Common Size Chart Edit"
     };
 });

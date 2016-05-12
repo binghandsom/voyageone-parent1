@@ -53,7 +53,7 @@ define([
          */
         $scope.deleteRow = function(sizeChartId){
             confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result.then(function () {
-                sizeChartService.delete({sizeChartId:sizeChartId}).then(function(reps){
+                sizeChartService.delete({sizeChartId: sizeChartId}).then(function () {
                     notify.success ($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     search();
                 });

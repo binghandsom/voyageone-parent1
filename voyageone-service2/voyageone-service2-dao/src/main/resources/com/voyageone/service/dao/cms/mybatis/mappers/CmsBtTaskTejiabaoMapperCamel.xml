@@ -14,12 +14,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_task_tejiabao
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="promotionId != null" >
                 `promotion_id`,
             </if>
@@ -48,9 +45,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
             </if>

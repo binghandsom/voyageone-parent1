@@ -200,13 +200,39 @@ public class ImageGroupService extends BaseService {
      * @param brandNameList 相关品牌名称列表
      * @param productTypeList 相关产品类型列表
      * @param sizeTypeList 相关尺码列表
+     * @param curr 当前页Index
+     * @param size 每页件数
+     * @return 检索结果
      */
     public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
-                                              String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                                              String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,
+                                              int  curr, int size) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList));
+        queryObject.setSort("{imageGroupId:-1}");
+        queryObject.setLimit(size);
+        queryObject.setSkip((curr - 1) * size);
         return cmsBtImageGroupDao.select(queryObject);
+    }
+
+    /**
+     * 根据检索条件取得ImageGroupInfo件数
+     * @param channelId 渠道id
+     * @param platFormChangeList 平台id列表
+     * @param imageType 图片类型
+     * @param beginModified 更新开始时间
+     * @param endModified 更新结束时间
+     * @param brandNameList 相关品牌名称列表
+     * @param productTypeList 相关产品类型列表
+     * @param sizeTypeList 相关尺码列表
+     * @return 检索结果件数
+     */
+    public long getCount(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
+                           String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+        String parameter = getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
+                endModified, brandNameList, productTypeList, sizeTypeList);
+        return cmsBtImageGroupDao.countByQuery(parameter);
     }
 
     /**

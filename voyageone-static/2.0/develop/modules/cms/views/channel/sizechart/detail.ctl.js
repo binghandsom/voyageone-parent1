@@ -2,10 +2,9 @@
  * Created by tony-piao on 2016/5/5.
  */
 define([
-    'angularAMD',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
-    function sizeDetailController($scope,$routeParams,sizeChartService,alert,notify,$translate) {
+], function () {
+    function sizeDetailController($scope,$routeParams,sizeChartService,sizeChartDetailService,alert,notify,$translate) {
 
         $scope.vm = {
             originCondition : [],    //保存初始状态
@@ -14,13 +13,6 @@ define([
             brandNameList:[],
             productTypeList:[],
             sizeTypeList:[]
-
-        };
-
-        function sizeChartTr(){
-            this.originalSize = "";
-            this.adjustSize = "";
-            this.usual = false;
         };
 
         $scope.initialize  = function () {
@@ -34,14 +26,11 @@ define([
         };
 
         function getItemById(){
-            sizeChartService.detailSearch({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
+            sizeChartDetailService.init({sizeChartId:Number($routeParams.sizeChartId)}).then(function(resp){
                 var item = $scope.vm.saveInfo  = resp.data.sizeChartList[0];
                 $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
                 $scope.vm.importList = _.map(item.sizeMap == null ?[]:item.sizeMap, function(item){
-                    if(item.usual == "0")
-                        item.usual = false;
-                    else
-                        item.usual = true;
+                    item.usual = item.usual != "0";
                     return item;
                 });
             });
@@ -51,7 +40,7 @@ define([
          * 添加尺码表
          */
         $scope.addSize = function(){
-            $scope.vm.importList.push(new sizeChartTr());
+            $scope.vm.importList.push({});
         };
         /**
          * 重置
@@ -66,15 +55,14 @@ define([
          */
         $scope.saveFinish = function(){
             if($scope.vm.saveInfo.sizeChartName == ""){
-                //$translate.instant('TXT_MSG_DELETE_SUCCESS')
-                alert("请输入尺码表名称");
+                alert($translate.instant('TXT_SIZE_CHART_NOTICE_REQUIED'));
                 return;
             }
 
             var upEntity = $scope.vm.saveInfo;
-            sizeChartService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
+            sizeChartDetailService.detailSave({sizeChartId:upEntity.sizeChartId,sizeChartName: upEntity.sizeChartName, finishFlag:upEntity.finish,
                                         brandNameList:upEntity.brandName,productTypeList:upEntity.productType,sizeTypeList:upEntity.sizeType}).then(function(){
-                notify.success($translate.instant('TXT_MSG_ADD_SUCCESS'));
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 getItemById();
                 $scope.$close();
             });
@@ -88,7 +76,6 @@ define([
                 alert($translate.instant('TXT_SIZE_CHART_NOTICE_REQUIED'));
                 return;
             }
-
             var upEntity = $scope.vm.saveInfo,sizeMaps = angular.copy($scope.vm.importList) , flag = true , tmpOriginalSize = "";
             _.map(sizeMaps, function(item){
                             if(item.originalSize == tmpOriginalSize){
@@ -110,13 +97,12 @@ define([
                             return item;
                         });
             if(!flag) return;
-            sizeChartService.detailSizeMapSave({sizeChartId:upEntity.sizeChartId,sizeMap:sizeMaps}).then(function(){
-                notify.success ($translate.instant('TXT_MSG_ADD_SUCCESS'));
+            sizeChartDetailService.detailSizeMapSave({sizeChartId:upEntity.sizeChartId,sizeMap:sizeMaps}).then(function(){
+                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 getItemById();
                 $scope.$close();
             });
         };
-
         /**
          * 删除添加项
          * @param index
@@ -131,37 +117,36 @@ define([
          */
         $scope.import = function(result){
             $scope.vm.importList = [];
-            var tmp = 0 , count = 0, obj = new sizeChartTr();
-             for(var i=0,length=result.length;i<length;i++){
-                 if(tmp == result[i].index){
-                     switch(count){
-                         case 0:
-                             obj.originalSize = result[i].value;
-                             break;
-                         case 1:
-                             obj.adjustSize = result[i].value;
-                             break;
-                         case 2:
-                             obj.usual = result[i].value == 1?true:false;
-                             break;
-                         default:
-                             break;
-                     }
-                     count++;
-                 }else{
-                     $scope.vm.importList.push(obj);
-                     obj = new sizeChartTr();
-                     obj.originalSize = result[i].value;
-                     tmp = result[i].index;
-                     count = 1;
-                 }
-             }
+            var tmp = 0 , count = 0, obj = {};
+            angular.forEach(result, function(data){
+                if(tmp == data.index){
+                    switch(count){
+                        case 0:
+                            obj.originalSize = data.value;
+                            break;
+                        case 1:
+                            obj.adjustSize = data.value;
+                            break;
+                        case 2:
+                            obj.usual = data.value == 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    count++;
+                }else{
+                    $scope.vm.importList.push(obj);
+                    obj = {};
+                    obj.originalSize = data.value;
+                    tmp = data.index;
+                    count = 1;
+                }
+            });
             $scope.vm.importList.push(obj);
         };
 
-
     }
 
-    sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','alert','notify','$translate'];
+    sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','sizeChartDetailService','alert','notify','$translate'];
     return sizeDetailController;
 });

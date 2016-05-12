@@ -22,7 +22,7 @@ public class LiquidFireImageService extends BaseService {
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
 
     @Retryable(maxAttempts = 3)
-    public void createImage(CmsMtImageCreateFileModel modelFile,String templateContent) throws Exception {
+    public void createImage(CmsMtImageCreateFileModel modelFile, String templateContent) throws Exception {
         try {
             String filePath = createImage(templateContent, modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
             modelFile.setFilePath(filePath);
@@ -40,11 +40,21 @@ public class LiquidFireImageService extends BaseService {
     //调用Liquid接口创建图片
     private String createImage(String templateContent, String vparam, String fileName) throws Exception {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
+        String source = getUrlParameter(templateContent, vparam);
+        return client.getImage(source, fileName, ImageConfig.getImageProxyIP(), ImageConfig.getImageProxyPort());
+    }
+
+    private String getUrlParameter(String templateContent, String vparam) throws Exception {
         String[] list = JacksonUtil.ToObjectFromJson(vparam, String[].class);
         for (int i = 0; i < list.length; i++) {
             list[i] = list[i].replace("&", "＆");
         }
-        String source = String.format(templateContent, list);
-        return client.getImage(source, fileName, ImageConfig.getImageProxyIP(), ImageConfig.getImageProxyPort());
+        return String.format(templateContent, list);
+    }
+    public String getDowlownUrl(String templateContent, String vparam) throws Exception {
+        LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
+        String urlParameter = getUrlParameter(templateContent, vparam);
+        return client.getDownloadUrl(urlParameter,"DownloadUrlFile");
+
     }
 }
