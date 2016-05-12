@@ -15,7 +15,7 @@
                     <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
+                    <label class="col-sm-4 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
                     <div class="col-sm-6">
                         <select multiple chosen class="form-control" width="'240px'" ng-model="vm.saveInfo.brandNameList"
                                 ng-options="brand.value as brand.name for brand in dropdown.brandNameList">
@@ -24,7 +24,7 @@
                     <!--<label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>-->
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</label>
+                    <label class="col-sm-4 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
                     <div class="col-sm-6">
                         <select multiple chosen class="form-control" width="'240px'"  ng-model="vm.saveInfo.productTypeList"
                                 ng-options="productType.value as productType.name for productType in dropdown.productTypeList">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</label>
+                    <label class="col-sm-4 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
                     <div class="col-sm-6">
                         <select multiple chosen class="form-control" width="'240px'"  ng-model="vm.saveInfo.sizeTypeList"
                                 ng-options="sizeType.value as sizeType.name for sizeType in dropdown.sizeTypeList">
