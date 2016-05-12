@@ -22,6 +22,7 @@ public class SxData {
 	private List<CmsBtProductModel_Sku> skuList;	// 只包含当前group，cart中, 允许使用的sku信息
 
     private Double maxPrice; // 当前productList的所有sku中，最大的那个价格（销售的价格）
+	private String brandCode; // 主商品fields.Brand对应的BrandId(cms_mt_brands_mapping)
 
 	public String getChannelId() {
 		return channelId;
@@ -94,4 +95,12 @@ public class SxData {
     public void setMaxPrice(Double maxPrice) {
         this.maxPrice = maxPrice;
     }
+
+	public String getBrandCode() {
+		return brandCode;
+	}
+
+	public void setBrandCode(String brandCode) {
+		this.brandCode = brandCode;
+	}
 }
