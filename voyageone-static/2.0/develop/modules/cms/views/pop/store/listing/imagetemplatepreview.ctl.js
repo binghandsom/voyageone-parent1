@@ -8,7 +8,8 @@ define([
 ], function (angularAMD, _) {
 
     angularAMD.controller('popImageTemplatePreviewCtl', function ($scope,imageTemplateService,context,$routeParams) {
-        $scope.vm = {templateParameterList:[]};
+        //$scope.vm = {templateParameterList:[]};
+        $scope.vm = {templateParameterList:{}};
         $scope.templateContent="";
         $scope.initialize = function () {
             if (context) {
@@ -21,7 +22,7 @@ define([
                 //$scope.vm.templateParameterList=res.data;
 
                 angular.forEach(res.data, function (value) {
-                    $scope.vm.templateParameterList.push({value: value});
+                    $scope.vm.templateParameterList[index]=value;
                 });
                 //for(var i=0;i<res.data.length;i++)
                 //{
