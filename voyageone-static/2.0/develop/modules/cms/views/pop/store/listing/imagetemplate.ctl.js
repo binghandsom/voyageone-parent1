@@ -6,25 +6,33 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popImageTemplateCtl', function ($scope,imageTemplateService, $routeParams) {
+    angularAMD.controller('popImageTemplateCtl', function ($scope,imageTemplateService,context, $routeParams) {
         $scope.vm = {"platformList":[],
             "brandNameList":[],
             "productTypeList":[],
-            "sizeTypeList":[]
+            "sizeTypeList":[],
+            "imageTemplateList":[]
         };
         $scope.model = {};
         $scope.datePicker = [];
         $scope.initialize  = function () {
-            //if(context)
-            //{
-            //    $scope.model=context;
-            //}
+
                 imageTemplateService.init().then(function (res) {
                     $scope.vm.platformList = res.data.platformList;
                     $scope.vm.brandNameList = res.data.brandNameList;
                     $scope.vm.productTypeList = res.data.productTypeList;
                     $scope.vm.sizeTypeList = res.data.sizeTypeList;
+                    $scope.vm.imageTemplateList=res.data.imageTemplateList;
                     //   $scope.search();
+                    if(context)
+                    {
+                        imageTemplateService.get(context.imageTemplateId).then(function (res) {
+                            $scope.model=res.data;
+                            $scope.model.cartId += "";
+                            $scope.model.viewType+="";
+                            $scope.model.imageTemplateType+="";
+                        })
+                    }
                 })
         };
         $scope.ok = function(){

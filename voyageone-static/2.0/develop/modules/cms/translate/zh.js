@@ -366,7 +366,10 @@ define(function(){
         "TXT_MSG_DELETE_ITEM": "您确定要删除这条数据吗?",
         "TXT_MSG_STARTUP_ITEM": "您确定要全部启动吗?",
         "TXT_MSG_DELETE_SUCCESS": "删除操作成功",
-        "TXT_MSG_DELETE_FAIL": "删除操作成功.",
+        "TXT_MSG_DELETE_FAIL": "删除操作失败.",
+        "TXT_MSG_ADD_ITEM": "您确定要新增这条数据吗?",
+        "TXT_MSG_ADD_SUCCESS": "新增操作成功",
+        "TXT_MSG_ADD_FAIL": "新增操作失败.",
         "TXT_MSG_NO_DATA_WITH_SAVE": "请确保必填项,以及列表中不为空",
         "TXT_MSG_NO_PLATFORM_CATEGORY": "没有取到任何平台类目... 尝试换一个平台试试 ?",
         "TXT_MSG_VALUE_SETTING_COMMENT": "值设定说明：",
@@ -424,12 +427,15 @@ define(function(){
         "TXT_IMAGE_COUNT":"图片数",
         "TXT_IMAGE_DETAIL":"图片详细",
         "TXT_IMAGE":"图片",
-        "TXT_ORIGIN_URL":"原始URL",
-        "TXT_PLATFORM_URL":"平台URL",
+        "TXT_ORIGIN_URL":"原始Url",
+        "TXT_PLATFORM_URL":"平台Url",
         "TXT_SEQUENCE":"顺序",
         "TXT_IMAGE_GROUP_ADD":"增加图片组保存",
         "TXT_COMMON_IMAGE_SET":"图片设定",
         "TXT_ORIGIN_IMAGE":"原始图片",
+        "TXT_MSG_DO_REFRESH_IMAGE": "您确定要刷图",
+        "TXT_MSG_REFRESH_IMAGE_SUCCESS": "刷图操作成功",
+        "TXT_MSG_REFRESH_IMAGE_FAIL": "刷图操作失败",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -488,7 +494,7 @@ define(function(){
         "BTN_REVERT_ALL": "还原所有",
         "BTN_START_INCREMENT_ALL": "启动增量所有",
         "BTN_SET_DEFAULT_VALUE": "设定默认项",
-
+        "BTN_RESET":"重置",
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
         "BEATING": "正在执行",
@@ -500,6 +506,22 @@ define(function(){
         "CANT_BEAT": "信息错误",
 
         /**分页显示*/
-        "TXT_PAGER_SIZE": "每页显示"
+        "TXT_PAGER_SIZE": "每页显示",
+        /**尺码表*/
+        "TXT_SIZE_CHART":"尺码表",
+        "TXT_SIZE_CHART_DETAIL":"尺码表明细",
+        "TXT_SIZE_CHART_NAME":"尺码表名称",
+        "TXT_SIZE_CHART_FINISH":"是否完成",
+        "TXT_SIZE_CHART_UPDATE_TIME":"更新时间",
+        "TXT_SIZE_CHART_BRAND_NAME":"品牌名称",
+        "TXT_SIZE_CHART_PRODUCT_TYPE":"品牌类别",
+        "TXT_SIZE_CHART_SIZE_TYPE":"适用型号",
+        "TXT_SIZE_CHART_ORIGINAL_SIZE":"原始型号",
+        "TXT_SIZE_CHART_ADJUST_SIZE":"平台型号",
+        "TXT_SIZE_CHART_COMMON_SIZE":"是否普通型号",
+        "TXT_SIZE_CHART_NOTICE":" 尺码表存在疑问请选择No，上新依然会使用这个尺码表",
+        "TXT_SIZE_CHART_NOTICE_REQUIED":"请输入尺码表名称",
+        "TXT_SIZE_CHART_NOTICE_REPEAT":"原始尺码不能重复",
+        "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空"
     };
 });

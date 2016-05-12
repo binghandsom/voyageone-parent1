@@ -82,10 +82,15 @@
                                 <!-- onoff switch -->
                             </div>
                         </div>
-                        <!--<div class="form-inline pull-right">
-                            <button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-                            <button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-                        </div>-->
+                        <div class="pull-right m-r-xs">
+                            <div class="form-inline text-center">
+                                <button type="submit" class="btn btn-default ng-binding" ng-click="ctrl.cancelProductDetail()"><i class="fa fa-remove"></i> 取消
+                                </button>
+                                <button type="submit" class="btn btn-vo ng-binding" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存
+                                </button>
+                            </div>
+                            <!-- .form-inline -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,7 +99,6 @@
 
     <div ng-if="ctrl.showInfoFlag">
         <uib-tabset class="tab-container vo_nav-tabs">
-
             <uib-tab>
                 <tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
                 <!-- Products table and controls -->
@@ -102,7 +106,7 @@
                     <div class="panel vo_panel tab_panel">
                         <div class="row wrapper">
                             <div class="container-fluid">
-                                <div class="col-sm-9">
+                                <div class="col-sm-8">
 
                                     <!--<ng-form ng-repeat="field in ctrl.productDetails.masterFields" name="subForm" novalidate>-->
                                     <!--<schema-header data="field" ng-if="field.isDisplay != 0">-->
@@ -132,7 +136,7 @@
                                                     <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                                         商品
                                                     </tab-heading>
-                                                    <div class="tab-content">
+                                                    <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
                                                         <div class="tab-pane ng-scope active">
                                                             <div class="vo_prodGallery">
                                                                 <div class="thumbnailWrapper">
@@ -156,7 +160,7 @@
                                                     <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                                         包装
                                                     </tab-heading>
-                                                    <div class="tab-content">
+                                                    <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
                                                         <div class="tab-pane ng-scope active">
                                                             <div class="vo_prodGallery">
                                                                 <div class="thumbnailWrapper">
@@ -180,7 +184,7 @@
                                                     <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                                         带角度
                                                     </tab-heading>
-                                                    <div class="tab-content">
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                                         <div class="tab-pane ng-scope active">
                                                             <div class="vo_prodGallery">
                                                                 <div class="thumbnailWrapper">
@@ -203,7 +207,7 @@
                                                     <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
                                                         自定义
                                                     </tab-heading>
-                                                    <div class="tab-content">
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                                         <div class="tab-pane ng-scope active">
                                                             <div class="vo_prodGallery">
                                                                 <div class="thumbnailWrapper">
@@ -224,27 +228,13 @@
                                                 </uib-tab>
                                             </uib-tabset>
                                             <!-- .vo_prodGallery -->
-
-                                            <div class="wrapper-sm">
-                                                <div class="form-inline text-center">
-                                                    <button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductDetail()"><i
-                                                            class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}
-                                                    </button>
-                                                    <button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i
-                                                            class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}
-                                                    </button>
-                                                </div>
-                                                <!-- .form-inline -->
-                                            </div>
                                             <!-- .wrapper -->
-                                            <div class="wrapper-sm m-t-xs">
+                                            <div class="wrapper-sm m-t-xs" style="margin-top: -10px;">
                                                 <h5 class="text-vo font-bold">SKU库存明细</h5>
                                                 <hr style="margin-top:0px;margin-bottom:10px"/>
-                                                <div ng-repeat="invObj in ctrl.inventoryList" class="column_overflow" style="height:80px">
-
-                                                    <div class="form-group">
-                                                        <label class="col-sm-6 control-label m-t-xs">{{invObj.skucode}}</label>
-
+                                                <div>
+                                                    <div class="form-group" ng-repeat="invObj in ctrl.inventoryList">
+                                                        <label class="col-sm-8 control-label text-left m-l-md">{{invObj.skucode}}</label>
                                                         <div class="col-sm-2 text-left">
                                                             <input type="text" class="form-control" ng-model="invObj.skyqty" disabled>
                                                         </div>
@@ -383,148 +373,6 @@
             </uib-tab>
 
         </uib-tabset>
-        <!-- tabset -->
-        <!--<div style="width:15%;position: fixed;right:1%;top:269px;">-->
-            <!--&lt;!&ndash; product detail panel starts here &ndash;&gt;-->
-            <!--<div class="col no-padder w-lg bg-light vo_prodDetailPanel">-->
-                <!--<div id="vo_fixProdPanel">-->
-                    <!--&lt;!&ndash; product photos &ndash;&gt;-->
-                    <!--<div class="vo_prodGallery">-->
-                        <!--<div class="imageContainer">-->
-                            <!--<div class="imageWrapper">-->
-                                <!--<img  class="imageWrapper" ng-src="{{!ctrl.currentImage ? 'http://image.sneakerhead.com/is/image/sneakerhead/'+ ctrl.productDetails.productImages.image1[0].image1 : ctrl.currentImage}}">-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<uib-tabset class="tab-container vo_nav-tabs">-->
-                        <!--<uib-tab>-->
-                            <!--<tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>-->
-                                <!--商品-->
-                            <!--</tab-heading>-->
-                            <!--<div class="tab-content">-->
-                                <!--<div class="tab-pane ng-scope active">-->
-                                    <!--<div class="vo_prodGallery">-->
-                                        <!--<div class="thumbnailWrapper">-->
-                                            <!--<div  ng-repeat="image in ctrl.productDetails.productImages.image1 | limitTo: 10"-->
-                                                  <!--class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"-->
-                                                  <!--ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image1"-->
-                                                  <!--ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">-->
-
-                                            <!--</div>-->
-                                            <!--<div  ng-repeat="image in ctrl.tempImage.image1 | limitTo: 10"-->
-                                                  <!--class="thumbnail">-->
-                                                <!--<img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">-->
-                                            <!--</div>-->
-                                            <!--<button ng-controller="popupCtrl" ng-click="ctrl.openImageSetting(ctrl.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</uib-tab>-->
-                        <!--<uib-tab>-->
-                            <!--<tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>-->
-                                <!--包装-->
-                            <!--</tab-heading>-->
-                            <!--<div class="tab-content">-->
-                                <!--<div class="tab-pane ng-scope active">-->
-                                    <!--<div class="vo_prodGallery">-->
-                                        <!--<div class="thumbnailWrapper">-->
-                                            <!--<div  ng-repeat="image in ctrl.productDetails.productImages.image2 | limitTo: 10"-->
-                                                  <!--class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image2}"-->
-                                                  <!--ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image2"-->
-                                                  <!--ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image2 + ')'}">-->
-
-                                            <!--</div>-->
-                                            <!--<div  ng-repeat="image in ctrl.tempImage.image2 | limitTo: 10"-->
-                                                  <!--class="thumbnail">-->
-                                                <!--<img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">-->
-                                            <!--</div>-->
-                                            <!--<button ng-controller="popupCtrl"  ng-click="ctrl.openImageSetting(ctrl.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</uib-tab>-->
-                        <!--<uib-tab>-->
-                            <!--<tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>-->
-                                <!--带角度-->
-                            <!--</tab-heading>-->
-                            <!--<div class="tab-content">-->
-                                <!--<div class="tab-pane ng-scope active">-->
-                                    <!--<div class="vo_prodGallery">-->
-                                        <!--<div class="thumbnailWrapper">-->
-                                            <!--<div  ng-repeat="image in ctrl.productDetails.productImages.image3 | limitTo: 10"-->
-                                                  <!--class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image3}"-->
-                                                  <!--ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image3"-->
-                                                  <!--ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image3 + ')'}">-->
-                                            <!--</div>-->
-                                            <!--<div  ng-repeat="image in ctrl.tempImage.image3 | limitTo: 10"-->
-                                                  <!--class="thumbnail">-->
-                                                <!--<img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">-->
-                                            <!--</div>-->
-                                            <!--<button ng-controller="popupCtrl"  ng-click="ctrl.openImageSetting(ctrl.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</uib-tab>-->
-                        <!--<uib-tab>-->
-                            <!--<tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>-->
-                                <!--自定义-->
-                            <!--</tab-heading>-->
-                            <!--<div class="tab-content">-->
-                                <!--<div class="tab-pane ng-scope active">-->
-                                    <!--<div class="vo_prodGallery">-->
-                                        <!--<div class="thumbnailWrapper">-->
-                                            <!--<div  ng-repeat="image in ctrl.productDetails.productImages.image4 | limitTo: 10"-->
-                                                  <!--class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image4}"-->
-                                                  <!--ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image4"-->
-                                                  <!--ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image4 + ')'}">-->
-                                            <!--</div>-->
-                                            <!--<div  ng-repeat="image in ctrl.tempImage.image4 | limitTo: 10"-->
-                                                  <!--class="thumbnail">-->
-                                                <!--<img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">-->
-                                            <!--</div>-->
-                                            <!--<button ng-controller="popupCtrl" ng-click="ctrl.openImageSetting(ctrl.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</uib-tab>-->
-                    <!--</uib-tabset>-->
-                    <!--&lt;!&ndash; .vo_prodGallery &ndash;&gt;-->
-
-                    <!--<div class="wrapper-sm">-->
-                        <!--<div class="form-inline text-center">-->
-                            <!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductDetail()"><i-->
-                                    <!--class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}-->
-                            <!--</button>-->
-                            <!--<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i-->
-                                    <!--class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}-->
-                            <!--</button>-->
-                        <!--</div>-->
-                        <!--&lt;!&ndash; .form-inline &ndash;&gt;-->
-                    <!--</div>-->
-                    <!--&lt;!&ndash; .wrapper &ndash;&gt;-->
-                    <!--<div class="wrapper-sm m-t-xs">-->
-                        <!--<h5 class="text-vo font-bold">SKU库存明细</h5>-->
-                        <!--<hr style="margin-top:0px;margin-bottom:10px"/>-->
-                        <!--<div ng-repeat="invObj in ctrl.inventoryList" class="column_overflow" style="height:80px">-->
-
-                            <!--<div class="form-group">-->
-                                <!--<label class="col-sm-7 control-label m-t-xs">{{invObj.skucode}}</label>-->
-
-                                <!--<div class="col-sm-5 text-left">-->
-                                    <!--<input type="text" class="form-control" ng-model="invObj.skyqty" disabled>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--&lt;!&ndash; #prodFixed &ndash;&gt;-->
-            <!--</div>-->
-            <!--&lt;!&ndash; no-padder &ndash;&gt;-->
-        <!--</div>-->
     </div>
     <!-- tabs ng-controller -->
 

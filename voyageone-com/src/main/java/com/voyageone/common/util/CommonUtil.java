@@ -97,13 +97,12 @@ public final class CommonUtil {
      * @return 所有异常信息的叠加
      */
     public static String getMessages(Throwable throwable) {
-
         StringBuilder builder = new StringBuilder();
-
-        while (throwable != null) {
-            builder.append(throwable.toString());
+        Throwable throwableTmp = throwable;
+        while (throwableTmp != null) {
+            builder.append(throwableTmp.toString());
             builder.append("\r\n");
-            throwable = throwable.getCause();
+            throwableTmp = throwableTmp.getCause();
         }
 
         return builder.toString();
@@ -275,7 +274,7 @@ public final class CommonUtil {
             Formatter formatter = new Formatter();
 
             for (int i = 0; i < mac.length; i++)
-                formatter.format("%s%X", (i > 0) ? ":" : "", (mac[i] & 0xFF));
+                formatter.format("%s%X", (i > 0) ? ":" : "", mac[i] & 0xFF);
 
             infoMap.put(MAC, formatter.toString());
 

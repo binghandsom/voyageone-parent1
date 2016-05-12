@@ -64,12 +64,13 @@ public class CmsImageGroupDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_CHANNEL_IMAGE_GROUP_DETAIL)
     public AjaxResponse save(@RequestBody Map<String, Object> param){
         param.put("channelId", this.getUser().getSelChannelId());
+        param.put("userName", this.getUser().getUserName());
         cmsImageGroupDetailService.save(param);
         return success(null);
     }
 
     /**
-     *  保存Image信息
+     *  保存Image信息（网络Url）
      *
      * @param param 客户端参数
      * @return 结果
@@ -77,12 +78,13 @@ public class CmsImageGroupDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
     public AjaxResponse saveImage(@RequestBody Map<String, Object> param){
         param.put("channelId", this.getUser().getSelChannelId());
+        param.put("userName", this.getUser().getUserName());
         cmsImageGroupDetailService.saveImage(param, null);
         return success(null);
     }
 
     /**
-     *  保存Image信息
+     *  保存Image信息（本地文件上传）
      *
      * @param param 客户端参数
      * @param file 导入文件
@@ -91,6 +93,7 @@ public class CmsImageGroupDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL)
     public AjaxResponse saveUploadImage(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         param.put("channelId", this.getUser().getSelChannelId());
+        param.put("userName", this.getUser().getUserName());
         cmsImageGroupDetailService.saveImage(param, file);
         return success(null);
     }
@@ -103,6 +106,7 @@ public class CmsImageGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.DELETE_CHANNEL_IMAGE_GROUP_DETAIL)
     public AjaxResponse delete(@RequestBody Map<String, Object> param){
+        param.put("userName", this.getUser().getUserName());
         cmsImageGroupDetailService.delete(param);
         return success(null);
     }
@@ -115,7 +119,8 @@ public class CmsImageGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.REFRESH_CHANNEL_IMAGE_GROUP_DETAIL)
     public AjaxResponse refresh(@RequestBody Map<String, Object> param){
-//        cmsImageGroupDetailService.refresh(param);
+        param.put("userName", this.getUser().getUserName());
+        cmsImageGroupDetailService.refresh(param);
         return success(null);
     }
 
@@ -127,7 +132,8 @@ public class CmsImageGroupDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP_DETAIL.MOVE_CHANNEL_IMAGE_GROUP_DETAIL)
     public AjaxResponse move(@RequestBody Map<String, Object> param){
-//        cmsImageGroupDetailService.refresh(param);
+        param.put("userName", this.getUser().getUserName());
+        cmsImageGroupDetailService.move(param);
         return success(null);
     }
 }

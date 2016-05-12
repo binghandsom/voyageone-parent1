@@ -5,6 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -35,9 +36,6 @@ public class CmsImageGroupService extends BaseAppService {
     @Autowired
     private ImageGroupService imageGroupService;
 
-    @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
-
     /**
      * 取得检索条件信息
      *
@@ -56,6 +54,8 @@ public class CmsImageGroupService extends BaseAppService {
         result.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, (String)param.get("channelId"), (String)param.get("lang")));
         // 尺寸类型下拉列表
         result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String)param.get("channelId"), (String)param.get("lang")));
+        // 图片类型
+        result.put("imageTypeList", Types.getTypeList(71, (String)param.get("lang")));
 
         return result;
     }
@@ -130,34 +130,17 @@ public class CmsImageGroupService extends BaseAppService {
     }
 
     /**
-     * 检索结果转换
+     * 检索结果编辑
      *
      * @param bean 检索结果（Bean）
      * @param channelId 渠道id
      * @param lang 语言
-     * @return 检索结果（Bean）
      */
     private void editImageGroupBean(CmsBtImageGroupBean bean, String channelId, String lang) {
-        if ("cn".equals(lang)) {
-            // ImageType
-            if (bean.getImageType() == 2) {
-                bean.setImageTypeName("尺码图");
-            } else if (bean.getImageType() == 3) {
-                bean.setImageTypeName("品牌故事图");
-            } else if (bean.getImageType() == 4) {
-                bean.setImageTypeName("物流介绍图");
-            }
 
-        } else {
-            // ImageType
-            if (bean.getImageType() == 2) {
-                bean.setImageTypeName("Size Chart Image");
-            } else if (bean.getImageType() == 3) {
-                bean.setImageTypeName("Brand Story Image");
-            } else if (bean.getImageType() == 4) {
-                bean.setImageTypeName("Shipping Description Image");
-            }
-        }
+        // ImageType
+        bean.setImageTypeName(Types.getTypeName(71, lang, String.valueOf(bean.getImageType())));
+
         // Platform
         TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, String.valueOf(bean.getCartId()), lang);
         if (typeChannelBean != null) {
@@ -214,13 +197,13 @@ public class CmsImageGroupService extends BaseAppService {
     }
 
     /**
-     * 新加ImageGroup信息
+     * 新建ImageGroup信息
      *
      * @param param 客户端参数
-     * @return 检索结果
      */
     public void save(Map<String, Object> param) {
         String channelId = (String)param.get("channelId");
+        String userName = (String)param.get("userName");
         String cartId = (String)param.get("platform");
         String imageGroupName = (String)param.get("imageGroupName");
         String imageType = (String)param.get("imageType");
@@ -235,7 +218,7 @@ public class CmsImageGroupService extends BaseAppService {
             throw new BusinessException("7000080");
         }
 
-        imageGroupService.save(channelId, cartId, imageGroupName, imageType, viewType,
+        imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
     }
 
@@ -243,11 +226,11 @@ public class CmsImageGroupService extends BaseAppService {
      * 逻辑删除ImageGroup信息
      *
      * @param param 客户端参数
-     * @return 检索结果
      */
     public void delete(Map<String, Object> param) {
+        String userName = (String)param.get("userName");
         String imageGroupId = String.valueOf(param.get("imageGroupId"));
-        imageGroupService.logicDelete(imageGroupId);
+        imageGroupService.logicDelete(imageGroupId, userName);
     }
 
 }

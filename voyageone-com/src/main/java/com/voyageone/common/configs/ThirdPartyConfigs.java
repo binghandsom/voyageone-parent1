@@ -79,8 +79,8 @@ public class ThirdPartyConfigs {
         return CacheHelper.getBeans(KEY,keyList, selfClass);
     }
 
-    public static HashMap<String, ThirdPartyConfigBean> getThirdPartyConfigMap(String channelId) {
-        HashMap<String, ThirdPartyConfigBean> thirdPartyConfigMap = new HashMap<>();
+    public static Map<String, ThirdPartyConfigBean> getThirdPartyConfigMap(String channelId) {
+        Map<String, ThirdPartyConfigBean> thirdPartyConfigMap = new HashMap<>();
         List<ThirdPartyConfigBean> configList = getConfigList(channelId);
         if (configList != null) {
             for (ThirdPartyConfigBean bean: configList) {

@@ -24,6 +24,8 @@
         <module>voyageone-components-intltarget</module>
         <module>voyageone-components-tmall</module>
         <module>voyageone-components-yimei</module>
+        <module>voyageone-components-liquifire</module>
+        <module>voyageone-components-uscdn</module>
         <module>voyageone-components-imagecreate</module>
         <module>voyageone-components-sftp_ftp</module>
     </modules>

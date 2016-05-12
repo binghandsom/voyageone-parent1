@@ -61,10 +61,8 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">{{'TXT_IMAGE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select class="form-control" ng-model="ctrl.imageType">
-                                            <option value="2" translate="TXT_SIZE_CHART_IMAGE" />
-                                            <option value="3" translate="TXT_BRAND_STORY_IMAGE" />
-                                            <option value="4" translate="TXT_SHIPPING_DESCRIPTION_IMAGE" />
+                                        <select class="form-control" ng-model="ctrl.imageType"
+                                                ng-options="imageType.value as imageType.name for imageType in ctrl.imageTypeList">
                                         </select>
                                     </div>
                                 </div>
@@ -112,16 +110,20 @@
                         <tbody>
                         <tr ng-repeat="image in ctrl.imageList">
                             <td class="mfb-xt text-center">{{$index+1}}</td>
-                            <td class="mfb-xxt text-center"><img class="img-circle" src="{{image.originUrl}}" ng-click="openImgGroupListImg()"></td>
+                            <td class="mfb-xxt text-center"><img class="img-circle" src="{{image.originUrl}}" ng-click="openImgGroupListImg(image.originUrl)"></td>
                             <td class="mfb-xxt text-left">{{image.originUrl}}</td>
-                            <td class="mfb-xxt text-left">{{image.platformUrl}}</td>
-                            <td class="mfb-xxt text-center"><i class="glyphicon glyphicon-arrow-up up" ng-click="ctrl.moveUp()"></i><i class="glyphicon glyphicon-arrow-down down" ng-click="ctrl.moveDown()"></i> </td>
-                            <td class="mfb-xxs text-center">{{image.statusName}}</td>
-                            <td class="mfb-xxt text-center">{{image.errorMsg}}</td>
+                            <td class="mfb-xxt text-left" ng-if="ctrl.cartId == '20' || ctrl.cartId == '21' || ctrl.cartId == '23' || ctrl.cartId == '27'">{{image.platformUrl}}</td>
+                            <td class="mfb-xxt text-center" ng-if="ctrl.cartId == '20' || ctrl.cartId == '21' || ctrl.cartId == '23' || ctrl.cartId == '27'"><i class="glyphicon glyphicon-arrow-up up" ng-click="ctrl.moveUp(image.originUrl)"></i><i class="glyphicon glyphicon-arrow-down down" ng-click="ctrl.moveDown(image.originUrl)"></i> </td>
+                            <td class="mfb-xxs text-center" ng-if="ctrl.cartId == '20' || ctrl.cartId == '21' || ctrl.cartId == '23' || ctrl.cartId == '27'">{{image.statusName}}</td>
+                            <td class="mfb-xxt text-center" ng-if="ctrl.cartId == '20' || ctrl.cartId == '21' || ctrl.cartId == '23' || ctrl.cartId == '27'">{{image.errorMsg}}</td>
+                            <td class="mfb-xxt text-left" ng-if="ctrl.cartId != '20' && ctrl.cartId != '21' && ctrl.cartId != '23' && ctrl.cartId != '27'"></td>
+                            <td class="mfb-xxt text-center" ng-if="ctrl.cartId != '20' && ctrl.cartId != '21' && ctrl.cartId != '23' && ctrl.cartId != '27'"></td>
+                            <td class="mfb-xxs text-center" ng-if="ctrl.cartId != '20' && ctrl.cartId != '21' && ctrl.cartId != '23' && ctrl.cartId != '27'"></td>
+                            <td class="mfb-xxt text-center" ng-if="ctrl.cartId != '20' && ctrl.cartId != '21' && ctrl.cartId != '23' && ctrl.cartId != '27'"></td>
                             <td class="mfb-xxt text-center">
-                                <button title="{{'BTN_REFRESH' | translate}}" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></button>
-                                <button title="{{'BTN_EDIT' | translate}}" class="btn btn-info btn-xs"><i class="fa fa-cog"></i></button>
-                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+                                <button title="{{'BTN_REFRESH' | translate}}" class="btn btn-primary btn-xs" ng-click="ctrl.refresh(image.originUrl)" ng-if="ctrl.cartId == '20' || ctrl.cartId == '21' || ctrl.cartId == '23'|| ctrl.cartId == '27'"><i class="fa fa-refresh"></i></button>
+                                <button title="{{'BTN_EDIT' | translate}}" class="btn btn-info btn-xs" ng-click="openImgGroupDetail(ctrl,image.originUrl)"><i class="fa fa-cog"></i></button>
+                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(image.originUrl)"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
                         </tbody>

@@ -21,11 +21,9 @@
                                         <label class="col-sm-3 control-label">{{'TXT_IMAGE_TYPE' | translate}}</label>
 
                                         <div class="col-sm-6">
-                                            <select class="form-control" ng-model="ctrl.imageType">
+                                            <select class="form-control" ng-model="ctrl.imageType"
+                                                    ng-options="imageType.value as imageType.name for imageType in ctrl.imageTypeList">
                                                 <option value="" translate="TXT_SELECT_NO_VALUE" />
-                                                <option value="2" translate="TXT_SIZE_CHART_IMAGE" />
-                                                <option value="3" translate="TXT_BRAND_STORY_IMAGE" />
-                                                <option value="4" translate="TXT_SHIPPING_DESCRIPTION_IMAGE" />
                                             </select>
                                         </div>
                                     </div>
