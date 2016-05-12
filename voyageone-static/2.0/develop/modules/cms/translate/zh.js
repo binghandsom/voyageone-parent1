@@ -327,6 +327,7 @@ define(function(){
         "TXT_SIZE_CHART_IMAGE": "尺码图",
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
+        "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
 
 
         "TXT_CHANNEL_ID": "渠道ID",
