@@ -37,6 +37,8 @@ public class CmsImageGroupDetailService extends BaseAppService {
 
     private final String URL_PREFIX = "http://image.voyageone.com.cn/cms";
 
+    private final int FILE_LIMIT_SIZE = 3145728;
+
     @Autowired
     private ImageGroupService imageGroupService;
 
@@ -114,8 +116,19 @@ public class CmsImageGroupDetailService extends BaseAppService {
         // 必须输入check
         if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
                 || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
+            // 请输入必填项目
             throw new BusinessException("7000080");
         }
+
+        // 如果存在图片那么平台不能变更
+        CmsBtImageGroupModel model = imageGroupService.getImageGroupModel(imageGroupId);
+        if (model != null && model.getImage() != null
+                && model.getImage().size() > 0
+                && model.getCartId() == Integer.parseInt(cartId)) {
+            // 图片已经存在，不能修改平台
+            throw new BusinessException("7000088");
+        }
+
         imageGroupService.update(userName,imageGroupId, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
     }
@@ -144,7 +157,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
         // 网络上传的场合
         if (file == null) {
             // 指定URL开头的场合，不进行FTP上传
-            if (originUrl.indexOf(URL_PREFIX) == 0) {
+            if (originUrl.startsWith(URL_PREFIX)) {
                 uploadFlg =false;
             }
         }
@@ -191,8 +204,8 @@ public class CmsImageGroupDetailService extends BaseAppService {
      */
     private String doSaveImageCheck(String imageGroupId, String originUrl, MultipartFile file) {
 
-        // ImageIO 支持的图片类型 : [BMP, bmp, jpg, JPG, wbmp, jpeg, png, PNG, JPEG, WBMP, GIF, gif]
-        String types = Arrays.toString(ImageIO.getReaderFormatNames());
+        // 支持的图片类型 : [jpg,png]
+        String types = "jpg,png";
         // 文件名
         String fileName = "";
         InputStream inputStream = null;
@@ -200,27 +213,35 @@ public class CmsImageGroupDetailService extends BaseAppService {
         if (file == null) {
             // 必须输入
             if (StringUtils.isEmpty(originUrl)) {
+                // 请输入必填项目
                 throw new BusinessException("7000080");
             }
             // Group里存在check
-            CmsBtImageGroupModel model = imageGroupService.getImageGroupModel(imageGroupId);
-            if (model != null) {
-                if (model.getImage() != null) {
-                    for (CmsBtImageGroupModel_Image image : model.getImage()) {
-                        if (originUrl.equals(image.getOriginUrl())) {
-                            throw new BusinessException("7000082");
+            if (originUrl.startsWith(URL_PREFIX)) {
+                CmsBtImageGroupModel model = imageGroupService.getImageGroupModel(imageGroupId);
+                if (model != null) {
+                    if (model.getImage() != null) {
+                        for (CmsBtImageGroupModel_Image image : model.getImage()) {
+                            if (originUrl.equals(image.getOriginUrl())) {
+                                // 原始Url已经存在于这个图片组中
+                                throw new BusinessException("7000082");
+                            }
                         }
                     }
                 }
             }
-
             try {
                 // 网络文件的场合
                 URL url = new URL(originUrl);
                 HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
-                httpUrl.connect();
-                inputStream = new BufferedInputStream(httpUrl.getInputStream());
+                httpUrl.connect();                inputStream = new BufferedInputStream(httpUrl.getInputStream());
+
+                if (httpUrl.getContentLength() >= FILE_LIMIT_SIZE) {
+                    // 图片大小不能超过3M
+                    throw new BusinessException("7000087");
+                }
             } catch (Exception e) {
+                // 输入的原始Url非法
                 throw new BusinessException("7000083");
             }
             if(originUrl.lastIndexOf("/") > -1) {
@@ -228,6 +249,10 @@ public class CmsImageGroupDetailService extends BaseAppService {
             }
         } else {
             // 本地上传的场合
+            if (file.getSize() >= FILE_LIMIT_SIZE)  {
+                // 图片大小不能超过3M
+                throw new BusinessException("7000087");
+            }
             fileName = file.getOriginalFilename();
             try {
                 inputStream = file.getInputStream();
