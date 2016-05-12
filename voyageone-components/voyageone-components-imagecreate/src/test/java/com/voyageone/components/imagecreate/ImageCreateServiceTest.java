@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +39,39 @@ public class ImageCreateServiceTest {
         request.setChannelId("001");
         request.setTemplateId(15);
         request.setFile("testaacc-111");
-        request.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
+        request.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/voyageone_image/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
         ImageCreateGetResponse response = imageCreateService.getImage(request);
         System.out.println(JacksonUtil.bean2Json(response));
+    }
+
+    @Test
+    public void testGetImageWithOutputStream() throws Exception {
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId("001");
+        request.setTemplateId(15);
+        request.setFile("testaacc-111");
+        // 同时加载图片stream
+        request.setFillStream(true);
+        request.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/voyageone_image/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
+        ImageCreateGetResponse response = imageCreateService.getImage(request);
+        System.out.println(JacksonUtil.bean2Json(response));
+
+        InputStream is = response.getImageInputStream();
+        File file = new File("d:/testaacc-111.jpg");
+        if (file.exists()) {
+            file.delete();
+        }
+        FileOutputStream os = new FileOutputStream(file);
+
+        int len;
+        // 1K的数据缓冲
+        byte[] bs = new byte[1024];
+        // 开始读取
+        while ((len = is.read(bs)) != -1) {
+            os.write(bs, 0, len);
+        }
+        is.close();
+        os.close();
     }
 
 
@@ -50,14 +83,14 @@ public class ImageCreateServiceTest {
         createImageParameter.setChannelId("001");
         createImageParameter.setTemplateId(15);
         createImageParameter.setFile("testbbb-112");
-        createImageParameter.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
+        createImageParameter.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
         datas.add(createImageParameter);
 
         createImageParameter = new CreateImageParameter();
         createImageParameter.setChannelId("001");
         createImageParameter.setTemplateId(15);
         createImageParameter.setFile("testbbb-113");
-        createImageParameter.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
+        createImageParameter.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
         datas.add(createImageParameter);
 
 
