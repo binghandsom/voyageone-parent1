@@ -342,7 +342,9 @@ public class CmsImageTemplateService extends BaseService {
     }
 
     public String[] getTemplateParameter(String templateContent) {
-        String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";//待加入配置项
+      //  String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";//待加入配置项
+        //String prefix="http://mce042-fs.nexcess.net:81/voyageone_image";
+        String prefix="http://";
         String[] strList = templateContent.split("%s");
         String[] paramList = new String[strList.length - 1];
         for (int i = 0; i < strList.length - 1; i++) {
@@ -355,6 +357,6 @@ public class CmsImageTemplateService extends BaseService {
         return paramList;
     }
     public String getDownloadUrl(GetDownloadUrlParamter paramter) throws Exception {
-        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), paramter.getTemplateParameter());
+        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), JacksonUtil.bean2Json(paramter.getTemplateParameter()));
     }
 }

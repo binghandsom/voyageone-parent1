@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.cms.imagetemplate;
 
+import java.util.List;
+
 /**
  * Created by dell on 2016/5/12.
  */
@@ -10,13 +12,14 @@ public class GetDownloadUrlParamter {
     public void setTemplateContent(String templateContent) {
         this.templateContent = templateContent;
     }
-    public String getTemplateParameter() {
+    String templateContent;
+    List<String> templateParameter;
+
+    public List<String> getTemplateParameter() {
         return templateParameter;
     }
-    public void setTemplateParameter(String templateParameter) {
+
+    public void setTemplateParameter(List<String> templateParameter) {
         this.templateParameter = templateParameter;
     }
-
-    String templateContent;
-    String templateParameter;
 }
