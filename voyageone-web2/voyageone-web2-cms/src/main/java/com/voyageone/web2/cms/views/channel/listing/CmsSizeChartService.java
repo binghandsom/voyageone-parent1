@@ -70,27 +70,17 @@ public class CmsSizeChartService extends BaseAppService {
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        //当前页数
+        int curr = (int) param.get("curr");
+        //每页显示显示记录
+        int size = (int) param.get("size");
         //按照填写的条件去数据库检索记录
         List<CmsBtSizeChartModel> sizeChartList=sizeChartService.getSizeChartSearch(channelId
-                ,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList);
-        int staIdx;
-        if((int)param.get("curr") ==1){
-            staIdx = 0 ;
-        }else{
-            staIdx = ((int)param.get("curr") - 1)* (int)param.get("size");
-        }
-        //每页多少条记录
-        int endIdx = staIdx + (int)param.get("size");
-        //检索的总共记录
-        int sizeChartListTotal = sizeChartList.size();
-        if (endIdx > sizeChartListTotal) {
-            endIdx = sizeChartListTotal;
-        }
-        List<CmsBtSizeChartModel> pageSizeChartList = sizeChartList.subList(staIdx, endIdx);
+                ,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList,curr,size);
         //尺码关系一览检索
-        param.put("sizeChartList", changeToBeanList(pageSizeChartList, channelId, lang));
-
-        param.put("total",sizeChartList.size());
+        param.put("sizeChartList", changeToBeanList(sizeChartList, channelId, lang));
+        //取得总件数
+        param.put("total",sizeChartService.getCount(channelId,sizeChartName,finishFlag,startTime,endTime,brandNameList,productTypeList,sizeTypeList));
         //返回数据的类型
         return param;
     }
