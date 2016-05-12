@@ -5,6 +5,7 @@
      * @Version: 0.2.0
      */
     angular.module("voyageone.angular.services.cookie", []).service("cookieService", CookieService);
+
     var keys = {
         language: "voyageone.user.language",
         company: "voyageone.user.company",
@@ -23,6 +24,16 @@
         };
     }
 
+    /**
+     * cookie 模型, 用来包装传入的数据
+     * @param key
+     * @param value
+     */
+    function Cookie(key, value) {
+        this.key = key;
+        this.value = value;
+    }
+
     function CookieService($cookies) {
         this.$cookies = $cookies;
     }
@@ -31,11 +42,21 @@
         var result = this.$cookies.get(key);
         if (result === undefined || result === null)
             return '';
-        return JSON.parse(result);
+
+        // 为了兼容老数据
+        // 不是以 { 起始的认为不是 json, 直接返回
+        if (result.indexOf('{') !== 0)
+            return result;
+
+        // 否则转换输出
+        var item = JSON.parse(result);
+        return item.value;
     };
 
     CookieService.prototype.set = function (key, value) {
-        return this.$cookies.put(key, angular.toJson(value));
+        // 统一使用 Cookie 类包装后存储
+        var item = new Cookie(key, value);
+        return this.$cookies.put(key, angular.toJson(item));
     };
 
     CookieService.prototype.removeAll = function () {
