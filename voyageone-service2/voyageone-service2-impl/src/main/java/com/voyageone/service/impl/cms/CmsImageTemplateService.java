@@ -10,6 +10,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
@@ -281,7 +282,8 @@ public class CmsImageTemplateService extends BaseService {
      * @param model 客户端参数
      * @return 检索结果
      */
-    public void save(CmsBtImageTemplateModel model, String userName) {
+    public CallResult save(CmsBtImageTemplateModel model, String userName) {
+        CallResult result = new CallResult();
         //设置默认值
         if (isNull(model.getBrandName())) {
             List lst = new ArrayList<String>();
@@ -314,8 +316,16 @@ public class CmsImageTemplateService extends BaseService {
             model.setTemplateModified(DateTimeUtil.getNow());
             model.setModifier(userName);
             model.setCreated(DateTimeUtil.getNow());
-            dao.insert(model);
+            long count = dao.countByQuery("{\"imageTemplateName\":\"" + model.getImageTemplateName() + "\"}");
+            if (count > 0) {
+                result.setMsg(model.getImageTemplateName() + "已经存在");
+                result.setResult(false);
+            }
+            else {
+                dao.insert(model);
+            }
         }
+        return result;
     }
 
     /**
