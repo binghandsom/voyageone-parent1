@@ -19,7 +19,7 @@ import java.util.Map;
  * @version 2.0.0, 16/01/26
  */
 @Service
-public class CmsErrorListService extends BaseAppService{
+class CmsErrorListService extends BaseAppService {
 
     @Autowired
     protected ChannelCategoryService cmsBtChannelCategoryService;
@@ -29,10 +29,11 @@ public class CmsErrorListService extends BaseAppService{
 
     /**
      * 获取检索页面初始化的master data数据
+     *
      * @param userInfo UserSessionBean
      * @return Map
      */
-    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException{
+    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException {
 
         Map<String, Object> masterData = new HashMap<>();
 
@@ -50,11 +51,11 @@ public class CmsErrorListService extends BaseAppService{
 
     /**
      * 检索错误信息
-     * @param params Map
-     * @param userInfo UserSessionBean
-     * @return Map
+     *
+     * @param params 搜索参数
+     * @return 包含错误信息的 Map, 使用了 key: [ errorList, errorCnt ]
      */
-    public Map<String, Object> search(Map params, UserSessionBean userInfo) {
+    public Map<String, Object> search(Map params) {
         Map<String, Object> resultBean = new HashMap<>();
         resultBean.put("errorList", businessLogService.getList(params));
         resultBean.put("errorCnt", businessLogService.getCount(params));
@@ -63,10 +64,11 @@ public class CmsErrorListService extends BaseAppService{
 
     /**
      * 更新error错误状态
+     *
      * @param params Map
      * @return int
      */
-    public Map<String, Object> updateStatus(Map params, UserSessionBean userInfo) {
+    Map<String, Object> updateStatus(Map params, UserSessionBean userInfo) {
         Map<String, Object> request = new HashMap<>();
         request.put("seq", Integer.parseInt(params.get("seq").toString()));
         request.put("modifier", userInfo.getUserName());
