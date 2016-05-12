@@ -307,7 +307,7 @@ define(function() {
         "TXT_DATA_TYPE": "Data Type",
         "TXT_SPECIAL_DESCRIPTION": "Special Description",
         "TXT_BRAND_STORY": "Brand Story Image",
-        "TXT_SIZE_CHART": "Size Chart",
+        "TXT_SIZE_CHART": "SizChart",
         "TXT_SHIPPING_DESCRIPTION": "Shipping Description",
         "TXT_INDEX": "Index",
         "TXT_ORIGIN_IMAGE_URL": "Original Image Url",
@@ -499,7 +499,7 @@ define(function() {
         "BTN_GET_TASK": "Get Tasks",
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
-        "BTN_RESET":"reset",
+        "BTN_RESET":"Reset",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
@@ -519,8 +519,9 @@ define(function() {
         /**分页显示*/
         "TXT_PAGER_SIZE": "page-size",
         /**尺码表*/
-        "TXT_SIZE_CHART":"SizeChart",
-        "TXT_SIZE_CHART_DETAIL":"Sizechartdetail",
+        "TXT_SIZE_CHART":"Size Chart List",
+        "TXT_SIZE_CHART_DETAIL":"Size Chart Detail",
+        "TXT_SIZE_CHART_IMPORT":"Size Chart Import",
         "TXT_SIZE_CHART_NAME":"Size Chart Name",
         "TXT_SIZE_CHART_FINISH":"Finish",
         "TXT_SIZE_CHART_UPDATE_TIME":"Update Time",
@@ -533,9 +534,8 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE":"Please select No if Size chart is in doubt,renewwill still use this size chart",
         "TXT_SIZE_CHART_NOTICE_REQUIED":"Please input sizeChart name",
         "TXT_SIZE_CHART_NOTICE_REPEAT":"originalSize can't repeat",
-        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null",
+        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size is required",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
-        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
-        "TXT_SIZE_CHART_NOTICE_COMPETE":"Please input to compete"
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character"
     };
 });
