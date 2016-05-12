@@ -83,10 +83,7 @@ public class LiquidFireClient {
     //获取下载地址
     public String getDownloadUrl(String param, String fileName) throws UnsupportedEncodingException {
         logger.debug(fileName + ":  " + this.getUrl() + "?" + param);
-        String paramTmp = param;
-        paramTmp = paramTmp.replace("\r\n", "");
-        paramTmp = paramTmp.replace("\n", "");
-        String urlParameter = java.net.URLEncoder.encode(paramTmp, "UTF-8");
+        String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
         logger.debug(fileName + "encode:  " + this.getUrl() + "?" + urlParameter);
         return this.getUrl() + "?" + urlParameter;
     }
