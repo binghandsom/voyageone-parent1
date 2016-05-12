@@ -11,6 +11,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.service.FtpService;
@@ -143,10 +144,15 @@ public class ImagePostScene7Service {
 								fileName = fileName.substring(0, qIndex);
 							}
 
-							boolean result = ftpService.storeFile(S7FTP_CONFIG,
-									ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder),
+							boolean result = ftpService.storeFile(
+									Codes.getCodeName(S7FTP_CONFIG, "Url"),
+									Codes.getCodeName(S7FTP_CONFIG, "Port"),
+									Codes.getCodeName(S7FTP_CONFIG, "UserName"),
+									Codes.getCodeName(S7FTP_CONFIG, "Password"),
 									fileName,
+									ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder),
 									inputStream,
+									Codes.getCodeName(S7FTP_CONFIG, "FileCoding"),
 									120000);
 
 							if (result) {
