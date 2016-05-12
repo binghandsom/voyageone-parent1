@@ -6,9 +6,9 @@
             resultType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel"
             parameterType="com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel">
         select
-        cart_id,
-        cat_id,
-        field_id,
+        cart_id as cartId,
+        cat_id as catId,
+        field_id as fieldId,
         type,
         created,
         creater,
