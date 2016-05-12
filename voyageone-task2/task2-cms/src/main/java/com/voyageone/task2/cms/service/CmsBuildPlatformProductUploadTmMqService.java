@@ -7,10 +7,16 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformMappingService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -23,6 +29,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -49,6 +56,16 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
     private SxProductService sxProductService;
     @Autowired
     private TbProductService tbProductService;
+    @Autowired
+    PlatformMappingService platformMappingService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
+    @Autowired
+    private CmsBuildPlatformProductUploadTmProductService uploadTmProductService;
+    @Autowired
+    private CmsBuildPlatformProductUploadTmItemService uploadTmItemService;
+    @Autowired
+    private ProductGroupService productGroupService;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -139,7 +156,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         // 平台id
         int cartId = Integer.parseInt(shopProp.getCart_id());
         // 产品id
-        String productId = "";
+        String platformProductId = "";
+        // 表达式解析子
+        ExpressionParser expressionParser = null;
 
         // 天猫产品上新处理
         // 先看一下productGroup表和调用天猫API去平台上取看是否有platformPid,两个地方都没有才需要上传产品，
@@ -160,32 +179,102 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> productList = sxData.getProductList();
             List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+            // 主产品取得结果判断
+            if (mainProduct == null) {
+                String errMsg = String.format("取得主商品信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+
+            // 属性值准备
+            // 取得主产品类目对应的platform mapping数据
+            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(shopProp.getOrder_channel_id(),
+                    Integer.parseInt(shopProp.getCart_id()), mainProduct.getCatId());
+            if (cmsMtPlatformMappingModel == null) {
+                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
+                        channelId, cartId, mainProduct.getCatId());
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+
+            // 取得主产品类目对应的平台类目
+            String platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
+            // 取得平台类目schema信息
+            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
+            if (cmsMtPlatformCategorySchemaModel == null) {
+                String errMsg = String.format("获取平台类目schema信息失败！[PlatformCategoryId:%s] [CartId:%s]", platformCategoryId, cartId);
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+
+            // 表达式解析子
+            expressionParser = new ExpressionParser(sxProductService, sxData);
+            // 平台产品id(MongoDB的)
+            platformProductId = sxData.getPlatform().getPlatformPid();
 
             // 天猫平台产品上新处理（产品上新成功之后，再做每个商品的上新处理）
             // 先看一下productGroup表和调用天猫API去平台上取看是否有platformPid,两个地方都没有才需要上传产品，
-            // 只有有一个地方有就认为产品已存在，不用新增和更新产品
-            if (StringUtils.isEmpty(sxData.getPlatform().getPlatformPid())) {
-                // productGroup表中platformPid为空的时候，调用天猫API查找产品platformPid
-                // 获取匹配产品规则
-//                tbProductService.getProductMatchSchema();
-            }
+            // 只要有一个地方有就认为产品已存在，不用新增和更新产品
+            // 另外，天猫平台产品只有新增，不能更新（如果需要更新具体商品的产品信息，可以在商品页面手动更新）
+            if (StringUtils.isEmpty(platformProductId)) {
+                // productGroup表中platformPid不存在的时候
 
+                // 匹配平台产品Id列表
+                List<String> platformProductIdList = new ArrayList<>();
+                // productGroup表中platformPid为空的时候，调用天猫API查找产品platformPid
+                platformProductIdList = uploadTmProductService.getProductIdFromTmall(expressionParser, cmsMtPlatformCategorySchemaModel,
+                        cmsMtPlatformMappingModel, shopProp, UserId_ClassName);
+
+                // 取得可以上传商品的平台产品id
+                // 如果发现已有产品符合我们要上传的商品，但需要等待天猫审核该产品,则抛出异常，不做后续上传产品/商品处理)
+                platformProductId = uploadTmProductService.getUsefulProductId(platformProductIdList, shopProp);
+
+                // productGroup表和天猫平台上都不存在这个产品时，新增产品
+                if (StringUtils.isEmpty(platformProductId)) {
+                    // 新增产品到平台
+                    platformProductId = uploadTmProductService.uploadProduct(expressionParser, cmsMtPlatformCategorySchemaModel,
+                            cmsMtPlatformMappingModel, shopProp, UserId_ClassName);
+                }
+
+                // 以前productGroup表中没有，从天猫平台上找到匹配的productId 或者 向平台新增成功之后，回写SxData和ProductGroup表platformPid
+                if (!StringUtils.isEmpty(platformProductId)) {
+                    // 回写SxData和ProductGroup表中的platformPid
+                    updateProductGroupProductPId(sxData, platformProductId);
+                }
+            }
 
         } catch (Exception ex) {
             // 回写workload表   (失败2)
             // 正常结束
-//            $error(String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-//                    channelId, cartId, groupId, jdWareId));
+            $error(String.format("天猫平台产品匹配或上传产品失败！[ChannelId:%s] [CartId:%s] [GroupId:%s]",
+                    channelId, cartId, groupId));
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
             throw ex;
         }
 
-        // 天猫产品上新处理
-
+        // 天猫商品上新处理
+        // TODO
 
         // 正常结束
 //        $info(String.format("京东单个商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
 //                channelId, cartId, groupId, jdWareId));
+    }
+
+
+    /**
+     * 回写产品Group表里的平台产品id
+     *
+     * @param sxData SxData 上新数据
+     * @param platformProductId String 平台产品id
+     */
+    private void updateProductGroupProductPId(SxData sxData, String platformProductId) {
+
+        // 回写平台产品id(platformProductId->platformPid)
+        sxData.getPlatform().setPlatformPid(platformProductId);
+        // 更新者
+        sxData.getPlatform().setModifier(UserId_ClassName);
+        // 更新ProductGroup表
+        productGroupService.update(sxData.getPlatform());
     }
 
 }

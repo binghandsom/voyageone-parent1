@@ -10,7 +10,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
@@ -276,6 +275,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         } catch (Exception e) {
             String errMsg = e.getMessage();
             if (errMsg.indexOf("调用聚美API错误")  > -1 ) {
+                // 去除错误信息里面的提交URL，否则图片的话实在太长了
                 if (errMsg.indexOf(shopBean.getApp_url()) > -1) {
                     errMsg = errMsg.substring(0, errMsg.lastIndexOf(shopBean.getApp_url()));
                 } else if (errMsg.lastIndexOf("}") > -1) {
