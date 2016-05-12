@@ -204,6 +204,13 @@ define([
                 $scope.vm.curMCatPath = $scope.vm.mCatList[catLvl][$index].catPath;
                 $scope.vm.selMIdxList[catLvl] = $index;
                 if ($scope.vm.mCatList[catLvl][$index].isParent == 0) {
+                    for (var i = 1; i < 5; i ++) {
+                        if (catLvl + i < 5) {
+                            $scope.vm.mCatListOrg[catLvl + i] = [];
+                            $scope.vm.mCatList[catLvl + i] = [];
+                            $scope.vm.searchMKeys[catLvl + i] = '';
+                        }
+                    }
                     return;
                 }
 
@@ -218,20 +225,12 @@ define([
                         $scope.vm.mCatList[catLvl + 1] = res.data.catList;
                         $scope.vm.searchMKeys[catLvl + 1] = '';
 
-                        if (catLvl + 2 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 2] = [];
-                            $scope.vm.mCatList[catLvl + 2] = [];
-                            $scope.vm.searchMKeys[catLvl + 2] = '';
-                        }
-                        if (catLvl + 3 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 3] = [];
-                            $scope.vm.mCatList[catLvl + 3] = [];
-                            $scope.vm.searchMKeys[catLvl + 3] = '';
-                        }
-                        if (catLvl + 4 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 4] = [];
-                            $scope.vm.mCatList[catLvl + 4] = [];
-                            $scope.vm.searchMKeys[catLvl + 4] = '';
+                        for (var i = 2; i < 5; i ++) {
+                            if (catLvl + i < 5) {
+                                $scope.vm.mCatListOrg[catLvl + i] = [];
+                                $scope.vm.mCatList[catLvl + i] = [];
+                                $scope.vm.searchMKeys[catLvl + i] = '';
+                            }
                         }
                     })
             } else {
@@ -241,6 +240,13 @@ define([
                 $scope.vm.curPCatPath = $scope.vm.pCatList[catLvl][$index].catPath;
                 $scope.vm.selPIdxList[catLvl] = $index;
                 if ($scope.vm.pCatList[catLvl][$index].isParent == 0) {
+                    for (var i = 1; i < 5; i ++) {
+                        if (catLvl + i < 5) {
+                            $scope.vm.pCatListOrg[catLvl + i] = [];
+                            $scope.vm.pCatList[catLvl + i] = [];
+                            $scope.vm.searchPKeys[catLvl + i] = '';
+                        }
+                    }
                     return;
                 }
 
@@ -256,20 +262,12 @@ define([
                         $scope.vm.pCatList[catLvl + 1] = res.data.catList;
                         $scope.vm.searchPKeys[catLvl + 1] = '';
 
-                        if (catLvl + 2 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 2] = [];
-                            $scope.vm.pCatList[catLvl + 2] = [];
-                            $scope.vm.searchPKeys[catLvl + 2] = '';
-                        }
-                        if (catLvl + 3 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 3] = [];
-                            $scope.vm.pCatList[catLvl + 3] = [];
-                            $scope.vm.searchPKeys[catLvl + 3] = '';
-                        }
-                        if (catLvl + 4 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 4] = [];
-                            $scope.vm.pCatList[catLvl + 4] = [];
-                            $scope.vm.searchPKeys[catLvl + 4] = '';
+                        for (var i = 2; i < 5; i ++) {
+                            if (catLvl + i < 5) {
+                                $scope.vm.pCatListOrg[catLvl + i] = [];
+                                $scope.vm.pCatList[catLvl + i] = [];
+                                $scope.vm.searchPKeys[catLvl + i] = '';
+                            }
                         }
                     })
             }
