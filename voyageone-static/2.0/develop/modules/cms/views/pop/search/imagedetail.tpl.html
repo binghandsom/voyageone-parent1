@@ -1,12 +1,12 @@
-<div class="vo_modal" ng-init="initialize()" style="height: 512px;">
+<div class="vo_modal" ng-init="initialize()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
         <h5 class="modal-title"> Product Photo</h5>
     </div>
-    <div class="col-sm-12">
-        <div class="col-sm-8 col-sm-offset-3 m-l-xxl m-t-md no-padder w-xxl bg-light vo_prodDetailPanel">
+    <div class="modal-body wrapper">
+        <div class="bg-light vo_prodDetailPanel">
             <div id="vo_fixProdPanel">
                 <!-- product photos -->
                 <div class="vo_prodGallery">
@@ -17,7 +17,7 @@
                 <uib-tabset class="tab-container vo_nav-tabs">
                     <uib-tab>
                         <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>商品</tab-heading>
-                        <div class="tab-content">
+                        <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
@@ -31,7 +31,7 @@
                     </uib-tab>
                     <uib-tab>
                         <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>包装</tab-heading>
-                        <div class="tab-content">
+                        <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
@@ -45,7 +45,7 @@
                     </uib-tab>
                     <uib-tab>
                         <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>带角度</tab-heading>
-                        <div class="tab-content">
+                        <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
@@ -58,8 +58,22 @@
                         </div>
                     </uib-tab>
                     <uib-tab>
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>自定义</tab-heading>
-                        <div class="tab-content">
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>PC端自定义</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[3] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                             ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab>
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>APP端自定义</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
@@ -73,14 +87,10 @@
                     </uib-tab>
                 </uib-tabset>
             </div>
-            <!-- #prodFixed -->
-
-            <div class="wrapper-sm">
-                <div class="form-inline text-center" ng-controller="popupCtrl">
-                    <!--<button class="btn btn-danger " ng-click="openImport('md',vm.promotionId,search)"><i class="fa fa-download"></i>&nbsp;下载</button>&nbsp;-->
-                    <button type="submit" title="关闭" class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp; 关闭</button>
-                </div>
-            </div>
         </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp; 关闭</button>
     </div>
 </div><!-- .vo_modal -->

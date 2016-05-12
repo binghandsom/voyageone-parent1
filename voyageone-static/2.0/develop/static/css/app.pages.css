@@ -1,0 +1,45 @@
+.category_drag_list_qh {
+    /*float:left;*/
+    margin: 0px;
+    padding: 4px 4px 0px 4px;
+    height: 300px;
+    overflow-y: auto;
+    overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    color: #3366cc;
+}
+
+.category_drag_list_qh ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+.category_drag_list_qh li a:link {
+    float: left;
+    width: 100%;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 9px;
+}
+
+.category_drag_list_qh li .indexSelected {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 2px;
+    background: #dcf3f9;
+    color: #333
+}
+
+.category_drag_list_qh li a:hover {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 9px;
+    background: #dcf3f9;
+    color: #333
+}

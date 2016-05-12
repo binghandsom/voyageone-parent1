@@ -1,0 +1,5 @@
+schema-item .ng-invalid input,
+schema-item .ng-invalid select,
+schema-item .ng-invalid .c-checkbox span {
+    border: 1px solid red;
+}
