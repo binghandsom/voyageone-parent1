@@ -439,7 +439,7 @@ define(function(){
         "TXT_ORIGIN_URL":"原始Url",
         "TXT_PLATFORM_URL":"平台Url",
         "TXT_SEQUENCE":"顺序",
-        "TXT_IMAGE_GROUP_ADD":"增加图片组保存",
+        "TXT_IMAGE_GROUP_ADD":"新增图片组别",
         "TXT_COMMON_IMAGE_SET":"图片设定",
         "TXT_ORIGIN_IMAGE":"原始图片",
         "TXT_MSG_DO_REFRESH_IMAGE": "您确定要刷图",
@@ -519,22 +519,23 @@ define(function(){
         /**尺码表*/
         "TXT_SIZE_CHART":"尺码表",
         "TXT_SIZE_CHART_DETAIL":"尺码表明细",
+        "TXT_SIZE_CHART_ADD":"新增尺码表",
+        "TXT_SIZE_CHART_IMPORT":"导入尺码表",
         "TXT_SIZE_CHART_NAME":"尺码表名称",
         "TXT_SIZE_CHART_FINISH":"是否完成",
         "TXT_SIZE_CHART_UPDATE_TIME":"更新时间",
         "TXT_SIZE_CHART_BRAND_NAME":"品牌名称",
         "TXT_SIZE_CHART_PRODUCT_TYPE":"品牌类别",
-        "TXT_SIZE_CHART_SIZE_TYPE":"适用型号",
-        "TXT_SIZE_CHART_ORIGINAL_SIZE":"原始型号",
-        "TXT_SIZE_CHART_ADJUST_SIZE":"平台型号",
-        "TXT_SIZE_CHART_COMMON_SIZE":"是否普通型号",
+        "TXT_SIZE_CHART_SIZE_TYPE":"适用尺码",
+        "TXT_SIZE_CHART_ORIGINAL_SIZE":"原始尺码",
+        "TXT_SIZE_CHART_ADJUST_SIZE":"平台尺码",
+        "TXT_SIZE_CHART_COMMON_SIZE":"是否普通尺码",
         "TXT_SIZE_CHART_NOTICE":" 尺码表存在疑问请选择No，上新依然会使用这个尺码表",
         "TXT_SIZE_CHART_NOTICE_REQUIED":"请输入尺码表名称",
         "TXT_SIZE_CHART_NOTICE_REPEAT":"原始尺码不能重复",
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
-        "TXT_SIZE_CHART_NOTICE_COMPETE":"请输入完整"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
     };
 });
