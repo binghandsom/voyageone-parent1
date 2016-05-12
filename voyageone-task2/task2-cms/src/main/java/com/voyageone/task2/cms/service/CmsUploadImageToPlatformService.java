@@ -4,6 +4,7 @@ import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -15,10 +16,14 @@ import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.dao.CmsMtImageCategoryDao;
+import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
+import com.voyageone.task2.cms.service.promotion.beat.ImageCategoryService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +49,12 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
 
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
+
+    @Autowired
+    private CmsMtImageCategoryDao imageCategoryDao;
+
+    @Autowired
+    private ImageCategoryService imageCategoryService;
 
     @Autowired
     private JumeiImageFileService jumeiImageFileService;
@@ -113,10 +124,24 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         TaobaoResponse uploadResponse = null;
         try {
             shopBean = Shops.getShop(channelId, cartId);
+            if (shopBean == null) {
+                throw new BusinessException("appkey信息取得失败");
+            }
+            // 取得类目id
+            String categoryId = "0";
+            ImageCategoryType imageCategoryType = getImageCategoryType(String.valueOf(imageType));
+            if (imageCategoryType != null) {
+                CmsMtImageCategoryModel model = imageCategoryDao.select(shopBean, imageCategoryType);
+                if (model == null) {
+                    model = imageCategoryService.createImageCategory(shopBean, imageCategoryType, getTaskName());
+                }
+                categoryId = model.getCategory_tid();
+            }
+
             if (StringUtils.isEmpty(platformUrl)) {
                 // 新建的场合
                 imageName = originUrl.substring(originUrl.lastIndexOf("/") + 1);
-                uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageName, "0");
+                uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageName, categoryId);
 
             } else {
                 // 更新的场合
@@ -207,6 +232,9 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             jmImageFileBean.setExtName("jpg");
 
             shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());
+            if (shopBean == null) {
+                throw new BusinessException("appkey信息取得失败");
+            }
             String platFormUrl = jumeiImageFileService.imageFileUpload(shopBean, jmImageFileBean);
             // 设置平台返回的Url
             image.setPlatformUrl(platFormUrl);
@@ -228,6 +256,23 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }
+    }
+
+    private ImageCategoryType getImageCategoryType(String imageType) {
+
+        ImageCategoryType imageCategoryType = null;
+
+        if (CmsConstants.ImageType.SIZE_CHART_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.SizeChart;
+        } else if (CmsConstants.ImageType.BRAND_STORY_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.BrandStory;
+        } else if (CmsConstants.ImageType.SHIPPING_DESCRIPTION_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.Shipping;
+        } else if (CmsConstants.ImageType.STORE_DESCRIPTION_IMAGE.equals(imageType)) {
+            imageCategoryType = ImageCategoryType.Store;
+        }
+
+        return imageCategoryType;
     }
 }
 
