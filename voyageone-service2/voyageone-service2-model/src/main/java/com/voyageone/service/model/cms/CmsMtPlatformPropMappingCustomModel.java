@@ -13,25 +13,11 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 
  */
 public class CmsMtPlatformPropMappingCustomModel extends BaseModel {
-    protected Integer seq;
-
     protected Integer cartId;
 
     protected String platformPropId;
 
     protected Integer mappingType;
-
-    protected String created;
-
-    protected String modified;
-
-    public Integer getSeq() {
-        return seq;
-    }
-
-    public void setSeq(Integer seq) {
-        this.seq = seq;
-    }
 
     public Integer getCartId() {
         return cartId;
@@ -55,21 +41,5 @@ public class CmsMtPlatformPropMappingCustomModel extends BaseModel {
 
     public void setMappingType(Integer mappingType) {
         this.mappingType = mappingType;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created == null ? null : created.trim();
-    }
-
-    public String getModified() {
-        return modified;
-    }
-
-    public void setModified(String modified) {
-        this.modified = modified == null ? null : modified.trim();
     }
 }

@@ -18,11 +18,11 @@ public interface CmsMtPlatformPropMappingCustomDao {
 
     CmsMtPlatformPropMappingCustomModel selectOne(Map<String, Object> map);
 
-    CmsMtPlatformPropMappingCustomModel select(Integer seq);
+    CmsMtPlatformPropMappingCustomModel select(Integer id);
 
     int insert(CmsMtPlatformPropMappingCustomModel record);
 
     int update(CmsMtPlatformPropMappingCustomModel record);
 
-    int delete(Integer seq);
+    int delete(Integer id);
 }
