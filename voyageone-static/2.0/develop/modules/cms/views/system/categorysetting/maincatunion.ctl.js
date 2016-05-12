@@ -203,6 +203,16 @@ define([
                 $scope.vm.curMCatId = $scope.vm.mCatList[catLvl][$index].catId;
                 $scope.vm.curMCatPath = $scope.vm.mCatList[catLvl][$index].catPath;
                 $scope.vm.selMIdxList[catLvl] = $index;
+                if ($scope.vm.mCatList[catLvl][$index].isParent == 0) {
+                    for (var i = 1; i < 5; i ++) {
+                        if (catLvl + i < 5) {
+                            $scope.vm.mCatListOrg[catLvl + i] = [];
+                            $scope.vm.mCatList[catLvl + i] = [];
+                            $scope.vm.searchMKeys[catLvl + i] = '';
+                        }
+                    }
+                    return;
+                }
 
                 para.rootCatId = $scope.vm.mCatList[0][$scope.vm.selMIdxList[0]].catId;
                 if (catLvl == 0) {
@@ -215,20 +225,12 @@ define([
                         $scope.vm.mCatList[catLvl + 1] = res.data.catList;
                         $scope.vm.searchMKeys[catLvl + 1] = '';
 
-                        if (catLvl + 2 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 2] = [];
-                            $scope.vm.mCatList[catLvl + 2] = [];
-                            $scope.vm.searchMKeys[catLvl + 2] = '';
-                        }
-                        if (catLvl + 3 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 3] = [];
-                            $scope.vm.mCatList[catLvl + 3] = [];
-                            $scope.vm.searchMKeys[catLvl + 3] = '';
-                        }
-                        if (catLvl + 4 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 4] = [];
-                            $scope.vm.mCatList[catLvl + 4] = [];
-                            $scope.vm.searchMKeys[catLvl + 4] = '';
+                        for (var i = 2; i < 5; i ++) {
+                            if (catLvl + i < 5) {
+                                $scope.vm.mCatListOrg[catLvl + i] = [];
+                                $scope.vm.mCatList[catLvl + i] = [];
+                                $scope.vm.searchMKeys[catLvl + i] = '';
+                            }
                         }
                     })
             } else {
@@ -237,6 +239,16 @@ define([
                 $scope.vm.curPCatId = $scope.vm.pCatList[catLvl][$index].catId;
                 $scope.vm.curPCatPath = $scope.vm.pCatList[catLvl][$index].catPath;
                 $scope.vm.selPIdxList[catLvl] = $index;
+                if ($scope.vm.pCatList[catLvl][$index].isParent == 0) {
+                    for (var i = 1; i < 5; i ++) {
+                        if (catLvl + i < 5) {
+                            $scope.vm.pCatListOrg[catLvl + i] = [];
+                            $scope.vm.pCatList[catLvl + i] = [];
+                            $scope.vm.searchPKeys[catLvl + i] = '';
+                        }
+                    }
+                    return;
+                }
 
                 para.rootCatId = $scope.vm.pCatList[0][$scope.vm.selPIdxList[0]].catId;
                 if (catLvl == 0) {
@@ -250,20 +262,12 @@ define([
                         $scope.vm.pCatList[catLvl + 1] = res.data.catList;
                         $scope.vm.searchPKeys[catLvl + 1] = '';
 
-                        if (catLvl + 2 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 2] = [];
-                            $scope.vm.pCatList[catLvl + 2] = [];
-                            $scope.vm.searchPKeys[catLvl + 2] = '';
-                        }
-                        if (catLvl + 3 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 3] = [];
-                            $scope.vm.pCatList[catLvl + 3] = [];
-                            $scope.vm.searchPKeys[catLvl + 3] = '';
-                        }
-                        if (catLvl + 4 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 4] = [];
-                            $scope.vm.pCatList[catLvl + 4] = [];
-                            $scope.vm.searchPKeys[catLvl + 4] = '';
+                        for (var i = 2; i < 5; i ++) {
+                            if (catLvl + i < 5) {
+                                $scope.vm.pCatListOrg[catLvl + i] = [];
+                                $scope.vm.pCatList[catLvl + i] = [];
+                                $scope.vm.searchPKeys[catLvl + i] = '';
+                            }
                         }
                     })
             }
@@ -297,23 +301,6 @@ define([
 
                 // 设置类目数据
                 $scope.vm.mCatList[catLvl] = rsList;
-                if (catLvl + 1 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 1] = [];
-                    $scope.vm.mCatList[catLvl + 1] = [];
-                }
-                if (catLvl + 2 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 2] = [];
-                    $scope.vm.mCatList[catLvl + 2] = [];
-                }
-                if (catLvl + 3 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 3] = [];
-                    $scope.vm.mCatList[catLvl + 3] = [];
-                }
-                if (catLvl + 4 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 4] = [];
-                    $scope.vm.mCatList[catLvl + 4] = [];
-                }
-
             } else {
                 // 平台类目查询
                 var qryCatName = $scope.vm.searchPKeys[catLvl];
@@ -339,22 +326,6 @@ define([
 
                 // 设置类目数据
                 $scope.vm.pCatList[catLvl] = rsList;
-                if (catLvl + 1 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 1] = [];
-                    $scope.vm.pCatList[catLvl + 1] = [];
-                }
-                if (catLvl + 2 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 2] = [];
-                    $scope.vm.pCatList[catLvl + 2] = [];
-                }
-                if (catLvl + 3 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 3] = [];
-                    $scope.vm.pCatList[catLvl + 3] = [];
-                }
-                if (catLvl + 4 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 4] = [];
-                    $scope.vm.pCatList[catLvl + 4] = [];
-                }
             }
         };
 
@@ -372,19 +343,6 @@ define([
                     .then(function (res) {
                         $scope.vm.mCatListOrg[catLvl + 1] = res.data.catList;
                         $scope.vm.mCatList[catLvl + 1] = res.data.catList;
-
-                        if (catLvl + 2 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 2] = [];
-                            $scope.vm.mCatList[catLvl + 2] = [];
-                        }
-                        if (catLvl + 3 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 3] = [];
-                            $scope.vm.mCatList[catLvl + 3] = [];
-                        }
-                        if (catLvl + 4 < 5) {
-                            $scope.vm.mCatListOrg[catLvl + 4] = [];
-                            $scope.vm.mCatList[catLvl + 4] = [];
-                        }
                     })
             } else {
                 // 平台类目查询
@@ -398,19 +356,6 @@ define([
                     .then(function (res) {
                         $scope.vm.pCatListOrg[catLvl + 1] = res.data.catList;
                         $scope.vm.pCatList[catLvl + 1] = res.data.catList;
-
-                        if (catLvl + 2 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 2] = [];
-                            $scope.vm.pCatList[catLvl + 2] = [];
-                        }
-                        if (catLvl + 3 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 3] = [];
-                            $scope.vm.pCatList[catLvl + 3] = [];
-                        }
-                        if (catLvl + 4 < 5) {
-                            $scope.vm.pCatListOrg[catLvl + 4] = [];
-                            $scope.vm.pCatList[catLvl + 4] = [];
-                        }
                     })
             }
         };

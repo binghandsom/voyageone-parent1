@@ -2,7 +2,9 @@ package com.voyageone.task2.cms.service.promotion.beat;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.PictureCategory;
+import com.taobao.api.response.PictureCategoryAddResponse;
 import com.taobao.api.response.PictureCategoryGetResponse;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.bean.TbGetPicCategoryParam;
@@ -59,5 +61,59 @@ public class ImageCategoryService extends VOAbsLoggable {
                     categoryModel.getCategory_name());
             return null;
         }
+    }
+
+    public CmsMtImageCategoryModel createImageCategory(ShopBean shopBean, ImageCategoryType type, String userName) throws ApiException {
+
+        String categoryId = "0";
+        String CategoryName = type.name() + "_" + shopBean.getCart_id() + "_" + shopBean.getOrder_channel_id();
+
+        // 获取目录
+        TbGetPicCategoryParam param = new TbGetPicCategoryParam();
+        param.setPictureCategoryName(CategoryName);
+        try {
+            PictureCategoryGetResponse getResponse = tbPictureService.getCategories(shopBean, param);
+            if (getResponse.isSuccess()) {
+                if (getResponse.getPictureCategories() != null && getResponse.getPictureCategories().size() > 0) {
+                    categoryId = String.valueOf(getResponse.getPictureCategories().get(0).getPictureCategoryId());
+                } else {
+                    // 获取目录不存在的情况下，增加目录
+                    PictureCategoryAddResponse addResponse = null;
+                    try {
+                        addResponse = tbPictureService.addCategory(shopBean, CategoryName);
+                        if (addResponse.isSuccess() && addResponse!= null && addResponse.getPictureCategory() != null && addResponse.getPictureCategory().getPictureCategoryId() != null) {
+                            categoryId =  String.valueOf(addResponse.getPictureCategory().getPictureCategoryId());
+                        } else if (!addResponse.isSuccess()) {
+                            String msg = "图片空间服务 -> 调用接口尝试新增图片分类信息失败，错误:" + addResponse.getErrorCode() + ", " + addResponse.getMsg();
+                            if (!StringUtils.isEmpty(addResponse.getSubMsg())) {
+                                msg += addResponse.getSubMsg();
+                            }
+                            throw new BusinessException(msg);
+                        }
+                    }  catch (ApiException e) {
+                        throw new BusinessException("图片空间服务 -> 调用接口尝试新增图片分类信息失败，错误:" + e.getErrCode() + ", " + e.getErrMsg());
+                    }
+                }
+            } else {
+                String msg = "图片空间服务 -> 调用接口尝试获取目录出现错误，错误:" + getResponse.getErrorCode() + ", " + getResponse.getMsg();
+                if (!StringUtils.isEmpty(getResponse.getSubMsg())) {
+                    msg += getResponse.getSubMsg();
+                }
+                throw new BusinessException(msg);
+            }
+        } catch (ApiException e) {
+            throw new BusinessException("图片空间服务 -> 调用接口尝试获取目录出现错误，错误:" + e.getErrCode() + ", " + e.getErrMsg());
+        }
+
+        CmsMtImageCategoryModel model = new CmsMtImageCategoryModel();
+        model.setCart_id(Integer.parseInt(shopBean.getCart_id()));
+        model.setCategory_tid(categoryId);
+        model.setCategory_name(CategoryName);
+        model.setChannel_id(shopBean.getOrder_channel_id());
+        model.setType(type.getVal());
+        model.setCreater(userName);
+        model.setModifier(userName);
+        imageCategoryDao.insert(model);
+        return model;
     }
 }

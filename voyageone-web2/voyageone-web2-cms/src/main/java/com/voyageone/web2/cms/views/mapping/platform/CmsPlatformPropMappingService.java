@@ -108,6 +108,10 @@ class CmsPlatformPropMappingService extends BaseAppService {
      */
     CmsMtCategorySchemaModel getPlatformCategorySchema(String categoryId, int cartId, UserSessionBean user) {
         CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(categoryId, cartId);
+        if (platformCatSchemaModel == null) {
+            $warn("getPlatformCategorySchema 没有该类目的数据 categoryId=" + categoryId + " cartId=" + cartId);
+            return null;
+        }
 
         // 转换类目属性
         String itemSchema = platformCatSchemaModel.getPropsItem();

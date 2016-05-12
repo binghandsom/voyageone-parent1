@@ -86,7 +86,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 检索结果转换
+     * 检索结果编辑
      *
      * @param images 图片列表
      * @param lang 语言
@@ -101,7 +101,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 编辑ImageGroup信息
+     * 更新ImageGroup信息
      *
      * @param param 客户端参数
      */
@@ -136,7 +136,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 保存ImageGroup信息
+     * 保存ImageGroup中的图片信息
      *
      * @param param 客户端参数
      * @param file 导入文件
@@ -320,5 +320,4 @@ public class CmsImageGroupDetailService extends BaseAppService {
         String originUrl = (String)param.get("originUrl");
         imageGroupService.refresh(userName, imageGroupId, originUrl);
     }
-
 }

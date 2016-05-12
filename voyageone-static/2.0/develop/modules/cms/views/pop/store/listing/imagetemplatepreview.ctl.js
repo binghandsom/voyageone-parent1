@@ -9,7 +9,7 @@ define([
 
     angularAMD.controller('popImageTemplatePreviewCtl', function ($scope,imageTemplateService,context,$routeParams) {
         //$scope.vm = {templateParameterList:[]};
-        $scope.vm = {templateParameterList:{}};
+        $scope.vm = {templateParameterList:[]};
         $scope.templateContent="";
         $scope.initialize = function () {
             if (context) {
@@ -18,22 +18,24 @@ define([
           //"getTemplateParameter":"getTemplateParameter",
           //"getDownloadUrl":"getDownloadUrl"
             imageTemplateService.getTemplateParameter( $scope.templateContent).then(function (res) {
-
-                //$scope.vm.templateParameterList=res.data;
-
                 angular.forEach(res.data, function (value) {
-                    $scope.vm.templateParameterList[index]=value;
+                    $scope.vm.templateParameterList.push({value:value});//[index]=value;
                 });
-                //for(var i=0;i<res.data.length;i++)
-                //{
-                //    $scope.vm.templateParameterList.push({i:res.data[i]});
-                //}
                 console.log( $scope.vm.templateParameterList);
             })
         };
         $scope.openPreview=function()
         {
-            console.log(_.values( $scope.vm.templateParameterList));
+            var templateParameter=[];
+            angular.forEach($scope.vm.templateParameterList,function(kv){
+                templateParameter.push(kv.value);
+            });
+            console.log(templateParameter);
+            imageTemplateService.getDownloadUrl({templateContent:$scope.templateContent,templateParameter:templateParameter}).then(function (res) {
+                window.open(res.data,"Preview image"+Math.random());
+                console.log( res.data);
+            })
+
         }
     });
 });

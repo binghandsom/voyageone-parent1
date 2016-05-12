@@ -227,5 +227,4 @@ public class CmsImageGroupService extends BaseAppService {
         String imageGroupId = String.valueOf(param.get("imageGroupId"));
         imageGroupService.logicDelete(imageGroupId, userName);
     }
-
 }

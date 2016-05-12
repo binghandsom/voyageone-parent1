@@ -11,7 +11,15 @@ public enum ImageCategoryType {
 
     Main(1),
 
-    Beat(2);
+    Beat(2),
+
+    SizeChart(3),
+
+    BrandStory(4),
+
+    Shipping(5),
+
+    Store(6);
 
     private int val;
 
@@ -31,6 +39,14 @@ public enum ImageCategoryType {
                 return Main;
             case 2:
                 return Beat;
+            case 3:
+                return SizeChart;
+            case 4:
+                return BrandStory;
+            case 5:
+                return Shipping;
+            case 6:
+                return Store;
             default:
                 return null;
         }
