@@ -43,7 +43,7 @@ public class CmsMtPlatformSpecialFieldDaoExtTest {
             System.out.println(model.getCatId() + "," + model.getCartId() + "," + model.getFieldId() + "," + model.getType());
         }
 
-        list = cmsMtPlatformSpecialFieldDaoExt.select(1, "11", "testFieldId11", null);
+        list = cmsMtPlatformSpecialFieldDaoExt.select(1, "11", "testFieldId22", null);
         for (CmsMtPlatformSpecialFieldModel model : list) {
             System.out.println(model.getCatId() + "," + model.getCartId() + "," + model.getFieldId() + "," + model.getType());
         }
@@ -62,5 +62,17 @@ public class CmsMtPlatformSpecialFieldDaoExtTest {
         model.setFieldId("testFieldId22");
         model.setType("2");
         cmsMtPlatformSpecialFieldDaoExt.delete(model);
+    }
+
+
+    @Test
+    public void testInsertWithList() throws Exception {
+
+    }
+
+
+    @Test
+    public void testSelectSpecialMappingType() throws Exception {
+
     }
 }

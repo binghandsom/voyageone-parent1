@@ -11,7 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by sn3 on 2015-07-16.
+ * JumeiService
+ *
+ * @author sn3 on 2015-07-16.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @Component
 public class JumeiService extends JmBase {
@@ -25,9 +29,9 @@ public class JumeiService extends JmBase {
 
     /**
      * 根据订单ID获取订单详情
+     *
      * @param shopBean ShopBean
-     * @param orderId String
-     * @return
+     * @param orderId  String
      * @throws Exception
      */
     public GetOrderDetailRes getOrderDetailByOrderId(ShopBean shopBean, String orderId) throws Exception {
@@ -44,11 +48,12 @@ public class JumeiService extends JmBase {
     /**
      * 订单发货接口
      * 接口说明：第三方ERP 通过该接口将已经发货订单的快递信息返回给聚美系统。商家只能用
-     聚美合作的快递公司进行发货，否则无法发货成功。
-     调用发货接口成功后,订单状态变为已发货status=3，聚美系统订单发货时间为ERP 调用接
-     口成功的时间。
+     * 聚美合作的快递公司进行发货，否则无法发货成功。
+     * 调用发货接口成功后,订单状态变为已发货status=3，聚美系统订单发货时间为ERP 调用接
+     * 口成功的时间。
+     *
      * @param shopBean ShopBean
-     * @param req SetShippingReq
+     * @param req      SetShippingReq
      * @return String
      * @throws Exception
      */
@@ -69,8 +74,9 @@ public class JumeiService extends JmBase {
      * 批量获取订单ID 接口
      * 特别注意：status 此参数不管如何传值，请务必保证同一时间段两种状态的订单都要抓取一次。
      * （因为卖家后台的订单下载功能也会触发订单备货，使订单状态从2 变为7，若只抓2 状态的订单可能会漏单）
+     *
      * @param shopBean ShopBean
-     * @param req GetOrderIdsReq
+     * @param req      GetOrderIdsReq
      * @return GetOrderIdsRes
      * @throws Exception
      */
@@ -78,11 +84,11 @@ public class JumeiService extends JmBase {
 
         Map<String, Object> parms = new HashMap<>();
         //开始时间
-        if (!StringUtils.isEmpty(req.getStart_date())){
+        if (!StringUtils.isEmpty(req.getStart_date())) {
             parms.put("start_date", req.getStart_date());
         }
         //开始时间
-        if (!StringUtils.isEmpty(req.getEnd_date())){
+        if (!StringUtils.isEmpty(req.getEnd_date())) {
             parms.put("end_date", req.getEnd_date());
         }
         //订单状态
@@ -98,8 +104,9 @@ public class JumeiService extends JmBase {
     /**
      * SKU库存同步接口
      * 接口说明：商家可以通过该接口修改自己的商品库存数量
+     *
      * @param shopBean ShopBean
-     * @param req StockSyncReq
+     * @param req      StockSyncReq
      * @return String
      * @throws Exception
      */
@@ -114,7 +121,7 @@ public class JumeiService extends JmBase {
         return reqJmApi(shopBean, C_URL_STOCK_SYNC, parms);
 
     }
-    
+
 //    public static void main(String[] args) throws Exception {
 //    	ShopBean shopBean = new ShopBean();
 //    	shopBean.setApp_url("http://openapi.ext.jumei.com/");

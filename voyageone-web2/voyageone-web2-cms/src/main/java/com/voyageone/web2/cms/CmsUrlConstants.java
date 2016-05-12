@@ -596,6 +596,9 @@ public interface CmsUrlConstants {
                 String DELETE_SIZE_CHART="sizeChartDelete";
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
                 String SAVE_EDIT_SIZE_CHART="sizeChartEditSave";
+            }
+            interface SIZE_CHART_DETAIL{
+                String ROOT="/cms/channel/sizeChartDetail";
                 String SEARCH_DETAIL_SIZE_CHART="sizeChartDetailSearch";
                 String SAVE_DETAIL_SIZE_CHART="sizeChartDetailSave";
                 String SAVE_DETAIL_SIZE_MAP_CHART ="sizeChartDetailSizeMapSave";
