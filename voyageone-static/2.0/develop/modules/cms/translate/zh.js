@@ -439,7 +439,7 @@ define(function(){
         "TXT_ORIGIN_URL":"原始Url",
         "TXT_PLATFORM_URL":"平台Url",
         "TXT_SEQUENCE":"顺序",
-        "TXT_IMAGE_GROUP_ADD":"增加图片组保存",
+        "TXT_IMAGE_GROUP_ADD":"新增图片组",
         "TXT_COMMON_IMAGE_SET":"图片设定",
         "TXT_ORIGIN_IMAGE":"原始图片",
         "TXT_MSG_DO_REFRESH_IMAGE": "您确定要刷图",
