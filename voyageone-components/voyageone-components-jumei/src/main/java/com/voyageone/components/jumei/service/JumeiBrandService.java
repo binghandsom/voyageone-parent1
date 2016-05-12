@@ -1,15 +1,26 @@
 package com.voyageone.components.jumei.service;
+
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.JmBase;
 import com.voyageone.components.jumei.bean.JmBrandBean;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * JumeiBrandService
+ *
+ * @author chuanyu.laing on 2016/1/25.
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 @Service
 public class JumeiBrandService extends JmBase {
     private static List<JmBrandBean> brands = null;
-    private static String BRAND_URL = "v1/htBrand/query";
+    private static final String BRAND_URL = "v1/htBrand/query";
+
     /**
      * 初始化品牌
      */

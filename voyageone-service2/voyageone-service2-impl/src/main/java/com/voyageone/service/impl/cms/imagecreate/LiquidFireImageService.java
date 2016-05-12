@@ -45,13 +45,16 @@ public class LiquidFireImageService extends BaseService {
     }
 
     private String getUrlParameter(String templateContent, String vparam) throws Exception {
+        String templateContentTmp = templateContent;
+        templateContentTmp = templateContentTmp.replace("\r\n", "");
+        templateContentTmp = templateContentTmp.replace("\n", "");
         String[] list = JacksonUtil.ToObjectFromJson(vparam, String[].class);
         for (int i = 0; i < list.length; i++) {
             list[i] = list[i].replace("&", "＆");
         }
-        return String.format(templateContent, list);
+        return String.format(templateContentTmp, list);
     }
-    public String getDowlownUrl(String templateContent, String vparam) throws Exception {
+    public String getDownloadUrl(String templateContent, String vparam) throws Exception {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
         String urlParameter = getUrlParameter(templateContent, vparam);
         return client.getDownloadUrl(urlParameter,"DownloadUrlFile");

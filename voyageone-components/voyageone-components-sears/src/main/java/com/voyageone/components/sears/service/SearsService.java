@@ -41,7 +41,7 @@ public class SearsService extends SearsBase {
     /**
      * 获取库存数据
      */
-    public AvailabilitiesResponse getInventory(Integer page, Integer pageSize,String since) throws Exception {
+    public AvailabilitiesResponse getInventory(Integer page, Integer pageSize, String since) throws Exception {
         String param = "page=" + page + "&per_page=" + pageSize + "&since=" + java.net.URLEncoder.encode(since, "utf-8");
 
         String responseXml = reqSearsApi(searsUrl + "availabilities", param);
@@ -70,7 +70,7 @@ public class SearsService extends SearsBase {
      */
     public ProductResponse getAllProducts(Integer page, Integer pageSize) throws Exception {
 
-        String responseXml = reqSearsApi(searsUrl + "products", ("page=" + page + "&per_page=" + pageSize));
+        String responseXml = reqSearsApi(searsUrl + "products", "page=" + page + "&per_page=" + pageSize);
 
         logger.info("Sears response: " + responseXml);
 
@@ -86,7 +86,7 @@ public class SearsService extends SearsBase {
     /**
      * Order LookUp
      *
-     * @param orderId     第几页
+     * @param orderId 第几页
      */
     public OrderLookupResponse getOrderInfo(String orderId) throws Exception {
         String responseXml = reqSearsApi(searsOrderUrlByOrderId + orderId);

@@ -1,4 +1,4 @@
 <select validators class="form-control" ng-model="$data.value.value"
-        ng-options="option.value as option.displayName for option in $data.options">
+        ng-options="option.value as option.displayName for option in ::$data.options">
     <option value="">{{::'TXT_SELECT_NO_VALUE'|translate}}</option>
 </select>

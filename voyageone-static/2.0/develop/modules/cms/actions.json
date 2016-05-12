@@ -80,6 +80,7 @@
         "getPlatformCategories": "getPlatformCategories",
         "setPlatformMapping": "setPlatformMapping",
         "getPlatformCategory": "getPlatformCategory",
+        "getPlatformCategorySchema": "getPlatformCategorySchema",
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
@@ -264,6 +265,11 @@
           "getCategoryList": "getCategoryList",
           "getCategoryDetail":"getCategoryDetail",
           "updateCategorySchema":"updateCategorySchema"
+        },
+        "categorySettingService": {
+          "root": "/cms/system/category/setting",
+          "getMasterSubCategoryList":"getMasterSubCategoryList",
+          "getPlatformSubCategoryList":"getPlatformSubCategoryList"
         }
       },
       "systemCartService":{
@@ -377,7 +383,10 @@
         "getCount": "getCount",
         "save": "save",
         "delete": "delete",
-        "get":"get"
+        "get":"get",
+        "getTemplateParameter":"getTemplateParameter",
+        "getDownloadUrl":"getDownloadUrl"
+
        },
       "imageGroupService": {
         "root": "/cms/channel/image_group",
