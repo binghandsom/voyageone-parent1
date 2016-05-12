@@ -103,7 +103,7 @@ public class VtmWsdlInsert extends BaseTaskService {
                     attribute.put(attributeName, values);
                 }
 
-                CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
+                CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
                 modelBeans.add(cmsBtFeedInfoModel);
 
