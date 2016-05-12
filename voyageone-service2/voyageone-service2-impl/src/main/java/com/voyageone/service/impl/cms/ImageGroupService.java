@@ -4,31 +4,20 @@ import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.SFtpUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsBtTasksBean;
-import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
-import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
-import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * ImageGroup Service
@@ -118,7 +107,6 @@ public class ImageGroupService extends BaseService {
                     }
                 }
                 model.setModifier(userName);
-                model.setModified(DateTimeUtil.getNowTimeStamp());
                 cmsBtImageGroupDao.update(model);
             }
         } else {
@@ -142,7 +130,6 @@ public class ImageGroupService extends BaseService {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             model.setModifier(userName);
-            model.setModified(DateTimeUtil.getNowTimeStamp());
             model.setCartId(Integer.parseInt(cartId));
             model.setImageGroupName(imageGroupName);
             model.setImageType(Integer.parseInt(imageType));
@@ -184,7 +171,6 @@ public class ImageGroupService extends BaseService {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             model.setModifier(userName);
-            model.setModified(DateTimeUtil.getNowTimeStamp());
             model.setActive(0);
             cmsBtImageGroupDao.update(model);
         }
@@ -345,8 +331,6 @@ public class ImageGroupService extends BaseService {
             images.add(imageModel);
             model.setImage(images);
             model.setModifier(userName);
-            model.setModified(DateTimeUtil.getNowTimeStamp());
-
             cmsBtImageGroupDao.update(model);
         } else {
             throw new RuntimeException();
@@ -374,7 +358,6 @@ public class ImageGroupService extends BaseService {
                 }
             }
             model.setModifier(userName);
-            model.setModified(DateTimeUtil.getNowTimeStamp());
             cmsBtImageGroupDao.update(model);
         } else {
             throw new RuntimeException();
@@ -415,7 +398,6 @@ public class ImageGroupService extends BaseService {
             }
 
             model.setModifier(userName);
-            model.setModified(DateTimeUtil.getNowTimeStamp());
             cmsBtImageGroupDao.update(model);
         }
     }
@@ -439,7 +421,6 @@ public class ImageGroupService extends BaseService {
                 }
             }
             model.setModifier(userName);
-            model.setModified(DateTimeUtil.getNowTimeStamp());
             cmsBtImageGroupDao.update(model);
         } else {
             throw new RuntimeException();
@@ -475,10 +456,12 @@ public class ImageGroupService extends BaseService {
             ChannelSftp ftpClient = ftpUtil.linkFtp(ftpBean);
             boolean isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
             if (!isSuccess) {
-                throw new BusinessException("upload error");
+                // FTP上传失败
+                throw new BusinessException("7000089");
             }
         } catch (Exception e) {
-            throw new BusinessException("upload error");
+            // FTP上传失败
+            throw new BusinessException("7000089");
         }
          return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
     }
