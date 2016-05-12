@@ -336,6 +336,7 @@ public class ImageGroupService extends BaseService {
         if (model != null) {
             CmsBtImageGroupModel_Image imageModel = new CmsBtImageGroupModel_Image();
             imageModel.setOriginUrl(uploadUrl);
+            imageModel.setErrorMsg(null);
             imageModel.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
             List<CmsBtImageGroupModel_Image> images = model.getImage();
             if (images == null) {
@@ -366,7 +367,8 @@ public class ImageGroupService extends BaseService {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(key)) {
                         image.setOriginUrl(uploadUrl);
-                        image.setStatus(1);
+                        image.setErrorMsg(null);
+                        image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
                         break;
                     }
                 }
