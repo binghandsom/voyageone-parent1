@@ -14,12 +14,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_task_jiagepilu
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="taskId != null" >
                 `task_id`,
             </if>
@@ -45,9 +42,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="taskId != null" >
                 #{taskId,jdbcType=INTEGER},
             </if>
