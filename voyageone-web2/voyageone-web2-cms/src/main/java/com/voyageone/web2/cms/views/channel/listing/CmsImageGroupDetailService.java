@@ -39,6 +39,8 @@ public class CmsImageGroupDetailService extends BaseAppService {
 
     private final int FILE_LIMIT_SIZE = 3145728;
 
+    private final String IMAGE_TYPE = "jpg";
+
     @Autowired
     private ImageGroupService imageGroupService;
 
@@ -84,7 +86,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 检索结果转换
+     * 检索结果编辑
      *
      * @param images 图片列表
      * @param lang 语言
@@ -99,7 +101,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 编辑ImageGroup信息
+     * 更新ImageGroup信息
      *
      * @param param 客户端参数
      */
@@ -124,7 +126,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
         CmsBtImageGroupModel model = imageGroupService.getImageGroupModel(imageGroupId);
         if (model != null && model.getImage() != null
                 && model.getImage().size() > 0
-                && model.getCartId() == Integer.parseInt(cartId)) {
+                && model.getCartId() != Integer.parseInt(cartId)) {
             // 图片已经存在，不能修改平台
             throw new BusinessException("7000088");
         }
@@ -134,7 +136,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
     }
 
     /**
-     * 保存ImageGroup信息
+     * 保存ImageGroup中的图片信息
      *
      * @param param 客户端参数
      * @param file 导入文件
@@ -204,8 +206,6 @@ public class CmsImageGroupDetailService extends BaseAppService {
      */
     private String doSaveImageCheck(String imageGroupId, String originUrl, MultipartFile file) {
 
-        // 支持的图片类型 : [jpg,png]
-        String types = "jpg,png";
         // 文件名
         String fileName = "";
         InputStream inputStream = null;
@@ -234,8 +234,8 @@ public class CmsImageGroupDetailService extends BaseAppService {
                 // 网络文件的场合
                 URL url = new URL(originUrl);
                 HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
-                httpUrl.connect();                inputStream = new BufferedInputStream(httpUrl.getInputStream());
-
+                httpUrl.connect();
+                inputStream = new BufferedInputStream(httpUrl.getInputStream());
                 if (httpUrl.getContentLength() >= FILE_LIMIT_SIZE) {
                     // 图片大小不能超过3M
                     throw new BusinessException("7000087");
@@ -265,15 +265,19 @@ public class CmsImageGroupDetailService extends BaseAppService {
             suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
         }
         // 类型和图片后缀全部小写，然后判断后缀是否合法
-        if(suffix == null || types.toLowerCase().indexOf(suffix.toLowerCase()) < 0){
+        if(suffix == null || IMAGE_TYPE.toLowerCase().indexOf(suffix.toLowerCase()) < 0){
+            // 文件扩展名非法
             throw new BusinessException("7000084");
         }
+
         try {
             BufferedImage bufferedImage = ImageIO.read(inputStream);
             if (bufferedImage == null) {
+                // 文件的内容不是图片
                 throw new BusinessException("7000085");
             }
         } catch (Exception e) {
+            // 文件的内容不是图片
             throw new BusinessException("7000085");
         }
 
@@ -316,5 +320,4 @@ public class CmsImageGroupDetailService extends BaseAppService {
         String originUrl = (String)param.get("originUrl");
         imageGroupService.refresh(userName, imageGroupId, originUrl);
     }
-
 }

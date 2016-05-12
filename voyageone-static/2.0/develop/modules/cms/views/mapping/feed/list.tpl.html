@@ -16,13 +16,13 @@
                                         ng-model="ctrl.selectedTop"
                                         ng-options="cate.catId as cate.catPath for cate in ctrl.topCategories"></select>
                             </label>
-                            <select class="form-control m-r-xxs" title="{{'TXT_FILTER_CATEGORY' | translate}}"
+                            <select class="form-control m-r-xxs" title="{{::'TXT_FILTER_CATEGORY' | translate}}"
                                     ng-change="ctrl.refreshTable()"
-                                    ng-options="v as k for (k,v) in ctrl.options.category"
+                                    ng-options="v as k for (k,v) in ::ctrl.options.category"
                                     ng-model="ctrl.matched.category"></select>
-                            <select class="form-control m-r-xxs" title="{{'TXT_FILTER_ATTRIBUTE' | translate}}"
+                            <select class="form-control m-r-xxs" title="{{::'TXT_FILTER_ATTRIBUTE' | translate}}"
                                     ng-change="ctrl.refreshTable()"
-                                    ng-options="v as k for (k,v) in ctrl.options.property"
+                                    ng-options="v as k for (k,v) in ::ctrl.options.property"
                                     ng-model="ctrl.matched.property"></select>
                             <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"
                                    ng-model="ctrl.matched.keyWord" enter-click="ctrl.refreshTable()"
@@ -30,9 +30,6 @@
                             <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
                                 | translate}}
                             </button>
-                            <!--<button class="btn btn-vo btn-xxs" ng-click="ctrl.refreshTable()">-->
-                            <!--<i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>-->
-                            <!--</button>-->
                         </div>
                     </div>
                 </div>

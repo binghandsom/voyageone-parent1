@@ -9,7 +9,7 @@ import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
  */
 public class GetUpdateSchemaFailException extends Exception {
 
-    private TmallItemUpdateSchemaGetResponse res;
+    private final TmallItemUpdateSchemaGetResponse res;
 
     public GetUpdateSchemaFailException(TmallItemUpdateSchemaGetResponse res) {
         super(res.getSubMsg());

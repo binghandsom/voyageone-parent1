@@ -371,12 +371,10 @@ public class JdWareService extends JdBase {
      * @return inputStream / throw Exception
      */
     public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
-        Exception exception = null;
         if (--retry > 0) {
             try {
                 return HttpUtils.getInputStream(url, null);
             } catch (Exception e) {
-                exception = e;
                 getImgInputStream(url, retry);
             }
         }

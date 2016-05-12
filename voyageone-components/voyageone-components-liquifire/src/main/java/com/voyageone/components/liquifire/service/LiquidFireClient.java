@@ -79,15 +79,15 @@ public class LiquidFireClient {
         download(downloadUrl, outFileFullName, proxyIP, proxyPort);
         return outFileFullName;
     }
+
     //获取下载地址
-    public String getDownloadUrl(String param,String fileName) throws UnsupportedEncodingException {
+    public String getDownloadUrl(String param, String fileName) throws UnsupportedEncodingException {
         logger.debug(fileName + ":  " + this.getUrl() + "?" + param);
-        param = param.replace("\r\n", "");
-        param = param.replace("\n", "");
         String urlParameter = java.net.URLEncoder.encode(param, "UTF-8");
         logger.debug(fileName + "encode:  " + this.getUrl() + "?" + urlParameter);
         return this.getUrl() + "?" + urlParameter;
     }
+
     private void download(String urlString, String filename, String proxyIP, String proxyPort) throws Exception {
         InputStream is = null;
         OutputStream os = null;
@@ -109,10 +109,9 @@ public class LiquidFireClient {
             conn.setReadTimeout(this.getReadTimeout());
             // 输入流
             is = conn.getInputStream();
-            String lfError= conn.getHeaderField("LF-Error");
-            if(!StringUtils.isEmpty(lfError))
-            {
-                logger.error("LF-Error"+lfError);
+            String lfError = conn.getHeaderField("LF-Error");
+            if (!StringUtils.isEmpty(lfError)) {
+                logger.error("LF-Error" + lfError);
                 throw new OpenApiException(ImageErrorEnum.LiquidCreateImageExceptionImage);
             }
             // 1K的数据缓冲

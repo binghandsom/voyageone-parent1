@@ -180,4 +180,46 @@ public class PlatformCategoryService extends BaseService {
     }
 
 
+
+    /**
+     * 取得一级类目列表（平台数据）
+     *
+     * @return CmsMtCategoryTreeModel
+     */
+    public List<CmsMtPlatformCategoryTreeModel> getFstLvlCategory(String channelId, int cartId) {
+        return platformCategoryDao.selectByChannel_CartId(channelId, cartId);
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public List<CmsMtPlatformCategoryTreeModel> findCategoryListByCatId(String channelId, int cartId, String rootCatId, int catLevel, String catId) {
+        CmsMtPlatformCategoryTreeModel treeModel = platformCategoryDao.selectByChannel_CartId_CatId(channelId, cartId, rootCatId == null ? catId : rootCatId);
+        if (catLevel > 0) {
+            treeModel = findCategoryByCatId(treeModel, catId);
+        }
+        if (treeModel == null) {
+            return new ArrayList<>(0);
+        }
+        return treeModel.getChildren();
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public CmsMtPlatformCategoryTreeModel findCategoryByCatId(CmsMtPlatformCategoryTreeModel tree, String catId) {
+        if (tree == null) {
+            return null;
+        }
+        for (CmsMtPlatformCategoryTreeModel catTreeModel : tree.getChildren()) {
+            if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
+                return catTreeModel;
+            }
+            if (catTreeModel.getChildren().size() > 0) {
+                CmsMtPlatformCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
+                if (category != null) return category;
+            }
+        }
+        return null;
+    }
 }

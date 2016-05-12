@@ -20,7 +20,7 @@
                 <div class="col-sm-3 m-l-sm">
                     <label class="control-label"><input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'text'"/>&nbsp;&nbsp;<span>{{::'TXT_TEXT'|translate}}</span></label>
                 </div>
-                <div class="col-sm-6" ng-show="ctrl.mappingSetting.type === 'text'">
+                <div class="col-sm-6" ng-if="ctrl.mappingSetting.type === 'text'">
                     <schema-item data="ctrl.field"></schema-item>
                 </div>
             </div>

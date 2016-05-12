@@ -200,6 +200,9 @@ define(function(){
         "TXT_BEAT_TASK": "价格披露",
         "TXT_UNIQUE": "唯一",
         "TXT_TEMPLATE": "模板",
+        "TXT_TEMPLATE_NAME": "模板名称",
+        "TXT_TEMPLATE_TYPE": "模板类型",
+        "TXT_TEMPLATE_CONTENT": "模板内容",
         "TXT_REVERT_TEMPLATE": "还原模板",
         "TXT_NEED_VERTICAL": "是否更新竖图",
         "TXT_VERTICAL_TEMPLATE": "竖图模板",
@@ -327,6 +330,7 @@ define(function(){
         "TXT_SIZE_CHART_IMAGE": "尺码图",
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
+        "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
 
 
         "TXT_CHANNEL_ID": "渠道ID",
@@ -526,6 +530,7 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
+        "TXT_SIZE_CHART_NOTICE_COMPETE":"请输入完整"
     };
 });

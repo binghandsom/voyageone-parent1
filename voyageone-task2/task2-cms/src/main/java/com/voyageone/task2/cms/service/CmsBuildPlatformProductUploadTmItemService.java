@@ -45,18 +45,15 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
      * @param platformProductId 平台产品id. 新建的场合：上传产品API调用后返回的产品id. 更新的场合：ProductGroup里platformPid（sxData.getPlatform().getPlatformPid()）
      * @param cmsMtPlatformCategorySchemaModel MongoDB  propsItem取得用
      * @param cmsMtPlatformMappingModel MongoDB 平台CategoryId取得，mapping设定
+     * @param shopBean 店铺
      * @param modifier 更新者
      * @return numIId
      * @throws Exception
      */
-    public String uploadItem(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, String modifier) throws Exception {
+    public String uploadItem(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) throws Exception {
         SxData sxData = expressionParser.getSxData();
         String numIId = sxData.getPlatform().getNumIId();
         Long categoryCode = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());
-
-        String channelId = sxData.getChannelId();
-        int cartId = sxData.getCartId();
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
         $debug("itemSchema:" + itemSchema);

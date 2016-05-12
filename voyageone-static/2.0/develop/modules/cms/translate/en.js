@@ -200,6 +200,9 @@ define(function() {
         "TXT_BEAT_TASK": "Price Disclosure",
         "TXT_UNIQUE": "Unique",
         "TXT_TEMPLATE": "Template",
+        "TXT_TEMPLATE_NAME": "Template Name",
+        "TXT_TEMPLATE_TYPE": "Template Type",
+        "TXT_TEMPLATE_CONTENT": "Template Content",
         "TXT_REVERT_TEMPLATE": "Revert Template",
         "TXT_NEED_VERTICAL": "Update Vertical Image",
         "TXT_VERTICAL_TEMPLATE": "Vertical Template",
@@ -430,6 +433,7 @@ define(function() {
         "TXT_MSG_DO_REFRESH_IMAGE": "Do you want refresh image",
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
+        "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
 
 
 
@@ -528,6 +532,6 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
         "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
-        "TXT_SIZE_CHART_COMMON_ADD":"Common Size Chart Edit"
+        "TXT_SIZE_CHART_NOTICE_COMPETE":"Please input to compete"
     };
 });

@@ -12,18 +12,14 @@
         <div class="row wrapper">
             <div class="container-fluid">
                 <div class="row m-b-md">
-                    <div class="col-sm-1">
-                        <button class="btn btn-success m-l-lg">主数据</button>
-                    </div>
+                    <div class="col-sm-1"></div>
                     <div class="col-sm-8 m-l-sm m-t-xs">
                         <label class="label-control">
-                            <span class="bg-info" style="padding: 4px;">主数据类目：</span><span class="m-l-sm">美妆>护肤品>香水</span>
+                            <span class="bg-info" style="padding: 4px;">主数据类目：</span><span class="m-l-sm">{{vm.curMCatPath}}</span>
                         </label>
                     </div>
                     <div class="col-sm-2 text-center m-l-sm">
-                        <a href="#/system/categorysetting/catunion">
-                            <button class="btn btn-info">属性合并</button>
-                        </a>
+                        <button class="btn btn-info" ng-click="compAttr()">属性合并</button>
                     </div>
                 </div>
                 <div class="box col-sm-offset-1" ng-controller="popupCtrl">
@@ -31,17 +27,16 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">一级类目</p>
-
                             <div class="form-inline m-l-xs">
-
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[0]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchMKeys[0]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0,0)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                             <div class="category_drag_list">
                                 <ul>
-                                    <li ng-repeat="cat in firstCats">
-                                        <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                    <li ng-repeat="cat in vm.mCatList[0]" ng-click="catTarget(0,0,$index)">
+                                        <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                        <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                     </li>
                                 </ul>
                             </div>
@@ -51,17 +46,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">二级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[1]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchMKeys[1]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0,1)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in firstCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.mCatList[1]" ng-click="catTarget(0,1,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -70,17 +65,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">三级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchMKeys[2]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0,2)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in firstCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.mCatList[2]" ng-click="catTarget(0,2,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -89,17 +84,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">四级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchMKeys[3]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0,3)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in firstCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.mCatList[3]" ng-click="catTarget(0,3,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -108,17 +103,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">五级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchMKeys[4]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0,4)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in firstCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.mCatList[4]" ng-click="catTarget(0,4,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -128,21 +123,17 @@
             <hr>
             <div class="container-fluid">
                 <div class="row m-b-md">
-                    <div class="col-sm-1">
-                        <button class="btn btn-success m-l-lg">平&nbsp;台</button>
-                    </div>
+                    <div class="col-sm-1"></div>
                     <div class="col-sm-7 m-l-sm m-t-xs">
                         <label class="label-control">
-                            <span class="bg-info" style="padding: 4px;">平台类目：</span><span class="m-l-sm">美妆>护肤品></span>
+                            <span class="bg-info" style="padding: 4px;">平台类目：</span><span class="m-l-sm">{{vm.curPCatPath}}</span>
                         </label>
                     </div>
                     <div class="col-sm-2 m-l-xxl">
-                        <select class="form-control">
-                            <option value="0">请选择平台...</option>
-                            <option value="1">TM</option>
-                            <option value="2">TG</option>
-                            <option value="3">JD</option>
-                            <option value="4">JG</option>
+                        <select class="form-control" ng-model="vm.selCart"
+                                ng-change="loadCategories()"
+                                ng-options="v.value as v.name for v in vm.carts">
+                            <option value="">请选择平台...</option>
                         </select>
                     </div>
                 </div>
@@ -151,17 +142,16 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">一级类目</p>
-
                             <div class="form-inline m-l-xs">
-
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[0]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchPKeys[0]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1,0)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                             <div class="category_drag_list">
                                 <ul>
-                                    <li ng-repeat="cat in firstCats">
-                                        <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                    <li ng-repeat="cat in vm.pCatList[0]" ng-click="catTarget(1,0,$index)">
+                                        <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                        <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                     </li>
                                 </ul>
                             </div>
@@ -171,17 +161,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">二级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[1]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchPKeys[1]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1,1)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in secondCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.pCatList[1]" ng-click="catTarget(1,1,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -190,17 +180,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">三级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchPKeys[2]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1,2)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in firstCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.pCatList[2]" ng-click="catTarget(1,2,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -209,17 +199,17 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">四级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchPKeys[3]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1,3)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="cat in firstCats">
-                                    <span class="m-l-xs" style="color:#000;">{{cat.name}}</span>
+                                <li ng-repeat="cat in vm.pCatList[3]" ng-click="catTarget(1,3,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
                                 </li>
                             </ul>
                         </div>
@@ -228,17 +218,18 @@
                     <div class="category_drag col-sm-2" style="margin-right: 10px;">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold">五级类目</p>
-
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="vm.searchPKeys[4]">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1,4)"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="category_drag_list">
                             <ul>
-                                <li ng-repeat="tag3 in tree[2]"></li>
-
+                                <li ng-repeat="cat in vm.pCatList[4]" ng-click="catTarget(1,4,$index)">
+                                    <span class="m-l-xs" style="color:#000;">{{cat.catName}}</span>
+                                    <span class="pull-right text-muted" ng-if="cat.isParent == 1"><i class="fa fa-fw fa-angle-right text"></i></span>
+                                </li>
                             </ul>
                         </div>
                     </div>
