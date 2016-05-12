@@ -100,22 +100,24 @@
                     <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px">
                         <thead>
                             <tr>
-                                <th class="mfb-xt text-center">{{'TXT_INDEX' | translate}}</th>
+                                <th class="mfb-xt text-center">{{'TXT_SEQ' | translate}}</th>
                                 <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_NAME' | translate}}</th>
                                 <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</th>
                                 <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</th>
                                 <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_FINISH' | translate}}</th>
                                 <th class="mfb-xxs text-center">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</th>
                                 <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
                             </tr>
                         </thead>
                         <tbody>
                                 <tr ng-repeat="chartInfo in vm.sizeChartList">
-                                    <td class="mfb-xt text-center">{{$index + 1}}</td>
+                                    <td class="mfb-xt text-center">{{chartInfo.sizeChartId}}</td>
                                     <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
                                     <td class="mfb-xxt text-left">{{chartInfo.brandNameTrans.join(' , ')}}</td>
                                     <td class="mfb-xxt text-left">{{chartInfo.productTypeTrans.join(' , ')}}</td>
                                     <td class="mfb-xxt text-left">{{chartInfo.sizeTypeTrans.join(' , ')}}</td>
+                                    <td class="mfb-xxt text-left">{{chartInfo.finish == true?"yes":"no"}}</td>
                                     <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
                                     <td class="mfb-xxt text-center">
                                         <a title="{{'BTN_SET'|translate}}" href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>

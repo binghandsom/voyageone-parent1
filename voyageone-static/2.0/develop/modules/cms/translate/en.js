@@ -307,7 +307,7 @@ define(function() {
         "TXT_DATA_TYPE": "Data Type",
         "TXT_SPECIAL_DESCRIPTION": "Special Description",
         "TXT_BRAND_STORY": "Brand Story Image",
-        "TXT_SIZE_CHART": "Size Chart",
+        "TXT_SIZE_CHART": "SizChart",
         "TXT_SHIPPING_DESCRIPTION": "Shipping Description",
         "TXT_INDEX": "Index",
         "TXT_ORIGIN_IMAGE_URL": "Original Image Url",
@@ -499,7 +499,7 @@ define(function() {
         "BTN_GET_TASK": "Get Tasks",
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
-        "BTN_RESET":"reset",
+        "BTN_RESET":"Reset",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
@@ -519,8 +519,8 @@ define(function() {
         /**分页显示*/
         "TXT_PAGER_SIZE": "page-size",
         /**尺码表*/
-        "TXT_SIZE_CHART":"SizeChart",
-        "TXT_SIZE_CHART_DETAIL":"Sizechartdetail",
+        "TXT_SIZE_CHART":"Size Chart",
+        "TXT_SIZE_CHART_DETAIL":"Size Chart Detail",
         "TXT_SIZE_CHART_NAME":"Size Chart Name",
         "TXT_SIZE_CHART_FINISH":"Finish",
         "TXT_SIZE_CHART_UPDATE_TIME":"Update Time",

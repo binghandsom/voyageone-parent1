@@ -16,8 +16,8 @@ define([
             this.imageType = "";
             this.beginModified = "";
             this.endModified = "";
-            this.brandNameList = [];
 
+            this.brandNameList = [];
             this.brandName = [];
             this.productTypeList = [];
             this.productType = [];
