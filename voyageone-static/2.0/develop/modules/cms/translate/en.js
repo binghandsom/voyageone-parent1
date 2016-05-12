@@ -521,6 +521,7 @@ define(function() {
         /**尺码表*/
         "TXT_SIZE_CHART":"Size Chart List",
         "TXT_SIZE_CHART_DETAIL":"Size Chart Detail",
+        "TXT_SIZE_CHART_ADD":"Common Size Chart Edit",
         "TXT_SIZE_CHART_IMPORT":"Size Chart Import",
         "TXT_SIZE_CHART_NAME":"Size Chart Name",
         "TXT_SIZE_CHART_FINISH":"Finish",
