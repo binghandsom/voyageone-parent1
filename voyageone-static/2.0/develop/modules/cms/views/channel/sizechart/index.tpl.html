@@ -118,8 +118,8 @@
                                     <td class="mfb-xxt text-left">{{chartInfo.sizeTypeTrans.join(' , ')}}</td>
                                     <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
                                     <td class="mfb-xxt text-center">
-                                        <a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
-                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
+                                        <a title="{{'BTN_SET'|translate}}" href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                        <a title="{{'BTN_DELETE'|translate}}" href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
                                     </td>
                                 </tr>
                         </tbody>
