@@ -1,6 +1,17 @@
 package com.voyageone.task2.cms.service;
 
 import com.csvreader.CsvReader;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.service.FtpService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -9,19 +20,6 @@ import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.task2.cms.bean.*;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.utils.WebServiceUtil;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.Codes;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feeds;
-import com.voyageone.common.configs.beans.FtpBean;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.util.FtpUtil;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.StringUtils;
-import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +47,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
     public String getTaskName() {
         return "CmsGetSuperFeedJob";
     }
+
+    @Autowired
+    private FtpService ftpService;
 
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
@@ -1528,52 +1529,31 @@ public class CmsGetSuperFeedService extends BaseTaskService {
     private boolean downloadFileForFtp(String channel_id) throws Exception {
         $info("产品文件下载开始 ");
         boolean isSuccess = true;
-
-        // FtpBean初期化
-        FtpBean ftpBean = new FtpBean();
-
-        ftpBean.setPort(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_port));
-        ftpBean.setUrl(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_url));
-        ftpBean.setUsername(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_username));
-        ftpBean.setPassword(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_password));
-        ftpBean.setFile_coding(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_file_coding));
-
-        FtpUtil ftpUtil = new FtpUtil();
-        FTPClient ftpClient = new FTPClient();
-        try {
-            //建立连接
-            ftpClient = ftpUtil.linkFtp(ftpBean);
-            if (ftpClient != null) {
-                //本地文件路径设定
-                ftpBean.setDown_localpath(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath));
-                //Ftp源文件路径设定
-                ftpBean.setDown_remotepath(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_remotepath));
-                //Ftp源文件名设定
-                ftpBean.setDown_filename(StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
-
-                String filePathName = ftpBean.getDown_localpath() + "/" + ftpBean.getDown_filename();
-                int result = ftpUtil.downFile(ftpBean, ftpClient);
-
-                //下载文件 失败
-                if (result != 2) {
-                    if (result == 0) {
-                        File file = new File(filePathName);
-                        file.delete();
-                        isSuccess = false;
+        String filePathName = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename));
+        int result = ftpService.downloadFile(
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_url),
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_port),
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_username),
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_password),
+                StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)),
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath),
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_remotepath),
+                Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_file_coding));
+        //下载文件 失败
+        if (result != 2) {
+            if (result == 0) {
+                File file = new File(filePathName);
+                file.delete();
+                isSuccess = false;
 //                        $error(filePathName + "下载异常！");
-                        $info(filePathName + "下载异常！");
-                        logIssue("cms 数据导入处理", filePathName + "下载异常！");
-                    } else {
-                        $info(filePathName + "文件不存在.");
-                    }
-                } else {
-                    //下载文件 成功
-//					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
-                }
+                $info(filePathName + "下载异常！");
+                logIssue("cms 数据导入处理", filePathName + "下载异常！");
+            } else {
+                $info(filePathName + "文件不存在.");
             }
-        } finally {
-            //断开连接
-            ftpUtil.disconnectFtp(ftpClient);
+        } else {
+            //下载文件 成功
+//					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
         }
         $info("产品文件下载结束");
         return isSuccess;

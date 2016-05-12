@@ -54,6 +54,11 @@
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-all</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-components-sftp_ftp</artifactId>
+			<version>${voyageone.components.sftp_ftp.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>voyageone-core</finalName>

@@ -1,22 +1,18 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.service.FtpService;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,25 +48,28 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         return "CmsImagePostScene7Job";
     }
 
+    @Autowired
+    private FtpService ftpService;
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         for (TaskControlBean taskControl : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
                 String channelId = taskControl.getCfg_val1();
-                $info("渠道"+channelId);
+                $info("渠道" + channelId);
                 CmsBtImagesModel feedImage = new CmsBtImagesModel();
                 feedImage.setUpdFlg(0);
                 feedImage.setChannelId(channelId);
 
-                ExecutorService es  = Executors.newFixedThreadPool(10);
+                ExecutorService es = Executors.newFixedThreadPool(10);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
                     $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
-                        List<List<CmsBtImagesModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
-                        for (List<CmsBtImagesModel> subImageUrlList :imageSplitList ){
+                        List<List<CmsBtImagesModel>> imageSplitList = CommonUtil.splitList(imageUrlList, 10);
+                        for (List<CmsBtImagesModel> subImageUrlList : imageSplitList) {
                             es.execute(() -> ImageGetAndSendTask(channelId, subImageUrlList));
                         }
                         es.shutdown();
@@ -90,7 +89,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
     private String ImageGetAndSendTask(String orderChannelId, List<CmsBtImagesModel> subImageUrlList) {
 
-        long threadNo =  Thread.currentThread().getId();
+        long threadNo = Thread.currentThread().getId();
 
         $info("thread-" + threadNo + " start");
 
@@ -142,112 +141,67 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             InputStream inputStream = null;
 
-            FtpBean ftpBean = new FtpBean();
-            // ftp连接port
-            String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
-            ftpBean.setPort(port);
-            // ftp连接url
-            String url = Codes.getCodeName(S7FTP_CONFIG, "Url");
-            ftpBean.setUrl(url);
-            // ftp连接usernmae
-            String userName = Codes.getCodeName(S7FTP_CONFIG, "UserName");
-            ftpBean.setUsername(userName);
-            // ftp连接password
-            String password = Codes.getCodeName(S7FTP_CONFIG, "Password");
-            ftpBean.setPassword(password);
-            // ftp连接上传文件编码
-            String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
-            ftpBean.setFile_coding(fileEncode);
-
-            //FTP服务器保存目录设定
-            String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
-            if(StringUtils.isEmpty(uploadPath)){
-                String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表",orderChannelId);
-                $error(err);
-                throw new BusinessException(err);
-            }
-            ftpBean.setUpload_path(uploadPath);
-
-            FtpUtil ftpUtil = new FtpUtil();
-            FTPClient ftpClient = new FTPClient();
 
             String imageUrl = "";
 
             try {
-                //建立连接
-                ftpClient = ftpUtil.linkFtp(ftpBean);
-                if (ftpClient != null) {
 
-                    boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
-                    if (change) {
-                        ftpClient.enterLocalPassiveMode();
-                        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                        ftpClient.setConnectTimeout(120000);
+                for (int i = 0; i < imageUrlList.size(); i++) {
+                    imageUrl = String.valueOf(imageUrlList.get(i).getOriginalUrl());
 
-                        for (int i = 0; i < imageUrlList.size(); i++) {
-                            imageUrl = String.valueOf(imageUrlList.get(i).getOriginalUrl());
+                    if (StringUtils.isNullOrBlank2(imageUrl)) {
+                        successImageUrlList.add(imageUrlList.get(i));
+                        continue;
+                    }
 
-                            if (StringUtils.isNullOrBlank2(imageUrl)) {
-                                successImageUrlList.add(imageUrlList.get(i));
-                                continue;
-                            }
+                    try {
+                        inputStream = HttpUtils.getInputStream(imageUrl);
+                    } catch (Exception ex) {
+                        // 图片url错误
+                        $error(ex.getMessage(), ex);
+                        imageUrlList.get(i).setUpdFlg(3);
+                        imageUrlList.get(i).setModifier(getTaskName());
 
-                            try {
-                                inputStream = HttpUtils.getInputStream(imageUrl);
-                            } catch (Exception ex) {
-                                // 图片url错误
-                                $error(ex.getMessage(), ex);
-                                imageUrlList.get(i).setUpdFlg(3);
-                                imageUrlList.get(i).setModifier(getTaskName());
-
-                                cmsBtImagesDaoExt.updateImage(imageUrlList.get(i));
-                                // 记录url错误图片以便删除这张图片相关记录
+                        cmsBtImagesDaoExt.updateImage(imageUrlList.get(i));
+                        // 记录url错误图片以便删除这张图片相关记录
 //                                urlErrorList.add(imageUrlList.get(i));
 
-                                continue;
-                            }
+                        continue;
+                    }
 
-                            int lastSlash = imageUrl.lastIndexOf("/");
-                            String fileName = imageUrlList.get(i).getImgName();
+                    int lastSlash = imageUrl.lastIndexOf("/");
+                    String fileName = imageUrlList.get(i).getImgName();
 
-                            boolean result = ftpClient.storeFile(fileName, inputStream);
+                    boolean result = ftpService.storeFile(Codes.getCodeName(S7FTP_CONFIG, "Url"),
+                            Codes.getCodeName(S7FTP_CONFIG, "Port"),
+                            Codes.getCodeName(S7FTP_CONFIG, "UserName"),
+                            Codes.getCodeName(S7FTP_CONFIG, "Password"),
+                            fileName,
+                            ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder),
+                            inputStream,
+                            Codes.getCodeName(S7FTP_CONFIG, "FileCoding"),
+                            120000);
+                    if (result) {
+                        successImageUrlList.add(imageUrlList.get(i));
 
-                            if (result) {
-                                successImageUrlList.add(imageUrlList.get(i));
+                        $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
 
-                                $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
+                    } else {
+                        isSuccess = false;
 
-                            } else {
-                                isSuccess = false;
+                        break;
+                    }
 
-                                break;
-                            }
-
-                            if (inputStream != null) {
-                                inputStream.close();
-                            }
-                        }
+                    if (inputStream != null) {
+                        inputStream.close();
                     }
                 }
-
-            } catch (Exception ex) {
+            } catch (Exception ex){
                 $error(ex.getMessage(), ex);
                 issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
-
                 isSuccess = false;
-
-            } finally {
-                //断开连接
-                if (ftpClient != null) {
-                    ftpUtil.disconnectFtp(ftpClient);
-                }
-
-                if (inputStream != null) {
-                    inputStream.close();
-                }
             }
         }
-
         return isSuccess;
     }
 }

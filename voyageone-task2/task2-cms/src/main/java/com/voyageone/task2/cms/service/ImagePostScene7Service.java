@@ -11,20 +11,16 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.service.FtpService;
 import com.voyageone.task2.cms.dao.ImageDao;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.configs.beans.FtpBean;
-import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.HttpUtils;
 
 @Service
@@ -40,6 +36,9 @@ public class ImagePostScene7Service {
 
 	@Autowired
 	private TransactionRunner transactionRunner;
+
+	@Autowired
+	private FtpService ftpService;
 
 	// Scene7FTP设置
 	private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
@@ -67,42 +66,9 @@ public class ImagePostScene7Service {
 
 			InputStream inputStream = null;
 
-			FtpBean ftpBean = new FtpBean();
-			// ftp连接port
-			String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
-			ftpBean.setPort(port);
-			// ftp连接url
-			String url = Codes.getCodeName(S7FTP_CONFIG, "Url");
-			ftpBean.setUrl(url);
-			// ftp连接usernmae
-			String userName = Codes.getCodeName(S7FTP_CONFIG, "UserName");
-			ftpBean.setUsername(userName);
-			// ftp连接password
-			String password = Codes.getCodeName(S7FTP_CONFIG, "Password");
-			ftpBean.setPassword(password);
-			// ftp连接上传文件编码
-			String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
-			ftpBean.setFile_coding(fileEncode);
-
-			//FTP服务器保存目录设定
-			String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
-			ftpBean.setUpload_path(uploadPath);
-
-			FtpUtil ftpUtil = new FtpUtil();
-			FTPClient ftpClient = new FTPClient();
-
 			String imageUrl;
 
 			try {
-				//建立连接
-				ftpClient = ftpUtil.linkFtp(ftpBean);
-				if (ftpClient != null) {
-
-					boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
-					if (change) {
-						ftpClient.enterLocalPassiveMode();
-						ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-						ftpClient.setConnectTimeout(120000);
 
 						for (Map<String, String> anImageUrlList : imageUrlList) {
 							imageUrl = String.valueOf(anImageUrlList.get("image_url"));
@@ -177,7 +143,11 @@ public class ImagePostScene7Service {
 								fileName = fileName.substring(0, qIndex);
 							}
 
-							boolean result = ftpClient.storeFile(fileName, inputStream);
+							boolean result = ftpService.storeFile(S7FTP_CONFIG,
+									ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder),
+									fileName,
+									inputStream,
+									120000);
 
 							if (result) {
 								successImageUrlList.add(imageUrl);
@@ -194,9 +164,6 @@ public class ImagePostScene7Service {
 								inputStream.close();
 							}
 						}
-					}
-				}
-
 			} catch (Exception ex) {
 				logger.error(ex.getMessage(), ex);
 				issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
@@ -204,10 +171,6 @@ public class ImagePostScene7Service {
 				isSuccess = false;
 
 			} finally {
-				//断开连接
-				if (ftpClient != null) {
-					ftpUtil.disconnectFtp(ftpClient);
-				}
 
 				if (inputStream != null) {
 					inputStream.close();
