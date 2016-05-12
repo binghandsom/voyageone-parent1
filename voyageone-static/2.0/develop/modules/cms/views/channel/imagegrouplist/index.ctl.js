@@ -28,7 +28,6 @@ define([
             this.pageOption = {
                 curr: 1,
                 total: 0,
-                size: 20,
                 fetch: this.getImageGroupList.bind(this)
             };
             this.imageGroupService = imageGroupService;
