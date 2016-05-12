@@ -519,6 +519,7 @@ define(function(){
         /**尺码表*/
         "TXT_SIZE_CHART":"尺码表",
         "TXT_SIZE_CHART_DETAIL":"尺码表明细",
+        "TXT_SIZE_CHART_ADD":"新增尺码表",
         "TXT_SIZE_CHART_IMPORT":"导入尺码表",
         "TXT_SIZE_CHART_NAME":"尺码表名称",
         "TXT_SIZE_CHART_FINISH":"是否完成",
