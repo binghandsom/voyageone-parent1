@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popImageTemplateCtl', function ($scope,imageTemplateService,context, $routeParams) {
+    angularAMD.controller('popImageTemplateCtl', function ($scope,imageTemplateService,alert,context, $routeParams) {
         $scope.vm = {"platformList":[],
             "brandNameList":[],
             "productTypeList":[],
@@ -37,8 +37,15 @@ define([
         };
         $scope.ok = function(){
                 imageTemplateService.save($scope.model).then(function (res) {
-
-                    $scope.$close();
+                    console.log(res);
+                      if(res.data.result) {
+                          $scope.$close();
+                      }
+                      else
+                      {
+                         // self.alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
+                          return alert(res.data.msg);
+                      }
                 }, function (res) {
                 })
 

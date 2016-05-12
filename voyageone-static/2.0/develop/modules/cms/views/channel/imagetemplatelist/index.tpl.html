@@ -44,7 +44,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'" ng-model="searchInfo.brandName"
+                                        <select multiple chosen class="form-control" width="'285px'" ng-model="searchInfo.brandName"
                                                 ng-options="brand.value as brand.name for brand in vm.brandNameList" >
                                         </select>
                                     </div>
@@ -52,7 +52,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'" ng-model="searchInfo.productType"
+                                        <select multiple chosen class="form-control" width="'285px'" ng-model="searchInfo.productType"
                                                 ng-options="productType.value as productType.name for productType in vm.productTypeList">
                                         </select>
                                     </div>
@@ -60,7 +60,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <select multiple chosen class="form-control" width="'360px'" ng-model="searchInfo.sizeType"
+                                        <select multiple chosen class="form-control" width="'285px'" ng-model="searchInfo.sizeType"
                                                 ng-options="sizeType.value as sizeType.name for sizeType in vm.sizeTypeList">
                                         </select>
                                     </div>
@@ -100,9 +100,9 @@
                     </div>
                     <div class="col-sm-12 text-center m-b-sm"  ng-controller="popupCtrl">
                         <div class="form-inline">
-                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清空</button>
-                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;检索</button>
-                            <button class="btn btn-success" ng-click="openImgTplEditing(null)"><i class="fa fa-plus"></i>&nbsp;Add</button>
+                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_MSG_SEARCH' | translate}}</button>
+                            <button class="btn btn-success" ng-click="openImgTplEditing(null)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -117,13 +117,13 @@
                            ng-controller="popupCtrl">
                         <thead>
                         <tr>
-                            <th class="mfb-xt text-center">{{'TXT_SEQ' | translate}}</th>
+                            <th class="mfb-xt3 text-center">{{'TXT_SEQ' | translate}}</th>
                             <th class="mfb-xxt text-center">{{'TXT_TEMPLATE_NAME' | translate}}</th>
-                            <th class="mfb-xxs text-center">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
-                            <th class="mfb-xxs text-center">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
-                            <th class="mfb-xxs text-center">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
-                            <th class="mfb-xxt text-center">{{'TXT_VIEW_TYPE' | translate}}</th>
-                            <th class="mfb-xxt text-center">{{'TXT_PLATFORM' | translate}}</th>
+                            <th class="mfb-xt text-center">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
+                            <th class="mfb-xt text-center">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
+                            <th class="mfb-xt text-center">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
+                            <th class="mfb-xt text-center">{{'TXT_VIEW_TYPE' | translate}}</th>
+                            <th class="mfb-xt text-center">{{'TXT_PLATFORM' | translate}}</th>
                             <th class="mfb-xxt text-center">{{'TXT_TEMPLATE_TYPE' | translate}}</th>
                             <th class="mfb-xxt text-center" style="width: 100px">{{'TXT_TEMPLATE_CONTENT' | translate}}</th>
                             <th class="mfb-xxx text-center">{{'TXT_UPDATE_TIME' | translate}}</th>
@@ -132,17 +132,17 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="model in vm.modelList">
-                            <td class="mfb-xt text-center">{{model.imageTemplateId}}</td>
-                            <td class="mfb-xx text-center">{{model.imageTemplateName}}</td>
-                            <td class="mfb-xxs text-center">{{model.brandNameTrans.join(' , ')}}</td>
-                            <td class="mfb-xxs text-center">{{model.productTypeTrans.join(' , ')}}</td>
-                            <td class="mfb-xxs text-center">{{model.sizeTypeTrans.join(' , ')}}</td>
-                            <td class="mfb-xxt text-center">{{model.viewTypeName}}</td>
-                            <td class="mfb-xxt text-center">{{model.cartName}}</td>
+                            <td class="mfb-xt3 text-center">{{model.imageTemplateId}}</td>
+                            <td class="mfb-xxt text-center">{{model.imageTemplateName}}</td>
+                            <td class="mfb-xt text-center">{{model.brandNameTrans.join(' , ')}}</td>
+                            <td class="mfb-xt text-center">{{model.productTypeTrans.join(' , ')}}</td>
+                            <td class="mfb-xt text-center">{{model.sizeTypeTrans.join(' , ')}}</td>
+                            <td class="mfb-xt text-center">{{model.viewTypeName}}</td>
+                            <td class="mfb-xt text-center">{{model.cartName}}</td>
                             <td class="mfb-xxt text-center">{{model.imageTemplateTypeName}}</td>
                             <td class="mfb-xxt text-center"><textarea  rows="3" readonly>{{model.imageTemplateContent}}</textarea></td>
                             <td class="mfb-xxx text-center">{{model.modified}}</td>
-                            <td class="mfb-xxt text-center">
+                            <td class="mfb-xx text-center">
                                 <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing(model)"><i class="fa fa-cog"></i></button>
                                 <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa  fa-trash-o"></i></button>
                             </td>

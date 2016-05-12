@@ -1,7 +1,6 @@
 /**
  * Created by linanbin on 15/12/7.
  */
-
 define([
     'underscore',
     'modules/cms/controller/popup.ctl',
@@ -34,7 +33,10 @@ define([
 
         $scope.initialize = initialize;
         $scope.clear = clear;
-        $scope.search = search;
+        $scope.search = function(){
+            $scope.vm.status.open = false;//收缩搜索栏
+            search();
+        };
         $scope.exportFile = exportFile;
         $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
@@ -278,7 +280,8 @@ define([
                 selList = $scope.vm.productSelList.selList;
             }
             openAddToPromotion(promotion, getSelProductList()).then(function () {
-                search ()
+                getGroupList();
+                getProductList();
             })
         }
 
@@ -289,7 +292,8 @@ define([
          */
         function openJMActivity (promotion, openJMActivity) {
             openJMActivity(promotion, getSelProductList()).then(function () {
-                search ()
+                getGroupList();
+                getProductList();
             })
         }
 
@@ -299,7 +303,8 @@ define([
          */
         function openBulkUpdate (openFieldEdit) {
             openFieldEdit(getSelProductList()).then(function () {
-                search ()
+                getGroupList();
+                getProductList();
             })
         }
 
@@ -426,17 +431,16 @@ define([
                     .then(function () {
                         searchAdvanceService.addFreeTag(tagBean.tagPath, productIds).then(function () {
                             notify.success ($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            search();
+                            getGroupList();
+                            getProductList();
                         })
                     });
             } else {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                return;
             }
         }
 
-    };
-
+    }
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
     return searchIndex;
 });

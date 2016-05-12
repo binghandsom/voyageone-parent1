@@ -12,6 +12,16 @@ import java.io.UnsupportedEncodingException;
  */
 public class ImageCreateGetRequest extends CreateImageParameter {
 
+    boolean fillStream = false;
+
+    public boolean isFillStream() {
+        return fillStream;
+    }
+
+    public void setFillStream(boolean fillStream) {
+        this.fillStream = fillStream;
+    }
+
     public String beanToUrl() throws UnsupportedEncodingException {
         StringBuilder sb = new StringBuilder();
         sb.append("cId=").append(channelId);

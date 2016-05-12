@@ -1,7 +1,9 @@
 package com.voyageone.components.imagecreate.service;
 
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.ComponentBase;
 import com.voyageone.components.imagecreate.bean.ImageCreateAddListRequest;
 import com.voyageone.components.imagecreate.bean.ImageCreateAddListResponse;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
@@ -10,8 +12,14 @@ import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.OpenApiResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,10 +31,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-public class ImageCreateService {
-
-    //private static final String POST_URL = "http://localhost:8080/rest/product/image/";
-    private static final String POST_URL = "http://image.voyageone.com.cn/createservice/";
+public class ImageCreateService extends ComponentBase {
 
     /**
      * 单个图片生成
@@ -41,7 +46,18 @@ public class ImageCreateService {
 
         request.checkInputValue();
 
-        return sendData(POST_URL + "get", request.beanToUrl(), null, ImageCreateGetResponse.class);
+        ImageCreateGetResponse response = sendData(getProstUrl() + "get", request.beanToUrl(), null, ImageCreateGetResponse.class);
+
+        if (request.isFillStream()) {
+            // build imageURL
+            String imageUrl = getImageDomainURL();
+            if (!imageUrl.endsWith("/")) {
+                imageUrl += "/";
+            }
+            imageUrl += response.getResultData().getFilePath();
+            response.setImageInputStream(getFileStream(imageUrl));
+        }
+        return response;
     }
 
     /**
@@ -59,7 +75,7 @@ public class ImageCreateService {
             createImageParameter.checkInputValue();
         }
 
-        return sendData(POST_URL + "addList", JacksonUtil.bean2Json(request), "application/json", ImageCreateAddListResponse.class);
+        return sendData(getProstUrl() + "addList", JacksonUtil.bean2Json(request), "application/json", ImageCreateAddListResponse.class);
     }
 
     private <E> E sendData(String url, String param, String accept, Class<E> clazz) throws Exception {
@@ -83,5 +99,42 @@ public class ImageCreateService {
             throw new OpenApiException(openApiResultBean.getErrorCode(), openApiResultBean.getErrorMsg());
         }
         return response;
+    }
+
+
+    /**
+     * 下载文件OutputStream
+     */
+    private InputStream getFileStream(String urlString) throws IOException {
+        InputStream is = null;
+        try {
+            URL url = new URL(urlString);
+            // 打开连接
+            URLConnection con = url.openConnection();
+            con.setRequestProperty("Accept-Charset", "UTF-8");
+            //设置请求超时为5s
+            con.setConnectTimeout(10 * 1000);
+            //设置请求超时为5s
+            con.setReadTimeout(20 * 1000);
+            // 输入流
+            is = con.getInputStream();
+            byte[] bytes = IOUtils.toByteArray(is);
+            return new ByteArrayInputStream(bytes);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
+    private String getProstUrl() {
+        return "http://" + Codes.getCodeName("VO_IMAGE_SERVER", "DOMAIN") + "/createservice/";
+    }
+
+    private String getImageDomainURL() {
+        return Codes.getCodeName("AliYun_OSS_Confige", "url");
     }
 }

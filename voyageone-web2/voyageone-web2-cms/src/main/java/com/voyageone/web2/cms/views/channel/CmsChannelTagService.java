@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.impl.cms.TagService;
@@ -20,29 +21,25 @@ import java.util.Map;
  */
 @Service
 public class CmsChannelTagService extends BaseAppService {
-    /**
-     * 店铺分类标签
-     */
-    private static final String TAG_TYPE_SHOP_CLASSIFY = "1";
-    private static final String TAG_TYPE_SHOP_CLASSIFY_NAME = "店铺内分类";
-    /**
-     * 活动标签
-     */
-    private static final String TAG_TYPE_PROMOTION = "2";
-    private static final String TAG_TYPE_PROMOTION_NAME = "活动标签";
-    /**
-     * 货位标签
-     */
-    private static final String TAG_TYPE_GOODS = "3";
-    private static final String TAG_TYPE_GOODS_NAME = "货位标签";
-    /**
-     * 自由标签
-     */
-    private static final String TAG_TYPE_FREE = "4";
-    private static final String TAG_TYPE_FREE_NAME = "自由标签";
     @Autowired
     private TagService tagService;
 
+    /**
+     * 取得标签管理初始化数据
+     * @param param
+     * @param lang
+     * @return result
+     */
+    public Map<String, Object> getInitTagInfo(Map param,String lang){
+        Map<String, Object> result = new HashMap<>();
+        List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
+        //取得所有的标签类型
+        result.put("tagTree",convertToTree(tagsList));
+        //标签类型
+        result.put("tagTypeList", Types.getTypeList(74, lang));
+        //返回数据类型
+        return result;
+    }
     /**
      * 根据channelId取得素有的标签并对其进行分类
      *
@@ -51,7 +48,7 @@ public class CmsChannelTagService extends BaseAppService {
      */
     public List<CmsBtTagBean> getTagInfoByChannelId(Map param) {
         //公司平台销售渠道
-        String channelId = (String) param.get("channel_id");
+        String channelId = (String) param.get("channelId");
         //标签类型
         String tagTypeSelectValue = (String) param.get("tagTypeSelectValue");
         //取得所有的标签类型
@@ -193,18 +190,7 @@ public class CmsChannelTagService extends BaseAppService {
         //一级标签
         if (firstTag) {
             cmsBtTagModel.setChannelId(channelId);
-            if (TAG_TYPE_SHOP_CLASSIFY.equals(tagTypeValue)) {
-                cmsBtTagModel.setTagName(TAG_TYPE_SHOP_CLASSIFY_NAME);
-            }
-            if (TAG_TYPE_PROMOTION.equals(tagTypeValue)) {
-                cmsBtTagModel.setTagName(TAG_TYPE_PROMOTION_NAME);
-            }
-            if (TAG_TYPE_GOODS.equals(tagTypeValue)) {
-                cmsBtTagModel.setTagName(TAG_TYPE_GOODS_NAME);
-            }
-            if (TAG_TYPE_FREE.equals(tagTypeValue)) {
-                cmsBtTagModel.setTagName(TAG_TYPE_FREE_NAME);
-            }
+            cmsBtTagModel.setTagName(tagTypeValue);
             cmsBtTagModel.setTagPath("0");
             cmsBtTagModel.setTagPathName(tagPathName);
             cmsBtTagModel.setTagType(Integer.valueOf(String.valueOf(tagInfo.get("tagTypeSelectValue"))));

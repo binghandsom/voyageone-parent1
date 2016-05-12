@@ -89,6 +89,7 @@ define([
                 self.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
+                        console.log(self.productDetails.feedInfoModel);
                         self.inventoryList = res.data.inventoryList;
                         self._orgChaName = res.data.orgChaName;
                         self._isminimall = res.data.isminimall;

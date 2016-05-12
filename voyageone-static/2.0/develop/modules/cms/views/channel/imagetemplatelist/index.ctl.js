@@ -2,7 +2,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function indexController($scope, imageTemplateService, confirm, $translate, cActions, notify, $location, cRoutes) {
+    function indexController($scope, imageTemplateService, confirm,alert, $translate, cActions, notify, $location, cRoutes) {
         $scope.vm = {"modelList": [],
             "platformList":[],
             "brandNameList":[],
@@ -81,6 +81,6 @@ define([
             })
         };
     }
-    indexController.$inject = ['$scope', 'imageTemplateService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
+    indexController.$inject = ['$scope', 'imageTemplateService', 'confirm','alert', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
     return indexController;
 });

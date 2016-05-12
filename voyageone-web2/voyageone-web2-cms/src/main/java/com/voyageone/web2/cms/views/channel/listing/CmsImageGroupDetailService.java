@@ -216,7 +216,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
                 // 请输入必填项目
                 throw new BusinessException("7000080");
             }
-            // Group里存在check
+            // ImageGroup里存在check
             if (originUrl.startsWith(URL_PREFIX)) {
                 CmsBtImageGroupModel model = imageGroupService.getImageGroupModel(imageGroupId);
                 if (model != null) {
