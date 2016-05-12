@@ -38,7 +38,7 @@ define([
                 }
             });
            if(resultArr.length % 3 != 0){
-               alert($translate.instant("TXT_SIZE_CHART_NOTICE_COMPETE"));
+               alert($translate.instant("TXT_SIZE_CHART_NOTICE_PS"));
                return;
            }
            for(var i=0,length=resultArr.length;i<length;i++){

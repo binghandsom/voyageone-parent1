@@ -519,23 +519,21 @@ define(function() {
         /**分页显示*/
         "TXT_PAGER_SIZE": "page-size",
         /**尺码表*/
-        "TXT_SIZE_CHART":"Size Chart",
+        "TXT_SIZE_CHART":"Size Chart List",
         "TXT_SIZE_CHART_DETAIL":"Size Chart Detail",
+        "TXT_SIZE_CHART_ADD":"Common Size Chart Edit",
+        "TXT_SIZE_CHART_IMPORT":"Size Chart Import",
         "TXT_SIZE_CHART_NAME":"Size Chart Name",
         "TXT_SIZE_CHART_FINISH":"Finish",
         "TXT_SIZE_CHART_UPDATE_TIME":"Update Time",
-        "TXT_SIZE_CHART_BRAND_NAME":"Related Brand Name",
-        "TXT_SIZE_CHART_PRODUCT_TYPE":"Related Product Type",
-        "TXT_SIZE_CHART_SIZE_TYPE":"Related Size Type",
-        "TXT_SIZE_CHART_ORIGINAL_SIZE":"originalSize",
+        "TXT_SIZE_CHART_ORIGINAL_SIZE":"Original Size",
         "TXT_SIZE_CHART_ADJUST_SIZE":"Platform Size",
-        "TXT_SIZE_CHART_COMMON_SIZE":"common Size Type",
+        "TXT_SIZE_CHART_COMMON_SIZE":"Common Size Type",
         "TXT_SIZE_CHART_NOTICE":"Please select No if Size chart is in doubt,renewwill still use this size chart",
         "TXT_SIZE_CHART_NOTICE_REQUIED":"Please input sizeChart name",
-        "TXT_SIZE_CHART_NOTICE_REPEAT":"originalSize can't repeat",
-        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null",
+        "TXT_SIZE_CHART_NOTICE_REPEAT":"OriginalSize can't repeat",
+        "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size is required",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
-        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
-        "TXT_SIZE_CHART_NOTICE_COMPETE":"Please input to compete"
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character"
     };
 });
