@@ -6,19 +6,24 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by dell on 2016/3/29.
+ * HtSkuAddResponse
+ * @author peitao.sun, 2016/3/29
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtSkuAddResponse extends JMResponse {
+public class HtSkuAddResponse extends BaseJMResponse {
 //    {
 //        "error_code": 0,
 //            "reason": "success",
 //            "response": {"sku_no":"jumei_sku_no"}
 //    }
-    String error_code;
-    String reason;
-    String jumei_sku_no;
-    boolean is_Success;
-    String errorMsg;
+    private String error_code;
+    private String reason;
+    private String jumei_sku_no;
+    private boolean is_Success;
+    private String errorMsg;
+    private String body;
+
 
     public String getErrorMsg() {
         return errorMsg;
@@ -60,14 +65,10 @@ public class HtSkuAddResponse extends JMResponse {
         this.jumei_sku_no = jumei_sku_no;
     }
 
-    @Override
     public String getBody() {
         return body;
     }
 
-    String body;
-
-    @Override
     public void setBody(String body) throws IOException {
         this.body = body;
         try {
@@ -84,14 +85,14 @@ public class HtSkuAddResponse extends JMResponse {
                     this.setJumei_sku_no(mapSesponse.get("jumei_sku_no").toString());
                 }
             }
-            if (this.getError_code() == "0") {
+            if ("0".equals(this.error_code)) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.getBody());
+                this.setErrorMsg(this.body);
             }
         } catch (Exception ex) {
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.getBody());
+            this.setErrorMsg("返回参数解析错误" + this.body);
         }
     }
 }

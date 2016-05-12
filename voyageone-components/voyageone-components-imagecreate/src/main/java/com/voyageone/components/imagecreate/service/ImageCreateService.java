@@ -78,7 +78,7 @@ public class ImageCreateService {
         if (response == null) {
             throw new OpenApiException(ImageErrorEnum.SystemError);
         }
-        OpenApiResultBean openApiResultBean = ((OpenApiResultBean) response);
+        OpenApiResultBean openApiResultBean = (OpenApiResultBean) response;
         if (openApiResultBean.getErrorCode() != 0) {
             throw new OpenApiException(openApiResultBean.getErrorCode(), openApiResultBean.getErrorMsg());
         }
