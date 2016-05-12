@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
@@ -51,8 +52,8 @@ public class CmsImageTemplateController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
         model.setChannelId(this.getUser().getSelChannelId());
-        service.save(model, this.getUser().getUserName());
-        return success(null);
+        CallResult result= service.save(model, this.getUser().getUserName());
+        return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
     public AjaxResponse delete(@RequestBody Long imageTemplateId) {
