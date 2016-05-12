@@ -80,6 +80,7 @@
         "getPlatformCategories": "getPlatformCategories",
         "setPlatformMapping": "setPlatformMapping",
         "getPlatformCategory": "getPlatformCategory",
+        "getPlatformCategorySchema": "getPlatformCategorySchema",
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
@@ -264,6 +265,11 @@
           "getCategoryList": "getCategoryList",
           "getCategoryDetail":"getCategoryDetail",
           "updateCategorySchema":"updateCategorySchema"
+        },
+        "categorySettingService": {
+          "root": "/cms/system/category/setting",
+          "getMasterSubCategoryList":"getMasterSubCategoryList",
+          "getPlatformSubCategoryList":"getPlatformSubCategoryList"
         }
       },
       "systemCartService":{

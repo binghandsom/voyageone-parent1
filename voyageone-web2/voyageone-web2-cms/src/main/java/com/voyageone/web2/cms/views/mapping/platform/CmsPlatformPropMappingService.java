@@ -6,6 +6,7 @@ import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.bean.cms.*;
@@ -26,10 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -98,6 +96,59 @@ class CmsPlatformPropMappingService extends BaseAppService {
             put("mapping", mappingMap);
             put("matchOver", platformMappingModel.getMatchOver());
         }};
+    }
+
+    /**
+     * 直接获取平台类目和 Mapping 的所有信息
+     *
+     * @param categoryId 平台类目 ID
+     * @param cartId     平台 ID
+     * @param user       用户配置
+     * @return CmsMtCategorySchemaModel
+     */
+    CmsMtCategorySchemaModel getPlatformCategorySchema(String categoryId, int cartId, UserSessionBean user) {
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(categoryId, cartId);
+
+        // 转换类目属性
+        String itemSchema = platformCatSchemaModel.getPropsItem();
+        String productSchema = platformCatSchemaModel.getPropsProduct();
+        List<com.voyageone.common.masterdate.schema.field.Field> masterFields = new ArrayList<>();
+        List<com.voyageone.common.masterdate.schema.field.Field> itemFields = new ArrayList<>();
+        List<com.voyageone.common.masterdate.schema.field.Field> prodFields = new ArrayList<>();
+        //取得商品fields from item schema
+        if (!com.voyageone.common.util.StringUtils.isEmpty(itemSchema)) {
+            itemFields = com.voyageone.common.masterdate.schema.factory.SchemaReader.readXmlForList(itemSchema);
+        }
+        //取得产品fields from item schema
+        if (!com.voyageone.common.util.StringUtils.isEmpty(productSchema)) {
+            prodFields = com.voyageone.common.masterdate.schema.factory.SchemaReader.readXmlForList(productSchema);
+        }
+
+        for (com.voyageone.common.masterdate.schema.field.Field proField : prodFields) {
+            proField.setInputLevel(1);
+            masterFields.add(proField);
+        }
+        for (com.voyageone.common.masterdate.schema.field.Field itemField : itemFields) {
+            itemField.setInputLevel(2);
+            //判断产品和商品中是否有相同的属性id，有则修改id名字加以区分
+            if (masterFields.contains(itemField)) {
+                itemField.setInputOrgId(itemField.getId());
+                com.voyageone.common.masterdate.schema.field.Field upField = FieldUtil.getFieldById(masterFields, itemField.getId());
+                if (upField != null) {
+                    String newId = itemField.getId() + "_productLevel";
+                    upField.setId(newId);
+                    FieldUtil.renameDependFieldId(upField, itemField.getId(), newId, masterFields);
+                }
+            }
+            masterFields.add(itemField);
+        }
+
+        CmsMtCategorySchemaModel masterSchemaModel = new CmsMtCategorySchemaModel(platformCatSchemaModel.getCatId(), platformCatSchemaModel.getCatFullPath(), masterFields);
+        masterSchemaModel.setModifier(user.getUserName());
+        masterSchemaModel.setCreater(user.getUserName());
+        masterSchemaModel.setSku(null);
+
+        return masterSchemaModel;
     }
 
     /**
