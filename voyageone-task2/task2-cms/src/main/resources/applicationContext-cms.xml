@@ -78,7 +78,7 @@
         <!-- 设定活动结束的隔离数据状态为等待还原batch -->
         <task:scheduled ref="CmsStockWaitingRevertJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!-- 设定活动结束的隔离数据状态为等待还原batch -->
+        <!-- 图片上传到平台batch -->
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
     </task:scheduled-tasks>
