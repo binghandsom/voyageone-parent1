@@ -37,10 +37,13 @@ define([
                     });
                 }
             });
-           if(resultArr.length % 3 != 0) return;
+           if(resultArr.length % 3 != 0){
+               alert($translate.instant("TXT_SIZE_CHART_NOTICE_COMPETE"));
+               return;
+           }
            for(var i=0,length=resultArr.length;i<length;i++){
                 if((i+1)%3 == 0){
-                    if(Number(resultArr[i].value) > 1 || Number(resultArr[i].value) < 0){
+                    if(Number(resultArr[i].value) > 1 || Number(resultArr[i].value) < 0 || isNaN(resultArr[i].value)){
                         alert($translate.instant("TXT_SIZE_CHART_NOTICE_third"));
                         return;
                     }

@@ -527,6 +527,7 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
+        "TXT_SIZE_CHART_NOTICE_COMPETE":"请输入完整"
     };
 });

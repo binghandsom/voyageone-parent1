@@ -529,6 +529,6 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size can't be null",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
         "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
-        "TXT_SIZE_CHART_COMMON_ADD":"Common Size Chart Edit"
+        "TXT_SIZE_CHART_NOTICE_COMPETE":"Please input to compete"
     };
 });
