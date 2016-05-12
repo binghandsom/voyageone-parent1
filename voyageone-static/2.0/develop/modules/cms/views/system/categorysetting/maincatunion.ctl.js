@@ -203,7 +203,7 @@ define([
                 $scope.vm.curMCatId = $scope.vm.mCatList[catLvl][$index].catId;
                 $scope.vm.curMCatPath = $scope.vm.mCatList[catLvl][$index].catPath;
                 $scope.vm.selMIdxList[catLvl] = $index;
-                if ($scope.vm.pCatList[catLvl][$index].isParent == 0) {
+                if ($scope.vm.mCatList[catLvl][$index].isParent == 0) {
                     return;
                 }
 
