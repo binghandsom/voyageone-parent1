@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
@@ -54,6 +55,11 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
             List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductBean.getCmsBtProductModel().getFields().getImages(imageType);
 
             for (CmsBtProductModel_Field_Image cmsBtProductModelFieldImage : cmsBtProductModelFieldImages) {
+                // 20160512 tom 有可能为空 add START
+                if (StringUtils.isEmpty(cmsBtProductModelFieldImage.getName())) {
+                    continue;
+                }
+                // 20160512 tom 有可能为空 add END
                 String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
                 completeImageUrl = UploadImageHandler.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {

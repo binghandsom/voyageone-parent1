@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetAllImages;
@@ -62,6 +63,11 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
             List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProduct.getFields().getImages(imageType);
 
             for (CmsBtProductModel_Field_Image cmsBtProductModelFieldImage : cmsBtProductModelFieldImages) {
+                // 20160512 tom 有可能为空 add START
+                if (StringUtils.isEmpty(cmsBtProductModelFieldImage.getName())) {
+                    continue;
+                }
+                // 20160512 tom 有可能为空 add END
                 String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {
