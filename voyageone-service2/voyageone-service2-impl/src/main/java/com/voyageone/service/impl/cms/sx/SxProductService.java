@@ -21,6 +21,7 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
+import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -85,6 +86,8 @@ public class SxProductService extends BaseService {
     private CmsMtPlatformDictDao cmsMtPlatformDictDao;
     @Autowired
     private PaddingImageDaoExt paddingImageDaoExt;
+    @Autowired
+    private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
     @Autowired
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
 
@@ -486,16 +489,21 @@ public class SxProductService extends BaseService {
     /**
      * mapping
      *
-     * @param fields List<Field>
+     * @param fields List<Field> 直接把值set进这个fields对象
      * @param cmsMtPlatformMappingModel
      * @param shopBean
      * @param expressionParser
      * @param user 上传图片用
-     * @return Map<field_id, mt里转换后的值>
+     * @return Map<field_id, mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
     public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         Map<String, Field> retMap = null;
+
+        Map<String, Field> fieldsMap = new HashMap<>();
+        for (Field field : fields) {
+            fieldsMap.put(field.getId(), field);
+        }
 
         // TODO:特殊字段处理
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
@@ -504,7 +512,16 @@ public class SxProductService extends BaseService {
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
 
-
+        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp);
+        if (!mappingTypePropsMap.isEmpty()) {
+            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser);
+            if (!resolveField.isEmpty()) {
+                if (retMap == null) {
+                    retMap = new HashMap<>();
+                }
+                retMap.putAll(resolveField);
+            }
+        }
 
         Map<String, MappingBean> mapProp = new HashMap<>();
         List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
@@ -514,7 +531,7 @@ public class SxProductService extends BaseService {
 
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
-                // TODO:特殊字段处理
+                // 特殊字段
 
             } else if (resolveJdPriceSection_before(shopBean, field)) {
                 // 设置京东属性 - [价格][价位]
@@ -832,50 +849,72 @@ public class SxProductService extends BaseService {
         }
     }
 
-//    public void constructCustomPlatformProps(Map<String, Field> fieldMap, ExpressionParser expressionParser) throws Exception {
-//        SxData sxData = expressionParser.getSxData();
-//        CmsBtProductModel mainSxProduct = sxData.getMainProduct();
-//
-//        String brandCode = brandMapDao.cmsBrandToPlatformBrand(sxData.getChannelId(), sxData.getCartId(), mainSxProduct.getFields().getBrand());
-//
-//        //第一步，先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
-//        List<CustomPlatformPropMappingModel> customPlatformPropMappingModels = platformPropCustomMappingDao.getCustomMappingPlatformProps(sxData.getCartId());
-//
-//        Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
-//
-//        for (CustomPlatformPropMappingModel customPlatformPropMappingModel : customPlatformPropMappingModels) {
-//            Field field = fieldMap.get(customPlatformPropMappingModel.getPlatformPropId());
-//            if (field != null) {
-//                List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(customPlatformPropMappingModel.getCustomMappingType());
-//                if (mappingPlatformPropBeans == null) {
-//                    mappingPlatformPropBeans = new ArrayList<>();
-//                    mappingTypePropsMap.put(customPlatformPropMappingModel.getCustomMappingType(), mappingPlatformPropBeans);
-//                }
-//                fieldMap.remove(customPlatformPropMappingModel.getPlatformPropId());
-//                mappingPlatformPropBeans.add(field);
-//            }
-//        }
-//
-//        //品牌
-//        for (Map.Entry<CustomMappingType, List<Field>> entry : mappingTypePropsMap.entrySet()) {
-//            CustomMappingType customMappingType = entry.getKey();
-//            List<Field> processFields = entry.getValue();
-//            switch (customMappingType) {
-//                case BRAND_INFO: {
-//                    String brandCode = tmallUploadRunState.getBrand_code();
-//                    Field field = processFields.get(0);
-//
-//                    if (field.getType() != FieldTypeEnum.SINGLECHECK) {
-//                        logger.error("tmall's brand field(" + field.getId() + ") must be singleCheck");
-//                    } else {
-//                        SingleCheckField singleCheckField = (SingleCheckField) field;
-//                        singleCheckField.setValue(brandCode);
-//                        contextBuildFields.addCustomField(singleCheckField);
-//                    }
-//                    break;
-//                }
-//                case SKU_INFO:
-//                {
+
+    /**
+     * 特殊属性取得
+     *
+     * @param fieldsMap
+     * @param expressionParser ExpressionParser
+     * @param mapSp 特殊属性Map
+     * @return
+     * @throws Exception
+     */
+    private Map<CustomMappingType, List<Field>> getCustomPlatformProps(Map<String, Field> fieldsMap, ExpressionParser expressionParser, Map<String, Object> mapSp) throws Exception {
+        SxData sxData = expressionParser.getSxData();
+
+        //第一步，先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
+        List<CmsMtPlatformPropMappingCustomModel> cmsMtPlatformPropMappingCustomModels = cmsMtPlatformPropMappingCustomDao.selectList(new HashMap<String, Object>(){{put("cartId", sxData.getCartId());}});
+
+        Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
+
+        for (CmsMtPlatformPropMappingCustomModel model : cmsMtPlatformPropMappingCustomModels) {
+            Field field = fieldsMap.get(model.getPlatformPropId());
+            if (field != null) {
+                List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(CustomMappingType.valueOf(model.getMappingType()));
+                if (mappingPlatformPropBeans == null) {
+                    mappingPlatformPropBeans = new ArrayList<>();
+                    mappingTypePropsMap.put(CustomMappingType.valueOf(model.getMappingType()), mappingPlatformPropBeans);
+                }
+                mappingPlatformPropBeans.add(field);
+                mapSp.put(model.getPlatformPropId(), field);
+            }
+        }
+
+        return mappingTypePropsMap;
+    }
+
+    /**
+     * 特殊属性设值
+     *
+     * @param mappingTypePropsMap
+     * @param expressionParser
+     * @throws Exception
+     */
+    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser) throws Exception {
+        Map<String, Field> retMap = new HashMap<>();
+
+        SxData sxData = expressionParser.getSxData();
+        CmsBtProductModel mainSxProduct = sxData.getMainProduct();
+
+        //品牌
+        for (Map.Entry<CustomMappingType, List<Field>> entry : mappingTypePropsMap.entrySet()) {
+            CustomMappingType customMappingType = entry.getKey();
+            List<Field> processFields = entry.getValue();
+            switch (customMappingType) {
+                case BRAND_INFO: {
+                    String brandCode = sxData.getBrandCode();
+                    Field field = processFields.get(0);
+
+                    if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+                        $error("tmall's brand field(" + field.getId() + ") must be singleCheck");
+                    } else {
+                        SingleCheckField singleCheckField = (SingleCheckField) field;
+                        singleCheckField.setValue(brandCode);
+                        retMap.put(field.getId(), singleCheckField);
+                    }
+                    break;
+                }
+//                case SKU_INFO: {
 //                    int cartId = workLoadBean.getCart_id();
 //                    String categoryCode = String.valueOf(tmallUploadRunState.getCategory_code());
 //
@@ -910,33 +949,42 @@ public class SxProductService extends BaseService {
 //                    contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
 //                    break;
 //                }
-//                case PRICE_SECTION:
-//                {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("price_section's platformProps must have only one prop!"));
-//                    }
-//                    SingleCheckField priceField = (SingleCheckField) processFields.get(0);
-//                    List<PriceSectionBuilder.PriceOption> priceOptions = PriceSectionBuilder.transferFromTmall(priceField.getOptions());
-//                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getPriceSaleSt();
-//
-//                    String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
-//                    priceField.setValue(priceSectionValue);
-//
-//                    contextBuildFields.addCustomField(priceField);
-//                    break;
-//                }
-//                case TMALL_SERVICE_VERSION:
-//                {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall service version's platformProps must have only one prop!"));
-//                    }
-//                    InputField  field = (InputField) processFields.get(0);
-//                    field.setValue("11100");
-//                    contextBuildFields.addCustomField(field);
-//                    break;
-//                }
+                case PRICE_SECTION:
+                {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("price_section's platformProps must have only one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+                        $error("price_section's field(" + field.getId() + ") must be singleCheck");
+                    } else {
+                        SingleCheckField priceField = (SingleCheckField) processFields.get(0);
+                        PriceSectionBuilder priceSectionBuilder = PriceSectionBuilder.createPriceSectionBuilder(priceField.getOptions());
+                        double usePrice = sxData.getPlatform().getPriceSaleSt();
+
+                        String priceSectionValue = priceSectionBuilder.getPriceOptionValue(usePrice);
+                        priceField.setValue(priceSectionValue);
+                        retMap.put(field.getId(), priceField);
+                    }
+                    break;
+                }
+                case TMALL_SERVICE_VERSION:
+                {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall service version's platformProps must have only one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall service version's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) processFields.get(0);
+                        inputField.setValue("11100");
+                        retMap.put(field.getId(), inputField);
+                    }
+                    break;
+                }
 //                case TMALL_STYLE_CODE:
 //                {
 //                    if (processFields == null || processFields.size() != 1)
@@ -1139,9 +1187,11 @@ public class SxProductService extends BaseService {
 //                    contextBuildFields.addCustomField(processField);
 //                    break;
 //                }
-//            }
-//        }
-//    }
+            }
+        }
+
+        return retMap;
+    }
 
     /**
      * 根据字典名字解析
