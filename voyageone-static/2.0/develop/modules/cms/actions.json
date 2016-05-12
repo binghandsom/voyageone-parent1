@@ -377,7 +377,10 @@
         "getCount": "getCount",
         "save": "save",
         "delete": "delete",
-        "get":"get"
+        "get":"get",
+        "getTemplateParameter":"getTemplateParameter",
+        "getDownloadUrl":"getDownloadUrl"
+
        },
       "imageGroupService": {
         "root": "/cms/channel/image_group",

@@ -51,7 +51,7 @@ public class LiquidFireImageService extends BaseService {
         }
         return String.format(templateContent, list);
     }
-    public String getDowlownUrl(String templateContent, String vparam) throws Exception {
+    public String getDownloadUrl(String templateContent, String vparam) throws Exception {
         LiquidFireClient client = new LiquidFireClient(ImageConfig.getLiquidFireUrl(), ImageConfig.getLiquidFireImageSavePath());
         String urlParameter = getUrlParameter(templateContent, vparam);
         return client.getDownloadUrl(urlParameter,"DownloadUrlFile");

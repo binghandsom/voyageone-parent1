@@ -3,21 +3,36 @@
  */
 define([
     'angularAMD',
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
+], function (angularAMD, _) {
 
-    angularAMD.controller('popImageTemplatePreviewCtl', function ($scope, $routeParams) {
-
-        /**
-         * 初始化数据.
-         */
+    angularAMD.controller('popImageTemplatePreviewCtl', function ($scope,imageTemplateService,context,$routeParams) {
+        $scope.vm = {templateParameterList:[]};
+        $scope.templateContent="";
         $scope.initialize = function () {
-            if ($scope.vm == undefined) {
-                $scope.vm = {};
+            if (context) {
+                $scope.templateContent=context
             }
-            $scope.vm.imageMain = $routeParams.imageMain;
-            $scope.vm.imageList = $routeParams.imageList;
-        };
+          //"getTemplateParameter":"getTemplateParameter",
+          //"getDownloadUrl":"getDownloadUrl"
+            imageTemplateService.getTemplateParameter( $scope.templateContent).then(function (res) {
 
+                //$scope.vm.templateParameterList=res.data;
+
+                angular.forEach(res.data, function (value) {
+                    $scope.vm.templateParameterList.push({value: value});
+                });
+                //for(var i=0;i<res.data.length;i++)
+                //{
+                //    $scope.vm.templateParameterList.push({i:res.data[i]});
+                //}
+                console.log( $scope.vm.templateParameterList);
+            })
+        };
+        $scope.openPreview=function()
+        {
+            console.log(_.values( $scope.vm.templateParameterList));
+        }
     });
 });

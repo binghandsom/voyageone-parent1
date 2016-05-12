@@ -575,6 +575,8 @@ public interface CmsUrlConstants {
             String Save = "save";
             String Delete = "delete";
             String Get="get";
+            String GetDownloadUrl="getDownloadUrl";
+            String GetTemplateParameter="getTemplateParameter";
         }
         interface CHANNEL_IMAGE_GROUP_DETAIL {
             String ROOT="/cms/channel/image_group_detail";

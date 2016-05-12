@@ -12,16 +12,21 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
+import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.commons.beanutils.BeanUtils;
+import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -38,6 +43,8 @@ public class CmsImageTemplateService extends BaseService {
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
     private CmsBtImageTemplateDao dao;
+    @Autowired
+    LiquidFireImageService serviceLiquidFireImage;
 
     public Object getPage(Map<String, Object> map) {
         int pageIndex = Integer.parseInt(map.get("pageIndex").toString());
@@ -52,10 +59,12 @@ public class CmsImageTemplateService extends BaseService {
         List<CmsBtImageTemplateModel> list = dao.select(queryObject);
         return changeToBeanList(list, (String) map.get("channelId"), (String) map.get("lang"));
     }
+
     public Object getCount(Map<String, Object> mapQuery) {
         String parameter = getSearchQuery(mapQuery);
         return dao.countByQuery(parameter);
     }
+
     public void update(CmsBtImageTemplateModel model) {
         dao.update(model);
     }
@@ -67,6 +76,7 @@ public class CmsImageTemplateService extends BaseService {
     public CmsBtImageTemplateModel getOne(JomgoQuery queryObject) {
         return dao.selectOneWithQuery(queryObject);
     }
+
     /**
      * 取得检索条件信息
      *
@@ -84,7 +94,7 @@ public class CmsImageTemplateService extends BaseService {
         // 尺寸类型下拉列表
         result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String) param.get("channelId"), (String) param.get("lang")));
 
-        result.put("imageTemplateList",Types.getTypeList(Constants.comMtTypeChannel.Image_Template_Type.toString(), (String) param.get("lang")));
+        result.put("imageTemplateList", Types.getTypeList(Constants.comMtTypeChannel.Image_Template_Type.toString(), (String) param.get("lang")));
         return result;
     }
 
@@ -112,6 +122,7 @@ public class CmsImageTemplateService extends BaseService {
         }
         return imageGroupBeanList;
     }
+
     /**
      * 检索结果转换
      *
@@ -189,7 +200,7 @@ public class CmsImageTemplateService extends BaseService {
     private String getSearchQuery(Map<String, Object> param) {
         StringBuilder result = new StringBuilder();
         List cartIdList = (List) param.get("cartIdList");
-        if (cartIdList!=null&&cartIdList.size() > 0) {
+        if (cartIdList != null && cartIdList.size() > 0) {
             result.append(MongoUtils.splicingValue("cartId", cartIdList.toArray(new Integer[cartIdList.size()])));
             result.append(",");
         }
@@ -203,7 +214,7 @@ public class CmsImageTemplateService extends BaseService {
             result.append(",");
         }
         if (!StringUtils.isEmpty((String) param.get("imageTemplateName"))) {
-            result.append("imageTemplateName:"+"{ $regex:\"" + (String) param.get("imageTemplateName") +"\"}");  //Regex."/"+ (String) param.get("imageTemplateName")+"/"));
+            result.append("imageTemplateName:" + "{ $regex:\"" + (String) param.get("imageTemplateName") + "\"}");  //Regex."/"+ (String) param.get("imageTemplateName")+"/"));
             result.append(",");
         }
         // Update Time
@@ -298,7 +309,7 @@ public class CmsImageTemplateService extends BaseService {
         } else {
             //新增
             model.setActive(1);
-           model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
+            model.setImageTemplateId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
             model.setCreater(userName);
             model.setTemplateModified(DateTimeUtil.getNow());
             model.setModifier(userName);
@@ -328,5 +339,22 @@ public class CmsImageTemplateService extends BaseService {
         queryObject.setQuery("{\"imageTemplateId\":" + imageTemplateId + "}");
         CmsBtImageTemplateModel model = getOne(queryObject);
         return model;
+    }
+
+    public String[] getTemplateParameter(String templateContent) {
+        String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";//待加入配置项
+        String[] strList = templateContent.split("%s");
+        String[] paramList = new String[strList.length - 1];
+        for (int i = 0; i < strList.length - 1; i++) {
+            if (strList[i].indexOf(prefix) > 0) {
+                paramList[i] = "test1.png";
+            } else {
+                paramList[i] = "test中国&" + i;
+            }
+        }
+        return paramList;
+    }
+    public String getDownloadUrl(GetDownloadUrlParamter paramter) throws Exception {
+        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), paramter.getTemplateParameter());
     }
 }
