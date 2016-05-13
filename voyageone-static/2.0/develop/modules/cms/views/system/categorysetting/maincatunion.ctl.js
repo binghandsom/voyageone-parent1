@@ -351,14 +351,14 @@ define([
             // 检查是否是叶子类目，即该类目不能再有子类目
             // 主数据类目
             var catObj = $scope.vm.mCatList[$scope.vm.curMCatLvl][$scope.vm.selMIdxList[$scope.vm.curMCatLvl]];
-            if (catObj.isParent == 1) {
+            if (catObj == undefined || catObj.isParent == 1) {
                 alert("请选择主数据叶子类目");
                 return;
             }
 
             // 平台类目
             catObj = $scope.vm.pCatList[$scope.vm.curPCatLvl][$scope.vm.selPIdxList[$scope.vm.curPCatLvl]];
-            if (catObj.isParent == 1) {
+            if (catObj == undefined || catObj.isParent == 1) {
                 alert("请选择平台叶子类目");
                 return;
             }
