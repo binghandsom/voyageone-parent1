@@ -24,6 +24,8 @@ public class SxData {
     private Double maxPrice; // 当前productList的所有sku中，最大的那个价格（销售的价格）
 	private String brandCode; // 主商品fields.Brand对应的BrandId(cms_mt_brands_mapping)
 
+	private boolean hasSku; // 库存更新时，要选择商品上传时是否有SKU属性
+
 	public String getChannelId() {
 		return channelId;
 	}
@@ -102,5 +104,13 @@ public class SxData {
 
 	public void setBrandCode(String brandCode) {
 		this.brandCode = brandCode;
+	}
+
+	public boolean isHasSku() {
+		return hasSku;
+	}
+
+	public void setHasSku(boolean hasSku) {
+		this.hasSku = hasSku;
 	}
 }
