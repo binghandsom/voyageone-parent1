@@ -37,12 +37,10 @@ public class ImageTemplateService extends BaseService {
     private CmsBtImageTemplateDao dao;
     @Autowired
     LiquidFireImageService serviceLiquidFireImage;
-
-    public Object getPage(ImageTempateParameter param,String channelId,String lang) {
-
-        int pageIndex =param.getPageIndex();// Integer.parseInt(map.get("pageIndex").toString());
-        int pageSize =param.getPageSize();// Integer.parseInt(map.get("pageSize").toString());
-        String parameter = getSearchQuery(param,channelId);
+    public  List<CmsBtImageTemplateBean> getPage(ImageTempateParameter param, String channelId, String lang) {
+        int pageIndex = param.getPageIndex();
+        int pageSize = param.getPageSize();
+        String parameter = getSearchQuery(param, channelId);
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("");
         queryObject.setQuery(parameter);
@@ -50,11 +48,10 @@ public class ImageTemplateService extends BaseService {
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageIndex - 1) * pageSize);
         List<CmsBtImageTemplateModel> list = dao.select(queryObject);
-        return changeToBeanList(list,channelId, lang);
+        return changeToBeanList(list, channelId, lang);
     }
-
-    public Object getCount(ImageTempateParameter param,String channelId) {
-        String parameter = getSearchQuery(param,channelId);
+    public Object getCount(ImageTempateParameter param, String channelId) {
+        String parameter = getSearchQuery(param, channelId);
         return dao.countByQuery(parameter);
     }
 
@@ -70,26 +67,6 @@ public class ImageTemplateService extends BaseService {
         return dao.selectOneWithQuery(queryObject);
     }
 
-    /**
-     * 取得检索条件信息
-     *
-     * @param param 客户端参数
-     * @return 检索条件信息
-     */
-    public Map<String, Object> init(Map<String, Object> param) {
-        Map<String, Object> result = new HashMap<>();
-        // 取得当前channel, 有多少个platform(Approve平台)
-        result.put("platformList", TypeChannels.getTypeListSkuCarts((String) param.get("channelId"), "A", (String) param.get("lang")));
-        // 品牌下拉列表
-        result.put("brandNameList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, (String) param.get("channelId"), (String) param.get("lang")));
-        // 产品类型下拉列表
-        result.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, (String) param.get("channelId"), (String) param.get("lang")));
-        // 尺寸类型下拉列表
-        result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String) param.get("channelId"), (String) param.get("lang")));
-
-        result.put("imageTemplateList", Types.getTypeList(Constants.comMtTypeChannel.Image_Template_Type.toString(), (String) param.get("lang")));
-        return result;
-    }
 
     /**
      * 检索结果转换
@@ -187,18 +164,18 @@ public class ImageTemplateService extends BaseService {
         }
     }
 
-    private String getSearchQuery(ImageTempateParameter param,String channelId) {
+    private String getSearchQuery(ImageTempateParameter param, String channelId) {
         StringBuilder result = new StringBuilder();
         if (ListUtils.notNull(param.getCartIdList())) {
-            result.append(MongoUtils.splicingValue("cartId",param.getCartIdList().toArray()));
+            result.append(MongoUtils.splicingValue("cartId", param.getCartIdList().toArray()));
             result.append(",");
         }
-        if (param.getImageTemplateType()>0) {
-            result.append(MongoUtils.splicingValue("imageTemplateType",param.getImageTemplateType()));
+        if (param.getImageTemplateType() > 0) {
+            result.append(MongoUtils.splicingValue("imageTemplateType", param.getImageTemplateType()));
             result.append(",");
         }
-        if (param.getViewType()>0) {
-            result.append(MongoUtils.splicingValue("viewType",param.getViewType()));
+        if (param.getViewType() > 0) {
+            result.append(MongoUtils.splicingValue("viewType", param.getViewType()));
             result.append(",");
         }
         if (!StringUtils.isEmpty(param.getImageTemplateName())) {
@@ -210,27 +187,27 @@ public class ImageTemplateService extends BaseService {
             result.append("\"modified\":{");
             // 获取Update Time Start
             if (!StringUtils.isEmpty(param.getBeginModified())) {
-                result.append(MongoUtils.splicingValue("$gte",param.getBeginModified() + " 00.00.00"));
+                result.append(MongoUtils.splicingValue("$gte", param.getBeginModified() + " 00.00.00"));
             }
             // 获取Update Time End
             if (!StringUtils.isEmpty(param.getEndModified())) {
                 if (!StringUtils.isEmpty(param.getBeginModified())) {
                     result.append(",");
                 }
-                result.append(MongoUtils.splicingValue("$lte",param.getEndModified()+ " 23.59.59"));
+                result.append(MongoUtils.splicingValue("$lte", param.getEndModified() + " 23.59.59"));
             }
             result.append("},");
         }
         // brandName
-        if (ListUtils.notNull(param.getBrandName())){
+        if (ListUtils.notNull(param.getBrandName())) {
             // 带上"All"
             param.getBrandName().add("All");
-            result.append(MongoUtils.splicingValue("brandName",param.getBrandName().toArray(new String[param.getBrandName().size()])));
+            result.append(MongoUtils.splicingValue("brandName", param.getBrandName().toArray(new String[param.getBrandName().size()])));
             result.append(",");
         }
 
         // productType
-        if(ListUtils.notNull(param.getProductType())) {
+        if (ListUtils.notNull(param.getProductType())) {
             // 带上"All"
             param.getProductType().add("All");
             result.append(MongoUtils.splicingValue("productType", param.getProductType().toArray(new String[param.getProductType().size()])));
@@ -240,8 +217,8 @@ public class ImageTemplateService extends BaseService {
         // sizeType
         if (ListUtils.notNull(param.getSizeType())) {
             // 带上"All"
-          param.getSizeType().add("All");
-            result.append(MongoUtils.splicingValue("sizeType",param.getSizeType().toArray(new String[param.getSizeType().size()])));
+            param.getSizeType().add("All");
+            result.append(MongoUtils.splicingValue("sizeType", param.getSizeType().toArray(new String[param.getSizeType().size()])));
             result.append(",");
         }
         // channelId
@@ -255,8 +232,9 @@ public class ImageTemplateService extends BaseService {
     }
 
     public boolean isNull(List list) {
-        return list != null&&list.size() == 0;
+        return list != null && list.size() == 0;
     }
+
     /**
      * 保存方法
      *
@@ -264,7 +242,7 @@ public class ImageTemplateService extends BaseService {
      * @return 检索结果
      */
     public void save(CmsBtImageTemplateModel model, String userName) {
-        check(model);
+
         //设置默认值
         if (isNull(model.getBrandName())) {
             List lst = new ArrayList<String>();
@@ -299,36 +277,7 @@ public class ImageTemplateService extends BaseService {
             dao.insert(model);
         }
     }
-    void check(CmsBtImageTemplateModel model) {
-        CallResult result = new CallResult();
-        if (model.getBrandName() == null || model.getBrandName().size() == 0) {
-            throw new BusinessException("7000080");
-        }
-        //7000080  必填
-        if (StringUtils.isEmpty(model.getImageTemplateName())) {
-            throw new BusinessException("7000080");
-        }
-        if (model.getCartId() == null || model.getCartId() == 0) {
-            throw new BusinessException("7000080");
-        }
-        if (model.getViewType() == null || model.getViewType() == 0) {
-            throw new BusinessException("7000080");
-        }
-        if (model.getImageTemplateType() == null || model.getImageTemplateType() == 0) {
-            throw new BusinessException("7000080");
-        }
-        if (StringUtils.isEmpty(model.getImageTemplateContent())) {
-            throw new BusinessException("7000080");
-        }
-        long ImageTemplateId = 0;
-        if (model.getImageTemplateId() != null) {
-            ImageTemplateId = model.getImageTemplateId();
-        }
-        long count = dao.countByQuery("{\"imageTemplateName\":\"" + model.getImageTemplateName() + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
-        if (count > 0) {
-            throw new BusinessException("4000009");
-        }
-    }
+
     /**
      * 逻辑删除ImageGroup信息
      *
@@ -344,16 +293,18 @@ public class ImageTemplateService extends BaseService {
             dao.update(model);
         }
     }
+
     public CmsBtImageTemplateModel get(long imageTemplateId) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{\"imageTemplateId\":" + imageTemplateId + "}");
         CmsBtImageTemplateModel model = getOne(queryObject);
         return model;
     }
+
     public String[] getTemplateParameter(String templateContent) {
-      //  String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";//待加入配置项
+        //  String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";//待加入配置项
         //String prefix="http://mce042-fs.nexcess.net:81/voyageone_image";
-        String prefix="http://";
+        String prefix = "http://";
         String[] strList = templateContent.split("%s");
         String[] paramList = new String[strList.length - 1];
         for (int i = 0; i < strList.length - 1; i++) {
@@ -365,7 +316,13 @@ public class ImageTemplateService extends BaseService {
         }
         return paramList;
     }
+
     public String getDownloadUrl(GetDownloadUrlParamter paramter) throws Exception {
         return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), JacksonUtil.bean2Json(paramter.getTemplateParameter()));
+    }
+
+    public boolean EXISTSName(String ImageTemplateName, long ImageTemplateId) {
+        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+        return count > 0;
     }
 }
