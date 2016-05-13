@@ -116,13 +116,15 @@ public class ImageTemplateService extends BaseService {
 
         // Related Brand Name
         List<String> brandNameTrans = new ArrayList<>();
-        for (String brandName : bean.getBrandName()) {
-            if ("All".equals(brandName)) {
-                brandNameTrans.add("All");
-            } else {
-                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
-                if (typeChannelBean != null) {
-                    brandNameTrans.add(typeChannelBean.getName());
+        if(ListUtils.notNull(bean.getBrandName())) {
+            for (String brandName : bean.getBrandName()) {
+                if ("All".equals(brandName)) {
+                    brandNameTrans.add("All");
+                } else {
+                    typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                    if (typeChannelBean != null) {
+                        brandNameTrans.add(typeChannelBean.getName());
+                    }
                 }
             }
         }
@@ -242,19 +244,18 @@ public class ImageTemplateService extends BaseService {
      * @return 检索结果
      */
     public void save(CmsBtImageTemplateModel model, String userName) {
-
         //设置默认值
-        if (isNull(model.getBrandName())) {
+        if (ListUtils.isNull((model.getBrandName()))) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setBrandName(lst);
         }
-        if (isNull(model.getProductType())) {
+        if (ListUtils.isNull((model.getProductType()))) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setProductType(lst);
         }
-        if (isNull(model.getSizeType())) {
+        if (ListUtils.isNull((model.getSizeType()))) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setSizeType(lst);
