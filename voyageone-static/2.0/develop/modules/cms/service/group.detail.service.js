@@ -186,7 +186,13 @@ define([
 			_.forEach(skus, function (sku) {
 				var cartInfo = "";
 				_.forEach(sku.skuCarts, function (skuCart) {
-					cartInfo += Carts.valueOf(skuCart).name + ",";
+					var strValue = Carts.valueOf(skuCart);
+					if (strValue == undefined) {
+						strValue = '';
+					} else {
+						strValue = strValue.name
+					}
+					cartInfo += strValue + ",";
 				});
 				result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
 			});

@@ -24,9 +24,9 @@ define([
                     $scope.vm.sizeTypeList = res.data.sizeTypeList;
                     $scope.vm.imageTemplateList=res.data.imageTemplateList;
                     //   $scope.search();
-                    if(context)
+                    if(context.model)
                     {
-                        imageTemplateService.get(context.imageTemplateId).then(function (res) {
+                        imageTemplateService.get(context.model.imageTemplateId).then(function (res) {
                             $scope.model=res.data;
                             $scope.model.cartId += "";
                             $scope.model.viewType+="";
@@ -40,6 +40,7 @@ define([
                     console.log(res);
                       if(res.data.result) {
                           $scope.$close();
+                          context.search();
                       }
                       else
                       {
