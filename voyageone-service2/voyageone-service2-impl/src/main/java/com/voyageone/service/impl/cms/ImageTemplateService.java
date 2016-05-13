@@ -6,13 +6,11 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
+import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
@@ -40,10 +38,11 @@ public class ImageTemplateService extends BaseService {
     @Autowired
     LiquidFireImageService serviceLiquidFireImage;
 
-    public Object getPage(Map<String, Object> map) {
-        int pageIndex = Integer.parseInt(map.get("pageIndex").toString());
-        int pageSize = Integer.parseInt(map.get("pageSize").toString());
-        String parameter = getSearchQuery(map);
+    public Object getPage(ImageTempateParameter param,String channelId,String lang) {
+
+        int pageIndex =param.getPageIndex();// Integer.parseInt(map.get("pageIndex").toString());
+        int pageSize =param.getPageSize();// Integer.parseInt(map.get("pageSize").toString());
+        String parameter = getSearchQuery(param,channelId);
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("");
         queryObject.setQuery(parameter);
@@ -51,11 +50,11 @@ public class ImageTemplateService extends BaseService {
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageIndex - 1) * pageSize);
         List<CmsBtImageTemplateModel> list = dao.select(queryObject);
-        return changeToBeanList(list, (String) map.get("channelId"), (String) map.get("lang"));
+        return changeToBeanList(list,channelId, lang);
     }
 
-    public Object getCount(Map<String, Object> mapQuery) {
-        String parameter = getSearchQuery(mapQuery);
+    public Object getCount(ImageTempateParameter param,String channelId) {
+        String parameter = getSearchQuery(param,channelId);
         return dao.countByQuery(parameter);
     }
 
@@ -188,6 +187,73 @@ public class ImageTemplateService extends BaseService {
         }
     }
 
+
+    private String getSearchQuery(ImageTempateParameter param,String channelId) {
+        StringBuilder result = new StringBuilder();
+        if (ListUtils.notNull(param.getCartIdList())) {
+            result.append(MongoUtils.splicingValue("cartId",param.getCartIdList().toArray()));
+            result.append(",");
+        }
+        if (param.getImageTemplateType()>0) {
+            result.append(MongoUtils.splicingValue("imageTemplateType",param.getImageTemplateType()));
+            result.append(",");
+        }
+        if (param.getViewType()>0) {
+            result.append(MongoUtils.splicingValue("viewType",param.getViewType()));
+            result.append(",");
+        }
+        if (!StringUtils.isEmpty(param.getImageTemplateName())) {
+            result.append("imageTemplateName:" + "{ $regex:\"" + param.getImageTemplateName() + "\"}");  //Regex."/"+ (String) param.get("imageTemplateName")+"/"));
+            result.append(",");
+        }
+        // Update Time
+        if (!StringUtils.isEmpty(param.getBeginModified()) || !StringUtils.isEmpty(param.getEndModified())) {
+            result.append("\"modified\":{");
+            // 获取Update Time Start
+            if (!StringUtils.isEmpty(param.getBeginModified())) {
+                result.append(MongoUtils.splicingValue("$gte",param.getBeginModified() + " 00.00.00"));
+            }
+            // 获取Update Time End
+            if (!StringUtils.isEmpty(param.getEndModified())) {
+                if (!StringUtils.isEmpty(param.getBeginModified())) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte",param.getEndModified()+ " 23.59.59"));
+            }
+            result.append("},");
+        }
+        // brandName
+        if (ListUtils.notNull(param.getBrandName())){
+            // 带上"All"
+            param.getBrandName().add("All");
+            result.append(MongoUtils.splicingValue("brandName",param.getBrandName().toArray(new String[param.getBrandName().size()])));
+            result.append(",");
+        }
+
+        // productType
+        if(ListUtils.notNull(param.getProductType())) {
+            // 带上"All"
+            param.getProductType().add("All");
+            result.append(MongoUtils.splicingValue("productType", param.getProductType().toArray(new String[param.getProductType().size()])));
+            result.append(",");
+        }
+
+        // sizeType
+        if (ListUtils.notNull(param.getSizeType())) {
+            // 带上"All"
+          param.getSizeType().add("All");
+            result.append(MongoUtils.splicingValue("sizeType",param.getSizeType().toArray(new String[param.getSizeType().size()])));
+            result.append(",");
+        }
+        // channelId
+        result.append(MongoUtils.splicingValue("channelId", channelId));
+        result.append(",");
+
+        // active
+        result.append(MongoUtils.splicingValue("active", 1));
+
+        return "{" + result.toString() + "}";
+    }
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
@@ -266,7 +332,7 @@ public class ImageTemplateService extends BaseService {
     }
 
     public boolean isNull(List list) {
-        return list == null || list.size() == 0;
+        return list != null&&list.size() == 0;
     }
 
     /**
