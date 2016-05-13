@@ -271,12 +271,17 @@ public class SchemaJsonReader {
         if(StringUtil.isEmpty(displayName)) {
             throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_33001, fieldId);
         } else {
-            String value = (String)optionMap.get("value");
-            if(StringUtil.isEmpty(value)) {
+            // 前台传进来的参数可能会是Integer类型，不能直接转为String
+            Object value = optionMap.get("value");
+            if (value == null) {
                 throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_33002, fieldId);
             } else {
+                String strValue = value.toString();
+                if (StringUtil.isEmpty(strValue)) {
+                    throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_33002, fieldId);
+                }
                 opResult.setDisplayName(displayName);
-                opResult.setValue(value);
+                opResult.setValue(strValue);
                 Map<String, Object> dependGroupMap = (Map<String, Object>)optionMap.get("dependGroup");
                 DependGroup dependGroup = mapToDependGroup(dependGroupMap, fieldId);
                 opResult.setDependGroup(dependGroup);
