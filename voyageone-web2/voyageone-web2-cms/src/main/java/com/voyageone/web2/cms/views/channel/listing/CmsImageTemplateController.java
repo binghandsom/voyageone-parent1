@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.channel.listing;
 
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
+import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -23,34 +24,33 @@ import java.util.Map;
 public class CmsImageTemplateController extends CmsController {
     @Autowired
     private ImageTemplateService service;
-
+    @Autowired
+    CmsImageTemplateService serviceCmsImageTemplate;
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Init)
     public AjaxResponse init(@RequestBody Map<String, Object> param) {
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
         // 初始化（取得检索条件信息)
-        Map<String, Object> resultBean = service.init(param);
+        Map<String, Object> resultBean = serviceCmsImageTemplate.init(param);
         //返回数据的类型
         return success(resultBean);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetPage)
-    public AjaxResponse getPage(@RequestBody Map<String, Object> param) {
-        param.put("channelId", this.getUser().getSelChannelId());
-        param.put("lang", this.getLang());
-        Object result = service.getPage(param);
+    public AjaxResponse getPage(@RequestBody ImageTempateParameter param) {
+        Object result = service.getPage(param, this.getUser().getSelChannelId(), this.getLang());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetCount)
-    public AjaxResponse getCount(@RequestBody Map<String, Object> param) {
-        param.put("channelId", this.getUser().getSelChannelId());
-        Object result = service.getCount(param);
+    public AjaxResponse getCount(@RequestBody ImageTempateParameter param) {
+        //param.put("channelId", );
+        Object result = service.getCount(param,this.getUser().getSelChannelId());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
         CallResult result=new CallResult();
         model.setChannelId(this.getUser().getSelChannelId());
-        service.save(model, this.getUser().getUserName());
+       serviceCmsImageTemplate.save(model, this.getUser().getUserName());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)

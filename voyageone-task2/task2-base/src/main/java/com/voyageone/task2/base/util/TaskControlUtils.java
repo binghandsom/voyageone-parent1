@@ -131,7 +131,13 @@ public class TaskControlUtils {
 
         return taskControlList.stream()
                 .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()) && taskControlBean.getCfg_val1().equals(val1))
-                .map(TaskControlBean::getEnd_time).findFirst().orElse(null);
+                .map(bean -> {
+                    if (bean.getEnd_time() == null) {
+                        return "";
+                    } else {
+                        return bean.getEnd_time();
+                    }
+                }).findFirst().orElse(null);
     }
 
     /**
