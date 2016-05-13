@@ -132,7 +132,9 @@ public class InsertSelectiveElementGenerator extends
                 sb.append(',');
                 valuesNullElement.addElement(new TextElement(sb.toString()));
                 valuesTrimElement.addElement(valuesNullElement);
-            } else {
+            }
+
+            else {
                 XmlElement insertNotNullElement = new XmlElement("if"); //$NON-NLS-1$
                 sb.setLength(0);
                 sb.append(introspectedColumn.getJavaProperty());
@@ -147,19 +149,68 @@ public class InsertSelectiveElementGenerator extends
                 insertNotNullElement.addElement(new TextElement(sb.toString()));
                 insertTrimElement.addElement(insertNotNullElement);
             }
-            XmlElement valuesNotNullElement = new XmlElement("if"); //$NON-NLS-1$
-            sb.setLength(0);
-            sb.append(introspectedColumn.getJavaProperty());
-            sb.append(" != null"); //$NON-NLS-1$
-            valuesNotNullElement.addAttribute(new Attribute(
-                    "test", sb.toString())); //$NON-NLS-1$
 
-            sb.setLength(0);
-            sb.append(MyBatis3FormattingUtilities
-                    .getParameterClause(introspectedColumn));
-            sb.append(',');
-            valuesNotNullElement.addElement(new TextElement(sb.toString()));
-            valuesTrimElement.addElement(valuesNotNullElement);
+            if(introspectedColumn.getJavaProperty().equals("modifier")) {
+
+                XmlElement insertNotNullElement = new XmlElement("if"); //$NON-NLS-1$
+                sb.setLength(0);
+                sb.append(introspectedColumn.getJavaProperty());
+                sb.append(" == null and creater != null"); //$NON-NLS-1$
+                insertNotNullElement.addAttribute(new Attribute(
+                        "test", sb.toString())); //$NON-NLS-1$
+
+                sb.setLength(0);
+                sb.append(MyBatis3FormattingUtilities
+                        .getEscapedColumnName(introspectedColumn));
+                sb.append(',');
+                insertNotNullElement.addElement(new TextElement(sb.toString()));
+                insertTrimElement.addElement(insertNotNullElement);
+
+                XmlElement valuesNotNullElement = new XmlElement("if"); //$NON-NLS-1$
+                sb.setLength(0);
+                sb.append(introspectedColumn.getJavaProperty());
+                sb.append(" != null"); //$NON-NLS-1$
+                valuesNotNullElement.addAttribute(new Attribute(
+                        "test", sb.toString())); //$NON-NLS-1$
+
+                sb.setLength(0);
+                sb.append(MyBatis3FormattingUtilities
+                        .getParameterClause(introspectedColumn));
+                sb.append(',');
+                valuesNotNullElement.addElement(new TextElement(sb.toString()));
+                valuesTrimElement.addElement(valuesNotNullElement);
+
+
+                XmlElement valuesNullElement = new XmlElement("if"); //$NON-NLS-1$
+                sb.setLength(0);
+                sb.append(introspectedColumn.getJavaProperty());
+                sb.append(" == null and creater != null"); //$NON-NLS-1$
+                valuesNullElement.addAttribute(new Attribute(
+                        "test", sb.toString())); //$NON-NLS-1$
+
+                sb.setLength(0);
+                introspectedColumn.setJavaProperty("creater");
+                sb.append(MyBatis3FormattingUtilities
+                        .getParameterClause(introspectedColumn));
+                sb.append(',');
+                valuesNullElement.addElement(new TextElement(sb.toString()));
+                valuesTrimElement.addElement(valuesNullElement);
+            }
+            else {
+                XmlElement valuesNotNullElement = new XmlElement("if"); //$NON-NLS-1$
+                sb.setLength(0);
+                sb.append(introspectedColumn.getJavaProperty());
+                sb.append(" != null"); //$NON-NLS-1$
+                valuesNotNullElement.addAttribute(new Attribute(
+                        "test", sb.toString())); //$NON-NLS-1$
+
+                sb.setLength(0);
+                sb.append(MyBatis3FormattingUtilities
+                        .getParameterClause(introspectedColumn));
+                sb.append(',');
+                valuesNotNullElement.addElement(new TextElement(sb.toString()));
+                valuesTrimElement.addElement(valuesNotNullElement);
+            }
 
         }
 
