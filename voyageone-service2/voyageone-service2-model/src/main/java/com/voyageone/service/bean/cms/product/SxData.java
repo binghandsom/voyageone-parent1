@@ -27,6 +27,8 @@ public class SxData {
 	private boolean hasSku; // 库存更新时，要选择商品上传时是否有SKU属性
 	private boolean isDarwin; // 是不是达尔文
 	private String styleCode;
+    private String errorCode;     // 出错时回写到businessLog表的errorCode
+    private String errorMessage;  // 出错时回写到businessLog表的errorMessage
 
 	public String getChannelId() {
 		return channelId;
@@ -131,4 +133,20 @@ public class SxData {
 	public void setStyleCode(String styleCode) {
 		this.styleCode = styleCode;
 	}
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }

@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.service.dao.cms.CmsBtBusinessLogDao;
 import com.voyageone.service.daoext.cms.CmsBtBusinessLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -21,6 +22,9 @@ public class BusinessLogService extends BaseService {
     @Autowired
     private CmsBtBusinessLogDaoExt cmsBtBusinessLogDaoExt;
 
+    @Autowired
+    private CmsBtBusinessLogDao cmsBtBusinessLogDao;
+
     public List<CmsBtBusinessLogModel> getList(Map params){
         return cmsBtBusinessLogDaoExt.selectByCondition(params);
     }
@@ -32,6 +36,11 @@ public class BusinessLogService extends BaseService {
     @VOTransactional
     public int updateFinishStatus(Map params){
         return cmsBtBusinessLogDaoExt.updateStatusFinish(params);
+    }
+
+    @VOTransactional
+    public int insertBusinessLog(CmsBtBusinessLogModel record){
+        return cmsBtBusinessLogDao.insert(record);
     }
 
 }

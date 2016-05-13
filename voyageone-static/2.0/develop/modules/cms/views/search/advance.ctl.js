@@ -4,6 +4,7 @@
 define([
     'underscore',
     'modules/cms/controller/popup.ctl',
+    'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advance.service'
 ], function (_) {
 

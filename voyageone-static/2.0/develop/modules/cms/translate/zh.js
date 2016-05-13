@@ -430,7 +430,7 @@ define(function(){
         "TXT_PROMOTION_DISCOUNT": "是否有活动折扣",
         "TXT_IMAGE_TYPE":"图片类型",
         "TXT_IMAGE_GROUP_LIST":"图片管理",
-        "TXT_RELATED_BRAND_NAME":"相关品牌名称",
+        "TXT_RELATED_BRAND_NAME":"相关品牌",
         "TXT_RELATED_PRODUCT_TYPE":"相关产品类型",
         "TXT_RELATED_SIZE_TYPE":"相关尺码",
         "TXT_IMAGE_GROUP_NAME":"图片组别名称",

@@ -332,10 +332,13 @@ public class ImageTemplateService extends BaseService {
         if (StringUtils.isEmpty(model.getImageTemplateContent())) {
             throw new BusinessException("7000080");
         }
-        long count = dao.countByQuery("{\"imageTemplateName\":\"" + model.getImageTemplateName() + "\"" + ",\"imageTemplateId\": { $ne:" + model.getImageTemplateId() + "}");
+        long ImageTemplateId = 0;
+        if (model.getImageTemplateId() != null) {
+            ImageTemplateId = model.getImageTemplateId();
+        }
+        long count = dao.countByQuery("{\"imageTemplateName\":\"" + model.getImageTemplateName() + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
         if (count > 0) {
-            result.setMsg(model.getImageTemplateName() + "已经存在");
-            result.setResult(false);
+            throw new BusinessException("4000009");
         }
     }
     /**
