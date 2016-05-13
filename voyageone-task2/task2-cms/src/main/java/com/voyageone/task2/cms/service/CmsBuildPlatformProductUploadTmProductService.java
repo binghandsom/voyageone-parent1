@@ -69,12 +69,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("天猫获取匹配产品规则失败(调用天猫API异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (TopSchemaException ex) {
             // 解析XML异常
             String errMsg = String.format("天猫获取匹配产品规则失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
@@ -88,6 +90,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("匹配天猫产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
@@ -106,12 +109,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("没有找到天猫平台匹配的产品(调用天猫API异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (TopSchemaException ex) {
             // 解析XML异常
             String errMsg = String.format("没有找到天猫平台匹配的产品(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
@@ -127,11 +132,12 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      *  4. 循环结束，如果有未审核的产品，那么抛出业务异常，任务结束，结束原因为：需要等待产品审核
      *  5. 循环结束，如果没有未审核的产品，返回null,后面会进入上传产品状态
      *
+     * @param sxData SxData 上新数据
      * @param platformProductIdList List<String> 平台platformProductId列表
      * @param shopBean ShopBean 店铺信息
      * @return 返回的可以上传商品的platformProductId()
      */
-    public String getUsefulProductId(List<String> platformProductIdList, ShopBean shopBean) {
+    public String getUsefulProductId(SxData sxData, List<String> platformProductIdList, ShopBean shopBean) {
         String platformProductId = null;
         boolean wait_for_check = false; //产品是否在等待天猫审核
 
@@ -144,6 +150,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             } catch (Exception ex) {
                 String errMsg = String.format("调用天猫API查询产品状态失败！[PlatformProductId:%s]", pid);
                 $error(errMsg);
+                sxData.setErrorMessage(errMsg);
                 throw new BusinessException(ex.getMessage());
             }
             // 可以发布商品
@@ -172,6 +179,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             // 如果循环完所有的平台产品id列表，没有可用的，只有天猫审核的产品，则抛出异常
             String errMsg = String.format("发现已有产品符合我们要上传的商品，但需要等待天猫审核该产品.  [PlatformProductId:%s]", platformProductId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(errMsg);
         }
 
@@ -238,6 +246,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("将取得的产品Schema xml转换为field列表失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
@@ -249,6 +258,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("天猫新增产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
@@ -265,12 +275,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("将取得所有field对应的属性值的列表转成xml字符串失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (ApiException ex) {
             // 调用API异常
             String errMsg = String.format("调用天猫API上传产品失败(调用天猫API异常)！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                     sxData.getChannelId(), sxData.getCartId(), platformCategoryId, brandCode, failCause.toString());
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
@@ -291,10 +303,48 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("调用天猫API上传产品失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                     sxData.getChannelId(), sxData.getCartId(), platformCategoryId, brandCode, failCause.toString());
             $error(errMsg);
+            sxData.setErrorMessage(errMsg);
             throw new BusinessException(errMsg);
         }
 
         return platformProductId;
+    }
+
+    /**
+     * 判断商品是否是达尔文体系
+     *
+     * @param sxData SxData 上新数据
+     * @param shopBean ShopBean 店铺
+     * @param platformCategoryId String 平台类目id
+     * @param brandCode long 品牌
+     * @return 返回的商品是否属于达尔文体系
+     */
+    public boolean getIsDarwin(SxData sxData, ShopBean shopBean, String platformCategoryId, String brandCode) {
+        //判断商品是否是达尔文体系
+        StringBuffer failCause = new StringBuffer();
+        Boolean isDarwin = false;
+
+        try {
+            isDarwin = tbProductService.isDarwin(Long.parseLong(platformCategoryId), Long.parseLong(brandCode), shopBean, failCause);
+            if (isDarwin == null && failCause.length() != 0) {
+                if (failCause.indexOf("访问淘宝超时") == -1) {
+                    String errMsg = String.format("判断商品是否是达尔文体系失败(访问淘宝超时)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
+                            platformCategoryId, brandCode, failCause.toString());
+                    $error(errMsg);
+                    sxData.setErrorMessage(errMsg);
+                    throw new BusinessException(errMsg);
+                }
+            }
+        } catch (ApiException ex) {
+            // 调用API异常
+            String errMsg = String.format("调用天猫API判断商品是否是达尔文体系失败(调用天猫API异常)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
+                    platformCategoryId, brandCode, failCause.toString());
+            $error(errMsg);
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(ex.getMessage());
+        }
+
+        return isDarwin;
     }
 
 }
