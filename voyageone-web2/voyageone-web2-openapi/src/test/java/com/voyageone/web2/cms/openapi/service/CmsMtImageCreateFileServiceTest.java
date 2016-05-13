@@ -156,7 +156,7 @@ public class CmsMtImageCreateFileServiceTest {
         //32 &问题   编码后%OA
         //31
         //30 编码后%OA
-        testTemplate(31);
+        testTemplate(51);
        // testTemplate(31);
        // testTemplate(32);
        // testTemplate(34);
@@ -185,7 +185,7 @@ sink=format[jpg],quality[100]
             if (strList[i].indexOf(prefix) > 0) {
                 paramList[i] = "test1.png";
             } else {
-                paramList[i] =templateId+ "test中国&" + i;
+                paramList[i] =templateId+ "test69中国&" + i;
             }
         }
         String cId = model.getChannelId();
