@@ -39,9 +39,8 @@ public class ImageTemplateService extends BaseService {
     LiquidFireImageService serviceLiquidFireImage;
 
     public Object getPage(ImageTempateParameter param,String channelId,String lang) {
-
-        int pageIndex =param.getPageIndex();// Integer.parseInt(map.get("pageIndex").toString());
-        int pageSize =param.getPageSize();// Integer.parseInt(map.get("pageSize").toString());
+        int pageIndex =param.getPageIndex();
+        int pageSize =param.getPageSize();
         String parameter = getSearchQuery(param,channelId);
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("");
