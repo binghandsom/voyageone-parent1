@@ -275,8 +275,8 @@ public class ImageTemplateService extends BaseService {
      * @param model 客户端参数
      * @return 检索结果
      */
-    public CallResult save(CmsBtImageTemplateModel model, String userName) {
-        CallResult result = check(model);
+    public void save(CmsBtImageTemplateModel model, String userName) {
+        check(model);
         //设置默认值
         if (isNull(model.getBrandName())) {
             List lst = new ArrayList<String>();
@@ -310,9 +310,8 @@ public class ImageTemplateService extends BaseService {
             model.setCreated(DateTimeUtil.getNow());
             dao.insert(model);
         }
-        return result;
     }
-    CallResult check(CmsBtImageTemplateModel model) {
+    void check(CmsBtImageTemplateModel model) {
         CallResult result = new CallResult();
         if (model.getBrandName() == null || model.getBrandName().size() == 0) {
             throw new BusinessException("7000080");
@@ -338,7 +337,6 @@ public class ImageTemplateService extends BaseService {
             result.setMsg(model.getImageTemplateName() + "已经存在");
             result.setResult(false);
         }
-        return result;
     }
     /**
      * 逻辑删除ImageGroup信息

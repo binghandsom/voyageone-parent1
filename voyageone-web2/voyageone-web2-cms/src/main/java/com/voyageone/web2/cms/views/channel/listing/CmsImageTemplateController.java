@@ -48,8 +48,9 @@ public class CmsImageTemplateController extends CmsController {
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
+        CallResult result=new CallResult();
         model.setChannelId(this.getUser().getSelChannelId());
-        CallResult result= service.save(model, this.getUser().getUserName());
+        service.save(model, this.getUser().getUserName());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
