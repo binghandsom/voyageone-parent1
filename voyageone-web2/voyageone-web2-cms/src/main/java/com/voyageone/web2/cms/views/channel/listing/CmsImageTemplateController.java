@@ -1,10 +1,8 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
 import com.voyageone.service.bean.cms.CallResult;
-import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
-import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
-import com.voyageone.service.impl.cms.CmsImageTemplateService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,7 +22,7 @@ import java.util.Map;
 )
 public class CmsImageTemplateController extends CmsController {
     @Autowired
-    private CmsImageTemplateService service;
+    private ImageTemplateService service;
 
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Init)
     public AjaxResponse init(@RequestBody Map<String, Object> param) {
@@ -51,8 +48,9 @@ public class CmsImageTemplateController extends CmsController {
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
+        CallResult result=new CallResult();
         model.setChannelId(this.getUser().getSelChannelId());
-        CallResult result= service.save(model, this.getUser().getUserName());
+        service.save(model, this.getUser().getUserName());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)

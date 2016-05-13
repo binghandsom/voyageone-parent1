@@ -15,7 +15,7 @@ import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.CmsImageTemplateService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.*;
@@ -53,7 +53,7 @@ public class ImageCreateFileService extends BaseService {
     @Autowired
     CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
 @Autowired
-    CmsImageTemplateService serviceCmsImageTemplate;
+ImageTemplateService serviceCmsImageTemplate;
     public CmsMtImageCreateFileModel getModel(int id) {
         return cmsMtImageCreateFileDao.select(id);
     }
