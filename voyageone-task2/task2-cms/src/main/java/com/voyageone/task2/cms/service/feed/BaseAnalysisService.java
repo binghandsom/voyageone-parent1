@@ -190,22 +190,23 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
             List<CmsBtFeedInfoModel> product;
             try{
                 product = getFeedInfoByCategory(categorPath);
+
+                $info("每棵树的信息取得结束");
+
+                String categorySplit =  Feeds.getVal1(channel, FeedEnums.Name.category_split);
+                if(!StringUtils.isEmpty(categorySplit)) {
+                    product.forEach(cmsBtFeedInfoModel -> {
+                        List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
+                        cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
+                    });
+                }
+                productAll.addAll(product);
+                if(productAll.size() > 500){
+                    executeMongoDB(productAll, productSucceeList, productFailAllList);
+                }
             }catch (Exception e){
                 e.printStackTrace();
-                throw e;
-            }
-            $info("每棵树的信息取得结束");
-
-            String categorySplit =  Feeds.getVal1(channel, FeedEnums.Name.category_split);
-            if(!StringUtils.isEmpty(categorySplit)) {
-                product.forEach(cmsBtFeedInfoModel -> {
-                    List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
-                    cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
-                });
-            }
-            productAll.addAll(product);
-            if(productAll.size() > 500){
-                executeMongoDB(productAll, productSucceeList, productFailAllList);
+                issueLog.log(e,ErrorType.BatchJob,SubSystem.CMS);
             }
         }
         executeMongoDB(productAll, productSucceeList, productFailAllList);
