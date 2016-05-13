@@ -199,6 +199,8 @@ define(function(){
         "TXT_REQUIRED": "必填",
         "TXT_BEAT_TASK": "价格披露",
         "TXT_UNIQUE": "唯一",
+        "TXT_LISTING":"列表",
+        "TXT_IMAGE_TEMPLATE_LIST": "图片模板管理",
         "TXT_TEMPLATE": "模板",
         "TXT_TEMPLATE_NAME": "模板名称",
         "TXT_TEMPLATE_TYPE": "模板类型",
