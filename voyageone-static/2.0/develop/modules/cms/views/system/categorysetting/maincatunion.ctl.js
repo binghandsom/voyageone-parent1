@@ -34,6 +34,7 @@ define([
                 _.extend($scope.vm, _catvmdata);
             }
             var para = {catLevel: 0};
+            var catObj = null;
             categorySettingService.getMasterSubCategoryList(para)
                 .then(function (res) {
                     $scope.vm.mCatListOrg[0] = res.data.catList;
@@ -41,17 +42,13 @@ define([
 
                     if ($routeParams.type == "1") {
                         // 重新显示数据
+                        research(0, 0);
                         // 显示主数据，确定类目级别以及是否有过滤查询
                         if ($scope.vm.curMCatLvl > 0) {
-                            for (var i = 0; i <= $scope.vm.curMCatLvl; i++) {
-                                resetCatTarget(0, i, $scope.vm.selMIdxList[i]);
-                                research(0, i);
-                            }
-                        } else {
-                            research(0, 0);
+                            regetMasterData(para, 0);
                         }
                     }
-                })
+                });
             platformMappingService.getCarts().then(function (res) {
                 $scope.vm.carts = res.data;
             });
@@ -59,23 +56,74 @@ define([
             if ($routeParams.type == "1") {
                 // 重新显示数据
                 // 显示平台数据
-                var para = {catLevel: 0, cartId: $scope.vm.selCart};
-                categorySettingService.getPlatformSubCategoryList(para)
+                var para2 = {catLevel: 0, cartId: $scope.vm.selCart};
+                categorySettingService.getPlatformSubCategoryList(para2)
                     .then(function (res) {
                         $scope.vm.pCatListOrg[0] = res.data.catList;
                         $scope.vm.pCatList[0] = res.data.catList;
-
+                        research(1, 0);
                         if ($scope.vm.curPCatLvl > 0) {
-                            for (var i = 0; i <= $scope.vm.curPCatLvl; i ++) {
-                                resetCatTarget(1, i, $scope.vm.selPIdxList[i]);
-                                research(1, i);
-                            }
-                        } else {
-                            research(1, 0);
+                            regetPlatformData(para2, 0);
                         }
-                    })
+                    });
             }
         };
+
+        function regetMasterData(para, idx) {
+            if (idx > $scope.vm.curMCatLvl) {
+                return;
+            }
+            para.catLevel = idx;
+            var catObj = $scope.vm.mCatList[idx][$scope.vm.selMIdxList[idx]];
+            if (catObj == undefined) {
+                return;
+            }
+            if (catObj.isParent == 0) {
+                return;
+            }
+            if (idx == 0) {
+                para.rootCatId = '';
+            } else {
+                para.rootCatId = $scope.vm.mCatList[0][$scope.vm.selMIdxList[0]].catId;
+            }
+            para.catId = catObj.catId;
+
+            categorySettingService.getMasterSubCategoryList(para)
+                .then(function (res) {
+                    $scope.vm.mCatListOrg[idx + 1] = res.data.catList;
+                    $scope.vm.mCatList[idx + 1] = res.data.catList;
+                    research(0, idx + 1);
+                    regetMasterData(para, idx + 1);
+                });
+        }
+
+        function regetPlatformData(para, idx) {
+            if (idx > $scope.vm.curPCatLvl) {
+                return;
+            }
+            para.catLevel = idx;
+            var catObj = $scope.vm.pCatList[idx][$scope.vm.selPIdxList[idx]];
+            if (catObj == undefined) {
+                return;
+            }
+            if (catObj.isParent == 0) {
+                return;
+            }
+            if (idx == 0) {
+                para.rootCatId = '';
+            } else {
+                para.rootCatId = $scope.vm.pCatList[0][$scope.vm.selPIdxList[0]].catId;
+            }
+            para.catId = catObj.catId;
+
+            categorySettingService.getPlatformSubCategoryList(para)
+                .then(function (res) {
+                    $scope.vm.pCatListOrg[idx + 1] = res.data.catList;
+                    $scope.vm.pCatList[idx + 1] = res.data.catList;
+                    research(1, idx + 1);
+                    regetPlatformData(para, idx + 1);
+                });
+        }
 
         // 查询类目（类目名称）,只查询本地缓存
         $scope.search = function(catType, catLvl) {
@@ -115,26 +163,7 @@ define([
 
                 // 设置类目数据
                 $scope.vm.mCatList[catLvl] = rsList;
-                if (catLvl + 1 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 1] = [];
-                    $scope.vm.mCatList[catLvl + 1] = [];
-                    $scope.vm.searchMKeys[catLvl + 1] = '';
-                }
-                if (catLvl + 2 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 2] = [];
-                    $scope.vm.mCatList[catLvl + 2] = [];
-                    $scope.vm.searchMKeys[catLvl + 2] = '';
-                }
-                if (catLvl + 3 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 3] = [];
-                    $scope.vm.mCatList[catLvl + 3] = [];
-                    $scope.vm.searchMKeys[catLvl + 3] = '';
-                }
-                if (catLvl + 4 < 5) {
-                    $scope.vm.mCatListOrg[catLvl + 4] = [];
-                    $scope.vm.mCatList[catLvl + 4] = [];
-                    $scope.vm.searchMKeys[catLvl + 4] = '';
-                }
+                clearInfo(0, catLvl, 1);
 
             } else {
                 // 平台类目查询
@@ -171,26 +200,7 @@ define([
 
                 // 设置类目数据
                 $scope.vm.pCatList[catLvl] = rsList;
-                if (catLvl + 1 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 1] = [];
-                    $scope.vm.pCatList[catLvl + 1] = [];
-                    $scope.vm.searchPKeys[catLvl + 1] = '';
-                }
-                if (catLvl + 2 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 2] = [];
-                    $scope.vm.pCatList[catLvl + 2] = [];
-                    $scope.vm.searchPKeys[catLvl + 2] = '';
-                }
-                if (catLvl + 3 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 3] = [];
-                    $scope.vm.pCatList[catLvl + 3] = [];
-                    $scope.vm.searchPKeys[catLvl + 3] = '';
-                }
-                if (catLvl + 4 < 5) {
-                    $scope.vm.pCatListOrg[catLvl + 4] = [];
-                    $scope.vm.pCatList[catLvl + 4] = [];
-                    $scope.vm.searchPKeys[catLvl + 4] = '';
-                }
+                clearInfo(1, catLvl, 1);
             }
         };
 
@@ -204,13 +214,7 @@ define([
                 $scope.vm.curMCatPath = $scope.vm.mCatList[catLvl][$index].catPath;
                 $scope.vm.selMIdxList[catLvl] = $index;
                 if ($scope.vm.mCatList[catLvl][$index].isParent == 0) {
-                    for (var i = 1; i < 5; i ++) {
-                        if (catLvl + i < 5) {
-                            $scope.vm.mCatListOrg[catLvl + i] = [];
-                            $scope.vm.mCatList[catLvl + i] = [];
-                            $scope.vm.searchMKeys[catLvl + i] = '';
-                        }
-                    }
+                    clearInfo(0, catLvl, 1);
                     return;
                 }
 
@@ -224,14 +228,7 @@ define([
                         $scope.vm.mCatListOrg[catLvl + 1] = res.data.catList;
                         $scope.vm.mCatList[catLvl + 1] = res.data.catList;
                         $scope.vm.searchMKeys[catLvl + 1] = '';
-
-                        for (var i = 2; i < 5; i ++) {
-                            if (catLvl + i < 5) {
-                                $scope.vm.mCatListOrg[catLvl + i] = [];
-                                $scope.vm.mCatList[catLvl + i] = [];
-                                $scope.vm.searchMKeys[catLvl + i] = '';
-                            }
-                        }
+                        clearInfo(0, catLvl, 2);
                     })
             } else {
                 // 平台类目查询
@@ -240,13 +237,7 @@ define([
                 $scope.vm.curPCatPath = $scope.vm.pCatList[catLvl][$index].catPath;
                 $scope.vm.selPIdxList[catLvl] = $index;
                 if ($scope.vm.pCatList[catLvl][$index].isParent == 0) {
-                    for (var i = 1; i < 5; i ++) {
-                        if (catLvl + i < 5) {
-                            $scope.vm.pCatListOrg[catLvl + i] = [];
-                            $scope.vm.pCatList[catLvl + i] = [];
-                            $scope.vm.searchPKeys[catLvl + i] = '';
-                        }
-                    }
+                    clearInfo(1, catLvl, 1);
                     return;
                 }
 
@@ -261,15 +252,28 @@ define([
                         $scope.vm.pCatListOrg[catLvl + 1] = res.data.catList;
                         $scope.vm.pCatList[catLvl + 1] = res.data.catList;
                         $scope.vm.searchPKeys[catLvl + 1] = '';
-
-                        for (var i = 2; i < 5; i ++) {
-                            if (catLvl + i < 5) {
-                                $scope.vm.pCatListOrg[catLvl + i] = [];
-                                $scope.vm.pCatList[catLvl + i] = [];
-                                $scope.vm.searchPKeys[catLvl + i] = '';
-                            }
-                        }
+                        clearInfo(1, catLvl, 2);
                     })
+            }
+        };
+
+        function clearInfo(catType, catLvl, begIdx) {
+            if (catType == 0) {
+                for (var i = begIdx; i < 5; i++) {
+                    if (catLvl + i < 5) {
+                        $scope.vm.mCatListOrg[catLvl + i] = [];
+                        $scope.vm.mCatList[catLvl + i] = [];
+                        $scope.vm.searchMKeys[catLvl + i] = '';
+                    }
+                }
+            } else {
+                for (var i = begIdx; i < 5; i++) {
+                    if (catLvl + i < 5) {
+                        $scope.vm.pCatListOrg[catLvl + i] = [];
+                        $scope.vm.pCatList[catLvl + i] = [];
+                        $scope.vm.searchPKeys[catLvl + i] = '';
+                    }
+                }
             }
         };
 
@@ -279,15 +283,9 @@ define([
             if (catType == 0) {
                 // 主数据类目查询
                 var qryCatName = $scope.vm.searchMKeys[catLvl];
-                var rsList = [];
-                if (qryCatName == '') {
-                    // 如果输入为空，则重置为最初查询的数据
-                    rsList = $scope.vm.mCatListOrg[catLvl];
-                    if (rsList == null || rsList == undefined || rsList.length == 0) {
-                        return;
-                    }
-                } else {
-                    nowCatList = $scope.vm.mCatList[catLvl];
+                if (qryCatName != '') {
+                    var rsList = [];
+                    nowCatList = $scope.vm.mCatListOrg[catLvl];
                     if (nowCatList == null || nowCatList == undefined || nowCatList.length == 0) {
                         return;
                     }
@@ -297,22 +295,15 @@ define([
                             rsList.push(catObj);
                         }
                     }
+                    // 设置类目数据
+                    $scope.vm.mCatList[catLvl] = rsList;
                 }
-
-                // 设置类目数据
-                $scope.vm.mCatList[catLvl] = rsList;
             } else {
                 // 平台类目查询
                 var qryCatName = $scope.vm.searchPKeys[catLvl];
-                var rsList = [];
-                if (qryCatName == '') {
-                    // 如果输入为空，则重置为最初查询的数据
-                    rsList = $scope.vm.pCatListOrg[catLvl];
-                    if (rsList == null || rsList == undefined || rsList.length == 0) {
-                        return;
-                    }
-                } else {
-                    nowCatList = $scope.vm.pCatList[catLvl];
+                if (qryCatName != '') {
+                    var rsList = [];
+                    nowCatList = $scope.vm.pCatListOrg[catLvl];
                     if (nowCatList == null || nowCatList == undefined || nowCatList.length == 0) {
                         return;
                     }
@@ -322,41 +313,9 @@ define([
                             rsList.push(catObj);
                         }
                     }
+                    // 设置类目数据
+                    $scope.vm.pCatList[catLvl] = rsList;
                 }
-
-                // 设置类目数据
-                $scope.vm.pCatList[catLvl] = rsList;
-            }
-        };
-
-        // 设置当前选中的类目，从后台查询子类目，只在画面切换时使用
-        function resetCatTarget(catType, catLvl, $index) {
-            var para = {catLevel: catLvl};
-            if (catType == 0) {
-                // 主数据类目查询
-                para.rootCatId = $scope.vm.mCatList[0][$scope.vm.selMIdxList[0]].catId;
-                if (catLvl == 0) {
-                    para.rootCatId = '';
-                }
-                para.catId = $scope.vm.mCatList[catLvl][$index].catId;
-                categorySettingService.getMasterSubCategoryList(para)
-                    .then(function (res) {
-                        $scope.vm.mCatListOrg[catLvl + 1] = res.data.catList;
-                        $scope.vm.mCatList[catLvl + 1] = res.data.catList;
-                    })
-            } else {
-                // 平台类目查询
-                para.rootCatId = $scope.vm.pCatList[0][$scope.vm.selPIdxList[0]].catId;
-                if (catLvl == 0) {
-                    para.rootCatId = '';
-                }
-                para.catId = $scope.vm.pCatList[catLvl][$index].catId;
-                para.cartId = $scope.vm.selCart;
-                categorySettingService.getPlatformSubCategoryList(para)
-                    .then(function (res) {
-                        $scope.vm.pCatListOrg[catLvl + 1] = res.data.catList;
-                        $scope.vm.pCatList[catLvl + 1] = res.data.catList;
-                    })
             }
         };
 

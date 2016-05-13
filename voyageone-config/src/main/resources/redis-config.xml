@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans default-lazy-init ="false"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- 连接池配置. -->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -64,7 +65,7 @@
     <bean id="genericJackson2JsonRedisSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
 
     <bean id="redisTemplate" class="com.voyageone.common.redis.VoCacheTemplate">
-        <property name="local" value="false"/>
+        <property name="local" value="true"/>
         <property name="connectionFactory" ref="jedisConnectionFactory"/>
         <property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />
         <property name="hashValueSerializer" ref="genericJackson2JsonRedisSerializer" />

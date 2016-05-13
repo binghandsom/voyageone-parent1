@@ -2,7 +2,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function indexController($scope, imageTemplateService, confirm, $translate, cActions, notify, $location, cRoutes) {
+    function indexController($scope, imageTemplateService, confirm,alert, $translate, cActions, notify, $location, cRoutes) {
         $scope.vm = {"modelList": [],
             "platformList":[],
             "brandNameList":[],
@@ -21,7 +21,7 @@ define([
                 $scope.vm.productTypeList = res.data.productTypeList;
                 $scope.vm.sizeTypeList = res.data.sizeTypeList;
                 $scope.vm.imageTemplateList=res.data.imageTemplateList;
-             //   $scope.search();
+                $scope.search();
             })
         };
         $scope.search = function () {
@@ -81,6 +81,6 @@ define([
             })
         };
     }
-    indexController.$inject = ['$scope', 'imageTemplateService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
+    indexController.$inject = ['$scope', 'imageTemplateService', 'confirm','alert', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
     return indexController;
 });

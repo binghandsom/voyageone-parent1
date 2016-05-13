@@ -1,0 +1,51 @@
+/*!
+ * views样式，权重最高
+ */
+
+/* category_drag_list_qh
+ * 在自定义属性页面, 提供选中样式。和扩大输入框宽度 */
+.category_drag_list_qh {
+    margin: 0;
+    padding: 10px;
+    min-height: 200px;
+}
+
+.category_drag_list_qh ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.category_drag_list_qh li {
+    padding: 5px;
+    transition: 200ms ease-in;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background-color: #F9E9F2;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.category_drag_list_qh li:hover {
+    background: #73214B;
+    font-weight: bold;
+    color: white;
+}
+
+.category_drag_list_qh li .indexSelected {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 2px;
+    background: #dcf3f9;
+    color: #333
+}
+
+.category_drag_list_qh .translated-row {
+    margin: 8px 0;
+}
+
+.category_drag_list_qh .translated-row input {
+    width: 70%;
+}

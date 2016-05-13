@@ -1,0 +1,9 @@
+/*!
+ * 项目自定义通用样式,比如angular的自定义directive
+ */
+
+schema-item .ng-invalid input,
+schema-item .ng-invalid select,
+schema-item .ng-invalid .c-checkbox span {
+    border: 1px solid red;
+}

@@ -40,7 +40,7 @@ define([
          * 添加尺码表
          */
         $scope.addSize = function(){
-            $scope.vm.importList.push({});
+            $scope.vm.importList.push({usual:true});
         };
         /**
          * 重置
@@ -77,26 +77,24 @@ define([
                 return;
             }
             var upEntity = $scope.vm.saveInfo,sizeMaps = angular.copy($scope.vm.importList) , flag = true , tmpOriginalSize = "";
+            sizeMaps = _.filter(sizeMaps,function(item){
+                    return item.originalSize != null || item.adjustSize != null;
+            });
             _.map(sizeMaps, function(item){
-                            if(item.originalSize == tmpOriginalSize){
-                                alert($translate.instant('TXT_SIZE_CHART_NOTICE_REPEAT'));
-                                flag = false;
-                                return;
-                            }
-                            else
-                                tmpOriginalSize = item.originalSize;
-                            if(item.originalSize == "" || item.adjustSize == ""){
-                                alert($translate.instant('TXT_SIZE_CHART_NOTICE_NULL'));
-                                flag = false;
-                                return;
-                            }
-                            if(item.usual == true)
-                                item.usual = "1";
-                            else
-                                item.usual = "0";
-                            return item;
-                        });
-            if(!flag) return;
+                        return item.usual = item.usual ? "1" : "0";
+                    });
+            for(var i=0,length=sizeMaps.length;i<length;i++){
+                if(sizeMaps[i].originalSize == null || sizeMaps[i].adjustSize == null) {
+                    alert($translate.instant('TXT_SIZE_CHART_NOTICE_NULL'));
+                    return;
+                }
+                if(sizeMaps[i].originalSize == tmpOriginalSize){
+                     alert($translate.instant('TXT_SIZE_CHART_NOTICE_REPEAT'));
+                     return;
+                 }else{
+                    tmpOriginalSize = sizeMaps[i].originalSize;
+                 }
+            }
             sizeChartDetailService.detailSizeMapSave({sizeChartId:upEntity.sizeChartId,sizeMap:sizeMaps}).then(function(){
                 notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 getItemById();

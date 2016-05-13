@@ -1,4 +1,4 @@
-<div class="modal-content" style="width: 730px;left: -60px;min-height: 449px;">
+<div class="modal-content" style="width: 730px;left: -60px;margin-top: -1px;">
 <div class="vo_modal" ng-init="initialize()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
@@ -31,7 +31,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
                 <div class="col-sm-7">
-                    <select multiple chosen class="form-control" width="'416px'"  ng-model="model.brandName"
+                    <select multiple chosen class="form-control" width="'404px'"  ng-model="model.brandName"
                             ng-options="brand.value as brand.name for brand in vm.brandNameList">
                     </select>
                 </div>
@@ -40,7 +40,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
                 <div class="col-sm-7">
-                    <select multiple chosen class="form-control" width="'416px'"  ng-model="model.productType"
+                    <select multiple chosen class="form-control" width="'404px'"  ng-model="model.productType"
                             ng-options="productType.value as productType.name for productType in vm.productTypeList">
                     </select>
                 </div>
@@ -48,7 +48,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
                 <div class="col-sm-7">
-                    <select multiple chosen class="form-control" width="'416px'" ng-model="model.sizeType"
+                    <select multiple chosen class="form-control" width="'404px'" ng-model="model.sizeType"
                             ng-options="sizeType.value as sizeType.name for sizeType in vm.sizeTypeList">
                     </select>
                 </div>
