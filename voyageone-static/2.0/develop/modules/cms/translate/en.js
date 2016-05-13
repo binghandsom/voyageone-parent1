@@ -199,7 +199,9 @@ define(function() {
         "TXT_SORT_DESC": "Desc",
         "TXT_BEAT_TASK": "Price Disclosure",
         "TXT_UNIQUE": "Unique",
+        "TXT_LISTING":"Listing",
         "TXT_TEMPLATE": "Template",
+        "TXT_IMAGE_TEMPLATE_LIST": "Image Template List",
         "TXT_TEMPLATE_NAME": "Template Name",
         "TXT_TEMPLATE_TYPE": "Template Type",
         "TXT_TEMPLATE_CONTENT": "Template Content",
@@ -438,6 +440,7 @@ define(function() {
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
         "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
+        "TXT_IMPORT_TEXT": "Import text",
 
 
 

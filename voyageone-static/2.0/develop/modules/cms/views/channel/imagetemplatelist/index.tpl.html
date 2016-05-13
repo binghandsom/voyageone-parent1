@@ -3,7 +3,7 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;Imagetemplatelist</h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_IMAGE_TEMPLATE_LIST' | translate}} </h4>
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
@@ -101,8 +101,8 @@
                     <div class="col-sm-12 text-center m-b-sm"  ng-controller="popupCtrl">
                         <div class="form-inline">
                             <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_MSG_SEARCH' | translate}}</button>
-                            <button class="btn btn-success" ng-click="openImgTplEditing(null)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
+                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH' | translate}}</button>
+                            <button class="btn btn-success" ng-click="openImgTplEditing({search:search})"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -117,17 +117,17 @@
                            ng-controller="popupCtrl">
                         <thead>
                         <tr>
-                            <th class="mfb-xt3 text-center">{{'TXT_SEQ' | translate}}</th>
-                            <th class="mfb-xxt text-center">{{'TXT_TEMPLATE_NAME' | translate}}</th>
-                            <th class="mfb-xt text-center">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
-                            <th class="mfb-xt text-center">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
-                            <th class="mfb-xt text-center">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
-                            <th class="mfb-xt text-center">{{'TXT_VIEW_TYPE' | translate}}</th>
-                            <th class="mfb-xt text-center">{{'TXT_PLATFORM' | translate}}</th>
-                            <th class="mfb-xxt text-center">{{'TXT_TEMPLATE_TYPE' | translate}}</th>
-                            <th class="mfb-xxt text-center" style="width: 100px">{{'TXT_TEMPLATE_CONTENT' | translate}}</th>
-                            <th class="mfb-xxx text-center">{{'TXT_UPDATE_TIME' | translate}}</th>
-                            <th class="mfb-xx text-center">{{'BTN_EDIT' | translate}}</th>
+                            <th class="mfb-xt3 text-center text-nowrap">{{'TXT_SEQ' | translate}}</th>
+                            <th class="mfb-xxt text-center text-nowrap">{{'TXT_TEMPLATE_NAME' | translate}}</th>
+                            <th class="mfb-xx text-center text-nowrap">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
+                            <th class="mfb-xx text-center text-nowrap">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
+                            <th class="mfb-xx text-center text-nowrap">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
+                            <th class="mfb-xt text-center text-nowrap">{{'TXT_VIEW_TYPE' | translate}}</th>
+                            <th class="mfb-xt text-center text-nowrap">{{'TXT_PLATFORM' | translate}}</th>
+                            <th class="mfb-xxt text-center text-nowrap">{{'TXT_TEMPLATE_TYPE' | translate}}</th>
+                            <th class="mfb-xxt text-center text-nowrap" style="width: 100px">{{'TXT_TEMPLATE_CONTENT' | translate}}</th>
+                            <th class="mfb-xxx text-center text-nowrap">{{'TXT_UPDATE_TIME' | translate}}</th>
+                            <th class="mfb-xx text-center text-nowrap">{{'BTN_EDIT' | translate}}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -143,7 +143,7 @@
                             <td class="mfb-xxt text-center"><textarea  rows="3" readonly>{{model.imageTemplateContent}}</textarea></td>
                             <td class="mfb-xxx text-center">{{model.modified}}</td>
                             <td class="mfb-xx text-center">
-                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing(model)"><i class="fa fa-cog"></i></button>
+                                <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing({search:search,model:model})"><i class="fa fa-cog"></i></button>
                                 <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
@@ -151,9 +151,10 @@
                     </table>
                     <div if-no-rows="vm.modelList.length"></div>
                 </div>
-                <div class="col-sm-12">
-                    <vpagination config="dataPageOption"></vpagination>
-                </div>
+
+            </div>
+            <div class="col-sm-12">
+                <vpagination config="dataPageOption"></vpagination>
             </div>
         </div>
 

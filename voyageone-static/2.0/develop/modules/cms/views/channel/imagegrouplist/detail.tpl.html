@@ -92,7 +92,13 @@
             <div class="table-responsive" ng-controller="popupCtrl">
                 <div class="col-sm-12 dropdown_table_main" if-no-rows="ctrl.imageList.length">
                     <div class="col-sm-12  m-t-sm m-b-xs">
-                        <button class="btn pull-right m-r-md m-b-xs btn-success" ng-click="openImgGroupDetail(ctrl,'')"><i class="fa fa-plus"></i>&nbsp;{{'BTN_ADD' | translate}}</button>
+                        <button class="btn pull-right m-r-md m-b-xs btn-success ng-binding"
+                                ng-click="openImgGroupDetail(ctrl,'')"><i class="fa fa-plus"></i>&nbsp;{{'BTN_ADD' | translate}}
+                        </button>
+                        <button class="btn pull-right m-r-xs m-b-xs btn-primary ng-binding"
+                                ng-click="ctrl.refreshPage()"><i class="fa fa-refresh"></i>&nbsp;{{'BTN_REFRESH' | translate}}
+                        </button>
+
                     </div>
                     <table class="table table-hover-new vo_table vo_tableforimggrouplist tableWordBreak" style="margin-bottom:0px;table-layout: fixed;" ng-controller="popupCtrl">
                         <thead>

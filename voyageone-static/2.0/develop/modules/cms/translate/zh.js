@@ -199,6 +199,8 @@ define(function(){
         "TXT_REQUIRED": "必填",
         "TXT_BEAT_TASK": "价格披露",
         "TXT_UNIQUE": "唯一",
+        "TXT_LISTING":"列表",
+        "TXT_IMAGE_TEMPLATE_LIST": "图片模板管理",
         "TXT_TEMPLATE": "模板",
         "TXT_TEMPLATE_NAME": "模板名称",
         "TXT_TEMPLATE_TYPE": "模板类型",
@@ -428,7 +430,7 @@ define(function(){
         "TXT_PROMOTION_DISCOUNT": "是否有活动折扣",
         "TXT_IMAGE_TYPE":"图片类型",
         "TXT_IMAGE_GROUP_LIST":"图片管理",
-        "TXT_RELATED_BRAND_NAME":"相关品牌名称",
+        "TXT_RELATED_BRAND_NAME":"相关品牌",
         "TXT_RELATED_PRODUCT_TYPE":"相关产品类型",
         "TXT_RELATED_SIZE_TYPE":"相关尺码",
         "TXT_IMAGE_GROUP_NAME":"图片组别名称",
@@ -445,6 +447,7 @@ define(function(){
         "TXT_MSG_DO_REFRESH_IMAGE": "您确定要刷图",
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "刷图操作成功",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "刷图操作失败",
+        "TXT_IMPORT_TEXT": "导入内容",
 
 
         "BTN_CREATE_TASK": "新建任务",

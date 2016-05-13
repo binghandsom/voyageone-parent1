@@ -101,11 +101,9 @@ define([
             } else if ($scope.addOrEditFlg == 0) {
                 context.field.fields.push($scope.vm.schema);
             } else if ($scope.addOrEditFlg == 3) {
-                // 先检查目标属性类型
-
-                
-                // 检查重复属性(id重复)
+                // 检查重复属性(id重复，$$hashKey重复)
                 var attrId = $scope.vm.schema.id;
+                var _hashKey = $scope.vm.schema.$$hashKey;
                 if (context.targetField.fields == null || context.targetField.fields == undefined) {
                     context.targetField.fields = [];
                 }
@@ -113,6 +111,10 @@ define([
                 for (idx in fieldList) {
                     if (attrId == fieldList[idx].id) {
                         alert("与现有属性'" + fieldList[idx].name + "'的id重复，请修改后再保存");
+                        return false;
+                    }
+                    if (_hashKey == fieldList[idx].$$hashKey) {
+                        alert("已添加过属性'" + $scope.vm.schema.name + "'，不能重复添加");
                         return false;
                     }
                 }

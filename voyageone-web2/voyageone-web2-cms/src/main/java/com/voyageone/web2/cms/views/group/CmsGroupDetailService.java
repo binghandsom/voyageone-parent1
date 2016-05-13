@@ -3,12 +3,12 @@ package com.voyageone.web2.cms.views.group;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -85,11 +85,12 @@ public class CmsGroupDetailService extends BaseAppService {
         grpQueryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
         grpQueryObject.setProjectionExt(searchItems.split(";"));
 
-        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);
+        List<CmsBtProductBean> prodList = productService.getBeanList(userInfo.getSelChannelId(), grpQueryObject);
         if (prodList == null || codeList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList 没有product数据 " + params.toString());
             throw new BusinessException("该group下没有product数据");
         }
+        prodList.forEach(prodObj -> prodObj.setGroupBean(grpObj));
 
         result.put("groupInfo", grpObj);
         result.put("productList", prodList);

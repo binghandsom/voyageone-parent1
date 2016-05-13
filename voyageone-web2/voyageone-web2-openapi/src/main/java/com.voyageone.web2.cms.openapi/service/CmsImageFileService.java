@@ -12,7 +12,7 @@ import com.voyageone.common.util.excel.ExportFileExcelUtil;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.CmsImageTemplateService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.imagecreate.ImageConfig;
 import com.voyageone.service.impl.cms.imagecreate.ImageCreateFileService;
 import com.voyageone.service.impl.cms.imagecreate.ImagePathCache;
@@ -44,7 +44,7 @@ public class CmsImageFileService extends BaseService {
     @Autowired
     private ImageCreateFileService imageCreateFileService;
     @Autowired
-    CmsImageTemplateService serviceCmsImageTemplate;
+    ImageTemplateService serviceCmsImageTemplate;
     @Autowired
     private ImagePathCache imagePathCache;
 
