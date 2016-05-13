@@ -119,7 +119,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
     private void uploadImageToTB(String channelId, String cartId, int imageType, CmsBtImageGroupModel_Image image) {
         String originUrl = image.getOriginUrl();
         String platformUrl = image.getPlatformUrl();
-        $info("开始上传平台图片---图片原始Url:" + originUrl + ", 平台id;" + cartId + ", 渠道id:" + channelId );
+        $info("开始上传平台图片---图片原始Url:" + originUrl + ", 平台id;" + cartId + ", 渠道id:" + channelId);
         InputStream inputStream = null;
         byte[] bytes = null;
         try {
