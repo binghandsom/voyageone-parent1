@@ -8,53 +8,53 @@
     http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <util:map id="categoryProductMap" map-class="java.util.HashMap">
-        <!--Long categoryId_背心吊带 = 121412004L; // 女装/女士精品>背心吊带-->
-        <!--Long productId_背心吊带 = 423627289L; // 女装/女士精品>背心吊带-->
-        <entry key="121412004" value="423627289"/>
-        <!--Long categoryId_女士包袋 = 50012010L; // 箱包皮具/热销女包/男包>女士包袋-->
-        <!--Long productId_女士包袋 = 457651932L; // 箱包皮具/热销女包/男包>女士包袋-->
-        <entry key="50012010" value="457651932"/>
-        <!--Long categoryId_礼服晚装 = 162702L; // 女装/女士精品>婚纱/旗袍/礼服>礼服/晚装-->
-        <!--Long productId_礼服晚装 = 456781204L; // 女装/女士精品>婚纱/旗袍/礼服>礼服/晚装-->
-        <entry key="162702" value="456781204"/>
-        <!--Long categoryId_连衣裙 = 50010850L; // 女装/女士精品>连衣裙-->
-        <!--Long productId_连衣裙 = 457788683L; // 女装/女士精品>连衣裙-->
-        <entry key="50010850" value="457788683"/>
-        <!--Long categoryId_衬衫 = 162104L; // 女装/女士精品>衬衫-->
-        <!--Long productId_衬衫 = 457346710L; // 女装/女士精品>衬衫-->
-        <entry key="162104" value="457346710"/>
-        <!--Long categoryId_毛针织衫 = 50000697L; // 女装/女士精品>毛针织衫-->
-        <!--Long productId_毛针织衫 = 456545719L; // 女装/女士精品>毛针织衫-->
-        <entry key="50000697" value="456545719"/>
-        <!--Long categoryId_皮衣 = 50008904L; // 女装/女士精品>皮衣-->
-        <!--Long productId_皮衣 = 457688704L; // 女装/女士精品>皮衣-->
-        <entry key="50008904" value="457688704"/>
-        <!--Long categoryId_牛仔裤 = 162205L; // 女装/女士精品>牛仔裤-->
-        <!--Long productId_牛仔裤 = 457518728L; // 女装/女士精品>牛仔裤-->
-        <entry key="162205" value="457518728"/>
-        <!--Long categoryId_休闲裤 = 162201L; // 女装/女士精品>休闲裤-->
-        <!--Long productId_休闲裤 = 458708052L; // 女装/女士精品>休闲裤-->
-        <entry key="162201" value="458708052"/>
-        <!--Long categoryId_西装裤 = 50022566L; // 女装/女士精品>裤子>西装裤/正装裤-->
-        <!--Long productId_西装裤 = 457605150L; // 女装/女士精品>裤子>西装裤/正装裤-->
-        <entry key="50022566" value="457605150"/>
-        <!--Long categoryId_钱包 = 121434005L; // 箱包皮具/热销女包/男包>钱包-->
-        <!--Long productId_钱包 = 462452269L; // 箱包皮具/热销女包/男包>钱包-->
-        <entry key="121434005" value="462452269"/>
+        <!--&lt;!&ndash;Long categoryId_背心吊带 = 121412004L; // 女装/女士精品>背心吊带&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_背心吊带 = 423627289L; // 女装/女士精品>背心吊带&ndash;&gt;-->
+        <!--<entry key="121412004" value="423627289"/>-->
+        <!--&lt;!&ndash;Long categoryId_女士包袋 = 50012010L; // 箱包皮具/热销女包/男包>女士包袋&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_女士包袋 = 457651932L; // 箱包皮具/热销女包/男包>女士包袋&ndash;&gt;-->
+        <!--<entry key="50012010" value="457651932"/>-->
+        <!--&lt;!&ndash;Long categoryId_礼服晚装 = 162702L; // 女装/女士精品>婚纱/旗袍/礼服>礼服/晚装&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_礼服晚装 = 456781204L; // 女装/女士精品>婚纱/旗袍/礼服>礼服/晚装&ndash;&gt;-->
+        <!--<entry key="162702" value="456781204"/>-->
+        <!--&lt;!&ndash;Long categoryId_连衣裙 = 50010850L; // 女装/女士精品>连衣裙&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_连衣裙 = 457788683L; // 女装/女士精品>连衣裙&ndash;&gt;-->
+        <!--<entry key="50010850" value="457788683"/>-->
+        <!--&lt;!&ndash;Long categoryId_衬衫 = 162104L; // 女装/女士精品>衬衫&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_衬衫 = 457346710L; // 女装/女士精品>衬衫&ndash;&gt;-->
+        <!--<entry key="162104" value="457346710"/>-->
+        <!--&lt;!&ndash;Long categoryId_毛针织衫 = 50000697L; // 女装/女士精品>毛针织衫&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_毛针织衫 = 456545719L; // 女装/女士精品>毛针织衫&ndash;&gt;-->
+        <!--<entry key="50000697" value="456545719"/>-->
+        <!--&lt;!&ndash;Long categoryId_皮衣 = 50008904L; // 女装/女士精品>皮衣&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_皮衣 = 457688704L; // 女装/女士精品>皮衣&ndash;&gt;-->
+        <!--<entry key="50008904" value="457688704"/>-->
+        <!--&lt;!&ndash;Long categoryId_牛仔裤 = 162205L; // 女装/女士精品>牛仔裤&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_牛仔裤 = 457518728L; // 女装/女士精品>牛仔裤&ndash;&gt;-->
+        <!--<entry key="162205" value="457518728"/>-->
+        <!--&lt;!&ndash;Long categoryId_休闲裤 = 162201L; // 女装/女士精品>休闲裤&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_休闲裤 = 458708052L; // 女装/女士精品>休闲裤&ndash;&gt;-->
+        <!--<entry key="162201" value="458708052"/>-->
+        <!--&lt;!&ndash;Long categoryId_西装裤 = 50022566L; // 女装/女士精品>裤子>西装裤/正装裤&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_西装裤 = 457605150L; // 女装/女士精品>裤子>西装裤/正装裤&ndash;&gt;-->
+        <!--<entry key="50022566" value="457605150"/>-->
+        <!--&lt;!&ndash;Long categoryId_钱包 = 121434005L; // 箱包皮具/热销女包/男包>钱包&ndash;&gt;-->
+        <!--&lt;!&ndash;Long productId_钱包 = 462452269L; // 箱包皮具/热销女包/男包>钱包&ndash;&gt;-->
+        <!--<entry key="121434005" value="462452269"/>-->
     </util:map>
 
     <util:map id="productChannelMap" map-class="java.util.HashMap">
-        <entry key="423627289" value="002"/>
-        <entry key="457651932" value="002"/>
-        <entry key="456781204" value="002"/>
-        <entry key="457788683" value="002"/>
-        <entry key="457346710" value="002"/>
-        <entry key="456545719" value="002"/>
-        <entry key="457688704" value="002"/>
-        <entry key="457518728" value="002"/>
-        <entry key="458708052" value="002"/>
-        <entry key="457605150" value="002"/>
-        <entry key="462452269" value="002"/>
+        <!--<entry key="423627289" value="002"/>-->
+        <!--<entry key="457651932" value="002"/>-->
+        <!--<entry key="456781204" value="002"/>-->
+        <!--<entry key="457788683" value="002"/>-->
+        <!--<entry key="457346710" value="002"/>-->
+        <!--<entry key="456545719" value="002"/>-->
+        <!--<entry key="457688704" value="002"/>-->
+        <!--<entry key="457518728" value="002"/>-->
+        <!--<entry key="458708052" value="002"/>-->
+        <!--<entry key="457605150" value="002"/>-->
+        <!--<entry key="462452269" value="002"/>-->
     </util:map>
 
     <util:list id="paltformCartList" list-class="java.util.ArrayList">
