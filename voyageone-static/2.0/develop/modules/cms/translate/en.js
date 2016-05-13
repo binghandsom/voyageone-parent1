@@ -440,6 +440,7 @@ define(function() {
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
         "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
+        "TXT_IMPORT_TEXT": "Import text",
 
 
 
