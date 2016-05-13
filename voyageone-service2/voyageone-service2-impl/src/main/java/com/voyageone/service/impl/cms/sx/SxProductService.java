@@ -186,19 +186,21 @@ public class SxProductService extends BaseService {
      */
     public void insertBusinessLog(SxData sxData, String modifier) {
         CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
+        CmsBtProductModel mainProduct = sxData.getMainProduct();
+        CmsBtProductGroupModel productGroup = sxData.getPlatform();
 
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        businessLogModel.setCatId(sxData.getMainProduct().getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
         businessLogModel.setGroupId(String.valueOf(sxData.getGroupId()));
         // 主商品的product_id
-        businessLogModel.setProductId(String.valueOf(sxData.getMainProduct().getProdId()));
+        if (mainProduct != null) businessLogModel.setProductId(String.valueOf(mainProduct.getProdId()));
         // code，没有code就不要设置
-        businessLogModel.setCode(sxData.getPlatform().getMainProductCode());
+        if (productGroup != null) businessLogModel.setCode(productGroup.getMainProductCode());
         // 错误类型(1:上新错误)
         businessLogModel.setErrorTypeId(1);
         // 错误code
