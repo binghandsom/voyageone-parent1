@@ -10,7 +10,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
@@ -36,7 +35,7 @@ import java.util.List;
 
 
 /**
- * 图片上传到平台（暂时只支持天猫和聚美）
+ * 图片上传到平台（暂时只支持淘宝/天猫/天猫国际和聚美）
  * @author jeff.duan on 2016/5/10.
  * @version 2.0.0
  */
@@ -76,7 +75,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 取得图片上传状态为2：等待上传的对象
         JomgoQuery queryObject = new JomgoQuery();
-        // 暂时只支持天猫和聚美
+        // 暂时只支持淘宝/天猫/天猫国际和聚美
         queryObject.setQuery("{\"image.status\":"
                 + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + "," + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + "]}}");
         List<CmsBtImageGroupModel> imageGroupList = cmsBtImageGroupDao.select(queryObject);
@@ -86,7 +85,6 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                 if (CmsConstants.ImageUploadStatus.WAITING_UPLOAD.equals(String.valueOf(image.getStatus()))) {
                     uploadImageToPlatform(imageGroup.getChannelId(), String.valueOf(imageGroup.getCartId()), imageGroup.getImageType(), image);
                     imageGroup.setModifier(getTaskName());
-                    imageGroup.setModified(DateTimeUtil.getNowTimeStamp());
                     cmsBtImageGroupDao.update(imageGroup);
                 }
             }
@@ -107,7 +105,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         } else if (cartId.equals(CartEnums.Cart.JM.getId())) {
             uploadImageToJM(channelId, imageType, image);
         }
-        // TODO 天猫和聚美以外 以后往这里加
+        // TODO 淘宝/天猫/天猫国际和聚美以外 以后往这里加
     }
 
     /**
@@ -277,6 +275,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         } catch (Exception e) {
             String errMsg = e.getMessage();
             if (errMsg.indexOf("调用聚美API错误")  > -1 ) {
+                // 去除错误信息里面的提交URL，否则图片的话实在太长了
                 if (errMsg.indexOf(shopBean.getApp_url()) > -1) {
                     errMsg = errMsg.substring(0, errMsg.lastIndexOf(shopBean.getApp_url()));
                 } else if (errMsg.lastIndexOf("}") > -1) {

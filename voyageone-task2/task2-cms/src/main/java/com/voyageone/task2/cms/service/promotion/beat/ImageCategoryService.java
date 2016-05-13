@@ -66,11 +66,11 @@ public class ImageCategoryService extends VOAbsLoggable {
     public CmsMtImageCategoryModel createImageCategory(ShopBean shopBean, ImageCategoryType type, String userName) throws ApiException {
 
         String categoryId = "0";
-        String CategoryName = type.name() + "_" + shopBean.getCart_id() + "_" + shopBean.getOrder_channel_id();
+        String categoryName = type.name() + "_" + shopBean.getCart_id() + "_" + shopBean.getOrder_channel_id();
 
         // 获取目录
         TbGetPicCategoryParam param = new TbGetPicCategoryParam();
-        param.setPictureCategoryName(CategoryName);
+        param.setPictureCategoryName(categoryName);
         try {
             PictureCategoryGetResponse getResponse = tbPictureService.getCategories(shopBean, param);
             if (getResponse.isSuccess()) {
@@ -80,7 +80,7 @@ public class ImageCategoryService extends VOAbsLoggable {
                     // 获取目录不存在的情况下，增加目录
                     PictureCategoryAddResponse addResponse = null;
                     try {
-                        addResponse = tbPictureService.addCategory(shopBean, CategoryName);
+                        addResponse = tbPictureService.addCategory(shopBean, categoryName);
                         if (addResponse.isSuccess() && addResponse!= null && addResponse.getPictureCategory() != null && addResponse.getPictureCategory().getPictureCategoryId() != null) {
                             categoryId =  String.valueOf(addResponse.getPictureCategory().getPictureCategoryId());
                         } else if (!addResponse.isSuccess()) {
@@ -108,7 +108,7 @@ public class ImageCategoryService extends VOAbsLoggable {
         CmsMtImageCategoryModel model = new CmsMtImageCategoryModel();
         model.setCart_id(Integer.parseInt(shopBean.getCart_id()));
         model.setCategory_tid(categoryId);
-        model.setCategory_name(CategoryName);
+        model.setCategory_name(categoryName);
         model.setChannel_id(shopBean.getOrder_channel_id());
         model.setType(type.getVal());
         model.setCreater(userName);
