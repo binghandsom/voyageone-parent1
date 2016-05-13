@@ -26,6 +26,7 @@ public class SxData {
 
 	private boolean hasSku; // 库存更新时，要选择商品上传时是否有SKU属性
 	private boolean isDarwin; // 是不是达尔文
+	private String styleCode;
 
 	public String getChannelId() {
 		return channelId;
@@ -121,5 +122,13 @@ public class SxData {
 
 	public void setDarwin(boolean darwin) {
 		isDarwin = darwin;
+	}
+
+	public String getStyleCode() {
+		return styleCode;
+	}
+
+	public void setStyleCode(String styleCode) {
+		this.styleCode = styleCode;
 	}
 }
