@@ -50,11 +50,7 @@ public class ImageCreateService extends ComponentBase {
 
         if (request.isFillStream()) {
             // build imageURL
-            String imageUrl = getImageDomainURL();
-            if (!imageUrl.endsWith("/")) {
-                imageUrl += "/";
-            }
-            imageUrl += response.getResultData().getFilePath();
+            String imageUrl = getOssHttpURL(response.getResultData().getFilePath());
             response.setImageInputStream(getFileStream(imageUrl));
         }
         return response;
@@ -134,7 +130,12 @@ public class ImageCreateService extends ComponentBase {
         return "http://" + Codes.getCodeName("VO_IMAGE_SERVER", "DOMAIN") + "/createservice/";
     }
 
-    private String getImageDomainURL() {
-        return Codes.getCodeName("AliYun_OSS_Confige", "url");
+    public String getOssHttpURL(String filePath) {
+        String imageUrl = Codes.getCodeName("AliYun_OSS_Confige", "url");
+        if (!imageUrl.endsWith("/")) {
+            imageUrl += "/";
+        }
+        imageUrl += filePath;
+        return imageUrl;
     }
 }
