@@ -96,6 +96,14 @@ define([
                     })
                 })
             },
+            refreshPage: function () {
+                var main = this;
+                main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
+                    if (res.data != null) {
+                        main.imageList = res.data;
+                    }
+                })
+            },
             delete: function (originUrl) {
                 var main = this;
                 main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
