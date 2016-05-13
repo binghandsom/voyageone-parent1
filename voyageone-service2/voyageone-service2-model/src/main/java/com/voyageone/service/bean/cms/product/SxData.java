@@ -25,6 +25,7 @@ public class SxData {
 	private String brandCode; // 主商品fields.Brand对应的BrandId(cms_mt_brands_mapping)
 
 	private boolean hasSku; // 库存更新时，要选择商品上传时是否有SKU属性
+	private boolean isDarwin; // 是不是达尔文
 
 	public String getChannelId() {
 		return channelId;
@@ -112,5 +113,13 @@ public class SxData {
 
 	public void setHasSku(boolean hasSku) {
 		this.hasSku = hasSku;
+	}
+
+	public boolean isDarwin() {
+		return isDarwin;
+	}
+
+	public void setDarwin(boolean darwin) {
+		isDarwin = darwin;
 	}
 }
