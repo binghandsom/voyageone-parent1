@@ -171,12 +171,9 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
 							<div class="col-sm-3">
-								<select class="form-control" ng-model="vm.searchInfo.tagTypeSelectValue" ng-change="getTagList()">
-									<option value="0" translate="TXT_SELECT_NO_VALUE"></option>
-									<option value="1" translate="TXT_TAG_STORE_CLASSIFY"></option>
-									<option value="2" translate="TXT_TAG_PROMOTION"></option>
-									<option value="3" translate="TXT_TAG_GOODS"></option>
-									<option value="4" translate="TXT_TAG_FREE"></option>
+								<select class="form-control" ng-model="vm.searchInfo.tagTypeSelectValue" ng-change="getTagList()"
+										ng-options="tagType.value as tagType.name for tagType in vm.masterData.tagTypeList">
+									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
 								</select>
 							</div>
 							<div class="col-sm-5">
