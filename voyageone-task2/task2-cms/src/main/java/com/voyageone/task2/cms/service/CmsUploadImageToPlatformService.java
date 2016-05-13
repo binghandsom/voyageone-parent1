@@ -142,7 +142,6 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         try {
             shopBean = Shops.getShop(channelId, cartId);
             if (shopBean == null) {
-                $error("appkey信息取得失败");
                 throw new BusinessException("appkey信息取得失败");
             }
             // 取得类目id
@@ -262,7 +261,6 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
 
             shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());
             if (shopBean == null) {
-                $error("appkey信息取得失败");
                 throw new BusinessException("appkey信息取得失败");
             }
             String platFormUrl = jumeiImageFileService.imageFileUpload(shopBean, jmImageFileBean);

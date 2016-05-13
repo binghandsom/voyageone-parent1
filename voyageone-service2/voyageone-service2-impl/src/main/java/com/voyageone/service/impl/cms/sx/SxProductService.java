@@ -3,10 +3,15 @@ package com.voyageone.service.impl.cms.sx;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
+import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -14,8 +19,10 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
@@ -26,12 +33,15 @@ import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
+import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -40,6 +50,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.ims.ImsBtProductModel;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +61,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 上新相关共通逻辑
@@ -69,6 +81,15 @@ public class SxProductService extends BaseService {
     private static final int UPD_FLG_UPLOADED = 1;
     @Autowired
     private TbPictureService tbPictureService;
+    @Autowired
+    TbProductService tbProductService;
+    @Autowired
+    private SkuFieldBuilderService skuFieldBuilderService;
+    @Autowired
+    private BusinessLogService businessLogService;
+    @Autowired
+    private ConditionPropValueService conditionPropValueService;
+
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
@@ -92,7 +113,7 @@ public class SxProductService extends BaseService {
     @Autowired
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
     @Autowired
-    private BusinessLogService businessLogService;
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -221,10 +242,12 @@ public class SxProductService extends BaseService {
      * 回写ims_bt_product表
      *
      * @param sxData 上新数据
-     * @param updateType s:sku级别, p:product级别
      * @param modifier 更新者
      */
-    public void updateImsBtProduct(SxData sxData, String updateType, String modifier) {
+    public void updateImsBtProduct(SxData sxData, String modifier) {
+        // s:sku级别, p:product级别
+        String updateType = (sxData.isHasSku()) ? "s" : "p";
+
         // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
         List<CmsBtProductModel> sxProductList = sxData.getProductList();
         for (CmsBtProductModel sxProduct : sxProductList) {
@@ -541,6 +564,7 @@ public class SxProductService extends BaseService {
      */
     public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         Map<String, Field> retMap = null;
+        SxData sxData = expressionParser.getSxData();
 
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
@@ -556,7 +580,19 @@ public class SxProductService extends BaseService {
 
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp);
         if (!mappingTypePropsMap.isEmpty()) {
-            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser);
+            // 所有sku取得
+            List<String> skus = new ArrayList<>();
+            for (CmsBtProductModel productModel : sxData.getProductList()) {
+                skus.addAll(productModel.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+            }
+            // wms逻辑库存取得
+            List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
+            Map<String, Integer> skuInventoryMap = new HashMap<>();
+            for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
+                skuInventoryMap.put(model.getSku(), model.getQtyChina());
+            }
+
+            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
             if (!resolveField.isEmpty()) {
                 if (retMap == null) {
                     retMap = new HashMap<>();
@@ -930,9 +966,11 @@ public class SxProductService extends BaseService {
      *
      * @param mappingTypePropsMap
      * @param expressionParser
+     * @param cmsMtPlatformMappingModel
+     * @param skuInventoryMap sku对应逻辑库存
      * @throws Exception
      */
-    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser) throws Exception {
+    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         Map<String, Field> retMap = new HashMap<>();
 
         SxData sxData = expressionParser.getSxData();
@@ -956,41 +994,29 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
-//                case SKU_INFO: {
-//                    int cartId = workLoadBean.getCart_id();
-//                    String categoryCode = String.valueOf(tmallUploadRunState.getCategory_code());
-//
-//                    workLoadBean.setHasSku(true);
-//
-//                    List<Field> allSkuFields = new ArrayList<>();
-//                    recursiveGetFields(processFields, allSkuFields);
-//                    AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, allSkuFields);
-//                    if (skuFieldBuilder == null)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
-//                    }
-//
-//                    skuFieldBuilder.setExpressionParser(expressionParser);
-//
-//                    DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
-//                    RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-//                    DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
-//                    String codePropImageTemplate = expressionParser.parse(dictWord.getExpression(), null);
-//                    skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
-//
-//                    List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, processFields,
-//                            workLoadBean.getProcessProducts(), workLoadBean.getSkuProductMap(),
-//                            workLoadBean.getCmsMtPlatformMappingModel(), workLoadBean.getSkuInventoryMap(),
-//                            contextBuildCustomFields, imageSet);
-//
-//                    if (skuInfoFields == null)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't build SkuInfoField"));
-//                    }
-//                    contextBuildFields.getCustomFields().addAll(skuInfoFields);
-//                    contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
-//                    break;
-//                }
+                case SKU_INFO: {
+                    int cartId = sxData.getCartId();
+
+                    sxData.setHasSku(true);
+
+                    List<Field> allSkuFields = new ArrayList<>();
+                    recursiveGetFields(processFields, allSkuFields);
+                    AbstractSkuFieldBuilder skuFieldService = skuFieldBuilderService.getSkuFieldBuilder(cartId, allSkuFields);
+                    if (skuFieldService == null) {
+                        throw new BusinessException("No sku builder find");
+                    }
+
+                    skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
+
+                    try {
+                        List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        skuInfoFields.forEach(field -> retMap.put(field.getId(), field)); // TODO：暂时只存放最大的field（即sku，颜色扩展，size扩展）以后再改
+                    } catch (Exception e) {
+                        $warn(e.getMessage());
+                        throw new BusinessException("Can't build SkuInfoField");
+                    }
+                    break;
+                }
                 case PRICE_SECTION:
                 {
                     if (processFields == null || processFields.size() != 1) {
@@ -1001,7 +1027,7 @@ public class SxProductService extends BaseService {
                     if (field.getType() != FieldTypeEnum.SINGLECHECK) {
                         $error("price_section's field(" + field.getId() + ") must be singleCheck");
                     } else {
-                        SingleCheckField priceField = (SingleCheckField) processFields.get(0);
+                        SingleCheckField priceField = (SingleCheckField) field;
                         PriceSectionBuilder priceSectionBuilder = PriceSectionBuilder.createPriceSectionBuilder(priceField.getOptions());
                         double usePrice = sxData.getPlatform().getPriceSaleSt();
 
@@ -1021,218 +1047,319 @@ public class SxProductService extends BaseService {
                     if (field.getType() != FieldTypeEnum.INPUT) {
                         $error("tmall service version's field(" + field.getId() + ") must be input");
                     } else {
-                        InputField inputField = (InputField) processFields.get(0);
+                        InputField inputField = (InputField) field;
                         inputField.setValue("11100");
                         retMap.put(field.getId(), inputField);
                     }
                     break;
                 }
-//                case TMALL_STYLE_CODE:
-//                {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall style code's platformProps must have only one prop!"));
-//                    }
-//                    if (processFields.get(0).getType() != FieldTypeEnum.INPUT) {
-//                        break;
-//                    }
-//                    InputField  field = (InputField) processFields.get(0);
-//
-//                    String styleCode = tmallUploadRunState.getStyle_code();
-//                    if (styleCode == null || "".equals(styleCode)) {
-//                        styleCode = generateStyleCode(tcb);
-//                        tmallUploadRunState.setStyle_code(styleCode);
-//                    }
-//                    // 测试代码不要提交 tom start
-////                    styleCode = "test." + styleCode;
-//                    // 测试代码不要提交 tom end
-//                    field.setValue(styleCode);
-//                    logger.debug("tmall style code[" + field.getId() + "]: " + field.getValue());
-//                    contextBuildFields.addCustomField(field);
-//                    break;
-//                }
-//                case TMALL_ITEM_QUANTITY:
-//                {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item quantity's platformProps must have only one prop!"));
-//                    }
-//
-//                    InputField processField = (InputField) processFields.get(0);
-//                    //初始值先设为0，等到库存更新之后，重新更新他的值
-//                    Map<String, Integer> skuInventoryMap = workLoadBean.getSkuInventoryMap();
-//                    int totalInventory = 0;
-//                    for (Map.Entry<String, Integer> skuInventoryEntry : skuInventoryMap.entrySet()) {
-//                        totalInventory += skuInventoryEntry.getValue();
-//                    }
-//                    processField.setValue(String.valueOf(totalInventory));
-//                    contextBuildCustomFields.setQuantityField(processField);
-//                    contextBuildFields.addCustomField(processField);
-//                    break;
-//                }
-//                case TMALL_ITEM_PRICE:
-//                {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item price's platformProps must have only one prop!"));
-//                    }
-//                    InputField  itemPriceField = (InputField) processFields.get(0);
-//
-////                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap());
-//                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap(), workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
-//                    itemPriceField.setValue(String.valueOf(itemPrice));
-//
-//                    contextBuildCustomFields.setPriceField(itemPriceField);
-//                    contextBuildFields.addCustomField(itemPriceField);
-//                    break;
-//                }
-//                case TMALL_XINGHAO:
-//                {
-//                    if (processFields == null || processFields.size() != 2)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item xinghao's platformProps must have two props!"));
-//                    }
-//
-//                    for (Field processField : processFields) {
-//                        if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
-//                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
-//                            //prop_1626510（型号）值设为-1(表示其他）
-//                            field.setValue("-1");
-//                            contextBuildFields.addCustomField(field);
-//                        }
-//                        else {
-//                            //其他的型号值填货号
-//                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
-//
-//                            String styleCode = tmallUploadRunState.getStyle_code();
-//                            if (styleCode == null || "".equals(styleCode)) {
-//                                styleCode = generateStyleCode(tcb);
-//                                tmallUploadRunState.setStyle_code(styleCode);
-//                            }
-//
-//                            field.setValue(styleCode);
-//                            contextBuildFields.addCustomField(field);
-//                        }
-//                    }
-//                    break;
-//                }
-//                case TMALL_OUT_ID: {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item outId's platformProps must have one prop!"));
-//                    }
-//                    boolean hasSku = false;
-//                    for (CustomMappingType customMappingIter : mappingTypePropsMap.keySet()) {
-//                        if (customMappingIter == CustomMappingType.SKU_INFO) {
-//                            hasSku = true;
-//                            break;
-//                        }
-//                    }
-//                    if (hasSku) {
-//                        logger.info("已经有sku属性，忽略商品外部编码");
-//                        continue;
-//                    }
-//                    // bug修正 tom START
-////                    InputField  field = (InputField) processFields;
-//
-//                    InputField  field = (InputField) (processFields.get(0));
-//                    // bug修正 tom END
-//                    List<SxProductBean> processProducts = workLoadBean.getProcessProducts();
-//                    if (processProducts.size() != 1) {
-//                        String errorCause = "包含商品外部编码的类目必须只有一个code";
-//                        logger.error(errorCause);
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(errorCause));
-//                    }
-//                    SxProductBean sxProductBean = processProducts.get(0);
-//                    List<CmsBtProductModel_Sku> cmsBtProductModelSkus = sxProductBean.getCmsBtProductModel().getSkus();
-//                    if (cmsBtProductModelSkus.size() != 1) {
-//                        String errorCause = "包含商品外部编码的类目必须只有一个sku";
-//                        logger.error(errorCause);
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(errorCause));
-//                    }
-//                    field.setValue(cmsBtProductModelSkus.get(0).getSkuCode());
-//                    contextBuildFields.addCustomField(field);
-//                    break;
-//                }
-//                case TMALL_SHOP_CATEGORY:
-//                {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
-//                    }
-//
-//                    Field processField = processFields.get(0);
-//                    String platformPropId = processField.getId();
-//                    List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
-//
-//                    //优先使用条件表达式
-//                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
-//                        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-//                        for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
-//                            String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
-//                            RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-//                            String propValue = expressionParser.parse(conditionExpression, null);
-//                            if (propValue != null) {
-//                                ((MultiCheckField)processField).addValue(propValue);
-//                            }
-//                        }
-//                        contextBuildFields.addCustomField(processField);
-//                    } else {
-//                        final String sellerCategoryPropId = "seller_cids";
-//                        if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
-//                            String numId = workLoadBean.getNumId();
-//                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-//                            try {
-//                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
-//                                String strXml = response.getUpdateItemResult();
-//                                // 读入的属性列表
-//                                List<Field> fieldList = null;
-//                                fieldList = SchemaReader.readXmlForList(strXml);
-//                                List<String> defaultValues = null;
-//                                for (Field field : fieldList) {
-//                                    if (sellerCategoryPropId.equals(field.getId())) {
-//                                        MultiCheckField multiCheckField = (MultiCheckField) field;
-//                                        defaultValues = multiCheckField.getDefaultValues();
-//                                        break;
-//                                    }
-//                                }
-//                                if (defaultValues != null) {
-//                                    MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
-//                                    field.setId(sellerCategoryPropId);
-//                                    for (String defaultValue : defaultValues) {
-//                                        field.addValue(defaultValue);
-//                                    }
-//                                    contextBuildFields.addCustomField(field);
-//                                }
-//                            } catch (TopSchemaException | ApiException e) {
-//                                logger.error(e.getMessage(), e);
-//                            }
-//                        }
-//                    }
-//                    break;
-//                }
-//                case ITEM_STATUS: {
-//                    if (processFields == null || processFields.size() != 1)
-//                    {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
-//                    }
-//
-//                    Field processField = processFields.get(0);
-//                    CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
-//                    if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
-//                        ((SingleCheckField) processField).setValue("0");
-//                    } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
-//                        ((SingleCheckField) processField).setValue("2");
-//                    } else {
-//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("PlatformActive must be Onsale or Instock, but now it is " + platformActive));
-//                    }
-//                    contextBuildFields.addCustomField(processField);
-//                    break;
-//                }
+                case TMALL_STYLE_CODE:
+                {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall style code's platformProps must have only one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall style code's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        String styleCode = sxData.getStyleCode();
+                        if (StringUtils.isEmpty(styleCode)) {
+                            styleCode = generateStyleCode(sxData);
+                        }
+                        inputField.setValue(styleCode);
+                        $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
+                        retMap.put(field.getId(), inputField);
+                    }
+                    break;
+                }
+                case TMALL_ITEM_QUANTITY:
+                {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item quantity's platformProps must have only one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item quantity's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField processField = (InputField) field;
+                        //初始值先设为0，等到库存更新之后，重新更新他的值
+                        int totalInventory = 0;
+                        for (Map.Entry<String, Integer> skuInventoryEntry : skuInventoryMap.entrySet()) {
+                            totalInventory += skuInventoryEntry.getValue();
+                        }
+                        processField.setValue(String.valueOf(totalInventory));
+                        retMap.put(field.getId(), processField);
+                    }
+                    break;
+                }
+                case TMALL_ITEM_PRICE:
+                {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item price's platformProps must have only one prop!");
+                    }
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item price's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField itemPriceField = (InputField) field;
+                        double itemPrice = calcItemPrice(sxData.getProductList(), skuInventoryMap, sxData.getChannelId(), sxData.getCartId());
+                        itemPriceField.setValue(String.valueOf(itemPrice));
+                        retMap.put(field.getId(), itemPriceField);
+                    }
+                    break;
+                }
+                case TMALL_XINGHAO:
+                {
+                    if (processFields == null || processFields.size() != 2) {
+                        throw new BusinessException("tmall item xinghao's platformProps must have two props!");
+                    }
+
+                    for (Field processField : processFields) {
+                        if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
+                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            //prop_1626510（型号）值设为-1(表示其他）
+                            field.setValue("-1");
+                            retMap.put(processField.getId(), field);
+                        } else {
+                            //其他的型号值填货号
+                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            String styleCode = sxData.getStyleCode();
+                            if (StringUtils.isEmpty(styleCode)) {
+                                styleCode = generateStyleCode(sxData);
+                            }
+                            field.setValue(styleCode);
+                            retMap.put(processField.getId(), field);
+                        }
+                    }
+                    break;
+                }
+                case TMALL_OUT_ID: {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item outId's platformProps must have one prop!");
+                    }
+                    boolean hasSku = false;
+                    for (CustomMappingType customMappingIter : mappingTypePropsMap.keySet()) {
+                        if (customMappingIter == CustomMappingType.SKU_INFO) {
+                            hasSku = true;
+                            break;
+                        }
+                    }
+                    if (hasSku) {
+                        $info("已经有sku属性，忽略商品外部编码");
+                        continue;
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item outId's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        List<CmsBtProductModel> processProducts = sxData.getProductList();
+                        if (processProducts.size() != 1) {
+                            String errorCause = "包含商品外部编码的类目必须只有一个code";
+                            $error(errorCause);
+                            throw new BusinessException(errorCause);
+                        }
+                        CmsBtProductModel sxProduct = processProducts.get(0);
+                        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = sxProduct.getSkus();
+                        if (cmsBtProductModelSkus.size() != 1) {
+                            String errorCause = "包含商品外部编码的类目必须只有一个sku";
+                            $error(errorCause);
+                            throw new BusinessException(errorCause);
+                        }
+                        inputField.setValue(cmsBtProductModelSkus.get(0).getSkuCode());
+                        retMap.put(field.getId(), inputField);
+                    }
+                    break;
+                }
+                case TMALL_SHOP_CATEGORY:
+                {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item shop_category's platformProps must have one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    String platformPropId = field.getId();
+                    List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(sxData.getChannelId(), platformPropId);
+
+                    //优先使用条件表达式
+                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+                        if (field.getType() != FieldTypeEnum.MULTICHECK) {
+                            $error("tmall item shop_category's field(" + field.getId() + ") must be MultiCheckField");
+                        } else {
+                            MultiCheckField multiCheckField = (MultiCheckField) field;
+                            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+                            for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
+                                String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
+                                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                                String propValue = expressionParser.parse(conditionExpression, shopBean, user, null);
+                                if (propValue != null) {
+                                     multiCheckField.addValue(propValue);
+                                }
+                            }
+                            retMap.put(platformPropId, multiCheckField);
+                        }
+                    } else {
+                        final String sellerCategoryPropId = "seller_cids";
+                        String numIId = sxData.getPlatform().getNumIId();
+                        if (!StringUtils.isEmpty(numIId)) {
+                            // 更新
+                            try {
+                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numIId, shopBean);
+                                String strXml = response.getUpdateItemResult();
+                                // 读入的属性列表
+                                List<Field> fieldList = SchemaReader.readXmlForList(strXml);
+                                List<String> defaultValues = null;
+                                for (Field fd : fieldList) {
+                                    if (sellerCategoryPropId.equals(fd.getId())) {
+                                        MultiCheckField multiCheckField = (MultiCheckField) fd;
+                                        defaultValues = multiCheckField.getDefaultValues();
+                                        break;
+                                    }
+                                }
+                                if (defaultValues != null) {
+                                    MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                    multiCheckField.setId(sellerCategoryPropId);
+                                    for (String defaultValue : defaultValues) {
+                                        multiCheckField.addValue(defaultValue);
+                                    }
+
+                                    retMap.put(sellerCategoryPropId, multiCheckField);
+                                }
+                            } catch (TopSchemaException | ApiException e) {
+                                $error(e.getMessage(), e);
+                            }
+                        }
+                    }
+                    break;
+                }
+                case ITEM_STATUS: {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item status's platformProps must have one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+                        $error("tmall's status field(" + field.getId() + ") must be singleCheck");
+                    } else {
+                        SingleCheckField singleCheckField = (SingleCheckField) field;
+
+                        CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+                        if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
+                            singleCheckField.setValue("0");
+                        } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+                            singleCheckField.setValue("2");
+                        } else {
+                            throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
+                        }
+                        retMap.put(field.getId(), singleCheckField);
+                    }
+                    break;
+                }
             }
         }
 
         return retMap;
+    }
+
+    private void recursiveGetFields(List<Field> fields, List<Field> resultFields) {
+        for (Field field : fields) {
+            switch (field.getType()) {
+                case COMPLEX:
+                    recursiveGetFields(((ComplexField)field).getFields(), resultFields);
+                    resultFields.add(field);
+                    break;
+                case MULTICOMPLEX:
+                    recursiveGetFields(((MultiComplexField)field).getFields(), resultFields);
+                    resultFields.add(field);
+                    break;
+                default:
+                    resultFields.add(field);
+            }
+        }
+    }
+
+    /**
+     * 生成款号（copy TmallProductSerive的此方法）
+     * 1. 如果不是达尔文体系，那么使用model作为款号直接返回
+     * 2. 如果是达尔文体系，暂时不做
+     * @param sxData SxData
+     * @throws Exception
+     */
+    public String generateStyleCode(SxData sxData) throws Exception {
+        boolean isDarwin = sxData.isDarwin();
+        if (!isDarwin) {
+            // 不是达尔文
+            String styleCode = sxData.getMainProduct().getFields().getModel();
+            sxData.setStyleCode(styleCode);
+            return styleCode;
+        } else {
+            // 是达尔文
+            // TODO:暂时throw出去
+            String errMsg = "是达尔文体系，上新逻辑未做成!";
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 价格的计算方法为：
+     *  计算最高价格，库存为0的sku不参与计算
+     *  如果所有sku库存都为0， 第一个的价格作为商品价格
+     */
+    private double calcItemPrice(List<CmsBtProductModel> productlList, Map<String, Integer> skuInventoryMap, String channelId, int cartId) {
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
+                , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+
+        // 检查一下
+        String sxPricePropName;
+        if (sxPriceConfig == null) {
+            return 0d;
+        } else {
+            sxPricePropName = sxPriceConfig.getConfigValue1();
+            if (StringUtils.isEmpty(sxPricePropName)) {
+                return 0d;
+            }
+        }
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom END
+
+        Double resultPrice = 0d, onePrice = 0d;
+        List<Double> skuPriceList = new ArrayList<>();
+        for (CmsBtProductModel productModel : productlList) {
+            for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
+                int skuQuantity = 0;
+                Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
+                if (skuQuantityInteger != null) {
+                    skuQuantity = skuQuantityInteger;
+                }
+                double skuPrice = 0;
+                try {
+                    skuPrice = Double.valueOf(cmsBtProductModelSku.getAttribute(sxPricePropName).toString());
+                } catch (Exception e) {
+                    $warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
+                }
+                if (onePrice - 0d == 0) {
+                    onePrice = skuPrice;
+                }
+                if (skuQuantity > 0)  {
+                    skuPriceList.add(skuPrice);
+                }
+            }
+        }
+
+        for (double skuPrice : skuPriceList) {
+            resultPrice = Double.max(resultPrice, skuPrice);
+        }
+        if (resultPrice - 0d == 0) {
+            resultPrice = onePrice;
+        }
+
+        return resultPrice;
     }
 
     /**

@@ -469,6 +469,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
                 updateProductGroupStatus(sxData, jdProductBean.getOptionType());
 
+                // 回写ims_bt_product表(numIId)
+                sxProductService.updateImsBtProduct(sxData, UserId_ClassName);
+
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
                 updateJdWareTransportId(shopProp, sxData, jdWareId);
@@ -1458,8 +1461,5 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
     }
-
-
-
 
 }
