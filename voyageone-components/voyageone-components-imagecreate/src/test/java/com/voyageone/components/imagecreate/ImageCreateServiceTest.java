@@ -37,7 +37,7 @@ public class ImageCreateServiceTest {
     public void testGet() throws Exception {
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId("001");
-        request.setTemplateId(15);
+        request.setTemplateId(15L);
         request.setFile("testaacc-111");
         request.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/voyageone_image/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
         ImageCreateGetResponse response = imageCreateService.getImage(request);
@@ -81,14 +81,14 @@ public class ImageCreateServiceTest {
         List<CreateImageParameter> datas = new ArrayList<>();
         CreateImageParameter createImageParameter = new CreateImageParameter();
         createImageParameter.setChannelId("001");
-        createImageParameter.setTemplateId(15);
+        createImageParameter.setTemplateId(15L);
         createImageParameter.setFile("testbbb-112");
         createImageParameter.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
         datas.add(createImageParameter);
 
         createImageParameter = new CreateImageParameter();
         createImageParameter.setChannelId("001");
-        createImageParameter.setTemplateId(15);
+        createImageParameter.setTemplateId(15L);
         createImageParameter.setFile("testbbb-113");
         createImageParameter.setVParam(new String[]{"file:bcbg/bcbg-sku.png", "http://mce042-fs.nexcess.net:81/001/under-armour-fire-shot-1269276669-5-2.png", "Text String to be rendered"});
         datas.add(createImageParameter);

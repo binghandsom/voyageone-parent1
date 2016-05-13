@@ -82,6 +82,9 @@ public class CmsConstants {
         // 全店操作配置最小间隔时间
         String STORE_OPERATION_INTERVAL_TIME = "STORE_OPERATION_INTERVAL_TIME";
 
+        // 原始图片的判断存在依据
+        String IMAGE_COMPARE_RULE = "IMAGE_COMPARE_RULE";
+
         // 价格相关
         String PRICE = "PRICE";
         String PRICE_SX_PRICE = ".sx_price";
@@ -147,5 +150,13 @@ public class CmsConstants {
         int property2CellNum = 22;
         int property3CellNum = 23;
         int property4CellNum = 24;
+    }
+
+    /**
+     * 判断原始图片是否存在的依据
+     */
+    public interface IMAGE_COMPARE_RULE {
+        String ORIGINAL_URL = "1";
+        String ORIGINAL_IAMGE_NAME = "2";
     }
 }

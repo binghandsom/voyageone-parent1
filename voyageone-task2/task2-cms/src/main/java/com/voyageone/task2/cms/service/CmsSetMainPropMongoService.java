@@ -18,9 +18,7 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.Condition;
@@ -31,6 +29,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.DataAmountService;
+import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -113,6 +112,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     private DataAmountService dataAmountService;
+
+    @Autowired
+    private ImagesService imagesService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -593,25 +595,25 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
-            {
-                if (newFlg) {
-                    List<Map<String, Object>> multiComplex = new LinkedList<>();
+//            {
+//                if (newFlg) {
+            List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                    List<String> lstImageOrg = feed.getImage();
-                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                        for (String imgOrg : lstImageOrg) {
-                            Map<String, Object> multiComplexChildren = new HashMap<>();
-                            // jeff 2016/04 change start
-                            // multiComplexChildren.put("image1", imgOrg);
-                            multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
-                            // jeff 2016/04 add end
-                            multiComplex.add(multiComplexChildren);
-                        }
-                    }
-
-                    field.put("images1", multiComplex);
+            List<String> lstImageOrg = feed.getImage();
+            if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                for (String imgOrg : lstImageOrg) {
+                    Map<String, Object> multiComplexChildren = new HashMap<>();
+                    // jeff 2016/04 change start
+                    // multiComplexChildren.put("image1", imgOrg);
+                    multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                    // jeff 2016/04 add end
+                    multiComplex.add(multiComplexChildren);
                 }
             }
+
+            field.put("images1", multiComplex);
+//                }
+//            }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
 
@@ -1281,19 +1283,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private String doUpdateImage(String channelId, String code, String originalUrl) {
 
             // 检查是否存在该Image
-            CmsBtImagesModel param = new CmsBtImagesModel();
-            param.setChannelId(channelId);
-            param.setCode(code);
-            param.setOriginalUrl(originalUrl);
-            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
+//            CmsBtImagesModel param = new CmsBtImagesModel();
+//            param.setChannelId(channelId);
+//            param.setCode(code);
+//            param.setOriginalUrl(originalUrl);
+//            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
+            CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
 
             // 不存在则插入
-            if (findImage.size() == 0) {
+            if (findImage == null) {
                 // 图片名最后一部分的值（索引）
                 int index = 1;
 
                 // 检查该code是否存在该Image（为了取得图片名最后一部分中的索引的最大值）
-                param = new CmsBtImagesModel();
+                CmsBtImagesModel param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
                 List<CmsBtImagesModel> oldImages = cmsBtImageDaoExt.selectImages(param);
@@ -1315,14 +1318,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
+                newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
-                cmsBtImageDaoExt.insertImages(newModel);
+                imagesService.insert(newModel);
 
                 return newModel.getImgName();
             } else {
-                return findImage.get(0).getImgName();
+
+                // 如果原始图片的地址发生变更则做更新操作
+                if (!originalUrl.equals(findImage.getOriginalUrl())) {
+                    findImage.setOriginalUrl(originalUrl);
+                    findImage.setUpdFlg(0);
+                    findImage.setModifier(getTaskName());
+                    imagesService.update(findImage);
+                }
+
+                return findImage.getImgName();
             }
         }
 

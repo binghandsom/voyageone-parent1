@@ -89,6 +89,18 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 根据channelId和产品Code检索出productGroup数据.
+     * @param channelId
+     * @param code
+     * @return
+     */
+    public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(String.format("{\"productCodes\": \"%s\", \"cartId\": %d}", code, cartId));
+        return getProductGroupByQuery(channelId, query);
+    }
+
+    /**
      * 更新group数据
      */
     public WriteResult update(CmsBtProductGroupModel model) {
