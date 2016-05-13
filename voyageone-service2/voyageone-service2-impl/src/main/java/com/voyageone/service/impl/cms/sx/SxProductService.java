@@ -30,6 +30,7 @@ import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
@@ -90,6 +91,8 @@ public class SxProductService extends BaseService {
     private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
     @Autowired
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
+    @Autowired
+    private BusinessLogService businessLogService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -173,6 +176,43 @@ public class SxProductService extends BaseService {
         upModel.setPublishStatus(publishStatus);
         upModel.setModifier(modifier);
         return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+    }
+
+    /**
+     * 出错的时候将错误信息回写到cms_bt_business_log表
+     *
+     * @param sxData 上新数据
+     * @param modifier 更新者
+     */
+    public void insertBusinessLog(SxData sxData, String modifier) {
+        CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
+
+        // 渠道id
+        businessLogModel.setChannelId(sxData.getChannelId());
+        // 类目id
+        businessLogModel.setCatId(sxData.getMainProduct().getCatId());
+        // 平台id
+        businessLogModel.setCartId(sxData.getCartId());
+        // Group id
+        businessLogModel.setGroupId(String.valueOf(sxData.getGroupId()));
+        // 主商品的product_id
+        businessLogModel.setProductId(String.valueOf(sxData.getMainProduct().getProdId()));
+        // code，没有code就不要设置
+        businessLogModel.setCode(sxData.getPlatform().getMainProductCode());
+        // 错误类型(1:上新错误)
+        businessLogModel.setErrorTypeId(1);
+        // 错误code
+        businessLogModel.setErrorCode(sxData.getErrorCode());
+        // 详细错误信息
+        businessLogModel.setErrorMsg(sxData.getErrorMessage());
+        // 状态(0:未处理 1:已处理)
+        businessLogModel.setStatus(0);
+        // 创建者
+        businessLogModel.setCreater(modifier);
+        // 更新者
+        businessLogModel.setModifier(modifier);
+
+        businessLogService.insertBusinessLog(businessLogModel);
     }
 
     /**

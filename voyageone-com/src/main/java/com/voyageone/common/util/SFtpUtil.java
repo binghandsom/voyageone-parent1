@@ -31,12 +31,12 @@ public class SFtpUtil {
         logger.info("  uploadPath=" + ftpBean.getUpload_path());
         logger.info("  uploadLocalPath=" + ftpBean.getUpload_localpath());
         logger.info("  uploadFileName=" + ftpBean.getUpload_filename());
-        logger.info("  getUploadInputSize=" + ftpBean.getUpload_input().available());
         boolean result = false;
 
         if (!StringUtils.isEmpty(ftpBean.getUpload_filename())) {
             InputStream fileInputStream = null;
             if (ftpBean.getUpload_input() != null) {
+                logger.info("  getUploadInputSize=" + ftpBean.getUpload_input().available());
                 fileInputStream = ftpBean.getUpload_input();
             } else {
                 String localFile = ftpBean.getUpload_localpath() + this.seperator + ftpBean.getUpload_filename();
