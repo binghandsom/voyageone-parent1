@@ -3,15 +3,12 @@ package com.voyageone.web2.cms.openapi.service;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportProduct;
 import com.voyageone.service.bean.openapi.image.AddListParameter;
 import com.voyageone.service.bean.openapi.image.AddListResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.GetImageResultBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
-import com.voyageone.service.impl.cms.CmsImageTemplateService;
-import com.voyageone.service.impl.cms.jumei.enumjm.EnumCount;
-import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMProductImportColumn;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -34,7 +31,7 @@ public class CmsMtImageCreateFileServiceTest {
     @Autowired
     private CmsBtImageTemplateDao dao;
     @Autowired
-    private CmsImageTemplateService serviceCmsImageTemplate;
+    private ImageTemplateService serviceCmsImageTemplate;
     @Test
     public void test() throws Exception {
         // String url = "http://image.voyageone.net/product/getImage?cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
