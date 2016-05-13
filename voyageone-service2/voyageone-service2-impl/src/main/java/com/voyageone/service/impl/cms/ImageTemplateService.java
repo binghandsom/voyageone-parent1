@@ -110,7 +110,7 @@ public class ImageTemplateService extends BaseService {
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
-            editImageGroupBean(dest, channelId, lang);
+            editImageTemplateBean(dest, channelId, lang);
             imageGroupBeanList.add(dest);
         }
         return imageGroupBeanList;
@@ -124,7 +124,7 @@ public class ImageTemplateService extends BaseService {
      * @param lang      语言
      * @return 检索结果（Bean）
      */
-    private void editImageGroupBean(CmsBtImageTemplateBean bean, String channelId, String lang) {
+    private void editImageTemplateBean(CmsBtImageTemplateBean bean, String channelId, String lang) {
         // Platform
         TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, String.valueOf(bean.getCartId()), lang);
         if (typeChannelBean != null) {
@@ -186,7 +186,6 @@ public class ImageTemplateService extends BaseService {
             bean.setImageTemplateTypeName(name);
         }
     }
-
 
     private String getSearchQuery(ImageTempateParameter param,String channelId) {
         StringBuilder result = new StringBuilder();
@@ -254,87 +253,10 @@ public class ImageTemplateService extends BaseService {
 
         return "{" + result.toString() + "}";
     }
-    /**
-     * 返回页面端的检索条件拼装成mongo使用的条件
-     */
-    private String getSearchQuery(Map<String, Object> param) {
-        StringBuilder result = new StringBuilder();
-        List cartIdList = (List) param.get("cartIdList");
-        if (cartIdList != null && cartIdList.size() > 0) {
-            result.append(MongoUtils.splicingValue("cartId", cartIdList.toArray(new Integer[cartIdList.size()])));
-            result.append(",");
-        }
-
-        if (!StringUtils.isEmpty((String) param.get("imageTemplateType"))) {
-            result.append(MongoUtils.splicingValue("imageTemplateType", Integer.parseInt((String) param.get("imageTemplateType"))));
-            result.append(",");
-        }
-        if (!StringUtils.isEmpty((String) param.get("viewType"))) {
-            result.append(MongoUtils.splicingValue("viewType", Integer.parseInt((String) param.get("viewType"))));
-            result.append(",");
-        }
-        if (!StringUtils.isEmpty((String) param.get("imageTemplateName"))) {
-            result.append("imageTemplateName:" + "{ $regex:\"" + (String) param.get("imageTemplateName") + "\"}");  //Regex."/"+ (String) param.get("imageTemplateName")+"/"));
-            result.append(",");
-        }
-        // Update Time
-        if (!StringUtils.isEmpty((String) param.get("beginModified")) || !StringUtils.isEmpty((String) param.get("endModified"))) {
-            result.append("\"modified\":{");
-            // 获取Update Time Start
-            if (!StringUtils.isEmpty((String) param.get("beginModified"))) {
-                result.append(MongoUtils.splicingValue("$gte", (String) param.get("beginModified") + " 00.00.00"));
-            }
-            // 获取Update Time End
-            if (!StringUtils.isEmpty((String) param.get("endModified"))) {
-                if (!StringUtils.isEmpty((String) param.get("beginModified"))) {
-                    result.append(",");
-                }
-                result.append(MongoUtils.splicingValue("$lte", (String) param.get("endModified") + " 23.59.59"));
-            }
-            result.append("},");
-        }
-
-        // brandName
-        List brandNameList = (List) param.get("brandName");
-        if (brandNameList.size() > 0) {
-            // 带上"All"
-            brandNameList.add("All");
-            result.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[brandNameList.size()])));
-            result.append(",");
-        }
-
-        // productType
-        List productTypeList = (List) param.get("productType");
-        if (productTypeList.size() > 0) {
-            // 带上"All"
-            productTypeList.add("All");
-            result.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[productTypeList.size()])));
-            result.append(",");
-        }
-
-        // sizeType
-        List sizeTypeList = (List) param.get("sizeType");
-        if (sizeTypeList.size() > 0) {
-            // 带上"All"
-            sizeTypeList.add("All");
-            result.append(MongoUtils.splicingValue("sizeType", sizeTypeList.toArray(new String[sizeTypeList.size()])));
-            result.append(",");
-        }
-
-        // channelId
-        result.append(MongoUtils.splicingValue("channelId", param.get("channelId")));
-        result.append(",");
-
-        // active
-        result.append(MongoUtils.splicingValue("active", 1));
-
-        return "{" + result.toString() + "}";
-    }
 
     public boolean isNull(List list) {
         return list != null&&list.size() == 0;
     }
-
     /**
      * 保存方法
      *
