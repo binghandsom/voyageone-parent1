@@ -221,10 +221,12 @@ public class SxProductService extends BaseService {
      * 回写ims_bt_product表
      *
      * @param sxData 上新数据
-     * @param updateType s:sku级别, p:product级别
      * @param modifier 更新者
      */
-    public void updateImsBtProduct(SxData sxData, String updateType, String modifier) {
+    public void updateImsBtProduct(SxData sxData, String modifier) {
+        // s:sku级别, p:product级别
+        String updateType = (sxData.isHasSku()) ? "s" : "p";
+
         // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
         List<CmsBtProductModel> sxProductList = sxData.getProductList();
         for (CmsBtProductModel sxProduct : sxProductList) {
