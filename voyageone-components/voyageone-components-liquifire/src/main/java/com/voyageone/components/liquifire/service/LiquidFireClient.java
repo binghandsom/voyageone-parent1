@@ -110,6 +110,11 @@ public class LiquidFireClient {
             // 输入流
             is = conn.getInputStream();
             String lfError = conn.getHeaderField("LF-Error");
+           if(conn.getContentLength()==0)
+           {
+               logger.error("ContentLength:" + conn.getContentLength());
+               throw new OpenApiException(ImageErrorEnum.LiquidCreateImageNullImage);
+           }
             if (!StringUtils.isEmpty(lfError)) {
                 logger.error("LF-Error" + lfError);
                 throw new OpenApiException(ImageErrorEnum.LiquidCreateImageExceptionImage);
