@@ -45,9 +45,6 @@ public class CmsImageTemplateService {
    }
     void check(CmsBtImageTemplateModel model) {
         CallResult result = new CallResult();
-        if (model.getBrandName() == null || model.getBrandName().size() == 0) {
-            throw new BusinessException("7000080");
-        }
         //7000080  必填
         if (StringUtils.isEmpty(model.getImageTemplateName())) {
             throw new BusinessException("7000080");
