@@ -24,13 +24,14 @@ import java.util.Map;
 public class CmsImageTemplateController extends CmsController {
     @Autowired
     private ImageTemplateService service;
-
+    @Autowired
+    CmsImageTemplateService serviceCmsImageTemplate;
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Init)
     public AjaxResponse init(@RequestBody Map<String, Object> param) {
         param.put("channelId", this.getUser().getSelChannelId());
         param.put("lang", this.getLang());
         // 初始化（取得检索条件信息)
-        Map<String, Object> resultBean = service.init(param);
+        Map<String, Object> resultBean = serviceCmsImageTemplate.init(param);
         //返回数据的类型
         return success(resultBean);
     }
@@ -49,7 +50,7 @@ public class CmsImageTemplateController extends CmsController {
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
         CallResult result=new CallResult();
         model.setChannelId(this.getUser().getSelChannelId());
-        service.save(model, this.getUser().getUserName());
+       serviceCmsImageTemplate.save(model, this.getUser().getUserName());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Delete)
