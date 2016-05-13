@@ -66,7 +66,7 @@ public class CmsMtCommonPropDaoTest {
         cmsMtCommonPropModel.setIsCode(1);
 //        cmsMtCommonPropModel.setModified(new Date());
         cmsMtCommonPropModel.setModifier("test");
-        cmsMtCommonPropModel.setCreater("test");
+//        cmsMtCommonPropModel.setCreater("test111");
 //        cmsMtCommonPropModel.setCreated(new Date());
         System.out.println(cmsMtCommonPropDao.insert(cmsMtCommonPropModel));
 
