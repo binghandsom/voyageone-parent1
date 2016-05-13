@@ -809,6 +809,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<String> orSearch = new ArrayList<>();
             orSearch.add(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
+            orSearch.add(MongoUtils.splicingValue("skus.skuCode", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
                 // 原文查询内容
