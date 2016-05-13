@@ -21,7 +21,7 @@ define([
                 $scope.vm.productTypeList = res.data.productTypeList;
                 $scope.vm.sizeTypeList = res.data.sizeTypeList;
                 $scope.vm.imageTemplateList=res.data.imageTemplateList;
-             //   $scope.search();
+                $scope.search();
             })
         };
         $scope.search = function () {
