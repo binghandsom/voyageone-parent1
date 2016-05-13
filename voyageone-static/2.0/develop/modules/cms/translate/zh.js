@@ -447,6 +447,7 @@ define(function(){
         "TXT_MSG_DO_REFRESH_IMAGE": "您确定要刷图",
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "刷图操作成功",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "刷图操作失败",
+        "TXT_IMPORT_TEXT": "导入内容",
 
 
         "BTN_CREATE_TASK": "新建任务",

@@ -74,6 +74,9 @@
             <if test="modifier != null" >
                 `modifier`,
             </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -142,6 +145,9 @@
             <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -208,8 +214,8 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null" >
-                `modifier` = #{modifier,jdbcType=VARCHAR},
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -282,8 +288,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -350,8 +356,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
