@@ -2,6 +2,9 @@ package com.voyageone.common;
 
 public class CmsConstants {
 
+    // 从上新的任务表中一次数据抽出最大件数
+    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
+
     /**
      * 产品状态
      */
@@ -159,4 +162,14 @@ public class CmsConstants {
         String ORIGINAL_URL = "1";
         String ORIGINAL_IAMGE_NAME = "2";
     }
+
+    /**
+     * 上新的任务表中的上新状态值
+     */
+    public interface SxWorkloadPublishStatusNum {
+        int initNum = 0;
+        int okNum = 1;
+        int errorNum = 2;
+    }
+
 }
