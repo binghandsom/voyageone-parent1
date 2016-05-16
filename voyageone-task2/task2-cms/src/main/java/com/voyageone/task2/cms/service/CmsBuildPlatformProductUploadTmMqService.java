@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -23,7 +24,6 @@ import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+//import com.voyageone.task2.base.Enums.TaskControlEnums;
 
 /**
  * 天猫平台产品上新服务
@@ -271,7 +273,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                         sxData.setErrorMessage(errMsg);
                     }
                     // 回写workload表   (失败2)
-                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
+                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
                     // 回写详细错误信息表(cms_bt_business_log)
                     sxProductService.insertBusinessLog(sxData, UserId_ClassName);
                 }
@@ -288,7 +290,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 sxData.setErrorMessage(errMsg);
             }
             // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, UserId_ClassName);
             throw new BusinessException(ex.getMessage());
@@ -299,24 +301,43 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             // TODO 达尔文相关共通处理暂时不做
         }
 
-        // 天猫商品上新处理
+        // 天猫商品上新(新增或更新)处理
         // 如果平台产品id不为空的话，上传商品到天猫平台
         if (!StringUtils.isEmpty(platformProductId)) {
             // 天猫商品上新处理
             try {
-                // 上传商品信息到天猫平台
+                // 新增或更新商品信息到天猫平台
                 numIId = uploadTmItemService.uploadItem(expressionParser, platformProductId, cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopProp, UserId_ClassName);
-                // 商品上传结果判断
+                // 新增或更新商品结果判断
                 if (!StringUtils.isEmpty(numIId)) {
                     // 上传商品成功的时候
-                    // TODO
+                    // 回写workload表   (成功1)
+                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, UserId_ClassName);
+
+                    // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
+                    sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, UserId_ClassName);
+
+                    // 回写ims_bt_product表(numIId)
+                    sxProductService.updateImsBtProduct(sxData, UserId_ClassName);
                 } else {
-                    // 上传商品失败的时候
-                    // TODO
+                    // 新增或更新商品失败的时候
+                    // 新增或更新商品失败
+                    String errMsg = String.format("天猫新增或更新商品信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s] [NumIId:%s]",
+                                    channelId, cartId, groupId, platformProductId, numIId);
+                    $error(errMsg);
+                    // 如果上新数据中的errorMessage为空
+                    if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                        sxData.setErrorMessage(errMsg);
+                    }
+                    // 回写workload表   (失败2)
+                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
+                    // 回写详细错误信息表(cms_bt_business_log)
+                    sxProductService.insertBusinessLog(sxData, UserId_ClassName);
+                    return;
                 }
             } catch (Exception ex) {
                 // 上传商品失败，回写workload表   (失败2)
-                String errMsg = String.format("天猫平台上传商品失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s]",
+                String errMsg = String.format("天猫平台新增或更新商品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s]",
                         channelId, cartId, groupId, platformProductId);
                 $error(errMsg);
                 ex.printStackTrace();
@@ -325,7 +346,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                     sxData.setErrorMessage(errMsg);
                 }
                 // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, UserId_ClassName);
                 throw new BusinessException(ex.getMessage());
