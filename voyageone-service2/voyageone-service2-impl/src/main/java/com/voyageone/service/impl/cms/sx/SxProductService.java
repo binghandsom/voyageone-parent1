@@ -216,13 +216,13 @@ public class SxProductService extends BaseService {
         sxData.getPlatform().setNumIId(numIId);
         // 设置PublishTime
         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
-        // platformActive平台上新状态类型(ToOnsale/ToInStock)
-        if ("ToOnsale".equals(sxData.getPlatform().getPlatformActive())) {
-            // platformActive是(ToOnsale)时，把platformStatus更新成"OnSale"
-            sxData.getPlatform().setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.OnSale);
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+            // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
         } else {
             // platformActive是(ToInStock)时，把platformStatus更新成"InStock"(默认)
-            sxData.getPlatform().setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.InStock);
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
         }
         // 更新者
         sxData.getPlatform().setModifier(modifier);
@@ -1345,7 +1345,7 @@ public class SxProductService extends BaseService {
     private double calcItemPrice(List<CmsBtProductModel> productlList, Map<String, Integer> skuInventoryMap, String channelId, int cartId) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-                , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                , CmsConstants.ChannelConfig.PRICE
                 , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
 
         // 检查一下
