@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -40,7 +41,6 @@ import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
@@ -464,7 +464,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             if (retStatus) {
                 // 新增或更新商品成功时
                  // 回写workload表   (成功1)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_OK, UserId_ClassName);
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, UserId_ClassName);
 
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
                 updateProductGroupStatus(sxData, jdProductBean.getOptionType());
@@ -487,7 +487,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     sxData.setErrorMessage(errMsg);
                 }
                 // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, UserId_ClassName);
 
@@ -510,7 +510,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 sxData.setErrorMessage(errMsg);
             }
             // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SX_WORKLOAD_PUBLISH_STATUS_ERROR, UserId_ClassName);
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, UserId_ClassName);
             throw ex;
@@ -1282,13 +1282,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      */
     private String getOptionType(CmsBtProductGroupModel productGroup, long groupId) {
         String retOptionType = "";
-        com.voyageone.common.CmsConstants.PlatformActive platformActive = productGroup.getPlatformActive();
+        CmsConstants.PlatformActive platformActive = productGroup.getPlatformActive();
 
-        if (platformActive == com.voyageone.common.CmsConstants.PlatformActive.ToOnSale) {
-            // 如果是Onsale， 那么onsale
+        if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
+            // 如果是ToOnSale， 那么onsale
             retOptionType = OptioinType_onsale;
         } else {
-            // 如果是Instock， 那么offsale（默认状态为offsale）
+            // 如果是ToInStock， 那么offsale（默认状态为offsale）
             retOptionType = OptioinType_offsale;
         }
 
@@ -1307,7 +1307,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private double getItemPrice(List<CmsBtProductModel> sxProducts, String channelId, String cartId, String priceType) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // priceType:"retail_price"(市场价)  "sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, com.voyageone.common.CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
 
         // 检查一下
         String sxPricePropName;
@@ -1351,7 +1351,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private double getSkuPrice(CmsBtProductModel_Sku cmsBtProductModelSku, String channelId, String cartId, String priceType) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // SKU价格类型应该用"sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, com.voyageone.common.CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
 
         // 检查一下
         String sxPricePropName;
@@ -1453,11 +1453,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 京东平台的操作类型(在售)
         if (OptioinType_onsale.equals(optionType)) {
             // platformStatus更新成"OnSale"
-            sxData.getPlatform().setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.OnSale);
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
         } else {
             // platformStatus更新成"InStock"
-            sxData.getPlatform().setPlatformStatus(com.voyageone.common.CmsConstants.PlatformStatus.InStock);
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
         }
+        // 更新者
+        sxData.getPlatform().setModifier(UserId_ClassName);
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
     }
