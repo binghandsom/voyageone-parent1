@@ -64,7 +64,7 @@ define([
             }
             searchAdvanceService.init().then(function (res) {
                 $scope.vm.masterData = res.data;
-                $scope.vm.custAttrList.push({inputVal: "", inputOpts: ""});
+                $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
@@ -359,13 +359,19 @@ define([
          * 添加新search选项
          */
         function addCustAttribute () {
+
             if ($scope.vm.custAttrList.length < 5) {
-                $scope.vm.custAttrList.push({inputVal: "", inputOpts: ""});
+                $scope.vm.custAttrList.push({ inputOptsKey: "",inputOpts: "",inputVal: ""});
             } else {
                 alert("最多只能添加5项")
             }
         }
-
+       // ng-readonly="true
+        $scope.vm.isCustAttrReadonly=function(m)
+        {
+            if(m==null) return false;
+            return m.inputOpts.lastIndexOf("null") > 0;
+        }
         function delCustAttribute (idx) {
             if ($scope.vm.custAttrList.length > 1) {
                 $scope.vm.custAttrList.splice(idx, 1);

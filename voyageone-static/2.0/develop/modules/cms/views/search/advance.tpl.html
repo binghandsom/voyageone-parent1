@@ -53,18 +53,18 @@
 							<label class="col-sm-3 control-label" ng-if="$index == 0" translate="TXT_CUST_QUERY_ATTR"></label>
 							<label class="col-sm-3 control-label" ng-if="$index != 0" ></label>
 							<div class="col-sm-3">
-								<select class="form-control" ng-model="option.inputOpts"
+								<select class="form-control" ng-model="option.inputOptsKey"
 										ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
 							</div>
+							<!--inputVal inputOpts-->
 							<div class="col-sm-2">
-								<select class="form-control">
+								<select class="form-control" ng-model="option.inputOpts">
 									<option value="=">=</option>
-									<option value="!=">! =</option>
-									<option value="= null">= null</option>
-									<option value="= null">= null</option>
-									<option value="! = null">! = null</option>
+									<option value="!=">!=</option>
+									<option value="=null">=null</option>
+									<option value="!=null">!=null</option>
 								</select>
 								<!--<select class="form-control" ng-model="option.inputOpts"-->
 										<!--ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">-->
@@ -73,7 +73,7 @@
 								<!--<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>-->
 							</div>
 							<div class="col-sm-2">
-								<input type="text" class="form-control" ng-model="option.inputVal">
+								<input type="text" class="form-control" ng-readonly="vm.isCustAttrReadonly(option)" ng-model="option.inputVal">
 							</div>
 							<button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
 							<button ng-if="$last" id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
