@@ -385,7 +385,7 @@
 
 					<!------------------------------------------------display table datas---------------------------------------------------------->
 					<div class="box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
-						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" style="min-width: 100%" width="{{vm.tblWidth}}" >
+						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" style="min-width: 100%" width="{{vm.tblWidth}}" ng-controller="popupCtrl" >
 							<tbody ng-repeat="groupInfo in vm.groupList">
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}" class="table_bg_gray">
 								<td colspan="8" class="control-label text-left form-inline" style="height:36px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
@@ -492,7 +492,7 @@
 					</table>
 					<div class="col-sm-12 box-body" if-no-rows="vm.productList.length" style="padding-left:0px">
 						<!----------------------------------------------------tab2's table datas------------------------------------------------------------------------------->
-						<table class="table-hover vo_table vo_models" ng-if="vm.productList.length" style="min-width: 100%" width="{{vm.tblWidth2}}">
+						<table class="table-hover vo_table vo_models" ng-if="vm.productList.length" style="min-width: 100%" width="{{vm.tblWidth2}}"  ng-controller="popupCtrl">
 							<tbody ng-repeat="productInfo in vm.productList">
 								<tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
 									<td colspan="9" class="control-label text-left form-inline" style="height:36px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
@@ -527,7 +527,7 @@
 								</tr>
 								<tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
 									<td class="text-left" style="display:inline-block;width:165px;height: 110px">
-										<img image="{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
+										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r" ng-click="openImagedetail({'mainPic':groupInfo.fields.images1[0].image1, 'picList':groupInfo.fields.images1})"/>
 									</td>
 									<td class="text-left" style="display:inline-block;width:150px;">{{productInfo.fields.brand}}</td>
 									<td class="text-center" style="display:inline-block;width:85px;">
