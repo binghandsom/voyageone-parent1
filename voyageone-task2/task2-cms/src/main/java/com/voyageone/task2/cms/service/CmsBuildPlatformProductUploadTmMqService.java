@@ -2,16 +2,20 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformMappingService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -35,8 +39,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//import com.voyageone.task2.base.Enums.TaskControlEnums;
-
 /**
  * 天猫平台产品上新服务
  * Product表中产品不存在就向天猫平台新增商品，否则就更新商品
@@ -48,8 +50,6 @@ import java.util.concurrent.Executors;
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadTmJob)
 public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
 
-    // 用户名（当前类名）
-    private final String UserId_ClassName = this.getClass().getSimpleName();
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
     @Autowired
@@ -68,6 +68,8 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
     private CmsBuildPlatformProductUploadTmItemService uploadTmItemService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private PromotionDetailService promotionDetailService;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -96,9 +98,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 // 天猫国际商品信息新增或更新(天猫国际)
                 doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TG.getId()));
                 // 淘宝商品信息新增或更新(淘宝)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TB.getId()));
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TB.getId()));
                 // 天猫MiniMall商品信息新增或更新(天猫MiniMall)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TMM.getId()));
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TMM.getId()));
             }
         }
 
@@ -226,7 +228,15 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             }
 
             // 判断商品是否是达尔文
-            boolean isDarwin = uploadTmProductService.getIsDarwin(sxData, shopProp, platformCategoryId, sxData.getBrandCode());
+            boolean isDarwin = false;
+            try {
+                isDarwin = uploadTmProductService.getIsDarwin(sxData, shopProp, platformCategoryId, sxData.getBrandCode());
+            } catch (BusinessException be) {
+                // 判断商品是否是达尔文异常的时候默认为"非达尔文"
+                String errMsg = String.format("判断商品是否是达尔文异常结束，默认为非达尔文！[PlatformCategoryId:%s] [CartId:%s] [BrandCode:%s]",
+                        platformCategoryId, cartId, sxData.getBrandCode());
+                $error(errMsg);
+            }
             // 设置是否是达尔文体系标志位
             sxData.setDarwin(isDarwin);
 
@@ -246,7 +256,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 List<String> platformProductIdList = new ArrayList<>();
                 // productGroup表中platformPid为空的时候，调用天猫API查找产品platformPid
                 platformProductIdList = uploadTmProductService.getProductIdFromTmall(expressionParser, cmsMtPlatformCategorySchemaModel,
-                        cmsMtPlatformMappingModel, shopProp, UserId_ClassName);
+                        cmsMtPlatformMappingModel, shopProp, getTaskName());
 
                 // 取得可以上传商品的平台产品id
                 // 如果发现已有产品符合我们要上传的商品，但需要等待天猫审核该产品,则抛出异常，不做后续上传产品/商品处理)
@@ -256,7 +266,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 if (StringUtils.isEmpty(platformProductId)) {
                     // 新增产品到平台
                     platformProductId = uploadTmProductService.uploadProduct(expressionParser, cmsMtPlatformCategorySchemaModel,
-                            cmsMtPlatformMappingModel, shopProp, UserId_ClassName);
+                            cmsMtPlatformMappingModel, shopProp, getTaskName());
                 }
 
                 // 以前productGroup表中没有，从天猫平台上找到匹配的productId 或者 向平台新增成功之后，回写SxData和ProductGroup表platformPid
@@ -273,15 +283,15 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                         sxData.setErrorMessage(errMsg);
                     }
                     // 回写workload表   (失败2)
-                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
+                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                     // 回写详细错误信息表(cms_bt_business_log)
-                    sxProductService.insertBusinessLog(sxData, UserId_ClassName);
+                    sxProductService.insertBusinessLog(sxData, getTaskName());
                 }
             }
 
         } catch (Exception ex) {
             // 上传产品失败，后面商品也不用上传，直接回写workload表   (失败2)
-            String errMsg = String.format("天猫平台产品匹配或上传产品失败！[ChannelId:%s] [CartId:%s] [GroupId:%s]",
+            String errMsg = String.format("天猫平台产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s]",
                     channelId, cartId, groupId);
             $error(errMsg);
             ex.printStackTrace();
@@ -290,9 +300,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 sxData.setErrorMessage(errMsg);
             }
             // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
-            sxProductService.insertBusinessLog(sxData, UserId_ClassName);
+            sxProductService.insertBusinessLog(sxData, getTaskName());
             throw new BusinessException(ex.getMessage());
         }
 
@@ -307,18 +317,21 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             // 天猫商品上新处理
             try {
                 // 新增或更新商品信息到天猫平台
-                numIId = uploadTmItemService.uploadItem(expressionParser, platformProductId, cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopProp, UserId_ClassName);
+                numIId = uploadTmItemService.uploadItem(expressionParser, platformProductId, cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopProp, getTaskName());
                 // 新增或更新商品结果判断
                 if (!StringUtils.isEmpty(numIId)) {
                     // 上传商品成功的时候
-                    // 回写workload表   (成功1)
-                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, UserId_ClassName);
-
                     // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
-                    sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, UserId_ClassName);
+                    sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskName());
 
                     // 回写ims_bt_product表(numIId)
-                    sxProductService.updateImsBtProduct(sxData, UserId_ClassName);
+                    sxProductService.updateImsBtProduct(sxData, getTaskName());
+
+                    // 更新特价宝
+                    updateTeJiaBaoPromotion(sxData);
+
+                    // 回写workload表   (成功1)
+                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
                 } else {
                     // 新增或更新商品失败的时候
                     // 新增或更新商品失败
@@ -330,9 +343,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                         sxData.setErrorMessage(errMsg);
                     }
                     // 回写workload表   (失败2)
-                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
+                    sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                     // 回写详细错误信息表(cms_bt_business_log)
-                    sxProductService.insertBusinessLog(sxData, UserId_ClassName);
+                    sxProductService.insertBusinessLog(sxData, getTaskName());
                     return;
                 }
             } catch (Exception ex) {
@@ -346,9 +359,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                     sxData.setErrorMessage(errMsg);
                 }
                 // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, UserId_ClassName);
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 // 回写详细错误信息表(cms_bt_business_log)
-                sxProductService.insertBusinessLog(sxData, UserId_ClassName);
+                sxProductService.insertBusinessLog(sxData, getTaskName());
                 throw new BusinessException(ex.getMessage());
             }
         }
@@ -357,7 +370,6 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         $info(String.format("天猫平台单个产品和商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s] [itemId:%s]",
                 channelId, cartId, groupId, platformProductId, numIId));
     }
-
 
     /**
      * 回写产品Group表里的平台产品id
@@ -370,12 +382,62 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         // 回写平台产品id(platformProductId->platformPid)
         sxData.getPlatform().setPlatformPid(platformProductId);
         // 更新者
-        sxData.getPlatform().setModifier(UserId_ClassName);
+        sxData.getPlatform().setModifier(getTaskName());
         // 更新ProductGroup表
         productGroupService.update(sxData.getPlatform());
     }
 
+    /**
+     * 特价宝的调用
+     *
+     * @param sxData            SxData 上新数据
+     */
+    private void updateTeJiaBaoPromotion(SxData sxData) {
+        // 特价宝的调用
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+        CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                , CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+        CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                , CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
 
+        // 检查一下
+        String tejiabaoOpenFlag = null;
+        String tejiabaoPricePropName = null;
 
+        if (tejiabaoOpenConfig != null && !StringUtils.isEmpty(tejiabaoOpenConfig.getConfigValue1())) {
+            if ("0".equals(tejiabaoOpenConfig.getConfigValue1()) || "1".equals(tejiabaoOpenConfig.getConfigValue1())) {
+                tejiabaoOpenFlag = tejiabaoOpenConfig.getConfigValue1();
+            }
+        }
+        if (tejiabaoPriceConfig != null && !StringUtils.isEmpty(tejiabaoPriceConfig.getConfigValue1())) {
+            tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
+        }
+
+        if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
+            for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
+                // 获取价格
+                if (sxProductModel.getSkus() == null || sxProductModel.getSkus().size() == 0) {
+                    // 没有sku的code, 跳过
+                    continue;
+                }
+                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+
+                // 设置特价宝
+                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+                cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
+                cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
+                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getFields().getCode());
+                cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
+                cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
+                cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
+                cmsBtPromotionCodesBean.setModifier(getTaskName());
+                // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+            }
+        }
+    }
 
 }
