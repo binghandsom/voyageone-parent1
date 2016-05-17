@@ -64,11 +64,12 @@ define([
             var tag = _.find(vm.tagList, function (num) {
                 return num.id === code.tagId;
             });
-            code.tagName = tag.tagName;
-            code.tagPathName = tag.tagPathName;
-            code.tagPath == tag.tagPath;
-            code.isUpdate=true;
-            console.log(code);
+            if(tag) {
+                code.tag = tag.tagName;
+                code.tagPathName = tag.tagPathName;
+                code.tagPath == tag.tagPath;
+                code.isUpdate = true;
+            }
         }
         $scope.updateCode = function(code){
             delete code.isUpdate;
