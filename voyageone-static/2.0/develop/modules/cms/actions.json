@@ -105,6 +105,7 @@
       "promotionService" : {
         "root": "/cms/promotion/index",
         "init": "init",
+        "initByPromotionId":"initByPromotionId",
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",

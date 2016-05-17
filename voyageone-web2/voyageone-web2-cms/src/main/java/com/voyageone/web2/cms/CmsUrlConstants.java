@@ -126,9 +126,8 @@ public interface CmsUrlConstants {
             interface INDEX {
 
                 String ROOT = "/cms/promotion/index";
-
                 String INIT = "init";
-
+                String InitByPromotionId="initByPromotionId";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";
