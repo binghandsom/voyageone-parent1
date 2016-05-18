@@ -3,11 +3,11 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.*;
-import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
@@ -21,9 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -116,13 +115,15 @@ public class ImageTemplateService extends BaseService {
 
         // Related Brand Name
         List<String> brandNameTrans = new ArrayList<>();
-        for (String brandName : bean.getBrandName()) {
-            if ("All".equals(brandName)) {
-                brandNameTrans.add("All");
-            } else {
-                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
-                if (typeChannelBean != null) {
-                    brandNameTrans.add(typeChannelBean.getName());
+        if(ListUtils.notNull(bean.getBrandName())) {
+            for (String brandName : bean.getBrandName()) {
+                if ("All".equals(brandName)) {
+                    brandNameTrans.add("All");
+                } else {
+                    typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                    if (typeChannelBean != null) {
+                        brandNameTrans.add(typeChannelBean.getName());
+                    }
                 }
             }
         }
@@ -242,19 +243,18 @@ public class ImageTemplateService extends BaseService {
      * @return 检索结果
      */
     public void save(CmsBtImageTemplateModel model, String userName) {
-
         //设置默认值
-        if (isNull(model.getBrandName())) {
+        if (ListUtils.isNull((model.getBrandName()))) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setBrandName(lst);
         }
-        if (isNull(model.getProductType())) {
+        if (ListUtils.isNull((model.getProductType()))) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setProductType(lst);
         }
-        if (isNull(model.getSizeType())) {
+        if (ListUtils.isNull((model.getSizeType()))) {
             List lst = new ArrayList<String>();
             lst.add("All");
             model.setSizeType(lst);
@@ -324,5 +324,88 @@ public class ImageTemplateService extends BaseService {
     public boolean EXISTSName(String ImageTemplateName, long ImageTemplateId) {
         long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
         return count > 0;
+    }
+
+    /**
+     * 根据channelId和brandName,productType,sizeType取得templateList
+     * @param channelId
+     * @param brandName
+     * @param productType
+     * @param sizeType
+     * @return
+     */
+    public List<CmsBtImageTemplateModel> getTemplateListWithNoParams(String channelId, String brandName, String productType, String sizeType) {
+
+        List<CmsBtImageTemplateModel> templateModelList = dao.selectTemplateForImageUpload(channelId, brandName, productType, sizeType);
+
+        List<CmsBtImageTemplateModel> noParamTemplateList = templateModelList.stream().filter(cmsBtImageTemplateModel ->
+                cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
+        ).collect(Collectors.toList());
+
+        // TODO: 16/5/10 根据有限顺序判断返回的只对应其中一个templateid
+//        for (CmsBtImageTemplateModel templateModel : noParamTemplateList) {
+//
+//        }
+        return noParamTemplateList;
+    }
+
+    /**
+     * 根据channelId,templateId,imageName返回图片生成返回的url
+     * @param channelId
+     * @param templateId
+     * @param imageName
+     * @return
+     */
+    public String getTemplateImageUrl (String channelId, String templateId, String imageName) {
+
+        String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
+        if (StringUtils.isEmpty(templateImageUrl))
+            throw new BusinessException("tm_codes表中对应的IMAGE_TEMPLATE,URL找不到数据");
+
+        return String.format(templateImageUrl, channelId, templateId, imageName);
+    }
+
+    /**
+     * 根据templateId获取单个模板
+     * @param templateId
+     * @return
+     */
+    public CmsBtImageTemplateModel selectTemplateById (Long templateId) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"imageTemplateId\":" + templateId + "}");
+        return getOne(queryObject);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CmsBtImageTemplateModel getCommonTemplate () {
+        String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
+        if (commonTemplateId == null) {
+            throw new BusinessException("tm_code表中IMAGE_TEMPLATE的DEFAULT_ID定义不存在");
+        }
+        return selectTemplateById(Long.valueOf(commonTemplateId));
+    }
+
+    /**
+     * 取得显示用图片的url,其中图片名字的%s保留(http://shenzhen-vo.oss-cn-shenzhen.aliyuncs.com/products/010/50/%s.jpg)
+     * @param channelId
+     * @return
+     */
+    public String getDefaultImageUrl (String channelId) {
+
+        // 取得CMS中默认的显示用模板ID
+        String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
+        if (commonTemplateId == null)
+            throw new BusinessException("tm_code表中IMAGE_TEMPLATE的DEFAULT_ID定义不存在");
+
+        // 取得显示图片用URL
+        String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
+        if (StringUtils.isEmpty(templateImageUrl))
+            throw new BusinessException("tm_codes表中对应的IMAGE_TEMPLATE,URL找不到数据");
+
+        // 返回图片URl(其中图片名字%s未替换)
+        return String.format(templateImageUrl, channelId, commonTemplateId, "%s");
     }
 }

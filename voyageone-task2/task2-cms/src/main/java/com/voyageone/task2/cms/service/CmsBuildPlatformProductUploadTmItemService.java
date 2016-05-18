@@ -66,7 +66,12 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
             throw new BusinessException("Can't convert schema to fields: " + e.getMessage());
         }
 
-        sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel,shopBean,expressionParser, modifier);
+        try {
+            sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier);
+        } catch (Exception e) {
+            $error("商品类目设值失败! " + e.getMessage());
+            sxData.setErrorMessage(e.getMessage());
+        }
 
         if (StringUtils.isEmpty(numIId)) {
             // add
@@ -75,6 +80,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 numIId = addTmallItem(categoryCode, platformProductId, fields, shopBean);
             } catch (ApiException e) {
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                sxData.setErrorMessage(e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
         } else {
@@ -84,6 +90,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 numIId = updateTmallItem(platformProductId, numIId, categoryCode, fields, shopBean);
             } catch (ApiException e) {
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                sxData.setErrorMessage(e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
         }

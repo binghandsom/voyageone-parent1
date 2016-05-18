@@ -72,6 +72,13 @@ define([
 					formData.customAttributes.cnAtts[feedInfo.key] = feedInfo.cnValue;
 			});
 
+			// 设定status
+			var status = formData.productStatus.approveStatus;
+			if (formData.productStatus.statusInfo.isApproved)
+				status = Status.APPROVED;
+			else if (formData.productStatus.statusInfo.isWaitingApprove)
+				status = Status.READY;
+
 			var data = {
 				categoryId: formData.categoryId,
 				categoryFullPath: formData.categoryFullPath,
@@ -80,7 +87,7 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes,
 				productStatus: {
-					approveStatus: formData.productStatus.approveStatus,
+					approveStatus: status,
 					translateStatus: formData.productStatus.translateStatus ? "1" : "0"
 				},
 				skuFields: formData.skuFields
@@ -93,7 +100,12 @@ define([
 					data.masterFields.push(field);
 			});
 
-			return $productDetailService.updateProductAllInfo(data);
+			var defer = $q.defer();
+			$productDetailService.updateProductAllInfo(data).then(function (res) {
+
+				defer.resolve({modified: res.data.modified, approveStatus: status});
+			});
+			return defer.promise;
 		}
 
 		/**

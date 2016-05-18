@@ -322,6 +322,15 @@ public class CmsProductDetailService extends BaseAppService {
 
         // 更新product数据
         CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
+
+        //执行product的carts更新
+        if(productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+
+            // 执行carts更新
+            List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), productUpdateBean.getProductModel().getCarts());
+            productUpdateBean.getProductModel().setCarts(carts);
+        }
+
         productService.updateProduct(channelId, productUpdateBean);
 
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);

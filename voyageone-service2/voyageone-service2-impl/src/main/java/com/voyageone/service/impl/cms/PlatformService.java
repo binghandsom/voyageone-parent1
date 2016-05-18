@@ -22,4 +22,13 @@ public class PlatformService extends BaseService {
     public List<PlatformBean> getAll() {
         return platformDao.getAll();
     }
+
+    /**
+     * 返回平台的商品访问url
+     * @param cartId
+     * @return
+     */
+    public String getPlatformProductUrl (String cartId) {
+        return "";
+    }
 }

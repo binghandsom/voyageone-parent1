@@ -38,6 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -585,6 +587,7 @@ public class ProductService extends BaseService {
                 models.add(model);
             }
 
+            // TODO: 16/5/13 如果sxworkload表已经同样的未上新的数据,是否就不需要再插入该条数据了
             if (models.size() > 0) {
                 cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
             }
@@ -1044,6 +1047,51 @@ public class ProductService extends BaseService {
         }
 
         return skuLogicQty;
+    }
+
+    /**
+     * 返回已经存在的及新生成的carts数据
+     * @param skus 产品SKU列表
+     * @param carts 寄存Cart列表
+     * @return
+     */
+    public List<CmsBtProductModel_Carts> getCarts (List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
+
+        List<CmsBtProductModel_Carts> newCarts = skus
+                .stream()
+                .map(CmsBtProductModel_Sku::getSkuCarts)
+                .flatMap(List::stream)
+                .distinct()
+                .filter(byCartId(carts))
+                .map(this::toProductModelCart)
+                .collect(Collectors.toList());
+
+        newCarts.addAll(carts);
+
+        return newCarts;
+    }
+
+    /**
+     * 返回在不在既存carts中的新cart过滤器
+     */
+    private Predicate<Integer> byCartId(List<CmsBtProductModel_Carts> carts) {
+        return i -> {
+            for(CmsBtProductModel_Carts cart : carts) {
+                if (Objects.equals(i, cart.getCartId()))
+                    return false;
+            }
+            return true;
+        };
+    }
+
+    /**
+     * 返回新的cart信息
+     */
+    private CmsBtProductModel_Carts toProductModelCart(Integer i) {
+        CmsBtProductModel_Carts newCart = new CmsBtProductModel_Carts();
+        newCart.setCartId(i);
+        newCart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+        return newCart;
     }
 
 }

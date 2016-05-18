@@ -61,10 +61,11 @@ define([
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
+        function ProductDetailController($routeParams, $rootScope, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
+            this.$rootScope = $rootScope;
             this.productDetailService = productDetailService;
             this.feedMappingService = feedMappingService;
             this.notify = notify;
@@ -89,11 +90,11 @@ define([
                 self.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
-                        console.log(self.productDetails.feedInfoModel);
                         self.inventoryList = res.data.inventoryList;
                         self._orgChaName = res.data.orgChaName;
                         self._isminimall = res.data.isminimall;
                         self._isMain = res.data.isMain;
+                        self.currentImage = self.$rootScope.imageUrl.replace('%s', self.productDetails.productImages.image1[0].image1) + ".jpg";
 
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
@@ -127,10 +128,11 @@ define([
                 //    && self.productDetails != self.productDetailsCopy))
                 //    self.productDetails.productStatus.approveStatus = Status.READY;
 
-                this.productDetailService.updateProductDetail(this.productDetails)
+                self.productDetailService.updateProductDetail(self.productDetails)
                     .then(function (res) {
-                        self.productDetails.modified = res.data.modified;
-                        this.productDetailService._setProductStatus(self.productDetails.productStatus);
+                        self.productDetails.modified = res.modified;
+                        self.productDetails.productStatus.approveStatus = res.approveStatus;
+                        self.productDetailService._setProductStatus(self.productDetails.productStatus);
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
@@ -205,6 +207,7 @@ define([
                 self.tempImage[context.imageType].push(context.base64);
 
                 self.productDetails = context.productInfo;
+                self.productDetailService._setProductStatus(self.productDetails.productStatus);
                 self._orgChaName = context.orgChaName;
                 self._isminimall = context.isminimall;
                 self._isMain = context.isMain;
