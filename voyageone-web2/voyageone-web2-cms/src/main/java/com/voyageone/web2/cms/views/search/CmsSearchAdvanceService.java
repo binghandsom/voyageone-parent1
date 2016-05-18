@@ -568,10 +568,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
-
                 if (items.size() == 0) {
                     break;
                 }
+                getGroupExtraInfo(items, userInfo.getSelChannelId(), Integer.parseInt(cmsSessionBean.getPlatformType().get("cartId").toString()), false);
 
                 List<TypeChannelBean> hscodes = TypeChannels.getTypeList("hsCodePrivate", userInfo.getSelChannelId());
                 items.forEach(item -> {
@@ -847,6 +847,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<String> orSearch = new ArrayList<>();
             orSearch.add(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
+            orSearch.add(MongoUtils.splicingValue("skus.skuCode", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
                 // 原文查询内容
@@ -940,12 +941,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
 //        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null]}}
         //inputOptsKey: "",inputOpts: "",inputVal
 //        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+        //自定义查询  sunpt
         List<Map<String, String>> custAttrMap = searchValue.getCustAttrMap();
         if (custAttrMap != null && custAttrMap.size() > 0) {
             for (Map<String, String> map : custAttrMap) {
-                String inputOptsKey = map.get("inputOptsKey");
-                String inputOpts = map.get("inputOpts");
-                String inputVal = map.get("inputVal");
+                String inputOptsKey = map.get("inputOptsKey");//条件字段
+                String inputOpts = map.get("inputOpts");//操作符
+                String inputVal = map.get("inputVal");//值
                 String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
                 if(!StringUtil.isEmpty(optsWhere)) {
                     result.append(optsWhere);
@@ -955,8 +957,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
         return result.toString();
     }
+
     public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
     {
+        //自定义查询  sunpt
         if(StringUtil.isEmpty(inputOptsKey)) return "";
         String result="";
         switch (inputOpts) {

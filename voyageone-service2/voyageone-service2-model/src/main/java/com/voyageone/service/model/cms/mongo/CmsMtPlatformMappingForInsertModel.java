@@ -1,6 +1,7 @@
 package com.voyageone.service.model.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Document
-public class CmsMtPlatformMappingForInsertModel extends BaseMongoModel {
+public class CmsMtPlatformMappingForInsertModel extends CartPartitionModel {
 
     private String channelId;
+
+    private int cartId;
 
     // 主数据的类目id
     private String mainCategoryId;
@@ -78,4 +81,12 @@ public class CmsMtPlatformMappingForInsertModel extends BaseMongoModel {
     public void setProps(List<Map<String, Object>> props) {
         this.props = props;
     }
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
+
+    public int getCartId() {
+        return cartId;
+    }
+
 }
