@@ -116,6 +116,7 @@ public class PromotionDetailService extends BaseService {
         productInfo.getSkus().forEach(sku -> {
             CmsBtPromotionSkuBean cmsBtPromotionSkuModel = new CmsBtPromotionSkuBean(productInfo, groupModel, promotionId, modifier, sku.getSkuCode(), 0);
             cmsBtPromotionSkuModel.setNumIid(numIId);
+            cmsBtPromotionSkuModel.setSize(sku.getSize());
             if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModel) == 0) {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             }
