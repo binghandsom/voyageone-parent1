@@ -121,6 +121,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     customPropsStr.append("feed.cnAtts.");
                     customPropsStr.append(propId);
                     customPropsStr.append(";");
+                    customPropsStr.append("feed.orgAtts.");
+                    customPropsStr.append(propId);
+                    customPropsStr.append(";");
                 }
             }
         }
@@ -668,6 +671,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     customPropsStr.append("feed.cnAtts.");
                     customPropsStr.append(propId);
                     customPropsStr.append(";");
+                    customPropsStr.append("feed.orgAtts.");
+                    customPropsStr.append(propId);
+                    customPropsStr.append(";");
                 }
             }
         }
@@ -947,6 +953,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if(customProps != null){
             for (Map<String,String>prop: customProps){
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation"))+"(en)");
             }
         }
     }
@@ -1043,6 +1050,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
             if(customProps != null){
                 for (Map<String,String>prop: customProps){
                     Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }

@@ -377,7 +377,7 @@
 							<th class="text-center" translate="TXT_SALE_PRICE" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
-							<th class="text-left" ng-repeat="prop2 in vm.customProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}</th>
+							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
 							<th class="text-left" translate="TXT_TIME"style="display:inline-block;width:150px;padding-left:8px"></th>
 						</tr>
 						</thead>
@@ -484,7 +484,7 @@
 							<td class="text-center" translate="TXT_SALE_PRICE" style="display:inline-block;width:150px;padding-left:8px"></td>
 							<td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
-							<th class="text-left" ng-repeat="prop2 in vm.customProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}</th>
+							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
 							<td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
 							<td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
 						</tr>

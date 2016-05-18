@@ -191,10 +191,12 @@ define([
                 var custArr = [];
                 _.forEach(customProps, function (data) {
                     var itemVal = groupInfo.feed.cnAtts[data.feed_prop_original];
+                    var orgAttsitemVal= groupInfo.feed.orgAtts[data.feed_prop_original];
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
                     custArr.push({value: itemVal});
+                    custArr.push({value: orgAttsitemVal});
                 });
                 groupInfo.custArr = custArr;
 
@@ -244,10 +246,12 @@ define([
                 var custArr = [];
                 _.forEach(customProps, function (data) {
                     var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
+                    var orgAttsitemVal= productInfo.feed.orgAtts[data.feed_prop_original];
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
                     custArr.push({value: itemVal});
+                    custArr.push({value: orgAttsitemVal});
                 });
                 productInfo.custArr = custArr;
 
