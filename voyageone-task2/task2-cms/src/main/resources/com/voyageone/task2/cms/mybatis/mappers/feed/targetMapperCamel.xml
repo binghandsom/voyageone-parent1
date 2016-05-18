@@ -1,0 +1,1449 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.TargetFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
+    <id column="sku" property="sku" jdbcType="VARCHAR" />
+    <result column="parent_sku" property="parentSku" jdbcType="VARCHAR" />
+    <result column="manufacturer_name" property="manufacturerName" jdbcType="VARCHAR" />
+    <result column="mpn" property="mpn" jdbcType="VARCHAR" />
+    <result column="model_number" property="modelNumber" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="regular_price" property="regularPrice" jdbcType="VARCHAR" />
+    <result column="sale_price" property="salePrice" jdbcType="VARCHAR" />
+    <result column="map" property="map" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="availability" property="availability" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="upc" property="upc" jdbcType="VARCHAR" />
+    <result column="isbn" property="isbn" jdbcType="VARCHAR" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="shipping_weight" property="shippingWeight" jdbcType="VARCHAR" />
+    <result column="margin" property="margin" jdbcType="VARCHAR" />
+    <result column="margin_percent" property="marginPercent" jdbcType="VARCHAR" />
+    <result column="catentryid" property="catentryid" jdbcType="VARCHAR" />
+    <result column="webclass" property="webclass" jdbcType="VARCHAR" />
+    <result column="subclass" property="subclass" jdbcType="VARCHAR" />
+    <result column="mozart_vendor_id" property="mozartVendorId" jdbcType="VARCHAR" />
+    <result column="selling_channel" property="sellingChannel" jdbcType="VARCHAR" />
+    <result column="item_status" property="itemStatus" jdbcType="VARCHAR" />
+    <result column="launchdate" property="launchdate" jdbcType="VARCHAR" />
+    <result column="availabilitydate" property="availabilitydate" jdbcType="VARCHAR" />
+    <result column="average_overall_rating" property="averageOverallRating" jdbcType="VARCHAR" />
+    <result column="total_item_reviews" property="totalItemReviews" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="short_description" property="shortDescription" jdbcType="LONGVARCHAR" />
+    <result column="buy_url" property="buyUrl" jdbcType="LONGVARCHAR" />
+    <result column="large_image_url" property="largeImageUrl" jdbcType="LONGVARCHAR" />
+    <result column="swatch_image" property="swatchImage" jdbcType="LONGVARCHAR" />
+    <result column="keywords" property="keywords" jdbcType="LONGVARCHAR" />
+    <result column="specifications" property="specifications" jdbcType="LONGVARCHAR" />
+    <result column="variation_themes" property="variationThemes" jdbcType="LONGVARCHAR" />
+    <result column="attribute_names" property="attributeNames" jdbcType="LONGVARCHAR" />
+    <result column="attribute_values" property="attributeValues" jdbcType="LONGVARCHAR" />
+    <result column="mozart_vendor_name" property="mozartVendorName" jdbcType="LONGVARCHAR" />
+    <result column="DPCI" property="dpci" jdbcType="LONGVARCHAR" />
+    <result column="division" property="division" jdbcType="LONGVARCHAR" />
+    <result column="item_kind" property="itemKind" jdbcType="LONGVARCHAR" />
+    <result column="streetdate" property="streetdate" jdbcType="LONGVARCHAR" />
+    <result column="ratable_attribute" property="ratableAttribute" jdbcType="LONGVARCHAR" />
+    <result column="webclass_name" property="webclassName" jdbcType="LONGVARCHAR" />
+    <result column="subclass_name" property="subclassName" jdbcType="LONGVARCHAR" />
+    <result column="manufacturing_brand" property="manufacturingBrand" jdbcType="LONGVARCHAR" />
+    <result column="contributor_type" property="contributorType" jdbcType="LONGVARCHAR" />
+    <result column="contributor" property="contributor" jdbcType="LONGVARCHAR" />
+    <result column="media_format" property="mediaFormat" jdbcType="LONGVARCHAR" />
+    <result column="barcode_type" property="barcodeType" jdbcType="LONGVARCHAR" />
+    <result column="specialitemsource" property="specialitemsource" jdbcType="LONGVARCHAR" />
+    <result column="esrbagerating" property="esrbagerating" jdbcType="LONGVARCHAR" />
+    <result column="tvrating" property="tvrating" jdbcType="LONGVARCHAR" />
+    <result column="bopo_flag" property="bopoFlag" jdbcType="LONGVARCHAR" />
+    <result column="soi_price_display" property="soiPriceDisplay" jdbcType="LONGVARCHAR" />
+    <result column="pricecode" property="pricecode" jdbcType="LONGVARCHAR" />
+    <result column="listprice" property="listprice" jdbcType="LONGVARCHAR" />
+    <result column="list_price_range" property="listPriceRange" jdbcType="LONGVARCHAR" />
+    <result column="sale_price_range" property="salePriceRange" jdbcType="LONGVARCHAR" />
+    <result column="sales_category" property="salesCategory" jdbcType="LONGVARCHAR" />
+    <result column="large_image_alternate" property="largeImageAlternate" jdbcType="LONGVARCHAR" />
+    <result column="sizing_chart" property="sizingChart" jdbcType="LONGVARCHAR" />
+    <result column="size_chart" property="sizeChart" jdbcType="LONGVARCHAR" />
+    <result column="shipping_service" property="shippingService" jdbcType="LONGVARCHAR" />
+    <result column="package_length" property="packageLength" jdbcType="LONGVARCHAR" />
+    <result column="package_width" property="packageWidth" jdbcType="LONGVARCHAR" />
+    <result column="package_height" property="packageHeight" jdbcType="LONGVARCHAR" />
+    <result column="tax_category" property="taxCategory" jdbcType="LONGVARCHAR" />
+    <result column="Facility" property="facility" jdbcType="LONGVARCHAR" />
+    <result column="Bulky" property="bulky" jdbcType="LONGVARCHAR" />
+    <result column="expert_review_flag" property="expertReviewFlag" jdbcType="LONGVARCHAR" />
+    <result column="thirdpartyhostedlink" property="thirdpartyhostedlink" jdbcType="LONGVARCHAR" />
+    <result column="Pickupinstore" property="pickupinstore" jdbcType="LONGVARCHAR" />
+    <result column="subscription" property="subscription" jdbcType="LONGVARCHAR" />
+    <result column="SECATTRIBUTES" property="secattributes" jdbcType="LONGVARCHAR" />
+    <result column="sec_barcode" property="secBarcode" jdbcType="LONGVARCHAR" />
+    <result column="auto_bullets" property="autoBullets" jdbcType="LONGVARCHAR" />
+    <result column="iac_attributes" property="iacAttributes" jdbcType="LONGVARCHAR" />
+    <result column="category_iacid" property="categoryIacid" jdbcType="LONGVARCHAR" />
+    <result column="callout_msg" property="calloutMsg" jdbcType="LONGVARCHAR" />
+    <result column="buyable" property="buyable" jdbcType="LONGVARCHAR" />
+    <result column="backorder_type" property="backorderType" jdbcType="LONGVARCHAR" />
+    <result column="max_order_qty" property="maxOrderQty" jdbcType="LONGVARCHAR" />
+    <result column="is_hazmat" property="isHazmat" jdbcType="LONGVARCHAR" />
+    <result column="is_food" property="isFood" jdbcType="LONGVARCHAR" />
+    <result column="whenever_shipping_eligible" property="wheneverShippingEligible" jdbcType="LONGVARCHAR" />
+    <result column="ship_to_restriction" property="shipToRestriction" jdbcType="LONGVARCHAR" />
+    <result column="po_box_prohibited" property="poBoxProhibited" jdbcType="LONGVARCHAR" />
+    <result column="nutrition_facts_flag" property="nutritionFactsFlag" jdbcType="LONGVARCHAR" />
+    <result column="drug_facts_flag" property="drugFactsFlag" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_cms" property="energyGuideCms" jdbcType="LONGVARCHAR" />
+    <result column="video_count" property="videoCount" jdbcType="LONGVARCHAR" />
+    <result column="ff_pickupInStore_rushDelivery_shipToStore_shipFromStore" property="ffPickupinstoreRushdeliveryShiptostoreShipfromstore" jdbcType="LONGVARCHAR" />
+    <result column="save_story" property="saveStory" jdbcType="LONGVARCHAR" />
+    <result column="gift_wrapable" property="giftWrapable" jdbcType="LONGVARCHAR" />
+    <result column="sign_required" property="signRequired" jdbcType="LONGVARCHAR" />
+    <result column="return_method" property="returnMethod" jdbcType="LONGVARCHAR" />
+    <result column="default_return_policy" property="defaultReturnPolicy" jdbcType="LONGVARCHAR" />
+    <result column="normal_return_policy" property="normalReturnPolicy" jdbcType="LONGVARCHAR" />
+    <result column="best_return_policy" property="bestReturnPolicy" jdbcType="LONGVARCHAR" />
+    <result column="display_eligibility" property="displayEligibility" jdbcType="LONGVARCHAR" />
+    <result column="age_restriction" property="ageRestriction" jdbcType="LONGVARCHAR" />
+    <result column="has_warranty" property="hasWarranty" jdbcType="LONGVARCHAR" />
+    <result column="marketprice" property="marketprice" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    sku, parent_sku, manufacturer_name, mpn, model_number, name, regular_price, sale_price, 
+    map, category, availability, brand, upc, isbn, currency, shipping_weight, margin, 
+    margin_percent, catentryid, webclass, subclass, mozart_vendor_id, selling_channel, 
+    item_status, launchdate, availabilitydate, average_overall_rating, total_item_reviews, 
+    marketprice,md5, updateFlag
+  </sql>
+  <sql id="Blob_Column_List" >
+    description, short_description, buy_url, large_image_url, swatch_image, keywords, 
+    specifications, variation_themes, attribute_names, attribute_values, mozart_vendor_name, 
+    DPCI, division, item_kind, streetdate, ratable_attribute, webclass_name, subclass_name, 
+    manufacturing_brand, contributor_type, contributor, media_format, barcode_type, specialitemsource, 
+    esrbagerating, tvrating, bopo_flag, soi_price_display, pricecode, listprice, list_price_range, 
+    sale_price_range, sales_category, large_image_alternate, sizing_chart, size_chart, 
+    shipping_service, package_length, package_width, package_height, tax_category, Facility, 
+    Bulky, expert_review_flag, thirdpartyhostedlink, Pickupinstore, subscription, SECATTRIBUTES, 
+    sec_barcode, auto_bullets, iac_attributes, category_iacid, callout_msg, buyable, 
+    backorder_type, max_order_qty, is_hazmat, is_food, whenever_shipping_eligible, ship_to_restriction, 
+    po_box_prohibited, nutrition_facts_flag, drug_facts_flag, energy_guide_cms, video_count, 
+    ff_pickupInStore_rushDelivery_shipToStore_shipFromStore, save_story, gift_wrapable, 
+    sign_required, return_method, default_return_policy, normal_return_policy, best_return_policy, 
+    display_eligibility, age_restriction, has_warranty
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_target_product_temp
+    where sku = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_target_product_temp
+    where sku = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <delete id="delete">
+    delete from cms_zz_feed_target_product_temp
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
+    insert into cms_zz_feed_target_product_temp (sku, parent_sku, manufacturer_name, 
+      mpn, model_number, name, 
+      regular_price, sale_price, map, 
+      category, availability, brand, 
+      upc, isbn, currency, 
+      shipping_weight, margin, margin_percent, 
+      catentryid, webclass, subclass, 
+      mozart_vendor_id, selling_channel, item_status, 
+      launchdate, availabilitydate, average_overall_rating, 
+      total_item_reviews, md5, updateFlag, 
+      description, short_description, 
+      buy_url, large_image_url, swatch_image, 
+      keywords, specifications, variation_themes, 
+      attribute_names, attribute_values, 
+      mozart_vendor_name, DPCI, division, 
+      item_kind, streetdate, ratable_attribute, 
+      webclass_name, subclass_name, manufacturing_brand, 
+      contributor_type, contributor, media_format, 
+      barcode_type, specialitemsource, 
+      esrbagerating, tvrating, bopo_flag, 
+      soi_price_display, pricecode, listprice, 
+      list_price_range, sale_price_range, 
+      sales_category, large_image_alternate, 
+      sizing_chart, size_chart, shipping_service, 
+      package_length, package_width, package_height, 
+      tax_category, Facility, Bulky, 
+      expert_review_flag, thirdpartyhostedlink, 
+      Pickupinstore, subscription, SECATTRIBUTES, 
+      sec_barcode, auto_bullets, iac_attributes, 
+      category_iacid, callout_msg, buyable, 
+      backorder_type, max_order_qty, is_hazmat, 
+      is_food, whenever_shipping_eligible, 
+      ship_to_restriction, po_box_prohibited, 
+      nutrition_facts_flag, drug_facts_flag, 
+      energy_guide_cms, video_count, ff_pickupInStore_rushDelivery_shipToStore_shipFromStore, 
+      save_story, gift_wrapable, sign_required, 
+      return_method, default_return_policy, 
+      normal_return_policy, best_return_policy, 
+      display_eligibility, age_restriction, 
+      has_warranty,marketprice)
+    values (#{sku,jdbcType=VARCHAR}, #{parentSku,jdbcType=VARCHAR}, #{manufacturerName,jdbcType=VARCHAR}, 
+      #{mpn,jdbcType=VARCHAR}, #{modelNumber,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{regularPrice,jdbcType=VARCHAR}, #{salePrice,jdbcType=VARCHAR}, #{map,jdbcType=VARCHAR}, 
+      #{category,jdbcType=VARCHAR}, #{availability,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, 
+      #{upc,jdbcType=VARCHAR}, #{isbn,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, 
+      #{shippingWeight,jdbcType=VARCHAR}, #{margin,jdbcType=VARCHAR}, #{marginPercent,jdbcType=VARCHAR}, 
+      #{catentryid,jdbcType=VARCHAR}, #{webclass,jdbcType=VARCHAR}, #{subclass,jdbcType=VARCHAR}, 
+      #{mozartVendorId,jdbcType=VARCHAR}, #{sellingChannel,jdbcType=VARCHAR}, #{itemStatus,jdbcType=VARCHAR}, 
+      #{launchdate,jdbcType=VARCHAR}, #{availabilitydate,jdbcType=VARCHAR}, #{averageOverallRating,jdbcType=VARCHAR}, 
+      #{totalItemReviews,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER}, 
+      #{description,jdbcType=LONGVARCHAR}, #{shortDescription,jdbcType=LONGVARCHAR}, 
+      #{buyUrl,jdbcType=LONGVARCHAR}, #{largeImageUrl,jdbcType=LONGVARCHAR}, #{swatchImage,jdbcType=LONGVARCHAR}, 
+      #{keywords,jdbcType=LONGVARCHAR}, #{specifications,jdbcType=LONGVARCHAR}, #{variationThemes,jdbcType=LONGVARCHAR}, 
+      #{attributeNames,jdbcType=LONGVARCHAR}, #{attributeValues,jdbcType=LONGVARCHAR}, 
+      #{mozartVendorName,jdbcType=LONGVARCHAR}, #{dpci,jdbcType=LONGVARCHAR}, #{division,jdbcType=LONGVARCHAR}, 
+      #{itemKind,jdbcType=LONGVARCHAR}, #{streetdate,jdbcType=LONGVARCHAR}, #{ratableAttribute,jdbcType=LONGVARCHAR}, 
+      #{webclassName,jdbcType=LONGVARCHAR}, #{subclassName,jdbcType=LONGVARCHAR}, #{manufacturingBrand,jdbcType=LONGVARCHAR}, 
+      #{contributorType,jdbcType=LONGVARCHAR}, #{contributor,jdbcType=LONGVARCHAR}, #{mediaFormat,jdbcType=LONGVARCHAR}, 
+      #{barcodeType,jdbcType=LONGVARCHAR}, #{specialitemsource,jdbcType=LONGVARCHAR}, 
+      #{esrbagerating,jdbcType=LONGVARCHAR}, #{tvrating,jdbcType=LONGVARCHAR}, #{bopoFlag,jdbcType=LONGVARCHAR}, 
+      #{soiPriceDisplay,jdbcType=LONGVARCHAR}, #{pricecode,jdbcType=LONGVARCHAR}, #{listprice,jdbcType=LONGVARCHAR}, 
+      #{listPriceRange,jdbcType=LONGVARCHAR}, #{salePriceRange,jdbcType=LONGVARCHAR}, 
+      #{salesCategory,jdbcType=LONGVARCHAR}, #{largeImageAlternate,jdbcType=LONGVARCHAR}, 
+      #{sizingChart,jdbcType=LONGVARCHAR}, #{sizeChart,jdbcType=LONGVARCHAR}, #{shippingService,jdbcType=LONGVARCHAR}, 
+      #{packageLength,jdbcType=LONGVARCHAR}, #{packageWidth,jdbcType=LONGVARCHAR}, #{packageHeight,jdbcType=LONGVARCHAR}, 
+      #{taxCategory,jdbcType=LONGVARCHAR}, #{facility,jdbcType=LONGVARCHAR}, #{bulky,jdbcType=LONGVARCHAR}, 
+      #{expertReviewFlag,jdbcType=LONGVARCHAR}, #{thirdpartyhostedlink,jdbcType=LONGVARCHAR}, 
+      #{pickupinstore,jdbcType=LONGVARCHAR}, #{subscription,jdbcType=LONGVARCHAR}, #{secattributes,jdbcType=LONGVARCHAR}, 
+      #{secBarcode,jdbcType=LONGVARCHAR}, #{autoBullets,jdbcType=LONGVARCHAR}, #{iacAttributes,jdbcType=LONGVARCHAR}, 
+      #{categoryIacid,jdbcType=LONGVARCHAR}, #{calloutMsg,jdbcType=LONGVARCHAR}, #{buyable,jdbcType=LONGVARCHAR}, 
+      #{backorderType,jdbcType=LONGVARCHAR}, #{maxOrderQty,jdbcType=LONGVARCHAR}, #{isHazmat,jdbcType=LONGVARCHAR}, 
+      #{isFood,jdbcType=LONGVARCHAR}, #{wheneverShippingEligible,jdbcType=LONGVARCHAR}, 
+      #{shipToRestriction,jdbcType=LONGVARCHAR}, #{poBoxProhibited,jdbcType=LONGVARCHAR}, 
+      #{nutritionFactsFlag,jdbcType=LONGVARCHAR}, #{drugFactsFlag,jdbcType=LONGVARCHAR}, 
+      #{energyGuideCms,jdbcType=LONGVARCHAR}, #{videoCount,jdbcType=LONGVARCHAR}, #{ffPickupinstoreRushdeliveryShiptostoreShipfromstore,jdbcType=LONGVARCHAR}, 
+      #{saveStory,jdbcType=LONGVARCHAR}, #{giftWrapable,jdbcType=LONGVARCHAR}, #{signRequired,jdbcType=LONGVARCHAR}, 
+      #{returnMethod,jdbcType=LONGVARCHAR}, #{defaultReturnPolicy,jdbcType=LONGVARCHAR}, 
+      #{normalReturnPolicy,jdbcType=LONGVARCHAR}, #{bestReturnPolicy,jdbcType=LONGVARCHAR}, 
+      #{displayEligibility,jdbcType=LONGVARCHAR}, #{ageRestriction,jdbcType=LONGVARCHAR}, 
+      #{hasWarranty,jdbcType=LONGVARCHAR},#{marketprice,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
+    insert into cms_zz_feed_target_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        sku,
+      </if>
+      <if test="parentSku != null" >
+        parent_sku,
+      </if>
+      <if test="manufacturerName != null" >
+        manufacturer_name,
+      </if>
+      <if test="mpn != null" >
+        mpn,
+      </if>
+      <if test="modelNumber != null" >
+        model_number,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="regularPrice != null" >
+        regular_price,
+      </if>
+      <if test="salePrice != null" >
+        sale_price,
+      </if>
+      <if test="map != null" >
+        map,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="availability != null" >
+        availability,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="upc != null" >
+        upc,
+      </if>
+      <if test="isbn != null" >
+        isbn,
+      </if>
+      <if test="currency != null" >
+        currency,
+      </if>
+      <if test="shippingWeight != null" >
+        shipping_weight,
+      </if>
+      <if test="margin != null" >
+        margin,
+      </if>
+      <if test="marginPercent != null" >
+        margin_percent,
+      </if>
+      <if test="catentryid != null" >
+        catentryid,
+      </if>
+      <if test="webclass != null" >
+        webclass,
+      </if>
+      <if test="subclass != null" >
+        subclass,
+      </if>
+      <if test="mozartVendorId != null" >
+        mozart_vendor_id,
+      </if>
+      <if test="sellingChannel != null" >
+        selling_channel,
+      </if>
+      <if test="itemStatus != null" >
+        item_status,
+      </if>
+      <if test="launchdate != null" >
+        launchdate,
+      </if>
+      <if test="availabilitydate != null" >
+        availabilitydate,
+      </if>
+      <if test="averageOverallRating != null" >
+        average_overall_rating,
+      </if>
+      <if test="totalItemReviews != null" >
+        total_item_reviews,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="shortDescription != null" >
+        short_description,
+      </if>
+      <if test="buyUrl != null" >
+        buy_url,
+      </if>
+      <if test="largeImageUrl != null" >
+        large_image_url,
+      </if>
+      <if test="swatchImage != null" >
+        swatch_image,
+      </if>
+      <if test="keywords != null" >
+        keywords,
+      </if>
+      <if test="specifications != null" >
+        specifications,
+      </if>
+      <if test="variationThemes != null" >
+        variation_themes,
+      </if>
+      <if test="attributeNames != null" >
+        attribute_names,
+      </if>
+      <if test="attributeValues != null" >
+        attribute_values,
+      </if>
+      <if test="mozartVendorName != null" >
+        mozart_vendor_name,
+      </if>
+      <if test="dpci != null" >
+        DPCI,
+      </if>
+      <if test="division != null" >
+        division,
+      </if>
+      <if test="itemKind != null" >
+        item_kind,
+      </if>
+      <if test="streetdate != null" >
+        streetdate,
+      </if>
+      <if test="ratableAttribute != null" >
+        ratable_attribute,
+      </if>
+      <if test="webclassName != null" >
+        webclass_name,
+      </if>
+      <if test="subclassName != null" >
+        subclass_name,
+      </if>
+      <if test="manufacturingBrand != null" >
+        manufacturing_brand,
+      </if>
+      <if test="contributorType != null" >
+        contributor_type,
+      </if>
+      <if test="contributor != null" >
+        contributor,
+      </if>
+      <if test="mediaFormat != null" >
+        media_format,
+      </if>
+      <if test="barcodeType != null" >
+        barcode_type,
+      </if>
+      <if test="specialitemsource != null" >
+        specialitemsource,
+      </if>
+      <if test="esrbagerating != null" >
+        esrbagerating,
+      </if>
+      <if test="tvrating != null" >
+        tvrating,
+      </if>
+      <if test="bopoFlag != null" >
+        bopo_flag,
+      </if>
+      <if test="soiPriceDisplay != null" >
+        soi_price_display,
+      </if>
+      <if test="pricecode != null" >
+        pricecode,
+      </if>
+      <if test="listprice != null" >
+        listprice,
+      </if>
+      <if test="listPriceRange != null" >
+        list_price_range,
+      </if>
+      <if test="salePriceRange != null" >
+        sale_price_range,
+      </if>
+      <if test="salesCategory != null" >
+        sales_category,
+      </if>
+      <if test="largeImageAlternate != null" >
+        large_image_alternate,
+      </if>
+      <if test="sizingChart != null" >
+        sizing_chart,
+      </if>
+      <if test="sizeChart != null" >
+        size_chart,
+      </if>
+      <if test="shippingService != null" >
+        shipping_service,
+      </if>
+      <if test="packageLength != null" >
+        package_length,
+      </if>
+      <if test="packageWidth != null" >
+        package_width,
+      </if>
+      <if test="packageHeight != null" >
+        package_height,
+      </if>
+      <if test="taxCategory != null" >
+        tax_category,
+      </if>
+      <if test="facility != null" >
+        Facility,
+      </if>
+      <if test="bulky != null" >
+        Bulky,
+      </if>
+      <if test="expertReviewFlag != null" >
+        expert_review_flag,
+      </if>
+      <if test="thirdpartyhostedlink != null" >
+        thirdpartyhostedlink,
+      </if>
+      <if test="pickupinstore != null" >
+        Pickupinstore,
+      </if>
+      <if test="subscription != null" >
+        subscription,
+      </if>
+      <if test="secattributes != null" >
+        SECATTRIBUTES,
+      </if>
+      <if test="secBarcode != null" >
+        sec_barcode,
+      </if>
+      <if test="autoBullets != null" >
+        auto_bullets,
+      </if>
+      <if test="iacAttributes != null" >
+        iac_attributes,
+      </if>
+      <if test="categoryIacid != null" >
+        category_iacid,
+      </if>
+      <if test="calloutMsg != null" >
+        callout_msg,
+      </if>
+      <if test="buyable != null" >
+        buyable,
+      </if>
+      <if test="backorderType != null" >
+        backorder_type,
+      </if>
+      <if test="maxOrderQty != null" >
+        max_order_qty,
+      </if>
+      <if test="isHazmat != null" >
+        is_hazmat,
+      </if>
+      <if test="isFood != null" >
+        is_food,
+      </if>
+      <if test="wheneverShippingEligible != null" >
+        whenever_shipping_eligible,
+      </if>
+      <if test="shipToRestriction != null" >
+        ship_to_restriction,
+      </if>
+      <if test="poBoxProhibited != null" >
+        po_box_prohibited,
+      </if>
+      <if test="nutritionFactsFlag != null" >
+        nutrition_facts_flag,
+      </if>
+      <if test="drugFactsFlag != null" >
+        drug_facts_flag,
+      </if>
+      <if test="energyGuideCms != null" >
+        energy_guide_cms,
+      </if>
+      <if test="videoCount != null" >
+        video_count,
+      </if>
+      <if test="ffPickupinstoreRushdeliveryShiptostoreShipfromstore != null" >
+        ff_pickupInStore_rushDelivery_shipToStore_shipFromStore,
+      </if>
+      <if test="saveStory != null" >
+        save_story,
+      </if>
+      <if test="giftWrapable != null" >
+        gift_wrapable,
+      </if>
+      <if test="signRequired != null" >
+        sign_required,
+      </if>
+      <if test="returnMethod != null" >
+        return_method,
+      </if>
+      <if test="defaultReturnPolicy != null" >
+        default_return_policy,
+      </if>
+      <if test="normalReturnPolicy != null" >
+        normal_return_policy,
+      </if>
+      <if test="bestReturnPolicy != null" >
+        best_return_policy,
+      </if>
+      <if test="displayEligibility != null" >
+        display_eligibility,
+      </if>
+      <if test="ageRestriction != null" >
+        age_restriction,
+      </if>
+      <if test="hasWarranty != null" >
+      has_warranty,
+    </if>
+      <if test="marketprice != null" >
+        marketprice
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="parentSku != null" >
+        #{parentSku,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerName != null" >
+        #{manufacturerName,jdbcType=VARCHAR},
+      </if>
+      <if test="mpn != null" >
+        #{mpn,jdbcType=VARCHAR},
+      </if>
+      <if test="modelNumber != null" >
+        #{modelNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="regularPrice != null" >
+        #{regularPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="map != null" >
+        #{map,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="availability != null" >
+        #{availability,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="upc != null" >
+        #{upc,jdbcType=VARCHAR},
+      </if>
+      <if test="isbn != null" >
+        #{isbn,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null" >
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingWeight != null" >
+        #{shippingWeight,jdbcType=VARCHAR},
+      </if>
+      <if test="margin != null" >
+        #{margin,jdbcType=VARCHAR},
+      </if>
+      <if test="marginPercent != null" >
+        #{marginPercent,jdbcType=VARCHAR},
+      </if>
+      <if test="catentryid != null" >
+        #{catentryid,jdbcType=VARCHAR},
+      </if>
+      <if test="webclass != null" >
+        #{webclass,jdbcType=VARCHAR},
+      </if>
+      <if test="subclass != null" >
+        #{subclass,jdbcType=VARCHAR},
+      </if>
+      <if test="mozartVendorId != null" >
+        #{mozartVendorId,jdbcType=VARCHAR},
+      </if>
+      <if test="sellingChannel != null" >
+        #{sellingChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="itemStatus != null" >
+        #{itemStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="launchdate != null" >
+        #{launchdate,jdbcType=VARCHAR},
+      </if>
+      <if test="availabilitydate != null" >
+        #{availabilitydate,jdbcType=VARCHAR},
+      </if>
+      <if test="averageOverallRating != null" >
+        #{averageOverallRating,jdbcType=VARCHAR},
+      </if>
+      <if test="totalItemReviews != null" >
+        #{totalItemReviews,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        #{shortDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="buyUrl != null" >
+        #{buyUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="largeImageUrl != null" >
+        #{largeImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="swatchImage != null" >
+        #{swatchImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="keywords != null" >
+        #{keywords,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specifications != null" >
+        #{specifications,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationThemes != null" >
+        #{variationThemes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeNames != null" >
+        #{attributeNames,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeValues != null" >
+        #{attributeValues,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mozartVendorName != null" >
+        #{mozartVendorName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dpci != null" >
+        #{dpci,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="division != null" >
+        #{division,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemKind != null" >
+        #{itemKind,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="streetdate != null" >
+        #{streetdate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ratableAttribute != null" >
+        #{ratableAttribute,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="webclassName != null" >
+        #{webclassName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="subclassName != null" >
+        #{subclassName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturingBrand != null" >
+        #{manufacturingBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contributorType != null" >
+        #{contributorType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contributor != null" >
+        #{contributor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaFormat != null" >
+        #{mediaFormat,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="barcodeType != null" >
+        #{barcodeType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialitemsource != null" >
+        #{specialitemsource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="esrbagerating != null" >
+        #{esrbagerating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="tvrating != null" >
+        #{tvrating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bopoFlag != null" >
+        #{bopoFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="soiPriceDisplay != null" >
+        #{soiPriceDisplay,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pricecode != null" >
+        #{pricecode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listprice != null" >
+        #{listprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listPriceRange != null" >
+        #{listPriceRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salePriceRange != null" >
+        #{salePriceRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salesCategory != null" >
+        #{salesCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="largeImageAlternate != null" >
+        #{largeImageAlternate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizingChart != null" >
+        #{sizingChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizeChart != null" >
+        #{sizeChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingService != null" >
+        #{shippingService,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageLength != null" >
+        #{packageLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageWidth != null" >
+        #{packageWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageHeight != null" >
+        #{packageHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxCategory != null" >
+        #{taxCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="facility != null" >
+        #{facility,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulky != null" >
+        #{bulky,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="expertReviewFlag != null" >
+        #{expertReviewFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="thirdpartyhostedlink != null" >
+        #{thirdpartyhostedlink,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pickupinstore != null" >
+        #{pickupinstore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="subscription != null" >
+        #{subscription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="secattributes != null" >
+        #{secattributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="secBarcode != null" >
+        #{secBarcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="autoBullets != null" >
+        #{autoBullets,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="iacAttributes != null" >
+        #{iacAttributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="categoryIacid != null" >
+        #{categoryIacid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="calloutMsg != null" >
+        #{calloutMsg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="buyable != null" >
+        #{buyable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="backorderType != null" >
+        #{backorderType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="maxOrderQty != null" >
+        #{maxOrderQty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isHazmat != null" >
+        #{isHazmat,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isFood != null" >
+        #{isFood,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="wheneverShippingEligible != null" >
+        #{wheneverShippingEligible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shipToRestriction != null" >
+        #{shipToRestriction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="poBoxProhibited != null" >
+        #{poBoxProhibited,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nutritionFactsFlag != null" >
+        #{nutritionFactsFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="drugFactsFlag != null" >
+        #{drugFactsFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideCms != null" >
+        #{energyGuideCms,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="videoCount != null" >
+        #{videoCount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ffPickupinstoreRushdeliveryShiptostoreShipfromstore != null" >
+        #{ffPickupinstoreRushdeliveryShiptostoreShipfromstore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="saveStory != null" >
+        #{saveStory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="giftWrapable != null" >
+        #{giftWrapable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="signRequired != null" >
+        #{signRequired,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnMethod != null" >
+        #{returnMethod,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="defaultReturnPolicy != null" >
+        #{defaultReturnPolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="normalReturnPolicy != null" >
+        #{normalReturnPolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bestReturnPolicy != null" >
+        #{bestReturnPolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="displayEligibility != null" >
+        #{displayEligibility,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ageRestriction != null" >
+        #{ageRestriction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hasWarranty != null" >
+        #{hasWarranty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="marketprice != null" >
+        #{marketprice,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
+    update cms_zz_feed_target_product_temp
+    <set >
+      <if test="parentSku != null" >
+        parent_sku = #{parentSku,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerName != null" >
+        manufacturer_name = #{manufacturerName,jdbcType=VARCHAR},
+      </if>
+      <if test="mpn != null" >
+        mpn = #{mpn,jdbcType=VARCHAR},
+      </if>
+      <if test="modelNumber != null" >
+        model_number = #{modelNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="regularPrice != null" >
+        regular_price = #{regularPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null" >
+        sale_price = #{salePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="map != null" >
+        map = #{map,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="availability != null" >
+        availability = #{availability,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="upc != null" >
+        upc = #{upc,jdbcType=VARCHAR},
+      </if>
+      <if test="isbn != null" >
+        isbn = #{isbn,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null" >
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingWeight != null" >
+        shipping_weight = #{shippingWeight,jdbcType=VARCHAR},
+      </if>
+      <if test="margin != null" >
+        margin = #{margin,jdbcType=VARCHAR},
+      </if>
+      <if test="marginPercent != null" >
+        margin_percent = #{marginPercent,jdbcType=VARCHAR},
+      </if>
+      <if test="catentryid != null" >
+        catentryid = #{catentryid,jdbcType=VARCHAR},
+      </if>
+      <if test="webclass != null" >
+        webclass = #{webclass,jdbcType=VARCHAR},
+      </if>
+      <if test="subclass != null" >
+        subclass = #{subclass,jdbcType=VARCHAR},
+      </if>
+      <if test="mozartVendorId != null" >
+        mozart_vendor_id = #{mozartVendorId,jdbcType=VARCHAR},
+      </if>
+      <if test="sellingChannel != null" >
+        selling_channel = #{sellingChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="itemStatus != null" >
+        item_status = #{itemStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="launchdate != null" >
+        launchdate = #{launchdate,jdbcType=VARCHAR},
+      </if>
+      <if test="availabilitydate != null" >
+        availabilitydate = #{availabilitydate,jdbcType=VARCHAR},
+      </if>
+      <if test="averageOverallRating != null" >
+        average_overall_rating = #{averageOverallRating,jdbcType=VARCHAR},
+      </if>
+      <if test="totalItemReviews != null" >
+        total_item_reviews = #{totalItemReviews,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        md5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        updateFlag = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        short_description = #{shortDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="buyUrl != null" >
+        buy_url = #{buyUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="largeImageUrl != null" >
+        large_image_url = #{largeImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="swatchImage != null" >
+        swatch_image = #{swatchImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="keywords != null" >
+        keywords = #{keywords,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specifications != null" >
+        specifications = #{specifications,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationThemes != null" >
+        variation_themes = #{variationThemes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeNames != null" >
+        attribute_names = #{attributeNames,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeValues != null" >
+        attribute_values = #{attributeValues,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mozartVendorName != null" >
+        mozart_vendor_name = #{mozartVendorName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dpci != null" >
+        DPCI = #{dpci,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="division != null" >
+        division = #{division,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemKind != null" >
+        item_kind = #{itemKind,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="streetdate != null" >
+        streetdate = #{streetdate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ratableAttribute != null" >
+        ratable_attribute = #{ratableAttribute,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="webclassName != null" >
+        webclass_name = #{webclassName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="subclassName != null" >
+        subclass_name = #{subclassName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturingBrand != null" >
+        manufacturing_brand = #{manufacturingBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contributorType != null" >
+        contributor_type = #{contributorType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contributor != null" >
+        contributor = #{contributor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaFormat != null" >
+        media_format = #{mediaFormat,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="barcodeType != null" >
+        barcode_type = #{barcodeType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialitemsource != null" >
+        specialitemsource = #{specialitemsource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="esrbagerating != null" >
+        esrbagerating = #{esrbagerating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="tvrating != null" >
+        tvrating = #{tvrating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bopoFlag != null" >
+        bopo_flag = #{bopoFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="soiPriceDisplay != null" >
+        soi_price_display = #{soiPriceDisplay,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pricecode != null" >
+        pricecode = #{pricecode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listprice != null" >
+        listprice = #{listprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listPriceRange != null" >
+        list_price_range = #{listPriceRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salePriceRange != null" >
+        sale_price_range = #{salePriceRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salesCategory != null" >
+        sales_category = #{salesCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="largeImageAlternate != null" >
+        large_image_alternate = #{largeImageAlternate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizingChart != null" >
+        sizing_chart = #{sizingChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizeChart != null" >
+        size_chart = #{sizeChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingService != null" >
+        shipping_service = #{shippingService,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageLength != null" >
+        package_length = #{packageLength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageWidth != null" >
+        package_width = #{packageWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageHeight != null" >
+        package_height = #{packageHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxCategory != null" >
+        tax_category = #{taxCategory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="facility != null" >
+        Facility = #{facility,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulky != null" >
+        Bulky = #{bulky,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="expertReviewFlag != null" >
+        expert_review_flag = #{expertReviewFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="thirdpartyhostedlink != null" >
+        thirdpartyhostedlink = #{thirdpartyhostedlink,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pickupinstore != null" >
+        Pickupinstore = #{pickupinstore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="subscription != null" >
+        subscription = #{subscription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="secattributes != null" >
+        SECATTRIBUTES = #{secattributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="secBarcode != null" >
+        sec_barcode = #{secBarcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="autoBullets != null" >
+        auto_bullets = #{autoBullets,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="iacAttributes != null" >
+        iac_attributes = #{iacAttributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="categoryIacid != null" >
+        category_iacid = #{categoryIacid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="calloutMsg != null" >
+        callout_msg = #{calloutMsg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="buyable != null" >
+        buyable = #{buyable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="backorderType != null" >
+        backorder_type = #{backorderType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="maxOrderQty != null" >
+        max_order_qty = #{maxOrderQty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isHazmat != null" >
+        is_hazmat = #{isHazmat,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isFood != null" >
+        is_food = #{isFood,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="wheneverShippingEligible != null" >
+        whenever_shipping_eligible = #{wheneverShippingEligible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shipToRestriction != null" >
+        ship_to_restriction = #{shipToRestriction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="poBoxProhibited != null" >
+        po_box_prohibited = #{poBoxProhibited,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nutritionFactsFlag != null" >
+        nutrition_facts_flag = #{nutritionFactsFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="drugFactsFlag != null" >
+        drug_facts_flag = #{drugFactsFlag,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideCms != null" >
+        energy_guide_cms = #{energyGuideCms,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="videoCount != null" >
+        video_count = #{videoCount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ffPickupinstoreRushdeliveryShiptostoreShipfromstore != null" >
+        ff_pickupInStore_rushDelivery_shipToStore_shipFromStore = #{ffPickupinstoreRushdeliveryShiptostoreShipfromstore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="saveStory != null" >
+        save_story = #{saveStory,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="giftWrapable != null" >
+        gift_wrapable = #{giftWrapable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="signRequired != null" >
+        sign_required = #{signRequired,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnMethod != null" >
+        return_method = #{returnMethod,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="defaultReturnPolicy != null" >
+        default_return_policy = #{defaultReturnPolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="normalReturnPolicy != null" >
+        normal_return_policy = #{normalReturnPolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bestReturnPolicy != null" >
+        best_return_policy = #{bestReturnPolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="displayEligibility != null" >
+        display_eligibility = #{displayEligibility,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ageRestriction != null" >
+        age_restriction = #{ageRestriction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hasWarranty != null" >
+        has_warranty = #{hasWarranty,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="marketprice != null" >
+        marketprice = #{marketprice,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where sku = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
+    update cms_zz_feed_target_product_temp
+    set parent_sku = #{parentSku,jdbcType=VARCHAR},
+      manufacturer_name = #{manufacturerName,jdbcType=VARCHAR},
+      mpn = #{mpn,jdbcType=VARCHAR},
+      model_number = #{modelNumber,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      regular_price = #{regularPrice,jdbcType=VARCHAR},
+      sale_price = #{salePrice,jdbcType=VARCHAR},
+      map = #{map,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR},
+      availability = #{availability,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      upc = #{upc,jdbcType=VARCHAR},
+      isbn = #{isbn,jdbcType=VARCHAR},
+      currency = #{currency,jdbcType=VARCHAR},
+      shipping_weight = #{shippingWeight,jdbcType=VARCHAR},
+      margin = #{margin,jdbcType=VARCHAR},
+      margin_percent = #{marginPercent,jdbcType=VARCHAR},
+      catentryid = #{catentryid,jdbcType=VARCHAR},
+      webclass = #{webclass,jdbcType=VARCHAR},
+      subclass = #{subclass,jdbcType=VARCHAR},
+      mozart_vendor_id = #{mozartVendorId,jdbcType=VARCHAR},
+      selling_channel = #{sellingChannel,jdbcType=VARCHAR},
+      item_status = #{itemStatus,jdbcType=VARCHAR},
+      launchdate = #{launchdate,jdbcType=VARCHAR},
+      availabilitydate = #{availabilitydate,jdbcType=VARCHAR},
+      average_overall_rating = #{averageOverallRating,jdbcType=VARCHAR},
+      total_item_reviews = #{totalItemReviews,jdbcType=VARCHAR},
+      md5 = #{md5,jdbcType=VARCHAR},
+      updateFlag = #{updateflag,jdbcType=INTEGER},
+      description = #{description,jdbcType=LONGVARCHAR},
+      short_description = #{shortDescription,jdbcType=LONGVARCHAR},
+      buy_url = #{buyUrl,jdbcType=LONGVARCHAR},
+      large_image_url = #{largeImageUrl,jdbcType=LONGVARCHAR},
+      swatch_image = #{swatchImage,jdbcType=LONGVARCHAR},
+      keywords = #{keywords,jdbcType=LONGVARCHAR},
+      specifications = #{specifications,jdbcType=LONGVARCHAR},
+      variation_themes = #{variationThemes,jdbcType=LONGVARCHAR},
+      attribute_names = #{attributeNames,jdbcType=LONGVARCHAR},
+      attribute_values = #{attributeValues,jdbcType=LONGVARCHAR},
+      mozart_vendor_name = #{mozartVendorName,jdbcType=LONGVARCHAR},
+      DPCI = #{dpci,jdbcType=LONGVARCHAR},
+      division = #{division,jdbcType=LONGVARCHAR},
+      item_kind = #{itemKind,jdbcType=LONGVARCHAR},
+      streetdate = #{streetdate,jdbcType=LONGVARCHAR},
+      ratable_attribute = #{ratableAttribute,jdbcType=LONGVARCHAR},
+      webclass_name = #{webclassName,jdbcType=LONGVARCHAR},
+      subclass_name = #{subclassName,jdbcType=LONGVARCHAR},
+      manufacturing_brand = #{manufacturingBrand,jdbcType=LONGVARCHAR},
+      contributor_type = #{contributorType,jdbcType=LONGVARCHAR},
+      contributor = #{contributor,jdbcType=LONGVARCHAR},
+      media_format = #{mediaFormat,jdbcType=LONGVARCHAR},
+      barcode_type = #{barcodeType,jdbcType=LONGVARCHAR},
+      specialitemsource = #{specialitemsource,jdbcType=LONGVARCHAR},
+      esrbagerating = #{esrbagerating,jdbcType=LONGVARCHAR},
+      tvrating = #{tvrating,jdbcType=LONGVARCHAR},
+      bopo_flag = #{bopoFlag,jdbcType=LONGVARCHAR},
+      soi_price_display = #{soiPriceDisplay,jdbcType=LONGVARCHAR},
+      pricecode = #{pricecode,jdbcType=LONGVARCHAR},
+      listprice = #{listprice,jdbcType=LONGVARCHAR},
+      list_price_range = #{listPriceRange,jdbcType=LONGVARCHAR},
+      sale_price_range = #{salePriceRange,jdbcType=LONGVARCHAR},
+      sales_category = #{salesCategory,jdbcType=LONGVARCHAR},
+      large_image_alternate = #{largeImageAlternate,jdbcType=LONGVARCHAR},
+      sizing_chart = #{sizingChart,jdbcType=LONGVARCHAR},
+      size_chart = #{sizeChart,jdbcType=LONGVARCHAR},
+      shipping_service = #{shippingService,jdbcType=LONGVARCHAR},
+      package_length = #{packageLength,jdbcType=LONGVARCHAR},
+      package_width = #{packageWidth,jdbcType=LONGVARCHAR},
+      package_height = #{packageHeight,jdbcType=LONGVARCHAR},
+      tax_category = #{taxCategory,jdbcType=LONGVARCHAR},
+      Facility = #{facility,jdbcType=LONGVARCHAR},
+      Bulky = #{bulky,jdbcType=LONGVARCHAR},
+      expert_review_flag = #{expertReviewFlag,jdbcType=LONGVARCHAR},
+      thirdpartyhostedlink = #{thirdpartyhostedlink,jdbcType=LONGVARCHAR},
+      Pickupinstore = #{pickupinstore,jdbcType=LONGVARCHAR},
+      subscription = #{subscription,jdbcType=LONGVARCHAR},
+      SECATTRIBUTES = #{secattributes,jdbcType=LONGVARCHAR},
+      sec_barcode = #{secBarcode,jdbcType=LONGVARCHAR},
+      auto_bullets = #{autoBullets,jdbcType=LONGVARCHAR},
+      iac_attributes = #{iacAttributes,jdbcType=LONGVARCHAR},
+      category_iacid = #{categoryIacid,jdbcType=LONGVARCHAR},
+      callout_msg = #{calloutMsg,jdbcType=LONGVARCHAR},
+      buyable = #{buyable,jdbcType=LONGVARCHAR},
+      backorder_type = #{backorderType,jdbcType=LONGVARCHAR},
+      max_order_qty = #{maxOrderQty,jdbcType=LONGVARCHAR},
+      is_hazmat = #{isHazmat,jdbcType=LONGVARCHAR},
+      is_food = #{isFood,jdbcType=LONGVARCHAR},
+      whenever_shipping_eligible = #{wheneverShippingEligible,jdbcType=LONGVARCHAR},
+      ship_to_restriction = #{shipToRestriction,jdbcType=LONGVARCHAR},
+      po_box_prohibited = #{poBoxProhibited,jdbcType=LONGVARCHAR},
+      nutrition_facts_flag = #{nutritionFactsFlag,jdbcType=LONGVARCHAR},
+      drug_facts_flag = #{drugFactsFlag,jdbcType=LONGVARCHAR},
+      energy_guide_cms = #{energyGuideCms,jdbcType=LONGVARCHAR},
+      video_count = #{videoCount,jdbcType=LONGVARCHAR},
+      ff_pickupInStore_rushDelivery_shipToStore_shipFromStore = #{ffPickupinstoreRushdeliveryShiptostoreShipfromstore,jdbcType=LONGVARCHAR},
+      save_story = #{saveStory,jdbcType=LONGVARCHAR},
+      gift_wrapable = #{giftWrapable,jdbcType=LONGVARCHAR},
+      sign_required = #{signRequired,jdbcType=LONGVARCHAR},
+      return_method = #{returnMethod,jdbcType=LONGVARCHAR},
+      default_return_policy = #{defaultReturnPolicy,jdbcType=LONGVARCHAR},
+      normal_return_policy = #{normalReturnPolicy,jdbcType=LONGVARCHAR},
+      best_return_policy = #{bestReturnPolicy,jdbcType=LONGVARCHAR},
+      display_eligibility = #{displayEligibility,jdbcType=LONGVARCHAR},
+      age_restriction = #{ageRestriction,jdbcType=LONGVARCHAR},
+      has_warranty = #{hasWarranty,jdbcType=LONGVARCHAR},
+    where sku = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedTargetBean" >
+    update cms_zz_feed_target_product_temp
+    set parent_sku = #{parentSku,jdbcType=VARCHAR},
+      manufacturer_name = #{manufacturerName,jdbcType=VARCHAR},
+      mpn = #{mpn,jdbcType=VARCHAR},
+      model_number = #{modelNumber,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      regular_price = #{regularPrice,jdbcType=VARCHAR},
+      sale_price = #{salePrice,jdbcType=VARCHAR},
+      map = #{map,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR},
+      availability = #{availability,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      upc = #{upc,jdbcType=VARCHAR},
+      isbn = #{isbn,jdbcType=VARCHAR},
+      currency = #{currency,jdbcType=VARCHAR},
+      shipping_weight = #{shippingWeight,jdbcType=VARCHAR},
+      margin = #{margin,jdbcType=VARCHAR},
+      margin_percent = #{marginPercent,jdbcType=VARCHAR},
+      catentryid = #{catentryid,jdbcType=VARCHAR},
+      webclass = #{webclass,jdbcType=VARCHAR},
+      subclass = #{subclass,jdbcType=VARCHAR},
+      mozart_vendor_id = #{mozartVendorId,jdbcType=VARCHAR},
+      selling_channel = #{sellingChannel,jdbcType=VARCHAR},
+      item_status = #{itemStatus,jdbcType=VARCHAR},
+      launchdate = #{launchdate,jdbcType=VARCHAR},
+      availabilitydate = #{availabilitydate,jdbcType=VARCHAR},
+      average_overall_rating = #{averageOverallRating,jdbcType=VARCHAR},
+      total_item_reviews = #{totalItemReviews,jdbcType=VARCHAR},
+      marketprice = #{marketprice,jdbcType=VARCHAR}
+      md5 = #{md5,jdbcType=VARCHAR},
+      updateFlag = #{updateflag,jdbcType=INTEGER}
+    where sku = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_target_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `catentryid` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_target_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_target_product_temp where `catentryid` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_target_product_full
+    where `catentryid` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoTargetModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="attribute_names" property="attributeNames" />
+    <result column="attribute_values" property="attributeValues" />
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_itemcode} as i_itemcode
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,attribute_names
+    ,attribute_values
+    ,variation_themes
+    ,SECATTRIBUTES
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+</mapper>

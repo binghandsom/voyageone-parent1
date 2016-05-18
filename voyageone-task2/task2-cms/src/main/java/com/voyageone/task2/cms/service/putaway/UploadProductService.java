@@ -9,6 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -55,6 +56,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
+
+    @Autowired
+    private ProductGroupService productGroupService;
 
     public UploadProductService() {}
 
@@ -221,19 +225,22 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-                String inStockTime = null, onSaleTime = null, publishTime = null;
+//                String inStockTime = null, onSaleTime = null, publishTime = null;
 
                 if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
-                    publishTime = DateTimeUtil.getNow();
+//                    publishTime = DateTimeUtil.getNow();
+                    mainProductPlatform.setPublishTime(DateTimeUtil.getNow());
                 }
 
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.OnSale)
                         && platformActive == CmsConstants.PlatformActive.ToOnSale) {
-                    onSaleTime = DateTimeUtil.getNow();
+//                    onSaleTime = DateTimeUtil.getNow();
+                    mainProductPlatform.setOnSaleTime(DateTimeUtil.getNow());
                 }
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.InStock)
                         && platformActive == CmsConstants.PlatformActive.ToInStock) {
-                    inStockTime = DateTimeUtil.getNow();
+//                    inStockTime = DateTimeUtil.getNow();
+                    mainProductPlatform.setInStockTime(DateTimeUtil.getNow());
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
@@ -242,9 +249,17 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.OnSale;
                 }
-                // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
+                // 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新-> 是的 (回写group表和product表)
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
 //                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, inStockTime, newPlatformStatus);
+
+                // 20160512 tom 回写group表和product表 START
+                mainProductPlatform.setNumIId(workLoadBean.getNumId());
+                mainProductPlatform.setPlatformStatus(newPlatformStatus);
+                mainProductPlatform.setProductCodes(codeList);
+                mainProductPlatform.setChannelId(workLoadBean.getOrder_channel_id());
+                productGroupService.updateGroupsPlatformStatus(mainProductPlatform);
+                // 20160512 tom 回写group表和product表 END
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);
@@ -348,7 +363,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     //成功时，publish_status设为1
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
-                // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
+                // 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新-> 失败的场合就不要更新了
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
 //                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
 
