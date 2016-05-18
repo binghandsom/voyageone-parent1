@@ -150,6 +150,7 @@ public class CmsConstants {
         int property2CellNum = 22;
         int property3CellNum = 23;
         int property4CellNum = 24;
+        int size = 25;
     }
 
     /**
