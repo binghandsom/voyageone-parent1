@@ -74,7 +74,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
                     }
                 }
 
-                CmsBtFeedInfoModel cmsBtFeedInfoModel = jewmodelBean.getCmsBtFeedInfoModel();
+                CmsBtFeedInfoModel cmsBtFeedInfoModel = jewmodelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
                 modelBeans.add(cmsBtFeedInfoModel);
 

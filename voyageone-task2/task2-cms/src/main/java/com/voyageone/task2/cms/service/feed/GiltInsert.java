@@ -102,7 +102,7 @@ public class GiltInsert extends BaseTaskService {
                         }
                     });
                 }
-                CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
+                CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
                 modelBeans.add(cmsBtFeedInfoModel);
 

@@ -296,4 +296,13 @@ public final class CommonUtil {
 
         return infoMap;
     }
+
+    /**
+     * 获取图片的后缀名
+     * @param imageUrl
+     * @return
+     */
+    public static String getImageExtend (String imageUrl) {
+        return imageUrl.substring(imageUrl.lastIndexOf(".")).toLowerCase();
+    }
 }

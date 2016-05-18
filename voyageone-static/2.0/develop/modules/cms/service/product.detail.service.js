@@ -24,38 +24,38 @@ define([
 		/**
 		 * 获取页面产品信息
 		 * @param formData
-         * @returns {*}
-         */
+		 * @returns {*}
+		 */
 		function getProductInfo (formData) {
 			var defer = $q.defer();
 			$productDetailService.getProductInfo(formData)
-			.then (function (res) {
-				var result = angular.copy(res);
+					.then (function (res) {
+						var result = angular.copy(res);
 
-				var feedKeys = _.values(result.data.productInfo.customAttributes.customIds);
-				if(res.data.productInfo.feedInfoModel) {
-					result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel
-							, feedKeys
-							, result.data.productInfo.customAttributes);
+						var feedKeys = _.values(result.data.productInfo.customAttributes.customIds);
+						if(res.data.productInfo.feedInfoModel) {
+							result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel
+									, feedKeys
+									, result.data.productInfo.customAttributes);
 
-				}
+						}
 
-				// 设置sku的渠道列表是否被选中
-				angular.forEach(result.data.skus, function (sku) {
-					var SelSkuCarts = [];
-					angular.forEach(sku.skuCarts, function(skuCart) {
-						SelSkuCarts[skuCart] = true;
+						// 设置sku的渠道列表是否被选中
+						angular.forEach(result.data.skus, function (sku) {
+							var SelSkuCarts = [];
+							angular.forEach(sku.skuCarts, function(skuCart) {
+								SelSkuCarts[skuCart] = true;
+							});
+							sku.SelSkuCarts = SelSkuCarts;
+						});
+
+						// 设置产品状态
+						if (result.data.productInfo.productStatus) {
+							_setProductStatus(result.data.productInfo.productStatus);
+						}
+
+						defer.resolve(result);
 					});
-					sku.SelSkuCarts = SelSkuCarts;
-				});
-
-				// 设置产品状态
-				if (result.data.productInfo.productStatus) {
-					_setProductStatus(result.data.productInfo.productStatus);
-				}
-
-				defer.resolve(result);
-			});
 
 			return defer.promise;
 		}
@@ -65,12 +65,19 @@ define([
 		 * @param productFormData
 		 * @param skuFormData
 		 * @returns {*|Promise.<T>}
-         */
+		 */
 		function updateProductDetail (formData) {
 			_.forEach(formData.feedInfoModel, function (feedInfo) {
 				if (feedInfo.selected)
 					formData.customAttributes.cnAtts[feedInfo.key] = feedInfo.cnValue;
 			});
+
+			// 设定status
+			var status = formData.productStatus.approveStatus;
+			if (formData.productStatus.statusInfo.isApproved)
+				status = Status.APPROVED;
+			else if (formData.productStatus.statusInfo.isWaitingApprove)
+				status = Status.READY;
 
 			var data = {
 				categoryId: formData.categoryId,
@@ -80,7 +87,7 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes,
 				productStatus: {
-					approveStatus: formData.productStatus.approveStatus,
+					approveStatus: status,
 					translateStatus: formData.productStatus.translateStatus ? "1" : "0"
 				},
 				skuFields: formData.skuFields
@@ -93,14 +100,19 @@ define([
 					data.masterFields.push(field);
 			});
 
-			return $productDetailService.updateProductAllInfo(data);
+			var defer = $q.defer();
+			$productDetailService.updateProductAllInfo(data).then(function (res) {
+
+				defer.resolve({modified: res.data.modified, approveStatus: status});
+			});
+			return defer.promise;
 		}
 
 		/**
 		 * 切换商品的主类目
 		 * @param data
-         * @returns {*}
-         */
+		 * @returns {*}
+		 */
 		function changeCategory (data) {
 			return $productDetailService.changeCategory(data);
 		}
@@ -133,8 +145,8 @@ define([
 		/**
 		 * 转换成画面上能用项目
 		 * @param productStatus
-         * @private
-         */
+		 * @private
+		 */
 		function _setProductStatus (productStatus) {
 
 			switch (productStatus.approveStatus) {

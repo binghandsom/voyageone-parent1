@@ -70,7 +70,7 @@ class SEAnalysisContext {
 
     private CmsBtFeedInfoModel getProduct(ShoeCityFeedBean feedBean) {
 
-        String code = StringUtils.replaceBlankToDash(feedBean.getCode());
+        String code = StringUtils.replaceBlankToDash(feedBean.getCode() + "-"+feedBean.getImg_id());
 
         if (codeMap.containsKey(code))
             return codeMap.get(code);
@@ -80,7 +80,7 @@ class SEAnalysisContext {
         product.setCategory(feedBean.getProduct_type());
         product.setCode(code);
         product.setName(feedBean.getCategory());
-        product.setModel(code);
+        product.setModel(StringUtils.replaceBlankToDash(feedBean.getCode()));
         product.setColor(feedBean.getColor());
         product.setOrigin("None");
         product.setSizeType(feedBean.getSize_type());

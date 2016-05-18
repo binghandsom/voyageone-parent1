@@ -9,7 +9,7 @@
             a.channel_id as channelId,
             a.feed_cat_path as feedCatPath,
         a.feed_prop_original as feedPropOriginal,
-            a.feed_prop_translation as feedPropTranslate,
+            a.feed_prop_translation as feedPropTranslation,
             a.display_order as displayOrder,
             a.created,
             a.creater,

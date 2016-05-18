@@ -207,9 +207,8 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
     /**
      * 上传产品到天猫(天猫国际)平台
      * 1. 从Mango数据库中查询所有产品的字段
-     * 2. 对所有产品字段进行mapping填值                      //TODO，如果遇到图片，那么抛出上传图片的信号
-     * 3. 如果没有遇到图片，那么调用Tmall API上传产品，如果上传成功，进入上传商品状态，
-     *    否则抛出Abort_Job信号, 错误原因为Tmall Api返回的错误
+     * 2. 对所有产品字段进行mapping填值
+     * 3. 调用Tmall API上传产品，如果上传成功，进入上传商品状态
      *
      * @param expressionParser ExpressionParser (包含SxData)
      * @param cmsMtPlatformCategorySchemaModel MongoDB  propsProduct取得用
@@ -323,9 +322,12 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         //判断商品是否是达尔文体系
         StringBuffer failCause = new StringBuffer();
         Boolean isDarwin = false;
+        String strPlatformCategoryId = (platformCategoryId == null) ? "0" : platformCategoryId;
+        String strBrandCode = (brandCode == null) ? "0" : brandCode;
 
         try {
-            isDarwin = tbProductService.isDarwin(Long.parseLong(platformCategoryId), Long.parseLong(brandCode), shopBean, failCause);
+            // 判断是否是达尔文（brandCode没有用到）
+            isDarwin = tbProductService.isDarwin(Long.parseLong(strPlatformCategoryId), Long.parseLong(strBrandCode), shopBean, failCause);
             if (isDarwin == null && failCause.length() != 0) {
                 if (failCause.indexOf("访问淘宝超时") == -1) {
                     String errMsg = String.format("判断商品是否是达尔文体系失败(访问淘宝超时)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",

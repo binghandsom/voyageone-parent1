@@ -1,8 +1,10 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.ImageTemplateService;
+import com.voyageone.service.impl.cms.PlatformService;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -31,6 +33,10 @@ public class CmsMenuController extends CmsController {
 
     @Autowired
     private CmsMenuService menuService;
+    @Autowired
+    ImageTemplateService imageTemplateService;
+    @Autowired
+    PlatformService platformService;
 
     /**
      * 返回categoryType, categoryList, categoryTreeList
@@ -48,6 +54,8 @@ public class CmsMenuController extends CmsController {
         List<Map<String, Object>> categoryList = new ArrayList<>();
 //        List<Map<String, Object>> categoryList = menuService.getCategoryList(cTypeId, channelId);
         resultBean.put("categoryList", categoryList);
+        resultBean.put("imageUrl", imageTemplateService.getDefaultImageUrl(getUser().getSelChannelId()));
+        resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()).replace("%s.jpg", ""));
 
         // 获取主数据类目CategoryTreeList
         List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(CartType.MASTER.getShortName(), channelId);

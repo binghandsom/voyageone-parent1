@@ -97,7 +97,9 @@ public class CmsPlatformMappingService extends BaseTaskService {
                                 cmsMtPlatformMappingForInsertModel.setPlatformCartId(cmsMtPlatformMappingModel.getPlatformCartId());
                                 cmsMtPlatformMappingForInsertModel.setPlatformCategoryId(cmsMtPlatformMappingModel.getPlatformCategoryId());
                                 cmsMtPlatformMappingForInsertModel.setMatchOver(cmsMtPlatformMappingModel.getMatchOver());
+                                cmsMtPlatformMappingForInsertModel.setCartId(platformCategory.getCartId());
                                 cmsMtPlatformMappingForInsertModel.setProps(testList);
+
                                 cmsMtPlatformMappingDao.insert(cmsMtPlatformMappingForInsertModel);
                             }
                         }

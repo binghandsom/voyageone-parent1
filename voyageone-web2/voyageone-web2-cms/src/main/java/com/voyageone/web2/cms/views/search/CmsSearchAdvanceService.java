@@ -10,6 +10,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -119,6 +120,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 if (ArrayUtils.contains(custAttrList, propId)) {
                     customProps2.add(props);
                     customPropsStr.append("feed.cnAtts.");
+                    customPropsStr.append(propId);
+                    customPropsStr.append(";");
+                    customPropsStr.append("feed.orgAtts.");
                     customPropsStr.append(propId);
                     customPropsStr.append(";");
                 }
@@ -564,10 +568,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
-
                 if (items.size() == 0) {
                     break;
                 }
+                getGroupExtraInfo(items, userInfo.getSelChannelId(), Integer.parseInt(cmsSessionBean.getPlatformType().get("cartId").toString()), false);
 
                 List<TypeChannelBean> hscodes = TypeChannels.getTypeList("hsCodePrivate", userInfo.getSelChannelId());
                 items.forEach(item -> {
@@ -666,6 +670,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 if (ArrayUtils.contains(param1, propId)) {
                     customProps2.add(props);
                     customPropsStr.append("feed.cnAtts.");
+                    customPropsStr.append(propId);
+                    customPropsStr.append(";");
+                    customPropsStr.append("feed.orgAtts.");
                     customPropsStr.append(propId);
                     customPropsStr.append(";");
                 }
@@ -840,6 +847,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<String> orSearch = new ArrayList<>();
             orSearch.add(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
+            orSearch.add(MongoUtils.splicingValue("skus.skuCode", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
                 // 原文查询内容
@@ -857,35 +865,35 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
 
         // 获取自定义查询条件
-        List<Map<String, String>> custList = searchValue.getCustAttrMap();
-        if (custList != null && custList.size() > 0) {
-            List<String> inputList = new ArrayList<>();
-            for (Map<String, String> item : custList) {
-                String inputVal = org.apache.commons.lang3.StringUtils.trimToNull(item.get("inputVal"));
-                if (inputVal != null) {
-                    // 字符型和数字要分开比较
-                    if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
-                        String qStr = "{'$or':[{'{0}':{'$type':1},'{0}':{1}},{'{0}':{'$type':16},'{0}':{1}},{'{0}':{'$type':18},'{0}':{1}},{'{0}':{'$type':2},'{0}':'{1}'}]}";
-                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
-                    } else {
-                        String qStr = "{'{0}':'{1}'}";
-                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
-                    }
-                }
-            }
-            if (inputList.size() > 0) {
-                result.append("'$and':[");
-                for (int i = 0, leng = inputList.size(); i < leng; i++) {
-                    if (i == 0) {
-                        result.append(inputList.get(i));
-                    } else {
-                        result.append(",");
-                        result.append(inputList.get(i));
-                    }
-                }
-                result.append("],");
-            }
-        }
+//        List<Map<String, String>> custList = searchValue.getCustAttrMap();
+//        if (custList != null && custList.size() > 0) {
+//            List<String> inputList = new ArrayList<>();
+//            for (Map<String, String> item : custList) {
+//                String inputVal = org.apache.commons.lang3.StringUtils.trimToNull(item.get("inputVal"));
+//                if (inputVal != null) {
+//                    // 字符型和数字要分开比较
+//                    if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+//                        String qStr = "{'$or':[{'{0}':{'$type':1},'{0}':{1}},{'{0}':{'$type':16},'{0}':{1}},{'{0}':{'$type':18},'{0}':{1}},{'{0}':{'$type':2},'{0}':'{1}'}]}";
+//                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
+//                    } else {
+//                        String qStr = "{'{0}':'{1}'}";
+//                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
+//                    }
+//                }
+//            }
+//            if (inputList.size() > 0) {
+//                result.append("'$and':[");
+//                for (int i = 0, leng = inputList.size(); i < leng; i++) {
+//                    if (i == 0) {
+//                        result.append(inputList.get(i));
+//                    } else {
+//                        result.append(",");
+//                        result.append(inputList.get(i));
+//                    }
+//                }
+//                result.append("],");
+//            }
+//        }
 
         // 查询价格比较（建议销售价和实际销售价）
         if (searchValue.getPriceDiffFlg() == 1) {
@@ -927,7 +935,49 @@ public class CmsSearchAdvanceService extends BaseAppService {
             result.append(",");
         }
 
+//        1.  = 出现搜索出入栏 -》 完全匹配 搜索输入栏输入的内容 eg {"a": "123123"}
+//        2.  != 出现搜索出入栏 -》 不等于 搜索输入栏输入的内容 eg {"a": {$ne: "123123"}}
+//        3.  = null   不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$in:[null],$exists:true}}
+//        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null]}}
+        //inputOptsKey: "",inputOpts: "",inputVal
+//        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+        //自定义查询  sunpt
+        List<Map<String, String>> custAttrMap = searchValue.getCustAttrMap();
+        if (custAttrMap != null && custAttrMap.size() > 0) {
+            for (Map<String, String> map : custAttrMap) {
+                String inputOptsKey = map.get("inputOptsKey");//条件字段
+                String inputOpts = map.get("inputOpts");//操作符
+                String inputVal = map.get("inputVal");//值
+                String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
+                if(!StringUtil.isEmpty(optsWhere)) {
+                    result.append(optsWhere);
+                    result.append(",");
+                }
+            }
+        }
         return result.toString();
+    }
+
+    public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
+    {
+        //自定义查询  sunpt
+        if(StringUtil.isEmpty(inputOptsKey)) return "";
+        String result="";
+        switch (inputOpts) {
+            case "=":
+                result=MongoUtils.splicingValue(inputOptsKey, inputVal);
+                break;
+            case "!=":
+                result="\""+inputOptsKey+"\": { $ne:\"" + inputVal + "\"}}";
+                break;
+            case "=null":
+                result="\""+inputOptsKey+"\":{$in:[null],$exists:true}";
+                break;
+            case "!=null":
+                result="\""+inputOptsKey+"\":{$ne:[null]}";
+                break;
+        }
+        return  result;
     }
     private void  writeHead (Workbook book,CmsSessionBean cmsSession){
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
@@ -947,6 +997,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if(customProps != null){
             for (Map<String,String>prop: customProps){
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation"))+"(en)");
             }
         }
     }
@@ -1043,6 +1094,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
             if(customProps != null){
                 for (Map<String,String>prop: customProps){
                     Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
