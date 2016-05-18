@@ -10,6 +10,7 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -90,7 +91,7 @@ public class FeedToCmsService extends BaseService {
         Set<String> sizeTypeList = new HashSet<>();
         Set<String> productTypeList = new HashSet<>();
 
-        Map<String ,CmsBtFeedInfoModel> cache = new HashMap<>();
+        boolean insertLog = false;
 
 
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
@@ -106,74 +107,65 @@ public class FeedToCmsService extends BaseService {
                     throw new BusinessException("category 不合法：" + category);
                 }
 
-                // 写log表
-                feedInfoLogService.insertCmsBtFeedInfoLog(product);
                 // 判断是否追加一个新的类目
                 if (!existCategory.contains(category)) {
                     feedCategoryTreeService.addCategory(channelId, category, modifier);
                     existCategory.add(category);
                 }
 
-                // 以下图片处理在生成主数据是再处理 feed导入不做处理
-//                List<String> imageUrls;
-//                imageUrls = product.getImage();
-//
-//                // 把Image中的Path删除只保留文件名
-//                if ("010".equalsIgnoreCase(channelId) || "012".equalsIgnoreCase(channelId)) {
-//                    product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf("."))).collect(toList()));
-//                } else {
-//                    int i = 1;
-//                    List<String> images = new ArrayList<>();
-//                    for (String  image :product.getImage()){
-//                        if("015".equalsIgnoreCase(channelId)){
-//                            images.add(special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
-//                        }else{
-//                            images.add(channelId + "-" + special_symbol.matcher(product.getCode()).replaceAll(Constants.EmptyString) + "-" + i);
-//                        }
-//                        i++;
-//                    }
-//                    product.setImage(images);
-//                }
-                CmsBtFeedInfoModel befproduct;
-                befproduct = cache.get(product.getCode());
-                if(befproduct == null) befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
+                CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
                     //把之前的sku（新的product中没有的sku）保存到新的product的sku中
-                    befproduct.getSkus().forEach(skuModel -> {
+                    for(CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
                         if (!product.getSkus().contains(skuModel)) {
                             product.getSkus().add(skuModel);
+                            insertLog = true;
+                        }else{
+                            // 改条数据已经需要跟新主数据了 后面价格也不需要比了
+                            if(insertLog == false) {
+                                CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
+                                        || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
+                                        || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
+                                        || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
+                                        || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0) {
+                                    insertLog = true;
+                                }
+                            }
                         }
-                    });
+                    }
                     product.setCreated(befproduct.getCreated());
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                     if (befproduct.getUpdFlg() == 2) {
                         product.setUpdFlg(2);
-                    } else {
+                    } else if(insertLog){
                         product.setUpdFlg(0);
                     }
+                }else{
+                    insertLog = true;
                 }
+
+                // code 库存计算
+                Integer qty = 0;
+                for(CmsBtFeedInfoModel_Sku sku : product.getSkus()){
+                    if(sku.getQty() != null) qty+=sku.getQty();
+                }
+                product.setQty(qty);
+
                 product.setCatId(MD5.getMD5(product.getCategory()));
                 feedInfoService.updateFeedInfo(product);
-                if(product.get_id() != null){
-                    cache.put(product.getCode(),product);
-                }
 
                 brandList.add(product.getBrand());
                 sizeTypeList.add(product.getSizeType());
                 productTypeList.add(product.getProductType());
 
-                //// 以下图片处理在生成主数据是再处理 feed导入不做处理
-//                List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
-//
-//                int i = 1;
-//                for (String  image :imageUrls){
-//                    CmsBtFeedProductImageModel cmsBtFeedProductImageModel =  new CmsBtFeedProductImageModel(channelId,product.getCode(), image, i, this.modifier);
-//                    imageModels.add(cmsBtFeedProductImageModel);
-//                    i++;
-//                }
-//                cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
+                if(insertLog){
+                    // 写log表
+                    product.set_id(null);
+                    feedInfoLogService.insertCmsBtFeedInfoLog(product);
+                }
 
                 Map<String, List<String>> attributeMtData;
                 if (attributeMtDatas.get(category) == null) {

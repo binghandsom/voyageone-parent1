@@ -141,6 +141,7 @@ public class FeedEnums {
         useDuty,
         priceWithDuty,
         priceWithoutDuty,
-        blackList
+        blackList,
+        quantity
     }
 }

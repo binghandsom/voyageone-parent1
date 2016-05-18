@@ -81,7 +81,6 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         int cnt = superFeedImport();
         $info("产品信息插入完成 共" + cnt + "条数据");
         if (cnt > 0) {
-//
             transformer.new Context(channel, this).transform();
 
             postNewProduct();
@@ -138,6 +137,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
         map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
         map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
+        map.put("quantity", (Feeds.getVal1(channel, FeedEnums.Name.quantity)));
         return map;
     }
 
@@ -206,7 +206,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                issueLog.log(e,ErrorType.BatchJob,SubSystem.CMS);
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             }
         }
         executeMongoDB(productAll, productSucceeList, productFailAllList);
