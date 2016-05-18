@@ -191,6 +191,7 @@ public class PromotionDetailService extends BaseService {
         boolean isUpdate=false;
         for (int i = 0; i < size; i++) {
             if (oldTagPath.equals(tags.get(i))) {
+                //存在替换
                 tags.set(i, promotionCodeModel.getTagPath());
                 isUpdate=true;
                 break;
