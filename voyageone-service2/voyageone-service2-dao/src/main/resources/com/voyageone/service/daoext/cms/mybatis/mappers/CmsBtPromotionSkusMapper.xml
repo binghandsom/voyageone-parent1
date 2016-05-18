@@ -8,6 +8,7 @@
         <result column="product_code" property="productCode" jdbcType="VARCHAR"/>
         <result column="product_name" property="productName" jdbcType="VARCHAR"/>
         <result column="product_sku" property="productSku" jdbcType="VARCHAR"/>
+        <result column="size" property="size" jdbcType="VARCHAR"/>
         <result column="qty" property="qty" jdbcType="INTEGER"/>
     </resultMap>
     <select id="select_cms_bt_promotion_sku" resultMap="bt_promotion_sku_map" parameterType="HashMap">
@@ -26,6 +27,7 @@
         product_model,
         product_code,
         product_sku,
+        size,
         cat_path,
         qty,
         syn_flg,
@@ -99,6 +101,9 @@
             <if test="productSku != null">
                 product_sku,
             </if>
+            <if test="size != null">
+                size,
+            </if>
             <if test="catPath != null">
                 cat_path,
             </if>
@@ -142,6 +147,9 @@
             <if test="productSku != null">
                 #{productSku,jdbcType=VARCHAR},
             </if>
+            <if test="size != null">
+                #{size,jdbcType=VARCHAR},
+            </if>
             <if test="catPath != null">
                 #{catPath,jdbcType=VARCHAR},
             </if>
@@ -184,6 +192,9 @@
             </if>
             <if test="productCode != null">
                 product_code = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null">
+                size = #{size,jdbcType=VARCHAR},
             </if>
             <if test="productSku != null">
                 product_sku = #{productSku,jdbcType=VARCHAR},
