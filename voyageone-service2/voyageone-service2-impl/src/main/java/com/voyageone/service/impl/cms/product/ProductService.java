@@ -741,7 +741,7 @@ public class ProductService extends BaseService {
             String imagePath = "";
             if (product.getFields().getImages1().size() > 0) {
                 if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                    imagePath = getImage1Url(channelId, product.getFields().getImages1().get(0).getName());
+                    imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
             }
             resultInfo.setShowName(imagePath);
             resultInfo.setCnName(product.getFields().getLongTitle());
@@ -839,11 +839,10 @@ public class ProductService extends BaseService {
                 param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
-                // TODO 写死,取得是S7图片显示的路径
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                        imagePath = getImage1Url(channelId, product.getFields().getImages1().get(0).getName());
+                        imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
                 }
                 bean.setImgPath(imagePath);
 
@@ -1110,18 +1109,6 @@ public class ProductService extends BaseService {
         newCart.setCartId(i);
         newCart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
         return newCart;
-    }
-
-    /**
-     * 返回图片Url
-     * @param channelId
-     * @param imageName
-     * @return
-     */
-    private String getImage1Url(String channelId, String imageName) {
-        String tempUrl = imageTemplateService.getDefaultImageUrl(channelId);
-
-        return tempUrl.replace("%s", imageName) + ".jpg";
     }
 
 }

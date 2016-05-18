@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -213,14 +212,14 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 retail.remove(sku);
                 if (superfeed.size() > 1000) {
 //                    insertSuperFeed(superfeed);
-                    transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                    transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
                     if (cnt > 5000) break;
                 }
             }
 
             if (superfeed.size() > 0) {
-                transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                 superfeed.clear();
             }
             reader.close();

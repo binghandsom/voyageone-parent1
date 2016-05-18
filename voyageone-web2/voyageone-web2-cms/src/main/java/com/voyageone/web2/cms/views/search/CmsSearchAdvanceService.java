@@ -567,7 +567,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
-                List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
+                List<CmsBtProductBean> items = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
                 if (items.size() == 0) {
                     break;
                 }
@@ -1010,7 +1010,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToFile(Workbook book, List<CmsBtProductModel> items, CmsSessionBean cmsSession, int startRowIndex) {
+    private boolean writeRecordToFile(Workbook book, List<CmsBtProductBean> items, CmsSessionBean cmsSession, int startRowIndex) {
         boolean isContinueOutput = true;
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
