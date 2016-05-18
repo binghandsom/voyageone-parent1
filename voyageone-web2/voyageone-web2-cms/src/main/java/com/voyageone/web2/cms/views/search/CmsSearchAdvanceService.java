@@ -934,12 +934,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
 //        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null]}}
         //inputOptsKey: "",inputOpts: "",inputVal
 //        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+        //自定义查询  sunpt
         List<Map<String, String>> custAttrMap = searchValue.getCustAttrMap();
         if (custAttrMap != null && custAttrMap.size() > 0) {
             for (Map<String, String> map : custAttrMap) {
-                String inputOptsKey = map.get("inputOptsKey");
-                String inputOpts = map.get("inputOpts");
-                String inputVal = map.get("inputVal");
+                String inputOptsKey = map.get("inputOptsKey");//条件字段
+                String inputOpts = map.get("inputOpts");//操作符
+                String inputVal = map.get("inputVal");//值
                 String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
                 if(!StringUtil.isEmpty(optsWhere)) {
                     result.append(optsWhere);
@@ -949,8 +950,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
         return result.toString();
     }
+
     public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
     {
+        //自定义查询  sunpt
         if(StringUtil.isEmpty(inputOptsKey)) return "";
         String result="";
         switch (inputOpts) {

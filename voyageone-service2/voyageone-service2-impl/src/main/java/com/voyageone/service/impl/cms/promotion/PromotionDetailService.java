@@ -10,6 +10,8 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
@@ -19,6 +21,8 @@ import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -147,11 +151,16 @@ public class PromotionDetailService extends BaseService {
         }
     }
 
+    @Autowired
+    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
+    @Autowired
+    CmsBtTagDao daoTag;
     /**
      * 修改
      */
     @VOTransactional
     public void update(CmsBtPromotionCodesBean promotionCodeModel, String modifier) {
+        CmsBtPromotionCodesModel oldPromotionCodesModel = daoCmsBtPromotionCodes.select(promotionCodeModel.getId());
         if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
 //            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(),
 //                    PromotionTypeEnums.Type.TEJIABAO.getTypeId(),
@@ -165,9 +174,35 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionTask.setNumIid(promotionCodeModel.getNumIid());
             cmsBtPromotionTask.setCreater(modifier);
             cmsBtPromotionTask.setModifier(modifier);
-
             cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
+
+            CmsBtTagModel modelTag = daoTag.select(oldPromotionCodesModel.getTagId());//获取修改前的tag
+            updateCmsBtProductTags(promotionCodeModel, modelTag.getTagPath(),modifier);//更新商品Tags
         }
+    }
+    /**
+     * 更新商品Tags
+     */
+    private void updateCmsBtProductTags(CmsBtPromotionCodesBean promotionCodeModel,String oldTagPath,String modifier) {
+        //更新商品Tags  sunpt
+        CmsBtProductModel productModel = productService.getProductById(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductId());
+        List<String> tags = productModel.getTags();
+        int size = tags.size();
+        boolean isUpdate=false;
+        for (int i = 0; i < size; i++) {
+            if (oldTagPath.equals(tags.get(i))) {
+                tags.set(i, promotionCodeModel.getTagPath());
+                isUpdate=true;
+                break;
+            }
+        }
+        if(!isUpdate)//没有更新 就添加
+        {
+            tags.add(promotionCodeModel.getTagPath());
+        }
+        productModel.setTags(tags);
+        productService.updateTags(promotionCodeModel.getOrgChannelId(),promotionCodeModel.getProductId(),tags,modifier);
+       //productService.update(productModel);
     }
 
     /**

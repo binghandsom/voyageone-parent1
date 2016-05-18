@@ -86,6 +86,9 @@ public class ProductService extends BaseService {
         String query = "{\"prodId\":" + prodId + "}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+    public void update(CmsBtProductModel model) {
+        cmsBtProductDao.update(model);
+    }
 
     /**
      * 获取商品 根据Code
@@ -946,7 +949,20 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
+    public void updateTags(String channelId,Long prodId, List<String> Tags,String modifier) {
+        Map<String,Object> paraMap = new HashMap<>(1);
+        paraMap.put("channelId", channelId);
+        paraMap.put("prodId", prodId);
 
+        Map<String, Object> rsMap = new HashMap<>(3);
+        rsMap.put("tags", Tags);
+        rsMap.put("modifier", modifier);
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
+
+        cmsBtProductDao.update(channelId, paraMap, updateMap);
+    }
     /**
      * 获取Sku的库存信息
      */
