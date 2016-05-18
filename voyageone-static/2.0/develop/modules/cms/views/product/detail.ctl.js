@@ -126,10 +126,11 @@ define([
                 //    && self.productDetails != self.productDetailsCopy))
                 //    self.productDetails.productStatus.approveStatus = Status.READY;
 
-                this.productDetailService.updateProductDetail(this.productDetails)
+                self.productDetailService.updateProductDetail(self.productDetails)
                     .then(function (res) {
-                        self.productDetails.modified = res.data.modified;
-                        this.productDetailService._setProductStatus(self.productDetails.productStatus);
+                        self.productDetails.modified = res.modified;
+                        self.productDetails.productStatus.approveStatus = res.approveStatus;
+                        self.productDetailService._setProductStatus(self.productDetails.productStatus);
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
@@ -204,6 +205,7 @@ define([
                 self.tempImage[context.imageType].push(context.base64);
 
                 self.productDetails = context.productInfo;
+                self.productDetailService._setProductStatus(self.productDetails.productStatus);
                 self._orgChaName = context.orgChaName;
                 self._isminimall = context.isminimall;
                 self._isMain = context.isMain;

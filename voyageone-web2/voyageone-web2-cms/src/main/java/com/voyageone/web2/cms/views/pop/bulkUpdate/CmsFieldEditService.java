@@ -17,6 +17,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Carts;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +118,14 @@ public class CmsFieldEditService extends BaseAppService {
             updateRequest.setProductModel(productModel);
             updateRequest.setIsCheckModifed(false);
             updateRequest.setModifier(userInfo.getUserName());
+
+            //执行product的carts更新
+            if(updateRequest.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+
+                // 执行carts更新
+                List<CmsBtProductModel_Carts> carts = productService.getCarts(updateRequest.getProductModel().getSkus(), updateRequest.getProductModel().getCarts());
+                updateRequest.getProductModel().setCarts(carts);
+            }
 
             productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
 
