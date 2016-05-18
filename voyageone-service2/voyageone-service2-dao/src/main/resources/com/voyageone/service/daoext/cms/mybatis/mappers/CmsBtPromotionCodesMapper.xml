@@ -120,6 +120,7 @@
                type="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.bean.cms.CmsBtPromotionSkuBean">
             <result column="product_sku" property="productSku"/>
+            <result column="size" property="size"/>
         </collection>
     </resultMap>
     <select id="select_cms_bt_promotion_code_sku" resultMap="bt_promotion_code_sku_map" parameterType="HashMap">
@@ -154,7 +155,8 @@
         b.tag_path,
         b.tag_name,
         b.tag_path_name,
-        c.product_sku
+        c.product_sku,
+        c.size
         FROM
         voyageone_cms2.cms_bt_promotion_codes a
         LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.id

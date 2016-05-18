@@ -540,10 +540,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
-
                 if (items.size() == 0) {
                     break;
                 }
+                getGroupExtraInfo(items, userInfo.getSelChannelId(), Integer.parseInt(cmsSessionBean.getPlatformType().get("cartId").toString()), false);
 
                 List<TypeChannelBean> hscodes = TypeChannels.getTypeList("hsCodePrivate", userInfo.getSelChannelId());
                 items.forEach(item -> {
@@ -809,6 +809,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<String> orSearch = new ArrayList<>();
             orSearch.add(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
+            orSearch.add(MongoUtils.splicingValue("skus.skuCode", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
                 // 原文查询内容

@@ -568,8 +568,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 List<String> transBaiduCn; // 百度翻译 - 输出参数
                 try {
-                    if ("017".equals(feed.getChannelId())) {
-                        // lucky vitamin 不做翻译
+                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
+                        // lucky vitamin 和 BHFO不做翻译
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                             field.setOriginalTitleCn(""); // 标题
                         }
@@ -651,8 +651,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
 
                     break;
-                case "012":
-                    break;
+                default:
+                    // 产品分类
+                    field.setProductType(feed.getProductType());
+                    // 适用人群
+                    field.setSizeType(feed.getSizeType());
             }
             // jeff 2016/04 change end
 
@@ -1299,7 +1302,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (oldImages.size() > 0) {
                     // 取得图片名最后一部分中的索引的最大值 + 1
                     try {
-                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
+                        index = oldImages.stream().map((imagesModel) -> imagesModel.getImgName().lastIndexOf("-") > 0 && StringUtils.isDigit(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length()))
+                                ? Integer.parseInt(imagesModel.getImgName().substring(imagesModel.getImgName().lastIndexOf("-") + 1, imagesModel.getImgName().length())) : 0).max(Integer::compare).get() + 1;
                     } catch (Exception ex) {
                         $error(ex);
                         throw new RuntimeException("ImageName Parse Fail!", ex);
@@ -1313,7 +1317,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
-                String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
+                String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
                 cmsBtImageDaoExt.insertImages(newModel);
