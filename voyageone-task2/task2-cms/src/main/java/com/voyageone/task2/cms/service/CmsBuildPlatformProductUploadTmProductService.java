@@ -322,9 +322,12 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         //判断商品是否是达尔文体系
         StringBuffer failCause = new StringBuffer();
         Boolean isDarwin = false;
+        String strPlatformCategoryId = (platformCategoryId == null) ? "0" : platformCategoryId;
+        String strBrandCode = (brandCode == null) ? "0" : brandCode;
 
         try {
-            isDarwin = tbProductService.isDarwin(Long.parseLong(platformCategoryId), Long.parseLong(brandCode), shopBean, failCause);
+            // 判断是否是达尔文（brandCode没有用到）
+            isDarwin = tbProductService.isDarwin(Long.parseLong(strPlatformCategoryId), Long.parseLong(strBrandCode), shopBean, failCause);
             if (isDarwin == null && failCause.length() != 0) {
                 if (failCause.indexOf("访问淘宝超时") == -1) {
                     String errMsg = String.format("判断商品是否是达尔文体系失败(访问淘宝超时)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",

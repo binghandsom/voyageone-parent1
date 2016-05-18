@@ -206,8 +206,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
 
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
-            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(shopProp.getOrder_channel_id(),
-                    Integer.parseInt(shopProp.getCart_id()), mainProduct.getCatId());
+            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCatId());
             if (cmsMtPlatformMappingModel == null) {
                 String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
                         channelId, cartId, mainProduct.getCatId());
