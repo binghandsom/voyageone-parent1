@@ -52,7 +52,7 @@ define([
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
         $scope.addFreeTag = addFreeTag;
-
+        $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         /**
          * 初始化数据.
          */
@@ -349,6 +349,14 @@ define([
             }
         }
 
+
+        function openAdvanceImagedetail(item){
+            var image = _.map(item.fields.images1,function(entity){
+                return entity.image1;
+            }),picList = [];
+            picList[0] = image;
+            this.openImagedetail({'mainPic': image[0], 'picList': picList});
+        }
     }
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
     return searchIndex;

@@ -413,7 +413,7 @@
 							</tr>
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}">
 								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;height: 110px">
-										<img image="{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
+										<a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)"><img image="{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r" /></a>
 									<div class="table_main pull-left" style="width:60%">
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
@@ -527,7 +527,7 @@
 								</tr>
 								<tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
 									<td class="text-left" style="display:inline-block;width:165px;height: 110px">
-										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r" ng-click="openImagedetail({'mainPic':groupInfo.fields.images1[0].image1, 'picList':groupInfo.fields.images1})"/>
+										<a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/></a>
 									</td>
 									<td class="text-left" style="display:inline-block;width:150px;">{{productInfo.fields.brand}}</td>
 									<td class="text-center" style="display:inline-block;width:85px;">
