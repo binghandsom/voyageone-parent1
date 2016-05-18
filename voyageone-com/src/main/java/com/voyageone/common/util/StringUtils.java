@@ -483,7 +483,7 @@ public final class StringUtils {
     public static String replaceBlankToDash(String val) {
         if ((val == null) || ("".equals(val)))
             return "";
-        return val.trim().replaceAll(" ", "-");
+        return val.trim().replaceAll("  "," ").replaceAll(" ", "-");
     }
 
 }

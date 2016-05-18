@@ -300,6 +300,21 @@ public class JewelryDictTest {
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
+				{
+					// 所有自定义图
+					RuleExpression htmlTemplate = new RuleExpression();
+					htmlTemplate.addRuleWord(new TextWord("<div style=\"margin:15px\" ><img src=\"%s\" style=\"display:block; width:760px;\" /></div>"));
+
+					RuleExpression imageTemplate = new RuleExpression();
+					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/JW_20160506_x790_526x?$790x526$&$product=%s"));
+
+					RuleExpression imageType = new RuleExpression();
+					imageType.addRuleWord(new TextWord(C_自定义图片));
+
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType);
+					ruleRoot.addRuleWord(new CustomWord(word));
+				}
+
 //				{
 //					// 四张手绘图
 //
