@@ -3,7 +3,8 @@
  */
 
 define([
-    'modules/cms/controller/popup.ctl'
+    'modules/cms/controller/popup.ctl',
+    'underscore'
 ], function () {
 
     function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService) {
@@ -23,7 +24,8 @@ define([
             "skuList": [],
             groupSelList: { selList: []},
             codeSelList: { selList: []},
-            skuSelList: { selList: []}
+            skuSelList: { selList: []},
+            tagList:[]
         };
         $scope.currentChannelId = cookieService.channel();
 
@@ -34,6 +36,9 @@ define([
             promotionService.init().then(function (res) {
                 $scope.vm.platformTypeList = res.data.platformTypeList;
                 $scope.vm.promotionStatus = res.data.promotionStatus;
+                promotionService.initByPromotionId($routeParams.promotionId).then(function(res){
+                    $scope.vm.tagList=res.data.tagList;
+                });
                 promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                     $scope.vm.promotion = res.data[0];
                     $scope.promotionOld = _.clone($scope.vm.promotion);
@@ -54,8 +59,20 @@ define([
             searchCode();
             //searchSku();
         };
-
+        $scope.codeTagChange=function(code) {
+            var vm = $scope.vm;
+            var tag = _.find(vm.tagList, function (num) {
+                return num.id === code.tagId;
+            });
+            if(tag) {
+                code.tag = tag.tagName;
+                code.tagPathName = tag.tagPathName;
+                code.tagPath == tag.tagPath;
+                code.isUpdate = true;
+            }
+        }
         $scope.updateCode = function(code){
+            delete code.isUpdate;
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
                 code.promotionPriceBak = code.promotionPrice;
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

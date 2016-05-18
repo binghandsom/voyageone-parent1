@@ -18,11 +18,11 @@ public interface CmsMtBrandsMappingDao {
 
     CmsMtBrandsMappingModel selectOne(Map<String, Object> map);
 
-    CmsMtBrandsMappingModel select(Integer seq);
+    CmsMtBrandsMappingModel select(Integer id);
 
     int insert(CmsMtBrandsMappingModel record);
 
     int update(CmsMtBrandsMappingModel record);
 
-    int delete(Integer seq);
+    int delete(Integer id);
 }
