@@ -1,2 +1,3 @@
 publish/
 *.doc.js
+test_server/config.js
