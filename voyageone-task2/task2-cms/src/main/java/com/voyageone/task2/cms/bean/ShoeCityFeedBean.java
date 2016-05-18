@@ -175,7 +175,7 @@ public class ShoeCityFeedBean {
     }
 
     public String getSku() {
-        return StringUtils.replaceBlankToDash(getCode()) + "-" + getSize();
+        return StringUtils.replaceBlankToDash("016-"+getCode()) + "-" + getImg_id() + "-" + getSize();
     }
 
     public String getClientSku() {

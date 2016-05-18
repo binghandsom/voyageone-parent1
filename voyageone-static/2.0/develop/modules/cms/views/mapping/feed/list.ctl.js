@@ -52,9 +52,14 @@ define([
              * @return {boolean}
              */
             isPropertyMatched: function () {
-                // 如果有匹配并且确实匹配完了,才算是属性匹配完成
-                return this.isMatched()
-                    && !!this.defaultMapping.matchOver;
+                if (!this.isMatched())
+                    return false;
+
+                var mapping = this.selectedMapping;
+                var mainMapping = mapping.mainMapping;
+
+                // 如果有匹配并且确实匹配完了,才算是属性匹配完成 ==>mainMapping和feedMapping其中有一个完成就算匹配完成
+                return !!mapping.matchOver || (mainMapping && !!mainMapping.matchOver);
             },
 
             /**

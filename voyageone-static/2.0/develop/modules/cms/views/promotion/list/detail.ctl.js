@@ -59,6 +59,7 @@ define([
             searchCode();
             //searchSku();
         };
+        //处理tag sunpt
         $scope.codeTagChange=function(code) {
             var vm = $scope.vm;
             var tag = _.find(vm.tagList, function (num) {
@@ -67,12 +68,15 @@ define([
             if(tag) {
                 code.tag = tag.tagName;
                 code.tagPathName = tag.tagPathName;
-                code.tagPath == tag.tagPath;
+                code.tagPath =tag.tagPath;
                 code.isUpdate = true;
             }
+            console.log(code);
+            console.log(tag);
         }
         $scope.updateCode = function(code){
             delete code.isUpdate;
+            console.log("updateCode"+code);
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
                 code.promotionPriceBak = code.promotionPrice;
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

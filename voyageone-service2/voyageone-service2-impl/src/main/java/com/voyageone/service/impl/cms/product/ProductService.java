@@ -12,9 +12,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
@@ -28,6 +26,7 @@ import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -79,12 +78,18 @@ public class ProductService extends BaseService {
     @Autowired
     private FeedMappingService feedMappingService;
 
+    @Autowired
+    private ImageTemplateService imageTemplateService;
+
     /**
      * 获取商品 根据ID获
      */
     public CmsBtProductModel getProductById(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+    public void update(CmsBtProductModel model) {
+        cmsBtProductDao.update(model);
     }
 
     /**
@@ -733,20 +738,20 @@ public class ProductService extends BaseService {
             resultInfo.setModelName(product.getFields().getModel());
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setUrlKey("");
-            // TODO 写死,取得是S7图片显示的路径
             String imagePath = "";
             if (product.getFields().getImages1().size() > 0) {
                 if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                    imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
+                    imagePath = getImage1Url(channelId, product.getFields().getImages1().get(0).getName());
             }
             resultInfo.setShowName(imagePath);
             resultInfo.setCnName(product.getFields().getLongTitle());
             // 获取HsCodeCrop
             String hsCodeCrop = product.getFields().getHsCodeCrop();
             if (!StringUtils.isEmpty(hsCodeCrop)) {
-                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
-                if (bean != null) {
-                    String[] hsCode = bean.getName().split(",");
+//                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
+                if (!StringUtils.isEmpty(hsCodeCrop)) {
+
+                    String[] hsCode = hsCodeCrop.split(",");
                     resultInfo.setHsCodeId(hsCodeCrop);
                     resultInfo.setHsCode(hsCode[1]);
                     resultInfo.setHsDescription(hsCode[2]);
@@ -756,9 +761,9 @@ public class ProductService extends BaseService {
             // 获取HsCodePrivate
             String hsCodePrivate = product.getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
-                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-                if (bean != null) {
-                    String[] hsCodePu = bean.getName().split(",");
+//                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
+                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                    String[] hsCodePu = hsCodePrivate.split(",");
                     resultInfo.setHsCodePuId(hsCodePrivate);
                     resultInfo.setHsCodePu(hsCodePu[0]);
                     resultInfo.setHsDescriptionPu(hsCodePu[1]);
@@ -838,7 +843,7 @@ public class ProductService extends BaseService {
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                        imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
+                        imagePath = getImage1Url(channelId, product.getFields().getImages1().get(0).getName());
                 }
                 bean.setImgPath(imagePath);
 
@@ -946,7 +951,20 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
+    public void updateTags(String channelId,Long prodId, List<String> Tags,String modifier) {
+        Map<String,Object> paraMap = new HashMap<>(1);
+        paraMap.put("channelId", channelId);
+        paraMap.put("prodId", prodId);
 
+        Map<String, Object> rsMap = new HashMap<>(3);
+        rsMap.put("tags", Tags);
+        rsMap.put("modifier", modifier);
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
+
+        cmsBtProductDao.update(channelId, paraMap, updateMap);
+    }
     /**
      * 获取Sku的库存信息
      */
@@ -1092,6 +1110,18 @@ public class ProductService extends BaseService {
         newCart.setCartId(i);
         newCart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
         return newCart;
+    }
+
+    /**
+     * 返回图片Url
+     * @param channelId
+     * @param imageName
+     * @return
+     */
+    private String getImage1Url(String channelId, String imageName) {
+        String tempUrl = imageTemplateService.getDefaultImageUrl(channelId);
+
+        return tempUrl.replace("%s", imageName) + ".jpg";
     }
 
 }

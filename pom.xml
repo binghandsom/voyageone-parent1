@@ -78,6 +78,7 @@
         <voyageone.web2.openapi.version>2.0.0-SNAPSHOT</voyageone.web2.openapi.version>
         <!-- voyageone.web2.sdk version -->
         <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
+        <voyageone.web2.vendor.version>2.0.0-SNAPSHOT</voyageone.web2.vendor.version>
 
         <!-- voyageone.service version -->
         <voyageone.service2.base.version>0.0.1-SNAPSHOT</voyageone.service2.base.version>

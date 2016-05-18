@@ -122,6 +122,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     customPropsStr.append("feed.cnAtts.");
                     customPropsStr.append(propId);
                     customPropsStr.append(";");
+                    customPropsStr.append("feed.orgAtts.");
+                    customPropsStr.append(propId);
+                    customPropsStr.append(";");
                 }
             }
         }
@@ -565,10 +568,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
-
                 if (items.size() == 0) {
                     break;
                 }
+                getGroupExtraInfo(items, userInfo.getSelChannelId(), Integer.parseInt(cmsSessionBean.getPlatformType().get("cartId").toString()), false);
 
                 List<TypeChannelBean> hscodes = TypeChannels.getTypeList("hsCodePrivate", userInfo.getSelChannelId());
                 items.forEach(item -> {
@@ -667,6 +670,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 if (ArrayUtils.contains(param1, propId)) {
                     customProps2.add(props);
                     customPropsStr.append("feed.cnAtts.");
+                    customPropsStr.append(propId);
+                    customPropsStr.append(";");
+                    customPropsStr.append("feed.orgAtts.");
                     customPropsStr.append(propId);
                     customPropsStr.append(";");
                 }
@@ -841,6 +847,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<String> orSearch = new ArrayList<>();
             orSearch.add(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
+            orSearch.add(MongoUtils.splicingValue("skus.skuCode", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
                 // 原文查询内容
@@ -934,12 +941,13 @@ public class CmsSearchAdvanceService extends BaseAppService {
 //        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null]}}
         //inputOptsKey: "",inputOpts: "",inputVal
 //        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+        //自定义查询  sunpt
         List<Map<String, String>> custAttrMap = searchValue.getCustAttrMap();
         if (custAttrMap != null && custAttrMap.size() > 0) {
             for (Map<String, String> map : custAttrMap) {
-                String inputOptsKey = map.get("inputOptsKey");
-                String inputOpts = map.get("inputOpts");
-                String inputVal = map.get("inputVal");
+                String inputOptsKey = map.get("inputOptsKey");//条件字段
+                String inputOpts = map.get("inputOpts");//操作符
+                String inputVal = map.get("inputVal");//值
                 String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
                 if(!StringUtil.isEmpty(optsWhere)) {
                     result.append(optsWhere);
@@ -949,8 +957,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
         return result.toString();
     }
+
     public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
     {
+        //自定义查询  sunpt
         if(StringUtil.isEmpty(inputOptsKey)) return "";
         String result="";
         switch (inputOpts) {
@@ -987,6 +997,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if(customProps != null){
             for (Map<String,String>prop: customProps){
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation"))+"(en)");
             }
         }
     }
@@ -1083,6 +1094,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
             if(customProps != null){
                 for (Map<String,String>prop: customProps){
                     Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
                 }
             }
