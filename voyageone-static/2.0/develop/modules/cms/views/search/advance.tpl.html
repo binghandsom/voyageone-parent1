@@ -313,15 +313,15 @@
 					</ul>
 				</div>&nbsp;
 				<div class="btn-group" uib-dropdown>
-					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+					<button type="button" class="btn btn-default" ng-disabled="vm.promotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
 					</button>
 					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
 						<!--<span class="caret"></span>-->
 					<!--</button>-->
 					<!-----------------------------参加活动------------------------------>
-					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
-						<li ng-repeat="promotion in vm.masterData.promotionList">
+					<ul uib-dropdown-menu ng-if="vm.promotionList.length">
+						<li ng-repeat="promotion in vm.promotionList">
 							<a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>

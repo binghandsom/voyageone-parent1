@@ -17,7 +17,8 @@ define([
                 tags:[],
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
-                tagTypeSelectValue: '0'
+                tagTypeSelectValue: '0',
+                promotionList: []
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -65,6 +66,7 @@ define([
             }
             searchAdvanceService.init().then(function (res) {
                 $scope.vm.masterData = res.data;
+                $scope.vm.promotionList =  _.where(res.data.promotionList, {isAllPromotion: 0});
                 $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
             })
             .then(function() {
