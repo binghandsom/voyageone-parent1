@@ -30,7 +30,7 @@
                 <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
                 <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control"
+                        <input type="date" class="form-control"
                                ng-model="promotion.prePeriodStart"
                                uib-datepicker-popup
                                is-open="datePicker1"
@@ -38,9 +38,10 @@
                                date-model-format="yyyy-MM-dd">
                         <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
                                     class="glyphicon glyphicon-calendar"></i></button></span>
-                    </div>&nbsp;~&nbsp;
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" class="form-control"
+                    </div>
+                    &nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control"
                                ng-model="promotion.prePeriodEnd"
                                uib-datepicker-popup
                                is-open="datePicker2"
@@ -54,8 +55,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
                 <div class="col-sm-7 form-inline">
-                    <div class="col-sm-5 input-group" >
-                        <input type="text"
+                    <div class="col-sm-5 input-group">
+                        <input type="date"
                                ng-model="promotion.preSaleStart"
                                class="form-control"
                                uib-datepicker-popup
@@ -64,9 +65,10 @@
                                date-model-format="yyyy-MM-dd">
 						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i
                                 class="glyphicon glyphicon-calendar"></i></button></span>
-                    </div>&nbsp;~&nbsp;
-                    <div class="col-sm-5 input-group" >
-                        <input type="text"
+                    </div>
+                    &nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="date"
                                ng-model="promotion.preSaleEnd"
                                class="form-control"
                                uib-datepicker-popup
@@ -81,8 +83,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_TIME"></label>
                 <div class="col-sm-7 form-inline">
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" class="form-control" name="promotionTimeStart"
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control" name="promotionTimeStart"
                                ng-model="promotion.activityStart"
                                uib-datepicker-popup
                                is-open="datePicker5"
@@ -91,9 +93,10 @@
                                required>
 						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i
                                 class="glyphicon glyphicon-calendar"></i></button></span>
-                    </div>&nbsp;~&nbsp;
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" class="form-control" name="promotionTimeEnd"
+                    </div>
+                    &nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control" name="promotionTimeEnd"
                                ng-model="promotion.activityEnd"
                                uib-datepicker-popup
                                is-open="datePicker6"
