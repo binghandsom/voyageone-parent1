@@ -1,212 +1,305 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionSkusDao">
-    <resultMap id="ResultMap" type="CmsBtPromotionSkusModel">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionSkusDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionSkusModel" />
+    <sql id="Base_Column_List" >
+        `id`, `promotion_id`, `org_channel_id`, `model_id`, `product_id`, `num_iid`, `product_model`, 
+        `product_code`, `product_sku`, `cat_path`, `qty`, `syn_flg`, `err_msg`, `created`, 
+        `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
-        select
-        `id`,`promotion_id`,`org_channel_id`,`model_id`,`product_id`,`num_iid`,`product_model`,`product_code`,`product_sku`,`cat_path`,`qty`,`syn_flg`,`err_msg`,`created`,`creater`,`modified`,`modifier`
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_promotion_skus
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="promotionId != null">
-                AND `promotion_id` = #{promotionId}
-            </if>
-            <if test="orgChannelId != null">
-                AND `org_channel_id` = #{orgChannelId}
-            </if>
-            <if test="modelId != null">
-                AND `model_id` = #{modelId}
-            </if>
-            <if test="productId != null">
-                AND `product_id` = #{productId}
-            </if>
-            <if test="numIid != null">
-                AND `num_iid` = #{numIid}
-            </if>
-            <if test="productModel != null">
-                AND `product_model` = #{productModel}
-            </if>
-            <if test="productCode != null">
-                AND `product_code` = #{productCode}
-            </if>
-            <if test="productSku != null">
-                AND `product_sku` = #{productSku}
-            </if>
-            <if test="catPath != null">
-                AND `cat_path` = #{catPath}
-            </if>
-            <if test="qty != null">
-                AND `qty` = #{qty}
-            </if>
-            <if test="synFlg != null">
-                AND `syn_flg` = #{synFlg}
-            </if>
-            <if test="errMsg != null">
-                AND `err_msg` = #{errMsg}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`promotion_id`,`org_channel_id`,`model_id`,`product_id`,`num_iid`,`product_model`,`product_code`,`product_sku`,`cat_path`,`qty`,`syn_flg`,`err_msg`,`created`,`creater`,`modified`,`modifier`
-        from cms_bt_promotion_skus
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="promotionId != null">
-                AND `promotion_id` = #{promotionId}
-            </if>
-
-            <if test="orgChannelId != null">
-                AND `org_channel_id` = #{orgChannelId}
-            </if>
-
-            <if test="modelId != null">
-                AND `model_id` = #{modelId}
-            </if>
-
-            <if test="productId != null">
-                AND `product_id` = #{productId}
-            </if>
-
-            <if test="numIid != null">
-                AND `num_iid` = #{numIid}
-            </if>
-
-            <if test="productModel != null">
-                AND `product_model` = #{productModel}
-            </if>
-
-            <if test="productCode != null">
-                AND `product_code` = #{productCode}
-            </if>
-
-            <if test="productSku != null">
-                AND `product_sku` = #{productSku}
-            </if>
-
-            <if test="catPath != null">
-                AND `cat_path` = #{catPath}
-            </if>
-
-            <if test="qty != null">
-                AND `qty` = #{qty}
-            </if>
-
-            <if test="synFlg != null">
-                AND `syn_flg` = #{synFlg}
-            </if>
-
-            <if test="errMsg != null">
-                AND `err_msg` = #{errMsg}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`promotion_id`,`org_channel_id`,`model_id`,`product_id`,`num_iid`,`product_model`,`product_code`,`product_sku`,`cat_path`,`qty`,`syn_flg`,`err_msg`,`created`,`creater`,`modified`,`modifier` from cms_bt_promotion_skus where id=#{id}
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkusModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_promotion_skus
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                `promotion_id`,
+            </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id`,
+            </if>
+            <if test="modelId != null" >
+                `model_id`,
+            </if>
+            <if test="productId != null" >
+                `product_id`,
+            </if>
+            <if test="numIid != null" >
+                `num_iid`,
+            </if>
+            <if test="productModel != null" >
+                `product_model`,
+            </if>
+            <if test="productCode != null" >
+                `product_code`,
+            </if>
+            <if test="productSku != null" >
+                `product_sku`,
+            </if>
+            <if test="catPath != null" >
+                `cat_path`,
+            </if>
+            <if test="qty != null" >
+                `qty`,
+            </if>
+            <if test="synFlg != null" >
+                `syn_flg`,
+            </if>
+            <if test="errMsg != null" >
+                `err_msg`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="modelId != null" >
+                #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="productId != null" >
+                #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="numIid != null" >
+                #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="productModel != null" >
+                #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productSku != null" >
+                #{productSku,jdbcType=VARCHAR},
+            </if>
+            <if test="catPath != null" >
+                #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="qty != null" >
+                #{qty,jdbcType=INTEGER},
+            </if>
+            <if test="synFlg != null" >
+                #{synFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="errMsg != null" >
+                #{errMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkusModel" >
         update cms_bt_promotion_skus
-        set
+        <set >
+            <if test="promotionId != null" >
+                `promotion_id` = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="modelId != null" >
+                `model_id` = #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="productId != null" >
+                `product_id` = #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="numIid != null" >
+                `num_iid` = #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="productModel != null" >
+                `product_model` = #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                `product_code` = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productSku != null" >
+                `product_sku` = #{productSku,jdbcType=VARCHAR},
+            </if>
+            <if test="catPath != null" >
+                `cat_path` = #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="qty != null" >
+                `qty` = #{qty,jdbcType=INTEGER},
+            </if>
+            <if test="synFlg != null" >
+                `syn_flg` = #{synFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="errMsg != null" >
+                `err_msg` = #{errMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `promotion_id`=#{promotionId}
-            ,`org_channel_id`=#{orgChannelId}
-            ,`model_id`=#{modelId}
-            ,`product_id`=#{productId}
-            ,`num_iid`=#{numIid}
-            ,`product_model`=#{productModel}
-            ,`product_code`=#{productCode}
-            ,`product_sku`=#{productSku}
-            ,`cat_path`=#{catPath}
-            ,`qty`=#{qty}
-            ,`syn_flg`=#{synFlg}
-            ,`err_msg`=#{errMsg}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_promotion_skus
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_promotion_skus
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_promotion_skus
-        (
-              `promotion_id`,
-              `org_channel_id`,
-              `model_id`,
-              `product_id`,
-              `num_iid`,
-              `product_model`,
-              `product_code`,
-              `product_sku`,
-              `cat_path`,
-              `qty`,
-              `syn_flg`,
-              `err_msg`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{promotionId},
-              #{orgChannelId},
-              #{modelId},
-              #{productId},
-              #{numIid},
-              #{productModel},
-              #{productCode},
-              #{productSku},
-              #{catPath},
-              #{qty},
-              #{synFlg},
-              #{errMsg},
-              #{created},
-              #{creater},
-              #{modified},
-              #{modifier}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion_skus
+        <where >
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="modelId != null" >
+                and `model_id` = #{modelId,jdbcType=INTEGER}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
+            </if>
+            <if test="productModel != null" >
+                and `product_model` = #{productModel,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productSku != null" >
+                and `product_sku` = #{productSku,jdbcType=VARCHAR}
+            </if>
+            <if test="catPath != null" >
+                and `cat_path` = #{catPath,jdbcType=VARCHAR}
+            </if>
+            <if test="qty != null" >
+                and `qty` = #{qty,jdbcType=INTEGER}
+            </if>
+            <if test="synFlg != null" >
+                and `syn_flg` = #{synFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="errMsg != null" >
+                and `err_msg` = #{errMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion_skus
+        <where >
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="modelId != null" >
+                and `model_id` = #{modelId,jdbcType=INTEGER}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
+            </if>
+            <if test="productModel != null" >
+                and `product_model` = #{productModel,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productSku != null" >
+                and `product_sku` = #{productSku,jdbcType=VARCHAR}
+            </if>
+            <if test="catPath != null" >
+                and `cat_path` = #{catPath,jdbcType=VARCHAR}
+            </if>
+            <if test="qty != null" >
+                and `qty` = #{qty,jdbcType=INTEGER}
+            </if>
+            <if test="synFlg != null" >
+                and `syn_flg` = #{synFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="errMsg != null" >
+                and `err_msg` = #{errMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

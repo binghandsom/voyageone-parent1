@@ -24,9 +24,9 @@ public class JsonBeanDeserializer extends JsonDeserializer<JsonBean> {
 		p.nextToken();
 		
 		do {
-			if (JsonBean.TYPE.equals(p.getCurrentName())) {
+			if (JsonBean.TYPE_STR.equals(p.getCurrentName())) {
 				jsonBean.setType(p.nextTextValue());
-			} else if (JsonBean.VALUE.equals(p.getCurrentName())) {
+			} else if (JsonBean.VALUE_STR.equals(p.getCurrentName())) {
 				jsonBean.setValue(p.nextTextValue());
 			}
 		} while (p.nextToken() != JsonToken.END_OBJECT);

@@ -59,7 +59,7 @@ public class CmsBtPromotionGroupsBean extends CmsBtPromotionGroupsModel {
             // numIid
             this.setNumIid(groupModel.getNumIId());
             // modelId
-            this.setModelId(groupModel.getGroupId());
+            this.setModelId(groupModel.getGroupId().intValue());
         }
 
     }

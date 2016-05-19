@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
@@ -36,8 +37,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
-
-
     public List<CmsBtProductModel> selectProductByIds( List<Long> ids,String channelId) {
         if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
@@ -47,7 +46,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{prodId:{$in:[" + idsStr + "]}}";
         return select(query, channelId);
     }
-
 
     /**
      * 根据codes返回多条产品数据
@@ -65,12 +63,16 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return select(query, channelId);
     }
 
+    public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
+        return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
+    }
+
     /**
      * 批量更新记录
      * @param channelId 渠道ID
      * @param bulkList  更新条件
      * @param modifier  更新者
-     * @param key       MongoKey pop,set,push,addToSet
+     * @param key       MongoKey $pop,$set,$push,$addToSet
      * @return 运行结果
      */
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
@@ -80,9 +82,16 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     @Override
     public WriteResult update(BaseMongoModel model) {
         throw new BusinessException("not suppert");
+        // return update(model);
     }
 
-    // 根据条件更新指定值
+    /**
+     * 根据条件更新指定值
+     * @param channelId String
+     * @param paraMap 更新条件
+     * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
+     * @return WriteResult
+     */
     public WriteResult update(String channelId, Map paraMap, Map rsMap) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
@@ -90,7 +99,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         params.putAll(paraMap);
         BasicDBObject result = new BasicDBObject();
         result.putAll(rsMap);
-        return coll.update(params, new BasicDBObject("$set", result), false, true);
+        return coll.update(params, result, false, true);
     }
 
     /**

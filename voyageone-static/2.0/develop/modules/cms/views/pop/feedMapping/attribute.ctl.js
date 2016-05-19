@@ -2,7 +2,7 @@
  * FeedMapping 属性匹配画面,对属性进行具体匹配的弹出框 Controller
  */
 
-define(['cms'], function (cms) {
+define(['cms', 'modules/cms/enums/FieldTypes'], function (cms, FieldTypes) {
 
     return cms.controller('propFeedMappingAttributeController', (function () {
 
@@ -32,15 +32,15 @@ define(['cms'], function (cms) {
 
             init: function () {
 
-                var ttt = this;
+                var self = this;
 
-                ttt.feedMappingService.getFieldMapping({
-                        mappingId: ttt.mapping._id,
-                        fieldId: ttt.field.id,
-                        fieldType: ttt.context.bean.type
+                self.feedMappingService.getFieldMapping({
+                        mappingId: self.mapping._id,
+                        fieldId: self.field.id,
+                        fieldType: self.context.bean.type
                     })
                     .then(function (res) {
-                        ttt.fieldMapping = res.data;
+                        self.fieldMapping = res.data;
                     });
             },
 
@@ -57,7 +57,7 @@ define(['cms'], function (cms) {
                 }
                 this.fieldMapping.mappings.push(mapping);
             },
-            
+
             /**
              * 移除一个mapping
              * @param {number} index
@@ -65,12 +65,44 @@ define(['cms'], function (cms) {
             remove: function (index) {
                 this.fieldMapping.mappings.splice(index, 1);
             },
-            
+
+            /**
+             * 将字段值转换为友好的显示名
+             */
+            value: function (mapping) {
+                var field = this.field;
+                var selected;
+                var val = mapping.val;
+                
+                if (mapping.type !== 'text')
+                    return val;
+
+                switch (field.type) {
+                    case FieldTypes.singleCheck:
+
+                        selected = field.options.find(function (item) {
+                            return item.value === val;
+                        });
+
+                        return selected ? selected.displayName : val;
+
+                    case FieldTypes.multiCheck:
+
+                        return val.split(',').map(function (val) {
+                            selected = field.options.find(function (item) {
+                                return item.value === val;
+                            });
+                            return selected ? selected.displayName : val;
+                        }).join(',')
+                }
+                return val;
+            },
+
             ok: function () {
                 this.context.fieldMapping = this.fieldMapping;
                 this.$uibModalInstance.close(this.context);
             },
-            
+
             cancel: function () {
                 this.$uibModalInstance.dismiss();
             }

@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.pop.image;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.ImgUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +35,23 @@ public class CmsImageSettingController extends CmsController {
     @Autowired
     CmsProductDetailService productPropsEditService;
 
+    // 允许上传的默认图片文件的后缀名
+    private List<String> imageExtends = new ArrayList<String>(){{
+        add(".jpg");
+        add(".JPG");
+    }};
+
     @RequestMapping(CmsUrlConstants.POP.IMAGE_SETTING.UPLOAD_IMAGE)
-    public AjaxResponse uploadPromotion(HttpServletRequest request, @RequestParam Long productId,@RequestParam String imageType) throws Exception {
+    public AjaxResponse uploadImage(HttpServletRequest request, @RequestParam Long productId,@RequestParam String imageType) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile file = multipartRequest.getFile("file");
         // 获得输入流：
+
+        if (!imageExtends.contains(ImgUtils.getImageExtend(file.getOriginalFilename())))
+            throw new BusinessException("上传的图片后缀名不正确,请上传正确的图片, eg: jpg, JPG");
+
         InputStream input = file.getInputStream();
-        Map<String,Object> reponse = cmsImageSettingService.uploadImage(file, productId, imageType, getUser());
+        Map<String,Object> response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()));
 
         int cartId = (int) getCmsSession().getPlatformType().get("cartId");
         Map productInfo = productPropsEditService.getProductInfo(getUser().getSelChannelId(), productId, cartId, getLang());
@@ -46,12 +59,12 @@ public class CmsImageSettingController extends CmsController {
 
         List<CmsBtProductModel_Field_Image> images = cmsProductInfoBean.getProductImages().get(imageType);
         images.remove(images.size() - 1);
-        reponse.put("productInfo", productInfo.get("productInfo"));
+        response.put("productInfo", productInfo.get("productInfo"));
         productInfo.remove("productInfo");
         input.close();
 
         // 返回用户信息
-        return success(reponse);
+        return success(response);
     }
 
 }

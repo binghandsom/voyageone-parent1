@@ -7,7 +7,6 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
 import com.voyageone.service.impl.cms.CustomWordService;

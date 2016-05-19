@@ -6,13 +6,20 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by dell on 2016/3/29.
+ * HtSpuUpdateResponse
+ * @author peitao.sun, 2016/3/29
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtSpuUpdateResponse extends JMResponse {
-    String error_code;
-    String reason;
-    boolean is_Success;
-    String errorMsg;
+public class HtSpuUpdateResponse extends BaseJMResponse {
+
+    private String error_code;
+    private String reason;
+    private boolean is_Success;
+    private String errorMsg;
+    private String body;
+
+
     public String getErrorMsg() {
         return errorMsg;
     }
@@ -45,19 +52,14 @@ public class HtSpuUpdateResponse extends JMResponse {
         this.reason = reason;
     }
 
-
-    @Override
     public String getBody() {
         return body;
     }
 
-    String body;
-
-    @Override
     public void setBody(String body) throws IOException {
         this.body = body;
         try {
-            //{"is_Success" : 1}
+//            {"is_Success" : 1}
 //            {
 //                "error": {
 //                "code": "500"
@@ -70,14 +72,14 @@ public class HtSpuUpdateResponse extends JMResponse {
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());
             }
-            if (map.containsKey("is_Success") && map.get("is_Success").equals("1")) {
+            if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.getBody());
+                this.setErrorMsg(this.body);
             }
         } catch (Exception ex) {
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.getBody());
+            this.setErrorMsg("返回参数解析错误" + this.body);
         }
     }
 }

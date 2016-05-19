@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.bean.search.index;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class CmsSearchInfoBean {
     private String brand;
 
     private String[] tags;
-
+    private Integer tagTypeSelectValue = 0;
     private String[] codeList;
 
     private String sortOneName;
@@ -263,6 +264,14 @@ public class CmsSearchInfoBean {
 
     public void setTags(String[] tags) {
         this.tags = tags;
+    }
+
+    public Integer getTagTypeSelectValue() {
+        return tagTypeSelectValue;
+    }
+
+    public void setTagTypeSelectValue(Integer tagTypeSelectValue) {
+        this.tagTypeSelectValue = tagTypeSelectValue;
     }
 
     public String[] getCodeList() {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-     http://www.springframework.org/schema/tx  
-     http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+<beans default-lazy-init ="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns="http://www.springframework.org/schema/beans"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
     <bean id="dataSourceMaster" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
@@ -28,14 +29,29 @@
         <property name="maxIdleTime" value="14400"></property>
         <!--强迫连接池扑杀任何的连接，这些连接超过了设置的秒数。(现将其设置为数据库wait_timeout的1/2)-->
         <property name="maxConnectionAge" value="14400"></property>
-
     </bean>
 
-    <bean id="sqlSessionFactoryMaster"
-          class="org.mybatis.spring.SqlSessionFactoryBean"
-          p:dataSource-ref="dataSourceMaster"
-          p:configLocation="classpath:com/voyageone/mybatis/myBatisConfig.xml"
-          p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
+    <bean id="sqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- SqlSessionFactory的数据源 -->
+        <property name="dataSource" ref="dataSourceMaster"/>
+        <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
+        <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfig.xml"/>
+        <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
+        <property name="mapperLocations" value="classpath*:com/voyageone/**/*Mapper.xml"/>
+        <!-- 配置Mybatis的插件plugin-->
+        <property name="plugins">
+            <array>
+                <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
+                    <property name="properties">
+                        <value>
+                            database_schema=synship
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
 
     <bean id="updateTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactoryMaster"/>
@@ -77,11 +93,27 @@
         <!--<property name="idleConnectionTestPeriod" value="60" />-->
     </bean>
 
-    <bean id="sqlSessionFactorySlave"
-          class="org.mybatis.spring.SqlSessionFactoryBean"
-          p:dataSource-ref="dataSourceSlave"
-          p:configLocation="classpath:com/voyageone/mybatis/myBatisConfig.xml"
-          p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
+    <bean id="sqlSessionFactorySlave" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- SqlSessionFactory的数据源 -->
+        <property name="dataSource" ref="dataSourceSlave"/>
+        <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
+        <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfig.xml"/>
+        <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
+        <property name="mapperLocations" value="classpath*:com/voyageone/**/*Mapper.xml"/>
+        <!-- 配置Mybatis的插件plugin-->
+        <property name="plugins">
+            <array>
+                <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
+                    <property name="properties">
+                        <value>
+                            database_schema=synship
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
 
     <bean id="selectTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactorySlave"/>

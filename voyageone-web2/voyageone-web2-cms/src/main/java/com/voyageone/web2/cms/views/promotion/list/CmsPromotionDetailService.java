@@ -2,10 +2,12 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -18,7 +20,6 @@ import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -189,7 +190,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                     queryObject.setQuery("{'prodId':" + productId + "}");
                     queryObject.setProjection("{'fields.code':1,'carts':{'$elemMatch':{'cartId':" + cartId + "}}}");
 
-                    List<CmsBtProductModel> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
+                    List<CmsBtProductBean> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
                     if (modelList != null && modelList.size() > 0 && modelList.get(0).getCarts().size()>0) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                         map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
@@ -218,12 +219,12 @@ public class CmsPromotionDetailService extends BaseAppService {
                 // 取得Product 数据
                 queryObject.setQuery("{\"prodId\":" + map.getProductId() + "}");
 
-                List<CmsBtProductModel> prodList = productService.getListWithGroup((String) param.get("channelId"), cartId, queryObject);
+                List<CmsBtProductBean> prodList = productService.getListWithGroup((String) param.get("channelId"), cartId, queryObject);
                 if (prodList != null && prodList.size() > 0) {
 //                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
 //                    map.setSkuCount(cmsBtProductModel.getSkus().size());
-                    CmsBtProductModel cmsBtProductModel = prodList.get(0);
-                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatformStatus());
+                    CmsBtProductBean cmsBtProductModel = prodList.get(0);
+                    map.setPlatformStatus(cmsBtProductModel.getGroupBean().getPlatformStatus());
                     map.setInventory(cmsBtProductModel.getBatchField().getCodeQty());
                 }
             });
@@ -376,7 +377,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
             if (!StringUtil.isEmpty(modelId)) {
-                model.setModelId(Long.parseLong(modelId));
+                model.setModelId(Integer.parseInt(modelId));
             }
         }
 

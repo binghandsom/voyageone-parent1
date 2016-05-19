@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.common.util.JacksonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class CmsBtPromotionDaoExtTest {
 
         map.put("channelId", 1);
 
-        cmsBtPromotionDaoExt.selectByCondition(map);
+        System.out.println(JacksonUtil.bean2Json(cmsBtPromotionDaoExt.selectByCondition(map)));
     }
 
     @Test
@@ -36,6 +37,37 @@ public class CmsBtPromotionDaoExtTest {
 
         map.put("channelId", 1);
 
-        cmsBtPromotionDaoExt.selectById(map);
+        System.out.println(JacksonUtil.bean2Json(cmsBtPromotionDaoExt.selectByCondition(map)));
+    }
+
+
+    @Test
+    public void testUpdate() throws Exception {
+
+    }
+
+    @Test
+    public void testInsert() throws Exception {
+
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+
+    }
+
+    @Test
+    public void testSelectPromotionIDByCartId() throws Exception {
+
+    }
+
+    @Test
+    public void testSelectPromotionHistory() throws Exception {
+
+    }
+
+    @Test
+    public void testSelectPromotionHistoryCnt() throws Exception {
+
     }
 }

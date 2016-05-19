@@ -21,6 +21,15 @@ public class SxData {
 	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表(product下所有sku都没有当前cartId，则去除)
 	private List<CmsBtProductModel_Sku> skuList;	// 只包含当前group，cart中, 允许使用的sku信息
 
+    private Double maxPrice; // 当前productList的所有sku中，最大的那个价格（销售的价格）
+	private String brandCode; // 主商品fields.Brand对应的BrandId(cms_mt_brands_mapping)
+
+	private boolean hasSku; // 库存更新时，要选择商品上传时是否有SKU属性
+	private boolean isDarwin; // 是不是达尔文
+	private String styleCode;
+    private String errorCode;     // 出错时回写到businessLog表的errorCode
+    private String errorMessage;  // 出错时回写到businessLog表的errorMessage
+
 	public String getChannelId() {
 		return channelId;
 	}
@@ -84,4 +93,60 @@ public class SxData {
 	public void setSkuList(List<CmsBtProductModel_Sku> skuList) {
 		this.skuList = skuList;
 	}
+
+    public Double getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(Double maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+	public String getBrandCode() {
+		return brandCode;
+	}
+
+	public void setBrandCode(String brandCode) {
+		this.brandCode = brandCode;
+	}
+
+	public boolean isHasSku() {
+		return hasSku;
+	}
+
+	public void setHasSku(boolean hasSku) {
+		this.hasSku = hasSku;
+	}
+
+	public boolean isDarwin() {
+		return isDarwin;
+	}
+
+	public void setDarwin(boolean darwin) {
+		isDarwin = darwin;
+	}
+
+	public String getStyleCode() {
+		return styleCode;
+	}
+
+	public void setStyleCode(String styleCode) {
+		this.styleCode = styleCode;
+	}
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }

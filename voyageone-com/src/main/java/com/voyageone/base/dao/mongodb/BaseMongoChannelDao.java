@@ -109,7 +109,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * @param channelId 渠道ID
      * @param bulkList  更新条件
      * @param modifier  更新者
-     * @param key       MongoKey pop,set,push,addToSet
+     * @param key       MongoKey $pop,$set,$push,$addToSet
      * @param isUpsert  是否插入新纪录
      * @return 运行结果
      */

@@ -23,6 +23,7 @@ public interface CmsUrlConstants {
         }
 
     }
+
     interface JMPROMOTION {
         interface LIST {
             interface INDEX {
@@ -36,56 +37,60 @@ public interface CmsUrlConstants {
                 String INSERT = "insert";
 
                 String UPDATE = "update";
-                String DELETE="delete";
+                String DELETE = "delete";
                 String GET = "get";
 
             }
+
             interface DETAIL {
                 String ROOT = "/cms/jmpromotion/detail";
 
                 String INIT = "init";
 
                 String GET_LIST_BY_WHERE = "getListByWhere";
-                String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE="getPromotionProductInfoListByWhere";
-                String GetPromotionProductInfoCountByWhere="getPromotionProductInfoCountByWhere";
+                String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE = "getPromotionProductInfoListByWhere";
+                String GetPromotionProductInfoCountByWhere = "getPromotionProductInfoCountByWhere";
                 String INSERT = "insert";
-                String DELETE="delete";
+                String DELETE = "delete";
                 String UPDATE = "update";
-                String UPDATEDEAlPRICE="updateDealPrice";
+                String UPDATEDEAlPRICE = "updateDealPrice";
                 String GET = "get";
-                String DELETEBYPPROMOTIONID="deleteByPromotionId";
-                String DELETEBYPRODUCTIDLIST="deleteByProductIdList";
-                String JmNewUpdateAll="jmNewUpdateAll";
-                String JmNewByProductIdListInfo="jmNewByProductIdListInfo";
-                String updateDealEndTime="updateDealEndTime";
-                String UpdateDealEndTimeAll="updateDealEndTimeAll";
+                String DELETEBYPPROMOTIONID = "deleteByPromotionId";
+                String DELETEBYPRODUCTIDLIST = "deleteByProductIdList";
+                String JmNewUpdateAll = "jmNewUpdateAll";
+                String JmNewByProductIdListInfo = "jmNewByProductIdListInfo";
+                String updateDealEndTime = "updateDealEndTime";
+                String UpdateDealEndTimeAll = "updateDealEndTimeAll";
                 String GET_PRODUCT_DETAIL = "getProductDetail";
                 String UPDATE_PRODUCT_DETAIL = "updateProductDetail";
                 String UPDATE_PROMOTION_PRODUCT_DETAIL = "updatePromotionProductDetail";
                 String UPDATE_SKU_DETAIL = "updateSkuDetail";
                 String DELETE_PROMOTION_SKU = "deletePromotionSku";
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
-                String UpdateJM="updateJM";
+                String UpdateJM = "updateJM";
             }
         }
     }
-interface CmsBtJmPromotionImportTask{
+
+    interface CmsBtJmPromotionImportTask {
         interface LIST {
-            interface  INDEX {
-                String ROOT="/cms/CmsBtJmPromotionImportTask/index";
-                String GET_BY_PROMOTIONID="getByPromotionId";
+            interface INDEX {
+                String ROOT = "/cms/CmsBtJmPromotionImportTask/index";
+                String GET_BY_PROMOTIONID = "getByPromotionId";
             }
         }
     }
-    interface CmsBtJmPromotionExportTask{
+
+    interface CmsBtJmPromotionExportTask {
         interface LIST {
-            interface  INDEX {
-                String ROOT="/cms/CmsBtJmPromotionExportTask/index";
-                String GET_BY_PROMOTIONID="getByPromotionId";
-                String ADDEXPORT="addExport";
+            interface INDEX {
+                String ROOT = "/cms/CmsBtJmPromotionExportTask/index";
+                String GET_BY_PROMOTIONID = "getByPromotionId";
+                String ADDEXPORT = "addExport";
             }
         }
     }
+
     interface CMSMTMASTERINFO {
         interface LIST {
             interface INDEX {
@@ -95,12 +100,13 @@ interface CmsBtJmPromotionImportTask{
                 String INSERT = "insert";
                 String UPDATE = "update";
                 String GET = "get";
-                String UPDATEJMIMG="updateJMImg";
-                String GetCountByWhere="getCountByWhere";
-                String LoadJmMasterBrand="loadJmMasterBrand";
+                String UPDATEJMIMG = "updateJMImg";
+                String GetCountByWhere = "getCountByWhere";
+                String LoadJmMasterBrand = "loadJmMasterBrand";
             }
         }
     }
+
     interface CMSMTJMCONFIG {
         interface LIST {
             interface INDEX {
@@ -108,20 +114,20 @@ interface CmsBtJmPromotionImportTask{
                 String INIT = "init";
                 String INSERT = "insert";
                 String UPDATE = "update";
-                String GETBYKEY="getByKey";
+                String GETBYKEY = "getByKey";
 
             }
         }
     }
+
     // 活动管理
     interface PROMOTION {
         interface LIST {
             interface INDEX {
 
                 String ROOT = "/cms/promotion/index";
-
                 String INIT = "init";
-
+                String InitByPromotionId="initByPromotionId";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";
@@ -349,6 +355,7 @@ interface CmsBtJmPromotionImportTask{
             String SET_PLATFORM_MAPPING = "setPlatformMapping";
 
             String GET_MAIN_CATEGORY_SCHEMA = "getMainCategorySchema";
+            String GET_PLATFORM_CATEGORY_SCHEMA = "getPlatformCategorySchema";
 
             String GET_DICT_LIST = "getDictList";
 
@@ -435,7 +442,7 @@ interface CmsBtJmPromotionImportTask{
             String ROOT = "/cms/pop/add_to_promotion/";
 
             String GET_PROM_TAGS = "getPromotionTags";
-
+            String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 
@@ -534,6 +541,7 @@ interface CmsBtJmPromotionImportTask{
 
             String GET_CAT_LIST = "getCatList";
         }
+
         interface CUSTOM_VALUE {
 
             String ROOT = "/cms/channel/custom/value";
@@ -544,12 +552,67 @@ interface CmsBtJmPromotionImportTask{
 
             String SAVE = "update";
         }
-        interface CHANNEL_TAG{
-            String ROOT="/cms/channel/tag";
+
+        interface CHANNEL_TAG {
+            String ROOT = "/cms/channel/tag";
             String INIT_CHANNEL_TAG = "init";
             String SAVE_CHANNEL_TAG = "saveTag";
             String DEL_CHANNEL_TAG = "delTag";
+            String GET_TAG_LIST = "getTagList";
         }
+        interface CHANNEL_IMAGE_GROUP {
+            String ROOT="/cms/channel/image_group";
+            String INIT_CHANNEL_IMAGE_GROUP = "init";
+            String SEARCH_CHANNEL_IMAGE_GROUP = "search";
+            String SAVE_CHANNEL_IMAGE_GROUP = "save";
+            String DELETE_CHANNEL_IMAGE_GROUP = "delete";
+        }
+        interface CHANNEL_IMAGE_TEMPLATE {
+            String ROOT = "/cms/channel/image_template";
+            String Init = "init";
+            String GetPage = "getPage";
+            String GetCount = "getCount";
+            String Save = "save";
+            String Delete = "delete";
+            String Get="get";
+            String GetDownloadUrl="getDownloadUrl";
+            String GetTemplateParameter="getTemplateParameter";
+        }
+        interface CHANNEL_IMAGE_GROUP_DETAIL {
+            String ROOT="/cms/channel/image_group_detail";
+            String INIT_CHANNEL_IMAGE_GROUP_DETAIL = "init";
+            String SAVE_CHANNEL_IMAGE_GROUP_DETAIL = "save";
+            String SEARCH_CHANNEL_IMAGE_GROUP_DETAIL = "search";
+            String SAVE_UPLOAD_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveUploadImage";
+            String SAVE_IMAGE_CHANNEL_IMAGE_GROUP_DETAIL = "saveImage";
+            String DELETE_CHANNEL_IMAGE_GROUP_DETAIL = "delete";
+            String REFRESH_CHANNEL_IMAGE_GROUP_DETAIL = "refresh";
+            String MOVE_CHANNEL_IMAGE_GROUP_DETAIL = "move";
+        }
+        interface LISTING{
+            interface SIZE_CHART{
+                String ROOT="/cms/channel/sizeChartList";
+                String INIT_SIZE_CHART = "sizeChartInit";
+                String DELETE_SIZE_CHART="sizeChartDelete";
+                String SEARCH_SIZE_CHART = "sizeChartSearch";
+                String SAVE_EDIT_SIZE_CHART="sizeChartEditSave";
+            }
+            interface SIZE_CHART_DETAIL{
+                String ROOT="/cms/channel/sizeChartDetail";
+                String SEARCH_DETAIL_SIZE_CHART="sizeChartDetailSearch";
+                String SAVE_DETAIL_SIZE_CHART="sizeChartDetailSave";
+                String SAVE_DETAIL_SIZE_MAP_CHART ="sizeChartDetailSizeMapSave";
+            }
+        }
+
     }
 
+    interface ImageCreate {
+        String ROOT = "/cms/imagecreate/index";
+        String Upload = "upload";
+        String GetPageByWhere = "getPageByWhere";
+        String GetCountByWhere = "getCountByWhere";
+        String DownloadExcel = "downloadExcel";
+        String DownloadImportErrorExcel = "downloadImportErrorExcel";
+    }
 }

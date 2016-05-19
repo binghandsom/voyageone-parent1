@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtImageCreateImportDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateImportModel" />
+    <sql id="Base_Column_List" >
+        `id`, `cms_mt_image_create_task_id`, `is_import`, `file_name`, `error_msg`, `success_rows`, 
+        `failures_rows`, `error_code`, `begin_time`, `end_time`, `creater`, `created`, `modified`, 
+        `modifier`, `failures_file_Name`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_image_create_import
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateImportModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_mt_image_create_import
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="cmsMtImageCreateTaskId != null" >
+                `cms_mt_image_create_task_id`,
+            </if>
+            <if test="isImport != null" >
+                `is_import`,
+            </if>
+            <if test="fileName != null" >
+                `file_name`,
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg`,
+            </if>
+            <if test="successRows != null" >
+                `success_rows`,
+            </if>
+            <if test="failuresRows != null" >
+                `failures_rows`,
+            </if>
+            <if test="errorCode != null" >
+                `error_code`,
+            </if>
+            <if test="beginTime != null" >
+                `begin_time`,
+            </if>
+            <if test="endTime != null" >
+                `end_time`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            <if test="failuresFileName != null" >
+                `failures_file_Name`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="cmsMtImageCreateTaskId != null" >
+                #{cmsMtImageCreateTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="isImport != null" >
+                #{isImport,jdbcType=BIT},
+            </if>
+            <if test="fileName != null" >
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                #{errorMsg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="successRows != null" >
+                #{successRows,jdbcType=INTEGER},
+            </if>
+            <if test="failuresRows != null" >
+                #{failuresRows,jdbcType=INTEGER},
+            </if>
+            <if test="errorCode != null" >
+                #{errorCode,jdbcType=INTEGER},
+            </if>
+            <if test="beginTime != null" >
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="failuresFileName != null" >
+                #{failuresFileName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateImportModel" >
+        update cms_mt_image_create_import
+        <set >
+            <if test="cmsMtImageCreateTaskId != null" >
+                `cms_mt_image_create_task_id` = #{cmsMtImageCreateTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="isImport != null" >
+                `is_import` = #{isImport,jdbcType=BIT},
+            </if>
+            <if test="fileName != null" >
+                `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="successRows != null" >
+                `success_rows` = #{successRows,jdbcType=INTEGER},
+            </if>
+            <if test="failuresRows != null" >
+                `failures_rows` = #{failuresRows,jdbcType=INTEGER},
+            </if>
+            <if test="errorCode != null" >
+                `error_code` = #{errorCode,jdbcType=INTEGER},
+            </if>
+            <if test="beginTime != null" >
+                `begin_time` = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                `end_time` = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="failuresFileName != null" >
+                `failures_file_Name` = #{failuresFileName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_mt_image_create_import
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_image_create_import
+        <where >
+            <if test="cmsMtImageCreateTaskId != null" >
+                and `cms_mt_image_create_task_id` = #{cmsMtImageCreateTaskId,jdbcType=INTEGER}
+            </if>
+            <if test="isImport != null" >
+                and `is_import` = #{isImport,jdbcType=BIT}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="successRows != null" >
+                and `success_rows` = #{successRows,jdbcType=INTEGER}
+            </if>
+            <if test="failuresRows != null" >
+                and `failures_rows` = #{failuresRows,jdbcType=INTEGER}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=INTEGER}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="failuresFileName != null" >
+                and `failures_file_Name` = #{failuresFileName,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_image_create_import
+        <where >
+            <if test="cmsMtImageCreateTaskId != null" >
+                and `cms_mt_image_create_task_id` = #{cmsMtImageCreateTaskId,jdbcType=INTEGER}
+            </if>
+            <if test="isImport != null" >
+                and `is_import` = #{isImport,jdbcType=BIT}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="successRows != null" >
+                and `success_rows` = #{successRows,jdbcType=INTEGER}
+            </if>
+            <if test="failuresRows != null" >
+                and `failures_rows` = #{failuresRows,jdbcType=INTEGER}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=INTEGER}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="failuresFileName != null" >
+                and `failures_file_Name` = #{failuresFileName,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>

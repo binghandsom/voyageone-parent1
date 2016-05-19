@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.common.util.JacksonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ public class CmsBtPromotionSkusDaoTest {
 
     @Test
     public void testSelect() throws Exception {
-        cmsBtPromotionSkusDao.select(1);
-
+        System.out.println(JacksonUtil.bean2Json(cmsBtPromotionSkusDao.select(447)));
     }
 }

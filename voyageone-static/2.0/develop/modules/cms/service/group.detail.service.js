@@ -73,7 +73,7 @@ define([
 				productInfo.priceSale = _setPriceSale(productInfo.fields);
 
 				// 设置time detail
-				productInfo.groups.timeDetail = _setTimeDetail(productInfo);
+				productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 			});
 
 			var tempProductIds = [];
@@ -186,7 +186,13 @@ define([
 			_.forEach(skus, function (sku) {
 				var cartInfo = "";
 				_.forEach(sku.skuCarts, function (skuCart) {
-					cartInfo += Carts.valueOf(skuCart).name + ",";
+					var strValue = Carts.valueOf(skuCart);
+					if (strValue == undefined) {
+						strValue = '';
+					} else {
+						strValue = strValue.name
+					}
+					cartInfo += strValue + ",";
 				});
 				result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
 			});

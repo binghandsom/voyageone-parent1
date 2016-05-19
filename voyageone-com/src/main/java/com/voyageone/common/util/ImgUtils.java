@@ -1,8 +1,7 @@
 package com.voyageone.common.util;
 
 import org.apache.commons.io.IOUtils;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -25,7 +24,6 @@ public final class ImgUtils {
 	public static boolean getPicStream(HttpServletRequest request,
 									   HttpServletResponse response,
 									   String imgPathPara) throws Exception {
-		boolean ret = false;
 		ServletOutputStream out = null;
 		InputStream ips = null;
 		try {
@@ -35,8 +33,7 @@ public final class ImgUtils {
 				ips = new FileInputStream(new File(imgPathPara));
 			} else {
 				// 网络文件的场合
-				URL url = null;
-				url = new URL(imgPathPara);
+				URL url = new URL(imgPathPara);
 				HttpURLConnection  httpUrl = (HttpURLConnection) url.openConnection();
 				httpUrl.connect();
 
@@ -47,7 +44,7 @@ public final class ImgUtils {
 			out = response.getOutputStream();
 
 			//	读取文件流
-			int i = 0;
+			int i;
 			byte[] buffer = new	byte[4096];
 
 			while((i = ips.read(buffer)) != -1) {
@@ -57,7 +54,7 @@ public final class ImgUtils {
 			out.flush();
 			ips.close();
 
-			ret = true;
+			return true;
 		} finally {
 			if (out != null) {
 				out.close();
@@ -67,7 +64,6 @@ public final class ImgUtils {
 				ips.close();
 			}
 		}
-		return ret;
 	}
 
 	/**
@@ -94,8 +90,7 @@ public final class ImgUtils {
 	 * @return decoded image
 	 */
 	public static BufferedImage decodeToImage(String imageString) throws IOException {
-		BASE64Decoder decoder = new BASE64Decoder();
-		byte[] imageByte = decoder.decodeBuffer(imageString);
+		byte[] imageByte = Base64.decodeBase64(imageString);
 		ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
 		BufferedImage image = ImageIO.read(bis);
 		bis.close();
@@ -110,8 +105,7 @@ public final class ImgUtils {
 			newFile.delete();
 		}
 
-		BASE64Decoder decoder = new BASE64Decoder();
-		byte[] imageByte = decoder.decodeBuffer(imageString);
+		byte[] imageByte = Base64.decodeBase64(imageString);
 
 		ByteArrayInputStream bis1 = new ByteArrayInputStream(imageByte);
 		FileOutputStream fos = new FileOutputStream(newFile);
@@ -180,8 +174,7 @@ public final class ImgUtils {
 	 * @throws IOException
 	 */
 	public static String encodeToString(byte[] imageBytes) throws IOException {
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(imageBytes);
+		return Base64.encodeBase64String(imageBytes);
 	}
 
 //	/**
@@ -232,4 +225,24 @@ public final class ImgUtils {
 //			return null;
 //		}
 //	}
+
+	/**
+	 * 获取图片的后缀名
+	 * @param imageUrl
+	 * @return
+	 */
+	public static String getImageExtend (String imageUrl) {
+		String tempExtend = imageUrl.substring(imageUrl.lastIndexOf(".") > 0 ? imageUrl.lastIndexOf(".") : 0);
+		return tempExtend.substring(0, tempExtend.indexOf("?") > 0 ? tempExtend.indexOf("?") : tempExtend.length()).toLowerCase();
+	}
+
+	/**
+	 * 获取图片的名字和后缀
+	 * @param imageUrl
+	 * @return
+	 */
+	public static String getImageName (String imageUrl) {
+		String tempExtend = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+		return tempExtend.substring(0, tempExtend.indexOf(".") > 0 ? tempExtend.indexOf(".") : tempExtend.length());
+	}
 }

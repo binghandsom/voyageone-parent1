@@ -4,9 +4,11 @@ import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsMtPlatformProductIdListModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.beanutils.BeanUtils;
@@ -28,6 +30,9 @@ public class PlatformCategoryService extends BaseService {
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
+
+    @Autowired
+    private CmsMtPlatformProductIdListDao platformCategoryProductIdListDao;
 
     public List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(String channelId, Integer cartId) {
         return platformCategoryDao.selectByChannel_CartId(channelId, cartId);
@@ -164,4 +169,57 @@ public class PlatformCategoryService extends BaseService {
         return insResult.getN();
     }
 
+    /**
+     * 获取指定active状态的平台产品ID列表
+     */
+    public List<CmsMtPlatformProductIdListModel> getPlatformProductIdList(int active) {
+        Map<String, Object> paramsMap = new HashMap<>();
+        paramsMap.put("active", active);
+
+        return platformCategoryProductIdListDao.selectList(paramsMap);
+    }
+
+
+
+    /**
+     * 取得一级类目列表（平台数据）
+     *
+     * @return CmsMtCategoryTreeModel
+     */
+    public List<CmsMtPlatformCategoryTreeModel> getFstLvlCategory(String channelId, int cartId) {
+        return platformCategoryDao.selectByChannel_CartId(channelId, cartId);
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public List<CmsMtPlatformCategoryTreeModel> findCategoryListByCatId(String channelId, int cartId, String rootCatId, int catLevel, String catId) {
+        CmsMtPlatformCategoryTreeModel treeModel = platformCategoryDao.selectByChannel_CartId_CatId(channelId, cartId, rootCatId == null ? catId : rootCatId);
+        if (catLevel > 0) {
+            treeModel = findCategoryByCatId(treeModel, catId);
+        }
+        if (treeModel == null) {
+            return new ArrayList<>(0);
+        }
+        return treeModel.getChildren();
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public CmsMtPlatformCategoryTreeModel findCategoryByCatId(CmsMtPlatformCategoryTreeModel tree, String catId) {
+        if (tree == null) {
+            return null;
+        }
+        for (CmsMtPlatformCategoryTreeModel catTreeModel : tree.getChildren()) {
+            if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
+                return catTreeModel;
+            }
+            if (catTreeModel.getChildren().size() > 0) {
+                CmsMtPlatformCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
+                if (category != null) return category;
+            }
+        }
+        return null;
+    }
 }

@@ -24,6 +24,9 @@
         <module>voyageone-components-intltarget</module>
         <module>voyageone-components-tmall</module>
         <module>voyageone-components-yimei</module>
+        <module>voyageone-components-liquifire</module>
+        <module>voyageone-components-uscdn</module>
+        <module>voyageone-components-imagecreate</module>
     </modules>
     <properties>
         <!--<voyageone.service2.base.version>0.0.1-SNAPSHOT</voyageone.service2.base.version>-->

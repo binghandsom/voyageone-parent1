@@ -46,31 +46,27 @@ define([
         };
         $scope.ok = function(){
 
-            if(!$scope.tejiabao){
+            if(!$scope.tejiabao)
                 $scope.promotion.tejiabaoId = "0";
-            }
-            if(!$scope.promotionFrom.$valid || !$scope.promotion.tagList){
+
+            if(!$scope.promotionForm.$valid || !$scope.promotion.tagList)
                 return;
-            }
-            for(var i=0;i<$scope.promotion.tagList.length;i++){
-                if($scope.promotion.tagList[i].tagName == ""){
+
+            for (var i = 0; i < $scope.promotion.tagList.length; i++) {
+                if ($scope.promotion.tagList[i].tagName == "") {
                     return;
                 }
             }
-            if(!items) {
-                promotionService.insertPromotion($scope.promotion).then(function (res) {
 
+            if (!items) {
+                promotionService.insertPromotion($scope.promotion).then(function () {
                     $scope.$close();
-                }, function (res) {
-                })
-            }else{
-                promotionService.updatePromotion($scope.promotion).then(function (res) {
-                    for (key in $scope.promotion) {
-                        items[key] = $scope.promotion[key];
-                    }
+                });
+            } else {
+                promotionService.updatePromotion($scope.promotion).then(function () {
+                    items = angular.copy($scope.promotion);
                     $scope.$close();
-                }, function (res) {
-                })
+                });
             }
         }
     });

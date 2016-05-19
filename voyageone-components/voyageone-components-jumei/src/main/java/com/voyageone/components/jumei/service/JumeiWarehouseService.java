@@ -12,14 +12,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by chuanyu.laing on 2016/1/25.
+ * JumeiWarehouseService
+ *
+ * @author chuanyu.laing on 2016/1/25.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class JumeiWarehouseService extends JmBase {
 
     private List<JmWarehouseBean> warehouses = null;
 
-    private static String WARE_HOUSE_URL = "v1/htWarehouse/query";
+    private static final String WARE_HOUSE_URL = "v1/htWarehouse/query";
+
     /**
      * 初始化商家仓库
      */
@@ -34,7 +39,6 @@ public class JumeiWarehouseService extends JmBase {
             warehouses = new ArrayList<>();
         }
     }
-
 
     /**
      * 获取全部商品商家仓库

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPlatformImagesDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPlatformImagesModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `cart_id`, `search_id`, `img_name`, `template_id`, `original_img_url`, 
+        `platform_img_url`, `platform_img_id`, `upd_flg`, `active`, `creater`, `created`, 
+        `modifier`, `modified`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_platform_images
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPlatformImagesModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_platform_images
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="searchId != null" >
+                `search_id`,
+            </if>
+            <if test="imgName != null" >
+                `img_name`,
+            </if>
+            <if test="templateId != null" >
+                `template_id`,
+            </if>
+            <if test="originalImgUrl != null" >
+                `original_img_url`,
+            </if>
+            <if test="platformImgUrl != null" >
+                `platform_img_url`,
+            </if>
+            <if test="platformImgId != null" >
+                `platform_img_id`,
+            </if>
+            <if test="updFlg != null" >
+                `upd_flg`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            `modified`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="searchId != null" >
+                #{searchId,jdbcType=VARCHAR},
+            </if>
+            <if test="imgName != null" >
+                #{imgName,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null" >
+                #{templateId,jdbcType=INTEGER},
+            </if>
+            <if test="originalImgUrl != null" >
+                #{originalImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="platformImgUrl != null" >
+                #{platformImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="platformImgId != null" >
+                #{platformImgId,jdbcType=VARCHAR},
+            </if>
+            <if test="updFlg != null" >
+                #{updFlg,jdbcType=INTEGER},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPlatformImagesModel" >
+        update cms_bt_platform_images
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="searchId != null" >
+                `search_id` = #{searchId,jdbcType=VARCHAR},
+            </if>
+            <if test="imgName != null" >
+                `img_name` = #{imgName,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null" >
+                `template_id` = #{templateId,jdbcType=INTEGER},
+            </if>
+            <if test="originalImgUrl != null" >
+                `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="platformImgUrl != null" >
+                `platform_img_url` = #{platformImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="platformImgId != null" >
+                `platform_img_id` = #{platformImgId,jdbcType=VARCHAR},
+            </if>
+            <if test="updFlg != null" >
+                `upd_flg` = #{updFlg,jdbcType=INTEGER},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_platform_images
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_platform_images
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="searchId != null" >
+                and `search_id` = #{searchId,jdbcType=VARCHAR}
+            </if>
+            <if test="imgName != null" >
+                and `img_name` = #{imgName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateId != null" >
+                and `template_id` = #{templateId,jdbcType=INTEGER}
+            </if>
+            <if test="originalImgUrl != null" >
+                and `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="platformImgUrl != null" >
+                and `platform_img_url` = #{platformImgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="platformImgId != null" >
+                and `platform_img_id` = #{platformImgId,jdbcType=VARCHAR}
+            </if>
+            <if test="updFlg != null" >
+                and `upd_flg` = #{updFlg,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_platform_images
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="searchId != null" >
+                and `search_id` = #{searchId,jdbcType=VARCHAR}
+            </if>
+            <if test="imgName != null" >
+                and `img_name` = #{imgName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateId != null" >
+                and `template_id` = #{templateId,jdbcType=INTEGER}
+            </if>
+            <if test="originalImgUrl != null" >
+                and `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="platformImgUrl != null" >
+                and `platform_img_url` = #{platformImgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="platformImgId != null" >
+                and `platform_img_id` = #{platformImgId,jdbcType=VARCHAR}
+            </if>
+            <if test="updFlg != null" >
+                and `upd_flg` = #{updFlg,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+</mapper>
