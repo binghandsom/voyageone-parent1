@@ -115,18 +115,18 @@ public abstract class BaseJomgoDao<T> {
         return null;
     }
 
-    public WriteResult update(BaseMongoModel model) {
-        if (StringUtils.isEmpty(model.get_id())) {
-            throw new RuntimeException("_id is empty");
-        }
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
-        model.setModified(DateTimeUtil.getNowTimeStamp());
-        return mongoTemplate.save(model, collectionName);
-    }
-
     public WriteResult delete(BaseMongoModel model) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
         return mongoTemplate.removeById(model.get_id(), collectionName);
+    }
+
+    public WriteResult update(BaseMongoModel model) {
+//        if (StringUtils.isEmpty(model.get_id())) {
+//            throw new RuntimeException("_id is empty");
+//        }
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
+        model.setModified(DateTimeUtil.getNowTimeStamp());
+        return mongoTemplate.save(model, collectionName);
     }
 
     public CommandResult executeCommand(String jsonCommand) {

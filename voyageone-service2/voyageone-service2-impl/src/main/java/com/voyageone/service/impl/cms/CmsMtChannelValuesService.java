@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsMtChannelValuesDao;
+import com.voyageone.service.daoext.cms.CmsMtChannelValuesDaoExt;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,16 @@ public class CmsMtChannelValuesService {
     @Autowired
     CmsMtChannelValuesDao cmsMtChannelValuesDao;
 
+    @Autowired
+    CmsMtChannelValuesDaoExt cmsMtChannelValuesDaoExt;
+
     /**
      * 插入ChannelValues
      *
      * @param cmsMtChannelValuesModel cmsMtChannelValuesModel
      */
     public int insertCmsMtChannelValues(CmsMtChannelValuesModel cmsMtChannelValuesModel) {
-        return cmsMtChannelValuesDao.insert(cmsMtChannelValuesModel);
+        return cmsMtChannelValuesDaoExt.insertIgnore(cmsMtChannelValuesModel);
     }
 
     /**

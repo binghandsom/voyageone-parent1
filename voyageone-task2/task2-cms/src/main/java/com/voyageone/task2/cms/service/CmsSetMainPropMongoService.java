@@ -19,7 +19,7 @@ import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.*;
-import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
+//import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -570,7 +570,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 List<String> transBaiduCn; // 百度翻译 - 输出参数
                 try {
-                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
+//                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
                         // lucky vitamin 和 BHFO不做翻译
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                             field.setOriginalTitleCn(""); // 标题
@@ -578,21 +578,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
                             field.setOriginalDesCn(""); // 长描述
                         }
-                    } else {
-                        if (transBaiduOrg.size() > 0) {
-                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
-                            if (transBaiduOrg.size() == 2) {
-                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
-                            } else {
-                                if ("标题".equals(transFlg)) {
-                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-                                } else {
-                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
-                                }
-                            }
-                        }
-                    }
+//                    } else {
+//                        if (transBaiduOrg.size() > 0) {
+//                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+//                            if (transBaiduOrg.size() == 2) {
+//                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+//                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+//                            } else {
+//                                if ("标题".equals(transFlg)) {
+//                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+//                                } else {
+//                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
+//                                }
+//                            }
+//                        }
+//                    }
 
                 } catch (Exception e) {
                     // 翻译失败的场合,全部设置为空, 运营自己翻译吧
