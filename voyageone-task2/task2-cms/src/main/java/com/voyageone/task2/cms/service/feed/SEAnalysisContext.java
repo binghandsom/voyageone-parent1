@@ -59,6 +59,8 @@ class SEAnalysisContext {
 
         sku.setPriceClientRetail(CommonUtil.getRoundUp2Digits(sku.getPriceCurrent() / 6.5));
 
+        sku.setQty(feedBean.getQty());
+
         CmsBtFeedInfoModel code = getProduct(feedBean);
 
         code.getSkus().add(sku);
