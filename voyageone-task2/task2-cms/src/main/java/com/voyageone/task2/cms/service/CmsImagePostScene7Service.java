@@ -88,7 +88,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 feedImage.setUpdFlg(0);
                 feedImage.setChannelId(channelId);
 
-                ExecutorService es  = Executors.newFixedThreadPool(10);
+                ExecutorService es  = Executors.newFixedThreadPool(1);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
@@ -105,76 +105,6 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         es.shutdown();
                         es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-                        // 取得CMS系统展示用的产品图片模板
-                        CmsBtImageTemplateModel commonTemplate = imageTemplateService.getCommonTemplate();
-
-                        // 获取该code对应的所有模板
-                        List<CreateImageParameter> imageDatas = new ArrayList<>();
-
-                        for(CmsBtImagesModel image : imageUrlList) {
-
-                            String imageExtend = ImgUtils.getImageExtend(image.getOriginalUrl());
-                            // CMS显示用共通模板
-                            CreateImageParameter commonTemplateParameter = new CreateImageParameter();
-                            commonTemplateParameter.setChannelId(channelId);
-                            commonTemplateParameter.setTemplateId(commonTemplate.getImageTemplateId());
-                            commonTemplateParameter.setFile(image.getImgName());
-                            commonTemplateParameter.setVParam(new String[]{channelId, image.getImgName() + imageExtend});
-                            imageDatas.add(commonTemplateParameter);
-
-                            // 获取所有模板数据
-                            CmsBtProductModel product = productService.getProductByCode(channelId, image.getCode());
-                            List<CmsBtImageTemplateModel> templateModels = imageTemplateService.getTemplateListWithNoParams(channelId
-                                    , product.getFields().getBrand()
-                                    , product.getFields().getProductType()
-                                    , product.getFields().getSizeType());
-
-                            // 返回需要调用图片生成api的对象
-                            for (CmsBtImageTemplateModel templateModel : templateModels) {
-
-                                CreateImageParameter createImageParameter = new CreateImageParameter();
-                                createImageParameter.setChannelId(channelId);
-                                createImageParameter.setTemplateId(templateModel.getImageTemplateId());
-                                createImageParameter.setFile(ImgUtils.getImageName(image.getImgName()));
-                                createImageParameter.setVParam(new String[]{image.getImgName() + imageExtend});
-                                imageDatas.add(createImageParameter);
-
-                                // 获取产品对应的group信息
-                                CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, product.getFields().getCode(), templateModel.getCartId());
-
-                                // 返回templateImageUrl
-                                String templateImageUrl = imageTemplateService.getTemplateImageUrl(channelId, templateModel.getImageTemplateId().toString(), image.getImgName() + imageExtend);
-
-                                // 将模板图片插入到platformImage
-                                CmsBtPlatformImagesModel platformImage = platformImagesService.selectByImageNameWithTemplate(channelId, templateModel.getCartId(), image.getImgName(), templateModel.getImageTemplateId());
-                                platformImage.setSearchId(groupModel.getGroupId().toString());
-                                platformImage.setOriginalImgUrl(templateImageUrl);
-                                platformImage.setUpdFlg(0);
-                                platformImage.setCreater(getTaskName());
-                                platformImage.setModifier(getTaskName());
-                                platformImagesService.save(platformImage);
-
-                                // 上新
-                                if (CmsConstants.ProductStatus.Approved.name().equals(product.getFields().getStatus()))
-                                    productService.insertSxWorkLoad(channelId, product, getTaskName());
-                            }
-                        }
-
-                        $info("本次生成图片模板的数量: " + imageDatas.size());
-                        // 按每次可以批量生成图片的最大数拆分图片列表
-                        List<List<CreateImageParameter>> splitImageDatas = CommonUtil.splitList(imageDatas, 200);
-
-                        for (List<CreateImageParameter> imageData : splitImageDatas) {
-
-                            // 调用图片生成API
-                            ImageCreateAddListRequest request = new ImageCreateAddListRequest();
-                            request.setData(imageData);
-                            $debug("本次处理的图片信息:" + request);
-                            ImageCreateAddListResponse response = imageCreateService.addList(request);
-                            if (response.getErrorCode() > 0)
-                                $error(imageData + " 调用图片生成API失败:" + response.getErrorMsg());
-                        }
-
                     } else {
                         $debug(channelId + "渠道本次没有要推送scene7的图片");
                     }
@@ -187,6 +117,77 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         }
     }
 
+    private void imageTemplate(String channelId , List<CmsBtImagesModel> imageUrlList) throws Exception {
+        // 取得CMS系统展示用的产品图片模板
+        CmsBtImageTemplateModel commonTemplate = imageTemplateService.getCommonTemplate();
+
+        // 获取该code对应的所有模板
+        List<CreateImageParameter> imageDatas = new ArrayList<>();
+
+        for(CmsBtImagesModel image : imageUrlList) {
+
+            String imageExtend = ImgUtils.getImageExtend(image.getOriginalUrl());
+            // CMS显示用共通模板
+            CreateImageParameter commonTemplateParameter = new CreateImageParameter();
+            commonTemplateParameter.setChannelId(channelId);
+            commonTemplateParameter.setTemplateId(commonTemplate.getImageTemplateId());
+            commonTemplateParameter.setFile(image.getImgName());
+            commonTemplateParameter.setVParam(new String[]{channelId, image.getImgName() + imageExtend});
+            imageDatas.add(commonTemplateParameter);
+
+            // 获取所有模板数据
+            CmsBtProductModel product = productService.getProductByCode(channelId, image.getCode());
+            List<CmsBtImageTemplateModel> templateModels = imageTemplateService.getTemplateListWithNoParams(channelId
+                    , product.getFields().getBrand()
+                    , product.getFields().getProductType()
+                    , product.getFields().getSizeType());
+
+            // 返回需要调用图片生成api的对象
+            for (CmsBtImageTemplateModel templateModel : templateModels) {
+
+                CreateImageParameter createImageParameter = new CreateImageParameter();
+                createImageParameter.setChannelId(channelId);
+                createImageParameter.setTemplateId(templateModel.getImageTemplateId());
+                createImageParameter.setFile(ImgUtils.getImageName(image.getImgName()));
+                createImageParameter.setVParam(new String[]{image.getImgName() + imageExtend});
+                imageDatas.add(createImageParameter);
+
+                // 获取产品对应的group信息
+                CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, product.getFields().getCode(), templateModel.getCartId());
+
+                // 返回templateImageUrl
+                String templateImageUrl = imageTemplateService.getTemplateImageUrl(channelId, templateModel.getImageTemplateId().toString(), image.getImgName() + imageExtend);
+
+                // 将模板图片插入到platformImage
+                CmsBtPlatformImagesModel platformImage = platformImagesService.selectByImageNameWithTemplate(channelId, templateModel.getCartId(), image.getImgName(), templateModel.getImageTemplateId());
+                platformImage.setSearchId(groupModel.getGroupId().toString());
+                platformImage.setOriginalImgUrl(templateImageUrl);
+                platformImage.setUpdFlg(0);
+                platformImage.setCreater(getTaskName());
+                platformImage.setModifier(getTaskName());
+                platformImagesService.save(platformImage);
+
+                // 上新
+                if (CmsConstants.ProductStatus.Approved.name().equals(product.getFields().getStatus()))
+                    productService.insertSxWorkLoad(channelId, product, getTaskName());
+            }
+        }
+
+        $info("本次生成图片模板的数量: " + imageDatas.size());
+        // 按每次可以批量生成图片的最大数拆分图片列表
+        List<List<CreateImageParameter>> splitImageDatas = CommonUtil.splitList(imageDatas, 200);
+
+        for (List<CreateImageParameter> imageData : splitImageDatas) {
+
+            // 调用图片生成API
+            ImageCreateAddListRequest request = new ImageCreateAddListRequest();
+            request.setData(imageData);
+            $debug("本次处理的图片信息:" + request);
+            ImageCreateAddListResponse response = imageCreateService.addList(request);
+            if (response.getErrorCode() > 0)
+                $error(imageData + " 调用图片生成API失败:" + response.getErrorMsg());
+        }
+    }
     private String ImageGetAndSendTask(String orderChannelId, List<CmsBtImagesModel> subImageUrlList) {
 
         long threadNo =  Thread.currentThread().getId();
@@ -212,12 +213,17 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         // 已上传成功图片处理标志置位
         int returnValue = 0;
         if (subSuccessImageUrlList.size() > 0) {
-
-            subSuccessImageUrlList.forEach(CmsBtImagesModel -> {
-                CmsBtImagesModel.setUpdFlg(1);
-                CmsBtImagesModel.setModifier(getTaskName());
-                cmsBtImagesDaoExt.updateImage(CmsBtImagesModel);
-            });
+            try {
+                imageTemplate(orderChannelId,subSuccessImageUrlList);
+                subSuccessImageUrlList.forEach(CmsBtImagesModel -> {
+                    CmsBtImagesModel.setUpdFlg(1);
+                    CmsBtImagesModel.setModifier(getTaskName());
+                    cmsBtImagesDaoExt.updateImage(CmsBtImagesModel);
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                issueLog.log(e,ErrorType.BatchJob,SubSystem.CMS);
+            }
         }
 
         if (urlErrorList.size() > 0) {
