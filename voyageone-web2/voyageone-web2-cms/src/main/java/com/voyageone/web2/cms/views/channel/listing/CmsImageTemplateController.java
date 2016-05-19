@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
@@ -8,6 +9,7 @@ import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +39,11 @@ public class CmsImageTemplateController extends CmsController {
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetPage)
     public AjaxResponse getPage(@RequestBody ImageTempateParameter param) {
-        Object result = service.getPage(param, this.getUser().getSelChannelId(), this.getLang());
+        String selChannelId = param.getChannelId();
+        if (StringUtils.isEmpty(selChannelId)) {
+            selChannelId = this.getUser().getSelChannelId();
+        }
+        Object result = service.getPage(param, selChannelId, this.getLang());
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.GetCount)
@@ -49,7 +55,9 @@ public class CmsImageTemplateController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_TEMPLATE.Save)
     public AjaxResponse save(@RequestBody CmsBtImageTemplateModel model) {
         CallResult result=new CallResult();
-        model.setChannelId(this.getUser().getSelChannelId());
+        if(StringUtil.isEmpty(model.getChannelId())) {
+            model.setChannelId(this.getUser().getSelChannelId());
+        }
        serviceCmsImageTemplate.save(model, this.getUser().getUserName());
         return success(result);
     }
