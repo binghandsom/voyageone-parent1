@@ -44,9 +44,10 @@
         </cache:caching>
     </cache:advice>
 
-    <aop:config>
-        <aop:advisor advice-ref="cachingCmsMtImageCreateTemplateDao"
-                     pointcut="execution(* com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao.*(..))"/>
-    </aop:config>
+
+    <!--<aop:config>-->
+        <!--<aop:advisor advice-ref="cachingCmsMtImageCreateTemplateDao"-->
+                     <!--pointcut="execution(* com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao.*(..))"/>-->
+    <!--</aop:config>-->
 
 </beans>
