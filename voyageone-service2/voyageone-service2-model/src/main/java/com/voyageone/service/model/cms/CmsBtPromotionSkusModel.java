@@ -29,6 +29,8 @@ public class CmsBtPromotionSkusModel extends BaseModel {
 
     protected String productSku;
 
+    protected String size;
+
     protected String catPath;
 
     protected Integer qty;
@@ -99,6 +101,14 @@ public class CmsBtPromotionSkusModel extends BaseModel {
 
     public void setProductSku(String productSku) {
         this.productSku = productSku == null ? null : productSku.trim();
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size == null ? null : size.trim();
     }
 
     public String getCatPath() {

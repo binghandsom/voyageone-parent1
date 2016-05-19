@@ -9,7 +9,6 @@ import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.GetImageResultBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
