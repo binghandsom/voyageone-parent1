@@ -160,7 +160,7 @@ define([
                 switch (me.selected.valueFrom) {
                     case options.MASTER:
 
-                        return me.ppService.getMainCategoryProps(mainCate.id).then(function (props) {
+                        return me.ppService.getMainCategoryProps(mainCate.id, false, true).then(function (props) {
 
                             // 如果是编辑, 则搜索选中字段的完整字段路径
                             // 编辑情况下, 有可能默认选中固定值, 但同时也会 load Master 属性, 所以这里需要特殊处理

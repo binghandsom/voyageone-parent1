@@ -87,7 +87,8 @@
         "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping",
         "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
-        "getCarts": "getCarts"
+        "getCarts": "getCarts",
+        "getCommonSchema": "getCommonSchema"
       },
       "$dictionaryService": {
         "root": "/cms/mapping/dictionary",
