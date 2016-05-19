@@ -92,7 +92,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
-                    $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
+                    $info(channelId + String.format("渠道本次有%d要推送NEXCESS图片服务器的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
 
                         // 上传图片到图片服务器
@@ -160,6 +160,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             }
                         }
 
+                        $info("本次生成图片模板的数量: " + imageDatas.size());
                         // 按每次可以批量生成图片的最大数拆分图片列表
                         List<List<CreateImageParameter>> splitImageDatas = CommonUtil.splitList(imageDatas, 200);
 
@@ -168,6 +169,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             // 调用图片生成API
                             ImageCreateAddListRequest request = new ImageCreateAddListRequest();
                             request.setData(imageData);
+                            $debug("本次处理的图片信息:" + request);
                             ImageCreateAddListResponse response = imageCreateService.addList(request);
                             if (response.getErrorCode() > 0)
                                 $error(imageData + " 调用图片生成API失败:" + response.getErrorMsg());
