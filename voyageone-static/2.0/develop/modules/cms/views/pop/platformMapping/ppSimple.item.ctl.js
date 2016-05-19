@@ -172,21 +172,21 @@ define([
                                 return;
                             }
 
-                            me.ppService.getPropertyPath(mainCate.id, me.ruleWord.value)
-                                .then(function (properties) {
+                            // 使用选中的叶子属性, 搜索完整的属性树枝干
+                            var properties = me.ppService.searchProperty(props, me.ruleWord.value);
 
-                                    if (!properties) {
-                                        values.push({selected: null, props: props});
-                                        return;
-                                    }
+                            // 如果搜索不到枝干(路径), 就默认不选中数据
+                            if (!properties) {
+                                values.push({selected: null, props: props});
+                                return;
+                            }
 
-                                    _.each(properties.reverse(), function (property) {
-                                        values.push({selected: property, props: props});
-                                        props = property.fields;
-                                        me.selected.value = property;
-                                    });
-
-                                });
+                            // 如果有, 则按倒序, 为每个下拉指定数据源和默认的选中项
+                            _.each(properties.reverse(), function (property) {
+                                values.push({selected: property, props: props});
+                                props = property.fields;
+                                me.selected.value = property;
+                            });
 
                         });
 

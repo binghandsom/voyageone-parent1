@@ -35,8 +35,8 @@ define([
             /**
              * 获取主数据类目属性的简化格式, 只包含 id 和 name
              * @param {string} mainCategoryId
-             * @param {boolean} withSku    是否追加 sku 属性
-             * @param {boolean} withCommon 是否追加通用属性
+             * @param {boolean} [withSku]    是否追加 sku 属性
+             * @param {boolean} [withCommon] 是否追加通用属性
              * @returns {Promise.<Field[]>}
              */
             getMainCategoryProps: function (mainCategoryId, withSku, withCommon) {
@@ -65,7 +65,7 @@ define([
 
                     if (commonSchema) {
                         // 深度 clone 并转换名称
-                        var newFields = commonSchema.fields.map(function(field) {
+                        var newFields = commonSchema.fields.map(function (field) {
                             var newField = angular.copy(field);
                             newField.name += ' ( common_schema )';
                             return newField;
@@ -163,23 +163,6 @@ define([
                 }
 
                 return defer.promise;
-            },
-
-            /**
-             * 根据 masterWord 查找完整字段路径
-             * @param {string} mainCategoryId
-             * @param {string} propertyId
-             * @param withSku
-             * @return {Promise.<Field[]>}
-             */
-            getPropertyPath: function (mainCategoryId, propertyId, withSku) {
-
-                return this.$getMainCategorySchema(mainCategoryId)
-                    .then(function (mainCategorySchema) {
-                        var fields = _.clone(mainCategorySchema.fields);
-                        if (withSku) fields.push(mainCategorySchema.sku);
-                        return this.searchProperty(fields, propertyId);
-                    }.bind(this));
             },
 
             /**
