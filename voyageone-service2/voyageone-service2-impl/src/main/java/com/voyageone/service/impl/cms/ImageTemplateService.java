@@ -408,4 +408,16 @@ public class ImageTemplateService extends BaseService {
         // 返回图片URl(其中图片名字%s未替换)
         return String.format(templateImageUrl, channelId, commonTemplateId, "%s");
     }
+
+    /**
+     * 返回图片Url
+     * @param channelId
+     * @param imageName
+     * @return
+     */
+    public String getImageFullUrl(String channelId, String imageName) {
+        String tempUrl = this.getDefaultImageUrl(channelId);
+
+        return tempUrl.replace("%s", imageName) + ".jpg";
+    }
 }

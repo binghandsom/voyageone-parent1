@@ -159,7 +159,8 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
      */
     protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String category) {
 
-        Map<String, Object> colums = getColumns();
+        Map colums = getColumns();
+        Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
         List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
         List<String> attList = new ArrayList<>();
@@ -196,9 +197,17 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
             vtmModelBean.setProductType(getProducType(vtmModelBean));
             vtmModelBean.setSizeType(getSizeType(vtmModelBean));
 
-            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
-            modelBeans.add(cmsBtFeedInfoModel);
+
+            if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
+                CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
+                beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(),cmsBtFeedInfoModel.getAttribute()));
+            }else{
+                modelBeans.add(cmsBtFeedInfoModel);
+                codeMap.put(cmsBtFeedInfoModel.getCode(),cmsBtFeedInfoModel);
+            }
 
         }
         $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());

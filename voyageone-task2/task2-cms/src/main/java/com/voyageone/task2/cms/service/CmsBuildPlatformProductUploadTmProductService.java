@@ -9,6 +9,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.BaseService;
@@ -69,6 +70,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("天猫获取匹配产品规则失败(调用天猫API异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (TopSchemaException ex) {
@@ -76,6 +78,15 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("天猫获取匹配产品规则失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(ex.getMessage());
+        } catch (Exception ex) {
+            // 异常
+            String errMsg = String.format("天猫获取匹配产品规则失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
+                    sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
+            $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
@@ -90,6 +101,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("匹配天猫产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
@@ -109,6 +121,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("没有找到天猫平台匹配的产品(调用天猫API异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (TopSchemaException ex) {
@@ -116,7 +129,16 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("没有找到天猫平台匹配的产品(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
+            throw new BusinessException(ex.getMessage());
+        } catch (Exception ex) {
+            // 异常
+            String errMsg = String.format("没有找到天猫平台匹配的产品！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
+                    sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
+            $error(errMsg);
+            sxData.setErrorMessage(errMsg);
+            ex.printStackTrace();
             throw new BusinessException(ex.getMessage());
         }
 
@@ -150,6 +172,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             } catch (Exception ex) {
                 String errMsg = String.format("调用天猫API查询产品状态失败！[PlatformProductId:%s]", pid);
                 $error(errMsg);
+                ex.printStackTrace();
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(ex.getMessage());
             }
@@ -245,6 +268,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("将取得的产品Schema xml转换为field列表失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
@@ -257,6 +281,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("天猫新增产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
@@ -274,6 +299,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("将取得所有field对应的属性值的列表转成xml字符串失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (ApiException ex) {
@@ -281,12 +307,21 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("调用天猫API上传产品失败(调用天猫API异常)！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                     sxData.getChannelId(), sxData.getCartId(), platformCategoryId, brandCode, failCause.toString());
             $error(errMsg);
+            ex.printStackTrace();
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(ex.getMessage());
+        } catch (Exception ex) {
+            // 异常
+            String errMsg = String.format("调用天猫API上传产品失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
+                    sxData.getChannelId(), sxData.getCartId(), platformCategoryId, brandCode, failCause.toString());
+            $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }
 
         // 成功，则更新状态
-        if (addProductResult != null) {
+        if (!StringUtils.isEmpty(addProductResult)) {
             // 将返回值xml字符串转换成field列表
             List<Field> result_fields = SchemaReader.readXmlForList(addProductResult);
             for (Field field : result_fields) {
@@ -342,6 +377,15 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             String errMsg = String.format("调用天猫API判断商品是否是达尔文体系失败(调用天猫API异常)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                     platformCategoryId, brandCode, failCause.toString());
             $error(errMsg);
+            ex.printStackTrace();
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(ex.getMessage());
+        } catch (Exception ex) {
+            // 异常
+            String errMsg = String.format("调用天猫API判断商品是否是达尔文体系失败！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
+                    platformCategoryId, brandCode, failCause.toString());
+            $error(errMsg);
+            ex.printStackTrace();
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         }

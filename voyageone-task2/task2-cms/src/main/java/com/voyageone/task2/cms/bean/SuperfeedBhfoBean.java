@@ -3037,7 +3037,7 @@ public class SuperfeedBhfoBean {
         temp.append(this.getTotalJacketLengthInches());
         temp.append(this.getTotalLengthInches());
         temp.append(this.getTotalSkirtLengthInches());
-        temp.append(this.getTotalquantitypooled());
+//        temp.append(this.getTotalquantitypooled());
         temp.append(this.getUmbrellaOpener());
         temp.append(this.getUpc());
         temp.append(this.getVents());

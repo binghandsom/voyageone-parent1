@@ -20,6 +20,16 @@ public class CmsBtImageTemplateModel extends BaseMongoModel {
     private  String imageTemplateContent;//模板内容 content
     private  String  templateModified;//模板内容改变时间戳
     private Integer active;
+    private  String  comment;
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public String getChannelId() {
         return channelId;
     }

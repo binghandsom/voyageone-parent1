@@ -79,11 +79,6 @@ public class SizeChartService extends BaseService {
     private String getSearchQuery(String channelId,String sizeChartName,String finishFlag
             ,String startTime,String endTime,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList) {
         StringBuilder sbQuery = new StringBuilder();
-        //channelId
-        if(!StringUtils.isEmpty(String.valueOf(channelId))){
-            sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
-            sbQuery.append(",");
-        }
         //sizeChartName
         if(!StringUtils.isEmpty(sizeChartName)){
             sbQuery.append("\"sizeChartName\":{$regex:\"").append(sizeChartName).append("\"},");
@@ -127,6 +122,14 @@ public class SizeChartService extends BaseService {
             sbQuery.append(MongoUtils.splicingValue("sizeType",  sizeTypeList.toArray(new String[sizeTypeList.size()])));
             sbQuery.append(",");
         }
+
+        // channelId
+        sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
+        sbQuery.append(",");
+
+        // active
+        sbQuery.append(MongoUtils.splicingValue("active", 1));
+
         return "{" + sbQuery.toString() + "}";
     }
     /**

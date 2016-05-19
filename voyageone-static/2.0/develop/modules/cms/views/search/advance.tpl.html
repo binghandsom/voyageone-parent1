@@ -313,15 +313,15 @@
 					</ul>
 				</div>&nbsp;
 				<div class="btn-group" uib-dropdown>
-					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+					<button type="button" class="btn btn-default" ng-disabled="vm.promotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
 					</button>
 					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
 						<!--<span class="caret"></span>-->
 					<!--</button>-->
 					<!-----------------------------参加活动------------------------------>
-					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
-						<li ng-repeat="promotion in vm.masterData.promotionList">
+					<ul uib-dropdown-menu ng-if="vm.promotionList.length">
+						<li ng-repeat="promotion in vm.promotionList">
 							<a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
@@ -377,7 +377,7 @@
 							<th class="text-center" translate="TXT_SALE_PRICE" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
-							<th class="text-left" ng-repeat="prop2 in vm.customProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}</th>
+							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
 							<th class="text-left" translate="TXT_TIME"style="display:inline-block;width:150px;padding-left:8px"></th>
 						</tr>
 						</thead>
@@ -413,7 +413,7 @@
 							</tr>
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}">
 								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;height: 110px">
-										<img image="{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
+										<a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)"><img image="{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r" /></a>
 									<div class="table_main pull-left" style="width:60%">
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
@@ -484,7 +484,7 @@
 							<td class="text-center" translate="TXT_SALE_PRICE" style="display:inline-block;width:150px;padding-left:8px"></td>
 							<td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
-							<th class="text-left" ng-repeat="prop2 in vm.customProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}</th>
+							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
 							<td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
 							<td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
 						</tr>
@@ -527,7 +527,7 @@
 								</tr>
 								<tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
 									<td class="text-left" style="display:inline-block;width:165px;height: 110px">
-										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r" ng-click="openImagedetail({'mainPic':groupInfo.fields.images1[0].image1, 'picList':groupInfo.fields.images1})"/>
+										<a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)"><img image="{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/></a>
 									</td>
 									<td class="text-left" style="display:inline-block;width:150px;">{{productInfo.fields.brand}}</td>
 									<td class="text-center" style="display:inline-block;width:85px;">

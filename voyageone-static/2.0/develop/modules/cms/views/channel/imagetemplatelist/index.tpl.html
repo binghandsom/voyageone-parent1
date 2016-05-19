@@ -126,7 +126,9 @@
                             <th class="mfb-xt text-center text-nowrap">{{'TXT_PLATFORM' | translate}}</th>
                             <th class="mfb-xxt text-center text-nowrap">{{'TXT_TEMPLATE_TYPE' | translate}}</th>
                             <th class="mfb-xxt text-center text-nowrap" style="width: 100px">{{'TXT_TEMPLATE_CONTENT' | translate}}</th>
-                            <th class="mfb-xxx text-center text-nowrap">{{'TXT_UPDATE_TIME' | translate}}</th>
+
+                            <th class="mfb-xxx text-center text-nowrap" style="width: 300px">{{'TXT_UPDATE_TIME' | translate}}</th>
+                            <th class="mfb-xxt text-center text-nowrap" >{{'TXT_COMMENT' | translate}}</th>
                             <th class="mfb-xx text-center text-nowrap">{{'BTN_EDIT' | translate}}</th>
                         </tr>
                         </thead>
@@ -140,8 +142,9 @@
                             <td class="mfb-xt text-center">{{model.viewTypeName}}</td>
                             <td class="mfb-xt text-center">{{model.cartName}}</td>
                             <td class="mfb-xxt text-center">{{model.imageTemplateTypeName}}</td>
-                            <td class="mfb-xxt text-center"><textarea  rows="3" readonly>{{model.imageTemplateContent}}</textarea></td>
+                            <td class="mfb-xxt text-center"><textarea style="resize: none;" rows="3" readonly>{{model.imageTemplateContent}}</textarea></td>
                             <td class="mfb-xxx text-center">{{model.modified}}</td>
+                            <td class="mfb-xxt text-center"><textarea style="resize: none;" rows="3" readonly>{{model.comment}}</textarea></td>
                             <td class="mfb-xx text-center">
                                 <button title="设置" class="btn btn-success btn-xs" ng-click="openImgTplEditing({search:search,model:model})"><i class="fa fa-cog"></i></button>
                                 <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa  fa-trash-o"></i></button>
