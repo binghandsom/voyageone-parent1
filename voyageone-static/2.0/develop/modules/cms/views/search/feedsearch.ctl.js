@@ -7,7 +7,7 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, selectRowsFactory, alert) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, selectRowsFactory, confirm, alert) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -146,12 +146,18 @@ define([
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            $feedSearchService.updateFeedStatus({'selList': selList}).then(function () {
-                search(1);
-            })
+            confirm($translate.instant('将选定的Feed状态设为等待导入，请确认。')).result
+                .then(function () {
+                    $feedSearchService.updateFeedStatus({'selList': selList}).then(function () {
+                        if (tempFeedSelect != null) {
+                            tempFeedSelect.clearSelectedList();
+                        }
+                        search(1);
+                    })
+                });
         };
     };
 
-    searchIndex.$inject = ['$scope','$routeParams','$feedSearchService','$translate','selectRowsFactory','alert'];
+    searchIndex.$inject = ['$scope','$routeParams','$feedSearchService','$translate','selectRowsFactory','confirm','alert'];
     return searchIndex;
 });

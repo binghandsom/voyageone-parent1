@@ -21,16 +21,10 @@
             // 循环处理全选中的数据
             angular.forEach(objectList.currPageRows, function(object) {
                 // 单签页面所有产品选中flag被标示
-                if (object['_nonChkFlg'] == undefined) {
-                    objectList.selFlag[object[id]] = objectList.selAllFlag;
-                }
-
+                objectList.selFlag[object[id]] = objectList.selAllFlag;
                 if (objectList.hasOwnProperty("selList")) {
                     var tempList = _.pluck(objectList.selList, id);
                     if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-                        if (object['_nonChkFlg'] == 1) {
-                            return;
-                        }
                         objectList.selList.push(object);
                     } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
                         objectList.selList.splice(tempList.indexOf(object[id]), 1);
@@ -62,7 +56,7 @@
             objectList.selAllFlag = true;
             tempList = _.pluck(objectList.selList, id);
             angular.forEach(objectList.currPageRows, function(object) {
-                if (tempList.indexOf(object[id]) == -1 && object['_nonChkFlg'] == undefined) {
+                if (tempList.indexOf(object[id]) == -1) {
                     objectList.selAllFlag = false;
                 }
             });
@@ -80,7 +74,7 @@
                 objectList.selAllFlag = true;
                 var tempList = _.pluck(objectList.selList, id);
                 angular.forEach(objectList.currPageRows, function(object) {
-                    if (tempList.indexOf(object[id]) == -1 && object['_nonChkFlg'] == undefined) {
+                    if (tempList.indexOf(object[id]) == -1) {
                         objectList.selAllFlag = false;
                     }
                 });

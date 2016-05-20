@@ -180,7 +180,7 @@
             <!--right-btn-->
             <div class="form-inline m-b-xs text-right">
                 <button class="btn btn-default" style="margin-top:4px" ng-click="updateFeedStatus()">
-                    <i class="fa fa-cog"></i>&nbsp;设置Feed状态
+                    <i class="fa fa-cog"></i>&nbsp;导入主数据
                 </button>&nbsp;
             </div><!-- /right-btn -->
             <div class="table-responsive">
@@ -219,9 +219,9 @@
                     <tr><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
                     <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
                         <td style="overflow: hidden;" class="text-right">{{$index + 1}}</td>
-                        <td style="overflow: hidden;;padding-left:0px" class="text-left"><label class="checkbox-inline c-checkbox">
-                            <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox"  ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(feedInfo._id, vm.feedSelList)" ng-disabled="feedInfo.updFlg==0">
+                        <td style="overflow: hidden;;padding-left:0px" class="text-left"><label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=0">
+                            <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(feedInfo._id, vm.feedSelList)">
                             <span class="fa fa-check"></span>
                         </label></td>
                         <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
