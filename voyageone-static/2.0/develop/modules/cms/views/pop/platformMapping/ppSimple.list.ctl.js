@@ -70,7 +70,7 @@ define([
 
                 // 加载主数据类目
                 // 页面呈现时, 需要使用其字段信息
-                self.ppService.getMainCategoryProps($mainCate.id)
+                self.ppService.getMainCategoryProps($mainCate.id, false, true)
 
                     .then(function (fields) {
                         self.mainCategory.fields = fields;

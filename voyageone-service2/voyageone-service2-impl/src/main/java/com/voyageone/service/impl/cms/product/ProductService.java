@@ -474,44 +474,52 @@ public class ProductService extends BaseService {
         /**
          * 更新carts
          */
-//        if (productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-//            List<Integer> oldCarts = new ArrayList<>();
-//            for (CmsBtProductModel_Carts cart : findModel.getCarts()) {
-//                oldCarts.add(cart.getCartId());
-//            }
+        if (productModel.getCarts().size() > 0) {
+
+            // 设置批量更新条件
+//            Map<String, Object> bulkQueryMap = new HashMap<>();
+//            bulkQueryMap.put("fields.code", productModel.getFields().getCode());
+
+            BasicDBObject queryObj = new BasicDBObject();
+            queryObj.put("fields.code", productModel.getFields().getCode());
+
+            BasicDBObject cartsObj = new BasicDBObject().append("carts", productModel.getCarts());
+            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", cartsObj);
+            cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
+        }
+
+//        if (bulkUpdateList.size() > 0) {
+//            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
+//        }
+
+
+
+
+//        for (CmsBtProductModel_Carts cartInfo : ) {
 //
-//            List<Integer> newCarts = new ArrayList<>();
-//            for (CmsBtProductModel_Sku sku:productModel.getSkus()) {
-//                newCarts.addAll(sku.getSkuCarts());
-//            }
-//            newCarts.removeAll(oldCarts);
-//            newCarts.stream().distinct().collect(toList());
+//            // 设置批量更新条件
+//            HashMap<String, Object> bulkQueryMap = new HashMap<>();
+//            bulkQueryMap.put("fields.code", productModel.getFields().getCode());
+//            bulkQueryMap.put("carts.cartId", cartInfo.getCartId());
 //
-//            List<BulkUpdateModel> bulkCartsList = new ArrayList<>();
-//            for (Integer cartId : newCarts) {
+//            HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+//            bulkUpdateMap.put("carts.$.platformStatus", cartInfo.getPlatformStatus().name());
+//            bulkUpdateMap.put("carts.$.publishTime", cartInfo.getPublishTime());
 //
-//                // 设置批量更新条件
-//                HashMap<String, Object> bulkQueryMap = new HashMap<>();
-//                bulkQueryMap.put("fields.code", productModel.getFields().getCode());
-//                bulkQueryMap.put("carts.cartId", cartId);
+//            BasicDBObject skusObj = new BasicDBObject().append("skus", skusList);
+//            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", skusObj);
+//            cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
 //
-//                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
-//                bulkUpdateMap.put("carts.$.platformStatus", CmsConstants.PlatformStatus.WaitingPublish.name());
+//            // 设定批量更新条件和值
+//            BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+//            bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+//            bulkUpdateModel.setQueryMap(bulkQueryMap);
+//            bulkCartsList.add(bulkUpdateModel);
+//        }
 //
-//                // 设定批量更新条件和值
-//                if (bulkUpdateMap.size() > 0) {
-//                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-//                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
-//                    bulkUpdateModel.setQueryMap(bulkQueryMap);
-//                    bulkCartsList.add(bulkUpdateModel);
-//                }
-//            }
-//
-//            // 批量更新product表
-//            if (bulkCartsList.size() > 0) {
-//                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkCartsList, null, "$set", true);
-//            }
-//
+//        // 批量更新product表
+//        if (bulkCartsList.size() > 0) {
+//            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkCartsList, null, "$set", true);
 //        }
 
     }
@@ -1086,8 +1094,6 @@ public class ProductService extends BaseService {
                 .filter(byCartId(carts))
                 .map(this::toProductModelCart)
                 .collect(Collectors.toList());
-
-        newCarts.addAll(carts);
 
         return newCarts;
     }
