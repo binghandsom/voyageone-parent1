@@ -188,11 +188,7 @@ public class TmallProductService {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(channelId, cartId);
-        ShopBean shopBean = getShop(channelId, cartId);
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
@@ -286,11 +282,7 @@ public class TmallProductService {
 
         ExpressionParser expressionParser = tcb.getExpressionParser();
 
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
-        ShopBean shopBean = getShop(orderChannelId, cartId);
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
 
         List<String> productCodeList = new ArrayList<>();
 
@@ -369,7 +361,7 @@ public class TmallProductService {
             String styleCode = cmsMainProduct.getFields().getModel();
             // modified by morse.lu end
             // test时要 start
-            styleCode = "test." + styleCode;
+//            styleCode = "test." + styleCode;
             // test时要 end
             workLoadBean.setStyle_code(styleCode);
             return styleCode;
@@ -502,11 +494,8 @@ public class TmallProductService {
         long categoryCode = tmallUploadRunState.getCategory_code();
         String brandCode = tmallUploadRunState.getBrand_code();
         String productCode = tmallUploadRunState.getProduct_code();
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(),
+                String.valueOf(workLoadBean.getCart_id()));
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
@@ -637,11 +626,7 @@ public class TmallProductService {
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(channelId, cartId);
-        ShopBean shopBean = getShop(channelId, cartId);
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
@@ -720,11 +705,7 @@ public class TmallProductService {
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage = tmallUploadRunState.getContextBuildFields();
 
@@ -886,11 +867,7 @@ public class TmallProductService {
 
     private String addTmallProduct(Long category_code, String brand_code, List<Field> productFields,
                                    WorkLoadBean workLoadBean) throws ApiException, TopSchemaException, TaskSignal {
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String product_code = null;
 
@@ -948,11 +925,7 @@ public class TmallProductService {
     }
 
     private String getProductStatus(String channel_id, String cart_id, Long product_id) throws ApiException, TopSchemaException {
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(channel_id, cart_id);
-        ShopBean shopBean = getShop(channel_id, cart_id);
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(channel_id, cart_id);
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         logger.debug("product status schema:" + schema);
         List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -1011,11 +984,7 @@ public class TmallProductService {
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
 
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(channelId, cartId);
-        ShopBean shopBean = getShop(channelId, cartId);
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
 
@@ -1102,11 +1071,7 @@ public class TmallProductService {
         Long categoryCode = tmallUploadRunState.getCategory_code();
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         String numId = workLoadBean.getNumId();
         String productId = workLoadBean.getProductId();
         Set<String> imageSet = new HashSet<>();
@@ -1182,11 +1147,8 @@ public class TmallProductService {
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
-        // modified by morse.lu 2016/05/15 start
-        // 临时写死上新target店铺
-//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-        // modified by morse.lu 2016/05/15 end
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+
 
         Map<String, String> urlMap;
         if (uploadImageResult.isUploadSuccess()) {
@@ -1353,7 +1315,7 @@ public class TmallProductService {
         SxData sxData = sxProductService.getSxProductDataByGroupId(workLoadBean.getOrder_channel_id(), workLoadBean.getGroupId());
         com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser rule_expressionParser = new com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser(sxProductService, sxData);
         // 临时写死上新target店铺
-        ShopBean shop = getShop(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
+        ShopBean shop = Shops.getShop(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
         // added by morse.lu 2016/05/16 end
 
         //第一步，先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
@@ -1465,7 +1427,7 @@ public class TmallProductService {
                         issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
                     }
-                    contextBuildFields.setXmlSkuData(xmlData.replace("<itemParam>","").replace("</itemParam>",""));
+                    contextBuildFields.setXmlSkuData(xmlData.replace("<itemParam>","").replace("</itemParam>","").replace("&amp;","&"));
 //                    contextBuildFields.getCustomFields().addAll(skuInfoFields);
 //                    contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
                     // modified by morse.lu 2016/05/16 end
@@ -1652,11 +1614,7 @@ public class TmallProductService {
                         final String sellerCategoryPropId = "seller_cids";
                         if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
                             String numId = workLoadBean.getNumId();
-                            // modified by morse.lu 2016/05/15 start
-                            // 临时写死上新target店铺
-//                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-                            ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-                            // modified by morse.lu 2016/05/15 end
+                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
                             try {
                                 TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
                                 String strXml = response.getUpdateItemResult();
@@ -2051,9 +2009,16 @@ public class TmallProductService {
         ShopBean shopBean = new ShopBean();
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform("TB");
+        // target 018
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        // target 018
+        // jewelry 010
         shopBean.setAppKey("21008948");
         shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+        // jewelry 010
         shopBean.setOrder_channel_id(order_channel_id);
         shopBean.setCart_id(cart_id);
         shopBean.setCart_type("3");
@@ -2061,7 +2026,7 @@ public class TmallProductService {
         shopBean.setComment("天猫国际");
         shopBean.setShop_name("target店");
         shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        
+
         return shopBean;
     }
 

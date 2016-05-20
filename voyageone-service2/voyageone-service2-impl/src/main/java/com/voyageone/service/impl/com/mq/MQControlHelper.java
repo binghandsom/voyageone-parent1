@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.com.mq;
 
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,4 +34,7 @@ public class MQControlHelper {
         return rabbitListenerEndpointRegistry.getListenerContainer(beanName).isRunning();
     }
 
+    public static void setConcurrentConsumers(String beanName, int count){
+        ((SimpleMessageListenerContainer)rabbitListenerEndpointRegistry.getListenerContainer(beanName)).setConcurrentConsumers(count);
+    }
 }

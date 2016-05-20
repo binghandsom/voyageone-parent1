@@ -60,9 +60,10 @@ public class MqSender extends BaseService {
             }
 
             final int finalRetryTimes = retryTimes;
-            amqpTemplate.send(routingKey, new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
+            Message message = new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
                 setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
-            }}));
+            }});
+            amqpTemplate.send(routingKey, message);
 
         } catch (Exception e) {
             $error(e.getMessage(), e);

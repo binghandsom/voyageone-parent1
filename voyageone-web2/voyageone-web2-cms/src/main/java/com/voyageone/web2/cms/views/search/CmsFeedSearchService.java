@@ -5,6 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -259,4 +260,20 @@ public class CmsFeedSearchService extends BaseAppService {
         }
     }
 
+    // 批量更新FEED状态信息
+    public void updateFeedStatus(List<Map> params, UserSessionBean userInfo) {
+        List<String> codeList = new ArrayList<>(params.size());
+        params.forEach(para -> codeList.add((String) para.get("code")));
+        HashMap paraMap1 = new HashMap(1);
+        paraMap1.put("$in", codeList);
+        HashMap paraMap2 = new HashMap(1);
+        paraMap2.put("code", paraMap1);
+
+        HashMap valueMap = new HashMap(1);
+        valueMap.put("updFlg", 0);
+        valueMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        valueMap.put("modifier", userInfo.getUserName());
+
+        feedInfoService.updateFeedInfo(userInfo.getSelChannelId(), paraMap2, valueMap);
+    }
 }

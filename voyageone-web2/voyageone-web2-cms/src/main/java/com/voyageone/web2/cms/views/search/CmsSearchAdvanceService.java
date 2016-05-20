@@ -76,7 +76,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.images2;fields.images3;fields.images4;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
@@ -176,7 +176,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         // 获取label
         Map param = new HashMap<>(2);
-        param.put("channel_id", userInfo.getSelChannelId());
+        param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
         masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
 
@@ -262,8 +262,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         codeArr = prodCodeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
 
-        Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
-        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";")));
+        String plusStr = (String) cmsSessionBean.getAttribute("_adv_search_props_searchItems");
+        if (plusStr == null) {
+            plusStr = "";
+        }
+        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat(plusStr).split(";")));
         queryObject.setProjection(projStr.toString());
         queryObject.setSort(setSortValue(searchValue));
 
