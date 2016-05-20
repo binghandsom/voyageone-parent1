@@ -134,7 +134,7 @@ public class JmProductBean extends JmBaseBean {
         this.dealInfo = dealInfo;
     }
 
-    public String toJsonStr() throws Exception {
+    public String toJsonStr() throws IOException {
         JmProductBean resultBean = new JmProductBean();
         resultBean.setProduct_spec_number(product_spec_number);
         resultBean.setCategory_v3_4_id(category_v3_4_id);
