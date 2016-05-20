@@ -189,7 +189,7 @@
                     <tr>
                         <th class="text-right" style="white-space: nowrap;width:40px">No.</th>
                         <th class="text-left" style="white-space: nowrap;width:40px;padding-left:0px"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length">
+                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label></th>
                         <th class="text-center mfb-x" style="white-space: nowrap">图片</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Category</th>
