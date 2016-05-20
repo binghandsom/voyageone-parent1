@@ -19,7 +19,7 @@
             JOIN voyageone_cms2.cms_bt_tasks t
                 ON b.task_id = t.id
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
-                ON pc.product_id = t.promotion_id
+                ON pc.promotion_id = t.promotion_id
                    AND pc.product_code = b.product_code
         SET b.message = #{message},
         b.syn_flag = #{syn_flag}
