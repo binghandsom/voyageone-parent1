@@ -18,4 +18,17 @@
     <properties>
         <voyageone.tools.daocodegen.version>1.0.0-SNAPSHOT</voyageone.tools.daocodegen.version>
     </properties>
+    <build>
+        <finalName>voyageone-dao-codegen</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

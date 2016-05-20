@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionSkusModel" />
     <sql id="Base_Column_List" >
         `id`, `promotion_id`, `org_channel_id`, `model_id`, `product_id`, `num_iid`, `product_model`, 
-        `product_code`, `product_sku`, `cat_path`, `qty`, `syn_flg`, `err_msg`, `created`, 
+        `product_code`, `product_sku`, `size`, `cat_path`, `qty`, `syn_flg`, `err_msg`, `created`, 
         `creater`, `modified`, `modifier`
     </sql>
 
@@ -41,6 +41,9 @@
             </if>
             <if test="productSku != null" >
                 `product_sku`,
+            </if>
+            <if test="size != null" >
+                `size`,
             </if>
             <if test="catPath != null" >
                 `cat_path`,
@@ -90,6 +93,9 @@
             </if>
             <if test="productSku != null" >
                 #{productSku,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null" >
+                #{size,jdbcType=VARCHAR},
             </if>
             <if test="catPath != null" >
                 #{catPath,jdbcType=VARCHAR},
@@ -153,6 +159,9 @@
             </if>
             <if test="productSku != null" >
                 `product_sku` = #{productSku,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null" >
+                `size` = #{size,jdbcType=VARCHAR},
             </if>
             <if test="catPath != null" >
                 `cat_path` = #{catPath,jdbcType=VARCHAR},
@@ -219,6 +228,9 @@
             <if test="productSku != null" >
                 and `product_sku` = #{productSku,jdbcType=VARCHAR}
             </if>
+            <if test="size != null" >
+                and `size` = #{size,jdbcType=VARCHAR}
+            </if>
             <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
@@ -274,6 +286,9 @@
             </if>
             <if test="productSku != null" >
                 and `product_sku` = #{productSku,jdbcType=VARCHAR}
+            </if>
+            <if test="size != null" >
+                and `size` = #{size,jdbcType=VARCHAR}
             </if>
             <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}

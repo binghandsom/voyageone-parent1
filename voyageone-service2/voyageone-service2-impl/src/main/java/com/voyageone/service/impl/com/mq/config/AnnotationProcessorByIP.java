@@ -322,7 +322,7 @@ public class AnnotationProcessorByIP
             }
         }
         for (String queue : queues) {
-            amqpAdmin.declareQueue(new Queue(queue, true, false, true));
+            amqpAdmin.declareQueue(new Queue(queue, true, false, local));
         }
         endpoint.setQueueNames(queues);
         /**

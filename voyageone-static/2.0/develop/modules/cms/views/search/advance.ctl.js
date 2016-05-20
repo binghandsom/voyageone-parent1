@@ -171,17 +171,6 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion (promotion, openAddToPromotion) {
-            var selList = [];
-            if ($scope.vm.currTab === 'group') {
-                _.forEach($scope.vm.groupSelList.selList, function (info) {
-                    selList.push({"id": info.id, "code": info.code});
-                    _.forEach(info.prodIds, function (prodInfo) {
-                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
-                    })
-                });
-            } else {
-                selList = $scope.vm.productSelList.selList;
-            }
             openAddToPromotion(promotion, getSelProductList()).then(function () {
                 getGroupList();
                 getProductList();
@@ -319,17 +308,7 @@ define([
          * 添加产品到指定自由标签
          */
         function addFreeTag (tagBean) {
-            var selList = [];
-            if ($scope.vm.currTab === 'group') {
-                _.forEach($scope.vm.groupSelList.selList, function (info) {
-                    selList.push({"id": info.id, "code": info.code});
-                    _.forEach(info.prodIds, function (prodInfo) {
-                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
-                    })
-                });
-            } else {
-                selList = $scope.vm.productSelList.selList;
-            }
+            var selList = getSelProductList();
             if (selList && selList.length) {
                 var productIds = [];
                 _.forEach(selList, function (object) {

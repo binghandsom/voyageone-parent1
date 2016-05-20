@@ -35,7 +35,8 @@
       "$feedSearchService": {
         "root": "/cms/search/feed/",
         "init": "init",
-        "search": "search"
+        "search": "search",
+        "updateFeedStatus": "updateFeedStatus"
       }
     },
     "group": {

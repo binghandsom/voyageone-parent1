@@ -6,56 +6,58 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService, cartList,items,confirm,$translate) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope, promotionService, cartList, items, confirm, notify, $translate) {
 
         $scope.promotion = {};
-        $scope.tejiabao=false;
+        $scope.tejiabao = false;
         $scope.cartList = cartList;
         $scope.datePicker = [];
         $scope.isEdit = false;
 
-        $scope.initialize  = function () {
-            if(items){
+        $scope.initialize = function () {
+            if (items) {
                 $scope.promotion = angular.copy(items);
                 $scope.isEdit = $scope.promotion.promotionStatus;
-                if($scope.promotion.tejiabaoId != "0"){
-                    $scope.tejiabao=true;
+                if ($scope.promotion.tejiabaoId != "0") {
+                    $scope.tejiabao = true;
                 }
-            }else{
-                $scope.promotion.tagList=[{"id":"","channelId":"","tagName":""}];
+            } else {
+                $scope.promotion.tagList = [{"id": "", "channelId": "", "tagName": ""}];
             }
         };
-        $scope.addTag = function(){
-            if($scope.promotion.tagList)
-            {
-                $scope.promotion.tagList.push({"id":"","channelId":"","tagName":""});
-            }else{
-                $scope.promotion.tagList=[{"id":"","channelId":"","tagName":""}];
-            }
 
+        $scope.addTag = function () {
+            if ($scope.promotion.tagList) {
+                $scope.promotion.tagList.push({"id": "", "channelId": "", "tagName": ""});
+            } else {
+                $scope.promotion.tagList = [{"id": "", "channelId": "", "tagName": ""}];
+            }
         };
-        $scope.delTag = function(parent,node){
+
+        $scope.delTag = function (parent, node) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
                 .then(function () {
                     var index;
-                    index=_.indexOf(parent,node);
-                    if(index >-1 ){
-                        parent.splice(index,1);
+                    index = _.indexOf(parent, node);
+                    if (index > -1) {
+                        parent.splice(index, 1);
                     }
                 });
         };
-        $scope.ok = function(){
 
-            if(!$scope.tejiabao)
+        $scope.ok = function () {
+
+            if (!$scope.tejiabao)
                 $scope.promotion.tejiabaoId = "0";
 
-            if(!$scope.promotionForm.$valid || !$scope.promotion.tagList)
+            if (!$scope.promotionForm.$valid || !$scope.promotion.tagList)
                 return;
 
-            for (var i = 0; i < $scope.promotion.tagList.length; i++) {
-                if ($scope.promotion.tagList[i].tagName == "") {
-                    return;
-                }
+            if ($scope.promotion.tagList.find(function (tag) {
+                    return !tag.tagName;
+                })) {
+                notify.danger('Please give me a Tag !');
+                return;
             }
 
             if (!items) {
@@ -70,19 +72,4 @@ define([
             }
         }
     });
-
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
 });

@@ -305,6 +305,7 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/search/feed";
             String INIT = "init";
             String SEARCH = "search";
+            String UPDATE = "updateFeedStatus";
         }
     }
 
