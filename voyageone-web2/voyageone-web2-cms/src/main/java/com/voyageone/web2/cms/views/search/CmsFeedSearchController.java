@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -117,4 +118,36 @@ public class CmsFeedSearchController extends CmsController {
         return success(resultBean);
     }
 
+    /**
+     * @api {post} /cms/search/feed/updateFeedStatus 2.3 批量更新FEED状态信息
+     * @apiName updateFeedStatus
+     * @apiDescription 批量更新FEED状态信息
+     * @apiGroup search
+     * @apiVersion 0.0.1
+     * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String[]} selList 已选择的feed list
+     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
+     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
+     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
+     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+     * @apiSuccessExample 成功响应更新请求
+     * {
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
+     * }
+     * @apiExample  业务说明
+     *  批量更新FEED状态信息
+     * @apiExample 使用表
+     *  使用mongo:cms_bt_feed_info_cxxx表
+     * @apiSampleRequest off
+     */
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE)
+    public AjaxResponse updateFeedStatus(@RequestBody Map params) {
+        List selList = (List) params.get("selList");
+        if (selList == null || selList.isEmpty()) {
+            throw new BusinessException("请至少选择一个Feed.");
+        }
+        searchService.updateFeedStatus(selList, getUser());
+        // 返回结果信息
+        return success(null);
+    }
 }

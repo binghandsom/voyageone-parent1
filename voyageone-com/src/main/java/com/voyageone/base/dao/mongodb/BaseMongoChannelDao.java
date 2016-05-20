@@ -103,6 +103,22 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, getCollectionName(channelId));
     }
 
+    /**
+     * 根据条件更新指定值
+     * @param channelId String
+     * @param paraMap 更新条件
+     * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
+     * @return WriteResult
+     */
+    public WriteResult update(String channelId, Map paraMap, Map rsMap) {
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BasicDBObject params = new BasicDBObject();
+        params.putAll(paraMap);
+        BasicDBObject result = new BasicDBObject();
+        result.putAll(rsMap);
+        return coll.update(params, result, false, true);
+    }
 
     /**
      * 批量更新记录
