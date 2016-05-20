@@ -36,7 +36,7 @@
                    AND pm.num_iid = b.num_iid
         SET b.message = #{message},
         b.syn_flag = #{syn_flag}
-        WHERE t.task_id = #{task_id}
+        WHERE t.id = #{task_id}
               AND pm.id IS NULL;
     </update>
 
