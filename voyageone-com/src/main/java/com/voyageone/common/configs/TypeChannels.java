@@ -57,7 +57,7 @@ public class TypeChannels {
         });
         List<TypeChannelBean> beans=CacheHelper.getBeans(KEY,keyList, selfClass);
         return CollectionUtils.isEmpty(beans)
-                ? null
+                ? new ArrayList<>()
                 : beans
                     .stream()
                     .sorted((a,b)->{
@@ -187,7 +187,6 @@ public class TypeChannels {
     public static TypeChannelBean getTypeChannelByCode(String type, String channel_id, String value, String lang_id) {
 
         List<TypeChannelBean> typeList = getTypeChannelBeans(type, channel_id);
-
         for (TypeChannelBean typeChannelBean : typeList) {
 
             if (typeChannelBean.getValue().equals(value) && typeChannelBean.getLang_id().equals(lang_id))

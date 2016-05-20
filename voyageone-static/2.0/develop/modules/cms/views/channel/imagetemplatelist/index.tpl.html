@@ -75,6 +75,7 @@
                                         <input type="text" ng-model="searchInfo.imageTemplateName" class="form-control">
                                     </div>
                                 </div>
+
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">{{'TXT_TEMPLATE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
@@ -95,11 +96,18 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">channelId</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" ng-model="searchInfo.channelId" class="form-control">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12 text-center m-b-sm"  ng-controller="popupCtrl">
                         <div class="form-inline">
+
                             <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                             <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH' | translate}}</button>
                             <button class="btn btn-success" ng-click="openImgTplEditing({search:search})"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>

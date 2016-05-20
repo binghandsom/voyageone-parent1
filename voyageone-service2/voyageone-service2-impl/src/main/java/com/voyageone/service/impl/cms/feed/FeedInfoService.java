@@ -10,7 +10,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * feed info Service
@@ -50,8 +52,16 @@ public class FeedInfoService extends BaseService {
      * @param cmsBtFeedInfoModel feed的产品信息
      * @return     WriteResult
      */
-    public WriteResult updateFeedInfo(CmsBtFeedInfoModel cmsBtFeedInfoModel){
+    public WriteResult updateFeedInfo(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         return cmsBtFeedInfoDao.update(cmsBtFeedInfoModel);
     }
 
+    /**
+     * 更新feed的产品信息
+     */
+    public WriteResult updateFeedInfo(String channelId, Map paraMap, Map rsMap) {
+        HashMap valueMap = new HashMap(1);
+        valueMap.put("$set", rsMap);
+        return cmsBtFeedInfoDao.update(channelId, paraMap, valueMap);
+    }
 }

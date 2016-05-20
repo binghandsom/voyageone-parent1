@@ -41,6 +41,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private Map<String,List<String>> attribute = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private int updFlg;
+    private int qty;
     private String clientProductURL = "";
 
     private String productType;
@@ -285,5 +286,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 }

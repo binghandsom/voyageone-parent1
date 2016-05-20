@@ -37,7 +37,12 @@ var build = {
                 'develop/static/css/font-awesome/css/font-awesome.css',
                 'develop/static/css/simple-line-icons/css/simple-line-icons.css',
                 'develop/static/css/glyphicons-regular/css/font.css',
-                'develop/static/css/app.css'
+                'develop/static/css/app.reset.css',
+                'develop/static/css/app.bootstrap.custom.css',
+                'develop/static/css/app.old.css',
+                'develop/static/css/app.custom.css',
+                'develop/static/css/app.components.css',
+                'develop/static/css/app.pages.css'
             ],
             dist: 'develop/static/css/',
             concat: 'app.min.css'

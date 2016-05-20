@@ -441,7 +441,11 @@ define(function() {
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
         "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
         "TXT_IMPORT_TEXT": "Import text",
-
+        "TXT_FeedStatus_New": "New",
+        "TXT_FeedStatus_WaitingForImport": "Waiting For Import",
+        "TXT_FeedStatus_FinishImport": "Finish Import",
+        "TXT_FeedStatus_Error": "Error",
+        "TXT_FeedStatus_NotImport": "Not Import",
 
 
 

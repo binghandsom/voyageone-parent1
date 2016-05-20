@@ -176,7 +176,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         // 获取label
         Map param = new HashMap<>(2);
-        param.put("channel_id", userInfo.getSelChannelId());
+        param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
         masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
 
@@ -262,8 +262,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         codeArr = prodCodeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
 
-        Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
-        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";")));
+        String plusStr = (String) cmsSessionBean.getAttribute("_adv_search_props_searchItems");
+        if (plusStr == null) {
+            plusStr = "";
+        }
+        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat(plusStr).split(";")));
         queryObject.setProjection(projStr.toString());
         queryObject.setSort(setSortValue(searchValue));
 
