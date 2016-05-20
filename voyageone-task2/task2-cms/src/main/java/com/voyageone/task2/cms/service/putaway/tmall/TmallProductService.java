@@ -9,12 +9,26 @@ import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.*;
+import com.taobao.top.schema.field.ComplexField;
+import com.taobao.top.schema.field.Field;
+import com.taobao.top.schema.field.InputField;
+import com.taobao.top.schema.field.MultiCheckField;
+import com.taobao.top.schema.field.MultiComplexField;
+import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.value.ComplexValue;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
+import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
+import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -61,7 +75,14 @@ public class TmallProductService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
+    private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
+
+    @Autowired
     TbProductService tbProductService;
+    @Autowired
+    private SxProductService sxProductService;
+    @Autowired
+    private SkuFieldBuilderService skuFieldBuilderService;
     @Autowired
     private BrandMapDao brandMapDao;
     @Autowired
@@ -167,7 +188,11 @@ public class TmallProductService {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        ShopBean shopBean = getShop(channelId, cartId);
+        // modified by morse.lu 2016/05/15 end
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
@@ -261,7 +286,11 @@ public class TmallProductService {
 
         ExpressionParser expressionParser = tcb.getExpressionParser();
 
-        ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
+        ShopBean shopBean = getShop(orderChannelId, cartId);
+        // modified by morse.lu 2016/05/15 end
 
         List<String> productCodeList = new ArrayList<>();
 
@@ -295,7 +324,7 @@ public class TmallProductService {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
         constructCustomPlatformProps(tcb, fieldMap, expressionParser, null);
-        constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, null);
+        constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, new HashSet<>());
         List<Field> searchFields = resolveMappingProps(tmallUploadRunState, null);
 
         try {
@@ -335,7 +364,13 @@ public class TmallProductService {
         boolean isDarwin = tmallUploadRunState.is_darwin();
 
         if (!isDarwin) {
-            String styleCode = cmsMainProduct.getFields().getCode();
+            // modified by morse.lu start
+//            String styleCode = cmsMainProduct.getFields().getCode();
+            String styleCode = cmsMainProduct.getFields().getModel();
+            // modified by morse.lu end
+            // test时要 start
+            styleCode = "test." + styleCode;
+            // test时要 end
             workLoadBean.setStyle_code(styleCode);
             return styleCode;
         } //如果是达尔文体系
@@ -467,8 +502,11 @@ public class TmallProductService {
         long categoryCode = tmallUploadRunState.getCategory_code();
         String brandCode = tmallUploadRunState.getBrand_code();
         String productCode = tmallUploadRunState.getProduct_code();
-        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(),
-                String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 end
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
@@ -599,7 +637,11 @@ public class TmallProductService {
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        ShopBean shopBean = getShop(channelId, cartId);
+        // modified by morse.lu 2016/05/15 end
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
@@ -661,7 +703,7 @@ public class TmallProductService {
 
         try {
             logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
-            String numId = addTmallItem(categoryCode, productCode, itemFields, shopBean);
+            String numId = addTmallItem(categoryCode, productCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
@@ -678,7 +720,11 @@ public class TmallProductService {
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
-        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 end
 
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage = tmallUploadRunState.getContextBuildFields();
 
@@ -712,7 +758,7 @@ public class TmallProductService {
 
         try {
             logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
-            String numId = addTmallItem(categoryCode, productCode, itemFields, shopBean);
+            String numId = addTmallItem(categoryCode, productCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
             logger.debug("after addTmallItem");
             tcb.setNumId(numId);
         } catch (ApiException e) {
@@ -744,7 +790,7 @@ public class TmallProductService {
     }
 */
 
-    private String addTmallItem(Long categoryCode, String productCode, List<Field> itemFields, ShopBean shopBean) throws ApiException, TaskSignal {
+    private String addTmallItem(Long categoryCode, String productCode, List<Field> itemFields, ShopBean shopBean, String xmlSkuData, WorkLoadBean workLoadBean) throws ApiException, TaskSignal {
         String xmlData;
 
         try {
@@ -753,6 +799,18 @@ public class TmallProductService {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
         }
+
+        // added by morse.lu 2016/05/17 start
+        // 由于sku属性设值修正，临时添加
+        if (!StringUtils.isEmpty(xmlSkuData)) {
+            xmlData = xmlData.replace("</itemParam>", "").concat(xmlSkuData).concat("</itemParam>");
+        }
+        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImagesList(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), String.valueOf(workLoadBean.getGroupId()));
+        for (CmsBtPlatformImagesModel model:imageUrlModel) {
+            xmlData = xmlData.replace(model.getOriginalImgUrl(), model.getPlatformImgUrl());
+        }
+        // added by morse.lu 2016/05/17 end
+
         StringBuffer failCause = new StringBuffer();
         logger.debug("tmall category code:" + categoryCode);
         logger.debug("xmlData:" + xmlData);
@@ -828,7 +886,11 @@ public class TmallProductService {
 
     private String addTmallProduct(Long category_code, String brand_code, List<Field> productFields,
                                    WorkLoadBean workLoadBean) throws ApiException, TopSchemaException, TaskSignal {
-        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 end
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String product_code = null;
 
@@ -886,7 +948,11 @@ public class TmallProductService {
     }
 
     private String getProductStatus(String channel_id, String cart_id, Long product_id) throws ApiException, TopSchemaException {
-        ShopBean shopBean = Shops.getShop(channel_id, cart_id);
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(channel_id, cart_id);
+        ShopBean shopBean = getShop(channel_id, cart_id);
+        // modified by morse.lu 2016/05/15 end
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         logger.debug("product status schema:" + schema);
         List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -945,7 +1011,11 @@ public class TmallProductService {
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
 
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        ShopBean shopBean = getShop(channelId, cartId);
+        // modified by morse.lu 2016/05/15 end
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
 
@@ -1032,7 +1102,11 @@ public class TmallProductService {
         Long categoryCode = tmallUploadRunState.getCategory_code();
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
-        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 end
         String numId = workLoadBean.getNumId();
         String productId = workLoadBean.getProductId();
         Set<String> imageSet = new HashSet<>();
@@ -1089,7 +1163,7 @@ public class TmallProductService {
 
         try {
             logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + ", numIId:" + numId + "]");
-            numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean);
+            numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
@@ -1108,8 +1182,11 @@ public class TmallProductService {
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
-        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
-
+        // modified by morse.lu 2016/05/15 start
+        // 临时写死上新target店铺
+//        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        // modified by morse.lu 2016/05/15 end
 
         Map<String, String> urlMap;
         if (uploadImageResult.isUploadSuccess()) {
@@ -1141,7 +1218,7 @@ public class TmallProductService {
 
         try {
             logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + "]");
-            numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean);
+            numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
@@ -1152,7 +1229,7 @@ public class TmallProductService {
         throw new TaskSignal(TaskSignalType.DONE, null);
     }
 
-    private String updateTmallItem(String productId, String numId, Long categoryCode, List<Field> itemFields, ShopBean shopBean) throws TaskSignal, ApiException {
+    private String updateTmallItem(String productId, String numId, Long categoryCode, List<Field> itemFields, ShopBean shopBean, String xmlSkuData, WorkLoadBean workLoadBean) throws TaskSignal, ApiException {
         String xmlData;
 
         try {
@@ -1161,6 +1238,18 @@ public class TmallProductService {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
         }
+
+        // added by morse.lu 2016/05/17 start
+        // 由于sku属性设值修正，临时添加
+        if (!StringUtils.isEmpty(xmlSkuData)) {
+            xmlData = xmlData.replace("</itemParam>", "").concat(xmlSkuData).concat("</itemParam>");
+        }
+        List<CmsBtPlatformImagesModel> imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImagesList(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), String.valueOf(workLoadBean.getGroupId()));
+        for (CmsBtPlatformImagesModel model:imageUrlModel) {
+            xmlData = xmlData.replace(model.getOriginalImgUrl(), model.getPlatformImgUrl());
+        }
+        // added by morse.lu 2016/05/17 end
+
         StringBuffer failCause = new StringBuffer();
         logger.debug("tmall category code:" + categoryCode);
         logger.debug("numId:" + numId);
@@ -1260,6 +1349,13 @@ public class TmallProductService {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
 
+        // added by morse.lu 2016/05/16 start
+        SxData sxData = sxProductService.getSxProductDataByGroupId(workLoadBean.getOrder_channel_id(), workLoadBean.getGroupId());
+        com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser rule_expressionParser = new com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser(sxProductService, sxData);
+        // 临时写死上新target店铺
+        ShopBean shop = getShop(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
+        // added by morse.lu 2016/05/16 end
+
         //第一步，先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
         List<CustomPlatformPropMappingModel> customPlatformPropMappingModels = platformPropCustomMappingDao.getCustomMappingPlatformProps(workLoadBean.getCart_id());
 
@@ -1302,34 +1398,77 @@ public class TmallProductService {
                     String categoryCode = String.valueOf(tmallUploadRunState.getCategory_code());
 
                     workLoadBean.setHasSku(true);
+                    // modified by morse.lu 2016/05/16 start
+//                    List<Field> allSkuFields = new ArrayList<>();
+//                    recursiveGetFields(processFields, allSkuFields);
+//                    AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, allSkuFields);
+//                    if (skuFieldBuilder == null)
+//                    {
+//                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
+//                    }
+//
+//                    skuFieldBuilder.setExpressionParser(expressionParser);
+//
+//                    DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
+//                    RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//                    DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
+//                    String codePropImageTemplate = expressionParser.parse(dictWord.getExpression(), null);
+//                    skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
+//
+//                    List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, processFields,
+//                            workLoadBean.getProcessProducts(), workLoadBean.getSkuProductMap(),
+//                            workLoadBean.getCmsMtPlatformMappingModel(), workLoadBean.getSkuInventoryMap(),
+//                            contextBuildCustomFields, imageSet);
 
-                    List<Field> allSkuFields = new ArrayList<>();
-                    recursiveGetFields(processFields, allSkuFields);
-                    AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, allSkuFields);
-                    if (skuFieldBuilder == null)
-                    {
-                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
+                    sxData.setHasSku(true);
+                    List<com.voyageone.common.masterdate.schema.field.Field> allSkuFields = new ArrayList<>();
+                    recursiveGetFieldsNew(processFields, allSkuFields);
+                    com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder skuFieldService;
+                    try {
+                        skuFieldService = skuFieldBuilderService.getSkuFieldBuilder(cartId, allSkuFields);
+                    } catch (Exception e) {
+                        throw new BusinessException("getSkuFieldBuilder error, ex is ["+ e.getMessage() + "]");
+                    }
+                    if (skuFieldService == null) {
+                        throw new BusinessException("No sku builder find");
                     }
 
-                    skuFieldBuilder.setExpressionParser(expressionParser);
+                    try {
+                        skuFieldService.setCodeImageTemplate(sxProductService.resolveDict("属性图片模板",rule_expressionParser,shop, "TmallProductService", null));
+                    } catch (Exception e) {
+                        throw new BusinessException("属性图片模板 设定失败！");
+                    }
 
-                    DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
-                    RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-                    DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
-                    String codePropImageTemplate = expressionParser.parse(dictWord.getExpression(), null);
-                    skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
-
-                    List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, processFields,
-                            workLoadBean.getProcessProducts(), workLoadBean.getSkuProductMap(),
-                            workLoadBean.getCmsMtPlatformMappingModel(), workLoadBean.getSkuInventoryMap(),
-                            contextBuildCustomFields, imageSet);
+                    List<com.voyageone.common.masterdate.schema.field.Field> skuInfoFields;
+                    try {
+                       skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, rule_expressionParser, workLoadBean.getCmsMtPlatformMappingModel(), workLoadBean.getSkuInventoryMap(), shop, "TmallProductService");
+                    } catch (Exception e) {
+                        logger.warn(e.getMessage());
+                        throw new BusinessException("Can't build SkuInfoField");
+                    }
+                    // modified by morse.lu 2016/05/16 end
 
                     if (skuInfoFields == null)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't build SkuInfoField"));
                     }
-                    contextBuildFields.getCustomFields().addAll(skuInfoFields);
-                    contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
+
+                    // modified by morse.lu 2016/05/16 start
+                    // old modified src is not right
+//                    for (com.voyageone.common.masterdate.schema.field.Field f :skuInfoFields) {
+//                        contextBuildFields.addCustomField(deepCloneToTbField(f));
+//                    }
+                    String xmlData;
+                    try {
+                        xmlData = com.voyageone.common.masterdate.schema.factory.SchemaWriter.writeParamXmlString(skuInfoFields);
+                    } catch (com.voyageone.common.masterdate.schema.exception.TopSchemaException e) {
+                        issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+                    }
+                    contextBuildFields.setXmlSkuData(xmlData.replace("<itemParam>","").replace("</itemParam>",""));
+//                    contextBuildFields.getCustomFields().addAll(skuInfoFields);
+//                    contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
+                    // modified by morse.lu 2016/05/16 end
                     break;
                 }
                 case PRICE_SECTION:
@@ -1513,7 +1652,11 @@ public class TmallProductService {
                         final String sellerCategoryPropId = "seller_cids";
                         if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
                             String numId = workLoadBean.getNumId();
-                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+                            // modified by morse.lu 2016/05/15 start
+                            // 临时写死上新target店铺
+//                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+                            ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+                            // modified by morse.lu 2016/05/15 end
                             try {
                                 TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
                                 String strXml = response.getUpdateItemResult();
@@ -1592,6 +1735,28 @@ public class TmallProductService {
             if (field == null) {
                 continue;
             }
+
+            // target店上新临时添加写死用 start
+//            if ("customsClearanceWay".equals(field.getId())) {
+//                // 入关方案
+//                // true:跨境 false:邮关
+//                ((SingleCheckField) field).setValue("true");
+//                mappingFields.add(field);
+//            }
+            if ("hscode".equals(field.getId())) {
+                // HS海关代码
+                if (!workLoadBean.isHasSku()) {
+                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+                    String propValue = expressionParser.parse(ruleExpression, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                    ((InputField) field).setValue(propValue.split(",")[0]);
+                    mappingFields.add(field);
+                }
+                continue;
+//                if (workLoadBean.isHasSku()) {
+//                    continue;
+//                }
+            }
+            // target店上新临时添加写死用 end
 
             if ("description".equals(field.getId())) {
                 System.out.println();
@@ -1837,6 +2002,39 @@ public class TmallProductService {
         }
     }
 
+    private void recursiveGetFieldsNew(List<Field> fields, List<com.voyageone.common.masterdate.schema.field.Field> resultFields) throws TaskSignal {
+        for (Field field : fields) {
+            switch (field.getType()) {
+                case COMPLEX:
+                    recursiveGetFieldsNew(((ComplexField)field).getFieldList(), resultFields);
+                    resultFields.add(deepCloneToMtField(field));
+                    break;
+                case MULTICOMPLEX:
+                    recursiveGetFieldsNew(((MultiComplexField)field).getFieldList(), resultFields);
+                    resultFields.add(deepCloneToMtField(field));
+                    break;
+                default:
+                    resultFields.add(deepCloneToMtField(field));
+            }
+        }
+    }
+
+
+    private com.voyageone.common.masterdate.schema.field.Field deepCloneToMtField(Field field) throws TaskSignal {
+        try {
+            return com.voyageone.common.masterdate.schema.factory.SchemaReader.elementToField(field.toElement());
+        } catch (Exception e) {
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+        }
+    }
+
+    private Field deepCloneToTbField(com.voyageone.common.masterdate.schema.field.Field field) throws TaskSignal {
+        try {
+            return SchemaReader.elementToField(field.toElement());
+        } catch (Exception e) {
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+        }
+    }
 
     private Field deepCloneField(Field field) throws TaskSignal {
         try {
@@ -1844,5 +2042,30 @@ public class TmallProductService {
         } catch (Exception e) {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
         }
+    }
+
+    /**
+     * target店铺临时写死用
+     */
+    private ShopBean getShop(String order_channel_id, String cart_id) {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
+        shopBean.setPlatform("TB");
+        shopBean.setAppKey("21008948");
+        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        shopBean.setOrder_channel_id(order_channel_id);
+        shopBean.setCart_id(cart_id);
+        shopBean.setCart_type("3");
+        shopBean.setCart_name("TG");
+        shopBean.setComment("天猫国际");
+        shopBean.setShop_name("target店");
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+        
+        return shopBean;
+    }
+
+    private ShopBean getShop(String order_channel_id, int cart_id) {
+        return getShop(order_channel_id, String.valueOf(cart_id));
     }
 }

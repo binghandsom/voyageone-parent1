@@ -9,6 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -42,6 +43,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Autowired
     private ProductService productService;
     @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -59,7 +62,17 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     public UploadProductService() {}
 
     public String do_upload() {
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModel(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        // modified by morse.lu 2016/05/15 start
+        // 测试单个groupId用
+//        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModel(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = new ArrayList<>();
+        CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
+        cmsBtSxWorkloadModel.setChannelId("018");
+        cmsBtSxWorkloadModel.setCartId(23);
+        cmsBtSxWorkloadModel.setGroupId(436245);
+        cmsBtSxWorkloadModel.setPublishStatus(0);
+        sxWorkloadModels.add(cmsBtSxWorkloadModel);
+        // modified by morse.lu 2016/05/15 end
         workLoadBeanListMap = buildWorkloadMap(sxWorkloadModels);
         workLoadBeans = workLoadBeanListMap.keySet();
 
@@ -225,15 +238,27 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
                 if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
                     publishTime = DateTimeUtil.getNow();
+                    // added by morse.lu 2016/05/15 start
+                    // 回写group表和product表
+                    mainProductPlatform.setPublishTime(publishTime);
+                    // added by morse.lu 2016/05/15 end
                 }
 
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.OnSale)
                         && platformActive == CmsConstants.PlatformActive.ToOnSale) {
                     onSaleTime = DateTimeUtil.getNow();
+                    // added by morse.lu 2016/05/15 start
+                    // 回写group表和product表
+                    mainProductPlatform.setOnSaleTime(onSaleTime);
+                    // added by morse.lu 2016/05/15 end
                 }
                 if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.InStock)
                         && platformActive == CmsConstants.PlatformActive.ToInStock) {
                     inStockTime = DateTimeUtil.getNow();
+                    // added by morse.lu 2016/05/15 start
+                    // 回写group表和product表
+                    mainProductPlatform.setInStockTime(inStockTime);
+                    // added by morse.lu 2016/05/15 end
                 }
 
                 CmsConstants.PlatformStatus newPlatformStatus = null;
@@ -242,9 +267,17 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.OnSale;
                 }
-                // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
+                // 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
 //                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, inStockTime, newPlatformStatus);
+                // added by morse.lu 2016/05/15 start
+                // 回写group表和product表
+                System.out.println("上新成功, 产品id是：" + workLoadBean.getProductId() + ". 商品id是：" + workLoadBean.getNumId());
+                mainProductPlatform.setNumIId(workLoadBean.getNumId());
+                mainProductPlatform.setPlatformPid(workLoadBean.getProductId());
+                mainProductPlatform.setPlatformStatus(newPlatformStatus);
+                productGroupService.updateGroupsPlatformStatus(mainProductPlatform);
+                // added by morse.lu 2016/05/15 end
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);
@@ -348,9 +381,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     //成功时，publish_status设为1
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
-                // TODO: 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
+                // 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新->
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
 //                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
+                // added by morse.lu 2016/05/15 start
+                // 回写group表和product表
+                CmsBtProductGroupModel mainProductPlatform = workLoadBean.getMainProduct().getCmsBtProductModel().getGroups();
+                mainProductPlatform.setNumIId(workLoadBean.getNumId());
+                mainProductPlatform.setPlatformPid(workLoadBean.getProductId());
+                productGroupService.updateGroupsPlatformStatus(mainProductPlatform);
+                // added by morse.lu 2016/05/15 end
 
                 //保存错误的日志
                 CmsBusinessLogModel cmsBusinessLogModel = new CmsBusinessLogModel();
