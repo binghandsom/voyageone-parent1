@@ -6,10 +6,11 @@
  */
 define([
     'cms',
-    'modules/cms/enums/Carts'
-], function (cms, Carts) {
+    'modules/cms/enums/Carts',
+    'modules/cms/enums/FeedStatus'
+], function (cms, FeedStatus) {
     'use strict';
-    return cms.directive("keyValue", function() {
+    return cms.directive("keyValue", function($translate) {
         return {
             restrict: "E",
             require: '^ngModel',
@@ -18,10 +19,13 @@ define([
             },
             template : '<div>{{dispValue}}</div>',
             link: function(scope, elem, attrs) {
-                if (scope.ngModel == undefined || scope.ngModel.length == 0) {
+                if (scope.ngModel == undefined) {
                     return;
                 }
                 if (attrs.type == 'carts') {
+                    if (scope.ngModel.length == 0) {
+                        return;
+                    }
                     var strDisp = "";
                     scope.ngModel.forEach(function (cartObj) {
                         if (cartObj.cartId != 0 && cartObj.cartId != 1) {
@@ -40,6 +44,9 @@ define([
                         }
                     });
                     scope.dispValue = strDisp;
+                } else if (attrs.type == 'feedStatus') {
+                    var strDisp = FeedStatus.valueOf(scope.ngModel).name;
+                    scope.dispValue = $translate.instant(strDisp);
                 }
             }
         };
