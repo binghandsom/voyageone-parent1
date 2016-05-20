@@ -8,7 +8,7 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     'modules/cms/enums/FeedStatus'
-], function (cms, FeedStatus) {
+], function (cms, Carts, FeedStatus) {
     'use strict';
     return cms.directive("keyValue", function($translate) {
         return {
