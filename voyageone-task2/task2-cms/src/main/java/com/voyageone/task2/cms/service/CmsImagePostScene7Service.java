@@ -313,7 +313,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             }
 
                             int lastSlash = imageUrl.lastIndexOf("/");
-                            String fileName = imageUrlList.get(i).getImgName() + ImgUtils.getImageExtend(imageUrlList.get(i).getOriginalUrl());
+//                            String fileName = imageUrlList.get(i).getImgName() + ImgUtils.getImageExtend(imageUrlList.get(i).getOriginalUrl());
+                            String fileName = imageUrlList.get(i).getImgName() + ".jpg";
 
                             boolean result = ftpClient.storeFile(fileName, inputStream);
 

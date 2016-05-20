@@ -71,7 +71,7 @@ public class UploadToUSJoiService extends BaseTaskService{
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TMM.getId()));
+        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.USJOI.getId()));
         cmsBtSxWorkloadModels.forEach(this::upload);
     }
 
