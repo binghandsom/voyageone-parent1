@@ -327,7 +327,7 @@ public class CmsProductDetailService extends BaseAppService {
         if(productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
             // 执行carts更新
-            List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), productUpdateBean.getProductModel().getCarts());
+            List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), oldProduct.getCarts());
             productUpdateBean.getProductModel().setCarts(carts);
         }
 
