@@ -176,7 +176,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         // 获取label
         Map param = new HashMap<>(2);
-        param.put("channel_id", userInfo.getSelChannelId());
+        param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
         masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
 
