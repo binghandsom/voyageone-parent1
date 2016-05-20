@@ -1,6 +1,6 @@
 package com.voyageone.service.model.cms.mongo;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 import com.voyageone.service.bean.cms.MappingBean;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Document
-public class CmsMtPlatformMappingModel extends BaseMongoModel {
+public class CmsMtPlatformMappingModel extends CartPartitionModel {
 
     private String channelId;
 
@@ -77,5 +77,9 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
 
     public void setProps(List<MappingBean> props) {
         this.props = props;
+    }
+
+    public int getCartId() {
+        return platformCartId;
     }
 }
