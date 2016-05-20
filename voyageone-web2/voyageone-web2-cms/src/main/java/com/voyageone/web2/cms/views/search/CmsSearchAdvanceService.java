@@ -262,8 +262,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         codeArr = prodCodeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
 
-        Integer cartId = Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString());
-        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";")));
+        String plusStr = (String) cmsSessionBean.getAttribute("_adv_search_props_searchItems");
+        if (plusStr == null) {
+            plusStr = "";
+        }
+        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat(plusStr).split(";")));
         queryObject.setProjection(projStr.toString());
         queryObject.setSort(setSortValue(searchValue));
 
