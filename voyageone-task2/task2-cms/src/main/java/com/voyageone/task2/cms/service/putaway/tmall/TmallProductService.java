@@ -1465,7 +1465,7 @@ public class TmallProductService {
                         issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
                     }
-                    contextBuildFields.setXmlSkuData(xmlData.replace("<itemParam>","").replace("</itemParam>",""));
+                    contextBuildFields.setXmlSkuData(xmlData.replace("<itemParam>","").replace("</itemParam>","").replace("&amp;","&"));
 //                    contextBuildFields.getCustomFields().addAll(skuInfoFields);
 //                    contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
                     // modified by morse.lu 2016/05/16 end
@@ -2051,9 +2051,16 @@ public class TmallProductService {
         ShopBean shopBean = new ShopBean();
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform("TB");
+        // target 018
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        // target 018
+        // jewelry 010
         shopBean.setAppKey("21008948");
         shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+        // jewelry 010
         shopBean.setOrder_channel_id(order_channel_id);
         shopBean.setCart_id(cart_id);
         shopBean.setCart_type("3");
