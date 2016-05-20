@@ -26,10 +26,7 @@
 
     /**
      * @Description:
-     * 对 Angular 的 Form 验证提供信息显示支持。
-     * 提供两张方式:
-     * 1. tip 方式将以 pop 冒泡的方式显示格式化的错误信息
-     * 2. 以自定义外观的方式, 输出格式化的错误信息
+     * 对 Angular 的 Form 验证提供统一的信息输出支持。
      *
      * @Date:    2016-05-18 16:22:46
      * @User:    Jonas
@@ -37,64 +34,57 @@
      */
     angular.module("voyageone.angular.directives.message", [])
 
-        .directive('popTip', function ($uibTooltip, $translate) {
+        .directive('voMessage', function ($translate) {
             return {
-                restrict: 'A',
+                restrict: "E",
                 require: '^^form',
-                priority: 0,
-                compile: function(elem, attrs) {
-
-                    var parentForm = elem.closest('form');
-
-                    if (!parentForm) return;
-
-                    var formName = parentForm.attr('name');
-
-                    var fieldName = attrs.name;
-
-                    elem.attr({
-                        'uib-popover': '{{' + formName + '.' + fieldName + '.$error|json}}',
-                        'popover-trigger': 'click'
-                    });
+                template: '{{$message}}',
+                scope: {
+                    'target': '='
                 },
-                link: function (scope, ele, attrs, formController) {
+                link: function (scope, elem, attrs, formController) {
 
                     var formName = formController.$name;
-                    var fieldName = attrs.name;
+
+                    var fieldName = scope.target.$name;
 
                     // 对指定 form 下字段的错误信息进行监视
                     // 如果有变动, 就显示第一个错误的提示信息
-                    scope.$watch(formName + '.' + fieldName + '.$error', function ($error) {
+                    scope.$watch(
 
-                        // 取所有错误的 angular 错误名称, 如 required
-                        var errorKeys = Object.keys($error);
+                        function () {
+                            return scope.target.$error;
+                        },
 
-                        // 取第一个
-                        var error = errorKeys[0];
+                        function ($error) {
 
-                        // 如果没有错误就不用继续处理错误信息了
-                        if (!error) return;
+                            // 取所有错误的 angular 错误名称, 如 required
+                            var errorKeys = Object.keys($error);
 
-                        // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                        $translate(errorTypes[error], { field: fieldName, form: formName }).then(function(message) {
+                            // 取第一个
+                            var error = errorKeys[0];
 
-                            console.error(message)
+                            // 如果没有错误就不用继续处理错误信息了
+                            if (!error) {
+                                hide();
+                                return;
+                            }
 
-                        }, function(key) {
+                            // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
+                            $translate(errorTypes[error], {field: fieldName, form: formName}).then(function (message) {
 
-                            console.error(key)
+                                // 翻译成功就输出翻译后的信息
+                                scope.$message = message;
 
-                        });
+                            }, function (key) {
 
-                    }, true);
+                                // 找不到就直接输出翻译 Key
+                                scope.$message = key;
 
+                            });
+
+                        }, true);
                 }
-            };
-        })
-
-        .directive('voMessage', function () {
-            return {
-                restrict: "E"
             }
         });
 })();
