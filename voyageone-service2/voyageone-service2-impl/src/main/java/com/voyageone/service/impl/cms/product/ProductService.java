@@ -12,9 +12,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
@@ -28,6 +26,7 @@ import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -79,12 +78,19 @@ public class ProductService extends BaseService {
     @Autowired
     private FeedMappingService feedMappingService;
 
+    @Autowired
+    private ImageTemplateService imageTemplateService;
+
     /**
      * 获取商品 根据ID获
      */
     public CmsBtProductModel getProductById(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+
+    public void update(CmsBtProductModel model) {
+        cmsBtProductDao.update(model);
     }
 
     /**
@@ -733,37 +739,37 @@ public class ProductService extends BaseService {
             resultInfo.setModelName(product.getFields().getModel());
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setUrlKey("");
-            // TODO 写死,取得是S7图片显示的路径
             String imagePath = "";
             if (product.getFields().getImages1().size() > 0) {
                 if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                    imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
+                    imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
             }
             resultInfo.setShowName(imagePath);
             resultInfo.setCnName(product.getFields().getLongTitle());
             // 获取HsCodeCrop
             String hsCodeCrop = product.getFields().getHsCodeCrop();
             if (!StringUtils.isEmpty(hsCodeCrop)) {
-                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
-                if (bean != null) {
-                    String[] hsCode = bean.getName().split(",");
-                    resultInfo.setHsCodeId(hsCodeCrop);
-                    resultInfo.setHsCode(hsCode[1]);
-                    resultInfo.setHsDescription(hsCode[2]);
-                    resultInfo.setUnit(hsCode[3]);
-                }
+//                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
+//                if (!StringUtils.isEmpty(hsCodeCrop)) {
+                // TODO 暂时不需要填写hsCode
+//                String[] hsCode = hsCodeCrop.split(",");
+//                resultInfo.setHsCodeId(hsCodeCrop);
+//                resultInfo.setHsCode(hsCode[0]);
+//                resultInfo.setHsDescription(hsCode[1]);
+//                resultInfo.setUnit(hsCode[2]);
+//                }
             }
             // 获取HsCodePrivate
             String hsCodePrivate = product.getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
-                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-                if (bean != null) {
-                    String[] hsCodePu = bean.getName().split(",");
-                    resultInfo.setHsCodePuId(hsCodePrivate);
-                    resultInfo.setHsCodePu(hsCodePu[0]);
-                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
-                    resultInfo.setUnitPu(hsCodePu[2]);
-                }
+//                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
+//                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                String[] hsCodePu = hsCodePrivate.split(",");
+                resultInfo.setHsCodePuId(hsCodePrivate);
+                resultInfo.setHsCodePu(hsCodePu[0]);
+                resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                resultInfo.setUnitPu(hsCodePu[2]);
+//                }
             }
         }
         return resultInfo;
@@ -834,11 +840,10 @@ public class ProductService extends BaseService {
                 param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
-                // TODO 写死,取得是S7图片显示的路径
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                        imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
+                        imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
                 }
                 bean.setImgPath(imagePath);
 
@@ -939,6 +944,21 @@ public class ProductService extends BaseService {
 
         Map<String, String> rsMap = new HashMap<>(3);
         rsMap.put("fields.translateStatus", translateStatus);
+        rsMap.put("modifier", modifier);
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
+
+        cmsBtProductDao.update(channelId, paraMap, updateMap);
+    }
+
+    public void updateTags(String channelId, Long prodId, List<String> Tags, String modifier) {
+        Map<String, Object> paraMap = new HashMap<>(1);
+        paraMap.put("channelId", channelId);
+        paraMap.put("prodId", prodId);
+
+        Map<String, Object> rsMap = new HashMap<>(3);
+        rsMap.put("tags", Tags);
         rsMap.put("modifier", modifier);
         rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
         HashMap<String, Object> updateMap = new HashMap<>();
@@ -1051,11 +1071,12 @@ public class ProductService extends BaseService {
 
     /**
      * 返回已经存在的及新生成的carts数据
-     * @param skus 产品SKU列表
+     *
+     * @param skus  产品SKU列表
      * @param carts 寄存Cart列表
      * @return
      */
-    public List<CmsBtProductModel_Carts> getCarts (List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
+    public List<CmsBtProductModel_Carts> getCarts(List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
 
         List<CmsBtProductModel_Carts> newCarts = skus
                 .stream()
@@ -1076,7 +1097,7 @@ public class ProductService extends BaseService {
      */
     private Predicate<Integer> byCartId(List<CmsBtProductModel_Carts> carts) {
         return i -> {
-            for(CmsBtProductModel_Carts cart : carts) {
+            for (CmsBtProductModel_Carts cart : carts) {
                 if (Objects.equals(i, cart.getCartId()))
                     return false;
             }

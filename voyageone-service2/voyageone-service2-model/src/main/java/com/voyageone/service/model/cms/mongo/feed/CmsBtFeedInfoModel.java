@@ -3,6 +3,10 @@ package com.voyageone.service.model.cms.mongo.feed;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -37,6 +41,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private Map<String,List<String>> attribute = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private int updFlg;
+    private int qty;
     private String clientProductURL = "";
 
     private String productType;
@@ -238,7 +243,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     @JsonIgnore
-    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(){
+    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(ChannelConfigEnums.Channel channel){
         CmsBtFeedInfoModel cmsBtFeedInfoModel =new CmsBtFeedInfoModel(this.channelId);
         cmsBtFeedInfoModel.setCategory(this.getCategory());
         cmsBtFeedInfoModel.setCode(this.getCode());
@@ -247,8 +252,12 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setColor(this.getColor());
         cmsBtFeedInfoModel.setOrigin(this.getOrigin());
         cmsBtFeedInfoModel.setSizeType(this.getSizeType());
+        String imageSplit = Feeds.getVal1(channel, FeedEnums.Name.image_split);
+        if(StringUtil.isEmpty(imageSplit)){
+            imageSplit = ",";
+        }
         if(this.getImage().size()>0){
-            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(",")).stream().map(s -> s.trim()).collect(Collectors.toList()));
+            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(imageSplit)).stream().map(s -> s.trim()).collect(Collectors.toList()));
         }else{
             cmsBtFeedInfoModel.setImage(new ArrayList<>());
         }
@@ -277,5 +286,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 }

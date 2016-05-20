@@ -77,15 +77,15 @@ public class CmsImageFileService extends BaseService {
             if (result.getErrorCode() > 0) {
                 return result;
             }
-           CmsBtImageTemplateModel modelTemplate=serviceCmsImageTemplate.get(templateId);
-            if(modelTemplate==null) {
+            CmsBtImageTemplateModel modelTemplate = serviceCmsImageTemplate.get(templateId);
+            if (modelTemplate == null) {
                 //模板不存在
                 result.setEnumError(ImageErrorEnum.ParametersRequired);
                 result.setSubEnumError(ImageErrorEnum.ImageTemplateNotNull);
                 return result;
             }
             //hashCode做缓存key
-            long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam,modelTemplate.getTemplateModified());
+            long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam, modelTemplate.getTemplateModified());
 
             String ossFilePath = imagePathCache.get(hashCode);
             if (!StringUtil.isEmpty(ossFilePath)) {

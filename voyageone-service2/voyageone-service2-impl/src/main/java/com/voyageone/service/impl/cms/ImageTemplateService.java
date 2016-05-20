@@ -19,7 +19,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +35,8 @@ public class ImageTemplateService extends BaseService {
     private CmsBtImageTemplateDao dao;
     @Autowired
     LiquidFireImageService serviceLiquidFireImage;
-    public  List<CmsBtImageTemplateBean> getPage(ImageTempateParameter param, String channelId, String lang) {
+
+    public List<CmsBtImageTemplateBean> getPage(ImageTempateParameter param, String channelId, String lang) {
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();
         String parameter = getSearchQuery(param, channelId);
@@ -49,6 +49,7 @@ public class ImageTemplateService extends BaseService {
         List<CmsBtImageTemplateModel> list = dao.select(queryObject);
         return changeToBeanList(list, channelId, lang);
     }
+
     public Object getCount(ImageTempateParameter param, String channelId) {
         String parameter = getSearchQuery(param, channelId);
         return dao.countByQuery(parameter);
@@ -61,11 +62,6 @@ public class ImageTemplateService extends BaseService {
     public List<CmsBtImageTemplateModel> getList(JomgoQuery queryObject) {
         return dao.select(queryObject);
     }
-
-    public CmsBtImageTemplateModel getOne(JomgoQuery queryObject) {
-        return dao.selectOneWithQuery(queryObject);
-    }
-
 
     /**
      * 检索结果转换
@@ -81,9 +77,7 @@ public class ImageTemplateService extends BaseService {
             CmsBtImageTemplateBean dest = new CmsBtImageTemplateBean();
             try {
                 BeanUtils.copyProperties(dest, imageGroup);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             editImageTemplateBean(dest, channelId, lang);
@@ -98,7 +92,6 @@ public class ImageTemplateService extends BaseService {
      * @param bean      检索结果（Bean）
      * @param channelId 渠道id
      * @param lang      语言
-     * @return 检索结果（Bean）
      */
     private void editImageTemplateBean(CmsBtImageTemplateBean bean, String channelId, String lang) {
         // Platform
@@ -115,7 +108,7 @@ public class ImageTemplateService extends BaseService {
 
         // Related Brand Name
         List<String> brandNameTrans = new ArrayList<>();
-        if(ListUtils.notNull(bean.getBrandName())) {
+        if (ListUtils.notNull(bean.getBrandName())) {
             for (String brandName : bean.getBrandName()) {
                 if ("All".equals(brandName)) {
                     brandNameTrans.add("All");
@@ -232,30 +225,23 @@ public class ImageTemplateService extends BaseService {
         return "{" + result.toString() + "}";
     }
 
-    public boolean isNull(List list) {
-        return list != null && list.size() == 0;
-    }
-
     /**
      * 保存方法
-     *
-     * @param model 客户端参数
-     * @return 检索结果
      */
     public void save(CmsBtImageTemplateModel model, String userName) {
         //设置默认值
         if (ListUtils.isNull((model.getBrandName()))) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setBrandName(lst);
         }
         if (ListUtils.isNull((model.getProductType()))) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setProductType(lst);
         }
         if (ListUtils.isNull((model.getSizeType()))) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setSizeType(lst);
         }
@@ -280,14 +266,9 @@ public class ImageTemplateService extends BaseService {
 
     /**
      * 逻辑删除ImageGroup信息
-     *
-     * @param imageTemplateId 客户端参数
-     * @return 检索结果
      */
     public void delete(long imageTemplateId) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageTemplateId\":" + imageTemplateId + "}");
-        CmsBtImageTemplateModel model = getOne(queryObject);
+        CmsBtImageTemplateModel model = dao.selectByTemplateId(imageTemplateId);
         if (model != null) {
             model.setActive(0);
             dao.update(model);
@@ -295,15 +276,10 @@ public class ImageTemplateService extends BaseService {
     }
 
     public CmsBtImageTemplateModel get(long imageTemplateId) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageTemplateId\":" + imageTemplateId + "}");
-        CmsBtImageTemplateModel model = getOne(queryObject);
-        return model;
+        return dao.selectByTemplateId(imageTemplateId);
     }
 
     public String[] getTemplateParameter(String templateContent) {
-        //  String prefix = "ftp://images@xpairs.com:voyageone5102@ftp.xpairs.com";//待加入配置项
-        //String prefix="http://mce042-fs.nexcess.net:81/voyageone_image";
         String prefix = "http://";
         String[] strList = templateContent.split("%s");
         String[] paramList = new String[strList.length - 1];
@@ -328,18 +304,13 @@ public class ImageTemplateService extends BaseService {
 
     /**
      * 根据channelId和brandName,productType,sizeType取得templateList
-     * @param channelId
-     * @param brandName
-     * @param productType
-     * @param sizeType
-     * @return
      */
     public List<CmsBtImageTemplateModel> getTemplateListWithNoParams(String channelId, String brandName, String productType, String sizeType) {
 
         List<CmsBtImageTemplateModel> templateModelList = dao.selectTemplateForImageUpload(channelId, brandName, productType, sizeType);
 
         List<CmsBtImageTemplateModel> noParamTemplateList = templateModelList.stream().filter(cmsBtImageTemplateModel ->
-                cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
+                        cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
         ).collect(Collectors.toList());
 
         // TODO: 16/5/10 根据有限顺序判断返回的只对应其中一个templateid
@@ -351,12 +322,8 @@ public class ImageTemplateService extends BaseService {
 
     /**
      * 根据channelId,templateId,imageName返回图片生成返回的url
-     * @param channelId
-     * @param templateId
-     * @param imageName
-     * @return
      */
-    public String getTemplateImageUrl (String channelId, String templateId, String imageName) {
+    public String getTemplateImageUrl(String channelId, String templateId, String imageName) {
 
         String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
         if (StringUtils.isEmpty(templateImageUrl))
@@ -367,20 +334,15 @@ public class ImageTemplateService extends BaseService {
 
     /**
      * 根据templateId获取单个模板
-     * @param templateId
-     * @return
      */
-    public CmsBtImageTemplateModel selectTemplateById (Long templateId) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageTemplateId\":" + templateId + "}");
-        return getOne(queryObject);
+    public CmsBtImageTemplateModel selectTemplateById(Long templateId) {
+        return dao.selectByTemplateId(templateId);
     }
 
     /**
-     *
-     * @return
+     * getCommonTemplate
      */
-    public CmsBtImageTemplateModel getCommonTemplate () {
+    public CmsBtImageTemplateModel getCommonTemplate() {
         String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
         if (commonTemplateId == null) {
             throw new BusinessException("tm_code表中IMAGE_TEMPLATE的DEFAULT_ID定义不存在");
@@ -390,10 +352,8 @@ public class ImageTemplateService extends BaseService {
 
     /**
      * 取得显示用图片的url,其中图片名字的%s保留(http://shenzhen-vo.oss-cn-shenzhen.aliyuncs.com/products/010/50/%s.jpg)
-     * @param channelId
-     * @return
      */
-    public String getDefaultImageUrl (String channelId) {
+    public String getDefaultImageUrl(String channelId) {
 
         // 取得CMS中默认的显示用模板ID
         String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
@@ -407,5 +367,14 @@ public class ImageTemplateService extends BaseService {
 
         // 返回图片URl(其中图片名字%s未替换)
         return String.format(templateImageUrl, channelId, commonTemplateId, "%s");
+    }
+
+    /**
+     * 返回图片Url
+     */
+    public String getImageFullUrl(String channelId, String imageName) {
+        String tempUrl = this.getDefaultImageUrl(channelId);
+
+        return tempUrl.replace("%s", imageName) + ".jpg";
     }
 }

@@ -13,8 +13,6 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 
  */
 public class CmsMtBrandsMappingModel extends BaseModel {
-    protected Integer seq;
-
     protected String channelId;
 
     protected Integer cartId;
@@ -24,14 +22,6 @@ public class CmsMtBrandsMappingModel extends BaseModel {
     protected String cmsBrand;
 
     protected Boolean active;
-
-    public Integer getSeq() {
-        return seq;
-    }
-
-    public void setSeq(Integer seq) {
-        this.seq = seq;
-    }
 
     public String getChannelId() {
         return channelId;

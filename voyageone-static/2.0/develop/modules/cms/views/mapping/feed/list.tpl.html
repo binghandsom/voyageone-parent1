@@ -84,18 +84,19 @@
                         <td>
                             <a ng-href="#/mapping/feed/0/{{feedCategory.selectedMapping.mainMapping._id}}" target="feed-field-mapping"
                                ng-if="feedCategory.isChild && feedCategory.selectedMapping.mainMapping"><i
-                                    class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_ATTRIBUTE_COMMON_MAIN'|translate}}</span></a>&nbsp;<span
-                                class="h4"
-                                ng-show="feedCategory.isChild && feedCategory.selectedMapping.mainMapping.matchOver"><i
-                                class="fa fa-check-circle text-vo"></i></span>
+                                    class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_ATTRIBUTE_COMMON_MAIN'|translate}}</span></a>&nbsp;
+                            <span class="h4" ng-show="feedCategory.isChild && feedCategory.selectedMapping.mainMapping.matchOver">
+                                <i class="fa fa-check-circle text-vo"></i>
+                            </span>
                         </td>
                         <td class=" text-center">
                             <a ng-href="#/mapping/feed/1/{{feedCategory.selectedMapping._id}}/{{::feedCategory.path}}" target="feed-field-mapping"
                                ng-if="!!feedCategory.isChild && !!feedCategory.selectedMapping">
                                 <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_ATTRIBUTE'|translate}}</span>
-                            </a>&nbsp;<span class="h4"
-                                            ng-show="feedCategory.isChild && feedCategory.selectedMapping.matchOver"><i
-                                class="fa fa-check-circle text-vo"></i></span>
+                            </a>&nbsp;
+                            <span class="h4" ng-show="feedCategory.isChild && feedCategory.selectedMapping.matchOver">
+                                <i class="fa fa-check-circle text-vo"></i>
+                            </span>
                         </td>
                     </tr>
                     </tbody>

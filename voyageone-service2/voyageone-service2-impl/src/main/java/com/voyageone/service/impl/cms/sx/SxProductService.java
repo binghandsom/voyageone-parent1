@@ -16,6 +16,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -39,6 +40,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
@@ -114,6 +116,8 @@ public class SxProductService extends BaseService {
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+    @Autowired
+    private ProductGroupService productGroupService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -197,6 +201,34 @@ public class SxProductService extends BaseService {
         upModel.setPublishStatus(publishStatus);
         upModel.setModifier(modifier);
         return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+    }
+
+    /**
+     * 回写product group表中的numIId和platformStatus(Onsale/InStock)
+     *
+     * @param sxData SxData 上新数据
+     * @param numIId String 商品id
+     * @param modifier 更新者
+     */
+    public void updateProductGroupNumIIdStatus(SxData sxData, String numIId, String modifier) {
+        // 上新成功后回写product group表中的numIId和platformStatus
+        // 回写商品id(wareId->numIId)
+        sxData.getPlatform().setNumIId(numIId);
+        // 设置PublishTime
+        sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+            // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
+        } else {
+            // platformActive是(ToInStock)时，把platformStatus更新成"InStock"(默认)
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+        }
+        // 更新者
+        sxData.getPlatform().setModifier(modifier);
+
+        // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
+        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
     }
 
     /**
@@ -1313,7 +1345,7 @@ public class SxProductService extends BaseService {
     private double calcItemPrice(List<CmsBtProductModel> productlList, Map<String, Integer> skuInventoryMap, String channelId, int cartId) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-                , com.voyageone.common.CmsConstants.ChannelConfig.PRICE
+                , CmsConstants.ChannelConfig.PRICE
                 , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
 
         // 检查一下

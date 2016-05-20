@@ -324,7 +324,10 @@
                                     <img image="{{code.image}}"
                                          alt="{{code.productName}}" class="thumb-sm-search pull-left m-r"/>
                                 </td>
-                                <td class="mfb-xxt text-left">{{code.tag}}</td>
+                                <td class="mfb-xxt text-left">
+                                    <select  class="form-control" width="'285px'" ng-change="codeTagChange(code)" ng-model="code.tagId"  ng-options="m.id as m.tagName for m in vm.tagList" >
+                                </select>
+                                </td>
                                 <td class="mfb-xxt text-center">{{code.inventory}}</td>
                                 <td class="mfb-xxt text-right">{{code.retailPrice | number : 2}}</td>
                                 <td class="mfb-xxt text-right">{{code.salePrice | number : 2}}</td>
@@ -355,7 +358,7 @@
                                     </small>
                                 </td>
                                 <td class="mfb-xx text-center">
-                                    <button ng-if="code.promotionPrice != code.promotionPriceBak" title="保存"
+                                    <button ng-if="code.promotionPrice != code.promotionPriceBak||code.isUpdate" title="保存"
                                             class="btn btn-vo btn-xs" ng-click="updateCode(code)"><i
                                             class="fa fa-floppy-o"></i></button>
                                     <button class="btn btn-danger btn-xs" ng-click="delPromotionCode(code)"><i

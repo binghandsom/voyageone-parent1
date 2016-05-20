@@ -15,6 +15,15 @@ public  class  ImageTempateParameter {
     int     pageIndex;
     int     pageSize;
 
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    String channelId;
 
     public int getPageIndex() {
         return pageIndex;

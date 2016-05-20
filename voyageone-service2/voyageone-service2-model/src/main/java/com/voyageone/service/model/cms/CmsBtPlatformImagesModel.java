@@ -10,7 +10,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
- * 尺码对照表组
+ * 平台图片表
  */
 public class CmsBtPlatformImagesModel extends BaseModel {
     protected String channelId;

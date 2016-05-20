@@ -10,9 +10,13 @@ import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.common.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -40,7 +44,8 @@ public class CmsPromotionIndexService extends BaseAppService {
 
     @Autowired
     private PromotionService promotionService;
-
+    @Autowired
+    private TagService serviceTag;
     /**
      * 获取该channel的category类型.
      *
@@ -56,7 +61,13 @@ public class CmsPromotionIndexService extends BaseAppService {
 
         return result;
     }
-
+    public Map<String, Object> initByPromotionId(int PromotionId,String channelId, String language) {
+        Map<String, Object> result = new HashMap<>();
+        CmsBtPromotionModel model = promotionService.getByPromotionId(PromotionId);
+        List<CmsBtTagModel> listTagModel = serviceTag.getListByParentTagId(model.getRefTagId());
+        result.put("tagList", listTagModel);
+        return result;
+    }
     public CmsBtPromotionModel queryById(Integer promotionId) {
         return promotionService.getByPromotionId(promotionId);
     }
@@ -81,6 +92,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         return promotionService.delete(cmsBtPromotionBean);
     }
 
+
     public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
@@ -97,6 +109,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 
             int rowIndex = 1;
             for (CmsBtPromotionCodesBean promotionCode : promotionCodes) {
+
                 promotionCode.setCartId(cmsBtPromotionModel.getCartId());
 //                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
                 boolean isContinueOutput = writeRecordToFile(book, promotionCode, rowIndex);
@@ -204,6 +217,8 @@ public class CmsPromotionIndexService extends BaseAppService {
                 FileUtils.cell(row, CmsConstants.CellNum.property3CellNum, unlock).setCellValue(item.getProperty3());
 
                 FileUtils.cell(row, CmsConstants.CellNum.property4CellNum, unlock).setCellValue(item.getProperty4());
+
+                FileUtils.cell(row, CmsConstants.CellNum.size, unlock).setCellValue(sku.getSize());
 
                 startRowIndex++;
             }
