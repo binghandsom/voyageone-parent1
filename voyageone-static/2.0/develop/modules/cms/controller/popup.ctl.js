@@ -336,6 +336,11 @@ define([
                     "templateUrl": "views/pop/search/codeDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
                     "controller": 'popCodeDetailCtl'
+                },
+                "addChannelCategory": {
+                    "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
+                    "controller": 'popAddChannelCategoryCtl'
                 }
 
             },
@@ -1063,6 +1068,13 @@ define([
          * */
         $scope.openCodeDetail = function (context) {
             return openModel(popActions.search.codeDetail, context);
+        };
+
+        /**
+         * 新增feed查询页code弹出
+         * */
+        $scope.openTagEdit = function (context) {
+            return openModel(popActions.search.addChannelCategory, context);
         };
 
 
