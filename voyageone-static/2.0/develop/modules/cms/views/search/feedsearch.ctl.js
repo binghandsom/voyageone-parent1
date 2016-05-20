@@ -127,7 +127,9 @@ define([
                     feedInfo.attsList = attsList;
 
                     // 设置勾选框
-                    tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code});
+                    if (feedInfo.updFlg != 0) {
+                        tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code});
+                    }
                 });
                 $scope.vm.feedSelList = tempFeedSelect.selectRowsInfo;
             })
