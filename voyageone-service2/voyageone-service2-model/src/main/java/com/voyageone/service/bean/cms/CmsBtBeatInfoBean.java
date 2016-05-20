@@ -15,8 +15,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
-    //    private int id;
-//
     private int task_id;
 
     private long num_iid;
@@ -33,14 +31,6 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
     private CmsBtTasksBean task;
 
-    //    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-//
     public int getTask_id() {
         return task_id;
     }
@@ -77,6 +67,7 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
     public BeatFlag getBeatFlag() {
         return BeatFlag.valueOf(getSynFlag());
     }
+
     @JsonIgnore
     public void setBeatFlag(BeatFlag flag) {
         setSynFlag(flag.getFlag());
