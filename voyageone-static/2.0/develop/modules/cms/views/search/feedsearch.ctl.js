@@ -7,16 +7,19 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, selectRowsFactory, alert) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
-            feedList: []
+            feedList: [],
+            feedSelList: { selList: []}
         };
 
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
+
+        var tempFeedSelect = null;
 
         /**
          * 初始化数据.
@@ -83,6 +86,11 @@ define([
                 $scope.vm.feedList = res.data.feedList;
                 $scope.vm.feedPageOption.total = res.data.feedListTotal;
 
+                if (tempFeedSelect == null) {
+                    tempFeedSelect = new selectRowsFactory();
+                } else {
+                    tempFeedSelect.clearCurrPageRows();
+                }
                 _.forEach($scope.vm.feedList, function (feedInfo) {
                     // 统计sku数
                     var skusList = feedInfo.skus;
@@ -117,12 +125,33 @@ define([
                         });
                     }
                     feedInfo.attsList = attsList;
+
+                    // 设置勾选框
+                    if (feedInfo.updFlg == 0) {
+                        tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code, '_nonChkFlg': 1});
+                    } else {
+                        tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code});
+                    }
                 });
+                $scope.vm.feedSelList = tempFeedSelect.selectRowsInfo;
             })
         }
 
+        /**
+         * 修改feed状态
+         */
+        $scope.updateFeedStatus = function() {
+            var selList = $scope.vm.feedSelList.selList;
+            if (selList && selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            $feedSearchService.updateFeedStatus({'selList': selList}).then(function () {
+                search(1);
+            })
+        };
     };
 
-    searchIndex.$inject = ['$scope','$routeParams','$feedSearchService','$translate'];
+    searchIndex.$inject = ['$scope','$routeParams','$feedSearchService','$translate','selectRowsFactory','alert'];
     return searchIndex;
 });
