@@ -126,7 +126,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
         for(CmsBtImagesModel image : imageUrlList) {
 
-            String imageExtend = ImgUtils.getImageExtend(image.getOriginalUrl());
+//            String imageExtend = ImgUtils.getImageExtend(image.getOriginalUrl());
+            String imageExtend = ".jpg";
             // CMS显示用共通模板
             CreateImageParameter commonTemplateParameter = new CreateImageParameter();
             commonTemplateParameter.setChannelId(channelId);
@@ -182,7 +183,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             // 调用图片生成API
             ImageCreateAddListRequest request = new ImageCreateAddListRequest();
             request.setData(imageData);
-            $debug("本次处理的图片信息:" + request);
+            $info("本次处理的图片信息:" + request);
             ImageCreateAddListResponse response = imageCreateService.addList(request);
             if (response.getErrorCode() > 0)
                 $error(imageData + " 调用图片生成API失败:" + response.getErrorMsg());
