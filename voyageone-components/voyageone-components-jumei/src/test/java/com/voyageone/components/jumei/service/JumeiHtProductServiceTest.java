@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -165,10 +166,10 @@ public class JumeiHtProductServiceTest {
         dealInfo.setPartner_deal_id("P0001");
         // Deal开始时间(必须)
         // 注：开始时间不能大于结束时间 售卖时间与当前deal对应的product下的所有deal的售卖时间对比，时间不能有交集
-        dealInfo.setStart_time(Long.parseLong("8"));
+        dealInfo.setStart_time(new Date().getTime());
         // Deal结束时间(必须)
         // 注：开始时间不能大于结束时间 售卖时间与当前deal对应的product下的所有deal的售卖时间对比，时间不能有交集
-        dealInfo.setEnd_time(Long.parseLong("23"));
+        dealInfo.setEnd_time(new Date().getTime() + 100000000);
         // 限购数量(可选)
         dealInfo.setUser_purchase_limit(2);
         // 仓库ID(必须)
