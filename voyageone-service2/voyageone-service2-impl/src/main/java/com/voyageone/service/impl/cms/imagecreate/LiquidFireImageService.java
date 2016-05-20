@@ -18,7 +18,7 @@ public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
 
-    @Retryable(maxAttempts = 3)
+    //@Retryable(maxAttempts = 3)
     public void createImage(CmsMtImageCreateFileModel modelFile, String templateContent) throws Exception {
         try {
             String filePath = createImage(templateContent, modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径
