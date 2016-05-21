@@ -88,6 +88,7 @@ public class ProductService extends BaseService {
         String query = "{\"prodId\":" + prodId + "}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+
     public void update(CmsBtProductModel model) {
         cmsBtProductDao.update(model);
     }
@@ -473,44 +474,52 @@ public class ProductService extends BaseService {
         /**
          * 更新carts
          */
-//        if (productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-//            List<Integer> oldCarts = new ArrayList<>();
-//            for (CmsBtProductModel_Carts cart : findModel.getCarts()) {
-//                oldCarts.add(cart.getCartId());
-//            }
+        if (productModel.getCarts().size() > 0) {
+
+            // 设置批量更新条件
+//            Map<String, Object> bulkQueryMap = new HashMap<>();
+//            bulkQueryMap.put("fields.code", productModel.getFields().getCode());
+
+            BasicDBObject queryObj = new BasicDBObject();
+            queryObj.put("fields.code", productModel.getFields().getCode());
+
+            BasicDBObject cartsObj = new BasicDBObject().append("carts", productModel.getCarts());
+            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", cartsObj);
+            cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
+        }
+
+//        if (bulkUpdateList.size() > 0) {
+//            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
+//        }
+
+
+
+
+//        for (CmsBtProductModel_Carts cartInfo : ) {
 //
-//            List<Integer> newCarts = new ArrayList<>();
-//            for (CmsBtProductModel_Sku sku:productModel.getSkus()) {
-//                newCarts.addAll(sku.getSkuCarts());
-//            }
-//            newCarts.removeAll(oldCarts);
-//            newCarts.stream().distinct().collect(toList());
+//            // 设置批量更新条件
+//            HashMap<String, Object> bulkQueryMap = new HashMap<>();
+//            bulkQueryMap.put("fields.code", productModel.getFields().getCode());
+//            bulkQueryMap.put("carts.cartId", cartInfo.getCartId());
 //
-//            List<BulkUpdateModel> bulkCartsList = new ArrayList<>();
-//            for (Integer cartId : newCarts) {
+//            HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+//            bulkUpdateMap.put("carts.$.platformStatus", cartInfo.getPlatformStatus().name());
+//            bulkUpdateMap.put("carts.$.publishTime", cartInfo.getPublishTime());
 //
-//                // 设置批量更新条件
-//                HashMap<String, Object> bulkQueryMap = new HashMap<>();
-//                bulkQueryMap.put("fields.code", productModel.getFields().getCode());
-//                bulkQueryMap.put("carts.cartId", cartId);
+//            BasicDBObject skusObj = new BasicDBObject().append("skus", skusList);
+//            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", skusObj);
+//            cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
 //
-//                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
-//                bulkUpdateMap.put("carts.$.platformStatus", CmsConstants.PlatformStatus.WaitingPublish.name());
+//            // 设定批量更新条件和值
+//            BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+//            bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+//            bulkUpdateModel.setQueryMap(bulkQueryMap);
+//            bulkCartsList.add(bulkUpdateModel);
+//        }
 //
-//                // 设定批量更新条件和值
-//                if (bulkUpdateMap.size() > 0) {
-//                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-//                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
-//                    bulkUpdateModel.setQueryMap(bulkQueryMap);
-//                    bulkCartsList.add(bulkUpdateModel);
-//                }
-//            }
-//
-//            // 批量更新product表
-//            if (bulkCartsList.size() > 0) {
-//                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkCartsList, null, "$set", true);
-//            }
-//
+//        // 批量更新product表
+//        if (bulkCartsList.size() > 0) {
+//            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkCartsList, null, "$set", true);
 //        }
 
     }
@@ -749,26 +758,26 @@ public class ProductService extends BaseService {
             String hsCodeCrop = product.getFields().getHsCodeCrop();
             if (!StringUtils.isEmpty(hsCodeCrop)) {
 //                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
-                if (!StringUtils.isEmpty(hsCodeCrop)) {
-
-                    String[] hsCode = hsCodeCrop.split(",");
-                    resultInfo.setHsCodeId(hsCodeCrop);
-                    resultInfo.setHsCode(hsCode[1]);
-                    resultInfo.setHsDescription(hsCode[2]);
-                    resultInfo.setUnit(hsCode[3]);
-                }
+//                if (!StringUtils.isEmpty(hsCodeCrop)) {
+                // TODO 暂时不需要填写hsCode
+//                String[] hsCode = hsCodeCrop.split(",");
+//                resultInfo.setHsCodeId(hsCodeCrop);
+//                resultInfo.setHsCode(hsCode[0]);
+//                resultInfo.setHsDescription(hsCode[1]);
+//                resultInfo.setUnit(hsCode[2]);
+//                }
             }
             // 获取HsCodePrivate
             String hsCodePrivate = product.getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
 //                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-                if (!StringUtils.isEmpty(hsCodePrivate)) {
-                    String[] hsCodePu = hsCodePrivate.split(",");
-                    resultInfo.setHsCodePuId(hsCodePrivate);
-                    resultInfo.setHsCodePu(hsCodePu[0]);
-                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
-                    resultInfo.setUnitPu(hsCodePu[2]);
-                }
+//                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                String[] hsCodePu = hsCodePrivate.split(",");
+                resultInfo.setHsCodePuId(hsCodePrivate);
+                resultInfo.setHsCodePu(hsCodePu[0]);
+                resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                resultInfo.setUnitPu(hsCodePu[2]);
+//                }
             }
         }
         return resultInfo;
@@ -950,8 +959,9 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
-    public void updateTags(String channelId,Long prodId, List<String> Tags,String modifier) {
-        Map<String,Object> paraMap = new HashMap<>(1);
+
+    public void updateTags(String channelId, Long prodId, List<String> Tags, String modifier) {
+        Map<String, Object> paraMap = new HashMap<>(1);
         paraMap.put("channelId", channelId);
         paraMap.put("prodId", prodId);
 
@@ -964,6 +974,7 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
+
     /**
      * 获取Sku的库存信息
      */
@@ -1068,11 +1079,12 @@ public class ProductService extends BaseService {
 
     /**
      * 返回已经存在的及新生成的carts数据
-     * @param skus 产品SKU列表
+     *
+     * @param skus  产品SKU列表
      * @param carts 寄存Cart列表
      * @return
      */
-    public List<CmsBtProductModel_Carts> getCarts (List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
+    public List<CmsBtProductModel_Carts> getCarts(List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
 
         List<CmsBtProductModel_Carts> newCarts = skus
                 .stream()
@@ -1083,8 +1095,6 @@ public class ProductService extends BaseService {
                 .map(this::toProductModelCart)
                 .collect(Collectors.toList());
 
-        newCarts.addAll(carts);
-
         return newCarts;
     }
 
@@ -1093,7 +1103,7 @@ public class ProductService extends BaseService {
      */
     private Predicate<Integer> byCartId(List<CmsBtProductModel_Carts> carts) {
         return i -> {
-            for(CmsBtProductModel_Carts cart : carts) {
+            for (CmsBtProductModel_Carts cart : carts) {
                 if (Objects.equals(i, cart.getCartId()))
                     return false;
             }

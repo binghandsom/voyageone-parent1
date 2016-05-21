@@ -5,7 +5,6 @@ import com.voyageone.components.liquifire.service.LiquidFireClient;
 import com.voyageone.service.dao.cms.CmsMtImageCreateFileDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +12,13 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-
 @Service
 @EnableRetry
 public class LiquidFireImageService extends BaseService {
     @Autowired
     CmsMtImageCreateFileDao daoCmsMtImageCreateFile;
 
-    @Retryable(maxAttempts = 3)
+    //@Retryable(maxAttempts = 3)
     public void createImage(CmsMtImageCreateFileModel modelFile, String templateContent) throws Exception {
         try {
             String filePath = createImage(templateContent, modelFile.getVparam(), Long.toString(modelFile.getHashCode()));//返回本地文件路径

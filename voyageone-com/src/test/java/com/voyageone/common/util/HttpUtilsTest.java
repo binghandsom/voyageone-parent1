@@ -16,4 +16,10 @@ public class HttpUtilsTest {
 
         System.out.println(cont);
     }
+
+    @Test
+    public void testExists() {
+        Boolean cont = HttpUtils.exists("http://mce042-fs.nexcess.net:81/voyageone_image/018/018-51150191-1.jpg");
+        System.out.println(String.valueOf(cont));
+    }
 }

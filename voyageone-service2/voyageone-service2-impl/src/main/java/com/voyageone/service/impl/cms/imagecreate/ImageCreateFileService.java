@@ -52,8 +52,9 @@ public class ImageCreateFileService extends BaseService {
     CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
     @Autowired
     CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
-@Autowired
-ImageTemplateService serviceCmsImageTemplate;
+    @Autowired
+    ImageTemplateService serviceCmsImageTemplate;
+
     public CmsMtImageCreateFileModel getModel(int id) {
         return cmsMtImageCreateFileDao.select(id);
     }
@@ -97,11 +98,11 @@ ImageTemplateService serviceCmsImageTemplate;
 
     public String getCreateFilePathName(long templateId, String channelId, String file) {
         //return "products/" + channelId + "/" + modelTemplate.getWidth() + "x" + modelTemplate.getHeight() + "/" + modelTemplate.getId() + "/" + file + ".jpg";
-        return "products/" + channelId + "/" +templateId + "/" + file + ".jpg";
+        return "products/" + channelId + "/" + templateId + "/" + file + ".jpg";
     }
 
-    public long getHashCode(String channelId, long templateId, String file, String vparam,String templateModified) {
-        String parameter = channelId + templateId + file + vparam+templateModified;
+    public long getHashCode(String channelId, long templateId, String file, String vparam, String templateModified) {
+        String parameter = channelId + templateId + file + vparam + templateModified;
         return HashCodeUtil.getHashCode(parameter);
     }
 
@@ -123,7 +124,7 @@ ImageTemplateService serviceCmsImageTemplate;
             //.创建并上传图片
             isCreateNewFile = createAndUploadImage(modelFile);
             imagePathCache.set(modelFile.getHashCode(), modelFile.getOssFilePath());
-            $info("CmsMtImageCreateTaskJobService:onStartup ok result; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],filePath=[%s] model.id=[%s]",
+            $info("CmsMtImageCreateTaskJobService:createAndUploadImage result; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],filePath=[%s] model.id=[%s]",
                     modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getOssFilePath(), modelFile.getId());
         } catch (OpenApiException ex) {
             //4.处理业务异常
@@ -170,7 +171,7 @@ ImageTemplateService serviceCmsImageTemplate;
     public boolean createAndUploadImage(CmsMtImageCreateFileModel modelFile) throws Exception {
         boolean isCreateNewFile = false;
         if (modelFile.getState() == 0) {
-          CmsBtImageTemplateModel   modelTemplate = serviceCmsImageTemplate.get(modelFile.getTemplateId());//获取模板
+            CmsBtImageTemplateModel modelTemplate = serviceCmsImageTemplate.get(modelFile.getTemplateId());//获取模板
             if (modelTemplate == null) {
                 throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
             }
@@ -192,19 +193,20 @@ ImageTemplateService serviceCmsImageTemplate;
         }
         return isCreateNewFile;
     }
+
     @VOTransactional
     public AddListResultBean addList(AddListParameter parameter, CmsMtImageCreateImportModel importModel) {
         $info("CmsImageFileService:addList start");
-        Map<Long,CmsBtImageTemplateModel> mapTemplate=new HashMap<>();
+        Map<Long, CmsBtImageTemplateModel> mapTemplate = new HashMap<>();
         AddListResultBean result = new AddListResultBean();
         try {
-            checkAddListParameter(parameter,mapTemplate);
+            checkAddListParameter(parameter, mapTemplate);
             CmsMtImageCreateTaskModel modelTask = new CmsMtImageCreateTaskModel();
             List<CmsMtImageCreateTaskDetailModel> listTaskDetail = new ArrayList<>();
             CmsMtImageCreateFileModel modelCmsMtImageCreateFile;
             for (CreateImageParameter imageInfo : parameter.getData()) {
-                String templateModified=mapTemplate.get(imageInfo.getTemplateId()).getTemplateModified();//
-                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(),templateModified);
+                String templateModified = mapTemplate.get(imageInfo.getTemplateId()).getTemplateModified();//
+                long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), templateModified);
                 modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
                     modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
@@ -258,16 +260,15 @@ ImageTemplateService serviceCmsImageTemplate;
             result.setRequestId(requestId);
             result.setErrorCode(ImageErrorEnum.SystemError.getCode());
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
-        }
-        finally {
+        } finally {
             mapTemplate.clear();
-            mapTemplate=null;
+            mapTemplate = null;
         }
         $info("CmsImageFileService:addList end");
         return result;
     }
 
-    public void checkAddListParameter(AddListParameter parameter,Map<Long,CmsBtImageTemplateModel> mapTemplate) throws OpenApiException {
+    public void checkAddListParameter(AddListParameter parameter, Map<Long, CmsBtImageTemplateModel> mapTemplate) throws OpenApiException {
 
         for (CreateImageParameter imageInfo : parameter.getData()) {
             imageInfo.checkInputValue();

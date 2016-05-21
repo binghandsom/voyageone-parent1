@@ -185,6 +185,16 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
 
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
                     String propId = mappingBean.getPlatformPropId();
+                    // add by morse.lu 2016/05/15 start
+                    // target店上新临时添加写死用
+                    if ("hscode".equals(propId)) {
+                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        skuFieldValue.setInputFieldValue(propId, propValue.split(",")[0]);
+//                        skuFieldValue.setInputFieldValue(propId, "0410004300");
+                        continue;
+                    }
+                    // add by morse.lu 2016/05/15 end
                     if (propId.equals(sku_sizeField.getId())) {
                         continue;
                     } else if (propId.equals(sku_quantityField.getId())) {

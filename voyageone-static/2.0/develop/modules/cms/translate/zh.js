@@ -448,6 +448,11 @@ define(function(){
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "刷图操作成功",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "刷图操作失败",
         "TXT_IMPORT_TEXT": "导入内容",
+        "TXT_FeedStatus_New": "新产品",
+        "TXT_FeedStatus_WaitingForImport": "等待导入",
+        "TXT_FeedStatus_FinishImport": "导入成功",
+        "TXT_FeedStatus_Error": "导入失败",
+        "TXT_FeedStatus_NotImport": "不导入",
 
 
         "BTN_CREATE_TASK": "新建任务",

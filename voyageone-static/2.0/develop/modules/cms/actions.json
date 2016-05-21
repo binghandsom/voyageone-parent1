@@ -35,7 +35,8 @@
       "$feedSearchService": {
         "root": "/cms/search/feed/",
         "init": "init",
-        "search": "search"
+        "search": "search",
+        "updateFeedStatus": "updateFeedStatus"
       }
     },
     "group": {
@@ -87,7 +88,8 @@
         "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping",
         "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
-        "getCarts": "getCarts"
+        "getCarts": "getCarts",
+        "getCommonSchema": "getCommonSchema"
       },
       "$dictionaryService": {
         "root": "/cms/mapping/dictionary",

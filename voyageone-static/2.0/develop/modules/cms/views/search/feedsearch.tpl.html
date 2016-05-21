@@ -29,7 +29,7 @@
                                     <div class="col-sm-8">
                                         <textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.fuzzySearch"></textarea>
                                         <div class="text-warnings">
-                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询包括:款号Model(多项换行分割),产品Code(多项换行分割),产品名称（英文）,详情描述（英文）
+                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割),产品名称（英文）,详情描述（英文）
                                         </div>
                                     </div>
                                 </div>
@@ -99,6 +99,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Status</label>
+                                    <div class="col-sm-8">
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="9" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="0" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_WaitingForImport' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="1" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_FinishImport' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="2" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_Error' | translate}}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" value="3" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -130,6 +150,18 @@
                                         <input class="form-control" ng-model="vm.searchInfo.sizeType">
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                    <div class="col-sm-8 form-inline" style="padding-left:0px">
+                                        <div class="col-sm-5">
+                                            <select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
+                                                    ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
@@ -145,16 +177,27 @@
     </div>
     <div class="box">
         <div class="box-body">
+            <!--right-btn-->
+            <div class="form-inline m-b-xs text-right">
+                <button class="btn btn-default" style="margin-top:4px" ng-click="updateFeedStatus()">
+                    <i class="fa fa-cog"></i>&nbsp;导入主数据
+                </button>&nbsp;
+            </div><!-- /right-btn -->
             <div class="table-responsive">
                 <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2300px;table-layout: fixed;margin-bottom:0px" ng-controller="popupCtrl">
                     <thead>
                     <tr>
-                        <th class="text-center mfb-xt" style="white-space: nowrap">No.</th>
+                        <th class="text-right" style="white-space: nowrap;width:40px">No.</th>
+                        <th class="text-left" style="white-space: nowrap;width:40px;padding-left:0px"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
+                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label></th>
                         <th class="text-center mfb-x" style="white-space: nowrap">图片</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Category</th>
                         <th class="text-center mfb-xxt" style="white-space: nowrap">Code</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Name</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Model</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Status</th>
+                        <th class="text-left mfb-xxt" style="white-space: nowrap">Inventory</th>
                         <th class="text-left mfb-xxx" style="white-space: nowrap">Short Description</th>
                         <th class="text-left mfb-xxx" style="white-space: nowrap">Long Description</th>
                         <th class="text-left mfb-xxt" style="white-space: nowrap">Color</th>
@@ -174,8 +217,13 @@
                     </thead>
                     <tbody>
                     <tr><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
-                    <tr  ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
-                        <td style="overflow: hidden;" class="text-center mfb-xt3">{{$index + 1}}</td>
+                    <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
+                        <td style="overflow: hidden;" class="text-right">{{$index + 1}}</td>
+                        <td style="overflow: hidden;;padding-left:0px" class="text-left"><label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=0">
+                            <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(feedInfo._id, vm.feedSelList)">
+                            <span class="fa fa-check"></span>
+                        </label></td>
                         <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
                             <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
                         </td>
@@ -184,6 +232,8 @@
                         <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.name}}</td>
                         <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.model}}</td>
+                        <td class="text-left mfb-xxt" style="overflow: hidden;"><key-value type="feedStatus" ng-model="feedInfo.updFlg"></key-value></td>
+                        <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.qty}}</td>
                         <td class="text-left mfb-xxt" style="overflow: hidden;">
                             <span ng-if="feedInfo.shortDescription.length > 50"><popover-text content="feedInfo.shortDescription" direct="left" size="50"></popover-text></span>
                             <span ng-if="feedInfo.shortDescription.length <= 50">{{feedInfo.shortDescription}}</span>

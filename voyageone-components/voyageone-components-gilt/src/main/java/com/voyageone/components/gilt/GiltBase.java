@@ -59,7 +59,7 @@ public abstract class GiltBase extends ComponentBase {
         String result = HttpUtils.get(call_url, parm_url.toString(), app_key);
 
         /* 如果包含message  表示错误*/
-        if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
+        if(StringUtils.isNullOrBlank2(result)){
             //转换错误信息
             GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
             if (res.getType() != null){
