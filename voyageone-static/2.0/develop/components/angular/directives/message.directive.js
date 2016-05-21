@@ -37,24 +37,33 @@
         .directive('voMessage', function ($translate) {
             return {
                 restrict: "E",
-                require: '^^form',
                 template: '{{$message}}',
+                require: '^^form',
                 scope: {
                     'target': '='
                 },
                 link: function (scope, elem, attrs, formController) {
 
-                    var formName = formController.$name;
+                    var fieldName, formName;
 
-                    var fieldName = scope.target.$name;
+                    function show(message) {
+                        scope.$message = message;
+                        elem.fadeIn();
+                    }
+
+                    function hide() {
+                        elem.fadeOut();
+                    }
+
+                    if (!scope.target)
+                        return;
+
+                    fieldName = scope.target.$name;
+                    formName = formController.$name;
 
                     // 对指定 form 下字段的错误信息进行监视
                     // 如果有变动, 就显示第一个错误的提示信息
-                    scope.$watch(
-
-                        function () {
-                            return scope.target.$error;
-                        },
+                    scope.$watch('target.$error',
 
                         function ($error) {
 
@@ -71,19 +80,10 @@
                             }
 
                             // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                            $translate(errorTypes[error], {field: fieldName, form: formName}).then(function (message) {
-
-                                // 翻译成功就输出翻译后的信息
-                                scope.$message = message;
-
-                            }, function (key) {
-
-                                // 找不到就直接输出翻译 Key
-                                scope.$message = key;
-
-                            });
+                            $translate(errorTypes[error], {field: fieldName, form: formName}).then(show, show);
 
                         }, true);
+
                 }
             }
         });
