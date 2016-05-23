@@ -14,7 +14,7 @@
     </select>
 
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtChannelValuesModel" useGeneratedKeys="true" keyProperty="id" >
-        insert IGNORE into cms_mt_channel_values
+        insert into cms_mt_channel_values
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 `channel_id`,
