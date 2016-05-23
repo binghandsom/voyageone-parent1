@@ -70,6 +70,18 @@ define([
                     "size": 'md'
                 }
             },
+            "channel":{
+                "categorySetting": {
+                    "templateUrl": "views/pop/channel/categorySetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/channel/categorySetting.ctl",
+                    "controller": 'categorySettingCtl'
+                },
+                "newCategory": {
+                    "templateUrl": "views/pop/channel/newCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/channel/newCategory.ctl",
+                    "controller": 'newCategoryCtl'
+                }
+            },
             "custom": {
                 "newAttribute": {
                     "templateUrl": "views/pop/custom/newAttribute.tpl.html",
@@ -1262,6 +1274,13 @@ define([
             });
         }
 
+        $scope.openCategorySetting = function (context) {
+            return openModel(popActions.channel.categorySetting, context);
+        };
+
+        $scope.openNewCategory = function (context) {
+            return openModel(popActions.channel.newCategory, context);
+        };
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {
         //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);
         //    promise.then(function success(data) {

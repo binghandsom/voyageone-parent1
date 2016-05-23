@@ -165,6 +165,12 @@
     "templateUrl": "views/channel/taglist/index.tpl.html",
     "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
   },
+  "channel_category": {
+    "hash": "/channel/category",
+    "templateUrl": "views/channel/category/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/category/index.ctl",
+    "controller": "categoryController as ctrl"
+  },
   "channel_listing_sizechart": {
     "hash": "/channel/sizechart",
     "templateUrl": "views/channel/sizechart/index.tpl.html",

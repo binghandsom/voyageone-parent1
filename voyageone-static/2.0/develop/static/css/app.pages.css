@@ -33,13 +33,15 @@
 }
 
 .category_drag_list_qh li .indexSelected {
-    float: left;
+/*    float: left;*/
     display: block;
     position: relative;
     list-style-type: none;
-    padding: 2px;
-    background: #dcf3f9;
-    color: #333
+    padding: 5px;
+    background: #73214B;
+    font-weight: bold;
+    border-radius: 4px;
+    color: white;
 }
 
 .category_drag_list_qh .translated-row {
@@ -176,4 +178,15 @@
     position: absolute;
     top: 15px;
     left: 1px;
+}
+
+.category-drag-minWidth input{
+    width:84% ! important;
+}
+
+@media screen and (max-width: 1580px) {
+    .category-drag-minWidth input{
+        width: 77% ! important;
+        display: inline;
+    }
 }
