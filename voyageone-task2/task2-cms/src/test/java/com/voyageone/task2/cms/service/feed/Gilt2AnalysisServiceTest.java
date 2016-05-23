@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +21,12 @@ public class Gilt2AnalysisServiceTest {
 
     @Autowired
     GiltAnalysisService gilt2AnalysisService;
+    @Autowired
+    private TaskDao taskDao;
     @Test
     public void testOnStartup() throws Exception {
-        List<TaskControlBean> taskControlList = new ArrayList<>();
+
+        List<TaskControlBean> taskControlList = taskDao.getTaskControlList("Cms2GiltAnalysisJob");
         gilt2AnalysisService.onStartup(taskControlList);
     }
 }

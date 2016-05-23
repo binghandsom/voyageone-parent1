@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
@@ -126,7 +127,11 @@ public class CmsPlatformMappingService extends BaseTaskService {
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
         // 类目ID
-        cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId(cmsMtPlatformCategoryTree.getCatPath()));
+        if(cmsMtPlatformCategoryTree.getCartId()== Integer.parseInt(CartEnums.Cart.JGJ.getId()) || cmsMtPlatformCategoryTree.getCartId()== Integer.parseInt(CartEnums.Cart.JGY.getId())){
+            cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId("jd_" + cmsMtPlatformCategoryTree.getCatPath()));
+        }else{
+            cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId(cmsMtPlatformCategoryTree.getCatPath()));
+        }
         // 类目ID
         cmsMtPlatformMappingModel.setPlatformCategoryId(cmsMtPlatformCategoryTree.getCatId());
         // 渠道ID

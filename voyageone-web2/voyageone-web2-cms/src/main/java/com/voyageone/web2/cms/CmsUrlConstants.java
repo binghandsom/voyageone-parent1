@@ -305,6 +305,7 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/search/feed";
             String INIT = "init";
             String SEARCH = "search";
+            String UPDATE = "updateFeedStatus";
         }
     }
 
@@ -355,6 +356,7 @@ public interface CmsUrlConstants {
             String SET_PLATFORM_MAPPING = "setPlatformMapping";
 
             String GET_MAIN_CATEGORY_SCHEMA = "getMainCategorySchema";
+
             String GET_PLATFORM_CATEGORY_SCHEMA = "getPlatformCategorySchema";
 
             String GET_DICT_LIST = "getDictList";
@@ -368,6 +370,8 @@ public interface CmsUrlConstants {
             String SAVE_MATCH_OVER_BY_MAIN_CATE = "saveMatchOverByMainCategory";
 
             String GET_CARTS = "getCarts";
+
+            String GET_COMMON_SCHEMA = "getCommonSchema";
         }
 
         interface DICTIONARY {

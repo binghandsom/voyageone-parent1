@@ -30,6 +30,9 @@
             this.selList = function(value) {
                 return value !== undefined ? _selectRowsInfo.selList.push(value) : _selectRowsInfo.selList;
             };
+            this.clearSelectedList = function() {
+                _selectRowsInfo.selList = [];
+            };
             this.selectRowsInfo = _selectRowsInfo;
         };
     });

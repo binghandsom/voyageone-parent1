@@ -96,16 +96,18 @@ define([
                     }
 
                     // 获取默认选中值,所在的属性路径
-                    $service.getPropertyPath($mainCate.id, $mapping.masterPropId, true).then(function (properties) {
-                        if (!properties) {
-                            $options.propGroups.push({selected: null, props: props});
-                            return;
-                        }
+                    var properties = $service.searchProperty(props, $mapping.masterPropId);
 
-                        _.each(_.clone(properties).reverse(), function (property) {
-                            $options.propGroups.push({selected: property, props: props});
-                            props = me.filterCurrent(property.fields);
-                        });
+                    // 如果没有, 则直接默认不选
+                    if (!properties) {
+                        $options.propGroups.push({selected: null, props: props});
+                        return;
+                    }
+
+                    // 有, 就倒序挨个选中默认选中项
+                    _.each(_.clone(properties).reverse(), function (property) {
+                        $options.propGroups.push({selected: property, props: props});
+                        props = me.filterCurrent(property.fields);
                     });
                 });
             },

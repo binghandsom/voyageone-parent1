@@ -6,6 +6,7 @@ angular.module("voyageone.angular",[
 "voyageone.angular.directives.fileStyle",
 "voyageone.angular.directives.ifNoRows",
 "voyageone.angular.directives.image",
+"voyageone.angular.directives.message",
 "voyageone.angular.directives.uiNav",
 "voyageone.angular.directives.popoverText",
 "voyageone.angular.directives.schema",

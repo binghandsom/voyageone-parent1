@@ -14,6 +14,7 @@ import com.voyageone.components.gilt.bean.GiltSku;
 import com.voyageone.components.gilt.service.GiltSkuService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
@@ -47,6 +48,8 @@ public class GiltAnalysisService extends BaseTaskService {
     private Transformer transformer;
     @Autowired
     private GiltFeedDao giltFeedDao;
+    @Autowired
+    private TaskDao taskDao;
     @Autowired
     private GiltInsert insertService;
     @Autowired
@@ -91,6 +94,10 @@ public class GiltAnalysisService extends BaseTaskService {
 
         Long scheduled = 24 * 60 * 60 * 1000L;
         String val1 = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.scheduled_time);
+        TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList,TaskControlEnums.Name.run_flg).get(0);
+        if(!StringUtils.isEmpty(taskControlBean.getEnd_time())){
+            lastExecuteTime = Long.parseLong(taskControlBean.getEnd_time());
+        }
         if (!StringUtils.isEmpty(val1)) {
             scheduled = Integer.parseInt(val1) * 60 * 60 * 1000L;
         }
@@ -105,6 +112,9 @@ public class GiltAnalysisService extends BaseTaskService {
             $info("产品信息插入开始");
             superFeedImport(taskControlList);
             $info("产品信息插入完成");
+
+            taskControlBean.setEnd_time(lastExecuteTime.toString());
+            taskDao.updateTaskControl(taskControlBean);
 
     //        $info("transform开始");
     //        transformer.new Context(GILT, this).transform();

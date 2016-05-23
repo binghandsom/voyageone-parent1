@@ -164,6 +164,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                             id,
                             Integer.parseInt(cartId));
             if (schemaModel != null){
+                if(cartId.equalsIgnoreCase(CartEnums.Cart.JGJ.getId()) || cartId.equalsIgnoreCase(CartEnums.Cart.JGY.getId())) schemaModel.setCatFullPath("jd_"+ schemaModel.getCatFullPath());
                 if(isExist(schemaModel.getCatFullPath())) continue;
                 if (Integer.parseInt(cartId) == schemaModel.getCartId()) {
 
@@ -325,7 +326,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                     index++;
 
-                    $info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId());
+                    $info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId()+"   "+masterModel.getCatFullPath());
 
                     //保存主数据schema
                     cmsMtCategorySchemaDao.insert(masterModel);
