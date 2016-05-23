@@ -35,8 +35,8 @@
         </property>
     </bean>
 
+    <!-- define CmsBtImageTemplate cache -->
     <bean id="cachingCmsBtImageTemplateKeyGenerator" class="com.voyageone.service.impl.cms.imagecreate.VOImageCreateTemplateCacheKeyGenerator"/>
-    <!-- define caching behavior -->
     <cache:advice id="cachingCmsBtImageTemplateDao" cache-manager="cacheManager" key-generator="cachingCmsBtImageTemplateKeyGenerator">
         <cache:caching cache="DATA_KEY_cachingCmsBtImageTemplateDao">
             <cache:cacheable method="selectByTemplateId"/>

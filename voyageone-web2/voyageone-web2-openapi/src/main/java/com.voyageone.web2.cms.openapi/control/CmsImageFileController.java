@@ -2,8 +2,8 @@ package com.voyageone.web2.cms.openapi.control;
 
 import com.voyageone.service.bean.openapi.image.AddListParameter;
 import com.voyageone.service.bean.openapi.image.AddListResultBean;
+import com.voyageone.service.bean.openapi.image.GetListResultBean;
 import com.voyageone.web2.cms.openapi.service.CmsImageFileService;
-//import com.voyageone.service.model.openapi.image.AddListResultBean;
 import com.voyageone.service.bean.openapi.image.GetImageResultBean;
 import com.voyageone.web2.cms.openapi.OpenAipBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +39,10 @@ public class CmsImageFileController extends OpenAipBaseController {
     @RequestMapping(value = "addList", method = RequestMethod.POST)
     public AddListResultBean addList(@RequestBody AddListParameter parameter) {
         return service.addListWithTrans(parameter);
+    }
+
+    @RequestMapping(value = "getListResult", method = RequestMethod.POST)
+    public GetListResultBean getListResult(@RequestParam int taskId) {
+        return service.getListResult(taskId);
     }
 }

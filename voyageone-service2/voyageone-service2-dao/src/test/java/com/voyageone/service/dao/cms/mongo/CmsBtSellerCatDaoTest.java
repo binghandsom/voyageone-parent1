@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -31,8 +32,22 @@ public class CmsBtSellerCatDaoTest {
 
     @Test
     public void testInsert() throws Exception {
-        CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel("1",1, "111", "test", "1>1>1", "0", "dd", 0, null);
-        cmsBtSellerCatDao.insert(cmsBtSellerCatModel);
+
+        CmsBtSellerCatModel football = new CmsBtSellerCatModel("010",20, "201", "足球鞋", "运动鞋->足球鞋", "101", "101-201", 0,  new ArrayList<CmsBtSellerCatModel>());
+        CmsBtSellerCatModel basketball = new CmsBtSellerCatModel("010",20, "202", "篮球鞋", "运动鞋->篮球鞋", "101", "101-202", 0,  new ArrayList<CmsBtSellerCatModel>());
+        List<CmsBtSellerCatModel> list = new ArrayList<CmsBtSellerCatModel>();
+        list.add(football);
+        list.add(basketball);
+        CmsBtSellerCatModel root = new CmsBtSellerCatModel("010", 20, "101", "运动鞋", "运动鞋", "0", "101", 1, list );
+        cmsBtSellerCatDao.insert(root);
+
+        CmsBtSellerCatModel ring = new CmsBtSellerCatModel("010",20, "211", "戒指", "首饰->戒指", "102", "102-211", 0,  new ArrayList<CmsBtSellerCatModel>());
+        CmsBtSellerCatModel bracelet = new CmsBtSellerCatModel("010",20, "212", "手镯", "首饰->手镯", "102", "102-212", 0,  new ArrayList<CmsBtSellerCatModel>());
+        List<CmsBtSellerCatModel> list1 = new ArrayList<CmsBtSellerCatModel>();
+        list1.add(ring);
+        list1.add(bracelet);
+        CmsBtSellerCatModel root1 = new CmsBtSellerCatModel("010", 20, "102", "首饰", "首饰", "0", "102", 1, list1 );
+        cmsBtSellerCatDao.insert(root1);
 
     }
 

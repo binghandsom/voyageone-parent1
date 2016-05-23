@@ -47,7 +47,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
      */
     public List<CmsBtSellerCatModel> selectByChannelCart(String channelId, int cartId) {
 
-        String queryStr = "{\"channelId\":\"" + channelId + "\"" + "\"cartId\"" + ":" + cartId + "}";
+        String queryStr = "{\"channelId\":\"" + channelId + "\"" + ",\"cartId\"" + ":" + cartId + "}";
 
         List<CmsBtSellerCatModel>  result = select(queryStr);
 
