@@ -224,6 +224,14 @@ public class TargetAnalysisService extends BaseAnalysisService {
             }
             reader.close();
             $info("Target产品文件读入完成");
+            if(!retail.isEmpty()){
+                String temp="";
+                for(String key :retail.keySet()){
+                    temp += key+"\n";
+                }
+                issueLog.log("target feed导入",temp+"feed中不存在",ErrorType.BatchJob,SubSystem.CMS);
+            }
+
         } catch (FileNotFoundException e) {
             $info("Target产品文件读入不存在");
         } catch (Exception ex) {
@@ -415,8 +423,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
         try {
             reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
             // Head读入
-            reader.readHeaders();
-            reader.getHeaders();
+//            reader.readHeaders();
+//            reader.getHeaders();
 
             // Body读入
             while (reader.readRecord()) {
@@ -474,5 +482,11 @@ public class TargetAnalysisService extends BaseAnalysisService {
             i++;
         }
         return attribute;
+    }
+
+    @Override
+    protected boolean backupFeedFile(String channelId){
+        super.backupFeedFile(channelId);
+        return backupFeedFile(channelId,FeedEnums.Name.file_id_import_sku);
     }
 }
