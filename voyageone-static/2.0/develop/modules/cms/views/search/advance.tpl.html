@@ -299,6 +299,20 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;Tags&nbsp;<span class="caret"></span>
+					</button>
+					<!-----------------------------tags------------------------------>
+					<ul uib-dropdown-menu>
+						<li>
+							<a href>freeTag</a>
+						</li>
+						<li>
+							<a href ng-click="openTagEdit('')">TagEdit</a>
+						</li>
+					</ul>
+				</div>&nbsp;
 				<button class="btn btn-default" ng-click="openCustomColumn('lg',search)">
 					<i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}
 				</button>&nbsp;
