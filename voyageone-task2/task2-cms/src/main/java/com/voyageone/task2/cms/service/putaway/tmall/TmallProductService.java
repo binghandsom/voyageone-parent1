@@ -1528,14 +1528,20 @@ public class TmallProductService {
 
                     for (Field processField : processFields) {
                         if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
-                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            // 20160523 tom bug修正 START
+//                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            SingleCheckField field = (SingleCheckField) processField;
+                            // 20160523 tom bug修正 END
                             //prop_1626510（型号）值设为-1(表示其他）
                             field.setValue("-1");
                             contextBuildFields.addCustomField(field);
                         }
                         else {
                             //其他的型号值填货号
-                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            // 20160523 tom bug修正 START
+//                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            InputField field = (InputField) processField;
+                            // 20160523 tom bug修正 END
 
                             String styleCode = tmallUploadRunState.getStyle_code();
                             if (styleCode == null || "".equals(styleCode)) {

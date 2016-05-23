@@ -36,4 +36,9 @@ public class UploadToUSJoiServiceTest {
 
         uploadToUSJoiService.onStartup(new ArrayList<TaskControlBean>());
     }
+
+    @Test
+    public void testOnStartup1() throws Exception {
+
+    }
 }
