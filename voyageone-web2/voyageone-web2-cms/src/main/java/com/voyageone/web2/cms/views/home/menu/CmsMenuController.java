@@ -89,7 +89,8 @@ public class CmsMenuController extends CmsController {
         //店铺自定义类目
         else
         {
-            List<CmsBtSellerCatModel> feedTreeList = menuService.getSellerCatTreeList(channelId, cartId);
+            List<CmsBtSellerCatModel> cmsBtSellerCatList = menuService.getSellerCatTreeList(channelId, cartId);
+            resultBean.put("categoryTreeList", cmsBtSellerCatList);
         }
 
 
