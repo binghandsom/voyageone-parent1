@@ -41,8 +41,7 @@ public class CmsImageFileController extends OpenAipBaseController {
 
     @RequestMapping(value = "getImage")
     public void getImage(HttpServletResponse response, @RequestParam String cId, @RequestParam int templateId, @RequestParam String file, @RequestParam String vparam) throws Exception {
-        ModelAndView result = null;
-        $info("CmsImageFileController:get start cId:=[%s],templateId=[%s],file=[%s],vparam=[%s]", cId, templateId, file, vparam);
+        $info("CmsImageFileController:getImage start cId:=[%s],templateId=[%s],file=[%s],vparam=[%s]", cId, templateId, file, vparam);
 
         GetImageResultBean resultBean = service.getImage(cId, templateId, file, false, vparam, CREATE_USER);
         if (resultBean.getErrorCode() == 0) {
@@ -53,6 +52,7 @@ public class CmsImageFileController extends OpenAipBaseController {
             response.setHeader("errorCode", String.valueOf(resultBean.getErrorCode()));
             response.setHeader("errorMsg", resultBean.getErrorMsg());
         }
+        $info("CmsImageFileController:getImage end cId:=[%s],templateId=[%s],file=[%s],vparam=[%s]", cId, templateId, file, vparam);
     }
 
     @RequestMapping(value = "addList", method = RequestMethod.POST)
