@@ -88,7 +88,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 feedImage.setUpdFlg(0);
                 feedImage.setChannelId(channelId);
 
-                ExecutorService es  = Executors.newFixedThreadPool(1);
+                ExecutorService es  = Executors.newFixedThreadPool(2);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
