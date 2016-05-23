@@ -159,10 +159,8 @@ public class CmsImageFileService extends BaseService {
         importModel.setErrorCode(0);
         String filePath = path + "/" + fileName;
         File excelFile = new File(filePath);
-        InputStream fileInputStream = null;
-        fileInputStream = new FileInputStream(excelFile);
-        HSSFWorkbook book = null;
-        book = new HSSFWorkbook(fileInputStream);
+        InputStream fileInputStream = new FileInputStream(excelFile);
+        HSSFWorkbook book = new HSSFWorkbook(fileInputStream);
         HSSFSheet productSheet = book.getSheet("Sheet1");
         List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
@@ -213,6 +211,10 @@ public class CmsImageFileService extends BaseService {
             return resultBean;
         }
         return imageCreateFileService.addList(parameter, null);
+    }
+
+    public GetListResultBean getListResult(int taskId) {
+        return imageCreateFileService.getListResult(taskId);
     }
 
 }
