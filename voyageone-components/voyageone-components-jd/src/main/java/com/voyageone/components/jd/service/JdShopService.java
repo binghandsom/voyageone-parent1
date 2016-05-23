@@ -59,16 +59,19 @@ public class JdShopService extends JdBase {
      * 京东添加前台展示的商家自定义店内分类
      *
      * @param shop ShopBean      店铺信息
-     * @return cId String  京东店铺分类cId
+     * @param cName String 分类名
+     * @param parentCId String 父分类Id
+     * @return cId String 分类Id
+     * @throws BusinessException
      */
-    public String addShopCategory(ShopBean shop, ShopCategory shopCategory) throws BusinessException {
+    public String addShopCategory(ShopBean shop, String cName, String parentCId) throws BusinessException {
 
         SellerCatAddRequest request = new SellerCatAddRequest();
         String cId = "";
 
-        request.setName("");
-        request.setParentId("");
-        request.setOpen(false);
+        request.setName(cName);
+        request.setParentId(parentCId);
+        request.setOpen(true);
         request.setHomeShow(false);
 
         try {
