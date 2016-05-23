@@ -766,6 +766,8 @@ public class HttpUtils {
 //        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection)  url.openConnection();
+        con.setConnectTimeout(60000);
+        con.setReadTimeout(60000);
         if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
             return getInputStream(con.getHeaderField("Location"));
         }else{
