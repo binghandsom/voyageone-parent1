@@ -1,10 +1,10 @@
-package com.voyageone.common.redis;
+package com.voyageone.service.impl.cms.imagecreate;
+
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
+import org.springframework.cache.interceptor.KeyGenerator;
 
 import java.lang.reflect.Method;
-
-import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.common.util.JacksonUtil;
-import org.springframework.cache.interceptor.KeyGenerator;
 
 /**
  * VODaoCacheKeyGenerator
@@ -13,7 +13,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class VODaoCacheKeyGenerator implements KeyGenerator {
+public class VOImageCreateTemplateCacheKeyGenerator implements KeyGenerator {
 
     private static final String PRE_STR = "DATA_CACHE_";
 
@@ -23,8 +23,8 @@ public class VODaoCacheKeyGenerator implements KeyGenerator {
             return String.format("%s%s[null]", PRE_STR, method.getDeclaringClass().getName());
         } else {
             String paramstr;
-            if (params.length == 1 && params[0] instanceof BaseModel) {
-                paramstr = JacksonUtil.bean2Json(((BaseModel)params[0]).getId());
+            if (params.length == 1 && params[0] instanceof CmsBtImageTemplateModel) {
+                paramstr = JacksonUtil.bean2Json(((CmsBtImageTemplateModel)params[0]).getImageTemplateId());
             } else if (params.length == 1) {
                 paramstr = JacksonUtil.bean2Json(params[0]);
             } else {

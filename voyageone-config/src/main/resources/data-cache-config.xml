@@ -35,18 +35,16 @@
         </property>
     </bean>
 
+    <bean id="cachingCmsBtImageTemplateKeyGenerator" class="com.voyageone.service.impl.cms.imagecreate.VOImageCreateTemplateCacheKeyGenerator"/>
     <!-- define caching behavior -->
-    <cache:advice id="cachingCmsBtImageTemplateDao" cache-manager="cacheManager" key-generator="voDaoCacheKeyGenerator">
+    <cache:advice id="cachingCmsBtImageTemplateDao" cache-manager="cacheManager" key-generator="cachingCmsBtImageTemplateKeyGenerator">
         <cache:caching cache="DATA_KEY_cachingCmsBtImageTemplateDao">
             <cache:cacheable method="selectByTemplateId"/>
             <cache:cache-evict method="update"/>
         </cache:caching>
     </cache:advice>
-
-
     <aop:config>
-        <aop:advisor advice-ref="cachingCmsBtImageTemplateDao"
-                     pointcut="execution(* com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao.*(..))"/>
+        <aop:advisor advice-ref="cachingCmsBtImageTemplateDao" pointcut="execution(* com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao.*(..))"/>
     </aop:config>
 
 </beans>
