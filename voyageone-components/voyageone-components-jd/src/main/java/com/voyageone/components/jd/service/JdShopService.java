@@ -1,7 +1,9 @@
 package com.voyageone.components.jd.service;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
+import com.jd.open.api.sdk.request.sellercat.SellerCatAddRequest;
 import com.jd.open.api.sdk.request.sellercat.SellerCatsGetRequest;
+import com.jd.open.api.sdk.response.sellercat.SellerCatAddResponse;
 import com.jd.open.api.sdk.response.sellercat.SellerCatsGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -20,7 +22,7 @@ import java.util.List;
 @Component
 public class JdShopService extends JdBase {
 
-	/**
+    /**
      * 京东获取前台展示的商家自定义店内分类
      *
      * @param shop ShopBean      店铺信息
@@ -51,5 +53,47 @@ public class JdShopService extends JdBase {
 
         return shopCategoryList;
     }
+
+
+    /**
+     * 京东添加前台展示的商家自定义店内分类
+     *
+     * @param shop ShopBean      店铺信息
+     * @return cId String  京东店铺分类cId
+     */
+    public String addShopCategory(ShopBean shop, ShopCategory shopCategory) throws BusinessException {
+
+        SellerCatAddRequest request = new SellerCatAddRequest();
+        String cId = "";
+
+        request.setName("");
+        request.setParentId("");
+        request.setOpen(false);
+        request.setHomeShow(false);
+
+        try {
+            // 调用京东获取前台添加的商家自定义店内分类API(360buy.sellercats.add)
+            SellerCatAddResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回店铺分类的cid
+                    cId = response.getCid();
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API添加前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+
+            throw new BusinessException(shop.getShop_name() + "添加前台展示的商家自定义店内分类信息失败 " + ex.getMessage());
+        }
+
+        return cId;
+
+    }
+
+
+
+
 
 }
