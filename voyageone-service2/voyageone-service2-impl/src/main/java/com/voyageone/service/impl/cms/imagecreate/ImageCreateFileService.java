@@ -68,7 +68,8 @@ public class ImageCreateFileService extends BaseService {
     }
 
     public boolean existsHashCode(long hashCode) {
-        return getModelByHashCode(hashCode) != null; //加缓存判断
+        //加缓存判断
+        return getModelByHashCode(hashCode) != null;
     }
 
     @VOTransactional
@@ -164,9 +165,12 @@ public class ImageCreateFileService extends BaseService {
             modelTaskDetail.setStatus(1);
         }
         if (modelFile != null) {
-            this.changeModel(modelFile);//一起保存
+            modelFile.setModified(new Date());
+            //一起保存
+            this.changeModel(modelFile);
         }
-        modelTaskDetail.setEndTime(new Date());//执行结束时间
+        //执行结束时间
+        modelTaskDetail.setEndTime(new Date());
         daoCmsMtImageCreateTaskDetail.update(modelTaskDetail);
     }
 
@@ -211,7 +215,7 @@ public class ImageCreateFileService extends BaseService {
                 long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), templateModified);
                 modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
-                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
+                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "SYSTEM", hashCode, imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
@@ -265,7 +269,6 @@ public class ImageCreateFileService extends BaseService {
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         } finally {
             mapTemplate.clear();
-            mapTemplate = null;
         }
         $info("CmsImageFileService:addList end");
         return result;
