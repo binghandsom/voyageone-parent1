@@ -324,6 +324,11 @@
       "$priceHistoryService": {
         "root": "/cms/pop/history_price",
         "getPriceHistory": "getPriceHistory"
+      },
+      "$addChannelCategoryService": {
+        "root": "/cms/pop/add_to_channel_category",
+        "init": "getChannelCategory",
+        "save": "saveChannelCategory"
       }
     },
     "translation": {
