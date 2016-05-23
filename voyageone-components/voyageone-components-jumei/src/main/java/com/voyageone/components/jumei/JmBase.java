@@ -54,7 +54,7 @@ public class JmBase extends ComponentBase {
             Object valueObj = entry.getValue();
             Object newValueObj;
             if (valueObj instanceof NotSignString) {
-                newValueObj = new NotSignString(replaceSpicialChart(((NotSignString)valueObj).content));
+                newValueObj = new NotSignString(replaceSpicialChart(((NotSignString)valueObj).getContent()));
             } else {
                 newValueObj = replaceSpicialChart((String)valueObj);
             }
@@ -90,8 +90,8 @@ public class JmBase extends ComponentBase {
                 }
             } else if (value instanceof NotSignString) {
                 NotSignString notSignString = (NotSignString)value;
-                if(!StringUtils.isEmpty(notSignString.content)){
-                    parm_url.append(notSignString.content);
+                if(!StringUtils.isEmpty(notSignString.getContent())){
+                    parm_url.append(notSignString.getContent());
                 }
             }
         }

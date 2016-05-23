@@ -13,11 +13,8 @@
                                     <label class="col-sm-3 control-label" translate="TXT_TAG_TYPE"></label>
 
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="initialize()">
-                                            <option value="1" translate="TXT_TAG_STORE_CLASSIFY"></option>
-                                            <option value="2" translate="TXT_TAG_PROMOTION"></option>
-                                            <option value="3" translate="TXT_TAG_GOODS"></option>
-                                            <option value="4" translate="TXT_TAG_FREE"></option>
+                                        <select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="initialize()"
+                                                ng-options="tagType.value as tagType.name for tagType in vm.tagTypeList">
                                         </select>
                                     </div>
                                 </div>

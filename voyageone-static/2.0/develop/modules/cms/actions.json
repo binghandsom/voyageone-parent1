@@ -29,7 +29,8 @@
         "getProductList": "getProductList",
         "exportProducts":"exportProducts",
         "getCustColumnsInfo":"getCustColumnsInfo",
-        "saveCustColumnsInfo":"saveCustColumnsInfo"
+        "saveCustColumnsInfo":"saveCustColumnsInfo",
+        "addFreeTag": "addFreeTag"
       },
       "$feedSearchService": {
         "root": "/cms/search/feed/",
@@ -79,13 +80,15 @@
         "getPlatformCategories": "getPlatformCategories",
         "setPlatformMapping": "setPlatformMapping",
         "getPlatformCategory": "getPlatformCategory",
+        "getPlatformCategorySchema": "getPlatformCategorySchema",
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
         "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping",
         "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
-        "getCarts": "getCarts"
+        "getCarts": "getCarts",
+        "getCommonSchema": "getCommonSchema"
       },
       "$dictionaryService": {
         "root": "/cms/mapping/dictionary",
@@ -103,6 +106,7 @@
       "promotionService" : {
         "root": "/cms/promotion/index",
         "init": "init",
+        "initByPromotionId":"initByPromotionId",
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",
@@ -170,6 +174,13 @@
         "addExport": "addExport"
       }
     },
+    "cmsMtImageCreate":{
+      "cmsMtImageCreateService":{
+        "root":"/cms/imagecreate/index",
+        "getPageByWhere":"getPageByWhere",
+        "getCountByWhere":"getCountByWhere"
+      }
+},
     "imageManager": {
       "$CmsMtMasterInfoService": {
         "root": "/cms/cmsmtmasterinfo/index",
@@ -256,6 +267,11 @@
           "getCategoryList": "getCategoryList",
           "getCategoryDetail":"getCategoryDetail",
           "updateCategorySchema":"updateCategorySchema"
+        },
+        "categorySettingService": {
+          "root": "/cms/system/category/setting",
+          "getMasterSubCategoryList":"getMasterSubCategoryList",
+          "getPlatformSubCategoryList":"getPlatformSubCategoryList"
         }
       },
       "systemCartService":{
@@ -292,7 +308,8 @@
       "$addToPromotionService": {
         "root": "/cms/pop/add_to_promotion",
         "getPromotionTags": "getPromotionTags",
-        "addToPromotion": "addToPromotion"
+        "addToPromotion": "addToPromotion",
+        "checkPromotionTags": "checkPromotionTags"
       },
       "$fieldEditService": {
         "root": "/cms/pop/field_edit",
@@ -357,7 +374,55 @@
           "root": "/cms/channel/tag",
           "init": "init",
           "save": "saveTag",
-          "del": "delTag"
+          "del": "delTag",
+          "getTagList": "getTagList"
+        }
+      },
+      "imageTemplateService":{
+        "root":"/cms/channel/image_template",
+        "init": "init",
+        "getPage": "getPage",
+        "getCount": "getCount",
+        "save": "save",
+        "delete": "delete",
+        "get":"get",
+        "getTemplateParameter":"getTemplateParameter",
+        "getDownloadUrl":"getDownloadUrl"
+
+       },
+      "imageGroupService": {
+        "root": "/cms/channel/image_group",
+        "init": "init",
+        "search": "search",
+        "save": "save",
+        "delete": "delete"
+      },
+      "imageGroupDetailService": {
+        "root": "/cms/channel/image_group_detail",
+        "init": "init",
+        "search": "search",
+        "save": "save",
+        "saveImage": "saveImage",
+        "saveUploadImage": "saveUploadImage",
+        "delete": "delete",
+        "refresh": "refresh",
+        "move": "move"
+      },
+      "sizeChart":{
+        "sizeChartService": {
+          "root": "/cms/channel/sizeChartList",
+          "init": "sizeChartInit",
+          "search": "sizeChartSearch",
+          "delete": "sizeChartDelete",
+          "editSave": "sizeChartEditSave"
+        }
+    },
+      "sizeChartDetail":{
+        "sizeChartDetailService": {
+          "root": "/cms/channel/sizeChartDetail",
+          "init": "sizeChartDetailSearch",
+          "detailSave": "sizeChartDetailSave",
+          "detailSizeMapSave": "sizeChartDetailSizeMapSave"
         }
       }
     }

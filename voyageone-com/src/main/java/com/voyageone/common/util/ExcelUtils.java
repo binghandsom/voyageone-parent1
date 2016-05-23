@@ -32,9 +32,9 @@ public final class ExcelUtils {
                 String value = cell.getStringCellValue();
                 if (StringUtils.isEmpty(value)) return null;
                 return Double.valueOf(value);
+            default:
+                return null;
         }
-
-        return null;
     }
 
     /**
@@ -64,17 +64,16 @@ public final class ExcelUtils {
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_NUMERIC:
                 double val = cell.getNumericCellValue();
-
                 if (numberFormat == null)
                     return String.valueOf(val);
-
                 NumberFormat formatter = new DecimalFormat(numberFormat);
                 return formatter.format(val);
             case Cell.CELL_TYPE_STRING:
                 return cell.getStringCellValue();
             case Cell.CELL_TYPE_FORMULA:
                 return cell.getStringCellValue();
+            default:
+                return null;
         }
-        return null;
     }
 }

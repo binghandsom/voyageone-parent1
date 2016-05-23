@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+<beans default-lazy-init ="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.springframework.org/schema/beans"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <!-- localhost dev env -->
-
-    <!-- Common相关配置 -->
     <import resource="classpath*:common-config.xml" />
-    <!--<import resource="classpath*:datasource-jumei-config.xml" />-->
+    <import resource="classpath*:data-cache-config.xml" />
     <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
     <import resource="classpath*:datasource-config-mongo-cms2.xml" />
@@ -18,6 +17,7 @@
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/data-cache-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config-new.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />-->

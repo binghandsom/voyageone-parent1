@@ -3,6 +3,9 @@ package com.voyageone.task2.cms.service.feed;
 import com.csvreader.CsvReader;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
@@ -13,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -76,6 +81,8 @@ public class SEAnalysisService extends BaseTaskService {
             }
         }
 
+        reader.close();
+
         $info("读取数据: " + beanList.size());
 
         shoeCityDao.clearTemp();
@@ -104,7 +111,30 @@ public class SEAnalysisService extends BaseTaskService {
 
         $info("成功数: " + succeed.size());
 
-        if (!succeed.isEmpty())
+        if (!succeed.isEmpty()) {
             shoeCityDao.updateSucceed(succeed);
+            backupFeedFile(feedFiles[0]);
+        }
+    }
+
+
+    private boolean backupFeedFile(File orgfile) {
+        $info("备份处理文件开始");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date_ymd = sdf.format(date);
+
+        String filename_backup = FILE_PATH + "Backup/" + date_ymd + "_"
+                + orgfile.getName();
+        File file = new File(orgfile.getPath());
+        File file_backup = new File(filename_backup);
+
+        if (!file.renameTo(file_backup)) {
+//            logger.error("产品文件备份失败");
+            $info("产品文件备份失败");
+        }
+
+        $info("备份处理文件结束");
+        return true;
     }
 }

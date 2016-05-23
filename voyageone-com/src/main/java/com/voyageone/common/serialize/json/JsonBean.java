@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value={"obj"})
 public class JsonBean {
 	
-	public static final String TYPE = "type";
-	public static final String VALUE = "value";
+	public static final String TYPE_STR = "type";
+	public static final String VALUE_STR = "value";
 	
 	private String type;
 	private String value;

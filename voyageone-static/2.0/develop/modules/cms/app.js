@@ -410,6 +410,8 @@ define([
                 vm.navigation = data.categoryList;
                 // TODO 来至服务器端的session
                 $rootScope.platformType = data.platformType;
+                $rootScope.imageUrl = data.imageUrl;
+                $rootScope.productUrl = data.productUrl;
             });
         }
 

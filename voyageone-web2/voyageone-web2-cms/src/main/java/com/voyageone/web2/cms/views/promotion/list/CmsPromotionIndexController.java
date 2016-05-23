@@ -34,7 +34,10 @@ public class CmsPromotionIndexController extends CmsController {
     public AjaxResponse init() {
         return success(cmsPromotionService.init(getUser().getSelChannelId(), getLang()));
     }
-
+    @RequestMapping(PROMOTION.LIST.INDEX.InitByPromotionId)
+    public AjaxResponse initByPromotionId(@RequestBody int PromotionId) {
+        return success(cmsPromotionService.initByPromotionId(PromotionId, getUser().getSelChannelId(), getLang()));
+    }
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
         return success(promotionService.getPromotionsByChannelId(getUser().getSelChannelId(), params));

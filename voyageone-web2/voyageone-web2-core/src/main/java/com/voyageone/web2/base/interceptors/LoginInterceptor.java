@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 @Component
 class LoginInterceptor {
 
-    public boolean preHandle(HttpServletRequest request) throws Exception {
+    boolean preHandle(HttpServletRequest request) throws Exception {
 
         HttpSession session = request.getSession();
         UserSessionBean user = (UserSessionBean) session.getAttribute(BaseConstants.SESSION_USER);

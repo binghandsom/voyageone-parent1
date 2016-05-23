@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * {@link CmsBtProductModel} 的商品Model
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
@@ -22,13 +23,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductGroupModel groups = new CmsBtProductGroupModel();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
+    private List<String> freeTags = new ArrayList<>();
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
     private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
     public String getOrgChannelId() {
 
-        return orgChannelId == null?this.channelId:orgChannelId;
+        return orgChannelId == null ? this.channelId : orgChannelId;
     }
 
     public void setOrgChannelId(String orgChannelId) {
@@ -74,10 +76,18 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.fields = fields;
     }
 
+    /**
+     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
+     */
+    @Deprecated
     public CmsBtProductGroupModel getGroups() {
         return groups;
     }
 
+    /**
+     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
+     */
+    @Deprecated
     public void setGroups(CmsBtProductGroupModel groups) {
         this.groups = groups;
     }
@@ -92,7 +102,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public CmsBtProductModel_Sku getSku(String skuCode) {
         if (skuCode != null && this.skus != null) {
-            for(CmsBtProductModel_Sku sku : skus) {
+            for (CmsBtProductModel_Sku sku : skus) {
                 if (skuCode.equals(sku.getSkuCode())) {
                     return sku;
                 }
@@ -107,6 +117,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<String> getFreeTags() {
+        return freeTags;
+    }
+
+    public void setFreeTags(List<String> freeTags) {
+        this.freeTags = freeTags;
     }
 
     public CmsBtProductModel_BatchField getBatchField() {

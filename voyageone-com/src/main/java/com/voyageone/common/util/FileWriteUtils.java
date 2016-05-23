@@ -68,7 +68,8 @@ public class FileWriteUtils {
         outputStream.write(getFormattedString(var, outputFormat));
     }
 
-    private String getFormattedString(String inputString, String outputFormat) {
+    private String getFormattedString(String input, String outputFormat) {
+        String inputString = input;
         String outputString = "";
 
         String[] formatList = outputFormat.split(",");
@@ -128,7 +129,7 @@ public class FileWriteUtils {
         boolean ret = false;
 
         if (!StringUtils.isEmpty(inputString)) {
-            float inputContent = Float.valueOf(inputString);
+            float inputContent = Float.parseFloat(inputString);
 
             if (inputContent < 0) {
                 ret = true;
@@ -182,9 +183,5 @@ public class FileWriteUtils {
         if(this.closed) {
             throw new IOException("This instance of the CsvWriter class has already been closed.");
         }
-    }
-
-    protected void finalize() {
-        this.close(false);
     }
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans default-lazy-init ="false"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- 连接池配置. -->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -47,18 +48,18 @@
 
     <!-- aliyun test -->
     <!--<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">-->
-        <!--&lt;!&ndash; 连接池配置. &ndash;&gt;-->
-        <!--<property name="poolConfig" ref="jedisPoolConfig" />-->
-        <!--&lt;!&ndash; Redis服务主机. &ndash;&gt;-->
-        <!--<property name="hostName" value="121.41.58.229" />-->
-        <!--&lt;!&ndash; Redis服务端口号. &ndash;&gt;-->
-        <!--<property name="port" value="6379" />-->
-        <!--&lt;!&ndash; Redis服务连接密码. &ndash;&gt;-->
-        <!--<property name="password" value="tYdce3Ot7" />-->
-        <!--&lt;!&ndash; 连超时设置. &ndash;&gt;-->
-        <!--<property name="timeout" value="15000" />-->
-        <!--&lt;!&ndash; 是否使用连接池. &ndash;&gt;-->
-        <!--<property name="usePool" value="true" />-->
+    <!--&lt;!&ndash; 连接池配置. &ndash;&gt;-->
+    <!--<property name="poolConfig" ref="jedisPoolConfig" />-->
+    <!--&lt;!&ndash; Redis服务主机. &ndash;&gt;-->
+    <!--<property name="hostName" value="121.41.58.229" />-->
+    <!--&lt;!&ndash; Redis服务端口号. &ndash;&gt;-->
+    <!--<property name="port" value="6379" />-->
+    <!--&lt;!&ndash; Redis服务连接密码. &ndash;&gt;-->
+    <!--<property name="password" value="tYdce3Ot7" />-->
+    <!--&lt;!&ndash; 连超时设置. &ndash;&gt;-->
+    <!--<property name="timeout" value="15000" />-->
+    <!--&lt;!&ndash; 是否使用连接池. &ndash;&gt;-->
+    <!--<property name="usePool" value="true" />-->
     <!--</bean>-->
 
     <bean id="genericJackson2JsonRedisSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
@@ -69,5 +70,9 @@
         <property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />
         <property name="hashValueSerializer" ref="genericJackson2JsonRedisSerializer" />
     </bean>
-
+    <!--<bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">-->
+        <!--<property name="connectionFactory" ref="jedisConnectionFactory"/>-->
+        <!--<property name="defaultSerializer" ref="genericJackson2JsonRedisSerializer" />-->
+        <!--<property name="hashValueSerializer" ref="genericJackson2JsonRedisSerializer" />-->
+    <!--</bean>-->
 </beans>

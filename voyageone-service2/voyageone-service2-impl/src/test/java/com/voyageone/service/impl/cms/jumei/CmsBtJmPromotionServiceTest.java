@@ -50,7 +50,7 @@ public class CmsBtJmPromotionServiceTest {
 
 
 //    @Resource
-//    CmsBtTagDao dao;
+//    CmsBtTagDao cmsBtJmPromotionImportTaskDao;
 //
 //    @Test
 //    public void testInsert() throws Exception {
@@ -63,7 +63,7 @@ public class CmsBtJmPromotionServiceTest {
 //        tag.setTagType(1);
 //        tag.setModifier("zhao");
 //        tag.setCreater("zhao");
-//        dao.insertCmsBtTag(tag);
+//        cmsBtJmPromotionImportTaskDao.insertCmsBtTag(tag);
 //
 //    }
 
@@ -76,7 +76,7 @@ public class CmsBtJmPromotionServiceTest {
 
         JmProductImportAllInfo importInfos = prepareData();
 
-        //1.image 空  模板未配置
+        //1.image 空  模板未配置 commons-net commons-net-3.3.jar
         //2.sku不对   没导完
 
         assertTrue("导入数据为空",importInfos.getListProductModel().size()>0);

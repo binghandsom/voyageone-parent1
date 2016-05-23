@@ -3,40 +3,6 @@
  * Created by LinAn.Bin on 15/12/7.
  */
 
-/**
- * @class
- * @name Field
- * @property {string} type
- * @property {object[]} options
- * @property {object[]} rules
- * @property {string} name
- * @property {string} id
- */
-
-/**
- * @typedef {object} FieldBean
- */
-
-/**
- * Simple Mapping List 设定弹出框的上下文参数
- * @name SimpleListMappingPopupContext
- * @class
- * @property {string} platformCategoryPath 平台类目路径
- * @property {string} platformCategoryId 平台类目 ID
- * @property {string} mainCategoryId 主数据类目 ID
- * @property {Array} path
- * @property {number} cartId 平台 ID
- * @property {Field} property 平台属性
- * @property {number|null} valueIndex
- */
-
-/**
- * @name SimpleItemMappingPopupContext
- * @class
- * @extends SimpleListMappingPopupContext
- * @property {RuleWord|null} ruleWord
- */
-
 define([
     'cms',
     'underscore',
@@ -372,7 +338,7 @@ define([
                     "controller": 'popCodeDetailCtl'
                 }
 
-        },
+            },
             "system": {
                 "channelList": {
                     "templateUrl": "views/pop/system/channelList.tpl.html",
@@ -400,13 +366,52 @@ define([
                     "controller": 'popChannelListCtl'
                 }
             },
+            "store": {
+                "listing": {
+                    "sizechart": {
+                        "templateUrl": "views/pop/store/listing/sizechart.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/sizechart.ctl",
+                        "controller": 'popSizeChartCtl'
+                    },
+                    "sizechartimport": {
+                        "templateUrl": "views/pop/store/listing/sizechartimport.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/sizechartimport.ctl",
+                        "controller": 'popSizeChartImportCtl'
+                    },
+                    "imagetemplate": {
+                        "templateUrl": "views/pop/store/listing/imagetemplate.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagetemplate.ctl",
+                        "controller": 'popImageTemplateCtl'
+                    },
+                    "imagetemplatepreview": {
+                        "templateUrl": "views/pop/store/listing/imagetemplatepreview.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagetemplatepreview.ctl",
+                        "controller": 'popImageTemplatePreviewCtl'
+                    },
+                    "imagegroupadd": {
+                        "templateUrl": "views/pop/store/listing/imagegroupadd.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagegroupadd.ctl",
+                        "controller": 'popImageGroupAddCtl as ctrl'
+                    },
+                    "imagegroupimg": {
+                        "templateUrl": "views/pop/store/listing/imagegroupimg.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagegroupimg.ctl",
+                        "controller": 'popImageGroupImgCtl'
+                    },
+                    "imagedetailadd": {
+                        "templateUrl": "views/pop/store/listing/imagedetailadd.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/store/listing/imagedetailadd.ctl",
+                        "controller": 'popImageDetailAddCtl'
+                    },
+                },
+            },
             "image": {
                 "upload": {
                     "templateUrl": "views/pop/image/imgSetting.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
                     "controller": 'popImgSettingCtl'
                 }
-            },
+            }
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -414,7 +419,7 @@ define([
 
         function openModel(config, context) {
 
-            if (context)
+           // if (context)
                 config.resolve = {
                     context: function () {
                         return context;
@@ -451,7 +456,6 @@ define([
 
         /**
          * 新增属性值
-         * @type {openAddattributevalueNew}
          */
         $scope.openAddattributevaluenew = openAddattributevaluenew;
         function openAddattributevaluenew(viewSize, data) {
@@ -519,7 +523,6 @@ define([
 
         /**
          * pop出properties变更页面,用于批量更新产品属性
-         * @type {openupdateProperties}
          */
         $scope.openFieldEdit = function (selList) {
             if (selList && selList.length) {
@@ -621,6 +624,7 @@ define([
         //        }
         //    });
         //}
+        
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
@@ -1081,6 +1085,95 @@ define([
         $scope.openCartEdit = function (context) {
             return openModel(popActions.system.cartList, context);
         };
+        /**
+         *新增店铺管理-Listing-sizechart页,新增操作弹出
+         */
+        $scope.openSizeChartAdd = function (context) {
+            return openModel(popActions.store.listing.sizechart, context);
+        };
+        /**
+         * 新增店铺管理-Listing-sizechart页,设置操作弹出
+         * */
+        $scope.openSizeChartSetting = function (context) {
+            return openModel(popActions.store.listing.sizechart, context);
+        };
+        /**
+         * 新增店铺管理-Listing-sizechartimport页,倒入操作弹出
+         * */
+        $scope.openSizeChartImport = function (context) {
+            return openModel(popActions.store.listing.sizechartimport, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagetemplate页,设置操作弹出
+         * */
+        $scope.openImgTplEditing = function (context) {
+            return openModel(popActions.store.listing.imagetemplate, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagetemplate预览图片页,设置操作弹出
+         * */
+        $scope.openImgTplPreview = function (context) {
+            return openModel(popActions.store.listing.imagetemplatepreview, context);
+        };
+        /**
+         * 新增店铺管理-Listing-imagegroup页,add操作弹出
+         * */
+        $scope.openImgGroupAdd = openImgGroupAdd;
+        function openImgGroupAdd(data) {
+            require([popActions.store.listing.imagegroupadd.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagegroupadd.templateUrl,
+                    controller: popActions.store.listing.imagegroupadd.controller,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+
+
+        /**
+         * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
+         * */
+        $scope.openImgGroupListImg = openImgGroupListImg;
+        function openImgGroupListImg(originUrl) {
+            require([popActions.store.listing.imagegroupimg.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagegroupimg.templateUrl,
+                    controller: popActions.store.listing.imagegroupimg.controller,
+                    resolve: {
+                        originUrl: function () {
+                            return originUrl;
+                        }
+                    }
+                });
+            });
+        }
+
+
+        /**
+         * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
+         * */
+        $scope.openImgGroupDetail = openImgGroupDetail;
+        function openImgGroupDetail(data, originUrl) {
+            require([popActions.store.listing.imagedetailadd.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.store.listing.imagedetailadd.templateUrl,
+                    controller: popActions.store.listing.imagedetailadd.controller,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        },
+                        originUrl: function () {
+                            return originUrl;
+                        }
+                    }
+                });
+            });
+        }
 
         /**
          * 弹出自定义属性列

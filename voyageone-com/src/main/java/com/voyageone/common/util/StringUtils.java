@@ -91,7 +91,7 @@ public final class StringUtils {
     /**
      * ArrayList 转为 页面输出字符串
      */
-    public static String arrayListToString(ArrayList<String> errorList) {
+    public static String arrayListToString(List<String> errorList) {
         // 异常信息输出
         StringBuilder outputBuff = new StringBuilder();
         for (int i = 0; i < errorList.size(); i++) {
@@ -108,7 +108,7 @@ public final class StringUtils {
     /**
      * ArrayList 转为 页面输出字符串
      */
-    public static String arrayListToString2(ArrayList<String> errorList) {
+    public static String arrayListToString2(List<String> errorList) {
         // 异常信息输出
         StringBuilder outputBuff = new StringBuilder();
         for (int i = 0; i < errorList.size(); i++) {
@@ -342,7 +342,7 @@ public final class StringUtils {
             for (int i = 0; i < len; i++) {
                 ret.append(chr);
             }
-            return (ret.toString());
+            return ret.toString();
         } else {
             return "";
         }
@@ -356,7 +356,7 @@ public final class StringUtils {
         if (lenleft < 0) {
             lenleft = 0;
         }
-        return (strAdd(chr, lenleft) + source);
+        return strAdd(chr, lenleft) + source;
     }
 
     /**
@@ -367,7 +367,7 @@ public final class StringUtils {
         if (lenleft < 0) {
             lenleft = 0;
         }
-        return (source + strAdd(chr, lenleft));
+        return source + strAdd(chr, lenleft);
     }
 
     /**
@@ -455,15 +455,12 @@ public final class StringUtils {
         if ((params == null) || (params.length == 0)) {
             return msg;
         }
+        String msgTmp = msg;
         int i = 0;
         for (int lens = params.length; i < lens; i++) {
-            StringBuilder idx = new StringBuilder();
-            idx.append("{");
-            idx.append(i);
-            idx.append("}");
-            msg = replace(msg, idx.toString(), params[i]);
+            msgTmp = replace(msgTmp, "{" + i + "}", params[i]);
         }
-        return msg;
+        return msgTmp;
     }
 
     public static String replace(String val, String find, String rep) {
@@ -486,7 +483,7 @@ public final class StringUtils {
     public static String replaceBlankToDash(String val) {
         if ((val == null) || ("".equals(val)))
             return "";
-        return val.trim().replaceAll(" ", "-");
+        return val.trim().replaceAll("  "," ").replaceAll(" ", "-");
     }
 
 }

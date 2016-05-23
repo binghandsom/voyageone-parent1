@@ -25,9 +25,6 @@ import java.util.Set;
  */
 public class CustomWordModuleGetAllImages extends CustomWordModule {
 
-    @Autowired
-    private SxProductService sxProductService;
-
     public final static String moduleName = "GetAllImages";
 
     public CustomWordModuleGetAllImages() {
@@ -40,7 +37,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamGetAllImages customModuleUserParamGetAllImages = ((CustomWordValueGetAllImages) customWord.getValue()).getUserParam();
 

@@ -2,6 +2,7 @@ package com.voyageone.common.util;
 
 import com.jcraft.jsch.*;
 import com.voyageone.common.configs.beans.FtpBean;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.*;
 import org.slf4j.Logger;
 
@@ -20,11 +21,11 @@ public class SFtpUtil {
     /**
      * Description: 向FTP服务器上传文件
      *
-     * @param ftpBean           FtpBean
+     * @param ftpBean FtpBean
      * @return ChannelSftp        ChannelSftp
-     *   成功返回true，否则返回false
+     * 成功返回true，否则返回false
      */
-    public  boolean uploadFile(FtpBean ftpBean,ChannelSftp ftpClient) throws IOException {
+    public boolean uploadFile(FtpBean ftpBean, ChannelSftp ftpClient) throws IOException {
         logger.info(ftpBean.getDown_filename() + "  Ftp 上传文件开始");
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
         logger.info("  uploadPath=" + ftpBean.getUpload_path());
@@ -32,22 +33,37 @@ public class SFtpUtil {
         logger.info("  uploadFileName=" + ftpBean.getUpload_filename());
         boolean result = false;
 
-        if(ftpBean.getUpload_filename() != null){
-            String localFile = ftpBean.getUpload_localpath() + this.seperator + ftpBean.getUpload_filename();
-            File file = new File(localFile);
+        if (!StringUtils.isEmpty(ftpBean.getUpload_filename())) {
+            InputStream fileInputStream = null;
+            if (ftpBean.getUpload_input() != null) {
+                logger.info("  getUploadInputSize=" + ftpBean.getUpload_input().available());
+                fileInputStream = ftpBean.getUpload_input();
+            } else {
+                String localFile = ftpBean.getUpload_localpath() + this.seperator + ftpBean.getUpload_filename();
+                File file = new File(localFile);
+                if (file.isFile()) {
+                    fileInputStream = new FileInputStream(file);
+                }
+            }
+            if (fileInputStream != null) {
+                //String remoteFile = ftpBean.getUpload_filename();
+                String uploadPath = seperator;
+                if (!StringUtils.isEmpty(ftpBean.getUpload_path())) {
+                    uploadPath = FilenameUtils.separatorsToUnix(ftpBean.getUpload_path());
+                    if (!uploadPath.startsWith(seperator)) {
+                        uploadPath = seperator + uploadPath;
+                    }
+                }
 
-            if(file.isFile()){
-                String remoteFile = ftpBean.getUpload_path() + this.seperator + ftpBean.getUpload_filename();
-                File rfile = new File(remoteFile);
-                String rpath = rfile.getParent();
                 try {
-                    createDir(rpath, ftpClient);
+                    if (!StringUtils.isEmpty(uploadPath)) {
+                        createDir(uploadPath, ftpClient);
+                    }
 
-                    ftpClient.put(new FileInputStream(file), file.getName());
+                    ftpClient.put(fileInputStream, ftpBean.getUpload_filename());
                     result = true;
                     logger.info(ftpBean.getUpload_filename() + " Ftp 上传文件成功");
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     logger.error(ftpBean.getUpload_filename() + " Ftp 上传文件失败");
                 }
@@ -65,23 +81,34 @@ public class SFtpUtil {
         try {
             sftp.cd(filepath);
         } catch (SftpException e1) {
-            sftp.mkdir(filepath);
+            String[] folders = filepath.split("/");
+            for (String folder : folders) {
+                if (folder.length() > 0) {
+                    try {
+                        sftp.cd(folder);
+                    } catch (SftpException e) {
+                        sftp.mkdir(folder);
+                        sftp.cd(folder);
+                    }
+                }
+            }
         }
     }
+
     /**
      * Description: 连接FTP服务器
      *
-     * @param ftpBean           FtpBean
+     * @param ftpBean FtpBean
      * @return ChannelSftp        ChannelSftp
      */
-    public ChannelSftp linkFtp(FtpBean ftpBean) throws IOException, JSchException {
+    public ChannelSftp linkFtp(FtpBean ftpBean) throws JSchException {
         ChannelSftp ftpClient = new ChannelSftp();
         logger.info(ftpBean.getUrl() + "  Ftp 连接开始");
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
         //boolean result = false;
         try {
             JSch jsch = new JSch();
-            int port = StringUtils.isNullOrBlank2(ftpBean.getPort())  || !StringUtils.isNumeric(ftpBean.getPort()) ? 22 : Integer.valueOf(ftpBean.getPort());
+            int port = StringUtils.isNullOrBlank2(ftpBean.getPort()) || !StringUtils.isNumeric(ftpBean.getPort()) ? 22 : Integer.valueOf(ftpBean.getPort());
             jsch.getSession(ftpBean.getUsername(), ftpBean.getUrl(), port);
             Session sshSession = jsch.getSession(ftpBean.getUsername(), ftpBean.getUrl(), port);
             logger.info("Session created.");
@@ -98,26 +125,29 @@ public class SFtpUtil {
             logger.info("Connected to " + ftpBean.getUrl() + ".");
 
         } catch (Exception e) {
-            disconnectFtp(ftpClient);
+            try {
+                disconnectFtp(ftpClient);
+            } catch (IOException ignored) {
+            }
             throw e;
         }
-        logger.info(ftpBean.getUrl()  + " Ftp 连接成功");
+        logger.info(ftpBean.getUrl() + " Ftp 连接成功");
         return ftpClient;
     }
 
     /**
      * Description: 断开FTP服务器
      *
-     * @param ftpClient         ChannelSftp
-     *  false: 断开出错 true : 断开成功
+     * @param ftpClient ChannelSftp
+     *                  false: 断开出错 true : 断开成功
      */
-    public void  disconnectFtp(ChannelSftp ftpClient) throws IOException {
+    public void disconnectFtp(ChannelSftp ftpClient) throws IOException {
         logger.info("Ftp 断开开始");
         if (ftpClient.isConnected()) {
 
             ftpClient.disconnect();
             logger.info("Ftp 断开成功");
-        }else if(ftpClient.isClosed()){
+        } else if (ftpClient.isClosed()) {
             logger.info("Ftp 已经断开");
         }
         logger.info("Ftp 断开结束");
@@ -127,12 +157,12 @@ public class SFtpUtil {
     /**
      * Description: 从FTP服务器下载文件
      *
-     * @param ftpBean           FtpBean
+     * @param ftpBean FtpBean
      * @return result            0: 执行出错
-     *                            1: 没有找到指定文件
-     *                            2: 执行成功
+     * 1: 没有找到指定文件
+     * 2: 执行成功
      */
-    public int downFile(FtpBean ftpBean , ChannelSftp ftpClient) throws Exception {
+    public int downFile(FtpBean ftpBean, ChannelSftp ftpClient) throws Exception {
         logger.info(ftpBean.getDown_filename() + "  Ftp 下载文件开始");
 
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
@@ -146,8 +176,7 @@ public class SFtpUtil {
             if (StringUtils.isNullOrBlank2(ftpBean.getDown_filename())) {
                 downloadByDirectory(ftpBean.getDown_remotepath(), ftpBean.getDown_localpath(), ftpClient);
                 result = 2;
-            }
-            else {
+            } else {
                 download(ftpBean.getDown_remotepath(), ftpBean.getDown_filename(), ftpBean.getDown_localpath(), ftpClient);
                 result = 2;
             }
@@ -157,20 +186,16 @@ public class SFtpUtil {
             throw e;
         }
 
-        logger.info(ftpBean.getDown_filename()  + " Ftp 下载文件结束");
+        logger.info(ftpBean.getDown_filename() + " Ftp 下载文件结束");
         return result;
     }
 
     /**
      * 下载单个文件
      *
-     * @param directory
-     *            下载目录
-     * @param downloadFile
-     *            下载的文件
-     * @param saveDirectory
-     *            存在本地的路径
-     *
+     * @param directory     下载目录
+     * @param downloadFile  下载的文件
+     * @param saveDirectory 存在本地的路径
      * @throws Exception
      */
     public void download(String directory, String downloadFile, String saveDirectory, ChannelSftp ftpClient) throws Exception {
@@ -185,12 +210,8 @@ public class SFtpUtil {
     /**
      * 下载目录下全部文件
      *
-     * @param directory
-     *            下载目录
-     *
-     * @param saveDirectory
-     *            存在本地的路径
-     *
+     * @param directory     下载目录
+     * @param saveDirectory 存在本地的路径
      * @throws Exception
      */
     public void downloadByDirectory(String directory, String saveDirectory, ChannelSftp ftpClient) throws Exception {
@@ -208,19 +229,14 @@ public class SFtpUtil {
     /**
      * 列出目录下的文件
      *
-     * @param directory
-     *            要列出的目录
-     *
+     * @param directory 要列出的目录
      * @return list 文件名列表
-     *
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
     public List<String> listFiles(String directory, ChannelSftp ftpClient) throws Exception {
-        Vector fileList;
         List<String> fileNameList = new ArrayList<>();
 
-        fileList = ftpClient.ls(directory);
+        Vector fileList = ftpClient.ls(directory);
 
         for (Object aFileList : fileList) {
             ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry) aFileList;
@@ -238,12 +254,12 @@ public class SFtpUtil {
     /**
      * Description: 从FTP服务器下载同一目录夹下多个文件
      *
-     * @param ftpBean           FtpBean
+     * @param ftpBean FtpBean
      * @return result            0: 执行出错
-     *                            1: 没有找到指定文件
-     *                            2: 执行成功
+     * 1: 没有找到指定文件
+     * 2: 执行成功
      */
-    public int downFiles(FtpBean ftpBean , ChannelSftp ftpClient,List<String> fileNames) throws Exception {
+    public int downFiles(FtpBean ftpBean, ChannelSftp ftpClient, List<String> fileNames) throws Exception {
         logger.info(ftpBean.getDown_remotepath() + "  Ftp 下载多个文件开始");
 
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
@@ -266,10 +282,11 @@ public class SFtpUtil {
 
     /**
      * 将FTP服务器目录夹下所有文件删除
-     * @param ftpBean           FtpBean
-     * @param ftpClient         ChannelSftp
+     *
+     * @param ftpBean   FtpBean
+     * @param ftpClient ChannelSftp
      */
-    public void delFilesByFolder(FtpBean ftpBean , ChannelSftp ftpClient) throws Exception {
+    public void delFilesByFolder(FtpBean ftpBean, ChannelSftp ftpClient) throws Exception {
         logger.info(ftpBean.getDown_remotepath() + "/" + " 删除Ftp下载文件开始");
 
         // 获取文件列表
@@ -285,11 +302,8 @@ public class SFtpUtil {
     /**
      * 删除文件
      *
-     * @param directory
-     *            要删除文件所在目录
-     * @param deleteFile
-     *            要删除的文件
-     *
+     * @param directory  要删除文件所在目录
+     * @param deleteFile 要删除的文件
      * @throws Exception
      */
     public void delete(String directory, String deleteFile, ChannelSftp ftpClient) throws Exception {
@@ -301,24 +315,26 @@ public class SFtpUtil {
 
     /**
      * 将FTP服务器上文件删除
-     * @param ftpBean           FtpBean
-     * @param ftpClient         ChannelSftp
-     * @param fileName         文件名
+     *
+     * @param ftpBean   FtpBean
+     * @param ftpClient ChannelSftp
+     * @param fileName  文件名
      */
-    public void delOneFile(FtpBean ftpBean , ChannelSftp ftpClient, String fileName) throws Exception {
-        String filePathName = ftpBean.getDown_remotepath() + "/" +  fileName;
-        logger.info(filePathName  + " 删除Ftp下载文件开始");
+    public void delOneFile(FtpBean ftpBean, ChannelSftp ftpClient, String fileName) throws Exception {
+        String filePathName = ftpBean.getDown_remotepath() + "/" + fileName;
+        logger.info(filePathName + " 删除Ftp下载文件开始");
 
         delete(ftpBean.getDown_remotepath(), fileName, ftpClient);
 
-        logger.info(filePathName  + " 删除Ftp下载文件结束");
+        logger.info(filePathName + " 删除Ftp下载文件结束");
     }
 
     /**
      * 将FTP服务器上文件移动位置
-     * @param ftpBean           FtpBean
-     * @param ftpClient         ChannelSftp
-     * @param fileName         文件名
+     *
+     * @param ftpBean   FtpBean
+     * @param ftpClient ChannelSftp
+     * @param fileName  文件名
      */
     public void removeOneFile(FtpBean ftpBean, ChannelSftp ftpClient, String fileName) throws SftpException {
         String bakPath = ftpBean.getRemote_bak_path();
@@ -328,32 +344,33 @@ public class SFtpUtil {
         createDir(bakPath, ftpClient);
         try {
             logger.info("移动 " + srcFilePathName + " 到 " + tgtFilePathName + " 开始。");
-            if(StringUtils.isEmpty(fileName)) {
+            if (StringUtils.isEmpty(fileName)) {
                 logger.error("fileName 不能为空或null");
                 return;
             }
             ftpClient.rename(srcFilePathName, tgtFilePathName);
             logger.info("移动 " + srcFilePathName + " 到 " + tgtFilePathName + " 结束。");
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("移动文件" + srcFilePathName + " 到 " + tgtFilePathName + "失败！");
         }
     }
 
     /**
      * 读取目标目录夹下所有文件名, 过滤掉文件夹
-     * @param ftpBean           FtpBean
-     * @param ftpClient         ChannelSftp
-     * @param folderPath        文件路径
+     *
+     * @param ftpBean    FtpBean
+     * @param ftpClient  ChannelSftp
+     * @param folderPath 文件路径
      */
     public List<String> getFolderFileNames(FtpBean ftpBean, ChannelSftp ftpClient, String folderPath) throws Exception {
-        logger.info(folderPath  + " 读取目标目录夹下所有文件名开始");
+        logger.info(folderPath + " 读取目标目录夹下所有文件名开始");
         List<String> fileNames = new ArrayList<>();
         // 获取文件列表
         List<String> fs = listFiles(folderPath, ftpClient);
         for (String ff : fs) {
             fileNames.add(ff);
         }
-        logger.info(folderPath  + " 读取目标目录夹下所有文件名结束");
+        logger.info(folderPath + " 读取目标目录夹下所有文件名结束");
         return fileNames;
     }
 
@@ -361,11 +378,11 @@ public class SFtpUtil {
     /**
      * Description: 向FTP服务器上传文件
      *
-     * @param ftpBean           FtpBean
+     * @param ftpBean FtpBean
      * @return ChannelSftp        ChannelSftp
-     *  成功返回true，否则返回false
+     * 成功返回true，否则返回false
      */
-    public  boolean uploadFileForSFTP(FtpBean ftpBean,ChannelSftp ftpClient) throws Exception {
+    public boolean uploadFileForSFTP(FtpBean ftpBean, ChannelSftp ftpClient) throws Exception {
         logger.info(ftpBean.getDown_filename() + "  SFtp 上传文件开始");
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
         logger.info("  uploadPath=" + ftpBean.getUpload_path());
@@ -373,24 +390,23 @@ public class SFtpUtil {
         logger.info("  uploadFileName=" + ftpBean.getUpload_filename());
         boolean result = false;
 
-        if(ftpBean.getUpload_filename() != null){
+        if (ftpBean.getUpload_filename() != null) {
             String localFile = ftpBean.getUpload_localpath() + this.seperator + ftpBean.getUpload_filename();
             File file = new File(localFile);
 
-            if(file.isFile()){
+            if (file.isFile()) {
                 //String remoteFile = ftpBean.getUpload_path() + this.seperator + ftpBean.getUpload_filename();
                 //File rfile = new File(remoteFile);
                 //String rpath = rfile.getParent();
                 try {
                     //createDir(rpath, ftpClient);
-                    try (InputStream in = new FileInputStream(file);){
+                    try (InputStream in = new FileInputStream(file);) {
                         ftpClient.put(in, file.getName());
                         result = true;
                         logger.info(ftpBean.getUpload_filename() + " SFtp 上传文件成功");
                     }
                     //ftpClient.put(new FileInputStream(file), file.getName());
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     logger.info(ftpBean.getUpload_filename() + " SFtp 上传文件失败");
                     throw e;
                 }

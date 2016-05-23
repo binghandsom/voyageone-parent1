@@ -366,6 +366,7 @@ public class JewelryAnalysis2Service extends BaseAnalysisService {
             Map temp= JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);
             Map<String,List<String>> attribute = new HashMap<>();
             for(int i = 0;i<99;i++){
+                if(i == 95) continue; //库存跳过
                 String value= (String)temp.get("attribute"+i+"Value");
                 if(!StringUtil.isEmpty(value)){
                     List<String> values= new ArrayList<>();

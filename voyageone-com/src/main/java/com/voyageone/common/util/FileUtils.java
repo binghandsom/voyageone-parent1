@@ -141,8 +141,8 @@ public final class FileUtils {
      * @param filePath 文件所在目录
      *                 description 在指定目录下获取全部文件组
      */
-    public static ArrayList<String[]> getFileGroup(String filePath) {
-        ArrayList<String[]> fileNameList = new ArrayList<>();
+    public static List<String[]> getFileGroup(String filePath) {
+        List<String[]> fileNameList = new ArrayList<>();
         File file = new File(filePath);
         for (String fileName : file.list()) {
             File file2 = new File(filePath + "/" + fileName);
@@ -243,11 +243,12 @@ public final class FileUtils {
     /**
      * url download file with proxy
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean downloadImage(String urlString, String filename, String savePath, String proxyIP, int proxyPort, String proxyUserName, String proxyPwd) {
         boolean result = false;
+
         OutputStream os = null;
         InputStream is = null;
+
         try {
             // 构造URL
             URL url = new URL(urlString);
@@ -389,8 +390,6 @@ public final class FileUtils {
             while ((length = inputStream.read(b)) > 0) {
                 os.write(b, 0, length);
             }
-        } catch (Exception ex) {
-            throw ex;
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -403,13 +402,13 @@ public final class FileUtils {
 
     public static void mkdirPath(String path) {
         String[] paths = path.split("/");
-        StringBuffer fullPath = new StringBuffer();
-        for (int i = 0; i < paths.length; i++) {
-            fullPath.append(paths[i]).append("\\");
+        StringBuilder fullPath = new StringBuilder();
+        for (String path1 : paths) {
+            fullPath.append(path1).append("\\");
             File file = new File(fullPath.toString());
             if (!file.exists()) {
                 file.mkdir();
-                System.out.println("创建目录为：" + fullPath.toString());
+                logger.info("创建目录为：" + fullPath.toString());
             }
         }
     }
@@ -425,16 +424,13 @@ public final class FileUtils {
             //取得request中的所有文件名
             Iterator<String> iter = multiRequest.getFileNames();
             while (iter.hasNext()) {
-                //记录上传过程起始时的时间，用来计算上传时间
-                int pre = (int) System.currentTimeMillis();
                 //取得上传文件
                 MultipartFile file = multiRequest.getFile(iter.next());
                 if (file != null) {
                     //取得当前上传文件的文件名称
                     String myFileName = file.getOriginalFilename();
                     //如果名称不为“”,说明该文件存在，否则说明该文件不存在
-                    if (myFileName.trim() != "") {
-                        System.out.println(myFileName);
+                    if (!"".equals(myFileName.trim())) {
                         //重命名上传后的文件名
                         String fileName = file.getOriginalFilename();
                         String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");

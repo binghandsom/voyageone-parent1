@@ -6,8 +6,8 @@
 
 /**
  * @typedef {object} PropGroup
- * @property {object|Field} selected 选中值
- * @property {object[]|Field[]} props 可选值, 必须包含 id 和 name
+ * @property {object} selected 选中值
+ * @property {object[]} props 可选值, 必须包含 id 和 name
  */
 
 define([
@@ -23,7 +23,7 @@ define([
 
         /**
          * Simple Mapping 弹出框的 Controller
-         * @param {SimpleItemMappingPopupContext} context
+         * @param context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
          * @param alert
@@ -36,7 +36,7 @@ define([
             this.ppService = ppPlatformMappingService;
             this.alert = alert;
 
-            this.property = context.path[0];
+            this.field = angular.copy(context.path[0]);
             /**
              * 是否需要(显示)选择项的匹配
              * @type {boolean}
@@ -56,7 +56,6 @@ define([
                 valueFrom: this.valueFromOptions.MASTER,
                 /**
                  * 当前选中的内容
-                 * @type {Field|null}
                  */
                 value: null,
                 /**
@@ -87,7 +86,7 @@ define([
 
                 var me = this;
                 var valueFrom = null;
-                var property = me.property;
+                var property = this.field;
 
                 switch (property.type) {
                     case FieldTypes.complex:
@@ -161,7 +160,7 @@ define([
                 switch (me.selected.valueFrom) {
                     case options.MASTER:
 
-                        return me.ppService.getMainCategoryProps(mainCate.id).then(function (props) {
+                        return me.ppService.getMainCategoryProps(mainCate.id, false, true).then(function (props) {
 
                             // 如果是编辑, 则搜索选中字段的完整字段路径
                             // 编辑情况下, 有可能默认选中固定值, 但同时也会 load Master 属性, 所以这里需要特殊处理
@@ -173,21 +172,21 @@ define([
                                 return;
                             }
 
-                            me.ppService.getPropertyPath(mainCate.id, me.ruleWord.value)
-                                .then(function (properties) {
+                            // 使用选中的叶子属性, 搜索完整的属性树枝干
+                            var properties = me.ppService.searchProperty(props, me.ruleWord.value);
 
-                                    if (!properties) {
-                                        values.push({selected: null, props: props});
-                                        return;
-                                    }
+                            // 如果搜索不到枝干(路径), 就默认不选中数据
+                            if (!properties) {
+                                values.push({selected: null, props: props});
+                                return;
+                            }
 
-                                    _.each(properties.reverse(), function (property) {
-                                        values.push({selected: property, props: props});
-                                        props = property.fields;
-                                        me.selected.value = property;
-                                    });
-
-                                });
+                            // 如果有, 则按倒序, 为每个下拉指定数据源和默认的选中项
+                            _.each(properties.reverse(), function (property) {
+                                values.push({selected: property, props: props});
+                                props = property.fields;
+                                me.selected.value = property;
+                            });
 
                         });
 
@@ -256,7 +255,7 @@ define([
              */
             updateSelectedValue: function () {
                 var values = this.values;
-                var property = this.property;
+                var property = this.field;
 
                 this.selected.value = values[values.length - 1].selected;
 
@@ -278,7 +277,7 @@ define([
                 // 这里是下半边
                 // 固定值,即 TextWord
                 var textWord = new RuleWord(WordTypes.TEXT);
-                var pfProp = this.property;
+                var pfProp = this.field;
 
                 switch (pfProp.type) {
                     case FieldTypes.input:
@@ -294,9 +293,6 @@ define([
                         });
                         textWord.value = values.join(',');
                 }
-
-                // 该函数只有最终确定时使用, 所以在最后返回时, 重置 field 的 value. 防止下次打开画面仍显示这些值
-                pfProp.value = pfProp.values = null;
 
                 return textWord;
             },
@@ -359,9 +355,6 @@ define([
             },
 
             cancel: function () {
-                // 这里同 getTextWord 函数底部的作用相同
-                var prop = this.property;
-                prop.value = prop.values = null;
                 this.$modal.dismiss();
             }
         };

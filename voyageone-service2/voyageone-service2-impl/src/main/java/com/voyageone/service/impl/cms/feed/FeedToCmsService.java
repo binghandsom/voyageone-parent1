@@ -10,8 +10,8 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -286,7 +286,8 @@ public class FeedToCmsService extends BaseService {
         cmsMtChannelValuesModel.setType(type);
         cmsMtChannelValuesModel.setModifier(modifier);
         cmsMtChannelValuesModel.setCreater(modifier);
-        cmsMtChannelValuesModel.setCreated(DateTimeUtil.getNow());
+//        cmsMtChannelValuesModel.setCreatedStr(DateTimeUtil.getNow());
+        cmsMtChannelValuesModel.setCreated(new Date());
         values.forEach(s -> {
             if(!StringUtil.isEmpty(s)) {
                 cmsMtChannelValuesModel.setKey(s);

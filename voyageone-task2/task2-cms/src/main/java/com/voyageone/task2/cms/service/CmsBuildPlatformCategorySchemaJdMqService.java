@@ -24,7 +24,6 @@ import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -204,6 +203,8 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
                         // 类目属性列表追加
                         fieldsList.add(inputField);
                         break;
+                    default:
+                        $error("复杂类型[" + inputType + "]不能作为属性值来使用！");
                 }
             }
         }
@@ -235,8 +236,12 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         // field共通信息设定
         // 类目属性id
         singleCheckField.setId(String.valueOf(categoryAttr.getAid()));
-        // 类目属性名
-        singleCheckField.setName(categoryAttr.getName());
+        // 类目属性名(如果为空，则设为类目属性id)
+        if (StringUtils.isEmpty(categoryAttr.getName())) {
+            singleCheckField.setName(String.valueOf(categoryAttr.getAid()));
+        } else {
+            singleCheckField.setName(categoryAttr.getName());
+        }
         // 类目属性类型
         singleCheckField.setType(FieldTypeEnum.SINGLECHECK);
 
@@ -270,8 +275,12 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         // field共通信息设定
         // 类目属性id
         multiCheckField.setId(String.valueOf(categoryAttr.getAid()));
-        // 类目属性名
-        multiCheckField.setName(categoryAttr.getName());
+        // 类目属性名(如果为空，则设为类目属性id)
+        if (StringUtils.isEmpty(categoryAttr.getName())) {
+            multiCheckField.setName(String.valueOf(categoryAttr.getAid()));
+        } else {
+            multiCheckField.setName(categoryAttr.getName());
+        }
         // 类目属性类型
         multiCheckField.setType(FieldTypeEnum.MULTICHECK);
 
@@ -303,7 +312,12 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         // 类目属性id
         inputField.setId(String.valueOf(categoryAttr.getAid()));
         // 类目属性名
-        inputField.setName(categoryAttr.getName());
+        // 类目属性名(如果为空，则设为类目属性id)
+        if (StringUtils.isEmpty(categoryAttr.getName())) {
+            inputField.setName(String.valueOf(categoryAttr.getAid()));
+        } else {
+            inputField.setName(categoryAttr.getName());
+        }
         // 类目属性类型
         inputField.setType(FieldTypeEnum.INPUT);
 

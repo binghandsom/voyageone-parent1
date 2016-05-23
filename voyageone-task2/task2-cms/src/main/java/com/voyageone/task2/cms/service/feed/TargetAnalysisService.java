@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -211,14 +212,14 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 retail.remove(sku);
                 if (superfeed.size() > 1000) {
 //                    insertSuperFeed(superfeed);
-                    transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                    transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
                     if (cnt > 5000) break;
                 }
             }
 
             if (superfeed.size() > 0) {
-                transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                 superfeed.clear();
             }
             reader.close();
@@ -270,17 +271,26 @@ public class TargetAnalysisService extends BaseAnalysisService {
         List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
         for (CmsBtFeedInfoTargetModel vtmModelBean : vtmModelBeans) {
 
+            // 计算重量 单位 统一到LB 1磅(lb)=16盎司(oz) 向上取整
+            vtmModelBean.setWeight(weightConvert(vtmModelBean.getWeight()));
+
             Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(vtmModelBean), HashMap.class);
             Map<String, List<String>> attribute = new HashMap<>();
             for (String attr : attList) {
                 String key = CamelUtil.underlineToCamel(attr.toLowerCase());
                 if (temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
+                if(key.equalsIgnoreCase("ratableAttribute") || key.equalsIgnoreCase("iacAttributes")){
+                    attribute=parseSpecialAttr(temp.get(key).toString(),attribute);
+                }else{
+                    List<String> values = new ArrayList<>();
+                    values.add((String) temp.get(key));
+                    attribute.put(key, values);
+                }
 
-                List<String> values = new ArrayList<>();
-                values.add((String) temp.get(key));
-                attribute.put(key, values);
             }
 
+
+            // Secattributes属性值解析
             if (!StringUtil.isEmpty(vtmModelBean.getSecattributes())) {
                 List<String> keyValue = java.util.Arrays.asList(vtmModelBean.getSecattributes().split("[|]"));
                 if (keyValue.size() % 2 != 0) {
@@ -299,6 +309,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 }
             }
 
+            //AttributeValues属性解析
             if (!StringUtil.isEmpty(vtmModelBean.getAttributeNames())) {
                 List<String> names = java.util.Arrays.asList(vtmModelBean.getAttributeNames().split("[|]"));
                 List<String> values = java.util.Arrays.asList(vtmModelBean.getAttributeValues().split("[|]"));
@@ -425,5 +436,43 @@ public class TargetAnalysisService extends BaseAnalysisService {
             return null;
         }
         return retailPriceList;
+    }
+
+    private String weightConvert(String weight){
+        String temp[] = weight.trim().split(" ");
+        if(temp.length > 1){
+            if ("oz".equalsIgnoreCase(temp[1])){
+
+                Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]) / 16.0);
+                return convertWeight.toString();
+            }else if("lb".equalsIgnoreCase(temp[1])){
+                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));;
+                return convertWeight.toString();
+            }else{
+                throw new BusinessException("重量转换失败：" + weight);
+            }
+        }
+        return "";
+    }
+
+    private Map<String, List<String>> parseSpecialAttr(String attrString,Map<String, List<String>> attribute){
+        if(StringUtil.isEmpty(attrString)) return attribute;
+        List<String> keyValue = new ArrayList<>();
+        java.util.Arrays.asList(attrString.split("[|]")).forEach(s -> keyValue.addAll(Arrays.asList(s.split("[~]"))));
+        if (keyValue.size() % 2 != 0) {
+            $error("属性值错误："+ attrString);
+            return  attribute;
+        }
+        for (int i = 0; i < keyValue.size(); i++) {
+            if (!StringUtil.isEmpty(keyValue.get(i))) {
+                List<String> v = new ArrayList<>();
+                if (!StringUtil.isEmpty(keyValue.get(i + 1))) {
+                    attribute.put(keyValue.get(i), v);
+                    v.add(keyValue.get(i + 1));
+                }
+            }
+            i++;
+        }
+        return attribute;
     }
 }

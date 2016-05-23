@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
@@ -70,7 +72,7 @@ class SEAnalysisContext {
 
     private CmsBtFeedInfoModel getProduct(ShoeCityFeedBean feedBean) {
 
-        String code = StringUtils.replaceBlankToDash(feedBean.getCode());
+        String code = StringUtils.replaceBlankToDash(feedBean.getCode() + "-"+feedBean.getImg_id());
 
         if (codeMap.containsKey(code))
             return codeMap.get(code);
@@ -80,13 +82,13 @@ class SEAnalysisContext {
         product.setCategory(feedBean.getProduct_type());
         product.setCode(code);
         product.setName(feedBean.getCategory());
-        product.setModel(code);
+        product.setModel(StringUtils.replaceBlankToDash(feedBean.getCode()));
         product.setColor(feedBean.getColor());
         product.setOrigin("None");
         product.setSizeType(feedBean.getSize_type());
         List<String> imageUrls = new ArrayList<>();
         for (int i = 1; i <= 5; i++)
-            imageUrls.add(String.format("http://image.sneakerhead.com/is/image/sneakerhead/%s-%s", feedBean.getImg_id(), i));
+            imageUrls.add(getImageFullUrl(ChannelConfigEnums.Channel.SHOE_CITY.getId(), feedBean.getImg_id()) + ".jpg");
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
@@ -155,5 +157,26 @@ class SEAnalysisContext {
         ExpParams(ShoeCityFeedBean feedBean) {
             this.cost = feedBean.getCost().doubleValue();
         }
+    }
+
+    /**
+     * 取得显示用图片的url,其中图片名字的%s保留(http://shenzhen-vo.oss-cn-shenzhen.aliyuncs.com/products/010/50/%s.jpg)
+     * @param channelId
+     * @return
+     */
+    private String getImageFullUrl (String channelId, String imageName) {
+
+        // 取得CMS中默认的显示用模板ID
+        String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
+        if (commonTemplateId == null)
+            throw new BusinessException("tm_code表中IMAGE_TEMPLATE的DEFAULT_ID定义不存在");
+
+        // 取得显示图片用URL
+        String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
+        if (StringUtils.isEmpty(templateImageUrl))
+            throw new BusinessException("tm_codes表中对应的IMAGE_TEMPLATE,URL找不到数据");
+
+        // 返回图片URl(其中图片名字%s未替换)
+        return String.format(templateImageUrl, channelId, commonTemplateId, imageName);
     }
 }

@@ -6,25 +6,21 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by dell on 2016/3/29.
+ * HtProductUpdateResponse
+ * @author peitao.sun, 2016/3/29
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtProductUpdateResponse extends JMResponse {
+public class HtProductUpdateResponse extends BaseJMResponse {
 
-    @Override
-    public void setBody(String body) throws IOException {
-        Map<String, Object> map = JacksonUtil.jsonToMap(body);
-        if (map.containsKey("is_Success") && (map.get("is_Success").toString().equals("1"))) {
-            this.setIs_Success(true);
-        } else {
-            this.setErrorMsg(body);
-        }
-        this.body = body;
-    }
-    String body;
-    boolean is_Success;
+    private boolean is_Success;
+    private String errorMsg;
+    private String body;
+
     public boolean getIs_Success() {
         return is_Success;
     }
+
     public void setIs_Success(boolean is_Success) {
         this.is_Success = is_Success;
     }
@@ -37,7 +33,18 @@ public class HtProductUpdateResponse extends JMResponse {
         this.errorMsg = errorMsg;
     }
 
-    String errorMsg;
+    public String getBody() {
+        return body;
+    }
 
+    public void setBody(String body) throws IOException {
+        Map<String, Object> map = JacksonUtil.jsonToMap(body);
+        if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
+            this.setIs_Success(true);
+        } else {
+            this.setErrorMsg(body);
+        }
+        this.body = body;
+    }
 
 }

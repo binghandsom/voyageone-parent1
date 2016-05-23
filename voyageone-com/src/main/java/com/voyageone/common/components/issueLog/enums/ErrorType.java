@@ -9,7 +9,8 @@ package com.voyageone.common.components.issueLog.enums;
  */
 public enum ErrorType {
     WSDL(1),
-    BatchJob(2);
+    BatchJob(2),
+    OpenAPI(3)    ;
 
     private int id;
 
@@ -27,6 +28,8 @@ public enum ErrorType {
                 return ErrorType.WSDL;
             case 2:
                 return ErrorType.BatchJob;
+            case 3:
+                return ErrorType.OpenAPI;
             default:
                 return null;
         }

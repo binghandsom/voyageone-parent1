@@ -40,7 +40,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
     @Autowired
     protected Transformer transformer;
     @Autowired
-    protected TransactionRunner transactionRunnerCms2;
+    protected TransactionRunner transactionRunner;
 
     protected abstract  void updateFull(List<String> itemIds);
 
@@ -51,7 +51,6 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
 
     /**
      * 读入feed文件并插入zzwork表
-     * @return
      */
     protected abstract  int superFeedImport();
 
@@ -60,8 +59,6 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
 
     /**
      * 根据类目获取该类目小的产品数据
-     * @param categorPath
-     * @return
      */
     protected abstract List<CmsBtFeedInfoModel> getFeedInfoByCategory(String categorPath);
 
@@ -111,8 +108,8 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         return true;
     }
 
-    protected HashMap<String, Object> getColumns() {
-        HashMap<String, Object> map = new HashMap<>();
+    protected Map<String, Object> getColumns() {
+        Map<String, Object> map = new HashMap<>();
         map.put("category", Feeds.getVal1(channel, FeedEnums.Name.category_column));
         map.put("channel_id", channel.getId());
         map.put("m_brand", Feeds.getVal1(channel, FeedEnums.Name.model_m_brand));
@@ -190,22 +187,23 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
             List<CmsBtFeedInfoModel> product;
             try{
                 product = getFeedInfoByCategory(categorPath);
+
+                $info("每棵树的信息取得结束");
+
+                String categorySplit =  Feeds.getVal1(channel, FeedEnums.Name.category_split);
+                if(!StringUtils.isEmpty(categorySplit)) {
+                    product.forEach(cmsBtFeedInfoModel -> {
+                        List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
+                        cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
+                    });
+                }
+                productAll.addAll(product);
+                if(productAll.size() > 500){
+                    executeMongoDB(productAll, productSucceeList, productFailAllList);
+                }
             }catch (Exception e){
                 e.printStackTrace();
-                throw e;
-            }
-            $info("每棵树的信息取得结束");
-
-            String categorySplit =  Feeds.getVal1(channel, FeedEnums.Name.category_split);
-            if(!StringUtils.isEmpty(categorySplit)) {
-                product.forEach(cmsBtFeedInfoModel -> {
-                    List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
-                    cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
-                });
-            }
-            productAll.addAll(product);
-            if(productAll.size() > 500){
-                executeMongoDB(productAll, productSucceeList, productFailAllList);
+                issueLog.log(e,ErrorType.BatchJob,SubSystem.CMS);
             }
         }
         executeMongoDB(productAll, productSucceeList, productFailAllList);

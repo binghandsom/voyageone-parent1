@@ -64,7 +64,7 @@
         select
         <include refid="promotion_fields"/>
         b.name as cartName,
-        c.id,
+        c.id as tag_id,
         c.channel_id as tag_channel_id,
         c.tag_name,
         c.tag_path,
@@ -93,13 +93,18 @@
         c.tag_status,
         c.sort_order,
         c.parent_tag_id
-        from voyageone_cms2.cms_bt_promotion a left join ct_cart b on a.cart_id = b.cart_id
+        from voyageone_cms2.cms_bt_promotion a left join Synship.ct_cart b on a.cart_id = b.cart_id
         left join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id
         where
         a.active = 1
         and (a.channel_id = #{channelId}
         <if test="orgChannelId != null and orgChannelId != ''">
             or a.channel_id = #{orgChannelId}
+        </if>
+        )
+        and (c.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or c.channel_id = #{orgChannelId}
         </if>
         )
         <if test="promotionId != null and promotionId != ''">

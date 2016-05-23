@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  *
  * @author tom
  */
-@Component("cmsSetMainPropMongoTask")
+@Component("CmsSetMainPropMongoJob")
 public class CmsSetMainPropMongoJob extends BaseTaskJob {
 
     @Autowired

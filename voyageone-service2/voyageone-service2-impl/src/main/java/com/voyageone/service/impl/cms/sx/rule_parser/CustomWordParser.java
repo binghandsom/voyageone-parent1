@@ -6,6 +6,7 @@ import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.word.CustomWordModule;
 import com.voyageone.service.impl.cms.sx.word.DefaultCustomRuleModules;
 
@@ -18,10 +19,12 @@ public class CustomWordParser extends VOAbsLoggable {
 
     private DefaultCustomRuleModules ruleModules;
     private ExpressionParser expressionParser;
+    private SxProductService sxProductService;
     private SxData sxData;
 
-    public CustomWordParser(ExpressionParser expressionParser, SxData sxData) {
+    public CustomWordParser(ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData) {
         this.expressionParser = expressionParser;
+        this.sxProductService = sxProductService;
         this.sxData = sxData;
         this.ruleModules = DefaultCustomRuleModules.getInstance();
     }
@@ -38,6 +41,6 @@ public class CustomWordParser extends VOAbsLoggable {
             $error("没有找到匹配的模块-moduleName:" + customWord.getValue().getModuleName());
             return null;
         }
-        return customWordModule.parse(customWord, expressionParser, sxData, shopBean, user, extParameter);
+        return customWordModule.parse(customWord, expressionParser, sxProductService, sxData, shopBean, user, extParameter);
     }
 }
