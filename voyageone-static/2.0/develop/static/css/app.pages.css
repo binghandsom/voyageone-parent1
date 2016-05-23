@@ -187,5 +187,6 @@
 @media screen and (max-width: 1580px) {
     .category-drag-minWidth input{
         width: 77% ! important;
+        display: inline;
     }
 }
