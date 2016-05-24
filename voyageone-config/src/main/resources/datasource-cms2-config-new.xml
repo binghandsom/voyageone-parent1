@@ -23,7 +23,7 @@
                 <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
                     <property name="properties">
                         <value>
-                            database_schema=voyageone_cms2
+                            database_schema=voyagenone_cms2_jumei
                         </value>
                     </property>
                 </bean>
