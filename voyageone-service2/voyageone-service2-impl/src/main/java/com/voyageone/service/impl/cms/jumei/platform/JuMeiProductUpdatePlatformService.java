@@ -131,8 +131,8 @@ public class JuMeiProductUpdatePlatformService {
         request.setJumei_product_name(info.getModelCmsBtJmProduct().getProductNameCn());
 
         productInfo.setName(modelProduct.getProductNameCn());//jmBtProductImport.getProductName());
-        productInfo.setCategory_v3_4_id(modelProduct.getCategoryLv4Id());//jmBtProductImport.getCategoryLv4Id());
-        productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
+        productInfo.setCategory_v3_4_id(String.valueOf(modelProduct.getCategoryLv4Id()));//jmBtProductImport.getCategoryLv4Id());
+        productInfo.setBrand_id(String.valueOf(modelProduct.getBrandId()));//jmBtProductImport.getBrandId());
         productInfo.setForeign_language_name(modelProduct.getForeignLanguageName());//jmBtProductImport.getForeignLanguageName());
         request.setUpdate_data(productInfo);
         HtProductUpdateResponse response = serviceJumeiHtProduct.update(shopBean, request);
@@ -206,7 +206,7 @@ public class JuMeiProductUpdatePlatformService {
         }
         //sku
         HtSkuUpdateRequest requestSku = new HtSkuUpdateRequest();
-        requestSku.setJumei_sku_id(modelSku.getJmSkuNo());//.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
+        requestSku.setJumei_sku_no(modelSku.getJmSkuNo());//.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
         requestSku.setBusinessman_num(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
         // requestSku.setCustoms_product_number();
         HtSkuUpdateResponse responseSku = serviceJumeiHtSku.update(shopBean, requestSku);
@@ -229,12 +229,12 @@ public class JuMeiProductUpdatePlatformService {
         HtSpuAddRequest requestSpu = new HtSpuAddRequest();
         requestSpu.setUpc_code(modelSku.getSkuCode());
         requestSpu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
-        requestSpu.setPropery("OTHER");
+        requestSpu.setProperty("OTHER");
         requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
         requestSpu.setAttribute(info.getModelCmsBtJmProduct().getAttribute());//jmBtProductImport.getAttribute());
         //spt  spu.setAbroad_price(modelPromotionSku.);//jmBtSkuImportModel.getAbroadPrice());
         // todo 价格单位
-        requestSpu.setArea_code(19);
+        requestSpu.setArea_code("19");
         HtSpuAddResponse responseSpu = serviceJumeiHtSpu.add(shopBean, requestSpu);
         if (responseSpu.is_Success()) {
             modelSku.setJmSpuNo(responseSpu.getJumei_spu_no());
