@@ -369,7 +369,7 @@ public class TmallProductService {
             String styleCode = cmsMainProduct.getFields().getModel();
             // modified by morse.lu end
             // test时要 start
-            styleCode = "test." + styleCode;
+//            styleCode = "test." + styleCode;
             // test时要 end
             workLoadBean.setStyle_code(styleCode);
             return styleCode;
