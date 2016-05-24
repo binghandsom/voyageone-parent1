@@ -3,7 +3,7 @@
         <button type="button" class="close" ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;Tag Edit&nbsp;</span></h5>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;Channel category&nbsp;</span></h5>
     </div>
 
     <div class="modal-body">
@@ -14,16 +14,14 @@
                         <label class="">店铺</label>
                     </div>
                     <div class="col-sm-7">
-                        <select class="form-control" >
-                            <option value="1">Select...</option>
-                            <option value="2">JD</option>
-                            <option value="3">TG</option>
-                            <option value="4">JM</option>
+                        <select class="form-control" ng-model="vm.categoryTypeSelectValue"  ng-change="initialize()"
+                                ng-options="cart.name for cart in vm.cartList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="column_overflow col-sm-12" style="border:1px solid silver">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" ng-repeat="list in vm.promotionList">
                         <div class="m-t-sm">
                             <label class=" ">新品上市（2016）</label>
                         </div>
@@ -40,7 +38,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" ng-repeat="list in vm.promotionList">
                         <div class="m-t-xs">
                             <label class=" ">Nike耐克</label>
                         </div>
@@ -48,24 +46,6 @@
                             <label class="checkbox-inline c-checkbox">
                                 <input type="checkbox">
                                 <span class="fa fa-check"></span>&nbsp;Air Force 1 空军1号
-                            </label>
-                        </div>
-                        <div class="m-t-xs m-l-md">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;Nike Drunk
-                            </label>
-                        </div>
-                        <div class="m-t-xs m-l-md">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;Nike Drunk
-                            </label>
-                        </div>
-                        <div class="m-t-xs m-l-md">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;Nike Drunk
                             </label>
                         </div>
                     </div>

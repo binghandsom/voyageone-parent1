@@ -18,7 +18,8 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                promotionList: []
+                promotionList: [],
+                catgoryList: [],
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -48,6 +49,7 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
+        $scope.openAddChannelCategory = openAddChannelCategory;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
@@ -172,6 +174,17 @@ define([
          */
         function openAddPromotion (promotion, openAddToPromotion) {
             openAddToPromotion(promotion, getSelProductList()).then(function () {
+                getGroupList();
+                getProductList();
+            })
+        }
+
+        /**
+         * popup出添加到CategoryEdit的功能
+         * @param openCategoryEdit
+         */
+        function openAddChannelCategory (openAddChannelCategoryEdit) {
+            openAddChannelCategoryEdit(getSelProductList()).then(function () {
                 getGroupList();
                 getProductList();
             })

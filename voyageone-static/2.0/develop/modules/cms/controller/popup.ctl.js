@@ -352,7 +352,7 @@ define([
                 "addChannelCategory": {
                     "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
-                    "controller": 'popAddChannelCategoryCtl'
+                    "controller": 'openAddChannelCategoryEdit'
                 }
 
             },
@@ -1083,10 +1083,18 @@ define([
         };
 
         /**
-         * 新增feed查询页code弹出
+         * 新增advance查询页分类edit弹出
          * */
-        $scope.openTagEdit = function (context) {
-            return openModel(popActions.search.addChannelCategory, context);
+        $scope.openAddChannelCategoryEdit = function (selList) {
+            if (selList && selList.length) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.code);
+                });
+                return openModel(popActions.search.addChannelCategory, {"productIds": productIds});
+            } else {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
         };
 
 

@@ -300,7 +300,7 @@
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
 				<div class="btn-group" uib-dropdown>
-					<button type="button" class="btn btn-default" uib-dropdown-toggle>
+					<button type="button" class="btn btn-default" ng-disabled="vm.catgoryList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;Tags&nbsp;<span class="caret"></span>
 					</button>
 					<!-----------------------------tags------------------------------>
@@ -309,7 +309,7 @@
 							<a href>freeTag</a>
 						</li>
 						<li>
-							<a href ng-click="openTagEdit('')">TagEdit</a>
+							<a href ng-click="$parent.openAddChannelCategory(openAddChannelCategoryEdit)">categoryEdit</a>
 						</li>
 					</ul>
 				</div>&nbsp;
