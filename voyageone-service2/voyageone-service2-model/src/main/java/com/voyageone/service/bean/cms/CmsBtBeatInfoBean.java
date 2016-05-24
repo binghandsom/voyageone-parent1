@@ -35,6 +35,7 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
     }
 
     public CmsBtBeatInfoBean(CmsBtTaskJiagepiluModel model) {
+        setId(model.getId());
         setTaskId(model.getTaskId());
         setNumIid(model.getNumIid());
         setProductCode(model.getProductCode());
@@ -42,6 +43,10 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
         setMessage(model.getMessage());
         setImageStatus(model.getImageStatus());
         setImageTaskId(model.getImageTaskId());
+        setCreater(model.getCreater());
+        setCreated(model.getCreated());
+        setModifier(model.getModifier());
+        setModified(model.getModified());
     }
 
     /**
