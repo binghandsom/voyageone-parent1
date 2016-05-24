@@ -37,7 +37,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = function(){
-            $scope.vm.status.open = false;//收缩搜索栏
+            //$scope.vm.status.open = false;//收缩搜索栏
             search();
         };
         $scope.exportFile = exportFile;
