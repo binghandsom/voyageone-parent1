@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('addChannelCategoryController', function ($scope,$addChannelCategoryService) {
+    angularAMD.controller('openAddChannelCategoryEdit', (function ($scope,$addChannelCategoryService) {
         $scope.vm = {
             categoryTypeSelectValue: 1,
             cartId: '',
@@ -32,5 +32,7 @@ define([
             $scope.vm.cartTree = $scope.cartTree;
         };
         
-    });
+    })().service('addChannelCategoryService',(function () {
+        
+    })()));
 });
