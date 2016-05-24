@@ -229,6 +229,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'fields.code':1,'_id':0}");
+        queryObject.setSort(setSortValue(searchValue));
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
         if (prodList == null || prodList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
