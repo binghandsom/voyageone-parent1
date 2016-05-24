@@ -49,7 +49,7 @@ public class CmsTaskPictureController extends BaseController {
 
         int total = taskPictureService.getAllBeatCount(param.getTask_id(), param.getFlag(), param.getSearchKey());
 
-        List<Map<String, String>> summary = taskPictureService.getBeatSummary(param.getTask_id());
+        List<Map<String, Object>> summary = taskPictureService.getBeatSummary(param.getTask_id());
 
         CmsBtTasksBean task = taskService.getTaskWithPromotion(param.getTask_id());
 

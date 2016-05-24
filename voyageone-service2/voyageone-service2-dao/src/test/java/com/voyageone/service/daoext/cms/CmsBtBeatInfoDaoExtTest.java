@@ -183,7 +183,7 @@ public class CmsBtBeatInfoDaoExtTest {
     @Test
     public void test11SelectSummary() throws Exception {
 
-        List<Map<String, String>> list = beatInfoDaoExt.selectSummary(444);
+        List<Map<String, Object>> list = beatInfoDaoExt.selectSummary(444);
 
         Object value = list.get(0).get("count");
 

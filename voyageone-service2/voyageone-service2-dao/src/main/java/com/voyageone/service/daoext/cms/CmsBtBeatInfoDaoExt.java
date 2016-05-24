@@ -43,7 +43,7 @@ public interface CmsBtBeatInfoDaoExt {
 
     int updateFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("force") boolean force, @Param("modifier") String userName);
 
-    List<Map<String, String>> selectSummary(@Param("taskId") int taskId);
+    List<Map<String, Object>> selectSummary(@Param("taskId") int taskId);
 
     List<CmsBtBeatInfoBean> selectListByNumiidInOtherTask(@Param("promotionId") int promotionId, @Param("taskId") int taskId, @Param("numIid") String numIid);
 

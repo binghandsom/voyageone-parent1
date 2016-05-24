@@ -48,7 +48,7 @@ public class BeatInfoService extends BaseService {
         return beatInfoDaoExt.selectListByTask(taskId);
     }
 
-    public List<Map<String, String>> getBeatSummary(int taskId) {
+    public List<Map<String, Object>> getBeatSummary(int taskId) {
         return beatInfoDaoExt.selectSummary(taskId);
     }
 

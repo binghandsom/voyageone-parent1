@@ -155,12 +155,12 @@ class CmsTaskPictureService extends BaseAppService {
      * @param task_id 任务 ID
      * @return 统计信息, List[Map{flag&count}]
      */
-    List<Map<String, String>> getBeatSummary(int task_id) {
-        List<Map<String, String>> result = beatInfoService.getBeatSummary(task_id);
+    List<Map<String, Object>> getBeatSummary(int task_id) {
+        List<Map<String, Object>> result = beatInfoService.getBeatSummary(task_id);
         // 数据查询出来的是整数, 转换为枚举名
-        for (Map<String, String> map : result) {
-            String flag = map.get("flag");
-            Integer flagId = Integer.valueOf(flag);
+        for (Map<String, Object> map : result) {
+            Object flag = map.get("flag");
+            Integer flagId = Integer.valueOf(String.valueOf(flag));
             BeatFlag flagEnum = BeatFlag.valueOf(flagId);
             map.put("flag", flagEnum.name());
         }
