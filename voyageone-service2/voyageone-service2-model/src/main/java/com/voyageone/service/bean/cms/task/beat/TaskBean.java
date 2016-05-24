@@ -41,17 +41,19 @@ public class TaskBean {
 
     private CmsBtPromotionModel promotion;
 
+    private Boolean update;
+
     public TaskBean() {
     }
 
     public TaskBean(CmsBtTasksBean taskModel) {
-        setTask_id(taskModel.getTask_id());
-        setTask_name(taskModel.getTask_name());
-        setTask_type(PromotionTypeEnums.Type.valueOf(taskModel.getTask_type()));
-        setPromotion_id(taskModel.getPromotion_id());
+        setTask_id(taskModel.getId());
+        setTask_name(taskModel.getTaskName());
+        setTask_type(PromotionTypeEnums.Type.valueOf(taskModel.getTaskType()));
+        setPromotion_id(taskModel.getPromotionId());
         setChannelId(taskModel.getChannelId());
-        setActivity_start(taskModel.getActivity_start());
-        setActivity_end(taskModel.getActivity_end());
+        setActivity_start(taskModel.getActivityStart());
+        setActivity_end(taskModel.getActivityEnd());
         setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
         setCreated(taskModel.getCreated());
         setCreater(taskModel.getCreater());
@@ -160,13 +162,13 @@ public class TaskBean {
 
         CmsBtTasksBean taskModel = new CmsBtTasksBean();
 
-        taskModel.setTask_id(getTask_id());
-        taskModel.setTask_name(getTask_name());
-        taskModel.setTask_type(getTask_type().getTypeId());
-        taskModel.setPromotion_id(getPromotion_id());
+        taskModel.setId(getTask_id());
+        taskModel.setTaskName(getTask_name());
+        taskModel.setTaskType(getTask_type().getTypeId());
+        taskModel.setPromotionId(getPromotion_id());
         taskModel.setChannelId(getChannelId());
-        taskModel.setActivity_start(getActivity_start());
-        taskModel.setActivity_end(getActivity_end());
+        taskModel.setActivityStart(getActivity_start());
+        taskModel.setActivityEnd(getActivity_end());
         taskModel.setConfig(JacksonUtil.bean2Json(getConfig()));
         taskModel.setCreated(getCreated());
         taskModel.setCreater(getCreater());
@@ -182,5 +184,13 @@ public class TaskBean {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public Boolean getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(Boolean update) {
+        this.update = update;
     }
 }

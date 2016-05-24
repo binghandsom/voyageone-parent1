@@ -521,16 +521,16 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<CmsBtTasksBean> addTaskList = new ArrayList<>();
         if (tasks.size() == 0) {
             CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-            CmsBtTasksBean cmsBtTaskModel = new CmsBtTasksBean();
-            cmsBtTaskModel.setModifier(operator);
-            cmsBtTaskModel.setCreater(operator);
-            cmsBtTaskModel.setPromotion_id(promotionId);
-            cmsBtTaskModel.setTask_type(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
-            cmsBtTaskModel.setTask_name(cmsBtPromotionModel.getPromotionName());
-            cmsBtTaskModel.setActivity_start(cmsBtPromotionModel.getActivityStart());
-            cmsBtTaskModel.setActivity_end(cmsBtPromotionModel.getActivityEnd());
-            cmsBtTaskModel.setChannelId(channelId);
-            addTaskList.add(cmsBtTaskModel);
+            CmsBtTasksBean tasksBean = new CmsBtTasksBean();
+            tasksBean.setModifier(operator);
+            tasksBean.setCreater(operator);
+            tasksBean.setPromotionId(promotionId);
+            tasksBean.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            tasksBean.setTaskName(cmsBtPromotionModel.getPromotionName());
+            tasksBean.setActivityStart(cmsBtPromotionModel.getActivityStart());
+            tasksBean.setActivityEnd(cmsBtPromotionModel.getActivityEnd());
+            tasksBean.setChannelId(channelId);
+            addTaskList.add(tasksBean);
         }
 
         Map<String, Object> param = new HashMap<>();
