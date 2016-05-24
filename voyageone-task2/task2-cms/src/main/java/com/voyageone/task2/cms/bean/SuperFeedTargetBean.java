@@ -223,6 +223,8 @@ public class SuperFeedTargetBean extends  SuperFeedBean{
 
     private String marketprice;
 
+    private String madeInCountry;
+
     public String getDescription() {
         return description;
     }
@@ -1085,4 +1087,11 @@ public class SuperFeedTargetBean extends  SuperFeedBean{
         this.updateflag = updateflag;
     }
 
+    public String getMadeInCountry() {
+        return madeInCountry;
+    }
+
+    public void setMadeInCountry(String madeInCountry) {
+        this.madeInCountry = madeInCountry;
+    }
 }

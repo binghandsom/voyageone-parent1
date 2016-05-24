@@ -6,10 +6,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -761,9 +763,16 @@ public class HttpUtils {
      * @throws IOException
      */
     public static InputStream getInputStream(String urlString) throws IOException {
+//        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
-
-        return url.openStream();
+        HttpURLConnection con = (HttpURLConnection)  url.openConnection();
+        con.setConnectTimeout(60000);
+        con.setReadTimeout(60000);
+        if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
+            return getInputStream(con.getHeaderField("Location"));
+        }else{
+            return url.openStream();
+        }
     }
 
 
