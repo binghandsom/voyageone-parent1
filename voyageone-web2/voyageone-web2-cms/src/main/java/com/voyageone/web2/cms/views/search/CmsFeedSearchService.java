@@ -218,7 +218,7 @@ public class CmsFeedSearchService extends BaseAppService {
         // 获取color
         String color = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("color"));
         if (color != null) {
-            result.append(MongoUtils.splicingValue("color", color));
+            result.append("'color':{'$regex': '" + color + "','$options':'i'}");
             result.append(",");
         }
 
