@@ -763,25 +763,15 @@ public class HttpUtils {
      * @throws IOException
      */
     public static InputStream getInputStream(String urlString) throws IOException {
-        urlString = getFinalURL(urlString);
+//        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
-        InputStream inputStream = url.openStream();
-
-        return url.openStream();
-    }
-
-    public static String getFinalURL(String url) {
-        String to = url;
-        try {
-            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-             con.setRequestMethod("HEAD");
-            if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
-                to = con.getHeaderField("Location");
-            }
-        } catch (Exception e) {
-            to = "";
+        HttpURLConnection con = (HttpURLConnection)  url.openConnection();
+        con.setConnectTimeout(60000);
+        con.setReadTimeout(60000);
+        if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
+            return getInputStream(con.getHeaderField("Location"));
+        }else{
+            return url.openStream();
         }
-        return to;
     }
-
 }
