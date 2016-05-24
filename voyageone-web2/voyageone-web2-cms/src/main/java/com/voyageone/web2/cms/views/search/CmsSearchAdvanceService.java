@@ -977,7 +977,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 result="\""+inputOptsKey+"\":{$in:[null],$exists:true}";
                 break;
             case "!=null":
-                result="\""+inputOptsKey+"\":{$ne:[null]}";
+                result="$and:[{\""+inputOptsKey+"\": { $ne: null }},{\""+inputOptsKey +"\": { $ne: \"\" }}]";
                 break;
         }
         return  result;
