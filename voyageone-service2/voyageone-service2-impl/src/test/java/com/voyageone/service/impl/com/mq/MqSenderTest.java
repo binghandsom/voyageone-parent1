@@ -24,10 +24,11 @@ public class MqSenderTest extends TestCase {
 
     @Test
     public void testSendMessage() throws Exception {
-        Map<String, Object> message = new HashMap<>();
-        message.put("id", "111");
-        for (int i=0;i<100;i++)
-        sender.sendMessage("voyageone_mq_error_handle_testing", message);
+        for (int i=0;i<10;i++) {
+            Map<String, Object> message = new HashMap<>();
+            message.put("id", String.valueOf(i));
+            sender.sendMessage("voyageone_mq_error_handle_testing", message);
+        }
     }
 
 }

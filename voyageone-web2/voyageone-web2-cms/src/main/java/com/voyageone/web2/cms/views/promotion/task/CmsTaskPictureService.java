@@ -26,10 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.voyageone.common.util.ExcelUtils.getString;
 
@@ -188,9 +185,10 @@ class CmsTaskPictureService extends BaseAppService {
             model.setTask_id(task_id);
             model.setCreater(user.getUserName());
             model.setModifier(user.getUserName());
-            String now = DateTimeUtil.getNow();
-            model.setCreatedStr(now);
-            model.setModifiedStr(now);
+
+            Date now = DateTimeUtil.getDate();
+            model.setCreated(now);
+            model.setModified(now);
 
             models.add(model);
         }

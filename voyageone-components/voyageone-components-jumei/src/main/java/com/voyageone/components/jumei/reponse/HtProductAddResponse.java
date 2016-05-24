@@ -65,6 +65,8 @@ public class HtProductAddResponse extends BaseJMResponse {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {
                     this.setError_code(String.valueOf(errorMap.get("code")));
+                } else if (errorMap.containsKey("codes")) {
+                    this.setError_code(String.valueOf(errorMap.get("codes")));
                 }
             }
             // 取得聚美生成的产品Id jumei_product_id

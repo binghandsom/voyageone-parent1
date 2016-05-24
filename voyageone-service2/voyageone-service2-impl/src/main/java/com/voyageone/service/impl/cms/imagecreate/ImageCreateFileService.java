@@ -8,11 +8,9 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.HashCodeUtil;
 import com.voyageone.service.bean.openapi.OpenApiException;
-import com.voyageone.service.bean.openapi.image.AddListParameter;
-import com.voyageone.service.bean.openapi.image.AddListResultBean;
-import com.voyageone.service.bean.openapi.image.CreateImageParameter;
-import com.voyageone.service.bean.openapi.image.ImageErrorEnum;
+import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.CmsMtImageCreateFileDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtImageCreateTaskDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
@@ -32,7 +30,9 @@ import java.util.*;
 @Service
 public class ImageCreateFileService extends BaseService {
     @Autowired
-    CmsMtImageCreateFileDao cmsMtImageCreateFileDao;
+    private CmsMtImageCreateFileDao cmsMtImageCreateFileDao;
+    @Autowired
+    private CmsMtImageCreateFileDaoExt cmsMtImageCreateFileDaoExt;
     @Autowired
     private AliYunOSSFileService serviceAliYunOSSFile;
     @Autowired
@@ -43,17 +43,19 @@ public class ImageCreateFileService extends BaseService {
     @Autowired
     private MqSender sender;
     @Autowired
-    CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
+    private CmsMtImageCreateTaskDao daoCmsMtImageCreateTask;
     @Autowired
-    CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
+    private CmsMtImageCreateTaskDetailDao daoCmsMtImageCreateTaskDetail;
     @Autowired
-    ImagePathCache imagePathCache;
+    private ImagePathCache imagePathCache;
     @Autowired
-    CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
+    private CmsMtImageCreateTaskDetailDaoExt daoExtCmsMtImageCreateTaskDetail;
     @Autowired
-    CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
+    private CmsMtImageCreateImportDao daoCmsMtImageCreateImport;
     @Autowired
-    ImageTemplateService serviceCmsImageTemplate;
+    private ImageTemplateService serviceCmsImageTemplate;
+    @Autowired
+    private CmsMtImageCreateTaskService cmsMtImageCreateTaskService;
 
     public CmsMtImageCreateFileModel getModel(int id) {
         return cmsMtImageCreateFileDao.select(id);
@@ -66,7 +68,8 @@ public class ImageCreateFileService extends BaseService {
     }
 
     public boolean existsHashCode(long hashCode) {
-        return getModelByHashCode(hashCode) != null; //加缓存判断
+        //加缓存判断
+        return getModelByHashCode(hashCode) != null;
     }
 
     @VOTransactional
@@ -162,9 +165,12 @@ public class ImageCreateFileService extends BaseService {
             modelTaskDetail.setStatus(1);
         }
         if (modelFile != null) {
-            this.changeModel(modelFile);//一起保存
+            modelFile.setModified(new Date());
+            //一起保存
+            this.changeModel(modelFile);
         }
-        modelTaskDetail.setEndTime(new Date());//执行结束时间
+        //执行结束时间
+        modelTaskDetail.setEndTime(new Date());
         daoCmsMtImageCreateTaskDetail.update(modelTaskDetail);
     }
 
@@ -209,7 +215,7 @@ public class ImageCreateFileService extends BaseService {
                 long hashCode = getHashCode(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), templateModified);
                 modelCmsMtImageCreateFile = getModelByHashCode(hashCode);
                 if (modelCmsMtImageCreateFile == null) {//1.创建记录信息
-                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "system addList", hashCode, imageInfo.isUploadUsCdn());
+                    modelCmsMtImageCreateFile = createCmsMtImageCreateFile(imageInfo.getChannelId(), imageInfo.getTemplateId(), imageInfo.getFile(), imageInfo.getVParamStr(), "SYSTEM", hashCode, imageInfo.isUploadUsCdn());
                 }
                 CmsMtImageCreateTaskDetailModel detailModel = new CmsMtImageCreateTaskDetailModel();
                 detailModel.setCmsMtImageCreateFileId(modelCmsMtImageCreateFile.getId());
@@ -245,6 +251,7 @@ public class ImageCreateFileService extends BaseService {
             Map<String, Object> map = new HashMap<>();
             map.put("id", modelTask.getId());
             sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
+            result.setTaskId(modelTask.getId());
             $info("CmsImageFileService:sendMessage end");
         } catch (OpenApiException ex) {
             result.setErrorCode(ex.getErrorCode());
@@ -262,7 +269,6 @@ public class ImageCreateFileService extends BaseService {
             result.setErrorMsg(ImageErrorEnum.SystemError.getMsg());
         } finally {
             mapTemplate.clear();
-            mapTemplate = null;
         }
         $info("CmsImageFileService:addList end");
         return result;
@@ -282,5 +288,29 @@ public class ImageCreateFileService extends BaseService {
                 }
             }
         }
+    }
+
+    public GetListResultBean getListResult(int taskId) {
+        $info(String.format("CmsImageFileService:getListResult start[%s]", taskId));
+        GetListResultBean result = new GetListResultBean();
+        if (taskId == 0) {
+            //限制条数
+            result.setErrorCode(ImageErrorEnum.TASKIDNotNull.getCode());
+            result.setErrorMsg(ImageErrorEnum.TASKIDNotNull.getMsg());
+            return result;
+        }
+        CmsMtImageCreateTaskModel cmsMtImageCreateTaskModel = cmsMtImageCreateTaskService.get(taskId);
+        if (cmsMtImageCreateTaskModel == null) {
+            result.setErrorCode(ImageErrorEnum.TASKNotNull.getCode());
+            result.setErrorMsg(ImageErrorEnum.TASKNotNull.getMsg());
+            return result;
+        }
+
+        List<CmsMtImageCreateFileModel> cmsMtImageCreateFiles = cmsMtImageCreateFileDaoExt.selectByTaskId(taskId);
+        if (cmsMtImageCreateFiles != null && !cmsMtImageCreateFiles.isEmpty()) {
+            result.setCmsMtImageCreateFiles(cmsMtImageCreateFiles);
+        }
+        $info(String.format("CmsImageFileService:getListResult end[%s]", taskId));
+        return result;
     }
 }
