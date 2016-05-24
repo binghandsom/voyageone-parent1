@@ -148,8 +148,8 @@ public class JuMeiProductUpdatePlatformService {
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
-        dealInfo.setUser_purchase_limit(modelPromotionProduct.getLimit());//jmBtDealImportModel.getUserPurchaseLimit());
-        dealInfo.setShipping_system_id(shippingSystemId);//jmBtDealImportModel.getShippingSystemId());
+        dealInfo.setUser_purchase_limit(String.valueOf(modelPromotionProduct.getLimit()));//jmBtDealImportModel.getUserPurchaseLimit());
+        dealInfo.setShipping_system_id(String.valueOf(shippingSystemId));//jmBtDealImportModel.getShippingSystemId());
         dealInfo.setProduct_long_name(modelProduct.getProductLongName());//jmBtDealImportModel.getProductLongName());
         dealInfo.setProduct_medium_name(modelProduct.getProductMediumName());//jmBtDealImportModel.getProductMediumName());
         dealInfo.setProduct_short_name(modelProduct.getProductShortName());//jmBtDealImportModel.getProductShortName());
@@ -190,7 +190,7 @@ public class JuMeiProductUpdatePlatformService {
         CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
         HtSpuUpdateRequest requestSpu = new HtSpuUpdateRequest();
-        requestSpu.setJumei_spu_id(modelSku.getJmSpuNo());//);
+        requestSpu.setJumei_spu_no(modelSku.getJmSpuNo());//);
         requestSpu.setUpc_code(modelSku.getUpc());
         requestSpu.setPropery("OTHER");
         requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
