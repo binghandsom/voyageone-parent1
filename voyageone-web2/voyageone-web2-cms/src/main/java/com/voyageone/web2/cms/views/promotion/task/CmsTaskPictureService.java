@@ -70,7 +70,7 @@ class CmsTaskPictureService extends BaseAppService {
      */
     public TaskBean create(TaskBean taskBean, UserSessionBean user) {
 
-        CmsBtPromotionModel promotion = promotionService.getPromotion(taskBean.getPromotion_id());
+        CmsBtPromotionModel promotion = promotionService.getPromotion(taskBean.getPromotionId());
 
         if (promotion == null)
             throw new BusinessException("7000001");
@@ -86,26 +86,26 @@ class CmsTaskPictureService extends BaseAppService {
 
             // 尝试检查任务的名称, 是否已经存在
             taskModels = taskService.getTasks(
-                    taskBean.getPromotion_id(),
-                    taskBean.getTask_name(),
+                    taskBean.getPromotionId(),
+                    taskBean.getTaskName(),
                     user.getSelChannelId(),
                     PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
 
             if (!taskModels.isEmpty())
                 throw new BusinessException("7000003");
 
-            taskBean.setTask_type(PromotionTypeEnums.Type.JIAGEPILU);
+            taskBean.setTaskType(PromotionTypeEnums.Type.JIAGEPILU);
             taskBean.setChannelId(user.getSelChannelId());
             taskBean.setCreater(user.getUserName());
         }
 
         // 如果没提交刷图时间, 则使用 Promotion 的预热时间
-        if (StringUtils.isEmpty(taskBean.getActivity_start()))
-            taskBean.setActivity_start(taskBean.getPromotion().getPrePeriodStart());
+        if (StringUtils.isEmpty(taskBean.getActivityStart()))
+            taskBean.setActivityStart(taskBean.getPromotion().getPrePeriodStart());
 
         // 如果没提交还原时间, 则使用 Promotion 的结束时间
-        if (StringUtils.isEmpty(taskBean.getActivity_end()))
-            taskBean.setActivity_end(taskBean.getPromotion().getActivityEnd());
+        if (StringUtils.isEmpty(taskBean.getActivityEnd()))
+            taskBean.setActivityEnd(taskBean.getPromotion().getActivityEnd());
 
         taskBean.setModifier(user.getUserName());
 
@@ -115,10 +115,10 @@ class CmsTaskPictureService extends BaseAppService {
             return null;
 
         taskModels = taskService.getTasks(
-                taskBean.getPromotion_id(),
-                taskBean.getTask_name(),
+                taskBean.getPromotionId(),
+                taskBean.getTaskName(),
                 user.getSelChannelId(),
-                taskBean.getTask_type().getTypeId());
+                taskBean.getTaskType().getTypeId());
 
         return new TaskBean(taskModels.get(0));
     }
@@ -309,16 +309,23 @@ class CmsTaskPictureService extends BaseAppService {
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
+
         CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
+
         if (taskModel == null) return null;
+
         CmsBtBeatInfoBean model = beatInfoService.getBeatInfByNumiid(task_id, num_iid);
+
         if (model != null) {
+
             if (model.getProductCode().equals(code))
                 return 0;
+
             model.setProductCode(code);
             model.setModifier(user.getUserName());
             return beatInfoService.updateCode(model);
         }
+
         model = new CmsBtBeatInfoBean();
         model.setNumIid(Long.valueOf(num_iid));
         model.setProductCode(code);
@@ -326,6 +333,9 @@ class CmsTaskPictureService extends BaseAppService {
         model.setTaskId(task_id);
         model.setCreater(user.getUserName());
         model.setModifier(user.getUserName());
+        model.setImageStatus(ImageStatus.None);
+        model.setImageTaskId(0);
+        model.setMessage("");
 
         Date now = DateTimeUtil.getDate();
         model.setCreated(now);

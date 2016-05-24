@@ -15,19 +15,19 @@ import java.util.Date;
  */
 public class TaskBean {
 
-    private int task_id;
+    private int id;
 
-    private String task_name;
+    private String taskName;
 
-    private PromotionTypeEnums.Type task_type;
+    private PromotionTypeEnums.Type taskType;
 
-    private int promotion_id;
+    private int promotionId;
 
     private String channelId;
 
-    private String activity_start;
+    private String activityStart;
 
-    private String activity_end;
+    private String activityEnd;
 
     private ConfigBean config;
 
@@ -47,13 +47,13 @@ public class TaskBean {
     }
 
     public TaskBean(CmsBtTasksBean taskModel) {
-        setTask_id(taskModel.getId());
-        setTask_name(taskModel.getTaskName());
-        setTask_type(PromotionTypeEnums.Type.valueOf(taskModel.getTaskType()));
-        setPromotion_id(taskModel.getPromotionId());
+        setId(taskModel.getId());
+        setTaskName(taskModel.getTaskName());
+        setTaskType(PromotionTypeEnums.Type.valueOf(taskModel.getTaskType()));
+        setPromotionId(taskModel.getPromotionId());
         setChannelId(taskModel.getChannelId());
-        setActivity_start(taskModel.getActivityStart());
-        setActivity_end(taskModel.getActivityEnd());
+        setActivityStart(taskModel.getActivityStart());
+        setActivityEnd(taskModel.getActivityEnd());
         setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
         setCreated(taskModel.getCreated());
         setCreater(taskModel.getCreater());
@@ -62,52 +62,52 @@ public class TaskBean {
         setPromotion(taskModel.getPromotion());
     }
 
-    public int getTask_id() {
-        return task_id;
+    public int getId() {
+        return id;
     }
 
-    public void setTask_id(int task_id) {
-        this.task_id = task_id;
+    public void setId(int task_id) {
+        this.id = task_id;
     }
 
-    public String getTask_name() {
-        return task_name;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setTask_name(String task_name) {
-        this.task_name = task_name;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
-    public PromotionTypeEnums.Type getTask_type() {
-        return task_type;
+    public PromotionTypeEnums.Type getTaskType() {
+        return taskType;
     }
 
-    public void setTask_type(PromotionTypeEnums.Type task_type) {
-        this.task_type = task_type;
+    public void setTaskType(PromotionTypeEnums.Type task_type) {
+        this.taskType = task_type;
     }
 
-    public int getPromotion_id() {
-        return promotion_id;
+    public int getPromotionId() {
+        return promotionId;
     }
 
-    public void setPromotion_id(int promotion_id) {
-        this.promotion_id = promotion_id;
+    public void setPromotionId(int promotion_id) {
+        this.promotionId = promotion_id;
     }
 
-    public String getActivity_start() {
-        return activity_start;
+    public String getActivityStart() {
+        return activityStart;
     }
 
-    public void setActivity_start(String activity_start) {
-        this.activity_start = activity_start;
+    public void setActivityStart(String activityStart) {
+        this.activityStart = activityStart;
     }
 
-    public String getActivity_end() {
-        return activity_end;
+    public String getActivityEnd() {
+        return activityEnd;
     }
 
-    public void setActivity_end(String activity_end) {
-        this.activity_end = activity_end;
+    public void setActivityEnd(String activityEnd) {
+        this.activityEnd = activityEnd;
     }
 
     public ConfigBean getConfig() {
@@ -162,13 +162,13 @@ public class TaskBean {
 
         CmsBtTasksBean taskModel = new CmsBtTasksBean();
 
-        taskModel.setId(getTask_id());
-        taskModel.setTaskName(getTask_name());
-        taskModel.setTaskType(getTask_type().getTypeId());
-        taskModel.setPromotionId(getPromotion_id());
+        taskModel.setId(getId());
+        taskModel.setTaskName(getTaskName());
+        taskModel.setTaskType(getTaskType().getTypeId());
+        taskModel.setPromotionId(getPromotionId());
         taskModel.setChannelId(getChannelId());
-        taskModel.setActivityStart(getActivity_start());
-        taskModel.setActivityEnd(getActivity_end());
+        taskModel.setActivityStart(getActivityStart());
+        taskModel.setActivityEnd(getActivityEnd());
         taskModel.setConfig(JacksonUtil.bean2Json(getConfig()));
         taskModel.setCreated(getCreated());
         taskModel.setCreater(getCreater());

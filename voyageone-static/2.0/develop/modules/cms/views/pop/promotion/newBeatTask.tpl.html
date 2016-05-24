@@ -9,7 +9,7 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label"><span translate="TXT_NAME"></span>&nbsp;(<span translate="TXT_UNIQUE"></span>)</label>
                 <div class="col-sm-7">
-                    <input name="task_name" ng-model="ctrl.taskBean.task_name" class="form-control" title="名称 / Name" ng-readonly="ctrl.isEdit">
+                    <input name="taskName" ng-model="ctrl.taskBean.taskName" class="form-control" title="名称 / Name" ng-readonly="ctrl.isEdit">
                 </div>
             </div>
 
@@ -17,13 +17,13 @@
                 <label class="col-sm-4 control-label"><span translate="TXT_TIME_START"></span></label>
                 <div class="col-sm-7">
                     <span class="input-group">
-                        <input name="activity_end" class="form-control"
+                        <input name="activityEnd" class="form-control"
                                title="开始时间 / Start Time" type="date"
                                readonly
-                               ng-model="ctrl.taskBean.activity_start"
+                               ng-model="ctrl.taskBean.activityStart"
                                uib-datepicker-popup
                                is-open="datepicker1"
-                               max-date="ctrl.taskBean.activity_end"
+                               max-date="ctrl.taskBean.activityEnd"
                                date-model-format="yyyy-MM-dd">
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -35,13 +35,13 @@
                 <label class="col-sm-4 control-label"><span translate="TXT_TIME_END"></span></label>
                 <div class="col-sm-7">
                     <span class="input-group">
-                        <input name="activity_start" class="form-control"
+                        <input name="activityStart" class="form-control"
                                title="结束时间 / End Time" type="date"
                                readonly
-                               ng-model="ctrl.taskBean.activity_end"
+                               ng-model="ctrl.taskBean.activityEnd"
                                uib-datepicker-popup
                                is-open="datepicker2"
-                               min-date="ctrl.taskBean.activity_start"
+                               min-date="ctrl.taskBean.activityStart"
                                date-model-format="yyyy-MM-dd">
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
