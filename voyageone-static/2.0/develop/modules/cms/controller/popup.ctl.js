@@ -352,7 +352,7 @@ define([
                 "addChannelCategory": {
                     "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
-                    "controller": 'openAddChannelCategoryEdit'
+                    "controller": 'popAddChannelCategoryCtrl as ctrl'
                 }
 
             },
