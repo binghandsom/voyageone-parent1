@@ -301,7 +301,12 @@ public class TmallProductService {
 
             if (searchSchema == null) {
                 logger.info("No match schema found");
-                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+                // modified by morse.lu 2016/05/24 start
+//                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+                // 允许无产品，只有商品
+                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
+                logger.info("无产品schema, 无需上传产品, 直接上传商品.");
+                // modified by morse.lu 2016/05/24 end
                 tmallUploadRunState.getContextBuildFields().clearContext();
                 return;
             }
@@ -716,6 +721,12 @@ public class TmallProductService {
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         Long categoryCode = tmallUploadRunState.getCategory_code();
         String productCode = tmallUploadRunState.getProduct_code();
+        // added by morse.lu 2016/05/24 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productCode)) {
+            productCode = "0";
+        }
+        // added by morse.lu 2016/05/24 end
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
