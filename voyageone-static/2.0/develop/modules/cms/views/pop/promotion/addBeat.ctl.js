@@ -21,9 +21,11 @@ define([
 
         PopAddBeatCtl.prototype = {
             init: function () {
-                var ttt = this;
-                ttt.taskBeatService.addNumiid({task_id: ttt.task_id}).then(function (res) {
-                    ttt.numiids = res.data;
+                var self = this;
+                self.taskBeatService.addNumiid({
+                    task_id: self.task_id
+                }).then(function (res) {
+                    self.numiids = res.data;
                     // 加载数据后, 重置初始化的 Chsoen 宽度
                     $("#numiid-chosen-box").find(".chosen-container").width("100%");
                 });

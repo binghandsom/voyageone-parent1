@@ -1,6 +1,7 @@
 define(function() {
     return {
         "TXT_REMINDER_WITH_COLON": "Reminder：",
+        "TXT_EDIT_TASK": "Edit Task ",
         "TXT_LOGOUT": "Logout",
         "TXT_HOME": "Home",
         "TXT_CATEGORY_VIEWS": "-- Category Views --",

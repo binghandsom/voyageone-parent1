@@ -7,22 +7,23 @@
 				</div>
 				<div class="container-fluid" ng-controller="popupCtrl">
 					<div class="col-sm-6">
-						<div class="form-horizontal m-l-md">
-						<div class="form-group form-inline">
-							<input type="file" tabindex="-1" accept=".xls,.xlsx" file-style
-								   data-button-text="Choose file" data-class-button="btn btn-default" data-classinput="form-control inline"
-								   nv-file-select uploader="ctrl.uploader"/>
-							<button class="btn btn-vo" ng-click="ctrl.importBeat()" ng-disabled="ctrl.uploadItem"><i class="glyphicon glyphicon-check"></i>&nbsp;<span translate="TXT_IMPORT_GOOD"></span></button>
-							<button class="btn btn-success" ng-click="popAddBeat(ctrl)"><i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></button>
-						  </div>
+						<div class="form-horizontal m-l-sm">
+							<div class="form-group form-inline">
+								<input type="file" tabindex="-1" accept=".xls,.xlsx" file-style
+									   data-button-text="Choose file" data-class-button="btn btn-default" data-classinput="form-control inline"
+									   nv-file-select uploader="ctrl.uploader"/>
+								<button class="btn btn-vo" ng-click="ctrl.importBeat()" ng-disabled="ctrl.uploadItem"><i class="glyphicon glyphicon-check"></i>&nbsp;<span translate="TXT_IMPORT_GOOD"></span></button>
+								<button class="btn btn-success" ng-click="popAddBeat(ctrl)"><i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></button>
+							</div>
 						</div>
 					</div>
 					<div class="pull-right m-r-xs">
 						<div class="form-horizontal form-inline">
 							<button class="btn btn-danger" ng-click="ctrl.download()"><i class="fa fa-cloud-download"></i>&nbsp;<span translate="TXT_DOWNLOAD_TASK_DETAIL"></span></button>
+							<button class="btn btn-primary" ng-click="ctrl.updateTask(openNewBeatTask)"><span translate="TXT_EDIT_TASK"></span>[&nbsp;<span>{{::ctrl.task.taskName}}</span>&nbsp;]&nbsp;</button>
 						</div>
 					</div>
-					<div class="col-sm-12 progress progress-xxs m-t-xs" style="padding-left:0px;margin-bottom:0px" ng-if="ctrl.uploadItem">
+					<div class="col-sm-12 progress progress-xxs m-t-xs" style="padding-left:0; margin-bottom:0" ng-if="ctrl.uploadItem">
 						<div class="progress-bar progress-bar-warning" role="progressbar" ng-style="{ 'width': ctrl.uploadItem.progress + '%' }"></div>
 					</div>
 				</div>
@@ -40,6 +41,14 @@
 			<button class="btn btn-default-vo" ng-repeat="item in ctrl.summary" ng-click="ctrl.flag = item.flag; ctrl.getData();">
 				<span>{{item.flag | translate}}</span>&nbsp;:&nbsp;<span>{{item.count}}</span>
 			</button>
+		</div>
+		<div class="pull-right col-sm-3">
+			<div class="input-group">
+				<input type="text" class="form-control" ng-model="ctrl.searchKey" placeholder="Search numiid or code"
+					   enter-click="#promo-beat-search-btn"><span class="input-group-btn"><button
+					id="promo-beat-search-btn" class="btn btn-default" translate="TXT_SEARCH"
+					ng-click="ctrl.getData()"></button></span>
+			</div>
 		</div>
 	</div>
 	<div class="box">
@@ -60,20 +69,20 @@
 						</thead>
 						<tbody>
 						<tr ng-repeat="info in ctrl.data">
-							<td class="mfb-xxt text-left">{{info.product_code}}</td>
+							<td class="mfb-xxt text-left">{{info.productCode}}</td>
 							<td class="mfb-xxt text-left">
-								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{info.num_iid}}" target="_blank">{{info.num_iid}}</a>
+								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{info.numIid}}" target="_blank">{{info.numIid}}</a>
 							</td>
-							<td class="mfb-xxt text-right">{{info.promotion_code.promotionPrice | number: 2 || '无'}}</td>
+							<td class="mfb-xxt text-right">{{info.promotionCode.promotionPrice | number: 2 || '无'}}</td>
 							<td class="mfb-xxt text-left">{{info.beatFlag | translate}}</td>
 							<td class="mfb-xxx text-left">{{info.message}}</td>
 							<td class="mfb-xxx text-left">{{info.modified.substring(0, 19)}}</td>
 							<td class="mfb-xxx text-center">
 								<div class="btn-group text-center">
-							  	   <button title="启动" ng-click="ctrl.controlOne(info, 'BEATING')" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP"></span></button>
-								   <button title="停止" ng-click="ctrl.controlOne(info, 'STOP')" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP"></span></button>
-								   <button title="还原" ng-click="ctrl.controlOne(info, 'REVERT')" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT"></span></button>
-							    </div>
+									<button title="启动" ng-click="ctrl.controlOne(info, 'BEATING')" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP"></span></button>
+									<button title="停止" ng-click="ctrl.controlOne(info, 'STOP')" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP"></span></button>
+									<button title="还原" ng-click="ctrl.controlOne(info, 'REVERT')" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT"></span></button>
+								</div>
 							</td>
 						</tr>
 						</tbody>
