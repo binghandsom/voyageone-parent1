@@ -18,9 +18,6 @@ define([
             /**
              * 画面初始化时
              */
-
-
-
             init: function () {
                 var self = this;
                 self.addChannelCategoryService.init().then(function (res) {
