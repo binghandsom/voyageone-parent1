@@ -6,6 +6,6 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('newCategoryCtl', function ($scope) {
+    angularAMD.controller('newCategoryCtl', function ($scope,context) {
     });
 });
