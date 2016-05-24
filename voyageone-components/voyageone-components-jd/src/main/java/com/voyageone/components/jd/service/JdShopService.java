@@ -2,8 +2,12 @@ package com.voyageone.components.jd.service;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.request.sellercat.SellerCatAddRequest;
+import com.jd.open.api.sdk.request.sellercat.SellerCatDeleteRequest;
+import com.jd.open.api.sdk.request.sellercat.SellerCatUpdateRequest;
 import com.jd.open.api.sdk.request.sellercat.SellerCatsGetRequest;
 import com.jd.open.api.sdk.response.sellercat.SellerCatAddResponse;
+import com.jd.open.api.sdk.response.sellercat.SellerCatDeleteResponse;
+import com.jd.open.api.sdk.response.sellercat.SellerCatUpdateResponse;
 import com.jd.open.api.sdk.response.sellercat.SellerCatsGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -75,7 +79,7 @@ public class JdShopService extends JdBase {
         request.setHomeShow(false);
 
         try {
-            // 调用京东获取前台添加的商家自定义店内分类API(360buy.sellercats.add)
+            // 调用京东添加前台商家自定义店内分类API(360buy.sellercats.add)
             SellerCatAddResponse response = reqApi(shop, request);
 
             if (response != null) {
@@ -94,6 +98,59 @@ public class JdShopService extends JdBase {
         return cId;
 
     }
+
+    /**
+     *
+     * @param shop ShopBean 店铺信息
+     * @param cId String 分类Id
+     * @throws BusinessException
+     */
+    public void deleteShopCategory(ShopBean shop, String cId) throws BusinessException {
+        SellerCatDeleteRequest request = new SellerCatDeleteRequest();
+        request.setCid(cId);
+
+        try {
+            // 调用京东删除前台商家自定义店内分类API(360buy.sellercats.delete)
+            SellerCatDeleteResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return;
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API删除前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+
+            throw new BusinessException(shop.getShop_name() + "删除前台展示的商家自定义店内分类信息失败 " + ex.getMessage());
+        }
+    }
+
+    public void updateShopCategory(ShopBean shop, String cId, String cName ) throws BusinessException {
+        SellerCatUpdateRequest request = new SellerCatUpdateRequest();
+        request.setCid(cId);
+        request.setName(cName);
+
+        try{
+            // 调用京东修改前台商家自定义店内分类API(360buy.sellercats.update)
+            SellerCatUpdateResponse  response = reqApi(shop, request);
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return;
+                }
+            }
+
+
+        }catch (Exception ex) {
+            logger.error("调用京东API修改前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+
+            throw new BusinessException(shop.getShop_name() + "修改前台展示的商家自定义店内分类信息失败 " + ex.getMessage());
+        }
+
+    }
+
+
 
 
 
