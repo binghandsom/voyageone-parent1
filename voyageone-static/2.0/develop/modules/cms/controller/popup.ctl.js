@@ -59,6 +59,11 @@ define([
                     "controller": 'popCategoryCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'lg'
+                },
+                "addChannelCategory": {
+                    "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
+                    "controller": 'popAddChannelCategoryCtrl as ctrl'
                 }
             },
             "category": {
@@ -348,11 +353,6 @@ define([
                     "templateUrl": "views/pop/search/codeDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
                     "controller": 'popCodeDetailCtl'
-                },
-                "addChannelCategory": {
-                    "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
-                    "controller": 'openAddChannelCategoryEdit'
                 }
 
             },
@@ -1091,7 +1091,7 @@ define([
                 _.forEach(selList, function (object) {
                     productIds.push(object.code);
                 });
-                return openModel(popActions.search.addChannelCategory, {"productIds": productIds});
+                return openModel(popActions.bulkUpdate.addChannelCategory, {"productIds": productIds});
             } else {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }

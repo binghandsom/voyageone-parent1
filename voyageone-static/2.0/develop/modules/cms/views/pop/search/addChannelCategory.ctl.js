@@ -2,37 +2,43 @@
  * Created by sofia on 5/19/2016.
  */
 define([
-    'angularAMD',
-    'underscore',
-    'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
+    'cms',
+    './addChannelCategory.service.dev'
+], function (cms) {
+    cms.controller('popAddChannelCategoryCtrl', (function () {
+        function PopAddChannelCategoryCtrl(context, addChannelCategoryService) {
+            this.code = context.productIds;
+            this.channelCategoryList = null;
+            this.cartList = [];
+            this.cartId = 0;
+            this.addChannelCategoryService = addChannelCategoryService;
+        }
 
-    angularAMD.controller('openAddChannelCategoryEdit', (function ($scope,$addChannelCategoryService) {
-        $scope.vm = {
-            categoryTypeSelectValue: 1,
-            cartId: '',
-            cartList: [],
-            cartTree: []
-        };
-        $scope.initialize = function () {
-            getCategoryList();
-        };
-        function getCategoryList() {
-            $scope.cartList = [
-                {name:'TM',value:'0'},
-                {name:'TG',value:'1'},
-                {name:'JD',value:'2'},
-                {name:'JG',value:'3'}
-            ];
-            $scope.cartTree = {
-                Tree1:[足球鞋,篮球鞋],
-                Tree2:[新品,篮球鞋]
+        PopAddChannelCategoryCtrl.prototype = {
+            /**
+             * 画面初始化时
+             */
+            init: function () {
+                var self = this;
+                self.addChannelCategoryService.init().then(function (res) {
+                    self.channelCategoryList = res.data;
+                });
+                self.cartList=['TM','TG','JD','JG']
+            },
+            /**
+             * 点击保存按钮时
+             */
+            save: function () {
+                var self = this;
+                self.addChannelCategoryService.save().then(function () {
+
+                })
             }
-            $scope.vm.cartList = $scope.cartList;
-            $scope.vm.cartTree = $scope.cartTree;
         };
-        
-    })().service('addChannelCategoryService',(function () {
-        
-    })()));
+        return PopAddChannelCategoryCtrl;
+    })());
 });
+
+
+
+

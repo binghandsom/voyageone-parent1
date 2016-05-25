@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
         <button type="button" class="close" ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
@@ -14,40 +14,25 @@
                         <label class="">店铺</label>
                     </div>
                     <div class="col-sm-7">
-                        <select class="form-control" ng-model="vm.categoryTypeSelectValue"  ng-change="initialize()"
-                                ng-options="cart.name for cart in vm.cartList">
+                        <select class="form-control" ng-model=" " ng-options="cart for cart in ctrl.cartList">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="column_overflow col-sm-12" style="border:1px solid silver">
-                    <div class="col-sm-12" ng-repeat="list in vm.promotionList">
-                        <div class="m-t-sm">
-                            <label class=" ">新品上市（2016）</label>
+                    <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList">
+                        <div class="m-t-xs" ng-if="category.isParent == 1">
+                            <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
+                            <label class=" ">{{category.catName}}</label>
                         </div>
-                        <div class="m-t-xs m-l-md">
+                        <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0">
                             <label class="checkbox-inline c-checkbox">
                                 <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;5月New
+                                <span class="fa fa-check"></span>&nbsp;
+                                <label class=" ">{{category.catName}}</label>
                             </label>
                         </div>
-                        <div class="m-t-xs m-l-md">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;4月New
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-sm-12" ng-repeat="list in vm.promotionList">
-                        <div class="m-t-xs">
-                            <label class=" ">Nike耐克</label>
-                        </div>
-                        <div class="m-t-xs m-l-md">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;Air Force 1 空军1号
-                            </label>
-                        </div>
+                        <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'" ng-init="categoryContainer = category.children">{{category}}</div>
                     </div>
                 </div>
             </div>
@@ -57,5 +42,21 @@
         <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
         <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
-</div><!-- .vo_modal -->
+</div>
+<script id="categoryContainer" type="text/ng-template">
+    <div class="col-sm-12 m-l-xs" ng-repeat="category in categoryContainer">
+        <div class="m-t-xs" ng-if="category.isParent == 1">
+            <i class="fa fa-minus icon-small text-vo"></i>&nbsp;
+            <label class=" ">{{category.catName}}</label>
+        </div>
+        <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0">
+            <label class="checkbox-inline c-checkbox">
+                <input type="checkbox">
+                <span class="fa fa-check"></span>&nbsp;
+                <label class=" ">{{category.catName}}</label>
+            </label>
+        </div>
+        <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'" ng-init="categoryContainer = category.children"></div>
+    </div>
+</script><!-- .vo_modal -->
 
