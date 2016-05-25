@@ -74,6 +74,11 @@ class CmsPlatformPropMappingService extends BaseAppService {
 
         // 转换类目属性
         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
+        // 20160525 tom 同时显示product的信息 START
+        if (platformCatSchemaModel.getPropsProduct() != null) {
+            fieldMap.putAll(SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsProduct()));
+        }
+        // 20160525 tom 同时显示product的信息 END
 
         // 转换简化的 mapping 信息
         List<MappingBean> mappingBeen = platformMappingModel.getProps();
@@ -291,6 +296,11 @@ class CmsPlatformPropMappingService extends BaseAppService {
 
             // 转换类目属性
             Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
+            // 20160525 tom 同时保存product的信息 START
+            if (platformCatSchemaModel.getPropsProduct() != null) {
+                fieldMap.putAll(SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsProduct()));
+            }
+            // 20160525 tom 同时保存product的信息 END
 
             // 查找并补全
             mappingBean = fixMappingStruct(platformMappingModel, fieldMap, mappingPath);
