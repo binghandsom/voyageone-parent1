@@ -61,6 +61,9 @@
             </if>
         </set>
         <where>
+            <if test="task_id != null" >
+                task_id = #{task_id}
+            </if>
             <if test="cfg_name != null" >
                 cfg_name = #{cfg_name}
             </if>
