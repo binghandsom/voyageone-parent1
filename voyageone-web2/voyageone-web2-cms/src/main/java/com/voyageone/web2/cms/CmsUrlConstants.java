@@ -614,6 +614,19 @@ public interface CmsUrlConstants {
             }
         }
 
+        interface SELLER_CAT {
+
+            String ROOT = "/cms/channel/category";
+
+            String GET_SELLER_CAT = "getSellerCat";
+
+            String ADD_SELLER_CAT = "addSellerCat";
+
+            String REMOVE_SELLER_CAT = "removeSellerCat";
+
+            String UPDATE_SELLER_CAT = "updateSellerCat";
+        }
+
     }
 
     interface ImageCreate {
