@@ -10,10 +10,8 @@ define([
             this.channelCategoryList = null;
             this.cartList = [];
             this.isSelectCid = [];
-            this.cartId = 20;
+            this.cartId = "20";
             this.addChannelCategoryService = $addChannelCategoryService;
-            this.cid = null;
-            this.cids = [];
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -25,15 +23,10 @@ define([
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     self.channelCategoryList = res.data.channelCategoryList;
                     self.cartList = res.data.cartList;
-                    self.isSelectCid =  [{
-                        "cId": "101"
-                    }, {
-                        "cid": "201"
-                    }, {
-                        "cid": "202"
-                    }]
+                    self.isSelectCid =  {"202":true,"102":true};
                 });
             },
+
             /**
              * 点击保存按钮时
              */
