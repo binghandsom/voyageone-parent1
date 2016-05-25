@@ -19,6 +19,9 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.DictWord;
@@ -91,6 +94,8 @@ public class SxProductService extends BaseService {
     private BusinessLogService businessLogService;
     @Autowired
     private ConditionPropValueService conditionPropValueService;
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -1422,6 +1427,26 @@ public class SxProductService extends BaseService {
     public String searchDictList(String channelId, int cartId, String paddingPropName, int imageIndex) {
         return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }
+
+    // 20160513 tom 图片服务器切换 START
+    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) {
+
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(channelId);
+        request.setTemplateId(Integer.parseInt(imageTemplate));
+        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
+        String[] vPara = {imageName};
+        request.setVParam(vPara);
+        ImageCreateGetResponse response = null;
+        try {
+            response = imageCreateService.getImage(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+    }
+    // 20160513 tom 图片服务器切换 END
 
     private enum SkuSort {
         DIGIT("digit", 1), // 纯数字系列

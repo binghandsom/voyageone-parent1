@@ -30,9 +30,6 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 
     public final static String moduleName = "GetMainProductImages";
 
-    @Autowired
-    private ImageCreateService imageCreateService;
-
     public CustomWordModuleGetMainPropductImages() {
         super(moduleName);
     }
@@ -99,7 +96,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                     // 20160513 tom 图片服务器切换 START
 //                    String completeImageUrl = String.format(imageTemplate, productImage.getName());
 
-                    String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName());
+                    String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
                     // 20160513 tom 图片服务器切换 END
 //                    completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                     imageUrlList.add(completeImageUrl);
@@ -122,10 +119,10 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 20160513 tom 图片服务器切换 START
 //                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
 
-                paddingImage = getImageByTemplateId(expressionParser, imageTemplate, paddingImageKey.trim());
+                paddingImage = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), imageTemplate, paddingImageKey.trim());
                 // 20160513 tom 图片服务器切换 END
 //                paddingImage = sxProductService.encodeImageUrl(paddingImage);
-                imageUrlList.add(String.format(imageTemplate, paddingImage)); // TODO: 这里是不是写错了? 疑似应该是add paddingImage tom
+                imageUrlList.add(String.format(imageTemplate, paddingImage)); // TODO: 这里是不是写错了? 疑似应该是add paddingImage tom   // morse：好像是错了，task2下面也要改
 
             }else {
                 return paddingImageKey.trim();
@@ -136,7 +133,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 20160513 tom 图片服务器切换 START
 //                String completeImageUrl = String.format(imageTemplate, productImage.getName());
 
-                String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName());
+                String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
                 // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 imageUrlList.add(completeImageUrl);
@@ -162,26 +159,5 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 
         return parseResult;
     }
-
-    // 20160513 tom 图片服务器切换 START
-    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName) {
-
-        ImageCreateGetRequest request = new ImageCreateGetRequest();
-        request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
-        request.setTemplateId(Integer.parseInt(imageTemplate));
-        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
-        String[] vPara = {imageName};
-        request.setVParam(vPara);
-        ImageCreateGetResponse response = null;
-        try {
-            response = imageCreateService.getImage(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
-
-    }
-    // 20160513 tom 图片服务器切换 END
 
 }
