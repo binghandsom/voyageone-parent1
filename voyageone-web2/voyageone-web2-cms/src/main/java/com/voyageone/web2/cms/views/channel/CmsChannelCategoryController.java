@@ -28,13 +28,24 @@ public class CmsChannelCategoryController  extends CmsController {
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.GET_SELLER_CAT)
     public AjaxResponse getSellerCat(@RequestBody Map param) {
-//        String channelId = this.getUser().getSelChannelId();
-        String channelId = "010";
+        String channelId = this.getUser().getSelChannelId();
         Integer cartId = (Integer) param.get("cartId") ;
         List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         Map<String, Object> result = new HashMap<>();
         result.put("catTree",list);
         return success(result);
     }
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.ADD_SELLER_CAT)
+    public AjaxResponse addSellerCat(@RequestBody Map param) {
+        String channelId = this.getUser().getSelChannelId();
+        Integer cartId = (Integer) param.get("cartId") ;
+        //创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+
+        //返回数据的类型
+        return success(param);
+    }
+
 
 }
