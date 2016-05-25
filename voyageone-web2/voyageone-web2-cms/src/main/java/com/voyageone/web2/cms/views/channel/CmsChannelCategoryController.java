@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Ethan Shi on 2016/5/25.
@@ -43,7 +44,10 @@ public class CmsChannelCategoryController  extends CmsController {
         Integer cartId = (Integer) param.get("cartId") ;
         String cName = (String) param.get("catName") ;
         String parentCId = (String) param.get("parentCatId") ;
-        String cId = (String) param.get("catId") ;
+//        String cId = (String) param.get("catId") ;
+
+        Random random = new Random();
+        String cId = String.valueOf(random.nextInt(1000) + 1000);
         //创建者/更新者
         String creator =this.getUser().getUserName();
 
