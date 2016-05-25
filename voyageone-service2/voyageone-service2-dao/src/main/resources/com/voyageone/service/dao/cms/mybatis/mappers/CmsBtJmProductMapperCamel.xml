@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmProductDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmProductModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `jumei_product_id`, `product_code`, `origin`, `product_name_cn`, 
+        `vo_category_name`, `vo_brand_name`, `brand_name`, `product_type`, `size_type`, `product_des_en`, 
+        `attribute`, `foreign_language_name`, `address_of_produce`, `available_period`, `product_des_cn`, 
+        `applicable_crowd`, `specialNote`, `color_en`, `last_jm_hash_id`, `creater`, `modified`, 
+        `modifier`, `last_jm_deal_begin`, `last_jm_deal_end`, `created`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_product
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmProductModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_jm_product
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="jumeiProductId != null" >
+                `jumei_product_id`,
+            </if>
+            <if test="productCode != null" >
+                `product_code`,
+            </if>
+            <if test="origin != null" >
+                `origin`,
+            </if>
+            <if test="productNameCn != null" >
+                `product_name_cn`,
+            </if>
+            <if test="voCategoryName != null" >
+                `vo_category_name`,
+            </if>
+            <if test="voBrandName != null" >
+                `vo_brand_name`,
+            </if>
+            <if test="brandName != null" >
+                `brand_name`,
+            </if>
+            <if test="productType != null" >
+                `product_type`,
+            </if>
+            <if test="sizeType != null" >
+                `size_type`,
+            </if>
+            <if test="productDesEn != null" >
+                `product_des_en`,
+            </if>
+            <if test="attribute != null" >
+                `attribute`,
+            </if>
+            <if test="foreignLanguageName != null" >
+                `foreign_language_name`,
+            </if>
+            <if test="addressOfProduce != null" >
+                `address_of_produce`,
+            </if>
+            <if test="availablePeriod != null" >
+                `available_period`,
+            </if>
+            <if test="productDesCn != null" >
+                `product_des_cn`,
+            </if>
+            <if test="applicableCrowd != null" >
+                `applicable_crowd`,
+            </if>
+            <if test="specialnote != null" >
+                `specialNote`,
+            </if>
+            <if test="colorEn != null" >
+                `color_en`,
+            </if>
+            <if test="lastJmHashId != null" >
+                `last_jm_hash_id`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            <if test="lastJmDealBegin != null" >
+                `last_jm_deal_begin`,
+            </if>
+            <if test="lastJmDealEnd != null" >
+                `last_jm_deal_end`,
+            </if>
+            `created`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="jumeiProductId != null" >
+                #{jumeiProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="origin != null" >
+                #{origin,jdbcType=VARCHAR},
+            </if>
+            <if test="productNameCn != null" >
+                #{productNameCn,jdbcType=VARCHAR},
+            </if>
+            <if test="voCategoryName != null" >
+                #{voCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="voBrandName != null" >
+                #{voBrandName,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null" >
+                #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null" >
+                #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="sizeType != null" >
+                #{sizeType,jdbcType=VARCHAR},
+            </if>
+            <if test="productDesEn != null" >
+                #{productDesEn,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="attribute != null" >
+                #{attribute,jdbcType=VARCHAR},
+            </if>
+            <if test="foreignLanguageName != null" >
+                #{foreignLanguageName,jdbcType=VARCHAR},
+            </if>
+            <if test="addressOfProduce != null" >
+                #{addressOfProduce,jdbcType=VARCHAR},
+            </if>
+            <if test="availablePeriod != null" >
+                #{availablePeriod,jdbcType=VARCHAR},
+            </if>
+            <if test="productDesCn != null" >
+                #{productDesCn,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="applicableCrowd != null" >
+                #{applicableCrowd,jdbcType=VARCHAR},
+            </if>
+            <if test="specialnote != null" >
+                #{specialnote,jdbcType=VARCHAR},
+            </if>
+            <if test="colorEn != null" >
+                #{colorEn,jdbcType=VARCHAR},
+            </if>
+            <if test="lastJmHashId != null" >
+                #{lastJmHashId,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="lastJmDealBegin != null" >
+                #{lastJmDealBegin,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastJmDealEnd != null" >
+                #{lastJmDealEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmProductModel" >
+        update cms_bt_jm_product
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="jumeiProductId != null" >
+                `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                `product_code` = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="origin != null" >
+                `origin` = #{origin,jdbcType=VARCHAR},
+            </if>
+            <if test="productNameCn != null" >
+                `product_name_cn` = #{productNameCn,jdbcType=VARCHAR},
+            </if>
+            <if test="voCategoryName != null" >
+                `vo_category_name` = #{voCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="voBrandName != null" >
+                `vo_brand_name` = #{voBrandName,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null" >
+                `brand_name` = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null" >
+                `product_type` = #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="sizeType != null" >
+                `size_type` = #{sizeType,jdbcType=VARCHAR},
+            </if>
+            <if test="productDesEn != null" >
+                `product_des_en` = #{productDesEn,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="attribute != null" >
+                `attribute` = #{attribute,jdbcType=VARCHAR},
+            </if>
+            <if test="foreignLanguageName != null" >
+                `foreign_language_name` = #{foreignLanguageName,jdbcType=VARCHAR},
+            </if>
+            <if test="addressOfProduce != null" >
+                `address_of_produce` = #{addressOfProduce,jdbcType=VARCHAR},
+            </if>
+            <if test="availablePeriod != null" >
+                `available_period` = #{availablePeriod,jdbcType=VARCHAR},
+            </if>
+            <if test="productDesCn != null" >
+                `product_des_cn` = #{productDesCn,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="applicableCrowd != null" >
+                `applicable_crowd` = #{applicableCrowd,jdbcType=VARCHAR},
+            </if>
+            <if test="specialnote != null" >
+                `specialNote` = #{specialnote,jdbcType=VARCHAR},
+            </if>
+            <if test="colorEn != null" >
+                `color_en` = #{colorEn,jdbcType=VARCHAR},
+            </if>
+            <if test="lastJmHashId != null" >
+                `last_jm_hash_id` = #{lastJmHashId,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="lastJmDealBegin != null" >
+                `last_jm_deal_begin` = #{lastJmDealBegin,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastJmDealEnd != null" >
+                `last_jm_deal_end` = #{lastJmDealEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_jm_product
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_product
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="jumeiProductId != null" >
+                and `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="origin != null" >
+                and `origin` = #{origin,jdbcType=VARCHAR}
+            </if>
+            <if test="productNameCn != null" >
+                and `product_name_cn` = #{productNameCn,jdbcType=VARCHAR}
+            </if>
+            <if test="voCategoryName != null" >
+                and `vo_category_name` = #{voCategoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="voBrandName != null" >
+                and `vo_brand_name` = #{voBrandName,jdbcType=VARCHAR}
+            </if>
+            <if test="brandName != null" >
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null" >
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="productDesEn != null" >
+                and `product_des_en` = #{productDesEn,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attribute != null" >
+                and `attribute` = #{attribute,jdbcType=VARCHAR}
+            </if>
+            <if test="foreignLanguageName != null" >
+                and `foreign_language_name` = #{foreignLanguageName,jdbcType=VARCHAR}
+            </if>
+            <if test="addressOfProduce != null" >
+                and `address_of_produce` = #{addressOfProduce,jdbcType=VARCHAR}
+            </if>
+            <if test="availablePeriod != null" >
+                and `available_period` = #{availablePeriod,jdbcType=VARCHAR}
+            </if>
+            <if test="productDesCn != null" >
+                and `product_des_cn` = #{productDesCn,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="applicableCrowd != null" >
+                and `applicable_crowd` = #{applicableCrowd,jdbcType=VARCHAR}
+            </if>
+            <if test="specialnote != null" >
+                and `specialNote` = #{specialnote,jdbcType=VARCHAR}
+            </if>
+            <if test="colorEn != null" >
+                and `color_en` = #{colorEn,jdbcType=VARCHAR}
+            </if>
+            <if test="lastJmHashId != null" >
+                and `last_jm_hash_id` = #{lastJmHashId,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="lastJmDealBegin != null" >
+                and `last_jm_deal_begin` = #{lastJmDealBegin,jdbcType=TIMESTAMP}
+            </if>
+            <if test="lastJmDealEnd != null" >
+                and `last_jm_deal_end` = #{lastJmDealEnd,jdbcType=TIMESTAMP}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_product
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="jumeiProductId != null" >
+                and `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="origin != null" >
+                and `origin` = #{origin,jdbcType=VARCHAR}
+            </if>
+            <if test="productNameCn != null" >
+                and `product_name_cn` = #{productNameCn,jdbcType=VARCHAR}
+            </if>
+            <if test="voCategoryName != null" >
+                and `vo_category_name` = #{voCategoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="voBrandName != null" >
+                and `vo_brand_name` = #{voBrandName,jdbcType=VARCHAR}
+            </if>
+            <if test="brandName != null" >
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null" >
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="productDesEn != null" >
+                and `product_des_en` = #{productDesEn,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attribute != null" >
+                and `attribute` = #{attribute,jdbcType=VARCHAR}
+            </if>
+            <if test="foreignLanguageName != null" >
+                and `foreign_language_name` = #{foreignLanguageName,jdbcType=VARCHAR}
+            </if>
+            <if test="addressOfProduce != null" >
+                and `address_of_produce` = #{addressOfProduce,jdbcType=VARCHAR}
+            </if>
+            <if test="availablePeriod != null" >
+                and `available_period` = #{availablePeriod,jdbcType=VARCHAR}
+            </if>
+            <if test="productDesCn != null" >
+                and `product_des_cn` = #{productDesCn,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="applicableCrowd != null" >
+                and `applicable_crowd` = #{applicableCrowd,jdbcType=VARCHAR}
+            </if>
+            <if test="specialnote != null" >
+                and `specialNote` = #{specialnote,jdbcType=VARCHAR}
+            </if>
+            <if test="colorEn != null" >
+                and `color_en` = #{colorEn,jdbcType=VARCHAR}
+            </if>
+            <if test="lastJmHashId != null" >
+                and `last_jm_hash_id` = #{lastJmHashId,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="lastJmDealBegin != null" >
+                and `last_jm_deal_begin` = #{lastJmDealBegin,jdbcType=TIMESTAMP}
+            </if>
+            <if test="lastJmDealEnd != null" >
+                and `last_jm_deal_end` = #{lastJmDealEnd,jdbcType=TIMESTAMP}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+</mapper>

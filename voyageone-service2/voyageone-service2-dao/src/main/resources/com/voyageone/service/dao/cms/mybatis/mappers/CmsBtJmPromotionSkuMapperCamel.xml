@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_product_id`, `cms_bt_jm_sku_id`, 
+        `sku_code`, `market_price`, `discount`, `deal_price`, `error_msg`, `synch_status`, 
+        `creater`, `created`, `modified`, `modifier`, `update_state`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_sku
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_jm_promotion_sku
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="cmsBtJmPromotionId != null" >
+                `cms_bt_jm_promotion_id`,
+            </if>
+            <if test="cmsBtJmProductId != null" >
+                `cms_bt_jm_product_id`,
+            </if>
+            <if test="cmsBtJmSkuId != null" >
+                `cms_bt_jm_sku_id`,
+            </if>
+            <if test="skuCode != null" >
+                `sku_code`,
+            </if>
+            <if test="marketPrice != null" >
+                `market_price`,
+            </if>
+            <if test="discount != null" >
+                `discount`,
+            </if>
+            <if test="dealPrice != null" >
+                `deal_price`,
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg`,
+            </if>
+            <if test="synchStatus != null" >
+                `synch_status`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            <if test="updateState != null" >
+                `update_state`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cmsBtJmPromotionId != null" >
+                #{cmsBtJmPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="cmsBtJmProductId != null" >
+                #{cmsBtJmProductId,jdbcType=INTEGER},
+            </if>
+            <if test="cmsBtJmSkuId != null" >
+                #{cmsBtJmSkuId,jdbcType=INTEGER},
+            </if>
+            <if test="skuCode != null" >
+                #{skuCode,jdbcType=VARCHAR},
+            </if>
+            <if test="marketPrice != null" >
+                #{marketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="discount != null" >
+                #{discount,jdbcType=DECIMAL},
+            </if>
+            <if test="dealPrice != null" >
+                #{dealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="errorMsg != null" >
+                #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="synchStatus != null" >
+                #{synchStatus,jdbcType=INTEGER},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="updateState != null" >
+                #{updateState,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel" >
+        update cms_bt_jm_promotion_sku
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cmsBtJmPromotionId != null" >
+                `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="cmsBtJmProductId != null" >
+                `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER},
+            </if>
+            <if test="cmsBtJmSkuId != null" >
+                `cms_bt_jm_sku_id` = #{cmsBtJmSkuId,jdbcType=INTEGER},
+            </if>
+            <if test="skuCode != null" >
+                `sku_code` = #{skuCode,jdbcType=VARCHAR},
+            </if>
+            <if test="marketPrice != null" >
+                `market_price` = #{marketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="discount != null" >
+                `discount` = #{discount,jdbcType=DECIMAL},
+            </if>
+            <if test="dealPrice != null" >
+                `deal_price` = #{dealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="synchStatus != null" >
+                `synch_status` = #{synchStatus,jdbcType=INTEGER},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="updateState != null" >
+                `update_state` = #{updateState,jdbcType=INTEGER},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_jm_promotion_sku
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cmsBtJmPromotionId != null" >
+                and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="cmsBtJmProductId != null" >
+                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
+            </if>
+            <if test="cmsBtJmSkuId != null" >
+                and `cms_bt_jm_sku_id` = #{cmsBtJmSkuId,jdbcType=INTEGER}
+            </if>
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="marketPrice != null" >
+                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="discount != null" >
+                and `discount` = #{discount,jdbcType=DECIMAL}
+            </if>
+            <if test="dealPrice != null" >
+                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="synchStatus != null" >
+                and `synch_status` = #{synchStatus,jdbcType=INTEGER}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="updateState != null" >
+                and `update_state` = #{updateState,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cmsBtJmPromotionId != null" >
+                and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="cmsBtJmProductId != null" >
+                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
+            </if>
+            <if test="cmsBtJmSkuId != null" >
+                and `cms_bt_jm_sku_id` = #{cmsBtJmSkuId,jdbcType=INTEGER}
+            </if>
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="marketPrice != null" >
+                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="discount != null" >
+                and `discount` = #{discount,jdbcType=DECIMAL}
+            </if>
+            <if test="dealPrice != null" >
+                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="synchStatus != null" >
+                and `synch_status` = #{synchStatus,jdbcType=INTEGER}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="updateState != null" >
+                and `update_state` = #{updateState,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+</mapper>
