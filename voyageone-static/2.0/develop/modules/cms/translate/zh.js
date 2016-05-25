@@ -512,6 +512,7 @@ define(function(){
         "BTN_START_INCREMENT_ALL": "启动增量所有",
         "BTN_SET_DEFAULT_VALUE": "设定默认项",
         "BTN_RESET":"重置",
+        "BTN_REFRESH_PAGE": "刷新画面",
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
         "BEATING": "正在执行",
