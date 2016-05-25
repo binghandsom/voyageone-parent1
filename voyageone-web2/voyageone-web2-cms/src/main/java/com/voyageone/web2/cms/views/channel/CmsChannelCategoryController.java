@@ -44,14 +44,12 @@ public class CmsChannelCategoryController  extends CmsController {
         Integer cartId = (Integer) param.get("cartId") ;
         String cName = (String) param.get("catName") ;
         String parentCId = (String) param.get("parentCatId") ;
-//        String cId = (String) param.get("catId") ;
 
-        Random random = new Random();
-        String cId = String.valueOf(random.nextInt(1000) + 1000);
+
         //创建者/更新者
         String creator =this.getUser().getUserName();
 
-        sellerCatService.addSellerCat(channelId,cartId,cName,parentCId,cId,creator);
+        sellerCatService.addSellerCat(channelId,cartId,cName,parentCId,creator);
 
         List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         Map<String, Object> result = new HashMap<>();

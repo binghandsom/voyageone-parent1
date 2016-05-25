@@ -47,6 +47,12 @@ public class JdShopService extends JdBase {
                     // 返回店铺分类列表
                     shopCategoryList = response.getShopCatList();
                 }
+                else
+                {
+                    logger.error("调用京东API获取前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+
+                    throw new BusinessException(shop.getShop_name() + "获取前台展示的商家自定义店内分类信息失败 " + response.getMsg());
+                }
             }
         } catch (Exception ex) {
             logger.error("调用京东API获取前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
@@ -88,6 +94,12 @@ public class JdShopService extends JdBase {
                     // 返回店铺分类的cid
                     cId = response.getCid();
                 }
+                else
+                {
+                    logger.error("调用京东API添加前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+
+                    throw new BusinessException(shop.getShop_name() + "添加前台展示的商家自定义店内分类信息失败 " + response);
+                }
             }
         } catch (Exception ex) {
             logger.error("调用京东API添加前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
@@ -114,9 +126,10 @@ public class JdShopService extends JdBase {
             SellerCatDeleteResponse response = reqApi(shop, request);
 
             if (response != null) {
-                // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    return;
+                // 京东返回异常的场合
+                if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    logger.error("调用京东API删除前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+                    throw new BusinessException(shop.getShop_name() + "删除前台展示的商家自定义店内分类信息失败 " +  response.getMsg());
                 }
             }
         } catch (Exception ex) {
@@ -135,9 +148,10 @@ public class JdShopService extends JdBase {
             // 调用京东修改前台商家自定义店内分类API(360buy.sellercats.update)
             SellerCatUpdateResponse  response = reqApi(shop, request);
             if (response != null) {
-                // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    return;
+                // 京东返回异常的场合
+                if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    logger.error("调用京东API修改前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+                    throw new BusinessException(shop.getShop_name() + "修改前台展示的商家自定义店内分类信息失败 " + response.getMsg());
                 }
             }
 
@@ -149,11 +163,4 @@ public class JdShopService extends JdBase {
         }
 
     }
-
-
-
-
-
-
-
 }
