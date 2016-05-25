@@ -507,6 +507,7 @@ define(function() {
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
         "BTN_RESET":"Reset",
+        "BTN_REFRESH_PAGE": "Refresh Page",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",

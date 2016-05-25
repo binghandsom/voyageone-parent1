@@ -4,8 +4,8 @@ package com.voyageone.components.jumei.bean;
  * Created by dell on 2016/3/29.
  */
 public class HtProductUpdate_ProductInfo {
-    int category_v3_4_id;//	Number  分类id   参数范围: V3版四级分类
-    int brand_id;//	Number  品牌id
+    String category_v3_4_id;//	Number  分类id   参数范围: V3版四级分类
+    String brand_id;//	Number  品牌id
     //    参数范围: 注：100字以内，不能出现容量、规格、颜色等信息，这些信息在子型号中设置产品名上不能填写除了“（）”“/”“+”“*” 以外的特殊符号，
 //    如-，<>，· ，空格等符号必须是英文半角符号，套装产品名以“+”号连接
     String name;//	String  产品名
@@ -23,19 +23,19 @@ public class HtProductUpdate_ProductInfo {
 //    参数范围: 注：可不传,最多10张，750*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
     String verticalImage;// 可选	String
 
-    public int getCategory_v3_4_id() {
+    public String getCategory_v3_4_id() {
         return category_v3_4_id;
     }
 
-    public void setCategory_v3_4_id(int category_v3_4_id) {
+    public void setCategory_v3_4_id(String category_v3_4_id) {
         this.category_v3_4_id = category_v3_4_id;
     }
 
-    public int getBrand_id() {
+    public String getBrand_id() {
         return brand_id;
     }
 
-    public void setBrand_id(int brand_id) {
+    public void setBrand_id(String brand_id) {
         this.brand_id = brand_id;
     }
 

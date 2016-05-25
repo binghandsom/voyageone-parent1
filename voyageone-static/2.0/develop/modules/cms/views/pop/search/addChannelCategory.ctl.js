@@ -10,7 +10,7 @@ define([
             this.channelCategoryList = null;
             this.cartList = [];
             this.isSelectCid = [];
-            this.cartId = 0;
+            this.cartId = "20";
             this.addChannelCategoryService = $addChannelCategoryService;
         }
 
@@ -20,12 +20,13 @@ define([
              */
             init: function () {
                 var self = this;
-                self.addChannelCategoryService.init({"code": self.code,"cartId":self.cartId}).then(function (res) {
+                self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     self.channelCategoryList = res.data.channelCategoryList;
                     self.cartList = res.data.cartList;
-                    self.isSelectCid = res.data.isSelectCid;
+                    self.isSelectCid =  {"202":true,"102":true};
                 });
             },
+
             /**
              * 点击保存按钮时
              */
