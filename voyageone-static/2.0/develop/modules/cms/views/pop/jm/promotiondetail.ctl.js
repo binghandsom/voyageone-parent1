@@ -20,6 +20,24 @@ define([
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
         };
+        $scope.addTag = function () {
+            if ($scope.model.tagList) {
+                $scope.model.tagList.push({"id": "", "channelId": "", "tagName": ""});
+            } else {
+                $scope.model.tagList = [{"id": "", "channelId": "", "tagName": ""}];
+            }
+        };
+
+        $scope.delTag = function (parent, node) {
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    var index;
+                    index = _.indexOf(parent, node);
+                    if (index > -1) {
+                        parent.splice(index, 1);
+                    }
+                });
+        };
         $scope.ok = function(){
             //console.log("save");
             //console.log($scope.model);

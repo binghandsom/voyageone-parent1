@@ -145,9 +145,9 @@ public class CmsBtJmPromotionService {
             bean.setChannelId(model.getChannelId());
             bean.setProductCode(fields.getCode());
             bean.setProductNameCn(fields.getProductNameCn());
-            bean.setProductLongName(fields.getLongTitle());
-            bean.setProductMediumName(fields.getMiddleTitle());
-            bean.setProductShortName(fields.getShortTitle());
+//            bean.setProductLongName(fields.getLongTitle());
+//            bean.setProductMediumName(fields.getMiddleTitle());
+//            bean.setProductShortName(fields.getShortTitle());
             bean.setBrandName(fields.getBrand());
             bean.setProductType(fields.getProductType());
             bean.setSizeType(fields.getSizeType());
@@ -159,9 +159,9 @@ public class CmsBtJmPromotionService {
                 String value = synshipComMtValueChannelDao.selectName(fields.getHsCodePrivate(), 43, "en",model.getChannelId());
                 if (StringUtils.isNotBlank(value)) {
                     List<String> props = Splitter.on(",").splitToList(value);
-                    bean.setHsCode(props.size() > 0 ? props.get(0) : null);
-                    bean.setHsName(props.size() > 1 ? props.get(1) : null);
-                    bean.setHsUnit(props.size() > 2 ? props.get(2) : null);
+//                    bean.setHsCode(props.size() > 0 ? props.get(0) : null);
+//                    bean.setHsName(props.size() > 1 ? props.get(1) : null);
+//                    bean.setHsUnit(props.size() > 2 ? props.get(2) : null);
                 }
             }
         }

@@ -131,8 +131,8 @@ public class JuMeiProductUpdatePlatformService {
         request.setJumei_product_name(info.getModelCmsBtJmProduct().getProductNameCn());
 
         productInfo.setName(modelProduct.getProductNameCn());//jmBtProductImport.getProductName());
-        productInfo.setCategory_v3_4_id(modelProduct.getCategoryLv4Id());//jmBtProductImport.getCategoryLv4Id());
-        productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
+//        productInfo.setCategory_v3_4_id(modelProduct.getCategoryLv4Id());//jmBtProductImport.getCategoryLv4Id());
+//        productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
         productInfo.setForeign_language_name(modelProduct.getForeignLanguageName());//jmBtProductImport.getForeignLanguageName());
         request.setUpdate_data(productInfo);
         HtProductUpdateResponse response = serviceJumeiHtProduct.update(shopBean, request);
@@ -150,18 +150,18 @@ public class JuMeiProductUpdatePlatformService {
         CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
         dealInfo.setUser_purchase_limit(modelPromotionProduct.getLimit());//jmBtDealImportModel.getUserPurchaseLimit());
         dealInfo.setShipping_system_id(shippingSystemId);//jmBtDealImportModel.getShippingSystemId());
-        dealInfo.setProduct_long_name(modelProduct.getProductLongName());//jmBtDealImportModel.getProductLongName());
-        dealInfo.setProduct_medium_name(modelProduct.getProductMediumName());//jmBtDealImportModel.getProductMediumName());
-        dealInfo.setProduct_short_name(modelProduct.getProductShortName());//jmBtDealImportModel.getProductShortName());
+//        dealInfo.setProduct_long_name(modelProduct.getProductLongName());//jmBtDealImportModel.getProductLongName());
+//        dealInfo.setProduct_medium_name(modelProduct.getProductMediumName());//jmBtDealImportModel.getProductMediumName());
+//        dealInfo.setProduct_short_name(modelProduct.getProductShortName());//jmBtDealImportModel.getProductShortName());
         dealInfo.setBefore_date("无");
         dealInfo.setSuit_people("时尚潮流人士");
-        dealInfo.setSpecial_explain(modelProduct.getSpecialNote());//jmBtProductImport.getSpecialNote());
-        dealInfo.setSearch_meta_text_custom(modelProduct.getSearchMetaTextCustom());//jmBtDealImportModel.getSearchMetaTextCustom());
+//        dealInfo.setSpecial_explain(modelProduct.getSpecialNote());//jmBtProductImport.getSpecialNote());
+//        dealInfo.setSearch_meta_text_custom(modelProduct.getSearchMetaTextCustom());//jmBtDealImportModel.getSearchMetaTextCustom());
         String partner_sku_nos = "";
         for (CmsBtJmSkuModel modelSku : info.getListCmsBtJmSku()) {
-            if(modelSku.getState()==1) {
-                partner_sku_nos += modelSku.getSkuCode() + ",";
-            }
+//            if(modelSku.getState()==1) {
+//                partner_sku_nos += modelSku.getSkuCode() + ",";
+//            }
         }
         // 特殊说明
         if (partner_sku_nos.length() > 0) {
@@ -180,9 +180,9 @@ public class JuMeiProductUpdatePlatformService {
     private void jmHtSpuSkuUpdateList(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {
             CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
-                if (modelPromotionProduct.getState() == 1) {
-                    jmHtSpuSkuUpdate(info, shopBean, modelPromotionSku);
-                }
+//                if (modelPromotionProduct.getState() == 1) {
+//                    jmHtSpuSkuUpdate(info, shopBean, modelPromotionSku);
+//                }
         }
     }
 
@@ -195,7 +195,7 @@ public class JuMeiProductUpdatePlatformService {
         requestSpu.setPropery("OTHER");
         requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
         requestSpu.setAttribute(info.getModelCmsBtJmProduct().getAttribute());//jmBtProductImport.getAttribute());
-        requestSpu.setAbroad_price(info.getModelCmsBtJmProduct().getMsrp().doubleValue());//jmBtSkuImportModel.getAbroadPrice());
+       // requestSpu.setAbroad_price(info.getModelCmsBtJmProduct().getMsrp().doubleValue());//jmBtSkuImportModel.getAbroadPrice());
         // todo 价格单位
         requestSpu.setArea_code(19);
         HtSpuUpdateResponse responseSpu = serviceJumeiHtSpu.update(shopBean, requestSpu);
@@ -218,9 +218,9 @@ public class JuMeiProductUpdatePlatformService {
     //添加未上新的sku
     private void jmAddListSku(JMUpdateProductInfo info, ShopBean shopBean) throws Exception {
         for (CmsBtJmPromotionSkuModel modelPromotionSku : info.getListCmsBtJmPromotionSku()) {
-                if (modelPromotionSku.getState() == 0) {
-                    jmAddSku(info, shopBean, modelPromotionSku);
-                }
+//                if (modelPromotionSku.getState() == 0) {
+//                    jmAddSku(info, shopBean, modelPromotionSku);
+//                }
         }
     }
     private void jmAddSku(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
@@ -254,9 +254,9 @@ public class JuMeiProductUpdatePlatformService {
         HtSkuAddResponse responseSku = serviceJumeiHtSku.add(shopBean, requestSku);
         if (responseSku.is_Success()) {
             modelSku.setJmSkuNo(responseSku.getJumei_sku_no());
-            modelSku.setState(1);
-            modelPromotionSku.setState(1);
-            modelPromotionSku.setSynchState(EnumJuMeiSynchState.NewSuccess.getId());
+//            modelSku.setState(1);
+//            modelPromotionSku.setState(1);
+//            modelPromotionSku.setSynchState(EnumJuMeiSynchState.NewSuccess.getId());
         } else {
             throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
         }

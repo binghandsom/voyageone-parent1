@@ -40,11 +40,10 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
-
     public HtDealUpdateDealPriceBatchResponse updateDealPriceBatch(ShopBean shopBean,HtDealUpdateDealPriceBatchRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
-        logger.info("延迟Deal的结束时间信息返回：" + reqResult);//商家可以通过该接口延迟Deal的结束时间。如果Deal下关联Sku在其他Deal存在且时间上有交叉，不允许修改.
+        logger.info("批量更新Deal价格信息返回：" + reqResult);//
         HtDealUpdateDealPriceBatchResponse response = new HtDealUpdateDealPriceBatchResponse();
         response.setBody(reqResult);
         return response;
