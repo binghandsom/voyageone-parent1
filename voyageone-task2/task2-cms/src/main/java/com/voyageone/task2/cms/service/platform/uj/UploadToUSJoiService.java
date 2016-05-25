@@ -93,6 +93,15 @@ public class UploadToUSJoiService extends BaseTaskService{
             for (CmsBtProductModel productModel : productModels) {
                 productModel.set_id(null);
 
+                final List<Integer> cartIds;
+                OrderChannelBean usJoiBean = Channels.getChannel(productModel.getOrgChannelId());
+                if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
+                    cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+                }else{
+                    cartIds = new ArrayList<>();
+                }
+
+
                 CmsBtProductModel pr = productService.getProductByCode(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode());
                 if (pr == null) {
                     creatGroup(productModel);
@@ -103,13 +112,7 @@ public class UploadToUSJoiService extends BaseTaskService{
                     List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
 
                     // 根据com_mt_us_joi_config表给sku 设cartId
-                    final List<Integer> cartIds;
-                    OrderChannelBean usJoiBean = Channels.getChannel(productModel.getOrgChannelId());
-                    if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
-                        cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-                    }else{
-                        cartIds = new ArrayList<>();
-                    }
+
                     productModel.getSkus().forEach(sku -> {
                         ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
 
@@ -147,18 +150,74 @@ public class UploadToUSJoiService extends BaseTaskService{
                     productPrices.add(priceBean);
                     productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
                 } else {
-                    productModel.setProdId(pr.getProdId());
-                    productModel.setGroups(pr.getGroups());
+                    List<ProductPriceBean> productPrices = new ArrayList<>();
+                    List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
+                    for(CmsBtProductModel_Sku sku:productModel.getSkus()){
+                        CmsBtProductModel_Sku oldSku = pr.getSku(sku.getSkuCode());
+                        if(oldSku == null){
+                            ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
 
-                    // 更新group
-                    // TODO: 16/4/23 edward 需要重新实现获取平台的groups对象
-//                    productGroupService.saveGroups(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode(), sxWorkLoadBean.getCartId(), pr.getGroups());
+                            skuPriceBean.setSkuCode(sku.getSkuCode());
 
-                    ProductUpdateBean requestModel = new ProductUpdateBean();
-                    requestModel.setProductModel(productModel);
-                    requestModel.setModifier(sxWorkLoadBean.getModifier());
-                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-                    productService.updateProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), requestModel);
+                            skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+                            sku.setClientMsrpPrice(null);
+
+                            skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+                            sku.setClientNetPrice(null);
+
+                            skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+                            sku.setClientRetailPrice(null);
+
+                            skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+                            sku.setPriceMsrp(null);
+
+                            skuPriceBean.setPriceRetail(sku.getPriceRetail());
+                            sku.setPriceRetail(null);
+
+                            skuPriceBean.setPriceSale(sku.getPriceSale());
+                            sku.setPriceSale(null);
+
+                            skuPriceBeans.add(skuPriceBean);
+                            sku.setSkuCarts(cartIds);
+                            pr.getSkus().add(sku);
+                        }else{
+                            if(oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
+                                    || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0
+                                    || oldSku.getPriceSale().compareTo(sku.getPriceSale()) != 0){
+                                ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
+
+                                skuPriceBean.setSkuCode(sku.getSkuCode());
+
+                                skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+
+                                skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+
+                                skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+
+                                skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+
+                                skuPriceBean.setPriceRetail(sku.getPriceRetail());
+
+                                skuPriceBean.setPriceSale(sku.getPriceSale());
+
+                                skuPriceBeans.add(skuPriceBean);
+                            }
+                        }
+                    }
+
+                    if(skuPriceBeans.size() > 0) {
+                        ProductUpdateBean requestModel = new ProductUpdateBean();
+                        requestModel.setProductModel(pr);
+                        requestModel.setModifier(sxWorkLoadBean.getModifier());
+                        requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
+                        productService.updateProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), requestModel);
+
+                        ProductPriceBean priceBean = new ProductPriceBean();
+                        priceBean.setProductId(pr.getProdId());
+                        priceBean.setSkuPrices(skuPriceBeans);
+                        productPrices.add(priceBean);
+                        productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
+                    }
                 }
             }
             sxWorkLoadBean.setPublishStatus(1);
