@@ -128,7 +128,7 @@
                 #{creater,jdbcType=VARCHAR},
             </if>
             <if test="active != null" >
-                #{active,jdbcType=BIT},
+                #{active,jdbcType=INTEGER},
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
@@ -191,7 +191,7 @@
                 `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
             <if test="active != null" >
-                `active` = #{active,jdbcType=BIT},
+                `active` = #{active,jdbcType=INTEGER},
             </if>
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
@@ -259,7 +259,7 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="active != null" >
-                and `active` = #{active,jdbcType=BIT}
+                and `active` = #{active,jdbcType=INTEGER}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
@@ -321,7 +321,7 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="active != null" >
-                and `active` = #{active,jdbcType=BIT}
+                and `active` = #{active,jdbcType=INTEGER}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}

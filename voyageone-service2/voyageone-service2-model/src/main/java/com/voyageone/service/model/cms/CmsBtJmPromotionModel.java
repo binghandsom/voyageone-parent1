@@ -66,7 +66,7 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Date prePeriodEnd;
 
-    protected Boolean active;
+    protected Integer active;
 
     /**
      * 备注
@@ -163,11 +163,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.prePeriodEnd = prePeriodEnd;
     }
 
-    public Boolean getActive() {
+    public Integer getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(Integer active) {
         this.active = active;
     }
 

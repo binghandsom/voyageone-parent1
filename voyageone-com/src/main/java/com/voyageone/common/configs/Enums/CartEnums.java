@@ -107,6 +107,10 @@ public class CartEnums {
 		}
 		public String getId() {
 			return id;
-		} 
+		}
+		public int getValue()
+		{
+			return  Integer.parseInt(id);
+		}
 	}
 }

@@ -4,58 +4,56 @@
  */
 define([
     'angularAMD',
+    'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,jmPromotionService,context,confirm,$translate) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate) {
         $scope.vm = {"jmMasterBrandList":[]};
-        $scope.model = {};
+        $scope.editModel = {};
         $scope.datePicker = [];
         $scope.initialize  = function () {
-            if(context)
+            console.log(context);
+            if(context&&context.id)
             {
-                $scope.model=context;
+                jmPromotionService.getEditModel(context.id).then(function (res) {
+                    $scope.editModel = res.data;
+                });
             }
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
         };
         $scope.addTag = function () {
-            if ($scope.model.tagList) {
-                $scope.model.tagList.push({"id": "", "channelId": "", "tagName": ""});
+            if ($scope.editModel.tagList) {
+                $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": "",active:1});
             } else {
-                $scope.model.tagList = [{"id": "", "channelId": "", "tagName": ""}];
+                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
             }
         };
-
-        $scope.delTag = function (parent, node) {
+        $scope.getTagList=function()
+        {
+            var tagList = _.filter( $scope.editModel.tagList, function(tag){ return tag.active==1; });
+            return tagList||[];
+        }
+        $scope.delTag = function (tag) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
                 .then(function () {
-                    var index;
-                    index = _.indexOf(parent, node);
-                    if (index > -1) {
-                        parent.splice(index, 1);
-                    }
+                  tag.active=0;
                 });
         };
-        $scope.ok = function(){
-            //console.log("save");
-            //console.log($scope.model);
-            if(!$scope.model.id) {
-                jmPromotionService.insert($scope.model).then(function (res) {
-
+        $scope.ok = function() {
+            $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
+            jmPromotionService.saveModel($scope.editModel).then(function (res) {
+                console.log(res);
+                if (res.data.result) {
                     $scope.$close();
-                }, function (res) {
-                })
-            }else{
-                jmPromotionService.update($scope.model).then(function (res) {
-                    for (key in $scope.promotion) {
-                        items[key] = $scope.promotion[key];
-                    }
-                    $scope.$close();
-                }, function (res) {
-                })
-            }
+                    context.search();
+                }
+                else {
+                    return alert(res.data.msg);
+                }
+            }, function (res) {
+            })
         }
     });
 });

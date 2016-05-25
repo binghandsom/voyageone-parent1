@@ -27,18 +27,13 @@ public interface CmsUrlConstants {
     interface JMPROMOTION {
         interface LIST {
             interface INDEX {
-
                 String ROOT = "/cms/jmpromotion/index";
-
                 String INIT = "init";
-
                 String GET_LIST_BY_WHERE = "getListByWhere";
-
-                String INSERT = "insert";
-
-                String UPDATE = "update";
+                String SaveModel = "saveModel";
                 String DELETE = "delete";
                 String GET = "get";
+                String GetEditModel="getEditModel";
 
             }
 

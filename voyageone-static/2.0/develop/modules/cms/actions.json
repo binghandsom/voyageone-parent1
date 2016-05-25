@@ -132,8 +132,8 @@
         "init": "init",
         "get": "get",
         "getListByWhere": "getListByWhere",
-        "insert": "insert",
-        "update": "update"
+        "getEditModel": "getEditModel",
+        "saveModel": "saveModel"
       },
       "jmPromotionProductAddService": {
         "root": "/cms/jm/promotion/product/",

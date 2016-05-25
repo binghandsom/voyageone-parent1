@@ -6,7 +6,7 @@
         `id`, `channel_id`, `cart_id`, `promotion_status`, `promotion_name`, `pre_sale_end`, 
         `pre_sale_start`, `pre_period_start`, `pre_period_end`, `activity_start`, `activity_end`, 
         `tejiabao_id`, `promotion_type`, `ref_tag_id`, `active`, `is_all_promotion`, `created`, 
-        `creater`, `modified`, `modifier`
+        `creater`, `modified`, `modifier`, `promotion_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -74,6 +74,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
+            </if>
+            <if test="promotionId != null" >
+                `promotion_id`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -143,6 +146,9 @@
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
+            <if test="promotionId != null" >
+                #{promotionId,jdbcType=INTEGER},
+            </if>
         </trim>
     </insert>
 
@@ -208,6 +214,9 @@
             </if>
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionId != null" >
+                `promotion_id` = #{promotionId,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -280,6 +289,9 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
 
@@ -344,6 +356,9 @@
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
         </where>
     </select>
