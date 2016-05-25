@@ -64,7 +64,13 @@ public class CmsBtJmPromotionService {
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
-
+    @VOTransactional
+   public void delete(int id) {
+       CmsBtJmPromotionModel model = dao.select(id);
+       model.setActive(0);
+       dao.update(model);
+       saveCmsBtPromotion(model);
+   }
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
     }
@@ -92,16 +98,16 @@ public class CmsBtJmPromotionService {
         if (parameter.getModel().getId()!=null&&parameter.getModel().getId() > 0) {//更新
             parameter.getModel().setModifier(userName);
              updateModel(parameter);
-            saveCmsBtPromotion(parameter.getModel(),false);
+            saveCmsBtPromotion(parameter.getModel());
         } else {//新增
             parameter.getModel().setModifier(userName);
             parameter.getModel().setCreater(userName);
              insertModel(parameter);
-            saveCmsBtPromotion(parameter.getModel(),true);
+            saveCmsBtPromotion(parameter.getModel());
         }
         return 1;
     }
-    public void  saveCmsBtPromotion(CmsBtJmPromotionModel model,boolean isAdd) {
+    public void  saveCmsBtPromotion(CmsBtJmPromotionModel model) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", model.getId());
         map.put("cartId", CartEnums.Cart.JM.getValue());
@@ -124,6 +130,7 @@ public class CmsBtJmPromotionService {
         promotion.setPromotionStatus(0);
         promotion.setTejiabaoId("");
         promotion.setIsAllPromotion(0);
+        promotion.setActive(model.getActive());
         if (promotion.getId() == null || promotion.getId() == 0) {
             daoCmsBtPromotion.insert(promotion);
         } else {

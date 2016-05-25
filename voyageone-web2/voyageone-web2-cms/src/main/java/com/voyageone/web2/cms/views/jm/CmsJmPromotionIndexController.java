@@ -43,4 +43,10 @@ public class CmsJmPromotionIndexController extends CmsController {
     public Object get(@RequestBody int id) {//@RequestParam("id")
         return success(service.select(id));
     }
+
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.DELETE)
+    public Object delete(@RequestBody int id) {
+         service.delete(id);
+        return success(0);
+    }
 }

@@ -13,9 +13,9 @@ define([
         $scope.datePicker = [];
         $scope.initialize  = function () {
             console.log(context);
-            if(context&&context.id)
+            if(context.model)
             {
-                jmPromotionService.getEditModel(context.id).then(function (res) {
+                jmPromotionService.getEditModel(context.model.id).then(function (res) {
                     $scope.editModel = res.data;
                 });
             }
@@ -44,14 +44,8 @@ define([
         $scope.ok = function() {
             $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
             jmPromotionService.saveModel($scope.editModel).then(function (res) {
-                console.log(res);
-                if (res.data.result) {
                     $scope.$close();
                     context.search();
-                }
-                else {
-                    return alert(res.data.msg);
-                }
             }, function (res) {
             })
         }

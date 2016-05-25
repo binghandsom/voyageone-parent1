@@ -85,7 +85,7 @@
 							<div class="form-horizontal form-inline">
 								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
 								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
-								<button class="btn btn-success" ng-click="openJmPromotionDetail({})"><i class="fa fa-plus"></i>&nbsp;新增聚美专场</button>
+								<button class="btn btn-success" ng-click="openJmPromotionDetail({search:search})"><i class="fa fa-plus"></i>&nbsp;新增聚美专场</button>
 							</div><!-- .form-inline -->
 						</div>
 					</div>
@@ -128,7 +128,7 @@
 						<td class="text-center">{{model.activityPcId}}</td>
 						<td class="text-center">{{model.activityAppId}}</td>
 						<td class="text-center">
-							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail(model)"><i class="fa fa-pencil"></i></button>
+							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail({model:model,search:search})"><i class="fa fa-pencil"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa  fa-trash-o"></i></button>
 							<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-download"></i></button>
 						</td>

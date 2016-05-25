@@ -133,7 +133,8 @@
         "get": "get",
         "getListByWhere": "getListByWhere",
         "getEditModel": "getEditModel",
-        "saveModel": "saveModel"
+        "saveModel": "saveModel",
+        "delete":"delete"
       },
       "jmPromotionProductAddService": {
         "root": "/cms/jm/promotion/product/",
