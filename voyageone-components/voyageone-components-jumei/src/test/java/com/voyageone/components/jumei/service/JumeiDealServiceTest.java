@@ -23,7 +23,7 @@ public class JumeiDealServiceTest {
     JumeiDealService jumeiDealService;
 
     @Test
-    public void testGet() throws Exception {
+    public void testGetDealByHashID() throws Exception {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
@@ -40,4 +40,5 @@ public class JumeiDealServiceTest {
 
         System.out.println(JsonUtil.getJsonString(dealInfo));
     }
+
 }
