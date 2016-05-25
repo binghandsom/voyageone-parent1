@@ -4,10 +4,7 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.ComponentBase;
-import com.voyageone.components.imagecreate.bean.ImageCreateAddListRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateAddListResponse;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.bean.*;
 import com.voyageone.service.bean.openapi.OpenApiException;
 import com.voyageone.service.bean.openapi.OpenApiResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
@@ -46,7 +43,7 @@ public class ImageCreateService extends ComponentBase {
 
         request.checkInputValue();
 
-        ImageCreateGetResponse response = sendData(getProstUrl() + "get", request.beanToUrl(), null, ImageCreateGetResponse.class);
+        ImageCreateGetResponse response = sendData(getProstUrl() + "get", request.beanToUrl(), null, false, ImageCreateGetResponse.class);
 
         if (request.isFillStream()) {
             // build imageURL
@@ -71,22 +68,47 @@ public class ImageCreateService extends ComponentBase {
             createImageParameter.checkInputValue();
         }
 
-        return sendData(getProstUrl() + "addList", JacksonUtil.bean2Json(request), "application/json", ImageCreateAddListResponse.class);
+        return sendData(getProstUrl() + "addList", JacksonUtil.bean2Json(request), "application/json", true, ImageCreateAddListResponse.class);
     }
 
-    private <E> E sendData(String url, String param, String accept, Class<E> clazz) throws Exception {
+    /**
+     * 取得多个图片生成结果
+     *
+     * @param request 请求体
+     * @return ImageCreateGetResponse
+     */
+    public ImageCreateGetListResultResponse getListResult(ImageCreateGetListResultRequest request) throws Exception {
+        if (request == null || request.getTaskId() == null) {
+            throw new OpenApiException(ImageErrorEnum.ParametersRequired);
+        }
+
+        request.checkInputValue();
+
+        return sendData(getProstUrl() + "getListResult", "taskId="+request.getTaskId(), null, true, ImageCreateGetListResultResponse.class);
+    }
+
+    private <E> E sendData(String url, String param, String accept, boolean isPost, Class<E> clazz) throws Exception {
         String result;
         if (accept == null) {
-            result = HttpUtils.post(url, param);
+            if (isPost) {
+                result = HttpUtils.post(url, param);
+            } else {
+                result = HttpUtils.get(url, param);
+            }
         } else {
-            result = HttpUtils.post(url, param, "application/json", null);
+            if (isPost) {
+                result = HttpUtils.post(url, param, "application/json", null);
+            } else {
+                result = HttpUtils.get(url, param, "application/json", null);
+            }
+
         }
         Map responseMap = JacksonUtil.json2Bean(result, HashMap.class);
         if (responseMap.containsKey("message")) {
             throw new OpenApiException(10200, (String) responseMap.get("message"));
         }
 
-        E response = JacksonUtil.json2Bean(result, clazz);
+        E response = JacksonUtil.json2BeanWithDateCovert(result, clazz);
         if (response == null) {
             throw new OpenApiException(ImageErrorEnum.SystemError);
         }

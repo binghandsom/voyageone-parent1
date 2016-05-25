@@ -91,7 +91,6 @@ public class ImageCreateFileService extends BaseService {
         modelFile.setUscdnState(0);
         modelFile.setErrorCode(0);
         modelFile.setErrorMsg("");
-        modelFile.setUscdnState(0);
         modelFile.setIsUploadUsCdn(isUploadUSCDN);
         modelFile.setCreater(Creater);
         modelFile.setModifier(Creater);
@@ -176,26 +175,25 @@ public class ImageCreateFileService extends BaseService {
 
     public boolean createAndUploadImage(CmsMtImageCreateFileModel modelFile) throws Exception {
         boolean isCreateNewFile = false;
-        if (modelFile.getState() == 0) {
+        if (modelFile.getState() != 1 || modelFile.getOssState() != 1 || (modelFile.getIsUploadUsCdn() && modelFile.getUscdnState() != 1)) {
             CmsBtImageTemplateModel modelTemplate = serviceCmsImageTemplate.get(modelFile.getTemplateId());//获取模板
             if (modelTemplate == null) {
                 throw new OpenApiException(ImageErrorEnum.ImageTemplateNotNull, "TemplateId:" + modelFile.getTemplateId());
             }
-            $info("CmsImageFileService:getImage get template end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
             //2.生成图片 from LiquidFire
             serviceLiquidFireImage.createImage(modelFile, modelTemplate.getImageTemplateContent());
             $info("CmsImageFileService:getImage create image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
             isCreateNewFile = true;
-        }
-        if (modelFile.getOssState() == 0) {
+
             //3.上传图片到阿里云OSS
             serviceAliYunOSSFile.upload(modelFile);
             $info("CmsImageFileService:getImage upload oss image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
-        }
-        if (modelFile.getIsUploadUsCdn() && modelFile.getUscdnState() == 0) {
+
             //4.上传 uscdn
-            serviceUSCDNFile.upload(modelFile);
-            $info("CmsImageFileService:getImage upload uscnd image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
+            if (modelFile.getIsUploadUsCdn()) {
+                serviceUSCDNFile.upload(modelFile);
+                $info("CmsImageFileService:getImage upload uscnd image file end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", modelFile.getChannelId(), modelFile.getTemplateId(), modelFile.getFile(), modelFile.getVparam(), modelFile.getHashCode(), modelFile.getId());
+            }
         }
         return isCreateNewFile;
     }
