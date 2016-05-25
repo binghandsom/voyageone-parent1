@@ -60,6 +60,8 @@ public class TaskBean {
         setModified(taskModel.getModified());
         setModifier(taskModel.getModifier());
         setPromotion(taskModel.getPromotion());
+
+        setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
     }
 
     public int getId() {

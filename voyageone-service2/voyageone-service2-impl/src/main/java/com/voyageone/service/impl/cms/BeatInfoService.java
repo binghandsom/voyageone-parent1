@@ -7,6 +7,7 @@ import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,7 +99,7 @@ public class BeatInfoService extends BaseService {
     }
 
     @VOTransactional
-    public int updateBeatInfoFlag(int taskId, BeatFlag flag, Boolean force, String userName) {
-        return beatInfoDaoExt.updateFlags(taskId, flag.getFlag(), force, userName);
+    public int updateBeatInfoFlag(int taskId, BeatFlag flag, ImageStatus imageStatus, Boolean force, String userName) {
+        return beatInfoDaoExt.updateFlags(taskId, flag.getFlag(), imageStatus.getId(), force, userName);
     }
 }

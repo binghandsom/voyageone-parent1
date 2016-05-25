@@ -175,7 +175,7 @@ public class CmsBtBeatInfoDaoExtTest {
     @Test
     public void test10UpdateFlags() throws Exception {
 
-        int count = beatInfoDaoExt.updateFlags(444, BeatFlag.SUCCESS.getFlag(), false, "testUpdateFlags");
+        int count = beatInfoDaoExt.updateFlags(444, BeatFlag.SUCCESS.getFlag(), ImageStatus.None.getId(), false, "testUpdateFlags");
 
         Assert.assertTrue(count == 2);
     }

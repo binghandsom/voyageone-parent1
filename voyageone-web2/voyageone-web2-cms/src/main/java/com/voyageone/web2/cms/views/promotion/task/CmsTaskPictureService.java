@@ -321,6 +321,7 @@ class CmsTaskPictureService extends BaseAppService {
             if (model.getProductCode().equals(code))
                 return 0;
 
+            model.setImageStatus(ImageStatus.None);
             model.setProductCode(code);
             model.setModifier(user.getUserName());
             return beatInfoService.updateCode(model);
@@ -366,6 +367,9 @@ class CmsTaskPictureService extends BaseAppService {
         return cell;
     }
 
+    /**
+     * 设定任务到指定状态, 并重置任务的图片状态
+     */
     private int setFlag(int beat_id, BeatFlag flag, UserSessionBean user) {
 
         if (flag == null)
@@ -376,16 +380,20 @@ class CmsTaskPictureService extends BaseAppService {
         if (beatInfoModel == null)
             return 0;
 
+        beatInfoModel.setImageStatus(ImageStatus.None);
         beatInfoModel.setSynFlag(flag);
         beatInfoModel.setModifier(user.getUserName());
         return beatInfoService.updateBeatInfoFlag(beatInfoModel);
     }
 
+    /**
+     * 设定所有任务到指定状态, 并重置所有任务的图片状态
+     */
     private int setFlags(int task_id, BeatFlag flag, Boolean force, UserSessionBean user) {
 
         if (flag == null)
             throw new BusinessException("7000002");
 
-        return beatInfoService.updateBeatInfoFlag(task_id, flag, force, user.getUserName());
+        return beatInfoService.updateBeatInfoFlag(task_id, flag, ImageStatus.None, force, user.getUserName());
     }
 }

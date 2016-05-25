@@ -41,7 +41,8 @@ public interface CmsBtBeatInfoDaoExt {
 
     int updateFlag(CmsBtBeatInfoBean beatInfoModel);
 
-    int updateFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("force") boolean force, @Param("modifier") String userName);
+    int updateFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("imageStatus") int imageStatus,
+                    @Param("force") boolean force, @Param("modifier") String userName);
 
     List<Map<String, Object>> selectSummary(@Param("taskId") int taskId);
 

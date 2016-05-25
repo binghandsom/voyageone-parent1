@@ -150,8 +150,9 @@
     <update id="updateFlags">
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu
         SET syn_flag = #{synFlag},
-        modifier = #{modifier},
-        modified = NOW()
+            image_status = #{imageStatus},
+            modifier = #{modifier},
+            modified = NOW()
         WHERE task_id = #{taskId}
         <if test="!force">
             AND syn_flag > 0
@@ -249,6 +250,7 @@
     <update id="updateCode">
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu
         SET product_code = #{productCode},
+            image_status = #{imageStatus},
             modified     = NOW(),
             modifier     = #{modifier}
         WHERE id = #{id}
