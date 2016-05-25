@@ -15,6 +15,7 @@ public class SellerCatRequestBean {
 
     private  int cartId;
 
+
     private List<CmsBtSellerCatModel> sellerCatList;
 
 
