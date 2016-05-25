@@ -25,11 +25,6 @@ public class CmsBtJmSkuModel extends BaseModel {
     protected String productCode;
 
     /**
-     * 产品ID
-     */
-    protected Integer cmsBtJmProductId;
-
-    /**
      * 品牌方SKU(聚美商家商品编码)
      */
     protected String skuCode;
@@ -45,9 +40,9 @@ public class CmsBtJmSkuModel extends BaseModel {
     protected String jmSkuNo;
 
     /**
-     * 商品条形码
+     * 规格  子规格
      */
-    protected String upc;
+    protected String format;
 
     /**
      * 尺码(VO系统)
@@ -65,11 +60,6 @@ public class CmsBtJmSkuModel extends BaseModel {
     protected BigDecimal msrp;
 
     /**
-     * 规格  子规格
-     */
-    protected String format;
-
-    /**
      * 中国最终售价
      */
     protected BigDecimal salePrice;
@@ -78,6 +68,11 @@ public class CmsBtJmSkuModel extends BaseModel {
      * 中国指导价格
      */
     protected BigDecimal retailPrice;
+
+    /**
+     * 商品条形码
+     */
+    protected String upc;
 
     public String getChannelId() {
         return channelId;
@@ -93,14 +88,6 @@ public class CmsBtJmSkuModel extends BaseModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode == null ? null : productCode.trim();
-    }
-
-    public Integer getCmsBtJmProductId() {
-        return cmsBtJmProductId;
-    }
-
-    public void setCmsBtJmProductId(Integer cmsBtJmProductId) {
-        this.cmsBtJmProductId = cmsBtJmProductId;
     }
 
     public String getSkuCode() {
@@ -127,12 +114,12 @@ public class CmsBtJmSkuModel extends BaseModel {
         this.jmSkuNo = jmSkuNo == null ? null : jmSkuNo.trim();
     }
 
-    public String getUpc() {
-        return upc;
+    public String getFormat() {
+        return format;
     }
 
-    public void setUpc(String upc) {
-        this.upc = upc == null ? null : upc.trim();
+    public void setFormat(String format) {
+        this.format = format == null ? null : format.trim();
     }
 
     public String getCmsSize() {
@@ -159,14 +146,6 @@ public class CmsBtJmSkuModel extends BaseModel {
         this.msrp = msrp;
     }
 
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format == null ? null : format.trim();
-    }
-
     public BigDecimal getSalePrice() {
         return salePrice;
     }
@@ -181,5 +160,13 @@ public class CmsBtJmSkuModel extends BaseModel {
 
     public void setRetailPrice(BigDecimal retailPrice) {
         this.retailPrice = retailPrice;
+    }
+
+    public String getUpc() {
+        return upc;
+    }
+
+    public void setUpc(String upc) {
+        this.upc = upc == null ? null : upc.trim();
     }
 }

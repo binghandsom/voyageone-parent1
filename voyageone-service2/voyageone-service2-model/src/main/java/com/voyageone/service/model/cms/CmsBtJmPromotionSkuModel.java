@@ -24,15 +24,9 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
      */
     protected Integer cmsBtJmPromotionId;
 
-    /**
-     * 商品id
-     */
-    protected Integer cmsBtJmProductId;
+    protected Integer cmsBtJmPromotionProductId;
 
-    /**
-     * sku id
-     */
-    protected Integer cmsBtJmSkuId;
+    protected String productCode;
 
     /**
      * 规格代码
@@ -85,20 +79,20 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
         this.cmsBtJmPromotionId = cmsBtJmPromotionId;
     }
 
-    public Integer getCmsBtJmProductId() {
-        return cmsBtJmProductId;
+    public Integer getCmsBtJmPromotionProductId() {
+        return cmsBtJmPromotionProductId;
     }
 
-    public void setCmsBtJmProductId(Integer cmsBtJmProductId) {
-        this.cmsBtJmProductId = cmsBtJmProductId;
+    public void setCmsBtJmPromotionProductId(Integer cmsBtJmPromotionProductId) {
+        this.cmsBtJmPromotionProductId = cmsBtJmPromotionProductId;
     }
 
-    public Integer getCmsBtJmSkuId() {
-        return cmsBtJmSkuId;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setCmsBtJmSkuId(Integer cmsBtJmSkuId) {
-        this.cmsBtJmSkuId = cmsBtJmSkuId;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode == null ? null : productCode.trim();
     }
 
     public String getSkuCode() {

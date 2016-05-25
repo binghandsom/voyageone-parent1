@@ -167,14 +167,14 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             } else {
                 cmsBtJmProductDao.update(saveInfo.getProductModel());
             }
-            saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
+         //   saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
             if (saveInfo.getPromotionProductModel().getId() == 0) {
                 cmsBtJmPromotionProductDao.insert(saveInfo.getPromotionProductModel());
             } else {
                 cmsBtJmPromotionProductDao.update(saveInfo.getPromotionProductModel());
             }
             for (CmsBtJmSkuModel skuModel : saveInfo.getListSkuModel()) {
-                skuModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
+               // skuModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
                 if (skuModel.getId() == 0) {
                     cmsBtJmSkuDao.insert(skuModel);
                 } else {
@@ -183,10 +183,10 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
                 mapSkuCodeId.put(skuModel.getSkuCode(), skuModel.getId());
             }
             for (CmsBtJmPromotionSkuModel skuPromotionModel : saveInfo.getListPromotionSkuModel()) {
-                skuPromotionModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
-                if(skuPromotionModel.getCmsBtJmSkuId()==0) {
-                    skuPromotionModel.setCmsBtJmSkuId(mapSkuCodeId.get(skuPromotionModel.getSkuCode()));
-                }
+               // skuPromotionModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
+//                if(skuPromotionModel.getCmsBtJmSkuId()==0) {
+//                    skuPromotionModel.setCmsBtJmSkuId(mapSkuCodeId.get(skuPromotionModel.getSkuCode()));
+//                }
                 if (skuPromotionModel.getId() == 0) {
                     cmsBtJmPromotionSkuDao.insert(skuPromotionModel);
                 } else {
@@ -532,7 +532,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         if (promotionSkuModel == null) {
             promotionSkuModel = new CmsBtJmPromotionSkuModel();
         }
-        promotionSkuModel.setCmsBtJmSkuId(importSkuModel.getId());
+      //  promotionSkuModel.setCmsBtJmSkuId(importSkuModel.getId());
         if (promotionSkuModel.getSynchStatus() == 2) {//已上传
             if (importSkuModel.getDealPrice() != 0) {
                 promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));

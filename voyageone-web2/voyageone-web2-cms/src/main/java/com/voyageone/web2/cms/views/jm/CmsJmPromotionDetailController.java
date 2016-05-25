@@ -159,7 +159,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         List<CmsBtJmSkuModel> skuList = cmsBtJmSkuService.selectList(map);
 
         Map<String, Object> promotionSkuParam = new HashMap<>();
-        promotionSkuParam.put("cmsBtJmProductId", cmsBtJmPromotionProductModel.getCmsBtJmProductId());
+       // promotionSkuParam.put("cmsBtJmProductId", cmsBtJmPromotionProductModel.getCmsBtJmProductId());
         List<CmsBtJmPromotionSkuModel> promotionSkuList = cmsBtJmPromotionSkuService.selectList(promotionSkuParam);
         result.put("skuList", cmsBtJmSkuService.selectSkuList(skuList, promotionSkuList));
 

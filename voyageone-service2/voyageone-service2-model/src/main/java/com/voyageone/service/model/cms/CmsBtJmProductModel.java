@@ -8,7 +8,6 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-import java.util.Date;
 
 /**
  * JMBTProduct||聚美商品
@@ -23,6 +22,8 @@ public class CmsBtJmProductModel extends BaseModel {
      * 聚美的商品id
      */
     protected String jumeiProductId;
+
+    protected String originJmHashId;
 
     /**
      * 商品code 唯一标识一个商品
@@ -109,21 +110,6 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected String colorEn;
 
-    /**
-     * 聚美活动的最后一次hash_id
-     */
-    protected String lastJmHashId;
-
-    /**
-     * deal开始时间
-     */
-    protected Date lastJmDealBegin;
-
-    /**
-     * deal结束时间
-     */
-    protected Date lastJmDealEnd;
-
     public String getChannelId() {
         return channelId;
     }
@@ -138,6 +124,14 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setJumeiProductId(String jumeiProductId) {
         this.jumeiProductId = jumeiProductId == null ? null : jumeiProductId.trim();
+    }
+
+    public String getOriginJmHashId() {
+        return originJmHashId;
+    }
+
+    public void setOriginJmHashId(String originJmHashId) {
+        this.originJmHashId = originJmHashId == null ? null : originJmHashId.trim();
     }
 
     public String getProductCode() {
@@ -274,29 +268,5 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setColorEn(String colorEn) {
         this.colorEn = colorEn == null ? null : colorEn.trim();
-    }
-
-    public String getLastJmHashId() {
-        return lastJmHashId;
-    }
-
-    public void setLastJmHashId(String lastJmHashId) {
-        this.lastJmHashId = lastJmHashId == null ? null : lastJmHashId.trim();
-    }
-
-    public Date getLastJmDealBegin() {
-        return lastJmDealBegin;
-    }
-
-    public void setLastJmDealBegin(Date lastJmDealBegin) {
-        this.lastJmDealBegin = lastJmDealBegin;
-    }
-
-    public Date getLastJmDealEnd() {
-        return lastJmDealEnd;
-    }
-
-    public void setLastJmDealEnd(Date lastJmDealEnd) {
-        this.lastJmDealEnd = lastJmDealEnd;
     }
 }

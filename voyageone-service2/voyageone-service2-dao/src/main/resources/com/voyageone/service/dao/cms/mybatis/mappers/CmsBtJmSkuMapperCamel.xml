@@ -3,9 +3,9 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmSkuDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmSkuModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `product_code`, `cms_bt_jm_product_id`, `sku_code`, `jm_spu_no`, 
-        `jm_sku_no`, `upc`, `cms_size`, `jm_size`, `msrp`, `creater`, `created`, `modified`, 
-        `modifier`, `format`, `sale_price`, `retail_price`
+        `id`, `channel_id`, `product_code`, `sku_code`, `jm_spu_no`, `jm_sku_no`, `format`, 
+        `cms_size`, `jm_size`, `msrp`, `creater`, `created`, `modified`, `modifier`, `sale_price`, 
+        `retail_price`, `upc`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -24,9 +24,6 @@
             <if test="productCode != null" >
                 `product_code`,
             </if>
-            <if test="cmsBtJmProductId != null" >
-                `cms_bt_jm_product_id`,
-            </if>
             <if test="skuCode != null" >
                 `sku_code`,
             </if>
@@ -36,8 +33,8 @@
             <if test="jmSkuNo != null" >
                 `jm_sku_no`,
             </if>
-            <if test="upc != null" >
-                `upc`,
+            <if test="format != null" >
+                `format`,
             </if>
             <if test="cmsSize != null" >
                 `cms_size`,
@@ -59,14 +56,14 @@
             <if test="modifier == null and creater != null" >
                 `modifier`,
             </if>
-            <if test="format != null" >
-                `format`,
-            </if>
             <if test="salePrice != null" >
                 `sale_price`,
             </if>
             <if test="retailPrice != null" >
                 `retail_price`,
+            </if>
+            <if test="upc != null" >
+                `upc`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -75,9 +72,6 @@
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
-            </if>
-            <if test="cmsBtJmProductId != null" >
-                #{cmsBtJmProductId,jdbcType=INTEGER},
             </if>
             <if test="skuCode != null" >
                 #{skuCode,jdbcType=VARCHAR},
@@ -88,8 +82,8 @@
             <if test="jmSkuNo != null" >
                 #{jmSkuNo,jdbcType=VARCHAR},
             </if>
-            <if test="upc != null" >
-                #{upc,jdbcType=VARCHAR},
+            <if test="format != null" >
+                #{format,jdbcType=VARCHAR},
             </if>
             <if test="cmsSize != null" >
                 #{cmsSize,jdbcType=VARCHAR},
@@ -121,14 +115,14 @@
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="format != null" >
-                #{format,jdbcType=VARCHAR},
-            </if>
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DECIMAL},
             </if>
             <if test="retailPrice != null" >
                 #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="upc != null" >
+                #{upc,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -142,9 +136,6 @@
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
             </if>
-            <if test="cmsBtJmProductId != null" >
-                `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER},
-            </if>
             <if test="skuCode != null" >
                 `sku_code` = #{skuCode,jdbcType=VARCHAR},
             </if>
@@ -154,8 +145,8 @@
             <if test="jmSkuNo != null" >
                 `jm_sku_no` = #{jmSkuNo,jdbcType=VARCHAR},
             </if>
-            <if test="upc != null" >
-                `upc` = #{upc,jdbcType=VARCHAR},
+            <if test="format != null" >
+                `format` = #{format,jdbcType=VARCHAR},
             </if>
             <if test="cmsSize != null" >
                 `cms_size` = #{cmsSize,jdbcType=VARCHAR},
@@ -181,14 +172,14 @@
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="format != null" >
-                `format` = #{format,jdbcType=VARCHAR},
-            </if>
             <if test="salePrice != null" >
                 `sale_price` = #{salePrice,jdbcType=DECIMAL},
             </if>
             <if test="retailPrice != null" >
                 `retail_price` = #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="upc != null" >
+                `upc` = #{upc,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -210,9 +201,6 @@
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
-            <if test="cmsBtJmProductId != null" >
-                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
-            </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
@@ -222,8 +210,8 @@
             <if test="jmSkuNo != null" >
                 and `jm_sku_no` = #{jmSkuNo,jdbcType=VARCHAR}
             </if>
-            <if test="upc != null" >
-                and `upc` = #{upc,jdbcType=VARCHAR}
+            <if test="format != null" >
+                and `format` = #{format,jdbcType=VARCHAR}
             </if>
             <if test="cmsSize != null" >
                 and `cms_size` = #{cmsSize,jdbcType=VARCHAR}
@@ -246,14 +234,14 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="format != null" >
-                and `format` = #{format,jdbcType=VARCHAR}
-            </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
             <if test="retailPrice != null" >
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="upc != null" >
+                and `upc` = #{upc,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -269,9 +257,6 @@
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
-            <if test="cmsBtJmProductId != null" >
-                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
-            </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
@@ -281,8 +266,8 @@
             <if test="jmSkuNo != null" >
                 and `jm_sku_no` = #{jmSkuNo,jdbcType=VARCHAR}
             </if>
-            <if test="upc != null" >
-                and `upc` = #{upc,jdbcType=VARCHAR}
+            <if test="format != null" >
+                and `format` = #{format,jdbcType=VARCHAR}
             </if>
             <if test="cmsSize != null" >
                 and `cms_size` = #{cmsSize,jdbcType=VARCHAR}
@@ -305,14 +290,14 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="format != null" >
-                and `format` = #{format,jdbcType=VARCHAR}
-            </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
             <if test="retailPrice != null" >
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="upc != null" >
+                and `upc` = #{upc,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

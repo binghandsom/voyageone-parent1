@@ -36,8 +36,6 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     protected Integer cmsBtJmMasterBrandId;
 
-    protected String cmsBtJmMasterBrandName;
-
     /**
      * 专场涉及品牌 明细汇总 顿号、分隔
      */
@@ -68,17 +66,14 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Date prePeriodEnd;
 
-    /**
-     * 发货仓库ID
-     */
-    protected Integer shippingSystemId;
-
-    protected Boolean isDelete;
+    protected Boolean active;
 
     /**
      * 备注
      */
     protected String comment;
+
+    protected Integer refTagId;
 
     public String getChannelId() {
         return channelId;
@@ -118,14 +113,6 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setCmsBtJmMasterBrandId(Integer cmsBtJmMasterBrandId) {
         this.cmsBtJmMasterBrandId = cmsBtJmMasterBrandId;
-    }
-
-    public String getCmsBtJmMasterBrandName() {
-        return cmsBtJmMasterBrandName;
-    }
-
-    public void setCmsBtJmMasterBrandName(String cmsBtJmMasterBrandName) {
-        this.cmsBtJmMasterBrandName = cmsBtJmMasterBrandName == null ? null : cmsBtJmMasterBrandName.trim();
     }
 
     public String getBrand() {
@@ -176,20 +163,12 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.prePeriodEnd = prePeriodEnd;
     }
 
-    public Integer getShippingSystemId() {
-        return shippingSystemId;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setShippingSystemId(Integer shippingSystemId) {
-        this.shippingSystemId = shippingSystemId;
-    }
-
-    public Boolean getIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(Boolean isDelete) {
-        this.isDelete = isDelete;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public String getComment() {
@@ -198,5 +177,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
+    }
+
+    public Integer getRefTagId() {
+        return refTagId;
+    }
+
+    public void setRefTagId(Integer refTagId) {
+        this.refTagId = refTagId;
     }
 }

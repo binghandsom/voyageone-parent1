@@ -3,12 +3,11 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionProductModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_product_id`, `product_code`, 
-        `jm_hash_id`, `limit`, `market_price`, `deal_price`, `app_id`, `created`, `pc_id`, 
-        `modified`, `discount`, `error_msg`, `sku_count`, `quantity`, `activity_start`, `activity_end`, 
-        `deal_end_time_state`, `deal_end_time`, `synch_status`, `update_status`, `price_status`, 
-        `creater`, `modifier`, `product_long_name`, `product_medium_name`, `product_short_name`, 
-        `search_meta_text_custom`
+        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
+        `market_price`, `deal_price`, `app_id`, `created`, `pc_id`, `modified`, `discount`, 
+        `error_msg`, `sku_count`, `quantity`, `activity_start`, `activity_end`, `deal_end_time_state`, 
+        `deal_end_time`, `synch_status`, `update_status`, `price_status`, `creater`, `modifier`, 
+        `product_long_name`, `product_medium_name`, `product_short_name`, `search_meta_text_custom`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -26,9 +25,6 @@
             </if>
             <if test="cmsBtJmPromotionId != null" >
                 `cms_bt_jm_promotion_id`,
-            </if>
-            <if test="cmsBtJmProductId != null" >
-                `cms_bt_jm_product_id`,
             </if>
             <if test="productCode != null" >
                 `product_code`,
@@ -114,9 +110,6 @@
             </if>
             <if test="cmsBtJmPromotionId != null" >
                 #{cmsBtJmPromotionId,jdbcType=INTEGER},
-            </if>
-            <if test="cmsBtJmProductId != null" >
-                #{cmsBtJmProductId,jdbcType=INTEGER},
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
@@ -216,9 +209,6 @@
             </if>
             <if test="cmsBtJmPromotionId != null" >
                 `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER},
-            </if>
-            <if test="cmsBtJmProductId != null" >
-                `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER},
             </if>
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
@@ -321,9 +311,6 @@
             <if test="cmsBtJmPromotionId != null" >
                 and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmProductId != null" >
-                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
-            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -415,9 +402,6 @@
             </if>
             <if test="cmsBtJmPromotionId != null" >
                 and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
-            </if>
-            <if test="cmsBtJmProductId != null" >
-                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
             </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}

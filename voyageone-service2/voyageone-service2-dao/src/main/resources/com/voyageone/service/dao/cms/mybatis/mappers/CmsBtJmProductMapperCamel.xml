@@ -3,11 +3,11 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmProductDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmProductModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `jumei_product_id`, `product_code`, `origin`, `product_name_cn`, 
-        `vo_category_name`, `vo_brand_name`, `brand_name`, `product_type`, `size_type`, `product_des_en`, 
-        `attribute`, `foreign_language_name`, `address_of_produce`, `available_period`, `product_des_cn`, 
-        `applicable_crowd`, `specialNote`, `color_en`, `last_jm_hash_id`, `creater`, `modified`, 
-        `modifier`, `last_jm_deal_begin`, `last_jm_deal_end`, `created`
+        `id`, `channel_id`, `jumei_product_id`, `origin_jm_hash_id`, `product_code`, `origin`, 
+        `product_name_cn`, `vo_category_name`, `vo_brand_name`, `brand_name`, `product_type`, 
+        `size_type`, `product_des_en`, `attribute`, `foreign_language_name`, `address_of_produce`, 
+        `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
+        `creater`, `modified`, `modifier`, `created`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -25,6 +25,9 @@
             </if>
             <if test="jumeiProductId != null" >
                 `jumei_product_id`,
+            </if>
+            <if test="originJmHashId != null" >
+                `origin_jm_hash_id`,
             </if>
             <if test="productCode != null" >
                 `product_code`,
@@ -77,9 +80,6 @@
             <if test="colorEn != null" >
                 `color_en`,
             </if>
-            <if test="lastJmHashId != null" >
-                `last_jm_hash_id`,
-            </if>
             <if test="creater != null" >
                 `creater`,
             </if>
@@ -90,12 +90,6 @@
             <if test="modifier == null and creater != null" >
                 `modifier`,
             </if>
-            <if test="lastJmDealBegin != null" >
-                `last_jm_deal_begin`,
-            </if>
-            <if test="lastJmDealEnd != null" >
-                `last_jm_deal_end`,
-            </if>
             `created`,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -104,6 +98,9 @@
             </if>
             <if test="jumeiProductId != null" >
                 #{jumeiProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="originJmHashId != null" >
+                #{originJmHashId,jdbcType=VARCHAR},
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
@@ -156,9 +153,6 @@
             <if test="colorEn != null" >
                 #{colorEn,jdbcType=VARCHAR},
             </if>
-            <if test="lastJmHashId != null" >
-                #{lastJmHashId,jdbcType=VARCHAR},
-            </if>
             <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
@@ -173,12 +167,6 @@
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="lastJmDealBegin != null" >
-                #{lastJmDealBegin,jdbcType=TIMESTAMP},
-            </if>
-            <if test="lastJmDealEnd != null" >
-                #{lastJmDealEnd,jdbcType=TIMESTAMP},
             </if>
             <if test="created == null" >
                 now(),
@@ -197,6 +185,9 @@
             </if>
             <if test="jumeiProductId != null" >
                 `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="originJmHashId != null" >
+                `origin_jm_hash_id` = #{originJmHashId,jdbcType=VARCHAR},
             </if>
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
@@ -249,9 +240,6 @@
             <if test="colorEn != null" >
                 `color_en` = #{colorEn,jdbcType=VARCHAR},
             </if>
-            <if test="lastJmHashId != null" >
-                `last_jm_hash_id` = #{lastJmHashId,jdbcType=VARCHAR},
-            </if>
             <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
             </if>
@@ -263,12 +251,6 @@
             </if>
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="lastJmDealBegin != null" >
-                `last_jm_deal_begin` = #{lastJmDealBegin,jdbcType=TIMESTAMP},
-            </if>
-            <if test="lastJmDealEnd != null" >
-                `last_jm_deal_end` = #{lastJmDealEnd,jdbcType=TIMESTAMP},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -293,6 +275,9 @@
             <if test="jumeiProductId != null" >
                 and `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR}
             </if>
+            <if test="originJmHashId != null" >
+                and `origin_jm_hash_id` = #{originJmHashId,jdbcType=VARCHAR}
+            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -344,9 +329,6 @@
             <if test="colorEn != null" >
                 and `color_en` = #{colorEn,jdbcType=VARCHAR}
             </if>
-            <if test="lastJmHashId != null" >
-                and `last_jm_hash_id` = #{lastJmHashId,jdbcType=VARCHAR}
-            </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
@@ -355,12 +337,6 @@
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="lastJmDealBegin != null" >
-                and `last_jm_deal_begin` = #{lastJmDealBegin,jdbcType=TIMESTAMP}
-            </if>
-            <if test="lastJmDealEnd != null" >
-                and `last_jm_deal_end` = #{lastJmDealEnd,jdbcType=TIMESTAMP}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -379,6 +355,9 @@
             <if test="jumeiProductId != null" >
                 and `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR}
             </if>
+            <if test="originJmHashId != null" >
+                and `origin_jm_hash_id` = #{originJmHashId,jdbcType=VARCHAR}
+            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -430,9 +409,6 @@
             <if test="colorEn != null" >
                 and `color_en` = #{colorEn,jdbcType=VARCHAR}
             </if>
-            <if test="lastJmHashId != null" >
-                and `last_jm_hash_id` = #{lastJmHashId,jdbcType=VARCHAR}
-            </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
@@ -441,12 +417,6 @@
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="lastJmDealBegin != null" >
-                and `last_jm_deal_begin` = #{lastJmDealBegin,jdbcType=TIMESTAMP}
-            </if>
-            <if test="lastJmDealEnd != null" >
-                and `last_jm_deal_end` = #{lastJmDealEnd,jdbcType=TIMESTAMP}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}

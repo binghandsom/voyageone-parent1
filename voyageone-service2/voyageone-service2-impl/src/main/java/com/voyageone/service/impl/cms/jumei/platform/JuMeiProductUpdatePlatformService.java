@@ -64,21 +64,21 @@ public class JuMeiProductUpdatePlatformService {
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
         long activityStart = modelCmsBtJmPromotionProduct.getActivityStart().getTime();
         long activityEnd = modelCmsBtJmPromotionProduct.getActivityEnd().getTime();
-        long lastJmDealBegin = modelCmsBtJmProduct.getLastJmDealBegin().getTime();
-        long LastJmDealEnd = modelCmsBtJmProduct.getLastJmDealEnd().getTime();
+        long lastJmDealBegin =0;// modelCmsBtJmProduct.getLastJmDealBegin().getTime();
+        long LastJmDealEnd =0;// modelCmsBtJmProduct.getLastJmDealEnd().getTime();
 
         if (LastJmDealEnd >= activityEnd)//1.	时间包含（包括开始时间，结束时间）
         {
             /*1)取上次的jumei_hash_id      取上次(最新)deal_end时间 */
-            modelPromotionProduct.setJmHashId(modelCmsBtJmProduct.getLastJmHashId());
-            modelPromotionProduct.setActivityEnd(modelCmsBtJmProduct.getLastJmDealEnd());
+//            modelPromotionProduct.setJmHashId(modelCmsBtJmProduct.getLastJmHashId());
+//            modelPromotionProduct.setActivityEnd(modelCmsBtJmProduct.getLastJmDealEnd());
         } else if (LastJmDealEnd < activityEnd && LastJmDealEnd >= activityStart)//2.	时间部分重叠 (包括开始时间)    开始时间肯定比上次大不存在只包含结束时间的情况
         {
             /*1)	取上次的jumei_hash_id  	Deal延期API */
-            modelPromotionProduct.setJmHashId(modelCmsBtJmProduct.getLastJmHashId());
+          //  modelPromotionProduct.setJmHashId(modelCmsBtJmProduct.getLastJmHashId());
             serviceJuMeiDeal.updateDealEndTime(shopBean, modelPromotionProduct);
-            modelCmsBtJmProduct.setLastJmDealBegin(modelPromotionProduct.getActivityStart());//保存最后一次 deal时间
-            modelCmsBtJmProduct.setLastJmDealEnd(modelPromotionProduct.getActivityEnd());//
+          //  modelCmsBtJmProduct.setLastJmDealBegin(modelPromotionProduct.getActivityStart());//保存最后一次 deal时间
+         //   modelCmsBtJmProduct.setLastJmDealEnd(modelPromotionProduct.getActivityEnd());//
         } else //不重叠
         {
            /* 1)调用 复制Deal(特卖)信息 */
@@ -108,15 +108,15 @@ public class JuMeiProductUpdatePlatformService {
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
-        request.setJumei_hash_id(modelProduct.getLastJmHashId());
+       // request.setJumei_hash_id(modelProduct.getLastJmHashId());
         request.setStart_time(getTime(info.getModelCmsBtJmPromotionProduct().getActivityStart()));
         request.setEnd_time(getTime(info.getModelCmsBtJmPromotionProduct().getActivityEnd()));
         HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(shopBean, request);
         if (response.is_Success()) {
             info.getModelCmsBtJmPromotionProduct().setJmHashId(response.getJumei_hash_id());
-            modelProduct.setLastJmHashId(response.getJumei_hash_id());
-            modelProduct.setLastJmDealBegin(modelCmsBtJmPromotionProduct.getActivityStart());
-            modelProduct.setLastJmDealEnd(modelCmsBtJmPromotionProduct.getActivityEnd());
+         //   modelProduct.setLastJmHashId(response.getJumei_hash_id());
+         //   modelProduct.setLastJmDealBegin(modelCmsBtJmPromotionProduct.getActivityStart());
+         //   modelProduct.setLastJmDealEnd(modelCmsBtJmPromotionProduct.getActivityEnd());
         } else {
             throw new BusinessException("productId:" + modelProduct.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
         }
@@ -187,7 +187,7 @@ public class JuMeiProductUpdatePlatformService {
     }
 
     private void jmHtSpuSkuUpdate(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
-        CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
+        CmsBtJmSkuModel modelSku =null;// info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
         HtSpuUpdateRequest requestSpu = new HtSpuUpdateRequest();
         requestSpu.setJumei_spu_id(modelSku.getJmSpuNo());//);
@@ -202,7 +202,7 @@ public class JuMeiProductUpdatePlatformService {
         if (responseSpu.is_Success()) {
 
         } else {
-            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " updateSpuErrorMsg:" + responseSpu.getErrorMsg());
+       //     throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " updateSpuErrorMsg:" + responseSpu.getErrorMsg());
         }
         //sku
         HtSkuUpdateRequest requestSku = new HtSkuUpdateRequest();
@@ -212,7 +212,7 @@ public class JuMeiProductUpdatePlatformService {
         HtSkuUpdateResponse responseSku = serviceJumeiHtSku.update(shopBean, requestSku);
         if (responseSku.is_Success()) {
         } else {
-            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " updateSkuErrorMsg:" + responseSku.getErrorMsg());
+          //  throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " updateSkuErrorMsg:" + responseSku.getErrorMsg());
         }
     }
     //添加未上新的sku
@@ -224,27 +224,27 @@ public class JuMeiProductUpdatePlatformService {
         }
     }
     private void jmAddSku(JMUpdateProductInfo info, ShopBean shopBean, CmsBtJmPromotionSkuModel modelPromotionSku) throws Exception {
-        CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
+      //  CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
         HtSpuAddRequest requestSpu = new HtSpuAddRequest();
-        requestSpu.setUpc_code(modelSku.getSkuCode());
-        requestSpu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
+       // requestSpu.setUpc_code(modelSku.getSkuCode());
+      //  requestSpu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
         requestSpu.setPropery("OTHER");
-        requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
+       // requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
         requestSpu.setAttribute(info.getModelCmsBtJmProduct().getAttribute());//jmBtProductImport.getAttribute());
         //spt  spu.setAbroad_price(modelPromotionSku.);//jmBtSkuImportModel.getAbroadPrice());
         // todo 价格单位
         requestSpu.setArea_code(19);
         HtSpuAddResponse responseSpu = serviceJumeiHtSpu.add(shopBean, requestSpu);
         if (responseSpu.is_Success()) {
-            modelSku.setJmSpuNo(responseSpu.getJumei_spu_no());
+      //      modelSku.setJmSpuNo(responseSpu.getJumei_spu_no());
         } else {
-            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
+          //  throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
         }
         //sku
         HtSkuAddRequest requestSku = new HtSkuAddRequest();
-        requestSku.setJumei_spu_no(modelSku.getJmSpuNo());//.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
-        requestSku.setBusinessman_num(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
+    //    requestSku.setJumei_spu_no(modelSku.getJmSpuNo());//.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
+       // requestSku.setBusinessman_num(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
         requestSku.setStocks("1");
         requestSku.setDeal_price(modelPromotionSku.getDealPrice().toString());//jmBtSkuImportModel.getDealPrice().toString());
         requestSku.setMarket_price(modelPromotionSku.getMarketPrice().toString());//jmBtSkuImportModel.getMarketPrice().toString());
@@ -253,12 +253,12 @@ public class JuMeiProductUpdatePlatformService {
         }
         HtSkuAddResponse responseSku = serviceJumeiHtSku.add(shopBean, requestSku);
         if (responseSku.is_Success()) {
-            modelSku.setJmSkuNo(responseSku.getJumei_sku_no());
+            //modelSku.setJmSkuNo(responseSku.getJumei_sku_no());
 //            modelSku.setState(1);
 //            modelPromotionSku.setState(1);
 //            modelPromotionSku.setSynchState(EnumJuMeiSynchState.NewSuccess.getId());
         } else {
-            throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
+           // throw new BusinessException("skuId:" + modelPromotionSku.getCmsBtJmSkuId() + " jmAddSkuErrorMsg:" + responseSpu.getErrorMsg());
         }
     }
     public static Long getTime(Date d) throws Exception {

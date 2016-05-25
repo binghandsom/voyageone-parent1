@@ -26,11 +26,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer cmsBtJmPromotionId;
 
     /**
-     * 商品id
-     */
-    protected Integer cmsBtJmProductId;
-
-    /**
      * 商品code 唯一标识一个商品（CMS系统）
      */
     protected String productCode;
@@ -154,14 +149,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setCmsBtJmPromotionId(Integer cmsBtJmPromotionId) {
         this.cmsBtJmPromotionId = cmsBtJmPromotionId;
-    }
-
-    public Integer getCmsBtJmProductId() {
-        return cmsBtJmProductId;
-    }
-
-    public void setCmsBtJmProductId(Integer cmsBtJmProductId) {
-        this.cmsBtJmProductId = cmsBtJmProductId;
     }
 
     public String getProductCode() {

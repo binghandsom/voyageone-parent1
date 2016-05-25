@@ -49,8 +49,8 @@ public class CmsBtJmSkuService {
             JMUpdateSkuWithPromotionInfo data = new JMUpdateSkuWithPromotionInfo();
             data.setCmsBtJmSkuModel(skuInfo);
             for (CmsBtJmPromotionSkuModel promotionSku : promotionSkuList) {
-                if (skuInfo.getId() == promotionSku.getCmsBtJmSkuId())
-                    data.setCmsBtJmPromotionSkuModel(promotionSku);
+//                if (skuInfo.getId() == promotionSku.getCmsBtJmSkuId())
+//                    data.setCmsBtJmPromotionSkuModel(promotionSku);
             }
             result.add(data);
         }

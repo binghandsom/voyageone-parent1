@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_product_id`, `cms_bt_jm_sku_id`, 
+        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_promotion_product_id`, `product_code`, 
         `sku_code`, `market_price`, `discount`, `deal_price`, `error_msg`, `synch_status`, 
         `creater`, `created`, `modified`, `modifier`, `update_state`
     </sql>
@@ -24,11 +24,11 @@
             <if test="cmsBtJmPromotionId != null" >
                 `cms_bt_jm_promotion_id`,
             </if>
-            <if test="cmsBtJmProductId != null" >
-                `cms_bt_jm_product_id`,
+            <if test="cmsBtJmPromotionProductId != null" >
+                `cms_bt_jm_promotion_product_id`,
             </if>
-            <if test="cmsBtJmSkuId != null" >
-                `cms_bt_jm_sku_id`,
+            <if test="productCode != null" >
+                `product_code`,
             </if>
             <if test="skuCode != null" >
                 `sku_code`,
@@ -70,11 +70,11 @@
             <if test="cmsBtJmPromotionId != null" >
                 #{cmsBtJmPromotionId,jdbcType=INTEGER},
             </if>
-            <if test="cmsBtJmProductId != null" >
-                #{cmsBtJmProductId,jdbcType=INTEGER},
+            <if test="cmsBtJmPromotionProductId != null" >
+                #{cmsBtJmPromotionProductId,jdbcType=INTEGER},
             </if>
-            <if test="cmsBtJmSkuId != null" >
-                #{cmsBtJmSkuId,jdbcType=INTEGER},
+            <if test="productCode != null" >
+                #{productCode,jdbcType=VARCHAR},
             </if>
             <if test="skuCode != null" >
                 #{skuCode,jdbcType=VARCHAR},
@@ -130,11 +130,11 @@
             <if test="cmsBtJmPromotionId != null" >
                 `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER},
             </if>
-            <if test="cmsBtJmProductId != null" >
-                `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER},
+            <if test="cmsBtJmPromotionProductId != null" >
+                `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER},
             </if>
-            <if test="cmsBtJmSkuId != null" >
-                `cms_bt_jm_sku_id` = #{cmsBtJmSkuId,jdbcType=INTEGER},
+            <if test="productCode != null" >
+                `product_code` = #{productCode,jdbcType=VARCHAR},
             </if>
             <if test="skuCode != null" >
                 `sku_code` = #{skuCode,jdbcType=VARCHAR},
@@ -192,11 +192,11 @@
             <if test="cmsBtJmPromotionId != null" >
                 and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmProductId != null" >
-                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
+            <if test="cmsBtJmPromotionProductId != null" >
+                and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmSkuId != null" >
-                and `cms_bt_jm_sku_id` = #{cmsBtJmSkuId,jdbcType=INTEGER}
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}
@@ -245,11 +245,11 @@
             <if test="cmsBtJmPromotionId != null" >
                 and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmProductId != null" >
-                and `cms_bt_jm_product_id` = #{cmsBtJmProductId,jdbcType=INTEGER}
+            <if test="cmsBtJmPromotionProductId != null" >
+                and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmSkuId != null" >
-                and `cms_bt_jm_sku_id` = #{cmsBtJmSkuId,jdbcType=INTEGER}
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}

@@ -4,9 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `name`, `activity_pc_id`, `activity_app_id`, `cms_bt_jm_master_brand_Id`, 
-        `cms_bt_jm_master_brand_Name`, `brand`, `category`, `activity_start`, `activity_end`, 
-        `pre_period_start`, `pre_period_end`, `shipping_system_id`, `created`, `creater`, 
-        `modified`, `modifier`, `is_delete`, `comment`
+        `brand`, `category`, `activity_start`, `activity_end`, `pre_period_start`, `pre_period_end`, 
+        `created`, `creater`, `modified`, `modifier`, `active`, `comment`, `ref_tag_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -34,9 +33,6 @@
             <if test="cmsBtJmMasterBrandId != null" >
                 `cms_bt_jm_master_brand_Id`,
             </if>
-            <if test="cmsBtJmMasterBrandName != null" >
-                `cms_bt_jm_master_brand_Name`,
-            </if>
             <if test="brand != null" >
                 `brand`,
             </if>
@@ -55,9 +51,6 @@
             <if test="prePeriodEnd != null" >
                 `pre_period_end`,
             </if>
-            <if test="shippingSystemId != null" >
-                `shipping_system_id`,
-            </if>
             `created`,
             <if test="creater != null" >
                 `creater`,
@@ -69,11 +62,14 @@
             <if test="modifier == null and creater != null" >
                 `modifier`,
             </if>
-            <if test="isDelete != null" >
-                `is_delete`,
+            <if test="active != null" >
+                `active`,
             </if>
             <if test="comment != null" >
                 `comment`,
+            </if>
+            <if test="refTagId != null" >
+                `ref_tag_id`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -92,9 +88,6 @@
             <if test="cmsBtJmMasterBrandId != null" >
                 #{cmsBtJmMasterBrandId,jdbcType=INTEGER},
             </if>
-            <if test="cmsBtJmMasterBrandName != null" >
-                #{cmsBtJmMasterBrandName,jdbcType=VARCHAR},
-            </if>
             <if test="brand != null" >
                 #{brand,jdbcType=VARCHAR},
             </if>
@@ -112,9 +105,6 @@
             </if>
             <if test="prePeriodEnd != null" >
                 #{prePeriodEnd,jdbcType=TIMESTAMP},
-            </if>
-            <if test="shippingSystemId != null" >
-                #{shippingSystemId,jdbcType=INTEGER},
             </if>
             <if test="created == null" >
                 now(),
@@ -137,11 +127,14 @@
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="isDelete != null" >
-                #{isDelete,jdbcType=BIT},
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="refTagId != null" >
+                #{refTagId,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -164,9 +157,6 @@
             <if test="cmsBtJmMasterBrandId != null" >
                 `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER},
             </if>
-            <if test="cmsBtJmMasterBrandName != null" >
-                `cms_bt_jm_master_brand_Name` = #{cmsBtJmMasterBrandName,jdbcType=VARCHAR},
-            </if>
             <if test="brand != null" >
                 `brand` = #{brand,jdbcType=VARCHAR},
             </if>
@@ -185,9 +175,6 @@
             <if test="prePeriodEnd != null" >
                 `pre_period_end` = #{prePeriodEnd,jdbcType=TIMESTAMP},
             </if>
-            <if test="shippingSystemId != null" >
-                `shipping_system_id` = #{shippingSystemId,jdbcType=INTEGER},
-            </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
             </if>
@@ -203,11 +190,14 @@
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="isDelete != null" >
-                `is_delete` = #{isDelete,jdbcType=BIT},
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
             </if>
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="refTagId != null" >
+                `ref_tag_id` = #{refTagId,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -238,9 +228,6 @@
             <if test="cmsBtJmMasterBrandId != null" >
                 and `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmMasterBrandName != null" >
-                and `cms_bt_jm_master_brand_Name` = #{cmsBtJmMasterBrandName,jdbcType=VARCHAR}
-            </if>
             <if test="brand != null" >
                 and `brand` = #{brand,jdbcType=VARCHAR}
             </if>
@@ -259,9 +246,6 @@
             <if test="prePeriodEnd != null" >
                 and `pre_period_end` = #{prePeriodEnd,jdbcType=TIMESTAMP}
             </if>
-            <if test="shippingSystemId != null" >
-                and `shipping_system_id` = #{shippingSystemId,jdbcType=INTEGER}
-            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -274,11 +258,14 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="isDelete != null" >
-                and `is_delete` = #{isDelete,jdbcType=BIT}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="refTagId != null" >
+                and `ref_tag_id` = #{refTagId,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -303,9 +290,6 @@
             <if test="cmsBtJmMasterBrandId != null" >
                 and `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER}
             </if>
-            <if test="cmsBtJmMasterBrandName != null" >
-                and `cms_bt_jm_master_brand_Name` = #{cmsBtJmMasterBrandName,jdbcType=VARCHAR}
-            </if>
             <if test="brand != null" >
                 and `brand` = #{brand,jdbcType=VARCHAR}
             </if>
@@ -324,9 +308,6 @@
             <if test="prePeriodEnd != null" >
                 and `pre_period_end` = #{prePeriodEnd,jdbcType=TIMESTAMP}
             </if>
-            <if test="shippingSystemId != null" >
-                and `shipping_system_id` = #{shippingSystemId,jdbcType=INTEGER}
-            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -339,11 +320,14 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="isDelete != null" >
-                and `is_delete` = #{isDelete,jdbcType=BIT}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="refTagId != null" >
+                and `ref_tag_id` = #{refTagId,jdbcType=INTEGER}
             </if>
         </where>
     </select>

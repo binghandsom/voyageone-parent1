@@ -1,4 +1,5 @@
 package com.voyageone.web2.cms.views.jm;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -31,11 +32,13 @@ public class CmsJmPromotionIndexController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.INSERT)
     public AjaxResponse insert(@RequestBody CmsBtJmPromotionModel params) {
         String channelId = getUser().getSelChannelId();
-       // params.put("channelId", channelId);
         params.setChannelId(channelId);
         params.setModifier(getUser().getUserName());
         params.setCreater(getUser().getUserName());
         params.setCreated(new Date());
+        if(StringUtil.isEmpty(params.getCategory())) {
+            params.setCategory("");
+        }
         return success(cmsPromotionService.insert(params));
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.UPDATE)
