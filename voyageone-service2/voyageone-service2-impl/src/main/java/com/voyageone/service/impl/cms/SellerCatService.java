@@ -25,7 +25,7 @@ public class SellerCatService extends BaseService {
         return cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
     }
 
-    public String addSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
+    public String addSellerCat(List<CmsBtSellerCatModel> catTree,  String cName, String parentCId, String creator) {
         return null;
     }
 

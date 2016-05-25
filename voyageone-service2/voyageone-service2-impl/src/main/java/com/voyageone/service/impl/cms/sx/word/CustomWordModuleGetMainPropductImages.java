@@ -3,6 +3,9 @@ package com.voyageone.service.impl.cms.sx.word;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetMainPrductImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetMainProductImages;
@@ -26,6 +29,9 @@ import java.util.List;
 public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 
     public final static String moduleName = "GetMainProductImages";
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     public CustomWordModuleGetMainPropductImages() {
         super(moduleName);
@@ -90,7 +96,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         if (imageIndex == -1) {
             if (imageTemplate != null) {
                 for (CmsBtProductModel_Field_Image productImage : productImages) {
-                    String completeImageUrl = String.format(imageTemplate, productImage.getName());
+                    // 20160513 tom 图片服务器切换 START
+//                    String completeImageUrl = String.format(imageTemplate, productImage.getName());
+
+                    String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName());
+                    // 20160513 tom 图片服务器切换 END
 //                    completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                     imageUrlList.add(completeImageUrl);
                 }
@@ -109,9 +119,13 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             }
             String paddingImage;
             if(imageTemplate != null){
-                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+                // 20160513 tom 图片服务器切换 START
+//                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+
+                paddingImage = getImageByTemplateId(expressionParser, imageTemplate, paddingImageKey.trim());
+                // 20160513 tom 图片服务器切换 END
 //                paddingImage = sxProductService.encodeImageUrl(paddingImage);
-                imageUrlList.add(String.format(imageTemplate, paddingImage));
+                imageUrlList.add(String.format(imageTemplate, paddingImage)); // TODO: 这里是不是写错了? 疑似应该是add paddingImage tom
 
             }else {
                 return paddingImageKey.trim();
@@ -119,7 +133,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         } else {
             CmsBtProductModel_Field_Image productImage = productImages.get(imageIndex);
             if(imageTemplate != null){
-                String completeImageUrl = String.format(imageTemplate, productImage.getName());
+                // 20160513 tom 图片服务器切换 START
+//                String completeImageUrl = String.format(imageTemplate, productImage.getName());
+
+                String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName());
+                // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 imageUrlList.add(completeImageUrl);
             }else {
@@ -144,4 +162,26 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 
         return parseResult;
     }
+
+    // 20160513 tom 图片服务器切换 START
+    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName) {
+
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
+        request.setTemplateId(Integer.parseInt(imageTemplate));
+        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
+        String[] vPara = {imageName};
+        request.setVParam(vPara);
+        ImageCreateGetResponse response = null;
+        try {
+            response = imageCreateService.getImage(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+
+    }
+    // 20160513 tom 图片服务器切换 END
+
 }
