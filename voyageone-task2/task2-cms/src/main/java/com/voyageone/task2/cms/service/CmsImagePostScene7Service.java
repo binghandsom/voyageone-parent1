@@ -138,6 +138,10 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             // 获取所有模板数据
             CmsBtProductModel product = productService.getProductByCode(channelId, image.getCode());
+            if(product == null) {
+                issueLog.log("图片上传","ChannelId:"+channelId+" Code:" +image.getCode()+"产品数据不存在",ErrorType.BatchJob,SubSystem.CMS);
+                continue;
+            }
             List<CmsBtImageTemplateModel> templateModels = imageTemplateService.getTemplateListWithNoParams(channelId
                     , product.getFields().getBrand()
                     , product.getFields().getProductType()
