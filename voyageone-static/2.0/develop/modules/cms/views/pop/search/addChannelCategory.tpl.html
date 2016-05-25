@@ -14,13 +14,13 @@
                         <label class="">店铺</label>
                     </div>
                     <div class="col-sm-7">
-                        <select class="form-control" ng-model=" " ng-options="cart for cart in ctrl.cartList">
+                        <select class="form-control" ng-model="cartId" ng-options="cart.name for cart in ctrl.cartList">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="column_overflow col-sm-12" style="border:1px solid silver">
-                    <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList">
+                    <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList track by category.catId">
                         <div class="m-t-xs" ng-if="category.isParent == 1">
                             <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
                             <label class=" ">{{category.catName}}</label>
@@ -28,7 +28,7 @@
                         <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0">
                             <label class="checkbox-inline c-checkbox">
                                 <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;
+                                <span class="fa fa-check"  ng-if="category.children && category.children.length" checked></span>&nbsp;
                                 <label class=" ">{{category.catName}}</label>
                             </label>
                         </div>

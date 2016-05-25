@@ -10,8 +10,10 @@ define([
             this.channelCategoryList = null;
             this.cartList = [];
             this.isSelectCid = [];
-            this.cartId = 0;
+            this.cartId = 20;
             this.addChannelCategoryService = $addChannelCategoryService;
+            this.cid = null;
+            this.cids = [];
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -20,10 +22,16 @@ define([
              */
             init: function () {
                 var self = this;
-                self.addChannelCategoryService.init({"code": self.code,"cartId":self.cartId}).then(function (res) {
+                self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     self.channelCategoryList = res.data.channelCategoryList;
                     self.cartList = res.data.cartList;
-                    self.isSelectCid = res.data.isSelectCid;
+                    self.isSelectCid =  [{
+                        "cId": "101"
+                    }, {
+                        "cid": "201"
+                    }, {
+                        "cid": "202"
+                    }]
                 });
             },
             /**
