@@ -168,15 +168,15 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
 
                 buildSkuSize(skuFieldValue, cmsSkuProp, buildSkuResult, skuSubMappingMap.get(sku_sizeField.getId()));
 
-                {
-                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
-                    for (Field fff : fList) {
-                        if (fff.getId().equals("in_prop_161712509")) {
-                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
-                            break;
-                        }
-                    }
-                }
+//                {
+//                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
+//                    for (Field fff : fList) {
+//                        if (fff.getId().equals("in_prop_161712509")) {
+//                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
+//                            break;
+//                        }
+//                    }
+//                }
 
 
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {

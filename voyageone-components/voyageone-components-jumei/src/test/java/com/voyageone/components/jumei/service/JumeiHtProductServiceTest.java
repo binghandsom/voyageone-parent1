@@ -25,13 +25,14 @@ public class JumeiHtProductServiceTest {
     JumeiHtProductService service;
 
     @Test
-    public void addProductAndDealTest() throws Exception {
+    public void testAddProductAndDeal() throws Exception {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
         shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
 //        shopBean.setApp_url("http://182.138.102.82:8868/");
-        shopBean.setApp_url("http://182.138.102.82:8823");
+//        shopBean.setApp_url("http://182.138.102.82:8823");
+        shopBean.setApp_url("http://openapi.ext.jmrd.com:8823");
 
         HtProductAddRequest request = new HtProductAddRequest();
         JmProductBean jmProductBean = new JmProductBean();
@@ -39,9 +40,9 @@ public class JumeiHtProductServiceTest {
         // 商品规格编号(必须)
         jmProductBean.setProduct_spec_number("10000");
         // 分类id(必须)
-        jmProductBean.setCategory_v3_4_id(123456);
+        jmProductBean.setCategory_v3_4_id(605);   // 605:足球鞋
         // 品牌id(必须)
-        jmProductBean.setBrand_id(110001);
+        jmProductBean.setBrand_id(6);             // 6:蝶翠诗 (DHC)
         // 产品名(必须)
         // 注：100字以内，不能出现容量、规格、颜色等信息，这些信息在子型号中设置产品名上不能填写除了“（）”“/”“+”“*” 以外的特殊符号，
         // 如-，<>，· ，空格等符号必须是英文半角符号，套装产品名以“+”号连接
@@ -49,17 +50,18 @@ public class JumeiHtProductServiceTest {
         // 外文名(必须)
         jmProductBean.setForeign_language_name("Product Foreign Language Name");
         // 产品功效ID(可选)，多个ID用 ","隔开
-        jmProductBean.setFunction_ids("a001,a002");
+//        jmProductBean.setFunction_ids("a001,a002");
         // 白底方图(必须)
         // 注：第一张必填,最多10张，1000*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开；
         // 图片上除了产品外不得出现任何其他信息（如水印、商标、优惠信息等)
-        jmProductBean.setNormalImage("白底方图No1，白底方图No2");
+        jmProductBean.setNormalImage("http://p12.jmstatic.com/open_api/gPop_131/012/product/1/12137BMA-001/12137BMA-0011_1.jpeg");
+//        jmProductBean.setNormalImage("白底方图No1，白底方图No2");
         // 竖图(可选)
         // 注：可不传,最多10张，750*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
-        jmProductBean.setVerticalImage("竖图1，竖图2");
+//        jmProductBean.setVerticalImage("竖图1，竖图2");
         // 调性图片(可选)
         // 注：传一张,可不传，单张不超过1m，多张图片以","，1500*400格式jpg,jpeg,单张不超过1m
-        jmProductBean.setDiaoxingImage("调性图片1");
+//        jmProductBean.setDiaoxingImage("调性图片1");
 
 
         // 设置SPU(SKU)属性列表
@@ -79,7 +81,7 @@ public class JumeiHtProductServiceTest {
         // 海外价格(必须)
         spu1.setAbroad_price(50.0);
         // 货币符号Id(必须)
-        spu1.setArea_code("01");
+        spu1.setArea_code("2223602");     // 2223602:RMB:中国币
         // 海外地址(可不传)(可选)
         spu1.setAbroad_url("");
         // 白底方图(可选)
@@ -87,13 +89,13 @@ public class JumeiHtProductServiceTest {
 //        spu1.setXXX();  // 不用上传SKU白底方图
         // 竖图(可选)
         // 注：可不传,最多10张，750*1000jpg,jpeg,单张不超过1m，多张图片以","隔开
-        spu1.setVerticalImage("竖图1");
+//        spu1.setVerticalImage("竖图1");
 
         // spu1的sku1信息
         // spu和sku是1对1的关系
         JmProductBean_Spus_Sku spu1_sku1 = new JmProductBean_Spus_Sku();
         // 商家自定义sku_no(必须)，请务必确保本次请求的sku_no唯一
-        spu1_sku1.setPartner_sku_no("S002");
+        spu1_sku1.setPartner_sku_no("S001");
         // 海关备案商品编码(必须)
         // 注:(发货仓库为保税区仓库时，此处必填) 获取仓库接口　增加返回bonded_area_id字段 大于０　表示　保税
         spu1_sku1.setCustoms_product_number("S001001");
@@ -125,7 +127,7 @@ public class JumeiHtProductServiceTest {
         // 海外价格(必须)
         spu2.setAbroad_price(60.0);
         // 货币符号Id(必须)
-        spu2.setArea_code("01");
+        spu2.setArea_code("2223602");     // 2223602:RMB:中国币
         // 海外地址(可不传)(可选)
         spu2.setAbroad_url("");
         // 白底方图(可选)
@@ -133,9 +135,9 @@ public class JumeiHtProductServiceTest {
 //        spu1.setXXX();  // 不用上传SKU白底方图
         // 竖图(可选)
         // 注：可不传,最多10张，750*1000jpg,jpeg,单张不超过1m，多张图片以","隔开
-        spu2.setVerticalImage("竖图2");
+//        spu2.setVerticalImage("竖图2");
 
-        // spu1的sku1信息
+        // spu2的sku2信息
         // spu和sku是1对1的关系
         JmProductBean_Spus_Sku spu2_sku2 = new JmProductBean_Spus_Sku();
         // 商家自定义sku_no(必须)，请务必确保本次请求的sku_no唯一
@@ -173,7 +175,7 @@ public class JumeiHtProductServiceTest {
         // 限购数量(可选)
         dealInfo.setUser_purchase_limit(2);
         // 仓库ID(必须)
-        dealInfo.setShipping_system_id(12001);
+        dealInfo.setShipping_system_id(1582);       // 1582:fsdf
         // 产品长标题(必须)  注：130　用于详情页显示，商品名+功效特点描述，不能出现价格及促销信息
         dealInfo.setProduct_long_name("产品长标题");
         // 产品中标题(必须)  注：35字　用于首页、列表页显示，填写商品名+功效的一句话描述，不能出现价格及促销信息
@@ -208,7 +210,7 @@ public class JumeiHtProductServiceTest {
         // 3）多个SKU时可合在一起拍也可分开拍摄，彩妆除外观实拍外还需要有近距离效果试用图。
         dealInfo.setDescription_images("商品实拍富文本HTML代码");
         // 商家自定义skuInfo下的partner_sku_no(必须)   (Json 多个sku_no 用 "," 隔开)
-        dealInfo.setPartner_sku_nos("partner_sku_no1,partner_sku_no2");
+        dealInfo.setPartner_sku_nos("S001,S002");
         // 设置DealInfo
         jmProductBean.setDealInfo(dealInfo);
 
@@ -219,49 +221,51 @@ public class JumeiHtProductServiceTest {
         if (response != null && response.getIs_Success()) {
             // 新增产品成功
             String reponseBody = response.getBody();
-
+            System.out.println("新增聚美商品成功！ body=" + reponseBody);
         } else {
             // 新增产品失败
-
+            System.out.println("新增聚美商品失败！");
         }
     }
 
     @Test
-    public void updateTest() throws Exception {
+    public void testUpdateProduct() throws Exception {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
         shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
 //        shopBean.setApp_url("http://182.138.102.82:8868/");
-        shopBean.setApp_url("http://182.138.102.82:8823");
+//        shopBean.setApp_url("http://182.138.102.82:8823");
+        shopBean.setApp_url("http://openapi.ext.jmrd.com:8823");
 
         HtProductUpdateRequest request = new HtProductUpdateRequest();
         // 聚美商品ID(可选)
         // 大于0的整数。jumei_product_id 和 jumei_product_name 必须存在一个;都存在时，忽略jumei_product_name参数
-        request.setJumei_product_id("222550619");
+        request.setJumei_product_id("222551454");
         // 聚美产品名
-        request.setJumei_product_name("聚美商品名");
+//        request.setJumei_product_name("产品名不能出现容量规格颜色等信息");   // 与更新前名称一样
+//        request.setJumei_product_name("更新后聚美商品名(李测试)");
         // 修改数据(只传需要修改的字段)
         HtProductUpdate_ProductInfo update_data = new HtProductUpdate_ProductInfo();
         // 分类id(可选)  V3版四级分类
-        update_data.setCategory_v3_4_id(3002);
+//        update_data.setCategory_v3_4_id(3002);
         // 品牌id(可选)
-        update_data.setBrand_id(120001);
+//        update_data.setBrand_id(120001);
         // 产品名(可选)
         // 100字以内，不能出现容量、规格、颜色等信息，这些信息在子型号中设置产品名上不能填写除了“（）”“/”“+”“*” 以外的特殊符号，
         // 如-，<>，· ，空格等符号必须是英文半角符号，套装产品名以“+”号连接
-        update_data.setName("修改后产品名");
+        update_data.setName("修改后产品名(李测试)");
         // 外文名(可选) 注：请输入产品外文名称，支持中文繁体、英文、法文、德文、韩文、日文，100个字符以内
-        update_data.setForeign_language_name("Foreign Language Name22");
+        update_data.setForeign_language_name("Foreign Language Name 2222");
         // 产品功效ID(可选)，多个ID用 ","隔开
-        update_data.setFunction_ids("G01,G02");
+//        update_data.setFunction_ids("G01,G02");
         // 白底方图(全量修改)(可选)
         // 注：第一张必填,最多10张，1000*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开；
         // 图片上除了产品外不得出现任何其他信息（如水印、商标、优惠信息等)
-        update_data.setNormalImage("白底方图22");
+//        update_data.setNormalImage("白底方图22");
         // 竖图 (全量修改)(可选)
         // 注：可不传,最多10张，750*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
-        update_data.setVerticalImage("竖图22");
+//        update_data.setVerticalImage("竖图22");
 
         request.setUpdate_data(update_data);
 
@@ -270,10 +274,10 @@ public class JumeiHtProductServiceTest {
         if (response != null && response.getIs_Success()) {
             // 更新商品成功
             String reponseBody = response.getBody();
-
+            System.out.println("更新聚美商品成功！ body=" + reponseBody);
         } else {
             // 更新商品失败
-
+            System.out.println("更新聚美商品失败！");
         }
 
     }

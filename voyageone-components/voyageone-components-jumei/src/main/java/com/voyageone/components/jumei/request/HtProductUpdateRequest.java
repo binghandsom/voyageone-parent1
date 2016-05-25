@@ -1,6 +1,7 @@
 package com.voyageone.components.jumei.request;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtProductUpdate_ProductInfo;
 
 import java.io.IOException;
@@ -59,8 +60,8 @@ public class HtProductUpdateRequest implements BaseJMRequest {
     @Override
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
-        params.put("jumei_product_id", this.getJumei_product_id());
-        params.put("jumei_product_name", this.getJumei_product_name());
+        if (!StringUtils.isEmpty(getJumei_product_id()))  params.put("jumei_product_id", this.getJumei_product_id());
+        if (!StringUtils.isEmpty(getJumei_product_name()))  params.put("jumei_product_name", this.getJumei_product_name());
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
     }
