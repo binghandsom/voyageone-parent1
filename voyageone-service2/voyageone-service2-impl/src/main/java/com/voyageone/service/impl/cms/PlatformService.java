@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.PlatformBean;
 import com.voyageone.common.configs.dao.PlatformDao;
 import com.voyageone.service.impl.BaseService;
@@ -29,6 +31,11 @@ public class PlatformService extends BaseService {
      * @return
      */
     public String getPlatformProductUrl (String cartId) {
-        return "";
+
+        // 取得CMS中默认的显示用模板ID
+        String commonTemplateId = Codes.getCodeName("PLATFORM_PRODUCT_URL", cartId);
+        if (commonTemplateId == null)
+            throw new BusinessException("tm_code表中PLATFORM_PRODUCT_URL及"+cartId+"定义不存在");
+        return commonTemplateId;
     }
 }
