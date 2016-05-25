@@ -48,43 +48,40 @@ define([
             },
 
             importBeat: function () {
-                var ttt = this;
-                var uploadQueue = ttt.uploader.queue;
+                var self = this;
+                var uploadQueue = self.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
                 var uploadIt = function () {
-                    ttt.uploadItem = uploadItem;
+                    self.uploadItem = uploadItem;
                     uploadItem.onSuccess = function (res) {
-                        ttt.$timeout(function () {
-                            ttt.uploadItem = null;
+                        self.$timeout(function () {
+                            self.uploadItem = null;
                         }, 500);
                         if (res.message) {
-                            ttt.alert(res.message);
-                            ttt.data = [];
-                            ttt.pageOption.curr = 1;
-                            ttt.pageOption.total = 0;
+                            self.alert(res.message);
                             return;
                         }
-                        ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                         if (res.data) {
-                            ttt.data = res.data.list;
-                            ttt.pageOption.curr = 1;
-                            ttt.pageOption.total = res.data.total;
+                            self.data = res.data.list;
+                            self.pageOption.curr = 1;
+                            self.pageOption.total = res.data.total;
                         }
                     };
                     uploadItem.formData = [{
-                        task_id: ttt.task_id,
-                        size: ttt.pageOption.size
+                        task_id: self.task_id,
+                        size: self.pageOption.size
                     }];
                     uploadItem.upload();
                 };
                 if (!uploadItem) {
-                    return ttt.alert('TXT_MSG_NO_UPLOAD');
+                    return self.alert('TXT_MSG_NO_UPLOAD');
                 }
-                if (!ttt.data.length) {
+                if (!self.data.length) {
                     uploadIt();
                     return;
                 }
-                ttt.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
+                self.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
             },
 
             getData: function () {
