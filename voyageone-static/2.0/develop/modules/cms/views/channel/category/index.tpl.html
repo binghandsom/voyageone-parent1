@@ -10,13 +10,14 @@
                         <div class="col-xs-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-1 control-label">店铺&nbsp;</label>
-                                    <div class="col-sm-3">
+                                   <label class="col-sm-1 control-label">店铺&nbsp;</label>
+                                   <div class="col-sm-3">
                                         <select class="form-control"ng-model="ctrl.cartInfo.cart"
                                                 ng-change="ctrl.loadCategories()"
                                                 ng-options="v.value as v.name for v in ctrl.carts">
                                         </select>
                                     </div>
+                                    <!--<label class="col-sm-2 control-label" style="width: 150px;">店铺:&nbsp;{{ctrl.carts[0].name}}</label>-->
                                     <label class="col-sm-2 control-label" style="width: 150px;">最大层级：{{ctrl.cartInfo.level}}</label>
                                     <label class="col-sm-2 control-label" style="width: 150px;">可设置最大标签数：{{ctrl.cartInfo.maxTag}}</label>
                                 </div>
@@ -54,13 +55,13 @@
                             ng-click="newIndex.value = 0;openNewCategory({first:true,tagSelectObject:selected[0],tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
-                <div class="category_drag_list_qh">
+                <div class="category_drag_list_dp">
                     <ul>
                         <li ng-repeat="tag1 in ctrl.tree[0]">
-                            <a href="javascript:void(0)" ng-click="selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
+                            <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
                                 <span>{{tag1.catName}}</span>
                                 <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                        ng-show = tag1.isLeaf ng-click="ctrl.delTag(tag1)">
+                                        ng-if = "tag1.children.length == 0" ng-click="ctrl.delTag(tag1)">
                                     <i class="fa  fa-trash-o"></i></button>
                             </a>
                         </li>
@@ -77,17 +78,17 @@
                     <input type="text" placeholder="快速检索" class="form-control" ctrl.ng-model="key[1]">
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(1)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="newIndex.value = 1; ctrl.openNewCategory({first:false,tagSelectObject:selected[0],tagInfo:vm,save:save})">
+                            ng-click="newIndex.value = 1; openNewCategory({first:false,tagSelectObject:selected[0],tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
-            <div class="category_drag_list_qh">
+            <div class="category_drag_list_dp">
                 <ul>
                     <li ng-repeat="tag2 in ctrl.tree[1]">
                         <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"  ng-class="{indexSelected:ctrl.selected[1] == tag2}">
                             <span>{{tag2.catName}}</span>
                             <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show = tag2.isLeaf ng-show="tagTwo.children.length" ng-click="ctrl.delTag(tag2)">
+                                    ng-if = "tag2.children.length == 0" ng-click="ctrl.delTag(tag2)">
                                 <i class="fa  fa-trash-o"></i></button>
                         </a>
                     </li>
@@ -103,17 +104,17 @@
                     <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[2]">
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(2)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="ctrl.newIndex.value = 2; ctrl.openNewCategory({first:false,tagSelectObject:selected[1],tagInfo:vm,save:save})">
+                            ng-click="ctrl.newIndex.value = 2; openNewCategory({first:false,tagSelectObject:selected[1],tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
-            <div class="category_drag_list_qh">
+            <div class="category_drag_list_dp">
                 <ul>
                     <li ng-repeat="tag3 in ctrl.tree[2]">
                         <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
                             <span>{{ tag3.catName }}</span>
                             <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show = tag3.isLeaf ng-click="ctrl.delTag(tag3)">
+                                    ng-if = "tag3.children.length == 0" ng-click="ctrl.delTag(tag3)">
                                 <i class="fa  fa-trash-o"></i></button>
                         </a>
                     </li>
@@ -128,19 +129,19 @@
 
                 <div class="form-inline m-l-xs">
                     <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[2]">
-                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(2)"><i class="fa fa-search"></i></button>
+                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(3)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
                             ng-click="newIndex.value = 2; openNewCategory({first:false,tagSelectObject:selected[1],tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
-            <div class="category_drag_list_qh">
+            <div class="category_drag_list_dp">
                 <ul>
-                    <li ng-repeat="tag3 in ctrl.tree[3]">
-                        <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:ctrl.selected[3] == tag3}">
-                            <span>{{ tag3.catName }}</span>
+                    <li ng-repeat="tag4 in ctrl.tree[3]">
+                        <a href="javascript:void(0)" ng-click="ctrl.selected[3] = tag4"  ng-class="{indexSelected:ctrl.selected[3] == tag4}">
+                            <span>{{ tag4.catName }}</span>
                             <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show = tag3.isLeaf ng-click="ctrl.delTag(tag3)">
+                                    ng-if = "tag4.children.length == 0" ng-click="ctrl.delTag(tag3)">
                                 <i class="fa  fa-trash-o"></i></button>
                         </a>
                     </li>

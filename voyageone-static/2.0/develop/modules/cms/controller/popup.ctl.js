@@ -79,12 +79,12 @@ define([
                 "categorySetting": {
                     "templateUrl": "views/pop/channel/categorySetting.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/channel/categorySetting.ctl",
-                    "controller": 'categorySettingCtl'
+                    "controller": 'categorySettingCtl as ctrl'
                 },
                 "newCategory": {
                     "templateUrl": "views/pop/channel/newCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/channel/newCategory.ctl",
-                    "controller": 'newCategoryCtl'
+                    "controller": 'newCategoryCtl as ctrl'
                 }
             },
             "custom": {
@@ -1289,6 +1289,7 @@ define([
         $scope.openNewCategory = function (context) {
             return openModel(popActions.channel.newCategory, context);
         };
+
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {
         //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);
         //    promise.then(function success(data) {

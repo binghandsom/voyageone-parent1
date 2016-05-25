@@ -5,7 +5,18 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
+    "use strict";
+    angularAMD.controller('newCategoryCtl', (function(){
+        function NewCategoryCtl(){
 
-    angularAMD.controller('newCategoryCtl', function ($scope,context) {
-    });
+        };
+
+        NewCategoryCtl.prototype = {
+            init:function(){
+
+            }
+        };
+
+        return NewCategoryCtl;
+    })());
 });

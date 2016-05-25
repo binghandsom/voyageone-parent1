@@ -50,7 +50,7 @@ define([
             byTagChildrenName:function(arr, index){
                 var key = this.key[index];
                 return key ? arr.filter(function (item) {
-                    return item.tagChildrenName.indexOf(key[index]) > -1;
+                    return item.catName.indexOf(key[index]) > -1;
                 }) : arr;
             },
             search:function(index){
