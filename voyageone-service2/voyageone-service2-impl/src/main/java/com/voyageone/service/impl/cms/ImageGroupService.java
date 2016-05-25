@@ -130,7 +130,7 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList 相关尺码列表
      */
     public void update(String userName, String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
-                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                       List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             model.setModifier(userName);
@@ -219,7 +219,7 @@ public class ImageGroupService extends BaseService {
      * @return 检索结果件数
      */
     public long getCount(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
-                           String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                         String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         String parameter = getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList);
         return cmsBtImageGroupDao.countByQuery(parameter);
@@ -467,7 +467,7 @@ public class ImageGroupService extends BaseService {
             // FTP上传失败
             throw new BusinessException("7000089");
         }
-         return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
+        return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
     }
 
     private FtpBean formatFtpBean(){
