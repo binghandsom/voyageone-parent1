@@ -6,6 +6,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.SellerCatRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Ethan Shi on 2016/5/25.
@@ -40,11 +42,60 @@ public class CmsChannelCategoryController  extends CmsController {
     public AjaxResponse addSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
         Integer cartId = (Integer) param.get("cartId") ;
-        //创建者/更新者用
-        param.put("userName", this.getUser().getUserName());
+        String cName = (String) param.get("catName") ;
+        String parentCId = (String) param.get("parentCatId") ;
+//        String cId = (String) param.get("catId") ;
+
+        Random random = new Random();
+        String cId = String.valueOf(random.nextInt(1000) + 1000);
+        //创建者/更新者
+        String creator =this.getUser().getUserName();
+
+        sellerCatService.addSellerCat(channelId,cartId,cName,parentCId,cId,creator);
+
+        List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+        Map<String, Object> result = new HashMap<>();
+        result.put("catTree",list);
 
         //返回数据的类型
-        return success(param);
+        return success(result);
+    }
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.UPDATE_SELLER_CAT)
+    public AjaxResponse updateSellerCat(@RequestBody Map param) {
+        String channelId = this.getUser().getSelChannelId();
+        Integer cartId = (Integer) param.get("cartId") ;
+        String cName = (String) param.get("catName") ;
+        String cId = (String) param.get("catId") ;
+        //创建者/更新者
+        String modifier =this.getUser().getUserName();
+
+        sellerCatService.updateSellerCat(channelId,cartId,cName,cId,modifier);
+
+        List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+        Map<String, Object> result = new HashMap<>();
+        result.put("catTree",list);
+
+        //返回数据的类型
+        return success(result);
+    }
+
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.REMOVE_SELLER_CAT)
+    public AjaxResponse deleteSellerCat(@RequestBody Map param) {
+        String channelId = this.getUser().getSelChannelId();
+        Integer cartId = (Integer) param.get("cartId") ;
+        String parentCId = (String) param.get("parentCatId") ;
+        String cId = (String) param.get("catId") ;
+
+        sellerCatService.deleteSellerCat(channelId,cartId,parentCId,cId);
+
+        List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+        Map<String, Object> result = new HashMap<>();
+        result.put("catTree",list);
+
+        //返回数据的类型
+        return success(result);
     }
 
 

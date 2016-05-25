@@ -5,13 +5,17 @@ define([
     'cms'
 ], function (cms) {
     cms.controller('popAddChannelCategoryCtrl', (function () {
-        function PopAddChannelCategoryCtrl(context, $addChannelCategoryService) {
+        function PopAddChannelCategoryCtrl(context, $addChannelCategoryService, selectRowsFactory) {
             this.code = context.productIds;
             this.channelCategoryList = null;
             this.cartList = [];
             this.isSelectCid = [];
             this.cartId = "20";
             this.addChannelCategoryService = $addChannelCategoryService;
+            this.catPath = null;
+            this.fullCatCId = null;
+            this.categorySelList = { selList: []};
+            this.tempCategorySelect = new selectRowsFactory();
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -21,9 +25,9 @@ define([
             init: function () {
                 var self = this;
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
-                    self.channelCategoryList = res.data.channelCategoryList;
                     self.cartList = res.data.cartList;
-                    self.isSelectCid =  {"202":true,"102":true};
+                    self.channelCategoryList = res.data.channelCategoryList;
+                    self.isSelectCid = res.data.isSelectCid;
                 });
             },
 
@@ -32,9 +36,20 @@ define([
              */
             save: function () {
                 var self = this;
-                self.addChannelCategoryService.save().then(function () {
-
-                })
+                // 重新初始化选中标签
+                self.tempCategorySelect = new selectRowsFactory();
+                self.addChannelCategoryService.save({"cartId": self.cartId, "cIds": self.cIds, "cNames": self.cNames,"fullCNames": self.catPath, "fullCIds": self.fullCIds}).then(function () {
+                    return self.cartId;
+                });
+                self.categorySelList = tempCategorySelect.selectRowsInfo;
+                if(self.categorySelList.selList.length>0){
+                   return function () {
+                            var parameter = [];
+                            _.forEach(self.categorySelList.selList, function (object) {
+                                parameter.push(object.data);
+                            });
+                        };
+                }
             }
         };
         return PopAddChannelCategoryCtrl;

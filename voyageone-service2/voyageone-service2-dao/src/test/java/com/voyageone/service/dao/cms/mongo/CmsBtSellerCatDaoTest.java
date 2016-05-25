@@ -52,15 +52,23 @@ public class CmsBtSellerCatDaoTest {
 
     @Test
     public void testDelete() throws Exception {
-        CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel();
-        cmsBtSellerCatModel.set_id("573edbbbaacaa23118390d8e");
-        cmsBtSellerCatDao.delete(cmsBtSellerCatModel);
+//        cmsBtSellerCatDao.delete("010",20,"0","103");
+        cmsBtSellerCatDao.delete("010",20,"103","221");
+        cmsBtSellerCatDao.delete("010",20,"103","222");
     }
 
 
     @Test
     public void testUpdate() throws Exception {
-
-       cmsBtSellerCatDao.update("010", 20, "耳钉", "212");
+       cmsBtSellerCatDao.update("010", 20, "手镯", "212", "test");
     }
+
+
+    @Test
+    public void testAdd() throws Exception {
+        cmsBtSellerCatDao.add("010", 20, "大家电","0", "103","testUser");
+        cmsBtSellerCatDao.add("010", 20, "电视机","103", "221","testUser");
+        cmsBtSellerCatDao.add("010", 20, "电冰箱","103", "222","testUser");
+    }
+
 }
