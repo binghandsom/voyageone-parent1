@@ -440,6 +440,7 @@ define(function() {
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
         "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
+        "TXT_CART_NAME": "Cart Name",
         "TXT_IMPORT_TEXT": "Import text",
         "TXT_FeedStatus_New": "New",
         "TXT_FeedStatus_WaitingForImport": "Waiting For Import",

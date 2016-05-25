@@ -337,7 +337,7 @@ define(function(){
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
         "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
-
+        "TXT_CART_NAME": "Cart名称",
 
         "TXT_CHANNEL_ID": "渠道ID",
         "TXT_CART_ID": "Cart ID",
