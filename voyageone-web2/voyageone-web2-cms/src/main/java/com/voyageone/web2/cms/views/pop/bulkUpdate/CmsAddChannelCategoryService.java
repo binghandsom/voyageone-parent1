@@ -46,7 +46,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //channelId
         String channelId = (String) params.get("channelId");
         //cartId
-        int cartId= (int) params.get("cartId");
+        String cartId= (String) params.get("cartId");
         CmsBtProductModel cmsBtProductModel = new CmsBtProductModel();
         if(codeList.size()==1){
             //选择一条记录．根据code在cms_bt_product取得对应的属性记录
@@ -64,7 +64,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         List<TypeChannelBean> cartList= menuService.getPlatformTypeList(channelId, lang);
         data.put("cartList",cartList);
         //根据channelId在cms_bt_seller_cat取得对应的达标数据
-        List<CmsBtSellerCatModel> channelCategoryList = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+        List<CmsBtSellerCatModel> channelCategoryList = sellerCatService.getSellerCatsByChannelCart(channelId, Integer.parseInt(cartId));
         data.put("channelCategoryList",channelCategoryList);
 
         return data;

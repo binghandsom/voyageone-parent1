@@ -4,19 +4,11 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by gjl on 2016/5/24.
  */
 public class CmsBtProductModel_SellerCats  extends BaseMongoMap<String, Object> {
-    public CmsBtProductModel_SellerCats() {
-
-    }
-
-    public CmsBtProductModel_SellerCats(Map m) {
-        this.putAll(m);
-    }
     public int getCartId() {
         return getAttribute("cartId");
     }
@@ -43,8 +35,8 @@ public class CmsBtProductModel_SellerCats  extends BaseMongoMap<String, Object> 
         return (List<String>) getAttribute("cNames");
     }
 
-    public void setCNames(List<String> cIds) {
-        setAttribute("cIds", cIds);
+    public void setCNames(List<String> cNames) {
+        setAttribute("cNames", cNames);
     }
 
     public List<String> getFullCNames() {
@@ -65,7 +57,7 @@ public class CmsBtProductModel_SellerCats  extends BaseMongoMap<String, Object> 
         return (List<String>) getAttribute("fullCIds");
     }
 
-    public void setFullCIds(List<String> fullCNames) {
-        setAttribute("fullCIds", fullCNames);
+    public void setFullCIds(List<String> fullCIds) {
+        setAttribute("fullCIds", fullCIds);
     }
 }
