@@ -71,6 +71,11 @@
             <artifactId>voyageone-components-uscdn</artifactId>
             <version>${voyageone.components.uscdn.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-imagecreate</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>

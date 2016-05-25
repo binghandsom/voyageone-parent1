@@ -131,8 +131,8 @@ public class JuMeiProductUpdatePlatformService {
         request.setJumei_product_name(info.getModelCmsBtJmProduct().getProductNameCn());
 
         productInfo.setName(modelProduct.getProductNameCn());//jmBtProductImport.getProductName());
-        productInfo.setCategory_v3_4_id(modelProduct.getCategoryLv4Id());//jmBtProductImport.getCategoryLv4Id());
-        productInfo.setBrand_id(modelProduct.getBrandId());//jmBtProductImport.getBrandId());
+        productInfo.setCategory_v3_4_id(String.valueOf(modelProduct.getCategoryLv4Id()));//jmBtProductImport.getCategoryLv4Id());
+        productInfo.setBrand_id(String.valueOf(modelProduct.getBrandId()));//jmBtProductImport.getBrandId());
         productInfo.setForeign_language_name(modelProduct.getForeignLanguageName());//jmBtProductImport.getForeignLanguageName());
         request.setUpdate_data(productInfo);
         HtProductUpdateResponse response = serviceJumeiHtProduct.update(shopBean, request);
@@ -148,8 +148,8 @@ public class JuMeiProductUpdatePlatformService {
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelPromotionProduct = info.getModelCmsBtJmPromotionProduct();
-        dealInfo.setUser_purchase_limit(modelPromotionProduct.getLimit());//jmBtDealImportModel.getUserPurchaseLimit());
-        dealInfo.setShipping_system_id(shippingSystemId);//jmBtDealImportModel.getShippingSystemId());
+        dealInfo.setUser_purchase_limit(String.valueOf(modelPromotionProduct.getLimit()));//jmBtDealImportModel.getUserPurchaseLimit());
+        dealInfo.setShipping_system_id(String.valueOf(shippingSystemId));//jmBtDealImportModel.getShippingSystemId());
         dealInfo.setProduct_long_name(modelProduct.getProductLongName());//jmBtDealImportModel.getProductLongName());
         dealInfo.setProduct_medium_name(modelProduct.getProductMediumName());//jmBtDealImportModel.getProductMediumName());
         dealInfo.setProduct_short_name(modelProduct.getProductShortName());//jmBtDealImportModel.getProductShortName());
@@ -190,7 +190,7 @@ public class JuMeiProductUpdatePlatformService {
         CmsBtJmSkuModel modelSku = info.getMapCmsBtJmSkuModel().get(modelPromotionSku.getCmsBtJmSkuId());
         //spu
         HtSpuUpdateRequest requestSpu = new HtSpuUpdateRequest();
-        requestSpu.setJumei_spu_id(modelSku.getJmSpuNo());//);
+        requestSpu.setJumei_spu_no(modelSku.getJmSpuNo());//);
         requestSpu.setUpc_code(modelSku.getUpc());
         requestSpu.setPropery("OTHER");
         requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
@@ -206,7 +206,7 @@ public class JuMeiProductUpdatePlatformService {
         }
         //sku
         HtSkuUpdateRequest requestSku = new HtSkuUpdateRequest();
-        requestSku.setJumei_sku_id(modelSku.getJmSkuNo());//.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
+        requestSku.setJumei_sku_no(modelSku.getJmSkuNo());//.setPartner_sku_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
         requestSku.setBusinessman_num(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
         // requestSku.setCustoms_product_number();
         HtSkuUpdateResponse responseSku = serviceJumeiHtSku.update(shopBean, requestSku);
@@ -229,12 +229,12 @@ public class JuMeiProductUpdatePlatformService {
         HtSpuAddRequest requestSpu = new HtSpuAddRequest();
         requestSpu.setUpc_code(modelSku.getSkuCode());
         requestSpu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
-        requestSpu.setPropery("OTHER");
+        requestSpu.setProperty("OTHER");
         requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
         requestSpu.setAttribute(info.getModelCmsBtJmProduct().getAttribute());//jmBtProductImport.getAttribute());
         //spt  spu.setAbroad_price(modelPromotionSku.);//jmBtSkuImportModel.getAbroadPrice());
         // todo 价格单位
-        requestSpu.setArea_code(19);
+        requestSpu.setArea_code("19");
         HtSpuAddResponse responseSpu = serviceJumeiHtSpu.add(shopBean, requestSpu);
         if (responseSpu.is_Success()) {
             modelSku.setJmSpuNo(responseSpu.getJumei_spu_no());

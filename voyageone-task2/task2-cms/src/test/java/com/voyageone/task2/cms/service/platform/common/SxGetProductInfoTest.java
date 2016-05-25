@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -118,6 +119,9 @@ public class SxGetProductInfoTest {
         System.out.println();
         System.out.println("start:" + DateTimeUtil.getNow());
         System.out.println(getInstance().format(new Date()));
+
+//        ShopBean shopBean1 = Shops.getShop("010", 23);
+//        System.out.println("shop");
 
 //        // 商品上新
 //        {
@@ -562,9 +566,9 @@ public class SxGetProductInfoTest {
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
-        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse");
+        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse", true);
         res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
-//        String res = sxProductService.resolveDict("无线商品图片-1", exp, shopBean, "morse", null);
+//        String res = sxProductService.resolveDict("属性图片模板", exp, shopBean, "morse", null);
 //        System.out.println(res);
         // constructMappingPlatformProps end
 

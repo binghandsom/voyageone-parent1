@@ -11,10 +11,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob)
@@ -30,8 +27,10 @@ public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         int cmsMtImageCreateTaskId = (int) messageMap.get("id");
+        $info(String.format("CmsMtImageCreateTaskJobService start. [%s]", cmsMtImageCreateTaskId));
         CmsMtImageCreateTaskModel taskModel = serviceCmsMtImageCreateTask.get(cmsMtImageCreateTaskId);
         if (taskModel == null) {
+            $info(String.format("CmsMtImageCreateTaskJobService id not found. [%s]", cmsMtImageCreateTaskId));
             return;
         }
         List<CmsMtImageCreateTaskDetailModel> list = serviceCmsMtImageCreateTaskDetail.getListByCmsMtImageCreateTaskId(cmsMtImageCreateTaskId);
@@ -39,18 +38,22 @@ public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
         taskModel.setBeginTime(new Date());
         List<Runnable> threads = new ArrayList<>();
         for (CmsMtImageCreateTaskDetailModel modelTaskDetail : list) {
-            if (modelTaskDetail.getStatus() == 0) {
-                threads.add(() -> serviceImageCreateFile.createAndUploadImage(modelTaskDetail));
-            }
+            //if (modelTaskDetail.getStatus() == 0) {
+            threads.add(() -> serviceImageCreateFile.createAndUploadImage(modelTaskDetail));
+            //}
         }
 
-        /**
-         * runWithThreadPool
-         */
-        runWithThreadPool(threads, taskControlList);
+        if (!threads.isEmpty()) {
+            /**
+             * runWithThreadPool
+             */
+            runWithThreadPool(threads, taskControlList);
 
-        //2.执行结束时间
-        taskModel.setEndTime(new Date());
-        serviceCmsMtImageCreateTask.save(taskModel);
+            //2.执行结束时间
+            taskModel.setEndTime(new Date());
+            serviceCmsMtImageCreateTask.save(taskModel);
+        }
+
+        $info(String.format("CmsMtImageCreateTaskJobService end. [%s]", cmsMtImageCreateTaskId));
     }
 }

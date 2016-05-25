@@ -23,6 +23,10 @@ public class CmsBtTaskJiagepiluModel extends BaseModel {
 
     protected String message;
 
+    protected Integer imageStatus;
+
+    protected Integer imageTaskId;
+
     public Integer getTaskId() {
         return taskId;
     }
@@ -61,5 +65,21 @@ public class CmsBtTaskJiagepiluModel extends BaseModel {
 
     public void setMessage(String message) {
         this.message = message == null ? null : message.trim();
+    }
+
+    public Integer getImageStatus() {
+        return imageStatus;
+    }
+
+    public void setImageStatus(Integer imageStatus) {
+        this.imageStatus = imageStatus;
+    }
+
+    public Integer getImageTaskId() {
+        return imageTaskId;
+    }
+
+    public void setImageTaskId(Integer imageTaskId) {
+        this.imageTaskId = imageTaskId;
     }
 }

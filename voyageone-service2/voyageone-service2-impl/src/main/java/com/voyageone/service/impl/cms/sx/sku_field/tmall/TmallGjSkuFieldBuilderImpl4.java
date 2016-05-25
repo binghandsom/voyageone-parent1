@@ -423,7 +423,8 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                         $warn("图片模板url未设置");
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
                     } else {
-                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+//                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
@@ -431,7 +432,10 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
+//                        } else {
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                         }
                     }
                 }
