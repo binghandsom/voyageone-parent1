@@ -25,16 +25,40 @@ public class SellerCatService extends BaseService {
         return cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
     }
 
-    public String addSellerCat(List<CmsBtSellerCatModel> catTree,  String cName, String parentCId, String creator) {
-        return null;
+    /**
+     *
+     * @param channelId
+     * @param cartId
+     * @param cName
+     * @param parentCId
+     * @param cId
+     * @param creator
+     */
+    public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String cId, String creator) {
+        cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
     }
 
-    public String updateSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
-        return null;
+    /**
+     *
+     * @param channelId
+     * @param cartId
+     * @param cName
+     * @param cId
+     * @param modifier
+     */
+    public void  updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
+        cmsBtSellerCatDao.update(channelId, cartId, cName,cId, modifier);
     }
 
-    public String deleteSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
-        return null;
+    /**
+     *
+     * @param chnnnelId
+     * @param cartId
+     * @param cName
+     * @param parentCId
+     */
+    public void deleteSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
+        cmsBtSellerCatDao.delete(chnnnelId, cartId, cName, parentCId);
     }
 
 }
