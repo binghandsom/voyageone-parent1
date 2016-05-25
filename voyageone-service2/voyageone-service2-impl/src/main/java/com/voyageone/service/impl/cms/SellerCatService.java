@@ -54,11 +54,11 @@ public class SellerCatService extends BaseService {
      *
      * @param chnnnelId
      * @param cartId
-     * @param cName
      * @param parentCId
+     * @param cId
      */
-    public void deleteSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
-        cmsBtSellerCatDao.delete(chnnnelId, cartId, cName, parentCId);
+    public void deleteSellerCat(String chnnnelId, int cartId, String parentCId, String cId) {
+        cmsBtSellerCatDao.delete(chnnnelId, cartId, parentCId, cId);
     }
 
 }
