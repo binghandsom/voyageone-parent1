@@ -39,6 +39,7 @@ public class CmsJmPromotionIndexController extends CmsController {
         if(StringUtil.isEmpty(params.getCategory())) {
             params.setCategory("");
         }
+        params.setRefTagId(0);
         return success(cmsPromotionService.insert(params));
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.UPDATE)

@@ -7,7 +7,7 @@
     <select id="getListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
           <where>
-              is_delete=0
+              active=1
               <if test="id != null">
                  AND id =  #{id}
               </if>
