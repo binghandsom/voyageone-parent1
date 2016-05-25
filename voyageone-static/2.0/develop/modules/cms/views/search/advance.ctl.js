@@ -262,7 +262,7 @@ define([
         {
             if(m==null) return false;
             return m.inputOpts.lastIndexOf("null") > 0;
-        }
+        };
         function delCustAttribute (idx) {
             if ($scope.vm.custAttrList.length > 1) {
                 $scope.vm.custAttrList.splice(idx, 1);
@@ -330,11 +330,16 @@ define([
 
 
         function openAdvanceImagedetail(item){
-            var image = _.map(item.fields.images1,function(entity){
-                return entity.image1;
-            }),picList = [];
-            picList[0] = image;
-            this.openImagedetail({'mainPic': image[0], 'picList': picList});
+            var picList = [];
+            for(var attr in item.fields){
+                if(attr.indexOf("images") >= 0){
+                    var image = _.map(item.fields[attr],function(entity){
+                        return entity.image1;
+                    });
+                    picList.push(image);
+                }
+            }
+            this.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
         }
     }
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
