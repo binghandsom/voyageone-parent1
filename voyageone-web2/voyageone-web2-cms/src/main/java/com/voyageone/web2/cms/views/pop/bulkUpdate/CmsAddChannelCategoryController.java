@@ -29,7 +29,7 @@ public class CmsAddChannelCategoryController  extends CmsController {
         //取得channelId
         params.put("channelId", this.getUser().getSelChannelId());
         Map result = cmsAddChannelCategoryService.getChannelCategory(params,getLang());
-        return success(params);
+        return success(result);
     }
 
     /**
