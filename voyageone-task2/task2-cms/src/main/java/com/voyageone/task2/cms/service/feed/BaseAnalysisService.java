@@ -108,6 +108,27 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         return true;
     }
 
+    protected boolean backupFeedFile(String channel_id,FeedEnums.Name name) {
+        $info("备份处理文件开始");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date_ymd = sdf.format(date);
+
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id,  name));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
+        File file = new File(filename);
+        File file_backup = new File(filename_backup);
+
+        if (!file.renameTo(file_backup)) {
+//            $error("产品文件备份失败");
+            $info(file_backup+"备份失败");
+        }
+
+        $info("备份处理文件结束");
+        return true;
+    }
+
     protected Map<String, Object> getColumns() {
         Map<String, Object> map = new HashMap<>();
         map.put("category", Feeds.getVal1(channel, FeedEnums.Name.category_column));

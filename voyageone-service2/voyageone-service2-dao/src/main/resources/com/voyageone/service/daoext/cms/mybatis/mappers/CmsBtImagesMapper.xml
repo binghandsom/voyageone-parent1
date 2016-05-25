@@ -40,6 +40,7 @@
                 and img_name = #{imgName}
             </if>
         </where>
+        limit 0,100
     </select>
     <insert id="insert_cms_bt_images" parameterType="com.voyageone.service.model.cms.CmsBtImagesModel" >
         insert into voyageone_cms2.cms_bt_images(

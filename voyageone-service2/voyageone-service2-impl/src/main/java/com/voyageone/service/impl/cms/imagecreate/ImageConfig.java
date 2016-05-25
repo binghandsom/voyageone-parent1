@@ -21,6 +21,10 @@ public class ImageConfig {
         return getValue("AliYun_OSS_Confige", "bucketName");
     }
 
+    public static String getAliYunUrl() {
+        return getValue("AliYun_OSS_Confige", "url");
+    }
+
     public static String getValue(String id, String code) {
         return Codes.getCodeName(id, code);
     }

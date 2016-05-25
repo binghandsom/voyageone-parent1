@@ -1,46 +1,15 @@
 package com.voyageone.service.dao.cms.mongo;
 
-import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
-
-    public static Map<String, CmsBtSellerCatModel> cache = new HashMap<>();
-
-    private CmsBtSellerCatModel getModelFormCache(String key) {
-        CmsBtSellerCatModel result = null;
-        if (cache.containsKey(key)) {
-            result = cache.get(key);
-        }
-        return result;
-    }
-
-    private void setCache(String key, CmsBtSellerCatModel cacheObj) {
-        if (cacheObj == null) {
-            cache.remove(key);
-        } else {
-            cache.put(key, cacheObj);
-        }
-    }
-
-    /**
-     * 取得 根据CatId
-     */
-    public CmsBtSellerCatModel selectByCatId(String catId) {
-        CmsBtSellerCatModel result = getModelFormCache(catId);
-        if (result == null) {
-            String queryStr = "{\"catId\":\"" + catId + "\"}";
-            result = selectOneWithQuery(queryStr);
-        }
-        return result;
-    }
 
     /**
      * 取得 根据ChannelId, CartId
@@ -49,40 +18,72 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
 
         String queryStr = "{\"channelId\":\"" + channelId + "\"" + ",\"cartId\"" + ":" + cartId + "}";
 
-        List<CmsBtSellerCatModel>  result = select(queryStr);
+        List<CmsBtSellerCatModel> result = select(queryStr);
 
         return result;
     }
 
 
-    /**
-     * 插入
-     */
-    public WriteResult insert(CmsBtSellerCatModel model) {
-        WriteResult reslt = super.insert(model);
-        if (reslt.getN() > 0) {
-            setCache(model.getCatId(), model);
+    public void update(String channelId, int cartId, String cName, String cId) {
+        String queryStr = "{'channelId':'" + channelId + "','cartId':" + cartId + "}";
+
+        List<CmsBtSellerCatModel> allCat = select(queryStr);
+        List<CmsBtSellerCatModel> resultList =  findCId(allCat, cId);
+        if(resultList.size() > 0)
+        {
+            CmsBtSellerCatModel result = resultList.get(0);
+            String oldCName = result.getCatName();
+            result.setCatName(cName);
+            String oldPath = result.getCatPath();
+
+            String[] paths = oldPath.split("->");
+            if( paths.length > 0)
+            {
+                paths[paths.length -1] = cName;
+            }
+
+            String catPath= "";
+            for (String path:paths) {
+                catPath = catPath + "->" +path;
+            }
+
+            result.setCatPath(oldPath.replace(oldCName, cName));
+
+
+            //递归更新子节点
+            updateChildren(result.getChildren(), result.getCatPath());
+
+            for (CmsBtSellerCatModel model: allCat) {
+                update(model);
+            }
         }
-        return reslt;
     }
 
-    /**
-     * 删除
-     */
-    public WriteResult delete(CmsBtSellerCatModel model) {
-        WriteResult reslt = super.delete(model);
-        if (reslt.getN() > 0) {
-            setCache(model.getCatId(), null);
+    private void updateChildren(List<CmsBtSellerCatModel> children, String parentCatPath)
+    {
+        for (CmsBtSellerCatModel model:children) {
+            model.setCatPath(parentCatPath + "->" + model.getCatName());
+            updateChildren(model.getChildren(), model.getCatPath());
         }
-        return reslt;
+
     }
 
-    public WriteResult update(CmsBtSellerCatModel model) {
-        WriteResult reslt = super.update(model);
-        if (reslt.getN() > 0) {
-            setCache(model.getCatId(), model);
+    private List<CmsBtSellerCatModel> findCId(List<CmsBtSellerCatModel> list, String cId)
+    {
+        List<CmsBtSellerCatModel> result = new ArrayList<CmsBtSellerCatModel>();
+        for (CmsBtSellerCatModel model:list) {
+            if (model.getCatId().equals(cId))
+            {
+                result.add(model);
+            }
+            else
+            {
+                result = findCId(model.getChildren() ,cId );
+            }
+
         }
-        return reslt;
+        return  result;
     }
+
 
 }

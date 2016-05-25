@@ -22,8 +22,19 @@ public class SellerCatService extends BaseService {
      * 取得Category Tree 根据channelId， cartId
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId) {
-
         return cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
-
     }
+
+    public String addSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
+        return null;
+    }
+
+    public String updateSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
+        return null;
+    }
+
+    public String deleteSellerCat(String chnnnelId, int cartId, String cName, String parentCId) {
+        return null;
+    }
+
 }
