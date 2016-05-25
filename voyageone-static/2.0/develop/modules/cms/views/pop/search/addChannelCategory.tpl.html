@@ -27,8 +27,8 @@
                         </div>
                         <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0">
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox">
-                                <span class="fa fa-check"  ng-if="category.children && category.children.length" checked></span>&nbsp;
+                                <input type="checkbox" ng-checked="isSelectCid(ctrl.cId)" ng-click=" ">
+                                <span class="fa fa-check" ></span>&nbsp;
                                 <label class=" ">{{category.catName}}</label>
                             </label>
                         </div>
