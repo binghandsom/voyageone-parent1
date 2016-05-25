@@ -8,7 +8,6 @@
 package com.voyageone.service.daoext.cms;
 
 
-import com.voyageone.service.model.cms.CmsMtImageCreateImportModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
