@@ -96,7 +96,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             // 取得所有field对应的属性值
             // 这里不需要用返回值MAP(返回的不是全部，只是一个基本类型field子集
             // 想要使用包含复杂类型的全体field直接用第一个参数fieldList即可
-            sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier);
+            sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
         } catch (Exception ex) {
             String errMsg = String.format("匹配天猫产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
@@ -276,7 +276,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         // 根据field列表取得属性值mapping数据
         try {
             // 取得所有field对应的属性值
-            sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier);
+            sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
         } catch (Exception ex) {
             String errMsg = String.format("天猫新增产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);

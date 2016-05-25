@@ -301,7 +301,12 @@ public class TmallProductService {
 
             if (searchSchema == null) {
                 logger.info("No match schema found");
-                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+                // modified by morse.lu 2016/05/24 start
+//                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+                // 允许无产品，只有商品
+                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
+                logger.info("无产品schema, 无需上传产品, 直接上传商品.");
+                // modified by morse.lu 2016/05/24 end
                 tmallUploadRunState.getContextBuildFields().clearContext();
                 return;
             }
@@ -323,7 +328,7 @@ public class TmallProductService {
             logger.error(e.getMessage(), e);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
-        constructCustomPlatformProps(tcb, fieldMap, expressionParser, null);
+        constructCustomPlatformProps(tcb, fieldMap, expressionParser, null, false);
         constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, new HashSet<>());
         List<Field> searchFields = resolveMappingProps(tmallUploadRunState, null);
 
@@ -527,7 +532,7 @@ public class TmallProductService {
                 logger.error(e.getMessage(), e);
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
             }
-            constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet);
+            constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet, false);
             constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, imageSet);
 
             //如果urlSet不为空，就去上传图片
@@ -661,7 +666,7 @@ public class TmallProductService {
             logger.error(e.getMessage(), e);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
-        constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet);
+        constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet, true);
         constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, imageSet);
 
         //如果imageSet不为空，就去上传图片
@@ -716,6 +721,12 @@ public class TmallProductService {
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         Long categoryCode = tmallUploadRunState.getCategory_code();
         String productCode = tmallUploadRunState.getProduct_code();
+        // added by morse.lu 2016/05/24 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productCode)) {
+            productCode = "0";
+        }
+        // added by morse.lu 2016/05/24 end
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
@@ -1123,7 +1134,7 @@ public class TmallProductService {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
         }
         tmallUploadRunState.getContextBuildFields().setFieldMap(fieldMap);
-        constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet);
+        constructCustomPlatformProps(tcb, fieldMap, expressionParser, imageSet, true);
         constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, imageSet);
 
         //如果imageSet不为空，就去上传图片
@@ -1341,7 +1352,10 @@ public class TmallProductService {
         return resultPrice;
     }
 
-    public void constructCustomPlatformProps(UploadProductTcb tcb, Map<String, Field> fieldMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
+    // modified by morse.lu 2016/05/16 start
+//    public void constructCustomPlatformProps(UploadProductTcb tcb, Map<String, Field> fieldMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
+    public void constructCustomPlatformProps(UploadProductTcb tcb, Map<String, Field> fieldMap, ExpressionParser expressionParser, Set<String> imageSet, boolean isItem) throws TaskSignal {
+        // modified by morse.lu 2016/05/16 end
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         TmallUploadRunState.TmallContextBuildFields contextBuildFields =
                 tmallUploadRunState.getContextBuildFields();
@@ -1363,6 +1377,12 @@ public class TmallProductService {
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
         for (CustomPlatformPropMappingModel customPlatformPropMappingModel : customPlatformPropMappingModels) {
+            // add by morse.lu 2016/05/24 start
+            if (!isItem && customPlatformPropMappingModel.getCustomMappingType() == CustomMappingType.SKU_INFO) {
+                // 不是商品，是产品
+                continue;
+            }
+            // add by morse.lu 2016/05/24 end
             Field field = fieldMap.get(customPlatformPropMappingModel.getPlatformPropId());
             if (field != null) {
                 List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(customPlatformPropMappingModel.getCustomMappingType());
