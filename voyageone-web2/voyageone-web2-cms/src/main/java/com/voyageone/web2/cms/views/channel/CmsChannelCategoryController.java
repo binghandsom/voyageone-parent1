@@ -81,10 +81,10 @@ public class CmsChannelCategoryController  extends CmsController {
     public AjaxResponse deleteSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
         Integer cartId = (Integer) param.get("cartId") ;
-        String cName = (String) param.get("catName") ;
+        String parentCId = (String) param.get("parentCatId") ;
         String cId = (String) param.get("catId") ;
 
-        sellerCatService.deleteSellerCat(channelId,cartId,cName,cId);
+        sellerCatService.deleteSellerCat(channelId,cartId,parentCId,cId);
 
         List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         Map<String, Object> result = new HashMap<>();
