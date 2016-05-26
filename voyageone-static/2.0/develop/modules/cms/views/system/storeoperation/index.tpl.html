@@ -96,7 +96,6 @@
                             <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
                                 <thead>
                                 <tr>
-                                    <th class="mfb-xt text-center">序号</th>
                                     <th class="mfb-xxt text-center">操作类型</th>
                                     <th class="mfb-xxt text-center">操作者</th>
                                     <th class="mfb-xxt text-center">操作时间</th>
@@ -107,7 +106,6 @@
                                 <table class="table dropdown_table_main"  width="100%">
                                     <tbody >
                                         <tr ng-repeat="storeData in store.storeDataList">
-                                            <td class="mfb-xt text-center">{{$index + 1}}</td>
                                             <td class="mfb-xxt text-center">{{storeData.operationTypeName}}</td>
                                             <td class="mfb-xxt text-center">{{storeData.modifier}}</td>
                                             <td class="mfb-xxt text-center">{{storeData.modified}}</td>
