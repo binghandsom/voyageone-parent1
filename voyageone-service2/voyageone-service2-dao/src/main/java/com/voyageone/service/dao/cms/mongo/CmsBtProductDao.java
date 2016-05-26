@@ -59,7 +59,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         }
         String idsStr = Joiner.on(",").join(codes);
 
-        String query = "{prodId:{$in:[" + idsStr + "]}}";
+        String query = "{'fields.code':{$in:[" + idsStr + "]}}";
         return select(query, channelId);
     }
 

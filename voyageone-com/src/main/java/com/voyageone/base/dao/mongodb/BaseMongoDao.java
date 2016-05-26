@@ -102,26 +102,29 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
     /**
      * 聚合查询
      *
-     * @param aggregates
+     * @param aggregates JomgoAggregate[]
      * @return List<Map> 返回的Map数据结构和aggregate语句对应
      */
+    @SuppressWarnings("unchecked")
     public List<Map> aggregateToMap(JomgoAggregate... aggregates) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass);
-        Aggregate aggr = mongoTemplate.aggregate(aggregates[0].getPipelineOperator(), collectionName, aggregates[0].getParameters());
-        for (int i = 1; i < aggregates.length; i++) {
-            aggr.and(aggregates[i].getPipelineOperator(), aggregates[i].getParameters());
-        }
-        return IteratorUtils.toList(aggr.as(Map.class));
+        return (List<Map>) aggregateToObj(Map.class, aggregates);
     }
 
     /**
      * 聚合查询<br>
      * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
-     * @param aggregates
-     * @return
      */
     @SuppressWarnings("unchecked")
     public List<T> aggregateToObj(JomgoAggregate... aggregates) {
+        return aggregateToObj(entityClass, aggregates);
+    }
+
+    /**
+     * 聚合查询<br>
+     * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> aggregateToObj(Class entityClass, JomgoAggregate... aggregates) {
         Aggregate aggr = mongoTemplate.aggregate(aggregates[0].getPipelineOperator(), collectionName, aggregates[0].getParameters());
         for (int i=1; i<aggregates.length; i++) {
             aggr.and(aggregates[i].getPipelineOperator(), aggregates[i].getParameters());

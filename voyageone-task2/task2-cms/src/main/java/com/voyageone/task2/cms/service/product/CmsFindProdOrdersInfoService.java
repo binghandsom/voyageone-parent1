@@ -8,8 +8,10 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.impl.cms.ChannelService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
@@ -40,11 +42,15 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
     private CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
 
     private static String queryStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',sku:'$sku'},count:{$sum:'$qty'}}}";
+    private static String grpqueryStr = "{},{'cartId':1,'groupId':1,'productCodes':1,'_id':1}";
+    private static String prodqueryStr = "{'fields.code':{$in:[%s]}},{'sales':1,'fields.code':1,'_id':0}";
 
     @Override
     public SubSystem getSubSystem() {
@@ -69,6 +75,10 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         String begDate2 = DateTimeUtil.getDateBeforeDays(30);
 
         for (OrderChannelBean chnObj : list) {
+            if (!"010".equals(chnObj.getOrder_channel_id())) {
+                continue;
+            }
+            // 针对各店铺产品进行统计
             List<CmsBtProductModel> prodList = cmsBtProductDao.select("{},{'_id':0,'prodId':1,'skus.skuCode':1,'skus.skuCarts':1}", chnObj.getOrder_channel_id());
             if (prodList == null || prodList.isEmpty()) {
                 $warn("CmsFindProdOrdersInfoService 该店铺无产品数据！ + channel_id=" + chnObj.getOrder_channel_id());
@@ -77,6 +87,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
 
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (CmsBtProductModel prodObj : prodList) {
+                // 对每个产品统计其sku数据
                 List<CmsBtProductModel_Sku> skusList = prodObj.getSkus();
                 if (skusList == null || skusList.isEmpty()) {
                     $warn(String.format("CmsFindProdOrdersInfoService 该产品无sku数据！ + channel_id=%s, prodId=%d", chnObj.getOrder_channel_id(), prodObj.getProdId()));
@@ -122,9 +133,6 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 }
 
                 // 30天销售数据
-                if (skuCodeList.contains("CRBT0102SP-")) {
-                    $debug("");
-                }
                 params = new Object[] { begDate2, endDate, cartList2, chnObj.getOrder_channel_id(), skuCodeList };
                 List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
                 if (!amt30days.isEmpty()) {
@@ -226,6 +234,78 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
             // 批量更新
             if (!bulkList.isEmpty()) {
                 BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set");
+                $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
+            }
+        }
+
+        // 再统计group的数据
+        for (OrderChannelBean chnObj : list) {
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            List<CmsBtProductGroupModel> getList = cmsBtProductGroupDao.select(grpqueryStr, chnObj.getOrder_channel_id());
+            if (getList == null || getList.isEmpty()) {
+                $warn(String.format("CmsFindProdOrdersInfoService 该店铺无group数据！ channel_id=%s", chnObj.getOrder_channel_id()));
+                continue;
+            }
+
+            for (CmsBtProductGroupModel grpObj : getList) {
+                List<String> codeList = grpObj.getProductCodes();
+                if (codeList == null || codeList.isEmpty()) {
+                    $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d", chnObj.getOrder_channel_id(), grpObj.getGroupId()));
+                    continue;
+                }
+                if (grpObj.getCartId() == 1) {
+                    // feed数据不统计
+                    continue;
+                }
+
+                int sum7 = 0;
+                int sum30 = 0;
+                int sumall = 0;
+                String codeStr = codeList.stream().map(code -> "'" + code + "'").collect(Collectors.joining(","));
+                List<CmsBtProductModel> prodList = cmsBtProductDao.select(String.format(prodqueryStr, codeStr), chnObj.getOrder_channel_id());
+                if (prodList == null || prodList.isEmpty()) {
+                    $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d codeStr=%s", chnObj.getOrder_channel_id(), grpObj.getGroupId(), codeList.toString()));
+                    continue;
+                }
+
+                for (CmsBtProductModel prodObj : prodList) {
+                    Map salesMap = prodObj.getSales();
+                    if (salesMap == null || salesMap.isEmpty()) {
+                        $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, code=%s", chnObj.getOrder_channel_id(), prodObj.getFields().getCode()));
+                        continue;
+                    }
+                    Map sum7Map = (Map) salesMap.get("code_sum_7");
+                    if (sum7Map != null) {
+                        sum7 += StringUtils.toIntValue((Integer) sum7Map.get("cartId_" + grpObj.getCartId()));
+                    }
+                    Map sum30Map = (Map) salesMap.get("code_sum_30");
+                    if (sum30Map != null) {
+                        sum30 += StringUtils.toIntValue((Integer) sum30Map.get("cartId_" + grpObj.getCartId()));
+                    }
+                    Map sumallMap = (Map) salesMap.get("code_sum_all");
+                    if (sumallMap != null) {
+                        sumall += StringUtils.toIntValue((Integer) sumallMap.get("cartId_" + grpObj.getCartId()));
+                    }
+                }
+
+                Map queryMap = new HashMap<>();
+                queryMap.put("groupId", grpObj.getGroupId());
+                Map updateMap = new HashMap<>();
+                Map salesMap = new HashMap<>();
+                salesMap.put("code_sum_7", sum7);
+                salesMap.put("code_sum_30", sum30);
+                salesMap.put("code_sum_all", sumall);
+                updateMap.put("sales", salesMap);
+
+                BulkUpdateModel updModel = new BulkUpdateModel();
+                updModel.setQueryMap(queryMap);
+                updModel.setUpdateMap(updateMap);
+                bulkList.add(updModel);
+            }
+
+            // 批量更新
+            if (!bulkList.isEmpty()) {
+                BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
                 $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
             }
         }
