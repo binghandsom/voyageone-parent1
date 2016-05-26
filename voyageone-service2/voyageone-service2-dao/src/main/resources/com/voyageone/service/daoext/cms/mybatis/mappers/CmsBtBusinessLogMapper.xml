@@ -20,7 +20,7 @@
        sku,
        error_type_id errorTypeId,
        error_code errorCode,
-       error_msg errMsg,
+       error_msg errorMsg,
        status,
        created,
        creater,
