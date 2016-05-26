@@ -1,16 +1,14 @@
 package com.voyageone.base.dao.mongodb;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.json.JsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+import org.apache.commons.collections.IteratorUtils;
+import org.jongo.Aggregate;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * BaseMongoDao
@@ -99,5 +97,35 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
 
     public WriteResult upsertFirst(String strQuery, String strUpdate) {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, collectionName);
+    }
+
+    /**
+     * 聚合查询
+     *
+     * @param aggregates
+     * @return List<Map> 返回的Map数据结构和aggregate语句对应
+     */
+    public List<Map> aggregateToMap(JomgoAggregate... aggregates) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass);
+        Aggregate aggr = mongoTemplate.aggregate(aggregates[0].getPipelineOperator(), collectionName, aggregates[0].getParameters());
+        for (int i = 1; i < aggregates.length; i++) {
+            aggr.and(aggregates[i].getPipelineOperator(), aggregates[i].getParameters());
+        }
+        return IteratorUtils.toList(aggr.as(Map.class));
+    }
+
+    /**
+     * 聚合查询<br>
+     * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
+     * @param aggregates
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> aggregateToObj(JomgoAggregate... aggregates) {
+        Aggregate aggr = mongoTemplate.aggregate(aggregates[0].getPipelineOperator(), collectionName, aggregates[0].getParameters());
+        for (int i=1; i<aggregates.length; i++) {
+            aggr.and(aggregates[i].getPipelineOperator(), aggregates[i].getParameters());
+        }
+        return IteratorUtils.toList(aggr.as(entityClass));
     }
 }

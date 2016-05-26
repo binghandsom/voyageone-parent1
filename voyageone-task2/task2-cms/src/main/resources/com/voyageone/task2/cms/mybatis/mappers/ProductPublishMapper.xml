@@ -59,4 +59,20 @@
 		  and code = #{p.code}
 	</update>
 
+	<!-- 统计前90天订单中的产品数量 -->
+	<select id="cms_selectProductOrderCount" resultType="Map"><![CDATA[
+		select
+			cart_id, order_channel_id channel_id, sku, date, CAST(sum(qty) AS signed) qty
+		from
+			(
+			select a.cart_id, a.order_channel_id, b.sku, DATE_FORMAT(DATE_ADD(a.order_date_time, INTERVAL 8 HOUR), '%Y-%m-%d') AS date, b.quantity_ordered-b.quantity_returned qty
+			from oms_bt_order_details b,oms_bt_orders a
+			where a.order_number = b.order_number and b.adjustment=0
+			and b.`status` not in ('Canceled')
+			and (a.order_date_time <= convert_tz(concat(date_format(date_add(CURDATE(), interval -1 day),  '%Y-%m-%d'),' 23:59:59'), '+08:00', '+00:00')
+			and convert_tz(concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.order_date_time)
+			) sales
+		group by cart_id, order_channel_id, sku, date
+	]]></select>
+
 </mapper>
