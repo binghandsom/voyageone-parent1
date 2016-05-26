@@ -140,6 +140,21 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected Integer tagId;
 
+    /**
+     * 中国指导售价   从sku来
+     */
+    protected BigDecimal retailPrice;
+
+    /**
+     * 中国最终售价   从sku来
+     */
+    protected BigDecimal salePrice;
+
+    /**
+     * 中国官网价格   从sku来
+     */
+    protected BigDecimal msrpRmb;
+
     public String getChannelId() {
         return channelId;
     }
@@ -338,5 +353,29 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setTagId(Integer tagId) {
         this.tagId = tagId;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public BigDecimal getMsrpRmb() {
+        return msrpRmb;
+    }
+
+    public void setMsrpRmb(BigDecimal msrpRmb) {
+        this.msrpRmb = msrpRmb;
     }
 }

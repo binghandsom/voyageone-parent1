@@ -8,7 +8,7 @@
         `error_msg`, `sku_count`, `quantity`, `activity_start`, `activity_end`, `deal_end_time_state`, 
         `deal_end_time`, `synch_status`, `update_status`, `price_status`, `creater`, `modifier`, 
         `product_long_name`, `product_medium_name`, `product_short_name`, `search_meta_text_custom`, 
-        `tag_id`
+        `tag_id`, `retail_price`, `sale_price`, `msrp_rmb`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -106,6 +106,15 @@
             </if>
             <if test="tagId != null" >
                 `tag_id`,
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price`,
+            </if>
+            <if test="salePrice != null" >
+                `sale_price`,
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -205,6 +214,15 @@
             <if test="tagId != null" >
                 #{tagId,jdbcType=INTEGER},
             </if>
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpRmb != null" >
+                #{msrpRmb,jdbcType=DECIMAL},
+            </if>
         </trim>
     </insert>
 
@@ -300,6 +318,15 @@
             </if>
             <if test="tagId != null" >
                 `tag_id` = #{tagId,jdbcType=INTEGER},
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                `sale_price` = #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -402,6 +429,15 @@
             <if test="tagId != null" >
                 and `tag_id` = #{tagId,jdbcType=INTEGER}
             </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -496,6 +532,15 @@
             </if>
             <if test="tagId != null" >
                 and `tag_id` = #{tagId,jdbcType=INTEGER}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
             </if>
         </where>
     </select>

@@ -195,13 +195,13 @@ public class CmsBtJmPromotionExportTaskService {
     }
 
     private ExportExcelInfo<Map<String, Object>> getExportProductInfo(String fileName, List<Map<String, Object>> dataSource) {
-        List<EnumJMProductImportColumn> listEnumJMProductImportColumn = EnumJMProductImportColumn.getList();
+        List<EnumJMProductImportColumn2> listEnumJMProductImportColumn = EnumJMProductImportColumn2.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("Product");
         info.setDisplayColumnName(true);
         info.setDataSource(dataSource);
-        for (EnumJMProductImportColumn o : listEnumJMProductImportColumn) {
+        for (EnumJMProductImportColumn2 o : listEnumJMProductImportColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
         return info;

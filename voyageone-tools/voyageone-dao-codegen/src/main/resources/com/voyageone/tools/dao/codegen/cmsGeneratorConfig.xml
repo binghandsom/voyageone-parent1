@@ -350,6 +350,11 @@
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
+        <table tableName="cms_bt_jm_promotion_tag_product" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
 
     </context>
 </generatorConfiguration>
