@@ -102,7 +102,6 @@ public class CmsImageFileService extends BaseService {
             if (modelFile == null) {
                 //1.创建记录信息
                 modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode, isUploadUSCDN);
-                $info("CmsImageFileService:getImage create db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
             }
             //.创建并上传图片
             isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile);

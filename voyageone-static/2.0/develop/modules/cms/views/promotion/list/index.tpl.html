@@ -114,9 +114,9 @@
 					<td class="text-left yellowLink"><a href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg"> Close </span></td>
 					<td class="text-left">{{currentChannelId == '997' || promotion.channelId != '997'?promotion.cartName:'US Joi'}}</td>
-					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
-					<td class="text-left">{{promotion.prePeriodStart}}&nbsp;~&nbsp;{{promotion.prePeriodEnd}}</td>
-					<td class="text-left">{{promotion.preSaleStart}}&nbsp;~&nbsp;{{promotion.preSaleEnd}}</td>
+					<td class="text-left">{{promotion.activityStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.activityEnd | date:'yyyy-MM-dd'}}</td>
+					<td class="text-left">{{promotion.prePeriodStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.prePeriodEnd | date:'yyyy-MM-dd'}}</td>
+					<td class="text-left">{{promotion.preSaleStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.preSaleEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-center">
 						<div ng-if = "promotion.channelId != 997" class="btn-group" uib-dropdown ng-if="!promotion.promotionStatus">
 							<button type="button" class="btn btn-default" uib-dropdown-toggle>
@@ -132,7 +132,7 @@
 						</div>
 					</td>
 					<td class="text-center" ng-controller="popupCtrl">
-						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion)"><i class="fa fa-pencil"></i></button>
+						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion,search)"><i class="fa fa-pencil"></i></button>
 						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" ng-disabled="promotion.promotionStatus" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion)"><i class="fa fa-cloud-download"></i></button>
 					</td>

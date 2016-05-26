@@ -2,6 +2,9 @@ package com.voyageone.service.impl.cms;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Types;
+import com.voyageone.service.bean.cms.CmsBtStoreOperationHistoryBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao;
@@ -17,9 +20,11 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +43,14 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class StoreOperationService extends BaseService {
 
-    Map<String, String> OPS = ImmutableMap.<String, String>builder()
-            .put("rePublish", "重新上新所有商品")
-            .put("reUpload1", "重新导入所有Feed商品(清空共通属性)")
-            .put("reUpload0", "重新导入所有Feed商品(不清空共通属性)")
-            .put("rePublishPrice", "价格同步")
-            .build();
+
+
+//    Map<String, String> OPS = ImmutableMap.<String, String>builder()
+//            .put("rePublish", "重新上新所有商品")
+//            .put("reUpload1", "重新导入所有Feed商品(清空共通属性)")
+//            .put("reUpload0", "重新导入所有Feed商品(不清空共通属性)")
+//            .put("rePublishPrice", "价格同步")
+//            .build();
 
 
     @Resource
@@ -83,7 +90,7 @@ public class StoreOperationService extends BaseService {
         List<String> productCodes = products.stream().map(p -> p.getFields().getCode()).collect(toList());
         List<CmsBtProductGroupModel> groupModels = productGroupDao.selectGroupIdsByProductCode(channelId, productCodes);
         insertWorkLoad(channelId, creater, groupModels);
-        insertHistory(OPS.get("rePublish"), creater);
+        insertHistory(CmsConstants.StoreOperationType.REPUBLISH, creater);
     }
 
     private void insertWorkLoad(String channelId, String creater, List<CmsBtProductGroupModel> groupModels) {
@@ -106,7 +113,6 @@ public class StoreOperationService extends BaseService {
      * 价格同步
      *
      * @param channelId
-     * @param channelId
      */
     public void rePublishPrice(String channelId, String creater) {
         //查询priceRetail和priceSale不相等的product
@@ -114,7 +120,7 @@ public class StoreOperationService extends BaseService {
 
         if (products.size() == 0) {
             $warn("[价格同步] 同步product数量为:0");
-            insertHistory(OPS.get("rePublishPrice"), creater);
+            insertHistory(CmsConstants.StoreOperationType.PRICE_SYNCHRONIZATION, creater);
             return;
         }
 
@@ -150,7 +156,7 @@ public class StoreOperationService extends BaseService {
         //插入价格变更log
         insertWorkLoad(channelId, creater, groupModels);
         $info("[价格同步] 同步product数量为:" + products.size());
-        insertHistory(OPS.get("rePublishPrice"), creater);
+        insertHistory(CmsConstants.StoreOperationType.PRICE_SYNCHRONIZATION, creater);
     }
 
     /**
@@ -241,14 +247,39 @@ public class StoreOperationService extends BaseService {
             productDao.deleteAll(channelId);
             productGroupDao.deleteAll(channelId);
         }
-        String operationType = cleanCommonProperties ? OPS.get("reUpload1") : OPS.get("reUpload0");
+        String operationType = cleanCommonProperties ? CmsConstants.StoreOperationType.REIMPORT_FEED_CLEAR_COMMON_PROPERTY : CmsConstants.StoreOperationType.REIMPORT_FEED_NOT_CLEAR_COMMON_PROPERTY;
         feedInfoDao.updateAllUpdFlg(channelId, 0);
         insertHistory(operationType, creater);
         return true;
     }
 
-    public List<CmsBtStoreOperationHistoryModel> getHistoryBy(Map<String, Object> params) {
-        return historyDao.selectList(params);
+    public List<CmsBtStoreOperationHistoryBean> getHistoryBy(Map<String, Object> params) {
+        return changeToBeanList(historyDao.selectList(params), (String) params.get("lang"));
+    }
+
+    /**
+     * 检索结果转换
+     *
+     * @param storeOperationHistoryList 检索结果（Model）
+     * @param lang 语言
+     * @return 检索结果（Bean）
+     */
+    private List<CmsBtStoreOperationHistoryBean> changeToBeanList(List<CmsBtStoreOperationHistoryModel> storeOperationHistoryList, String lang) {
+        List<CmsBtStoreOperationHistoryBean> storeOperationHistoryBeanList = new ArrayList<>();
+
+        for (CmsBtStoreOperationHistoryModel storeOperationHistory : storeOperationHistoryList) {
+            CmsBtStoreOperationHistoryBean dest = new CmsBtStoreOperationHistoryBean();
+            try {
+                BeanUtils.copyProperties(dest, storeOperationHistory);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            dest.setOperationTypeName(Types.getTypeName(75, lang, String.valueOf(dest.getOperationType())));
+            storeOperationHistoryBeanList.add(dest);
+        }
+        return storeOperationHistoryBeanList;
     }
 
     /**

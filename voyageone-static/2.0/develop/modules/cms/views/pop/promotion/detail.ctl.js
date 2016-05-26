@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope, promotionService, cartList, items, confirm, notify, $translate) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope, promotionService, cartList, items, confirm, notify, $translate,$filter) {
 
         $scope.promotion = {};
         $scope.tejiabao = false;
@@ -60,15 +60,37 @@ define([
                 return;
             }
 
+                $scope.promotion.prePeriodStart = dateToString($scope.promotion.prePeriodStart);
+                $scope.promotion.prePeriodEnd = dateToString($scope.promotion.prePeriodEnd);
+                $scope.promotion.activityStart = dateToString($scope.promotion.activityStart);
+                $scope.promotion.activityEnd = dateToString($scope.promotion.activityEnd);
+                $scope.promotion.preSaleStart = dateToString($scope.promotion.preSaleStart);
+                $scope.promotion.preSaleEnd = dateToString($scope.promotion.preSaleEnd);
+
             if (!items) {
                 promotionService.insertPromotion($scope.promotion).then(function () {
                     $scope.$close();
                 });
             } else {
                 promotionService.updatePromotion($scope.promotion).then(function () {
-                    items = angular.copy($scope.promotion);
+
                     $scope.$close();
                 });
+            }
+        }
+        function dateToString(date){
+            if(date && date instanceof Date){
+                return $filter("date")(date,"yyyy-MM-dd");
+            }else{
+                if(date)    return date;
+                return "";
+            }
+        }
+        function stringTodate(date){
+            if(date){
+               return new Date(date);
+            }else{
+                return null;
             }
         }
     });
