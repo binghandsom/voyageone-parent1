@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -53,6 +54,16 @@ public class SellerCatServiceTest {
 
         sellerCatService.save(result);
 
+
+    }
+
+    @Test
+    public void testGetSellerCatConfig() throws Exception {
+
+        Map map = sellerCatService.getSellerCatConfig(23);
+        System.out.println(JsonUtil.bean2Json(map));
+        Map map2 =sellerCatService.getSellerCatConfig(24);
+        System.out.println(JsonUtil.bean2Json(map2));
 
     }
 }
