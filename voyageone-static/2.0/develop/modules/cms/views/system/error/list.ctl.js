@@ -61,7 +61,7 @@ define([], function () {
         }
 
         function updateFinishStatus(id) {
-            $errorListService.updateFinishStatus({seq: id})
+            $errorListService.updateFinishStatus({id: id})
                 .then(function () {
                     notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     search();

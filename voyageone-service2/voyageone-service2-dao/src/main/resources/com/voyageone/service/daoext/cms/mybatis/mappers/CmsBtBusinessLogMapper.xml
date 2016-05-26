@@ -98,7 +98,7 @@
 
     <!-- 根据seq修改状态  status = 1-->
     <update id="update_business_log_status_finish" parameterType="Map">
-        update voyageone_cms2.cms_bt_business_log set status = 1 where id=#{seq}
+        update voyageone_cms2.cms_bt_business_log set status = 1 where id=#{id}
     </update>
 
 </mapper>
