@@ -722,7 +722,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         try {
             // 取得所有field对应的属性值
-            attrMap = sxProductService.constructMappingPlatformProps(itemFieldList, platformMappingData, shopBean, expressionParser, user);
+            attrMap = sxProductService.constructMappingPlatformProps(itemFieldList, platformMappingData, shopBean, expressionParser, user, true);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东商品属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformMappingData.getPlatformCartId());

@@ -58,20 +58,20 @@ public class HtSkuUpdateResponse extends BaseJMResponse {
     public void setBody(String body) throws IOException {
         this.body = body;
         try {
-            //{"is_Success" : 1}
 //            {
-//                "error": {
-//                "code": "500"
+//                "error_code": "0",
+//                    "reason": "success",
+//                    "response": ""
 //            }
-//            }
+
             Map<String, Object> map = JacksonUtil.jsonToMap(body);
-            if (map.containsKey("error")) {
-                this.setError_code(map.get("code").toString());
+            if (map.containsKey("error_code")) {
+                this.setError_code(map.get("error_code").toString());
             }
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());
             }
-            if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
+            if (map.containsKey("reason") && "success".equals(map.get("reason"))) {
                 this.setIs_Success(true);
             } else {
                 this.setErrorMsg(this.body);

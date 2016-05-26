@@ -301,7 +301,12 @@ public class TmallProductService {
 
             if (searchSchema == null) {
                 logger.info("No match schema found");
-                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+                // modified by morse.lu 2016/05/24 start
+//                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+                // 允许无产品，只有商品
+                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
+                logger.info("无产品schema, 无需上传产品, 直接上传商品.");
+                // modified by morse.lu 2016/05/24 end
                 tmallUploadRunState.getContextBuildFields().clearContext();
                 return;
             }
@@ -716,6 +721,12 @@ public class TmallProductService {
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         Long categoryCode = tmallUploadRunState.getCategory_code();
         String productCode = tmallUploadRunState.getProduct_code();
+        // added by morse.lu 2016/05/24 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productCode)) {
+            productCode = "0";
+        }
+        // added by morse.lu 2016/05/24 end
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
@@ -2062,37 +2073,5 @@ public class TmallProductService {
         } catch (Exception e) {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
         }
-    }
-
-    /**
-     * target店铺临时写死用
-     */
-    private ShopBean getShop(String order_channel_id, String cart_id) {
-        ShopBean shopBean = new ShopBean();
-        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
-        shopBean.setPlatform("TB");
-        // target 018
-        shopBean.setAppKey("21008948");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
-        // target 018
-        // jewelry 010
-//        shopBean.setAppKey("21008948");
-//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-        // jewelry 010
-        shopBean.setOrder_channel_id(order_channel_id);
-        shopBean.setCart_id(cart_id);
-        shopBean.setCart_type("3");
-        shopBean.setCart_name("TG");
-        shopBean.setComment("天猫国际");
-        shopBean.setShop_name("target店");
-        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        
-        return shopBean;
-    }
-
-    private ShopBean getShop(String order_channel_id, int cart_id) {
-        return getShop(order_channel_id, String.valueOf(cart_id));
     }
 }
