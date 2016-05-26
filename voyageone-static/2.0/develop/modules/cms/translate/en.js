@@ -1,6 +1,8 @@
 define(function() {
     return {
+        "TXT_IMAGE_STATUS": "Image Status",
         "TXT_REMINDER_WITH_COLON": "Reminder：",
+        "TXT_EDIT_TASK": "Edit Task ",
         "TXT_LOGOUT": "Logout",
         "TXT_HOME": "Home",
         "TXT_CATEGORY_VIEWS": "-- Category Views --",
@@ -523,6 +525,11 @@ define(function() {
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
         "CANT_BEAT": "Info Error",
+
+        "None": "No Image",
+        "Waiting": "Waiting",
+        "Error": "Error",
+        "Exists": "Success",
 
         /**分页显示*/
         "TXT_PAGER_SIZE": "page-size",

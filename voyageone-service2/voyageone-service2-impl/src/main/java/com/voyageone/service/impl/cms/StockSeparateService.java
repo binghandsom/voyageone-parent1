@@ -6,6 +6,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
 import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -25,20 +26,24 @@ import java.util.Map;
  */
 @Service
 public class StockSeparateService extends BaseService {
+
     @Autowired
-    private CmsBtTasksDaoExt cmsBtTasksDaoExt;
+    private CmsBtTasksDao tasksDao;
 
     @Autowired
     private CmsBtTasksIncrementStockDaoExt cmsBtTasksIncrementStockDaoExt;
+
     @Autowired
     private CmsBtStockSeparateItemDaoExt cmsBtStockSeparateItemDaoExt;
+
     @Autowired
     private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;
+
     @Autowired
     private CmsBtStockSeparateIncrementItemDaoExt cmsBtStockSeparateIncrementItemDaoExt;
+
     @Autowired
     private CmsBtStockSalesQuantityDaoExt cmsBtStockSalesQuantityDaoExt;
-
 
     public List<Map<String, Object>> getStockSeparateIncrementTask(Map<String, Object> param) {
         return cmsBtTasksIncrementStockDaoExt.selectStockSeparateIncrementTask(param);
@@ -73,9 +78,7 @@ public class StockSeparateService extends BaseService {
         cmsBtTasksStockDaoExt.deleteStockSeparatePlatform(sqlParam2);
 
         // 删除任务表中的数据
-        CmsBtTasksBean cmsBtTasksBean = new CmsBtTasksBean();
-        cmsBtTasksBean.setId(taskId);
-        cmsBtTasksDaoExt.delete(cmsBtTasksBean);
+        tasksDao.delete(taskId);
     }
 
     // TODO 因为梁兄帮promotion stock修改了将dao和service的访问,不知道这个方法对应的原始方法是哪个,我暂时注释掉-edward
@@ -209,7 +212,7 @@ public class StockSeparateService extends BaseService {
      * 导入文件数据更新(增量方式)
      *
      * @param saveData    保存对象
-     * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
+     * @param taskId      ?
      * @param creater     创建者/更新者
      * @param channelId   渠道id
      */
@@ -345,7 +348,8 @@ public class StockSeparateService extends BaseService {
         /**
          * insert cmsBtTasks
          */
-        cmsBtTasksDaoExt.insert(cmsBtTasksBean);
+        tasksDao.insert(cmsBtTasksBean);
+
         String taskID = String.valueOf(cmsBtTasksBean.getId());
 
         /**
