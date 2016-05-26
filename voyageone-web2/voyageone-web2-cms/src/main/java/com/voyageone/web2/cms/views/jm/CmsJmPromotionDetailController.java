@@ -56,12 +56,12 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
-        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
+        return success(serviceCmsBtJmPromotionProduct.getPageByWhere(params));
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetPromotionProductInfoCountByWhere)
     public AjaxResponse getPromotionProductInfoCountByWhere(@RequestBody Map<String, Object> map)
     {
-        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoCountByWhere(map));
+        return success(serviceCmsBtJmPromotionProduct.getCountByWhere(map));
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATE)
     public AjaxResponse update(@RequestBody CmsBtJmPromotionProductModel params) {

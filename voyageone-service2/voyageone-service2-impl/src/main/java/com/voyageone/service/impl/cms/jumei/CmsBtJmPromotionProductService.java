@@ -54,14 +54,14 @@ public class CmsBtJmPromotionProductService {
         return daoExt.getListByWhere(map);
     }
 
-    public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
-        return daoExt.getPromotionProductInfoListByWhere(map);
-    }
-    public int getPromotionProductInfoCountByWhere(Map<String, Object> map)
-    {
-        return  daoExt.getPromotionProductInfoCountByWhere(map);
+    public List<MapModel> getPageByWhere(Map<String, Object> map) {
+        return daoExt.getPageByWhere(map);
     }
 
+    public int getCountByWhere(Map<String, Object> map)
+    {
+        return  daoExt.getCountByWhere(map);
+    }
     public int delete(int id) {
         return dao.delete(id);
     }
