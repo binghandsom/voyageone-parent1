@@ -474,6 +474,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                         queryObj.setProjection("{'fields.images1':1,'prodId': 1, 'fields.code': 1,'_id':0}");
                         queryObj.setQuery("{\"fields.code\":\"" + String.valueOf(pCdList.get(i)) + "\"}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
+                        // 如果根据code获取不到数据就跳过
+                        if (prod == null)
+                            continue;
                         List<CmsBtProductModel_Field_Image> fldImgList = prod.getFields().getImages1();
                         if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);

@@ -213,7 +213,7 @@
                                     </label>
                                     <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{group.channelName}}&nbsp;</span>
 									<span class="m-r-sm" ng-if="group.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="{{$root.productUrl}}{{group.numIid}}" target="_blank"  ng-bind="group.numIid"></a>
+										<a ng-href="{{vm.platformUrl}}{{group.numIid}}" target="_blank"  ng-bind="group.numIid"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="#/group/detail/{{group.modelId}}" title="{{group.productModel}}"
@@ -307,7 +307,7 @@
                                     <span class="label label-danger m-t-xs m-l-sm m-r-sm">&nbsp;M&nbsp;</span>
                                     <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{code.channelName}}&nbsp;</span>
 									<span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="{{$root.productUrl}}{{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
+										<a ng-href="{{vm.platformUrl}}{{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
 									</span>&nbsp;
 										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
 											<a ng-href="#/product/detail/{{code.productId}}" target="_blank" ng-bind="code.productCode"></a>

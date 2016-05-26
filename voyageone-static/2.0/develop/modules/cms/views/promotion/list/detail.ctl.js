@@ -25,7 +25,8 @@ define([
             groupSelList: { selList: []},
             codeSelList: { selList: []},
             skuSelList: { selList: []},
-            tagList:[]
+            tagList:[],
+            platformUrl: ''
         };
         $scope.currentChannelId = cookieService.channel();
 
@@ -38,6 +39,7 @@ define([
                 $scope.vm.promotionStatus = res.data.promotionStatus;
                 promotionService.initByPromotionId($routeParams.promotionId).then(function(res){
                     $scope.vm.tagList=res.data.tagList;
+                    $scope.vm.platformUrl = res.data.platformUrl;
                 });
                 promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                     $scope.vm.promotion = res.data[0];
