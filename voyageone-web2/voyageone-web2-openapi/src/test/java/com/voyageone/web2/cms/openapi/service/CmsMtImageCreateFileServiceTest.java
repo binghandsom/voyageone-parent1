@@ -39,7 +39,7 @@ public class CmsMtImageCreateFileServiceTest {
         String file = "nike-air-penny-ii-333886005-1";//"test-test-1";//
         String vparam = "[\"file:bcbg/bcbg-sku.png\",\"file:bcbg/bcbgtupian.jpg\",\"Text String to be rendered\"]";
         String queryString = "cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
-        GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        GetImageResultBean result = service.getImage(cId, templateId, file, false, false, vparam, "测试创建");
 
     }
 
@@ -191,7 +191,7 @@ sink=format[jpg],quality[100]
         //int templateId = 15;
         String file = "nike-air-penny-ii-333886005-1";// + System.currentTimeMillis() + "templateId:" + templateId;//"test-test-1";//
         String vparam = JacksonUtil.bean2Json(paramList);
-        GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        GetImageResultBean result = service.getImage(cId, templateId, file, false, false, vparam, "测试创建");
         System.out.println(result.getErrorCode()+""+result.getErrorMsg());
        // Assert.isTrue(result.getErrorCode()==0,"有错误");
     }
