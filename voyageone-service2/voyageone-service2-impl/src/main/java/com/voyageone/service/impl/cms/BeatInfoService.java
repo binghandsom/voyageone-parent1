@@ -2,9 +2,12 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.dao.cms.CmsBtTaskJiagepiluDao;
 import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
+import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,88 +16,90 @@ import java.util.Map;
 
 /**
  * Tag Service
+ * 价格披露用~
+ * 因接口改造改动 by Jonas on 2016-05-24 17:52:01
  *
  * @author chuanyu.liang 15/12/30
- * @version 2.0.0
+ * @version 2.1.0
+ * @since 2.0.0
  */
 @Service
 public class BeatInfoService extends BaseService {
 
     @Autowired
-    private CmsBtBeatInfoDaoExt beatInfoDao;
+    private CmsBtTaskJiagepiluDao jiagepiluDao;
 
+    @Autowired
+    private CmsBtBeatInfoDaoExt beatInfoDaoExt;
 
-    public List<CmsBtBeatInfoBean> getBeatInfoListByTaskId(int taskId, BeatFlag flag, int offset, int size) {
-        return beatInfoDao.selectListByTask(taskId, flag, offset, size);
+    public List<CmsBtBeatInfoBean> getBeatInfoListByTaskId(int taskId, BeatFlag flag, String searchKey, int offset, int size) {
+        return beatInfoDaoExt.selectListByTaskWithPrice(taskId, flag, searchKey, offset, size);
     }
 
-    public int getBeatInfoCountByTaskId(int taskId, BeatFlag flag) {
-        return beatInfoDao.selectListByTaskCount(taskId, flag);
+    public int getBeatInfoCountByTaskId(int taskId, BeatFlag flag, String searchKey) {
+        return beatInfoDaoExt.selectListByTaskCount(taskId, flag, searchKey);
     }
 
     public CmsBtBeatInfoBean getBeatInfById(int beatId) {
-        return beatInfoDao.selectOneById(beatId);
+        CmsBtTaskJiagepiluModel model = jiagepiluDao.select(beatId);
+        return new CmsBtBeatInfoBean(model);
     }
 
     public List<CmsBtBeatInfoBean> getBeatInfByTaskId(int taskId) {
-        return beatInfoDao.selectListByTask(taskId);
+        return beatInfoDaoExt.selectListByTask(taskId);
     }
 
-    public List<Map> getBeatSummary(int taskId) {
-        return beatInfoDao.selectSummary(taskId);
+    public List<Map<String, Object>> getBeatSummary(int taskId) {
+        return beatInfoDaoExt.selectSummary(taskId);
     }
 
     public int getCountInFlags(int taskId, BeatFlag... flags) {
-        return beatInfoDao.selectCountInFlags(taskId, flags);
+        return beatInfoDaoExt.selectCountInFlags(taskId, flags);
     }
 
     public CmsBtBeatInfoBean getBeatInfByNumiid(int taskId, String numIid) {
-        return beatInfoDao.selectOneByNumiid(taskId, numIid);
+        return beatInfoDaoExt.selectOneByNumiid(taskId, numIid);
     }
 
     public List<CmsBtBeatInfoBean> getBeatInfByNumiidInOtherTask(int promotion_id, int taskId, String numIid) {
-        return beatInfoDao.selectListByNumiidInOtherTask(promotion_id, taskId, numIid);
+        return beatInfoDaoExt.selectListByNumiidInOtherTask(promotion_id, taskId, numIid);
     }
 
     @VOTransactional
     public int addTasks(List<CmsBtBeatInfoBean> models) {
-        return beatInfoDao.insertList(models);
+        return beatInfoDaoExt.insertList(models);
     }
 
     @VOTransactional
     public int updateCode(CmsBtBeatInfoBean model) {
-        return beatInfoDao.updateCode(model);
+        return beatInfoDaoExt.updateCode(model);
     }
 
     @VOTransactional
-    public int updateDiffPromotionMessage(int taskId, String message) {
-        return beatInfoDao.updateDiffPromotionMessage(taskId, message);
-    }
+    public int importBeatInfo(int taskId, List<CmsBtBeatInfoBean> models) {
 
-    @VOTransactional
-    public int removeTask(int taskId) {
-        return beatInfoDao.deleteByTask(taskId);
-    }
+        int errorFlag = BeatFlag.CANT_BEAT.getFlag();
 
-    @VOTransactional
-    public void importBeatInfo(int taskId, List<CmsBtBeatInfoBean> models) {
+        int count1 = beatInfoDaoExt.deleteByTask(taskId);
 
-        beatInfoDao.deleteByTask(taskId);
+        int count2 = beatInfoDaoExt.insertList(models);
 
-        beatInfoDao.insertList(models);
+        int count3 = beatInfoDaoExt.updateNoCodeMessage(taskId, errorFlag, "不能在 Promo 中找到 Code");
 
-        beatInfoDao.updateDiffPromotionMessage(taskId, "与 Promotion 信息不符");
+        int count4 = beatInfoDaoExt.updateNoNumiidMessage(taskId, errorFlag, "不能在 Promo 中找到 Numiid");
+
+        int count5 = beatInfoDaoExt.updateCodeNotMatchNumiidMessage(taskId, errorFlag, "和 Promo 中的 Code 和 Numiid 不匹配");
+
+        return count1 + count2 + count3 + count4 + count5;
     }
 
     @VOTransactional
     public int updateBeatInfoFlag(CmsBtBeatInfoBean beatInfoModel) {
-        return beatInfoDao.updateFlag(beatInfoModel);
+        return beatInfoDaoExt.updateFlag(beatInfoModel);
     }
 
     @VOTransactional
-    public int updateBeatInfoFlag(int taskId, BeatFlag flag, String userName) {
-        return beatInfoDao.updateFlags(taskId, flag, userName);
+    public int updateBeatInfoFlag(int taskId, BeatFlag flag, ImageStatus imageStatus, Boolean force, String userName) {
+        return beatInfoDaoExt.updateFlags(taskId, flag.getFlag(), imageStatus.getId(), force, userName);
     }
-
-
 }

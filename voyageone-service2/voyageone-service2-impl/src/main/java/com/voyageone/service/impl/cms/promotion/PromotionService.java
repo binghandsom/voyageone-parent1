@@ -10,6 +10,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
@@ -44,6 +45,9 @@ public class PromotionService extends BaseService {
     @Autowired
     private CmsBtTagDao cmsBtTagDao;
 
+    @Autowired
+    private CmsBtPromotionDao promotionDao;
+
     /**
      * 根据PromotionId查询
      *
@@ -54,6 +58,10 @@ public class PromotionService extends BaseService {
         Map<String, Object> params = new HashMap<>();
         params.put("promotionId", promotionId);
         return cmsBtPromotionDaoExt.selectById(params);
+    }
+
+    public CmsBtPromotionModel getPromotion(int promotionId) {
+        return promotionDao.select(promotionId);
     }
 
     /**
