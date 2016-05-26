@@ -12,6 +12,7 @@ import com.voyageone.common.spring.CMappingJacksonObjectMapper;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,25 @@ public final class JacksonUtil {
     public static <T> T json2Bean(String jsonStr, Class<T> cls) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            return mapper.readValue(jsonStr, cls);
+        } catch (IOException e) {
+            throw new SystemException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 根据json字符串返回对应java类型
+     *
+     * @param jsonStr String
+     * @param cls     Class<T>
+     * @return T
+     */
+    public static <T> T json2BeanWithDateCovert(String jsonStr, Class<T> cls) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        mapper.setDateFormat(format);
         try {
             return mapper.readValue(jsonStr, cls);
         } catch (IOException e) {

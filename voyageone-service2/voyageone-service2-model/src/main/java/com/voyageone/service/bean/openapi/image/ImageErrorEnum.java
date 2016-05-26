@@ -8,6 +8,8 @@ public enum ImageErrorEnum implements ErrorEnumInterface {
     ChannelIdNotNull(10102, "ChannelId must not be null"),
     FileNotNull(10103, "File  must not be null"),
     VParamNotNull(10104, "VParam template must not be null"),
+    TASKIDNotNull(10105, "taskId not found."),
+    TASKNotNull(10106, "task not found."),
     LiquidCreateImageError(10201, "Call  liquid interface exception"),
     LiquidCreateImageExceptionImage(1020101, "liquid create an exception image"),
     LiquidCreateImageNullImage(1020102,"liquid create a null image"),

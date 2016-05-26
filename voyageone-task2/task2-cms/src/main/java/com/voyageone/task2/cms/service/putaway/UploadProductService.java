@@ -131,13 +131,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
             }
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 END
-            // tom 增加一个判断, 如果是jewelry店以外的话, 就跳过, 这段代码是临时用用, 预计5/29左右可以删掉 START
-            if (mainSxProduct != null) {
-                if (!mainSxProduct.getCmsBtProductModelGroupPlatform().getChannelId().equals("010")) {
-                    continue;
-                }
-            }
-            // tom 增加一个判断, 如果是jewelry店以外的话, 就跳过, 这段代码是临时用用, 预计5/29左右可以删掉 END
 
             workload.setMainProduct(mainSxProduct);
 
