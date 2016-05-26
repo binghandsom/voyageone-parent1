@@ -139,6 +139,11 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.EXTENDCOLOR_BASECOLOR) {
                     colorExtend_basecolorField = platformProp;
                 }
+
+                // 暂时不知道匹配什么
+                if (type.intValue() == SkuTemplateConstants.UNKOWN) {
+                    addUnkownField(platformProp);
+                }
             }
         }
 
