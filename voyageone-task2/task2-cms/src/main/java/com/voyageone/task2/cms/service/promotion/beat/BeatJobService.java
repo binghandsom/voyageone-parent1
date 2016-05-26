@@ -10,6 +10,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
@@ -20,7 +21,6 @@ import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
-import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
@@ -62,6 +62,10 @@ public class BeatJobService extends BaseTaskService {
      */
     private static int lastErrorTarget = 0;
 
+    static int getLastErrorTarget() {
+        return lastErrorTarget;
+    }
+
     @Autowired
     private CmsBeatInfoService beatInfoService;
 
@@ -102,6 +106,11 @@ public class BeatJobService extends BaseTaskService {
         final int LIMIT = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
         List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT);
+
+        if (beatInfoModels.isEmpty()) {
+            $info("没有需要进行处理的价格披露任务");
+            return;
+        }
 
         $info("预定抽取数量：%s，实际抽取数量：%s", LIMIT, beatInfoModels.size());
 
@@ -157,7 +166,6 @@ public class BeatJobService extends BaseTaskService {
                         // 对已知可能出现的异常, 提供相对明确的信息格式化
                         // 并且, 这种异常并不发送错误报告
 
-                        String exceptionName = exception.getClass().getName();
                         String message = exception.getMessage();
 
                         if (exception instanceof GetUpdateSchemaFailException) {
@@ -174,21 +182,19 @@ public class BeatJobService extends BaseTaskService {
                                     apiException.getMessage());
                         }
 
-                        message = format("价格披露2 出现 %s 异常 -> %s", exceptionName, message);
+                        $debug(format("价格披露2 出现 %s 异常 -> %s", exception.getClass().getName(), message), exception);
 
-                        $info(message);
-                        bean.setMessage(message);
+                        bean.setMessage(format("出现 %s 异常: %s", getGoodName(exception), message));
                         fail(bean);
 
                     } catch (Exception exception) {
 
-                        // 对未知异常发送错误报告
-                        String message = format("价格披露2 出现 %s 异常 -> %s",
-                                exception.getClass().getName(), exception.getMessage());
+                        $debug("价格披露2 出现异常", exception);
 
-                        $info(message);
-                        bean.setMessage(message);
+                        // 对未知异常发送错误报告
                         logIssue(exception, bean);
+
+                        bean.setMessage(format("出现 %s 异常: %s", getGoodName(exception), exception.getMessage()));
                         fail(bean);
                     }
 
@@ -200,6 +206,15 @@ public class BeatJobService extends BaseTaskService {
 
         // 运行线程
         runWithThreadPool(runnableList, taskControlList);
+    }
+
+    /**
+     * 优化异常名称的显示
+     * <p>如 java.lang.NullPointerException 将转换为 NullPointer</p>
+     */
+    private String getGoodName(Exception exception) {
+        String exceptionName = exception.getClass().getSimpleName();
+        return exceptionName.replace("Exception", "");
     }
 
     private int[] tryGetConfig(List<TaskControlBean> taskControlList) {
@@ -265,34 +280,32 @@ public class BeatJobService extends BaseTaskService {
 
         private ShopBean shopBean;
 
-        private CmsMtImageCategoryModel upCat1egory;
+        private CmsMtImageCategoryModel upCategory;
 
-        private CmsMtImageCategoryModel downCat1egory;
+        private CmsMtImageCategoryModel downCategory;
 
         private CmsBtBeatInfoBean beatInfoBean;
 
-        private TaskBean taskBean;
-
         private ConfigBean configBean;
 
-        private TbItemSchema tbItemS1chema;
+        private TbItemSchema tbItemSchema;
 
         CmsMtImageCategoryModel getUpCategory() {
-            if (upCat1egory == null)
-                upCat1egory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
-            return upCat1egory;
+            if (upCategory == null)
+                upCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
+            return upCategory;
         }
 
         CmsMtImageCategoryModel getDownCategory() {
-            if (downCat1egory == null)
-                downCat1egory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Main);
-            return downCat1egory;
+            if (downCategory == null)
+                downCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Main);
+            return downCategory;
         }
 
         TbItemSchema getTbItemSchema() throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
-            if (tbItemS1chema == null)
-                tbItemS1chema = tbItemService.getUpdateSchema(shopBean, beatInfoBean.getNumIid());
-            return tbItemS1chema;
+            if (tbItemSchema == null)
+                tbItemSchema = tbItemService.getUpdateSchema(shopBean, beatInfoBean.getNumIid());
+            return tbItemSchema;
         }
 
         private Context(CmsBtBeatInfoBean beatInfoBean) {
@@ -301,11 +314,10 @@ public class BeatJobService extends BaseTaskService {
 
             this.beatInfoBean = beatInfoBean;
             this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
-            this.taskBean = new TaskBean(beatInfoBean.getTask());
-            this.configBean = taskBean.getConfig();
+            this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
         }
 
-        private InputStream getImageStream(int templateId, String imageName) {
+        private InputStream getImageStream(int templateId, String imageName, String imageFileName, boolean withPrice) {
 
             // 检查当前图片状态
             ImageStatus currentStatus = beatInfoBean.getImageStatusEnum();
@@ -326,10 +338,14 @@ public class BeatJobService extends BaseTaskService {
 
             ImageCreateGetRequest request = new ImageCreateGetRequest();
 
+            request.setFillStream(true);
             request.setChannelId(shopBean.getOrder_channel_id());
             request.setTemplateId(templateId);
-            request.setFile(imageName);
-            request.setVParam(new String[]{imageName, promotionPriceString});
+            request.setFile(imageFileName);
+            if (withPrice)
+                request.setVParam(new String[]{imageName, promotionPriceString});
+            else
+                request.setVParam(new String[]{imageName});
 
             try {
                 ImageCreateGetResponse response = imageCreateService.getImage(request);
@@ -340,7 +356,7 @@ public class BeatJobService extends BaseTaskService {
             }
         }
 
-        private String getTaobaoImageUrl(int templateId, String imageName, CmsMtImageCategoryModel categoryModel)
+        private String getTaobaoImageUrl(int templateId, String imageName, String imageFileName, CmsMtImageCategoryModel categoryModel, boolean withPrice)
                 throws IOException, ApiException {
 
             // 首先尝试获取之前存在图片
@@ -348,7 +364,7 @@ public class BeatJobService extends BaseTaskService {
             // 直接继续上图
             try {
                 PictureGetResponse pictureGetResponse = tbPictureService.getPictures(shopBean,
-                        imageName, Long.valueOf(categoryModel.getCategory_tid()));
+                        imageFileName, Long.valueOf(categoryModel.getCategory_tid()));
 
                 List<Picture> pictures = pictureGetResponse.getPictures();
 
@@ -359,13 +375,13 @@ public class BeatJobService extends BaseTaskService {
             } catch (ApiException ignored) {
             }
 
-            $info("尝试下载并上传：[ %s ] -> [ %s ] -> [ %s ]", templateId, imageName, categoryModel.getCategory_name());
+            $info("尝试下载并上传：[ %s ] -> [ %s ] -> [ %s ]", templateId, imageFileName, categoryModel.getCategory_name());
 
-            InputStream inputStream = getImageStream(templateId, imageName);
+            InputStream inputStream = getImageStream(templateId, imageName, imageFileName, withPrice);
 
             byte[] bytes = IOUtils.toByteArray(inputStream);
 
-            PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageName, categoryModel.getCategory_tid());
+            PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageFileName, categoryModel.getCategory_tid());
 
             if (uploadResponse.isSuccess() && StringUtils.isEmpty(uploadResponse.getSubCode()))
                 // 成功返回
@@ -446,6 +462,7 @@ public class BeatJobService extends BaseTaskService {
 
             Integer templateId;
             String imageName;
+            boolean withPrice;
             CmsMtImageCategoryModel categoryModel;
 
             switch (beatInfoBean.getSynFlagEnum()) {
@@ -453,23 +470,26 @@ public class BeatJobService extends BaseTaskService {
                     templateId = configBean.getBeat_template();
                     imageName = image_url_key + ".beat.jpg";
                     categoryModel = getUpCategory();
+                    withPrice = true;
                     break;
                 case REVERT:
                 case SUCCESS:
                     templateId = configBean.getRevert_template();
                     imageName = image_url_key + ".jpg";
                     categoryModel = getDownCategory();
+                    withPrice = false;
                     break;
                 default:
                     return null;
             }
-            return getTaobaoImageUrl(templateId, imageName, categoryModel);
+            return getTaobaoImageUrl(templateId, image_url_key, imageName, categoryModel, withPrice);
         }
 
         private String getTaobaoVerticalImageUrl() throws IOException, ApiException {
 
             Integer templateId;
             CmsMtImageCategoryModel categoryModel;
+            boolean withPrice;
 
             CmsBtPromotionCodesBean code = beatInfoBean.getPromotion_code();
 
@@ -480,17 +500,19 @@ public class BeatJobService extends BaseTaskService {
                     templateId = configBean.getBeat_vtemplate();
                     imageName = image_url_key + ".beat.jpg";
                     categoryModel = getUpCategory();
+                    withPrice = true;
                     break;
                 case REVERT:
                 case SUCCESS:
                     templateId = configBean.getRevert_vtemplate();
                     imageName = image_url_key + ".jpg";
                     categoryModel = getDownCategory();
+                    withPrice = false;
                     break;
                 default:
                     return null;
             }
-            return getTaobaoImageUrl(templateId, imageName, categoryModel);
+            return getTaobaoImageUrl(templateId, image_url_key, imageName, categoryModel, withPrice);
         }
     }
 }

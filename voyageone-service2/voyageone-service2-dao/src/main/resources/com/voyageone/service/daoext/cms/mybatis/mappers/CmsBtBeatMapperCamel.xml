@@ -140,9 +140,10 @@
 
     <update id="updateFlag">
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu
-        SET syn_flag = #{synFlag},
-            modifier = #{modifier},
-            modified = NOW()
+        SET syn_flag     = #{synFlag},
+            image_status = #{imageStatus},
+            modifier     = #{modifier},
+            modified     = NOW()
         WHERE id = #{id}
               AND modified = #{modified}
     </update>
@@ -265,6 +266,8 @@
             b.product_code,
             syn_flag,
             message,
+            image_status,
+            image_task_id,
             b.created,
             b.creater,
             b.modified,
@@ -412,10 +415,11 @@
 
     <update id="updateFlagAndMessage">
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu
-        SET syn_flag = #{synFlag},
-            message  = #{message},
-            modified = NOW(),
-            modifier = #{modifier}
+        SET syn_flag     = #{synFlag},
+            message      = #{message},
+            image_status = #{imageStatus},
+            modified     = NOW(),
+            modifier     = #{modifier}
         WHERE id = #{id}
               AND modified = #{modified}
     </update>
