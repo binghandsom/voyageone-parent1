@@ -62,7 +62,7 @@ public class CartEnums {
 		/**
 		 * 天猫MiniMall
 		 */
-		TMM("30"),
+		TMM("d"),
 
 		/**
 		 * USJOI

@@ -40,7 +40,7 @@ public class TbSellerCatService extends TbBase {
 
         try {
             SellercatsListGetResponse  response  = reqTaobaoApi(shop, request);
-            if(!StringUtils.isNullOrBlank2(response.getErrorCode())) {
+            if(StringUtils.isNullOrBlank2(response.getErrorCode())) {
                 return response.getSellerCats();
             }
 
