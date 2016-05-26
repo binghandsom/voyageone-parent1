@@ -1,12 +1,13 @@
 package com.voyageone.service.impl.cms;
 
-import com.mysql.jdbc.StringUtils;
+
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.dao.ShopDao;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtConfigHistoryDao;
 import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
 import org.springframework.stereotype.Service;
@@ -31,36 +32,14 @@ public class CartService {
     @Resource
     CmsBtConfigHistoryDao historyDao;
 
-    public List<CartBean> getAll(CartBean con) {
-        List<CartBean> carts = cartDao.getAllCarts();
-        Predicate<CartBean> filter = (bean) -> {
-
-            boolean flg = true;
-
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(con.getCart_id())) {
-                flg = flg && con.getCart_id().equalsIgnoreCase(bean.getCart_id());
-            }
-
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(con.getName())) {
-                flg = flg && con.getName().equalsIgnoreCase(bean.getName());
-            }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(con.getCart_type())) {
-                flg = flg && con.getCart_type().equalsIgnoreCase(bean.getCart_type());
-            }
-            if (con.getActive() != null) {
-                flg = flg && con.getActive().equalsIgnoreCase(bean.getActive());
-            }
-            return flg;
-
-        };
-        return carts.stream().filter(filter)
-                .collect(Collectors.toCollection(ArrayList::new));
+    public List<CartBean> getCarts(CartBean con) {
+        return cartDao.getCarts(con);
     }
 
 
     public int saveOrUpdate(CartBean bean) {
 
-        boolean isAdd = StringUtils.isEmptyOrWhitespaceOnly(bean.getCart_id());
+        boolean isAdd = com.mysql.jdbc.StringUtils.isEmptyOrWhitespaceOnly(bean.getCart_id());
         CmsBtConfigHistory<CartBean> history = null;
         if (isAdd) {
             history = CmsBtConfigHistory.build(null, bean, "CART Add", bean.getCreater());
@@ -79,7 +58,7 @@ public class CartService {
      * @return
      */
     public int deleteLogic(CartBean bean) {
-        if (bean == null || StringUtils.isNullOrEmpty(bean.getCart_id())) {
+        if (bean == null || com.mysql.jdbc.StringUtils.isNullOrEmpty(bean.getCart_id())) {
 
             return 0;
         }
@@ -92,27 +71,28 @@ public class CartService {
         return result;
     }
 
-    public CartBean getById(String cart_id) {
-        CartBean con = new CartBean();
-        con.setCart_id(cart_id);
-        List<CartBean> results = getAll(con);
-        if (results.size() > 0) {
-            return results.get(0);
-        }
-        return null;
-    }
-
     public void save(CartBean bean) {
         try {
-            CartBean originCart = Carts.getCart(bean.getCart_id());
-            cartDao.insert(bean);
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString());
-            CmsBtConfigHistory<CartBean> history = CmsBtConfigHistory.build(originCart, bean, "CART ADD", bean.getCreater());
-            historyDao.insert(history);
-        } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("Duplicate entry")) {
-                throw new BusinessException("CART_ID重复!");
+            CartBean oldCart = cartDao.getCart(bean.getCart_id());
+            if (oldCart != null) {
+                if ("1".equals(oldCart.getActive())) {
+                    // 主键存在,并且非逻辑删除的情况
+                    throw new BusinessException("CART_ID重复!");
+                } else {
+                    // 主键存在,但是逻辑删除的情况
+                    bean.setActive("1");
+                    cartDao.update(bean);
+                }
+            } else {
+                // 主键不存在的情况（包括逻辑删除也不存在）
+                cartDao.insert(bean);
             }
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString());
+            CmsBtConfigHistory<CartBean> history = CmsBtConfigHistory.build(null, bean, "CART ADD", bean.getCreater());
+            historyDao.insert(history);
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
             throw new BusinessException("保存Cart失败!", e);
         }
     }

@@ -6,19 +6,20 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.service.bean.cms.CmsBtStoreOperationHistoryBean;
 import com.voyageone.service.impl.cms.StoreOperationService;
-import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.bean.Page;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,7 @@ public class CmsStoreOperationController extends CmsController {
 
     public static final int INTERVAL_DEFAULT = 2; //默认值为2
 
-
-    @Resource
+    @Autowired
     StoreOperationService storeOperationService;
 
 
@@ -64,7 +64,8 @@ public class CmsStoreOperationController extends CmsController {
     public AjaxResponse init() {
         String channelId = getUser().getSelChannelId();
         long uploadCnt = storeOperationService.countProductsThatCanUploaded(channelId);
-        return success(ImmutableMap.of("uploadCnt", uploadCnt));
+        return success(ImmutableMap.of("uploadCnt", uploadCnt,
+                "storeOperationTypeList", Types.getTypeList(75, this.getLang())));
     }
 
     /**
@@ -134,7 +135,8 @@ public class CmsStoreOperationController extends CmsController {
         String channelId = getUser().getSelChannelId();
         checkInInterval(channelId);
         storeOperationService.rePublishPrice(channelId, userName);
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+        return success(true);
     }
 
     /**
@@ -142,14 +144,8 @@ public class CmsStoreOperationController extends CmsController {
      */
     @RequestMapping("getHistory")
     public AjaxResponse getHistory(@RequestBody Map<String, Object> params) {
-
-        List<CmsBtStoreOperationHistoryModel> historys = storeOperationService.getHistoryBy(params);
-        return success(Page.fromMap(params).withData(historys));
-    }
-
-    public static void main(String[] args) {
-        ConcurrentHashMap<String, LocalDateTime> tests = new ConcurrentHashMap<>();
-        LocalDateTime old = tests.putIfAbsent("a", LocalDateTime.now());
-        System.out.println(old);
+        params.put("lang", this.getLang());
+        List<CmsBtStoreOperationHistoryBean> historyList = storeOperationService.getHistoryBy(params);
+        return success(Page.fromMap(params).withData(historyList));
     }
 }

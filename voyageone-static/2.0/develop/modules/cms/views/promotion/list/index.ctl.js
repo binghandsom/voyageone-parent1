@@ -4,7 +4,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (_) {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, cookieService) {
+    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, cookieService,$filter) {
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":0},{"name":"Close","value":1}],"promotionIdList": []};
         $scope.searchInfo = {};
@@ -31,6 +31,14 @@ define([
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function (res) {
                 $scope.vm.promotionList = _.where(res.data, {isAllPromotion: 0});
+                _.each($scope.vm.promotionList,function(item){
+                    if(item.prePeriodStart) item.prePeriodStart = new Date(item.prePeriodStart);
+                    if(item.prePeriodEnd) item.prePeriodEnd = new Date(item.prePeriodEnd);
+                    if(item.activityStart) item.activityStart = new Date(item.activityStart);
+                    if(item.activityEnd) item.activityEnd = new Date(item.activityEnd);
+                    if(item.preSaleStart) item.preSaleStart = new Date(item.preSaleStart);
+                    if(item.preSaleEnd) item.preSaleEnd = new Date(item.preSaleEnd);
+                })
                 $scope.groupPageOption.total = $scope.vm.promotionList.length;
             }, function (res) {
             })
@@ -56,6 +64,6 @@ define([
         };
     }
 
-    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes', 'cookieService'];
+
     return indexController;
 });
