@@ -102,6 +102,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             newNode.setModifier(creator);
             newNode.setCatPath(cName);
             newNode.setParentCatId("0");
+            newNode.setFullCatCId(cId);
             newNode.setIsParent(0);
             newNode.setChildren(new ArrayList<CmsBtSellerCatModel>());
             insert(newNode);
@@ -124,7 +125,8 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
                 newNode.setModified(now);
                 newNode.setCreater(creator);
                 newNode.setModifier(creator);
-                newNode.setCatPath(parent.getCatPath() + "->" + cName);
+                newNode.setCatPath(parent.getCatPath() + ">" + cName);
+                newNode.setFullCatCId(parent.getFullCatCId() + "-" + cId);
                 newNode.setParentCatId(parent.getCatId());
                 newNode.setIsParent(0);
                 newNode.setChildren(new ArrayList<CmsBtSellerCatModel>());
@@ -156,7 +158,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
         if(resultList.size() > 0)
         {
             CmsBtSellerCatModel result = resultList.get(0);
-            String oldCName = result.getCatName();
+
             result.setCatName(cName);
             String oldPath = result.getCatPath();
 
