@@ -219,7 +219,10 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
                 }
             }
 
-            if (productIdStr != null){
+            // 20160526 tom bug修正 START
+//            if (productIdStr != null){
+            if (!StringUtils.isEmpty(productIdStr)){
+            // 20160526 tom bug修正 END
 
                 Long productId = Long.parseLong(productIdStr);
 
