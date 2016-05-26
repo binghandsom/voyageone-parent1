@@ -1,5 +1,7 @@
 package com.voyageone.components.jumei.request;
 
+import com.voyageone.common.util.StringUtils;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +18,11 @@ public class HtSpuAddRequest implements BaseJMRequest {
 
     private String jumei_product_id;//	String; 聚美产品ID
     private String upc_code;// 可选	String        商品自带条码
-    private String propery;//	String 规格 :FORMAL 正装 MS 中小样 OTHER 其他
+    private String property;//	String 规格 :FORMAL 正装 MS 中小样 OTHER 其他
     private String size;//	String     容量/尺寸 /
     private String attribute;// 可选	String 型号/颜色
-    private Float abroad_price;//float  海外价格
-    private int area_code;//	;Number 货币符号Id
+    private String abroad_price;//float  海外价格
+    private String area_code;//	;Number 货币符号Id
     private String abroad_url;// 可选	String   海外地址(可不传)
     // 白底方图 参数范围: 注：可不传,最多10张，1000*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
     private String normalImage;
@@ -52,12 +54,12 @@ public class HtSpuAddRequest implements BaseJMRequest {
         this.upc_code = upc_code;
     }
 
-    public String getPropery() {
-        return propery;
+    public String getProperty() {
+        return property;
     }
 
-    public void setPropery(String propery) {
-        this.propery = propery;
+    public void setProperty(String property) {
+        this.property = property;
     }
 
     public String getSize() {
@@ -76,19 +78,19 @@ public class HtSpuAddRequest implements BaseJMRequest {
         this.attribute = attribute;
     }
 
-    public Float getAbroad_price() {
+    public String getAbroad_price() {
         return abroad_price;
     }
 
-    public void setAbroad_price(Float abroad_price) {
+    public void setAbroad_price(String abroad_price) {
         this.abroad_price = abroad_price;
     }
 
-    public int getArea_code() {
+    public String getArea_code() {
         return area_code;
     }
 
-    public void setArea_code(int area_code) {
+    public void setArea_code(String area_code) {
         this.area_code = area_code;
     }
 
@@ -119,16 +121,16 @@ public class HtSpuAddRequest implements BaseJMRequest {
     @Override
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
-        params.put("jumei_product_id", this.getJumei_product_id());
-        params.put("upc_code", this.getUpc_code());
-        params.put("propery", this.getPropery());
-        params.put("size", this.getSize());
-        params.put("attribute", this.getAttribute());
-        params.put("abroad_price", this.getAbroad_price());
-        params.put("area_code", Integer.toString(this.getArea_code()));
-        params.put("abroad_url", this.getAbroad_url());
-        params.put("normalImage", this.getNormalImage());
-        params.put("verticalImage", this.getVerticalImage());
+        if (!StringUtils.isEmpty(getJumei_product_id())) params.put("jumei_product_id", this.getJumei_product_id());
+        if (!StringUtils.isEmpty(getUpc_code()))         params.put("upc_code", this.getUpc_code());
+        if (!StringUtils.isEmpty(getProperty()))         params.put("property", this.getProperty());
+        if (!StringUtils.isEmpty(getSize()))             params.put("size", this.getSize());
+        if (!StringUtils.isEmpty(getAttribute()))        params.put("attribute", this.getAttribute());
+        if (!StringUtils.isEmpty(getAbroad_price()))     params.put("abroad_price", this.getAbroad_price());
+        if (!StringUtils.isEmpty(getArea_code()))        params.put("area_code", this.getArea_code());
+        if (!StringUtils.isEmpty(getAbroad_url()))       params.put("abroad_url", this.getAbroad_url());
+        if (!StringUtils.isEmpty(getNormalImage()))      params.put("normalImage", this.getNormalImage());
+        if (!StringUtils.isEmpty(getVerticalImage()))    params.put("verticalImage", this.getVerticalImage());
         return params;
     }
 }

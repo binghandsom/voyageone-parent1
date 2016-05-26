@@ -102,7 +102,6 @@ public class CmsImageFileService extends BaseService {
             if (modelFile == null) {
                 //1.创建记录信息
                 modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode, isUploadUSCDN);
-                $info("CmsImageFileService:getImage create db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model.id=[%s]", channelId, templateId, file, vparam, hashCode, modelFile.getId());
             }
             //.创建并上传图片
             isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile);
@@ -159,10 +158,8 @@ public class CmsImageFileService extends BaseService {
         importModel.setErrorCode(0);
         String filePath = path + "/" + fileName;
         File excelFile = new File(filePath);
-        InputStream fileInputStream = null;
-        fileInputStream = new FileInputStream(excelFile);
-        HSSFWorkbook book = null;
-        book = new HSSFWorkbook(fileInputStream);
+        InputStream fileInputStream = new FileInputStream(excelFile);
+        HSSFWorkbook book = new HSSFWorkbook(fileInputStream);
         HSSFSheet productSheet = book.getSheet("Sheet1");
         List<CreateImageParameter> listModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listErrorMap = new ArrayList<>();//错误行集合  导出错误文件
@@ -213,6 +210,10 @@ public class CmsImageFileService extends BaseService {
             return resultBean;
         }
         return imageCreateFileService.addList(parameter, null);
+    }
+
+    public GetListResultBean getListResult(int taskId) {
+        return imageCreateFileService.getListResult(taskId);
     }
 
 }

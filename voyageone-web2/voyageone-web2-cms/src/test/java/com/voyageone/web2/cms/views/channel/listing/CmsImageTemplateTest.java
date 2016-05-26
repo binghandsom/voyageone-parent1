@@ -55,4 +55,15 @@ public class CmsImageTemplateTest {
 //        }
     }
 
+    @Test
+    public void testSelectOne() {
+        CmsBtImageTemplateModel model = dao.selectByTemplateId(30);
+        System.out.println(model);
+        model.setComment(model.getComment() + "_1");
+        dao.update(model);
+        model = dao.selectByTemplateId(30);
+        System.out.println(model);
+    }
+
+
 }

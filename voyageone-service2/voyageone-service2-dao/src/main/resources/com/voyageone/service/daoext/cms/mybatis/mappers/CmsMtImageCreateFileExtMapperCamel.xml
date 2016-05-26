@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtImageCreateFileDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtImageCreateFileModel" />
+
+    <select id="selectByTaskId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+            file.id,
+            file.hash_code,
+            file.channel_id,
+            file.template_id,
+            file.file,
+            file.file_path,
+            file.vparam,
+            file.oss_file_path,
+            file.us_cdn_file_path,
+            file.state,
+            file.oss_state,
+            file.uscdn_state,
+            file.error_msg,
+            file.error_code,
+            file.is_upload_us_cdn,
+            file.created,
+            file.creater,
+            file.modified,
+            file.modifier
+        from cms_mt_image_create_file file
+            inner join cms_mt_image_create_task_detail detail on file.id=detail.cms_mt_image_create_file_id
+        where detail.cms_mt_image_create_task_id = #{task_id,jdbcType=INTEGER}
+    </select>
+
+</mapper>
