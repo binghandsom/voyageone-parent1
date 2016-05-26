@@ -384,6 +384,16 @@
           "getTagList": "getTagList"
         }
       },
+      "sellerCat": {
+        "sellerCatService": {
+          "root": "/cms/channel/category/",
+          "init": "getSellerCatConfig",
+          "getCat":"getSellerCat",
+          "addCat": "addSellerCat",
+          "delCat": "removeSellerCat",
+          "updateCat":"updateSellerCat"
+        }
+      },
       "imageTemplateService":{
         "root":"/cms/channel/image_template",
         "init": "init",

@@ -215,6 +215,16 @@
     color: #333
 }
 
+.category_drag_list_dp li input{
+    position: relative;
+    width: 20% ! important;
+    padding: 10px;
+    border: 1px solid #ededed;
+    border-radius: 4px;
+    opacity: 1;
+    height: 30px;
+}
+
 .category-drag-minWidth input{
     width:84% ! important;
 }
