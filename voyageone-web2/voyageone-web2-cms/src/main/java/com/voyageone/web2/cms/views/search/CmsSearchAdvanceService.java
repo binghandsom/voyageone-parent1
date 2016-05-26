@@ -1039,7 +1039,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
              */
         Sheet sheet = book.getSheetAt(0);
 
-        for (CmsBtProductModel item : items) {
+        for (CmsBtProductBean item : items) {
 
             Row row = FileUtils.row(sheet, startRowIndex);
 
@@ -1056,9 +1056,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
 
+            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
+
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
 
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroups().getNumIId());
+            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
 
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
 
