@@ -292,16 +292,16 @@ public class CmsBtJmPromotionService {
         if (fields != null) {
             bean.setChannelId(model.getChannelId());
             bean.setProductCode(fields.getCode());
-            bean.setProductNameCn(fields.getProductNameCn());
+            //bean.setProductNameCn(fields.getProductNameCn());
 //            bean.setProductLongName(fields.getLongTitle());
 //            bean.setProductMediumName(fields.getMiddleTitle());
 //            bean.setProductShortName(fields.getShortTitle());
-            bean.setBrandName(fields.getBrand());
-            bean.setProductType(fields.getProductType());
-            bean.setSizeType(fields.getSizeType());
-            bean.setColorEn(fields.getColor());
-            bean.setProductDesCn(fields.getLongDesCn());
-            bean.setProductDesEn(fields.getLongDesEn());
+            //bean.setBrandName(fields.getBrand());
+           // bean.setProductType(fields.getProductType());
+           // bean.setSizeType(fields.getSizeType());
+           // bean.setColorEn(fields.getColor());
+           // bean.setProductDesCn(fields.getLongDesCn());
+           // bean.setProductDesEn(fields.getLongDesEn());
 
             if (fields.getHsCodePrivate() != null) {  //海关编号,名称,和单位
                 String value = synshipComMtValueChannelDao.selectName(fields.getHsCodePrivate(), 43, "en",model.getChannelId());
