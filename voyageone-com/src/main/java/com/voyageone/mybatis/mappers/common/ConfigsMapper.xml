@@ -105,6 +105,41 @@
         order by cart_id
     </select>
 
+    <select id="ct_cart_getList" resultType="com.voyageone.common.configs.beans.CartBean">
+        select
+        cart_id,
+        name,
+        short_name,
+        description,
+        platform_id,
+        cart_type,
+        active
+        from Synship.ct_cart
+        where 1=1
+        <if test="cart_id !=null">
+            and cart_id = #{cart_id}
+        </if>
+        <if test="name !=null">
+            and name like '%${name}%'
+        </if>
+        <if test="short_name !=null">
+            and short_name = #{short_name}
+        </if>
+        <if test="description !=null">
+            and description = #{description}
+        </if>
+        <if test="platform_id !=null">
+            and platform_id = #{platform_id}
+        </if>
+        <if test="cart_type !=null">
+            and cart_type = #{cart_type}
+        </if>
+        <if test="active !=null">
+            and active = #{active}
+        </if>
+        order by cart_id
+    </select>
+
     <select id="com_mt_third_party_config_getAll" resultType="com.voyageone.common.configs.beans.ThirdPartyConfigBean">
         select
             seq,
@@ -175,6 +210,12 @@
      <insert id="ct_cart_insert" parameterType="com.voyageone.common.configs.beans.CartBean">
         INSERT INTO Synship.ct_cart (cart_id, name, short_name, description, platform_id, cart_type, created,modified, creater, active)
         VALUES (#{cart_id}, #{name}, #{short_name}, #{description}, #{platform_id}, #{cart_type}, now(),now(),#{modifier}, 1)
+    </insert>
+
+    <insert id="ct_cart_Update" parameterType="com.voyageone.common.configs.beans.CartBean">
+        UPDATE Synship.ct_cart set name = #{name}, short_name = #{short_name}, description = #{description},
+        platform_id = #{platform_id}, cart_type = #{cart_type}, active = #{active}, modified = now(), modifier = #{modifier}
+        WHERE cart_id = #{cart_id}
     </insert>
 
     <update id="ct_cart_delete" parameterType="map" >
