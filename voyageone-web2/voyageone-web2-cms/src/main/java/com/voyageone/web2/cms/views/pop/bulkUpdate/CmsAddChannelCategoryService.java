@@ -56,8 +56,13 @@ public class CmsAddChannelCategoryService extends BaseAppService {
                 //根据商品code取得对应的类目达标属性
                 cmsBtProductModel = productService.getProductByCode(channelId, code);
                 //取得叶子类目的catId
-
-                data.put("isSelectCid",cmsBtProductModel.getSellerCats().get("cIds"));
+                List isSelectCidList = (List) cmsBtProductModel.getSellerCats().get("cIds");
+                Map isSelectCidMap = new HashMap<>();
+                for(int j=0;j<isSelectCidList.size();j++){
+                    Map map = (Map) isSelectCidList.get(j);
+                    isSelectCidMap.put(map.get("cId"),true);
+                }
+                data.put("isSelectCid",isSelectCidMap);
             }
         }
         //取得店铺渠道

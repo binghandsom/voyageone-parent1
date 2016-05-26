@@ -160,7 +160,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             result.setCatName(cName);
             String oldPath = result.getCatPath();
 
-            String[] paths = oldPath.split("->");
+            String[] paths = oldPath.split(">");
             if( paths.length > 0)
             {
                 paths[paths.length -1] = cName;
@@ -168,10 +168,16 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
 
             String catPath= "";
             for (String path:paths) {
-                catPath = catPath + "->" +path;
+                if(catPath.equals(""))
+                {
+                    catPath = path;
+                }
+                else {
+                    catPath = catPath + ">" + path;
+                }
             }
 
-            result.setCatPath(oldPath.replace(oldCName, cName));
+            result.setCatPath(catPath);
             result.setModifier(modifier);
             result.setModified(DateTimeUtil.getNow());
 
@@ -189,7 +195,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
     private void updateChildren(List<CmsBtSellerCatModel> children, String parentCatPath, String modifier)
     {
         for (CmsBtSellerCatModel model:children) {
-            model.setCatPath(parentCatPath + "->" + model.getCatName());
+            model.setCatPath(parentCatPath + ">" + model.getCatName());
             model.setModifier(modifier);
             model.setModified(DateTimeUtil.getNow());
             updateChildren(model.getChildren(), model.getCatPath(), modifier);
@@ -207,7 +213,8 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             }
             else
             {
-                result = findCId(model.getChildren() ,cId );
+                List<CmsBtSellerCatModel> childern = findCId(model.getChildren() ,cId );
+                result.addAll(childern);
             }
 
         }
