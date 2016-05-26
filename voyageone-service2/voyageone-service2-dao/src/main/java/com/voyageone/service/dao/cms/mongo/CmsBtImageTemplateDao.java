@@ -19,6 +19,10 @@ public class CmsBtImageTemplateDao extends BaseMongoDao<CmsBtImageTemplateModel>
     }
 
 
+    public void update(CmsBtImageTemplateModel model) {
+        super.update(model);
+    }
+
     /**
      * 根据banrd和productType和sizeType取得对应的所有Template列表
      */

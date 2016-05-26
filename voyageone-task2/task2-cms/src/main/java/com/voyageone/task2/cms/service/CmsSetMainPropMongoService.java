@@ -1033,6 +1033,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
                 if (!blnFound) {
+                    // 获取当前channel, 有多少个platform
+                    List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+                    List<Integer> skuCarts = new ArrayList<>();
+                    if (typeChannelBeanListApprove != null) {
+                        for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+                            skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
+                        }
+                    }
+
                     CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
                     sku.setSkuCode(feedSku.getSku());
                     sku.setBarcode(feedSku.getBarcode()); // barcode
@@ -1045,6 +1054,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 设置一些每个类目不一样的, sku级别的属性
                         sku.putAll(doSetCustomSkuInfo(feed, skuFieldSchemaList));
                     }
+
+                    // 增加默认渠道
+                    sku.setSkuCarts(skuCarts);
 
                     product.getSkus().add(sku);
                 }

@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
@@ -7,6 +10,7 @@ import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
 import com.voyageone.ims.rule_expression.RuleExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
@@ -23,6 +27,9 @@ import java.util.Set;
 public class CustomWordModuleImageWithParam extends CustomWordModule {
 
     public final static String moduleName = "ImageWithParam";
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     public CustomWordModuleImageWithParam() {
         super(moduleName);
@@ -74,7 +81,23 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             imageParams.add("");
         }
 
-        String parseResult = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, imageParams.toArray()));
+        // 20160513 tom 图片服务器切换 START
+//        String parseResult = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, imageParams.toArray()));
+
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
+        request.setTemplateId(Integer.parseInt(imageTemplate));
+        request.setFile(imageTemplate + "_" + imageParams.get(0)); // 模板id + "_" + 第一个参数(一般是图片名)
+        request.setVParam(imageParams.toArray(new String[(imageParams.size())]));
+        ImageCreateGetResponse response = null;
+        try {
+            response = imageCreateService.getImage(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String parseResult = UploadImageHandler.encodeImageUrl(imageCreateService.getOssHttpURL(response.getResultData().getFilePath()));
+        // 20160513 tom 图片服务器切换 END
         if (imageSet != null) {
             imageSet.add(parseResult);
         }

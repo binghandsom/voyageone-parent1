@@ -21,11 +21,15 @@ public class CmsImageFileSendTaskTest {
 
     @Test
     public void test() throws Exception {
-        for (int i=16219; i>0; i--) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", i);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
-        }
+//        for (int i=16219; i>0; i--) {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("id", i);
+//            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
+//        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 20478);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
     }
 
     @Autowired

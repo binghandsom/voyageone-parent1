@@ -1,12 +1,10 @@
 package com.voyageone.components.imagecreate;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.imagecreate.bean.ImageCreateAddListRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateAddListResponse;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.bean.*;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
+import com.voyageone.service.model.cms.CmsMtImageCreateFileModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,5 +99,18 @@ public class ImageCreateServiceTest {
 
 
         System.out.println(JacksonUtil.bean2Json(response));
+    }
+
+    @Test
+    public void testGetListResult() throws Exception {
+
+        ImageCreateGetListResultRequest request = new ImageCreateGetListResultRequest();
+        request.setTaskId(30994);
+
+        ImageCreateGetListResultResponse response = imageCreateService.getListResult(request);
+
+        for (CmsMtImageCreateFileModel model : response.getCmsMtImageCreateFiles()) {
+            System.out.println(JacksonUtil.bean2Json(model));
+        }
     }
 }
