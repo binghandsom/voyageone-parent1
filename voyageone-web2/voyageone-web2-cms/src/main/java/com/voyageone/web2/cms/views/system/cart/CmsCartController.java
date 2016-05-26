@@ -7,6 +7,8 @@ import com.voyageone.service.impl.cms.CartService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.bean.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,52 +31,50 @@ public class CmsCartController extends CmsController {
     @Resource
     CartService cartService;
 
+    @Autowired
+    CmsCartService cmsCartService;
+
 
     @RequestMapping("list")
     public AjaxResponse doList(@RequestBody Map<String,String> params) {
 
         CartBean bean = new CartBean();
-        bean.setCart_id(params.get("cart_id"));
-        bean.setName(params.get("name"));
-        bean.setCart_type(params.get("cart_type"));
-        bean.setActive(params.get("active"));
-        List<CartBean> data = cartService.getAll(bean);
+        if (!StringUtils.isEmpty(params.get("cart_id"))) {
+            bean.setCart_id(params.get("cart_id"));
+        }
+        if (!StringUtils.isEmpty(params.get("name"))) {
+            bean.setName(params.get("name"));
+        }
+        if (!StringUtils.isEmpty(params.get("cart_type"))) {
+            bean.setCart_type(params.get("cart_type"));
+        }
+        if (!StringUtils.isEmpty(params.get("active"))) {
+            bean.setActive(params.get("active"));
+        }
+        List<CartBean> data = cartService.getCarts(bean);
         return success(Page.fromMap(params).withData(data));
 
     }
 
-
     @RequestMapping("delete")
     public AjaxResponse delete(@RequestBody CartBean con) {
-
         Preconditions.checkArgument(!StringUtils.isNullOrBlank2(con.getCart_id()));
         con.setModifier(getUser().getUserName());
         cartService.deleteLogic(con);
         return success(true);
     }
 
-
     @RequestMapping("saveOrUpdate")
     public AjaxResponse saveOrUpdate(@RequestBody CartBean bean) {
-        checkCart(bean);
         bean.setModifier(getUser().getUserName());
-        cartService.saveOrUpdate(bean);
+        cmsCartService.saveOrUpdate(bean);
         return success(true);
     }
 
-    private void checkCart(@RequestBody CartBean bean) {
-        Preconditions.checkArgument(org.apache.commons.lang3.StringUtils.isNotBlank(bean.getCart_id()), "cart_id不能为空");
-        Preconditions.checkArgument(org.apache.commons.lang3.StringUtils.isNotBlank(bean.getName()), "cart_name不能为空");
-        Preconditions.checkArgument(org.apache.commons.lang3.StringUtils.isNotBlank(bean.getShort_name()), "short_name不能为空");
-        Preconditions.checkArgument(org.apache.commons.lang3.StringUtils.isNotBlank(bean.getPlatform_id()), "platform_id不能为空");
-        Preconditions.checkArgument(org.apache.commons.lang3.StringUtils.isNotBlank(bean.getCart_type()), "cart_type不能为空");
-    }
-
-
     @RequestMapping("save")
     public AjaxResponse save(@RequestBody CartBean bean) {
-        checkCart(bean);
-        cartService.save(bean);
+        bean.setModifier(getUser().getUserName());
+        cmsCartService.save(bean);
         return success(true);
     }
 
