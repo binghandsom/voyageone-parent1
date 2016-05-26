@@ -14,9 +14,7 @@
                         <label class="">{{'TXT_CART_NAME' | translate}}</label>
                     </div>
                     <div class="col-sm-7">
-                        <select class="form-control" ng-model="ctrl.cartId"
-                                ng-options="cart.value as cart.name for cart in ctrl.cartList" ng-change="ctrl.init()">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        <select class="form-control" ng-model="ctrl.cartId" ng-options="cart.value as cart.name for cart in ctrl.cartList" ng-change="ctrl.init()">
                         </select>
                     </div>
                 </div>
@@ -29,11 +27,10 @@
                         <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0" ng-repeat="cid in isSelectCid"
                              ng-controller="selectRowsCtrl">
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-checked="ctrl.isSelectCid[{{category.catId}}]"
-                                       ng-model="ctrl.categorySelList.selFlag[category.catId]"
-                                       ng-click="selectOne(category.catId, ctrl.categorySelList)">
+                                <input type="checkbox" name="catsels.isChk" ng-checked="ctrl.isSelectCid[category.catId]"
+                                       ng-model="ctrl.isSelectCid[category.catId]" ng-click=" ">
                                 <span class="fa fa-check"></span>&nbsp;
-                                <label class=" ">{{category.catName}}</label>
+                                <label>{{category.catName}}</label>
                             </label>
                         </div>
                         <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
@@ -45,12 +42,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' |
-            translate}}
-        </button>
-        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>
-            {{'BTN_SAVE' | translate}}
-        </button>
+        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}} </button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>{{'BTN_SAVE' | translate}}</button>
     </div>
 </div>
 <script id="categoryContainer" type="text/ng-template">
@@ -61,11 +54,10 @@
         </div>
         <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0" ng-controller="selectRowsCtrl">
             <label class="checkbox-inline c-checkbox">
-                <input type="checkbox" ng-checked="ctrl.isSelectCid[{{category.catId}}]"
-                       ng-model="ctrl.categorySelList.selFlag[category.catId]"
-                       ng-click="selectOne(category.catId, ctrl.categorySelList)">
+                <input type="checkbox" name="catsels.isChk" ng-checked="ctrl.isSelectCid[category.catId]"
+                       ng-model="ctrl.isSelectCid[category.catId]" ng-click=" ">
                 <span class="fa fa-check"></span>&nbsp;
-                <label class=" ">{{category.catName}}</label>
+                <label>{{category.catName}}</label>
             </label>
         </div>
         <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
