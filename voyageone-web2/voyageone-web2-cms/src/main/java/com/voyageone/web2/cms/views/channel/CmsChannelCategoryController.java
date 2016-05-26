@@ -97,4 +97,12 @@ public class CmsChannelCategoryController  extends CmsController {
     }
 
 
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.GET_SELLER_CAT_CONFIG)
+    public AjaxResponse getSellerCatConfig(@RequestBody Map param) {
+
+        Integer cartId = (Integer) param.get("cartId") ;
+        return success(sellerCatService.getSellerCatConfig(cartId));
+    }
+
+
 }

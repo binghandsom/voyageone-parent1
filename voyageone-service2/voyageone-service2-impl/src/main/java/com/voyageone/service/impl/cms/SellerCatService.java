@@ -4,6 +4,7 @@ import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.internal.util.StringUtil;
 import com.taobao.api.domain.SellerCat;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -15,12 +16,12 @@ import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.iterators.ObjectArrayIterator;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -37,6 +38,47 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private TbSellerCatService tbSellerCatService;
+
+
+    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
+
+    private static final String DEFAULT_SELLER_CAT_CNT = "10";
+
+
+    /**
+     * 获取店铺自定义分类的相关配置参数
+     * @param cartId
+     * @return
+     */
+    public Map<String, Object> getSellerCatConfig(int cartId)
+    {
+        String cartIdStr = String.valueOf(cartId);
+        String depth = Codes.getCode("MAX_SELLER_CAT_DEPTH",  cartIdStr);
+        String cnt = Codes.getCode("MAX_SELLER_CAT_CNT",  cartIdStr);
+
+        Map<String, Object> result = new HashMap<>();
+
+        if(!StringUtils.isNullOrBlank2(depth))
+        {
+            result.put("MAX_SELLER_CAT_DEPTH" ,depth );
+        }
+        else
+        {
+            result.put("MAX_SELLER_CAT_DEPTH" ,DEFAULT_SELLER_CAT_DEPTH );
+        }
+
+        if(!StringUtils.isNullOrBlank2(cnt))
+        {
+            result.put("MAX_SELLER_CAT_CNT" ,cnt );
+        }
+        else
+        {
+            result.put("MAX_SELLER_CAT_CNT" ,DEFAULT_SELLER_CAT_CNT );
+        }
+
+        return  result;
+    }
+
 
     /**
      * 取得Category Tree 根据channelId， cartId

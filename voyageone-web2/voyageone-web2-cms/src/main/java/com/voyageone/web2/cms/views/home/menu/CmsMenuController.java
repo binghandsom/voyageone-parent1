@@ -69,9 +69,10 @@ public class CmsMenuController extends CmsController {
             masterData.setCatPath("master");
             masterData.setCatName("主类目数据");
 
-            List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>(2);
+            List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>();
             allTreeList.add(masterData);
-
+            resultBean.put("categoryTreeList", allTreeList);
+        }else if (cTypeId.equals(CartType.FEED.getShortName())){
             // 获取Feed类目CategoryTreeList
             if (!channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
                 List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
@@ -80,11 +81,10 @@ public class CmsMenuController extends CmsController {
                 feedData.setIsParent(1);
                 feedData.setCatPath("feed");
                 feedData.setCatName("Feed类目数据");
+                List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>();
                 allTreeList.add(feedData);
+                resultBean.put("categoryTreeList", allTreeList);
             }
-
-
-            resultBean.put("categoryTreeList", allTreeList);
         }
         //店铺自定义类目
         else
