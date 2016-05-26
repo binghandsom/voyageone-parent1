@@ -53,8 +53,9 @@ public class SellerCatService extends BaseService {
     public Map<String, Object> getSellerCatConfig(int cartId)
     {
         String cartIdStr = String.valueOf(cartId);
-        String depth = Codes.getCode("MAX_SELLER_CAT_DEPTH",  cartIdStr);
-        String cnt = Codes.getCode("MAX_SELLER_CAT_CNT",  cartIdStr);
+        Codes.reload();
+        String depth = Codes.getCodeName("MAX_SELLER_CAT_DEPTH",  cartIdStr);
+        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT",  cartIdStr);
 
         Map<String, Object> result = new HashMap<>();
 
@@ -81,11 +82,57 @@ public class SellerCatService extends BaseService {
 
 
     /**
-     * 取得Category Tree 根据channelId， cartId
+     * 取得Category 根据channelId， cartId
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId) {
 
-        return cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
+        return getSellerCatsByChannelCart(channelId, cartId, true);
+    }
+
+
+    /**
+     * 取得Category Tree 根据channelId， cartId
+     */
+    public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId, boolean isTree) {
+
+        if(isTree) {
+            return cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
+        }
+        else
+        {
+            List<CmsBtSellerCatModel> result = new ArrayList<>();
+
+            List<CmsBtSellerCatModel> treeList = cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
+
+            for (CmsBtSellerCatModel node : treeList) {
+                result.addAll(findAllChildren(node));
+            }
+
+            return  result;
+        }
+    }
+
+
+    private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root)
+    {
+        List<CmsBtSellerCatModel> result = new ArrayList<>();
+        for (CmsBtSellerCatModel model: root.getChildren()) {
+
+            CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel();
+            cmsBtSellerCatModel.setCatId(model.getCatId());
+            cmsBtSellerCatModel.setCatName(model.getCatName());
+            cmsBtSellerCatModel.setParentCatId(model.getParentCatId());
+            cmsBtSellerCatModel.setChannelId(model.getChannelId());
+            cmsBtSellerCatModel.setCartId(model.getCartId());
+            cmsBtSellerCatModel.setCreated(model.getCreated());
+            cmsBtSellerCatModel.setModified(model.getModified());
+            cmsBtSellerCatModel.setCreater(model.getCreater());
+            cmsBtSellerCatModel.setModifier(model.getModifier());
+            cmsBtSellerCatModel.setChildren(new ArrayList<CmsBtSellerCatModel>());
+            result.add(cmsBtSellerCatModel);
+            result.addAll(findAllChildren(model) );
+        }
+        return  result;
     }
 
     /**
