@@ -254,6 +254,9 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
             }
 
             CmsBtProductModel sxProductBean = skuProductMap.get(cmsSkuProp);
+            // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
+            expressionParser.pushMasterPropContext(sxProductBean.getFields());
+            // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
 
             if (colorExtend_imageField != null) {
                 String propImage = sxProductBean.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
@@ -262,7 +265,8 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                         $warn("图片模板url未设置");
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
                     } else {
-                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+//                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
@@ -270,7 +274,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
+//                        } else {
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                         }
                     }
                 }
@@ -292,6 +299,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                     }
                 }
             }
+
+            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+            expressionParser.popMasterPropContext();
+            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
 
             complexValues.add(complexValue);
         }
