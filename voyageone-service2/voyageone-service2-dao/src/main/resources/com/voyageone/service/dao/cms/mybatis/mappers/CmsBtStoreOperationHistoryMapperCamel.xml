@@ -117,19 +117,19 @@
         <include refid="Base_Column_List" />
         from cms_bt_store_operation_history
         <where >
-            <if test="operationType != null" >
+            <if test="operationType != null and operationType != ''" >
                 and `operation_type` = #{operationType,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null" >
+            <if test="modified != null and modified != ''" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
+            <if test="modifier != null and modifier != ''" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
-            <if test="created != null" >
+            <if test="created != null and created != ''" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="creater != null" >
+            <if test="creater != null and creater != ''" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>

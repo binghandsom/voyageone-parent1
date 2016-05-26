@@ -6,9 +6,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.service.bean.cms.CmsBtStoreOperationHistoryBean;
 import com.voyageone.service.impl.cms.StoreOperationService;
-import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.bean.Page;
@@ -64,7 +65,8 @@ public class CmsStoreOperationController extends CmsController {
     public AjaxResponse init() {
         String channelId = getUser().getSelChannelId();
         long uploadCnt = storeOperationService.countProductsThatCanUploaded(channelId);
-        return success(ImmutableMap.of("uploadCnt", uploadCnt));
+        return success(ImmutableMap.of("uploadCnt", uploadCnt,
+                "storeOperationTypeList", Types.getTypeList(75, this.getLang())));
     }
 
     /**
@@ -142,9 +144,9 @@ public class CmsStoreOperationController extends CmsController {
      */
     @RequestMapping("getHistory")
     public AjaxResponse getHistory(@RequestBody Map<String, Object> params) {
-
-        List<CmsBtStoreOperationHistoryModel> historys = storeOperationService.getHistoryBy(params);
-        return success(Page.fromMap(params).withData(historys));
+        params.put("lang", this.getLang());
+        List<CmsBtStoreOperationHistoryBean> historyList = storeOperationService.getHistoryBy(params);
+        return success(Page.fromMap(params).withData(historyList));
     }
 
     public static void main(String[] args) {
