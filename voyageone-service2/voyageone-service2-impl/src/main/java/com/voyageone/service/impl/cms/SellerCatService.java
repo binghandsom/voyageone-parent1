@@ -105,6 +105,21 @@ public class SellerCatService extends BaseService {
             List<CmsBtSellerCatModel> treeList = cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
 
             for (CmsBtSellerCatModel node : treeList) {
+                CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
+                copyRoot.setCatId(node.getCatId());
+                copyRoot.setCatName(node.getCatName());
+                copyRoot.setParentCatId(node.getParentCatId());
+                copyRoot.setChannelId(node.getChannelId());
+                copyRoot.setCartId(node.getCartId());
+                copyRoot.setCreated(node.getCreated());
+                copyRoot.setModified(node.getModified());
+                copyRoot.setCreater(node.getCreater());
+                copyRoot.setModifier(node.getModifier());
+                copyRoot.setFullCatCId(node.getFullCatCId());
+                copyRoot.setCatPath(node.getCatPath());
+                copyRoot.setChildren(new ArrayList<CmsBtSellerCatModel>());
+                result.add(copyRoot);
+
                 result.addAll(findAllChildren(node));
             }
 
@@ -116,6 +131,7 @@ public class SellerCatService extends BaseService {
     private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root)
     {
         List<CmsBtSellerCatModel> result = new ArrayList<>();
+
         for (CmsBtSellerCatModel model: root.getChildren()) {
 
             CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel();
@@ -128,6 +144,8 @@ public class SellerCatService extends BaseService {
             cmsBtSellerCatModel.setModified(model.getModified());
             cmsBtSellerCatModel.setCreater(model.getCreater());
             cmsBtSellerCatModel.setModifier(model.getModifier());
+            cmsBtSellerCatModel.setFullCatCId(model.getFullCatCId());
+            cmsBtSellerCatModel.setCatPath(model.getCatPath());
             cmsBtSellerCatModel.setChildren(new ArrayList<CmsBtSellerCatModel>());
             result.add(cmsBtSellerCatModel);
             result.addAll(findAllChildren(model) );

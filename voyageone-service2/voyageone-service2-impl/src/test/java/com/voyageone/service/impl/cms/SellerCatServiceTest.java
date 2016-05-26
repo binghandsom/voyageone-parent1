@@ -28,6 +28,9 @@ public class SellerCatServiceTest {
     @Test
     public void testGetSellerCatsByChannelCart() throws Exception {
 
+        List<CmsBtSellerCatModel> result  = sellerCatService.getSellerCatsByChannelCart("010", 23, false);
+        System.out.println(JsonUtil.bean2Json(result));
+
     }
 
     @Test
