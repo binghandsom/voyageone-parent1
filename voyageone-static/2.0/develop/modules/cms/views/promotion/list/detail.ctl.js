@@ -73,12 +73,9 @@ define([
                 code.tagPath =tag.tagPath;
                 code.isUpdate = true;
             }
-            console.log(code);
-            console.log(tag);
         }
         $scope.updateCode = function(code){
             delete code.isUpdate;
-            console.log("updateCode"+code);
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
                 code.promotionPriceBak = code.promotionPrice;
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
