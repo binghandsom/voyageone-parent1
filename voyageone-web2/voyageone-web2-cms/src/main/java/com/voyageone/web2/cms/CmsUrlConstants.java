@@ -625,6 +625,8 @@ public interface CmsUrlConstants {
             String REMOVE_SELLER_CAT = "removeSellerCat";
 
             String UPDATE_SELLER_CAT = "updateSellerCat";
+
+            String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
         }
 
     }
