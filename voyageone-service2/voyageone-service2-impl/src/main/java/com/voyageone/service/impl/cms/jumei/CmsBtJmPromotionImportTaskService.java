@@ -8,7 +8,7 @@ import com.voyageone.common.util.excel.ExcelImportUtil;
 import com.voyageone.service.bean.cms.businessmodel.*;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
-import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMProductImportColumn2;
+import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMProductImportColumn;
 import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMSkuImportColumn;
 import com.voyageone.service.impl.cms.jumei.enumjm.EnumJMSpecialImageImportColumn;
 import com.voyageone.service.model.cms.*;
@@ -121,7 +121,7 @@ public class CmsBtJmPromotionImportTaskService {
         HSSFSheet productSheet = book.getSheet("Product");
         List<CmsBtJmImportProduct> listProductModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合  导出错误文件
-        List<ExcelColumn> listProductColumn = EnumJMProductImportColumn2.getListExcelColumn();//配置列信息
+        List<ExcelColumn> listProductColumn = EnumJMProductImportColumn.getListExcelColumn();//配置列信息
         ExcelImportUtil.importSheet(productSheet, listProductColumn, listProductModel, listProducctErrorMap, CmsBtJmImportProduct.class);
 
         HSSFSheet skuSheet = book.getSheet("Sku");
