@@ -34,7 +34,7 @@ public class PlatformService extends BaseService {
 
         // 取得CMS中默认的显示用模板ID
         String commonTemplateId = Codes.getCodeName("PLATFORM_PRODUCT_URL", cartId);
-        if (commonTemplateId == null)
+        if (commonTemplateId == null && !"0".equals(cartId) && !"1".equals(cartId))
             throw new BusinessException("tm_code表中PLATFORM_PRODUCT_URL及"+cartId+"定义不存在");
         return commonTemplateId;
     }
