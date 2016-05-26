@@ -70,15 +70,15 @@
 						</thead>
 						<tbody>
 						<tr ng-repeat="info in ctrl.data">
-							<td class="text-left">{{info.productCode}}</td>
+							<td class="text-left">{{::info.productCode}}</td>
 							<td class="text-left">
-								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{info.numIid}}" target="_blank">{{info.numIid}}</a>
+								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{::info.numIid}}" target="_blank">{{::info.numIid}}</a>
 							</td>
-							<td class="text-right">{{info.promotion_code.promotionPrice | number: 2 || '无'}}</td>
-							<td class="text-left">{{info.synFlagEnum | translate}}</td>
-							<td class="text-left">{{info.imageStatusEnum | translate}}</td>
-							<td class="text-left">{{info.message}}</td>
-							<td class="text-left">{{info.modified.substring(0, 19)}}</td>
+							<td class="text-right">{{::info.promotion_code.promotionPrice | number: 2 || '无'}}</td>
+							<td class="text-left">{{::info.synFlagEnum | translate}}</td>
+							<td class="text-left" title="{{::info.imageTaskId}}">{{::info.imageStatusEnum | translate}}</td>
+							<td class="text-left">{{::info.message}}</td>
+							<td class="text-left">{{::info.modified.substring(0, 19)}}</td>
 							<td class="text-center">
 								<div class="btn-group text-center">
 									<button title="启动" ng-click="ctrl.controlOne(info, 'BEATING')" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP"></span></button>
