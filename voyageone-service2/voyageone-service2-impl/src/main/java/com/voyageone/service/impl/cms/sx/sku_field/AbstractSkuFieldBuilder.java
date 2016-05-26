@@ -8,6 +8,7 @@ import com.voyageone.service.dao.cms.CmsMtPlatformPropSkuDao;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
 
     protected CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao;
     protected CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
+    private List<Field> unkownFields;
 
     private int cartId = -1;
     private String codeImageTemplate;
@@ -69,5 +71,12 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
 
     public void setCodeImageTemplate(String codeImageTemplate) {
         this.codeImageTemplate = codeImageTemplate;
+    }
+
+    protected final void addUnkownField(Field field) {
+        if (unkownFields == null) {
+            unkownFields = new ArrayList<>();
+        }
+        unkownFields.add(field);
     }
 }

@@ -1,103 +1,56 @@
 package com.voyageone.service.daoext.cms;
 
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
-import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by jonasvlag on 16/2/29.
+ * 转换原 class 形式到 interface 形式, by Jonas on 2016-05-24 11:12:58
  *
- * @version 2.0.0
+ * @version 2.1.0
+ * @since 2.0.0
  */
 @Repository
-public class CmsBtBeatInfoDaoExt extends ServiceBaseDao {
+public interface CmsBtBeatInfoDaoExt {
 
-    public int insertList(List<CmsBtBeatInfoBean> modelList) {
-        return insert("cms_bt_beat_info_insertList", parameters("modelList", modelList));
-    }
+    int insertList(@Param("list") List<CmsBtBeatInfoBean> modelList);
 
-    /**
-     * 更新 BeatInfo Message, 为那些在 Beat 中但不在 Promotion 中的 Code/Numiid
-     */
-    public int updateDiffPromotionMessage(int task_id, String message) {
-        Map params = parameters(
-                "task_id", task_id,
-                "message", message,
-                "syn_flag", BeatFlag.CANT_BEAT.getFlag());
-        int count0 = update("cms_bt_beat_info_updateNoCodeMessage", params);
-        int count1 = update("cms_bt_beat_info_updateNoNumiidMessage", params);
-        return count0 + count1;
-    }
+    int updateNoCodeMessage(@Param("taskId") int taskId, @Param("synFlag") int synFlag, @Param("message") String message);
 
-    public List<CmsBtBeatInfoBean> selectListByTask(int task_id) {
-        return selectList("cms_bt_beat_info_selectListByTask", parameters(
-                "task_id", task_id));
-    }
+    int updateNoNumiidMessage(@Param("taskId") int taskId, @Param("synFlag") int synFlag, @Param("message") String message);
 
-    public List<CmsBtBeatInfoBean> selectListByTask(int task_id, BeatFlag flag, int offset, int size) {
-        return selectList("cms_bt_beat_info_selectListByTask_page", parameters(
-                "task_id", task_id,
-                "flag", flag,
-                "offset", offset,
-                "size", size));
-    }
+    int updateCodeNotMatchNumiidMessage(@Param("taskId") int taskId, @Param("synFlag") int synFlag, @Param("message") String message);
 
-    public int selectListByTaskCount(int task_id, BeatFlag flag) {
-        return selectOne("cms_bt_beat_info_selectListByTask_count", parameters(
-                "task_id", task_id,
-                "flag", flag));
-    }
+    List<CmsBtBeatInfoBean> selectListByTask(@Param("taskId") int taskId);
 
-    public int deleteByTask(int task_id) {
-        return delete("cms_bt_beat_info_deleteByTask", parameters("task_id", task_id));
-    }
+    List<CmsBtBeatInfoBean> selectListByTaskWithPrice(
+            @Param("taskId") int taskId, @Param("flag") BeatFlag flag, @Param("searchKey") String searchKey,
+            @Param("offset") int offset, @Param("size") int size);
 
-    public int selectCountInFlags(int task_id, BeatFlag... flags) {
-        return selectOne("cms_bt_beat_info_selectCountInFlags", parameters("task_id", task_id, "flags", flags));
-    }
+    int selectListByTaskCount(@Param("taskId") int taskId, @Param("flag") BeatFlag flag, @Param("searchKey") String searchKey);
 
-    public CmsBtBeatInfoBean selectOneById(int beat_id) {
-        return selectOne("cms_bt_beat_info_selectOneById", parameters("beat_id", beat_id));
-    }
+    int deleteByTask(@Param("taskId") int taskId);
 
-    public int updateFlag(CmsBtBeatInfoBean beatInfoModel) {
-        return update("cms_bt_beat_info_updateFlag", beatInfoModel);
-    }
+    int selectCountInFlags(@Param("taskId") int taskId, @Param("flags") BeatFlag... flags);
 
-    public int updateFlags(Integer task_id, BeatFlag flag, String userName) {
-        return update("cms_bt_beat_info_updateFlags", parameters(
-                "task_id", task_id,
-                "modifier", userName,
-                "syn_flag", flag.getFlag()));
-    }
+    int updateFlag(CmsBtBeatInfoBean beatInfoModel);
 
-    public List<Map> selectSummary(int task_id) {
-        return selectList("cms_bt_beat_info_selectSummary", parameters("task_id", task_id));
-    }
+    int updateFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("imageStatus") int imageStatus,
+                    @Param("force") boolean force, @Param("modifier") String userName);
 
-    public List<CmsBtBeatInfoBean> selectListByNumiidInOtherTask(int promotion_id, int task_id, String num_iid) {
-        return selectList("cms_bt_beat_info_selectListByNumiidInOtherTask", parameters(
-                "promotion_id", promotion_id,
-                "task_id", task_id,
-                "num_iid", num_iid
-        ));
-    }
+    List<Map<String, Object>> selectSummary(@Param("taskId") int taskId);
 
-    public CmsBtBeatInfoBean selectOneByNumiid(int task_id, String num_iid) {
-        return selectOne("cms_bt_beat_info_selectOneByNumiid", parameters(
-                "task_id", task_id,
-                "num_iid", num_iid
-        ));
-    }
+    List<CmsBtBeatInfoBean> selectListByNumiidInOtherTask(@Param("promotionId") int promotionId, @Param("taskId") int taskId, @Param("numIid") String numIid);
 
-    public int updateCode(CmsBtBeatInfoBean model) {
-        return update("cms_bt_beat_info_updateCode", model);
-    }
+    CmsBtBeatInfoBean selectOneByNumiid(@Param("taskId") int taskId, @Param("numIid") String numIid);
+
+    int updateCode(CmsBtBeatInfoBean model);
 
     /**
      * 查询在特定条件下的, 需要处理的价格披露信息
@@ -105,17 +58,9 @@ public class CmsBtBeatInfoDaoExt extends ServiceBaseDao {
      * @param limit TOP 行数
      * @return 带有 Promotion_Code 和 Task 信息 CmsBtBeatInfoModel
      */
-    public List<CmsBtBeatInfoBean> selectListNeedBeatFullData(int limit) {
-        return selectList("cms_bt_beat_info_selectListNeedBeatFullData", parameters(
-                "upFlag", BeatFlag.BEATING.getFlag(),
-                "revertFlag", BeatFlag.REVERT.getFlag(),
-                "downFlag", BeatFlag.SUCCESS.getFlag(),
-                "now", DateTimeUtil.getNow(),
-                "limit", limit
-        ));
-    }
+    List<CmsBtBeatInfoBean> selectListNeedBeatFullData(
+            @Param("limit") int limit, @Param("upFlag") int upFlag, @Param("revertFlag") int revertFlag,
+            @Param("downFlag") int downFlag, @Param("now") Date now);
 
-    public int updateFlagAndMessage(CmsBtBeatInfoBean beatInfoModel) {
-        return update("cms_bt_beat_info_updateFlagAndMessage", beatInfoModel);
-    }
+    int updateFlagAndMessage(CmsBtBeatInfoBean beatInfoModel);
 }

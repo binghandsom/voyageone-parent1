@@ -271,6 +271,11 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.EXTENDSIZE_YUANBAI) {
                     skuExtend_yuanbaiField = platformProp;
                 }
+
+                // 暂时不知道匹配什么
+                if (type.intValue() == SkuTemplateConstants.UNKOWN) {
+                    addUnkownField(platformProp);
+                }
             }
         }
 
