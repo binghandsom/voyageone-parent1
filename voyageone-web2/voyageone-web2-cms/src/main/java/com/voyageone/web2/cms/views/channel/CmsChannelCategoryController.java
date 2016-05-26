@@ -31,7 +31,7 @@ public class CmsChannelCategoryController  extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.GET_SELLER_CAT)
     public AjaxResponse getSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
-        Integer cartId = (Integer) param.get("cartId") ;
+        Integer cartId = Integer.valueOf(param.get("cartId").toString()) ;
         List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         Map<String, Object> result = new HashMap<>();
         result.put("catTree",list);
@@ -41,9 +41,9 @@ public class CmsChannelCategoryController  extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.ADD_SELLER_CAT)
     public AjaxResponse addSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
-        Integer cartId = (Integer) param.get("cartId") ;
-        String cName = (String) param.get("catName") ;
-        String parentCId = (String) param.get("parentCatId") ;
+        Integer cartId =  Integer.valueOf( param.get("cartId").toString()) ;
+        String cName = String.valueOf(param.get("catName")) ;
+        String parentCId =  String.valueOf(param.get("parentCatId")) ;
 
 
         //创建者/更新者
@@ -62,9 +62,9 @@ public class CmsChannelCategoryController  extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.UPDATE_SELLER_CAT)
     public AjaxResponse updateSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
-        Integer cartId = (Integer) param.get("cartId") ;
-        String cName = (String) param.get("catName") ;
-        String cId = (String) param.get("catId") ;
+        Integer cartId =  Integer.valueOf( param.get("cartId").toString()) ;
+        String cName = String.valueOf(param.get("catName")) ;
+        String cId = String.valueOf(param.get("catId")) ;
         //创建者/更新者
         String modifier =this.getUser().getUserName();
 
@@ -82,9 +82,9 @@ public class CmsChannelCategoryController  extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.REMOVE_SELLER_CAT)
     public AjaxResponse deleteSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
-        Integer cartId = (Integer) param.get("cartId") ;
-        String parentCId = (String) param.get("parentCatId") ;
-        String cId = (String) param.get("catId") ;
+        Integer cartId = Integer.valueOf(param.get("cartId").toString()) ;
+        String parentCId = String.valueOf(param.get("parentCatId")) ;
+        String cId = String.valueOf(param.get("catId")) ;
 
         sellerCatService.deleteSellerCat(channelId,cartId,parentCId,cId);
 
@@ -100,7 +100,7 @@ public class CmsChannelCategoryController  extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.GET_SELLER_CAT_CONFIG)
     public AjaxResponse getSellerCatConfig(@RequestBody Map param) {
 
-        Integer cartId = (Integer) param.get("cartId") ;
+        Integer cartId = Integer.valueOf(param.get("cartId").toString()) ;
         return success(sellerCatService.getSellerCatConfig(cartId));
     }
 
