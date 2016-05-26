@@ -7,7 +7,8 @@
         `market_price`, `deal_price`, `app_id`, `created`, `pc_id`, `modified`, `discount`, 
         `error_msg`, `sku_count`, `quantity`, `activity_start`, `activity_end`, `deal_end_time_state`, 
         `deal_end_time`, `synch_status`, `update_status`, `price_status`, `creater`, `modifier`, 
-        `product_long_name`, `product_medium_name`, `product_short_name`, `search_meta_text_custom`
+        `product_long_name`, `product_medium_name`, `product_short_name`, `search_meta_text_custom`, 
+        `tag_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -102,6 +103,9 @@
             </if>
             <if test="searchMetaTextCustom != null" >
                 `search_meta_text_custom`,
+            </if>
+            <if test="tagId != null" >
+                `tag_id`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -198,6 +202,9 @@
             <if test="searchMetaTextCustom != null" >
                 #{searchMetaTextCustom,jdbcType=VARCHAR},
             </if>
+            <if test="tagId != null" >
+                #{tagId,jdbcType=INTEGER},
+            </if>
         </trim>
     </insert>
 
@@ -290,6 +297,9 @@
             </if>
             <if test="searchMetaTextCustom != null" >
                 `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR},
+            </if>
+            <if test="tagId != null" >
+                `tag_id` = #{tagId,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -389,6 +399,9 @@
             <if test="searchMetaTextCustom != null" >
                 and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
             </if>
+            <if test="tagId != null" >
+                and `tag_id` = #{tagId,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
 
@@ -480,6 +493,9 @@
             </if>
             <if test="searchMetaTextCustom != null" >
                 and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
+            </if>
+            <if test="tagId != null" >
+                and `tag_id` = #{tagId,jdbcType=INTEGER}
             </if>
         </where>
     </select>

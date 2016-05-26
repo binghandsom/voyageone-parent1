@@ -135,6 +135,11 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected String searchMetaTextCustom;
 
+    /**
+     * tag
+     */
+    protected Integer tagId;
+
     public String getChannelId() {
         return channelId;
     }
@@ -325,5 +330,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setSearchMetaTextCustom(String searchMetaTextCustom) {
         this.searchMetaTextCustom = searchMetaTextCustom == null ? null : searchMetaTextCustom.trim();
+    }
+
+    public Integer getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
     }
 }

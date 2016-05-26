@@ -7,7 +7,7 @@
         `product_name_cn`, `vo_category_name`, `vo_brand_name`, `brand_name`, `product_type`, 
         `size_type`, `product_des_en`, `attribute`, `foreign_language_name`, `address_of_produce`, 
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
-        `creater`, `modified`, `modifier`, `created`
+        `creater`, `modified`, `modifier`, `created`, `image1`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -91,6 +91,9 @@
                 `modifier`,
             </if>
             `created`,
+            <if test="image1 != null" >
+                `image1`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -174,6 +177,9 @@
             <if test="created != null" >
                 #{created,jdbcType=TIMESTAMP},
             </if>
+            <if test="image1 != null" >
+                #{image1,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -254,6 +260,9 @@
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="image1 != null" >
+                `image1` = #{image1,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -341,6 +350,9 @@
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
+            <if test="image1 != null" >
+                and `image1` = #{image1,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -420,6 +432,9 @@
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="image1 != null" >
+                and `image1` = #{image1,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

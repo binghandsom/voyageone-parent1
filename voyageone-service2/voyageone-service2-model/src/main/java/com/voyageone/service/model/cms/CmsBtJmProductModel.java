@@ -110,6 +110,11 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected String colorEn;
 
+    /**
+     * 商品图片
+     */
+    protected String image1;
+
     public String getChannelId() {
         return channelId;
     }
@@ -268,5 +273,13 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setColorEn(String colorEn) {
         this.colorEn = colorEn == null ? null : colorEn.trim();
+    }
+
+    public String getImage1() {
+        return image1;
+    }
+
+    public void setImage1(String image1) {
+        this.image1 = image1 == null ? null : image1.trim();
     }
 }
