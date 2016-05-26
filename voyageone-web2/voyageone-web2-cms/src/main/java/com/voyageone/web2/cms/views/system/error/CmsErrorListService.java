@@ -71,7 +71,7 @@ class CmsErrorListService extends BaseAppService {
      */
     Map<String, Object> updateStatus(Map params, UserSessionBean userInfo) {
         Map<String, Object> request = new HashMap<>();
-        request.put("seq", Integer.parseInt(params.get("seq").toString()));
+        request.put("id", Integer.parseInt(params.get("id").toString()));
         request.put("modifier", userInfo.getUserName());
         int modifiedCount = businessLogService.updateFinishStatus(request);
 

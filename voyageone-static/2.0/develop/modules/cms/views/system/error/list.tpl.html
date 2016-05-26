@@ -102,10 +102,10 @@
 						<td class="mfb-xxx text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
 						<td class="mfb-x text-left">
 							<div class="onoffswitch">
-								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5"
+								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="{{errorInfo.id}}"
                                        ng-change="updateFinishStatus(errorInfo.id)"
                                        ng-model="errorInfo.status">
-								<label class="onoffswitch-label" for="myonoffswitch5">
+								<label class="onoffswitch-label" for="{{errorInfo.id}}">
 									<span class="onoffswitch-inner"></span>
 									<span class="onoffswitch-switch"></span>
 								</label>
