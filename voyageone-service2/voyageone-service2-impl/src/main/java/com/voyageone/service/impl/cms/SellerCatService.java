@@ -1,9 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
-import com.jd.open.api.sdk.internal.util.StringUtil;
 import com.taobao.api.domain.SellerCat;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -16,8 +14,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.iterators.ObjectArrayIterator;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -105,19 +101,7 @@ public class SellerCatService extends BaseService {
             List<CmsBtSellerCatModel> treeList = cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
 
             for (CmsBtSellerCatModel node : treeList) {
-                CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
-                copyRoot.setCatId(node.getCatId());
-                copyRoot.setCatName(node.getCatName());
-                copyRoot.setParentCatId(node.getParentCatId());
-                copyRoot.setChannelId(node.getChannelId());
-                copyRoot.setCartId(node.getCartId());
-                copyRoot.setCreated(node.getCreated());
-                copyRoot.setModified(node.getModified());
-                copyRoot.setCreater(node.getCreater());
-                copyRoot.setModifier(node.getModifier());
-                copyRoot.setFullCatCId(node.getFullCatCId());
-                copyRoot.setCatPath(node.getCatPath());
-                copyRoot.setChildren(new ArrayList<CmsBtSellerCatModel>());
+                CmsBtSellerCatModel copyRoot = copyCmsBtSellerCatModel(node);
                 result.add(copyRoot);
 
                 result.addAll(findAllChildren(node));
@@ -128,25 +112,41 @@ public class SellerCatService extends BaseService {
     }
 
 
+    /**
+     * clone 一个CmsBtSellerCatModel对象
+     * @param node
+     * @return
+     */
+    private CmsBtSellerCatModel copyCmsBtSellerCatModel(CmsBtSellerCatModel node) {
+        CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
+        copyRoot.setCatId(node.getCatId());
+        copyRoot.setCatName(node.getCatName());
+        copyRoot.setParentCatId(node.getParentCatId());
+        copyRoot.setChannelId(node.getChannelId());
+        copyRoot.setCartId(node.getCartId());
+        copyRoot.setCreated(node.getCreated());
+        copyRoot.setModified(node.getModified());
+        copyRoot.setCreater(node.getCreater());
+        copyRoot.setModifier(node.getModifier());
+        copyRoot.setFullCatCId(node.getFullCatCId());
+        copyRoot.setCatPath(node.getCatPath());
+        copyRoot.setChildren(new ArrayList<CmsBtSellerCatModel>());
+        return copyRoot;
+    }
+
+
+    /**
+     * 找出所有孩子节点
+     * @param root
+     * @return
+     */
     private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root)
     {
         List<CmsBtSellerCatModel> result = new ArrayList<>();
 
         for (CmsBtSellerCatModel model: root.getChildren()) {
 
-            CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel();
-            cmsBtSellerCatModel.setCatId(model.getCatId());
-            cmsBtSellerCatModel.setCatName(model.getCatName());
-            cmsBtSellerCatModel.setParentCatId(model.getParentCatId());
-            cmsBtSellerCatModel.setChannelId(model.getChannelId());
-            cmsBtSellerCatModel.setCartId(model.getCartId());
-            cmsBtSellerCatModel.setCreated(model.getCreated());
-            cmsBtSellerCatModel.setModified(model.getModified());
-            cmsBtSellerCatModel.setCreater(model.getCreater());
-            cmsBtSellerCatModel.setModifier(model.getModifier());
-            cmsBtSellerCatModel.setFullCatCId(model.getFullCatCId());
-            cmsBtSellerCatModel.setCatPath(model.getCatPath());
-            cmsBtSellerCatModel.setChildren(new ArrayList<CmsBtSellerCatModel>());
+            CmsBtSellerCatModel cmsBtSellerCatModel = copyCmsBtSellerCatModel(model);
             result.add(cmsBtSellerCatModel);
             result.addAll(findAllChildren(model) );
         }
@@ -247,6 +247,8 @@ public class SellerCatService extends BaseService {
 //            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
 //        }
         cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
+
+        //删除product表中素所有的店铺内分类
     }
 
     /**
@@ -280,7 +282,7 @@ public class SellerCatService extends BaseService {
             sellerCat = formatJDModel(shopCategory, channelId, cartId, creator);
 
         }
-        else if (isJDPlatform(shopCartId) )
+        else if (isTMPlatform(shopCartId) )
         {
             List<SellerCat> sellerCatList= tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
@@ -290,6 +292,14 @@ public class SellerCatService extends BaseService {
     }
 
 
+    /**
+     * 将TM店铺自定义分类Model转换成CmsBtSellerCatModel
+     * @param list
+     * @param channelId
+     * @param cartId
+     * @param creator
+     * @return
+     */
     private List<CmsBtSellerCatModel> formatTMModel(List<SellerCat> list, String channelId, int cartId, String creator)
     {
         List<CmsBtSellerCatModel> result = new ArrayList<>() ;

@@ -49,31 +49,39 @@ define([
                 var map = flatCategories(this.channelCategoryList);
 
                 _.map(this.isSelectCid, function (value, key) {
-                    return {categoryId:key, selected:value};
-                }).filter(function(item) {
+                    return {categoryId: key, selected: value};
+                }).filter(function (item) {
                     return item.selected;
-                }).forEach(function(item) {
+                }).forEach(function (item) {
                     var category = map[item.categoryId];
-
-                    while(category) {
+                    if (category) {
+                        if (fullCNames.indexOf(category.catPath) < 0) fullCNames.push(category.catPath);
+                        if (fullCIds.indexOf(category.fullCatCId) < 0)  fullCIds.push(category.fullCatCId);
+                    }
+                    while (category) {
                         if (cIds.indexOf(category.catId) < 0) cIds.push(category.catId);
                         if (cNames.indexOf(category.catName) < 0) cNames.push(category.catName);
-
-                        if (category.parent) {
-                            if (fullCNames.indexOf(category.catPath) < 0) fullCNames.push(category.catPath);
-                            if (fullCIds.indexOf(category.fullCatCId) < 0)  fullCIds.push(category.fullCatCId);
-                        }
-
                         category = category.parent;
                     }
                 });
+
+                if (fullCIds.length > 5) {
+                    alert("Sorry,勾选的类目数目已超过最大值10，请重新勾选！");
+                }
+
                 var self = this;
-                self.addChannelCategoryService.save({"cIds": cIds, "cNames": cNames, "fullCNames": fullCNames, "fullCatCId": fullCIds,"code": self.code}).then(function () {
+                self.addChannelCategoryService.save({
+                    "cIds": cIds,
+                    "cNames": cNames,
+                    "fullCNames": fullCNames,
+                    "fullCatCId": fullCIds,
+                    "code": self.code,
+                    "cartId": self.cartId
+                }).then(function () {
+
                 });
             }
-
         };
-
         return PopAddChannelCategoryCtrl;
     })());
 });
