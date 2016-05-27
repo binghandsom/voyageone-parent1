@@ -35,6 +35,9 @@ define([
                 });
 
             },
+            /**
+             * 当选择店铺时初始化页面，并根据店铺深度(level)设置div宽度
+             */
             loadCategories:function(){
                 var self = this;
                 //获取店铺配置
@@ -129,6 +132,10 @@ define([
                 });
 
             },
+            /**
+             * 修改结点名称
+             * @param node 树结构结点
+             */
             updateCat:function(node){
                     var self = this;
                     if(node.value == null){
