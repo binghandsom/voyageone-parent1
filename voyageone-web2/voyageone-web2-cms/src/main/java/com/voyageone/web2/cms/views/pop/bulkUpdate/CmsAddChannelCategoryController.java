@@ -39,6 +39,7 @@ public class CmsAddChannelCategoryController  extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_CHANNEL_CATEGORY.SAVE_CHANNEL_CATEGORY_INFO)
     public AjaxResponse save (@RequestBody Map<String, Object> params){
+        cmsAddChannelCategoryService.saveChannelCategory(params);
         return success(params);
     }
 }

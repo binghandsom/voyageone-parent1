@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -47,20 +48,22 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         String channelId = (String) params.get("channelId");
         //cartId
         String cartId= (String) params.get("cartId");
-        CmsBtProductModel cmsBtProductModel = new CmsBtProductModel();
+        //取得类目达标下面的个数
+        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT", cartId);
+        data.put("cnt",cnt);
         if(codeList.size()==1){
             //选择一条记录．根据code在cms_bt_product取得对应的属性记录
             for(int i=0;i<codeList.size();i++){
                 //取得商品code
                 String code = codeList.get(i).toString();
                 //根据商品code取得对应的类目达标属性
-                cmsBtProductModel = productService.getProductByCode(channelId, code);
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
                 //取得叶子类目的catId
                 List isSelectCidList = (List) cmsBtProductModel.getSellerCats().get("cIds");
                 Map isSelectCidMap = new HashMap<>();
                 for(int j=0;j<isSelectCidList.size();j++){
-                    Map map = (Map) isSelectCidList.get(j);
-                    isSelectCidMap.put(map.get("cId"),true);
+                    //取得选择的cid
+                    isSelectCidMap.put(isSelectCidList.get(j).toString(),true);
                 }
                 data.put("isSelectCid",isSelectCidMap);
             }
@@ -71,7 +74,26 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //根据channelId在cms_bt_seller_cat取得对应的达标数据
         List<CmsBtSellerCatModel> channelCategoryList = sellerCatService.getSellerCatsByChannelCart(channelId, Integer.parseInt(cartId));
         data.put("channelCategoryList",channelCategoryList);
-
         return data;
+    }
+
+    /**
+     * 保存数据到cms_bt_product
+     * @param params
+     */
+    public void saveChannelCategory(Map<String, Object> params){
+        //
+        List<String> cIdsList = (List) params.get("cIds");
+        List<String> cNamesList = (List) params.get("cNames");
+        List<String> fullCNamesList = (List) params.get("fullCNames");
+        List<String> fullCatCIdList = (List) params.get("fullCIds");
+        List<String> codeList = (List) params.get("code");
+        //check
+
+        //公共处理
+
+        //区分
+        productService.updateSellerCat(cIdsList,cNamesList,fullCNamesList,fullCatCIdList,codeList);
+
     }
 }
