@@ -74,7 +74,12 @@ define([
         /**
          * 检索
          */
-        function search(page) {
+        function search(page,flg) {
+            if(flg === true && tempFeedSelect){
+                // 默认设置成第一页
+                $scope.vm.feedPageOption.curr = 1;
+                tempFeedSelect = null;
+            }
             $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;

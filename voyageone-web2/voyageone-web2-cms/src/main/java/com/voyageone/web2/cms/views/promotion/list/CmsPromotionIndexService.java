@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -10,15 +11,13 @@ import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.TagService;
-import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.common.CmsConstants;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +43,10 @@ public class CmsPromotionIndexService extends BaseAppService {
 
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private PlatformService platformService;
+
     @Autowired
     private TagService serviceTag;
     /**
@@ -66,6 +69,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         CmsBtPromotionModel model = promotionService.getByPromotionId(PromotionId);
         List<CmsBtTagModel> listTagModel = serviceTag.getListByParentTagId(model.getRefTagId());
         result.put("tagList", listTagModel);
+        result.put("platformUrl", platformService.getPlatformProductUrl(String.valueOf(model.getCartId())));
         return result;
     }
     public CmsBtPromotionModel queryById(Integer promotionId) {

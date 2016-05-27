@@ -1,7 +1,10 @@
 package com.voyageone.service.impl.cms;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Types;
+import com.voyageone.service.bean.cms.CmsBtStoreOperationHistoryBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao;
@@ -11,15 +14,17 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductPriceLogService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +43,14 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class StoreOperationService extends BaseService {
 
-    Map<String, String> OPS = ImmutableMap.<String, String>builder()
-            .put("rePublish", "重新上新所有商品")
-            .put("reUpload1", "重新导入所有Feed商品(清空共通属性)")
-            .put("reUpload0", "重新导入所有Feed商品(不清空共通属性)")
-            .put("rePublishPrice", "价格同步")
-            .build();
+
+
+//    Map<String, String> OPS = ImmutableMap.<String, String>builder()
+//            .put("rePublish", "重新上新所有商品")
+//            .put("reUpload1", "重新导入所有Feed商品(清空共通属性)")
+//            .put("reUpload0", "重新导入所有Feed商品(不清空共通属性)")
+//            .put("rePublishPrice", "价格同步")
+//            .build();
 
 
     @Resource
@@ -60,6 +67,15 @@ public class StoreOperationService extends BaseService {
 
     @Resource
     CmsBtStoreOperationHistoryDao historyDao;
+
+    @Autowired
+    ProductPriceLogService priceLogService;
+
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    ProductSkuService skuService;
 
 
     public long countProductsThatCanUploaded(String channelId) {
@@ -81,31 +97,33 @@ public class StoreOperationService extends BaseService {
 
 
         List<String> productCodes = products.stream().map(p -> p.getFields().getCode()).collect(toList());
-        List<CmsBtProductGroupModel> groupModels = productGroupDao.selectGroupIdsByProductCode(channelId, productCodes);
-        insertWorkLoad(channelId, creater, groupModels);
-        insertHistory(OPS.get("rePublish"), creater);
+//        List<CmsBtProductGroupModel> groupModels = productGroupDao.selectGroupIdsByProductCode(channelId, productCodes);
+//        insertWorkLoad(channelId, creater, groupModels);
+        // 插入上新履历表
+        products.stream().forEach(product -> {
+            productService.insertSxWorkLoad(channelId, product, creater);
+        });
+
+        insertHistory(CmsConstants.StoreOperationType.REPUBLISH, creater);
     }
 
-    private void insertWorkLoad(String channelId, String creater, List<CmsBtProductGroupModel> groupModels) {
-        List<CmsBtSxWorkloadModel> models = groupModels.stream().map(groupModel -> {
-            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-            model.setChannelId(channelId);
-            model.setCreater(creater);
-            model.setCartId(groupModel.getCartId());
-            model.setGroupId(groupModel.getGroupId().intValue());
-            model.setModifier(creater);
-            return model;
-        }).collect(toList());
-        workloadDao.insertSxWorkloadModels(models);
-    }
-
-    @Resource
-    ProductPriceLogService priceLogService;
+//    private void insertWorkLoad(String channelId, String creater, List<CmsBtProductGroupModel> groupModels) {
+//        List<CmsBtSxWorkloadModel> models = groupModels.stream().map(groupModel -> {
+//            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+//            model.setChannelId(channelId);
+//            model.setCartId(groupModel.getCartId());
+//            model.setGroupId(groupModel.getGroupId().intValue());
+//            model.setPublishStatus(0);
+//            model.setCreater(creater);
+//            model.setModifier(creater);
+//            return model;
+//        }).collect(toList());
+//        workloadDao.insertSxWorkloadModels(models);
+//    }
 
     /**
      * 价格同步
      *
-     * @param channelId
      * @param channelId
      */
     public void rePublishPrice(String channelId, String creater) {
@@ -114,14 +132,16 @@ public class StoreOperationService extends BaseService {
 
         if (products.size() == 0) {
             $warn("[价格同步] 同步product数量为:0");
-            insertHistory(OPS.get("rePublishPrice"), creater);
-            return;
+            insertHistory(CmsConstants.StoreOperationType.PRICE_SYNCHRONIZATION, creater);
+            throw new BusinessException("[价格同步] 同步product数量为:0");
         }
 
 
         List<ProductPriceBean> productPrices = buildProductPricesFrom(products);
         if (productPrices.size() > 0) {
             skuService.updatePrices(channelId, productPrices, creater);
+
+            // 更新价格履历
         }
 //这里已有共通的改变价格的方法,直接调用
 //        List<BulkUpdateModel> bulkList = Lists.newArrayListWithExpectedSize(products.size());
@@ -142,15 +162,19 @@ public class StoreOperationService extends BaseService {
 //        });
 //        productDao.bulkUpdateWithMap(channelId, bulkList, creater, "$set");
 
-        List<String> productCodes = Lists.newArrayListWithExpectedSize(products.size());
-        List<CmsBtProductGroupModel> groupModels = productGroupDao.selectGroupIdsByProductCode(channelId, productCodes);
+//        List<String> productCodes = products.stream().map(product -> product.getFields().getCode()).collect(Collectors.toList());
+//        List<CmsBtProductGroupModel> groupModels = productGroupDao.selectGroupIdsByProductCode(channelId, productCodes);
 
         insertPriceLog(channelId, products, creater);
 
         //插入价格变更log
-        insertWorkLoad(channelId, creater, groupModels);
+//        insertWorkLoad(channelId, creater, groupModels);
+        // 插入上新履历表
+        products.stream().forEach(product -> {
+            productService.insertSxWorkLoad(channelId, product, creater);
+        });
         $info("[价格同步] 同步product数量为:" + products.size());
-        insertHistory(OPS.get("rePublishPrice"), creater);
+        insertHistory(CmsConstants.StoreOperationType.PRICE_SYNCHRONIZATION, creater);
     }
 
     /**
@@ -170,6 +194,7 @@ public class StoreOperationService extends BaseService {
                     .filter(sku -> sku.getPriceRetail() != sku.getPriceSale())  //过滤价格不相等的
                     .map(sku -> {
                         sku.setPriceSale(sku.getPriceRetail()); //将价格转化为相等
+                        sku.setPriceChgFlg(""); // 清空priceChgFlg
                         return ProductSkuPriceBean.from(sku);
                     }).collect(Collectors.toList());
             if (skuPrices.size() > 0) {
@@ -182,9 +207,6 @@ public class StoreOperationService extends BaseService {
         }); //end products for
         return prices;
     }
-
-    @Resource
-    ProductSkuService skuService;
 
     //插入priceLog
     private void insertPriceLog(String channelId, List<CmsBtProductModel> products, String creater) {
@@ -241,14 +263,39 @@ public class StoreOperationService extends BaseService {
             productDao.deleteAll(channelId);
             productGroupDao.deleteAll(channelId);
         }
-        String operationType = cleanCommonProperties ? OPS.get("reUpload1") : OPS.get("reUpload0");
+        String operationType = cleanCommonProperties ? CmsConstants.StoreOperationType.REIMPORT_FEED_CLEAR_COMMON_PROPERTY : CmsConstants.StoreOperationType.REIMPORT_FEED_NOT_CLEAR_COMMON_PROPERTY;
         feedInfoDao.updateAllUpdFlg(channelId, 0);
         insertHistory(operationType, creater);
         return true;
     }
 
-    public List<CmsBtStoreOperationHistoryModel> getHistoryBy(Map<String, Object> params) {
-        return historyDao.selectList(params);
+    public List<CmsBtStoreOperationHistoryBean> getHistoryBy(Map<String, Object> params) {
+        return changeToBeanList(historyDao.selectList(params), (String) params.get("lang"));
+    }
+
+    /**
+     * 检索结果转换
+     *
+     * @param storeOperationHistoryList 检索结果（Model）
+     * @param lang 语言
+     * @return 检索结果（Bean）
+     */
+    private List<CmsBtStoreOperationHistoryBean> changeToBeanList(List<CmsBtStoreOperationHistoryModel> storeOperationHistoryList, String lang) {
+        List<CmsBtStoreOperationHistoryBean> storeOperationHistoryBeanList = new ArrayList<>();
+
+        for (CmsBtStoreOperationHistoryModel storeOperationHistory : storeOperationHistoryList) {
+            CmsBtStoreOperationHistoryBean dest = new CmsBtStoreOperationHistoryBean();
+            try {
+                BeanUtils.copyProperties(dest, storeOperationHistory);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            dest.setOperationTypeName(Types.getTypeName(75, lang, String.valueOf(dest.getOperationType())));
+            storeOperationHistoryBeanList.add(dest);
+        }
+        return storeOperationHistoryBeanList;
     }
 
     /**

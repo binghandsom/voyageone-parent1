@@ -88,7 +88,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 feedImage.setUpdFlg(0);
                 feedImage.setChannelId(channelId);
 
-                ExecutorService es  = Executors.newFixedThreadPool(2);
+                ExecutorService es  = Executors.newFixedThreadPool(3);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
@@ -138,6 +138,10 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             // 获取所有模板数据
             CmsBtProductModel product = productService.getProductByCode(channelId, image.getCode());
+            if(product == null) {
+                issueLog.log("图片上传","ChannelId:"+channelId+" Code:" +image.getCode()+"产品数据不存在",ErrorType.BatchJob,SubSystem.CMS);
+                continue;
+            }
             List<CmsBtImageTemplateModel> templateModels = imageTemplateService.getTemplateListWithNoParams(channelId
                     , product.getFields().getBrand()
                     , product.getFields().getProductType()
@@ -288,7 +292,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                     if (change) {
                         ftpClient.enterLocalPassiveMode();
                         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                        ftpClient.setConnectTimeout(120000);
+                        ftpClient.setConnectTimeout(60000);
+                        ftpClient.setDataTimeout(60000);
 
                         for (int i = 0; i < imageUrlList.size(); i++) {
                             imageUrl = String.valueOf(imageUrlList.get(i).getOriginalUrl());
@@ -299,9 +304,12 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             }
 
                             try {
+                                $info("thread-" + threadNo + ":"+imageUrl+"流取得开始");
                                 inputStream = HttpUtils.getInputStream(imageUrl);
+
                             } catch (Exception ex) {
                                 // 图片url错误
+                                ex.printStackTrace();
                                 $error(ex.getMessage(), ex);
                                 imageUrlList.get(i).setUpdFlg(3);
                                 imageUrlList.get(i).setModifier(getTaskName());
@@ -316,14 +324,16 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             int lastSlash = imageUrl.lastIndexOf("/");
 //                            String fileName = imageUrlList.get(i).getImgName() + ImgUtils.getImageExtend(imageUrlList.get(i).getOriginalUrl());
                             String fileName = imageUrlList.get(i).getImgName() + ".jpg";
+                            $info("thread-" + threadNo + ":"+imageUrl+"ftp上传开始");
                             boolean result = ftpClient.storeFile(fileName, inputStream);
-
+                            $info("thread-" + threadNo + ":"+ imageUrl+"ftp上传结束");
                             if (result) {
                                 successImageUrlList.add(imageUrlList.get(i));
 
                                 $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
 
                             } else {
+                                $info("thread-" + threadNo + ":" + imageUrl + "上传失败!");
                                 isSuccess = false;
 
                                 break;
@@ -338,6 +348,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             } catch (Exception ex) {
                 $error(ex.getMessage(), ex);
+                ex.printStackTrace();
                 issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
 
                 isSuccess = false;
