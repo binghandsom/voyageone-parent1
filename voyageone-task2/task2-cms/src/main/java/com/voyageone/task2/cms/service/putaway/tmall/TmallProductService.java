@@ -706,6 +706,13 @@ public class TmallProductService {
         }
         */
 
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productCode)) {
+            productCode = "0";
+        }
+        // added by morse.lu 2016/05/27 end
+
         try {
             logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
             String numId = addTmallItem(categoryCode, productCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
