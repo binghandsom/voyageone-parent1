@@ -4,6 +4,11 @@
     "templateUrl": "views/home/welcome/index.tpl.html",
     "controllerUrl": "modules/cms/views/home/welcome/index.ctl"
   },
+  "dashboard":{
+    "hash": "/home/welcome",
+    "templateUrl": "views/home/welcome/datachart.tpl.html",
+    "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl"
+  },
   "promotion_index": {
     "hash": "/promotion/index",
     "templateUrl": "views/promotion/list/index.tpl.html",

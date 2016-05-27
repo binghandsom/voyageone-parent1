@@ -4,18 +4,26 @@
 define([
     'cms'
 ], function (cms) {
+
+    function flatCategories(categories, parent) {
+        return categories.reduce(function (map, curr) {
+            curr.parent = parent;
+            map[curr.catId] = curr;
+            if (curr.children && curr.children.length)
+                map = angular.extend(map, flatCategories(curr.children, curr));
+            return map;
+        }, {});
+    }
+
     cms.controller('popAddChannelCategoryCtrl', (function () {
-        function PopAddChannelCategoryCtrl(context, $addChannelCategoryService, selectRowsFactory) {
+
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService) {
             this.code = context.productIds;
-            this.channelCategoryList = null;
             this.cartList = [];
+            this.channelCategoryList = null;
             this.isSelectCid = [];
-            this.cartId = "20";
+            this.cartId = $rootScope.platformType.cartId.toString();
             this.addChannelCategoryService = $addChannelCategoryService;
-            this.catPath = null;
-            this.fullCatCId = null;
-            this.categorySelList = { selList: []};
-            this.tempCategorySelect = new selectRowsFactory();
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -26,8 +34,8 @@ define([
                 var self = this;
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     self.cartList = res.data.cartList;
-                    self.channelCategoryList = res.data.channelCategoryList;
                     self.isSelectCid = res.data.isSelectCid;
+                    self.channelCategoryList = res.data.channelCategoryList;
                 });
             },
 
@@ -35,27 +43,37 @@ define([
              * 点击保存按钮时
              */
             save: function () {
-                var self = this;
-                // 重新初始化选中标签
-                self.tempCategorySelect = new selectRowsFactory();
-                self.addChannelCategoryService.save({"cartId": self.cartId, "cIds": self.cIds, "cNames": self.cNames,"fullCNames": self.catPath, "fullCIds": self.fullCIds}).then(function () {
-                    return self.cartId;
+
+                var cIds = [], cNames = [], fullCNames = [], fullCIds = [];
+
+                var map = flatCategories(this.channelCategoryList);
+
+                _.map(this.isSelectCid, function (value, key) {
+                    return {categoryId:key, selected:value};
+                }).filter(function(item) {
+                    return item.selected;
+                }).forEach(function(item) {
+                    var category = map[item.categoryId];
+
+                    while(category) {
+                        if (cIds.indexOf(category.catId) < 0) cIds.push(category.catId);
+                        if (cNames.indexOf(category.catName) < 0) cNames.push(category.catName);
+
+                        if (category.parent) {
+                            if (fullCNames.indexOf(category.catPath) < 0) fullCNames.push(category.catPath);
+                            if (fullCIds.indexOf(category.fullCatCId) < 0)  fullCIds.push(category.fullCatCId);
+                        }
+
+                        category = category.parent;
+                    }
                 });
-                self.categorySelList = tempCategorySelect.selectRowsInfo;
-                if(self.categorySelList.selList.length>0){
-                   return function () {
-                            var parameter = [];
-                            _.forEach(self.categorySelList.selList, function (object) {
-                                parameter.push(object.data);
-                            });
-                        };
-                }
+                var self = this;
+                self.addChannelCategoryService.save({"cIds": cIds, "cNames": cNames, "fullCNames": fullCNames, "fullCatCId": fullCIds,"code": self.code}).then(function () {
+                });
             }
+
         };
+
         return PopAddChannelCategoryCtrl;
     })());
 });
-
-
-
-

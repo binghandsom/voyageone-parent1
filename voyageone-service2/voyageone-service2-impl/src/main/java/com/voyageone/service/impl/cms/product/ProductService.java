@@ -1121,4 +1121,32 @@ public class ProductService extends BaseService {
         return newCart;
     }
 
+    /**
+     * 更新cms_bt_product表的SellerCat字段
+     * @param cIdsList
+     * @param cNamesList
+     * @param fullCNamesList
+     * @param fullCatCIdList
+     */
+    public void updateSellerCat(List<String> cIdsList, List<String> cNamesList, List<String> fullCNamesList, List<String> fullCatCIdList, List<String> codeList,String modifier,String channelId){
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("sellerCats.cartId",cIdsList);
+        updateMap.put("sellerCats.cIds",cIdsList);
+        updateMap.put("sellerCats.cNames",cNamesList);
+        updateMap.put("sellerCats.fullCNames",fullCNamesList);
+        updateMap.put("sellerCats.fullCatCId",fullCatCIdList);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (String code : codeList) {
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("feed.fields.code", code);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+        // 批量更新product表
+        if (bulkList.size() > 0) {
+            cmsBtProductDao.updateSellerCat(channelId, bulkList, modifier, "$set");
+        }
+    }
 }

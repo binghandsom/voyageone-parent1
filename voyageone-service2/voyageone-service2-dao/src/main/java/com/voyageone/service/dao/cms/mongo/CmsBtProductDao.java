@@ -1,7 +1,8 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.google.common.base.Joiner;
-import com.mongodb.*;
+import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
@@ -14,10 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
@@ -123,5 +120,9 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
         return select(PriceNotEqualQuery, channelId);
     }
+
+    public void updateSellerCat(String channelId, List<BulkUpdateModel> bulkList, String modifier, String $set){
+
+    };
 
 }
