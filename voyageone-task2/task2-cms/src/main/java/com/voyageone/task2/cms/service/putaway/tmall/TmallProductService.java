@@ -706,6 +706,13 @@ public class TmallProductService {
         }
         */
 
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productCode)) {
+            productCode = "0";
+        }
+        // added by morse.lu 2016/05/27 end
+
         try {
             logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
             String numId = addTmallItem(categoryCode, productCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
@@ -1172,6 +1179,13 @@ public class TmallProductService {
         }
         */
 
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productId)) {
+            productId = "0";
+        }
+        // added by morse.lu 2016/05/27 end
+
         try {
             logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + ", numIId:" + numId + "]");
             numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
@@ -1226,6 +1240,13 @@ public class TmallProductService {
             logger.info("商品数量设为：" + quantityField.getValue());
         }
         */
+
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productId)) {
+            productId = "0";
+        }
+        // added by morse.lu 2016/05/27 end
 
         try {
             logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + "]");
