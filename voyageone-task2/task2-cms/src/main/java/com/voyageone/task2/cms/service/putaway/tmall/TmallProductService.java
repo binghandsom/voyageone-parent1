@@ -1350,6 +1350,11 @@ public class TmallProductService {
         List<Double> skuPriceList = new ArrayList<>();
         for (SxProductBean sxProduct : sxProducts) {
             CmsBtProductModel cmsProduct = sxProduct.getCmsBtProductModel();
+
+            if (!cmsProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
+
             for (CmsBtProductModel_Sku cmsBtProductModelSku : cmsProduct.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
