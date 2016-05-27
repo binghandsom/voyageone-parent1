@@ -2,8 +2,7 @@
  * Created by sofia on 5/19/2016.
  */
 define([
-    'cms',
-    './addChannelCategory.service.dev'
+    'cms'
 ], function (cms) {
 
     function flatCategories(categories, parent) {
@@ -18,13 +17,13 @@ define([
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
-        function PopAddChannelCategoryCtrl(context, $rootScope, addChannelCategoryService) {
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService) {
             this.code = context.productIds;
             this.cartList = [];
             this.channelCategoryList = null;
             this.isSelectCid = [];
             this.cartId = $rootScope.platformType.cartId.toString();
-            this.addChannelCategoryService = addChannelCategoryService;
+            this.addChannelCategoryService = $addChannelCategoryService;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
