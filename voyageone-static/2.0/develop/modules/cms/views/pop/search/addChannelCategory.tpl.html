@@ -24,7 +24,7 @@
                             <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
                             <label class=" ">{{category.catName}}</label>
                         </div>
-                        <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0" ng-repeat="cid in isSelectCid"
+                        <div class="m-t-xs" ng-if="category.isParent == 0" ng-repeat="cid in isSelectCid"
                              ng-controller="selectRowsCtrl">
                             <label class="checkbox-inline c-checkbox">
                                 <input type="checkbox" name="catsels.isChk" ng-checked="ctrl.isSelectCid[category.catId]"
@@ -47,12 +47,12 @@
     </div>
 </div>
 <script id="categoryContainer" type="text/ng-template">
-    <div class="col-sm-12 m-l-xs" ng-repeat="category in categoryContainer">
+    <div class="col-sm-12 m-l-md" ng-repeat="category in categoryContainer">
         <div class="m-t-xs" ng-if="category.isParent == 1">
             <i class="fa fa-minus icon-small text-vo"></i>&nbsp;
             <label class=" ">{{category.catName}}</label>
         </div>
-        <div class="m-t-xs m-l-xs" ng-if="category.isParent == 0" ng-controller="selectRowsCtrl">
+        <div class="m-t-xs" ng-if="category.isParent == 0" ng-controller="selectRowsCtrl">
             <label class="checkbox-inline c-checkbox">
                 <input type="checkbox" name="catsels.isChk" ng-checked="ctrl.isSelectCid[category.catId]"
                        ng-model="ctrl.isSelectCid[category.catId]" ng-click=" ">
