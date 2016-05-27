@@ -119,7 +119,7 @@ public class CmsBtJmPromotionImportTaskService {
         }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
     }
-
+    //check
     public void check(CmsBtJmPromotionModel model,List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel,List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap) throws IllegalAccessException {
         List<ProductImportBean> listErroProduct=new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
@@ -131,7 +131,7 @@ public class CmsBtJmPromotionImportTaskService {
         listProductModel.removeAll(listErroProduct);//移除不能导入的 product
         listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));
     }
-
+    //save
     public void  saveImport( CmsBtJmPromotionModel model,List<ProductImportBean> listProductImport,List<SkuImportBean> listSkuImport) {
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
         //初始化
@@ -198,7 +198,7 @@ public class CmsBtJmPromotionImportTaskService {
         return saveInfo;
     }
 
-    void  loadSaveSku(ProductSaveInfo saveInfo,List<SkuImportBean> listImport) {
+    private void  loadSaveSku(ProductSaveInfo saveInfo,List<SkuImportBean> listImport) {
         CmsBtJmPromotionSkuModel skuModel = null;
         for (SkuImportBean skuImportBean : listImport) {
             if (saveInfo.productModel.getId() > 0) {
@@ -214,43 +214,51 @@ public class CmsBtJmPromotionImportTaskService {
             saveInfo.skuList.add(skuModel);
         }
     }
-    List<SkuImportBean> getListSkuImportBeanByProductCode(List<SkuImportBean> listSkuImport,String productCode) {
+    private List<SkuImportBean> getListSkuImportBeanByProductCode(List<SkuImportBean> listSkuImport,String productCode) {
         List<SkuImportBean> listResult = new ArrayList<>();
         for (SkuImportBean sku : listSkuImport) {
-            if(sku.getProductCode().equals(productCode))
-            {
+            if (sku.getProductCode().equals(productCode)) {
                 listResult.add(sku);
             }
         }
-        return  listResult;
+        return listResult;
     }
-     void loadSaveTag(String promotionTag, ProductSaveInfo saveInfo,CmsBtJmPromotionModel model) {
-         if (StringUtils.isEmpty(promotionTag)) {
-             return;
-         }
-         CmsBtJmPromotionTagProductModel tagProductModel = null;
-         String[] tagList = promotionTag.split("|");
-         List<CmsBtTagModel> listCmsBtTag = daoExtCmsBtTag.selectListByParentTagId(model.getRefTagId());
-         for (String tagName : tagList) {
-             for (CmsBtTagModel tagModel : listCmsBtTag) {
-                 if (tagModel.getTagName().equals(tagName)) {
-                     if (saveInfo.productModel.getId() > 0) {
-                         Map<String, Object> map = new HashMap<>();
-                         map.put("cmsBtJmPromotionProductId", saveInfo.productModel.getId());//cms_bt_jm_promotion_product_id cms_bt_tag_id
-                         map.put("cmsBtTagId", tagModel.getId());
-                         tagProductModel = daoCmsBtJmPromotionTagProduct.selectOne(map);
-                     }
-                     if (tagProductModel == null) {
-                         tagProductModel = new CmsBtJmPromotionTagProductModel();
-                         tagProductModel.setChannelId(model.getChannelId());
-                         tagProductModel.setCmsBtTagId(tagModel.getId());
-                         tagProductModel.setTagName(tagModel.getTagName());
-                         saveInfo.tagList.add(tagProductModel);
-                     }
-                 }
-             }
-         }
-     }
+    private void loadSaveTag(String promotionTag, ProductSaveInfo saveInfo,CmsBtJmPromotionModel model) {
+        if (StringUtils.isEmpty(promotionTag)) {
+            return;
+        }
+        CmsBtJmPromotionTagProductModel tagProductModel = null;
+        String[] tagList = promotionTag.split("|");
+
+        //获取该活动的所有tag
+        List<CmsBtTagModel> listCmsBtTag = daoExtCmsBtTag.selectListByParentTagId(model.getRefTagId());
+
+        for (String tagName : tagList) {
+            for (CmsBtTagModel tagModel : listCmsBtTag) {
+                if (tagModel.getTagName().equals(tagName)) {
+                    if (saveInfo.productModel.getId() > 0) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("cmsBtJmPromotionProductId", saveInfo.productModel.getId());//cms_bt_jm_promotion_product_id cms_bt_tag_id
+                        map.put("cmsBtTagId", tagModel.getId());
+                        tagProductModel = daoCmsBtJmPromotionTagProduct.selectOne(map);
+                    }
+                    if (tagProductModel == null) {
+                        //不存在 添加tag
+                        tagProductModel = new CmsBtJmPromotionTagProductModel();
+                        tagProductModel.setChannelId(model.getChannelId());
+                        tagProductModel.setCmsBtTagId(tagModel.getId());
+                        tagProductModel.setTagName(tagModel.getTagName());
+                        saveInfo.tagList.add(tagProductModel);
+                    }
+                }
+                else
+                {
+                      // TODO: 2016/5/27  不做处理
+                }
+                tagProductModel=null;
+            }
+        }
+    }
     public List<ExcelColumn> getProductImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
         list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码"));
