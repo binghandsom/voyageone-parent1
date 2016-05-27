@@ -402,6 +402,7 @@ define(function() {
         "TXT_MSG_TAG": "Please select and fill in the label!",
         "TXT_MSG_TAG_EDITOR": "Tag Editor",
         "TXT_MSG_TAG_PATH": "Tag Path",
+        "TXT_MSG_TAG_NAME": "Tag Name",
         "TXT_MSG_TAG_IMAGE": "Tag name is less than 50 bytes!",
         "TXT_MSG_IMPORT_MODE": "Import Mode",
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
@@ -543,6 +544,13 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE_REPEAT":"OriginalSize can't repeat",
         "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size is required",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
-        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character"
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
+
+        /**店铺分类*/
+        "TXT_STORE_CATEGORY":"Store Category",
+        "TXT_STORE_CATEGORY_NAME":"store",
+        "MAX_SELLER_CAT_DEPTH":"max level",
+        "MAX_SELLER_CAT_CNT":"max tag counts",
+        "TXT_STORE_CATEGORY_SELECT":"Please select a tag"
     };
 });

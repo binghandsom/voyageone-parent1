@@ -3,14 +3,14 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder">店铺分类</i></h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder" translate="TXT_STORE_CATEGORY"></i></h4>
                 </div>
                 <div class="container-fluid">
                     <div class="col-sm-12" ng-controller="popupCtrl">
                         <div class="col-xs-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                   <label class="col-sm-1 control-label">店铺&nbsp;</label>
+                                   <label class="col-sm-1 control-label">{{'TXT_STORE_CATEGORY_NAME' | translate}}&nbsp;</label>
                                    <div class="col-sm-3">
                                         <select class="form-control"ng-model="ctrl.cartInfo.cart"
                                                 ng-change="ctrl.loadCategories()"
@@ -18,8 +18,8 @@
                                         </select>
                                     </div>
                                     <!--<label class="col-sm-2 control-label" style="width: 150px;">店铺:&nbsp;{{ctrl.carts[0].name}}</label>-->
-                                    <label class="col-sm-2 control-label" style="width: 150px;">最大层级：{{ctrl.cartInfo.level}}</label>
-                                    <label class="col-sm-2 control-label" style="width: 150px;">可设置最大标签数：{{ctrl.cartInfo.maxTag}}</label>
+                                    <label class="col-sm-2 control-label" style="width: 150px;">{{'MAX_SELLER_CAT_DEPTH' | translate}}：{{ctrl.cartInfo.level}}</label>
+                                    <label class="col-sm-2 control-label" style="width: 150px;">{{'MAX_SELLER_CAT_CNT' | translate}}：{{ctrl.cartInfo.maxTag}}</label>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
         <!---------------------------------------Level 1-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 1">
             <div class="category_drag_main">
-                <p class="text-center text-vo font-bold">Level 1</p>
+                <p class="text-center text-vo font-bold"><i class="glyphicon glyphicon-align-left"></i>&emsp;Level 1</p>
 
                 <div class="form-inline m-l-xs">
 
@@ -62,8 +62,8 @@
                                         ng-if = "tag1.children.length == 0" ng-click="ctrl.delete(tag1)" style="margin-left: 7px;">
                                 </button>
                                 <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag1)">
-                                    <span ng-if="tag1.value == null">&nbsp;Edit</span>
-                                    <span ng-if="tag1.value == 1">&nbsp;Save</span>
+                                    <span ng-if="tag1.value == null" translate="BTN_EDIT"></span>
+                                    <span ng-if="tag1.value == 1" translate="BTN_SAVE"></span>
                                 </button>
                             </a>
                         </li>
@@ -74,10 +74,10 @@
         <!---------------------------------------Level 2-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 2">
             <div class="category_drag_main">
-                <p class="text-center text-vo font-bold">Level 2</p>
+                <p class="text-center text-vo font-bold"><i class="glyphicon glyphicon-align-left"></i>&emsp;Level 2</p>
 
                 <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" ctrl.ng-model="key[1]">
+                    <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[1]">
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(1)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
                             ng-click="ctrl.newIndex.value = 1;ctrl.newCategory(false,0,openNewCategory)">
@@ -94,8 +94,8 @@
                                     ng-if = "tag2.children.length == 0" ng-click="ctrl.delete(tag2)" style="margin-left: 7px;">
                             </button>
                             <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag2)">
-                                <span ng-if="tag2.value == null">&nbsp;Edit</span>
-                                <span ng-if="tag2.value == 1">&nbsp;Save</span>
+                                <span ng-if="tag2.value == null" translate="BTN_EDIT"></span>
+                                <span ng-if="tag2.value == 1" translate="BTN_SAVE"></span>
                             </button>
                         </a>
                     </li>
@@ -105,7 +105,7 @@
         <!---------------------------------------Level 3-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 3">
             <div class="category_drag_main">
-                <p class="text-center text-vo font-bold">Level 3</p>
+                <p class="text-center text-vo font-bold"><i class="glyphicon glyphicon-align-left"></i>&emsp;Level 3</p>
 
                 <div class="form-inline m-l-xs">
                     <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[2]">
@@ -118,15 +118,15 @@
             <div class="category_drag_list_dp">
                 <ul>
                     <li ng-repeat="tag3 in ctrl.tree[2]">
-                        <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
+                        <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(3)"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
                             <span ng-if="tag3.value == null">{{tag3.catName}}</span>
                             <input ng-if="tag3.value == 1" type="text" ng-model="tag3.newCatName">
                             <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
                                     ng-if = "tag3.children.length == 0" ng-click="ctrl.delete(tag3)" style="margin-left: 7px;">
                             </button>
                             <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag3)">
-                                <span ng-if="tag3.value == null">&nbsp;Edit</span>
-                                <span ng-if="tag3.value == 1">&nbsp;Save</span>
+                                <span ng-if="tag3.value == null" translate="BTN_EDIT"></span>
+                                <span ng-if="tag3.value == 1" translate="BTN_SAVE"></span>
                             </button>
                         </a>
                     </li>
@@ -137,13 +137,13 @@
         <!---------------------------------------Level 4 (最大不会超过4层)-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 4">
             <div class="category_drag_main">
-                <p class="text-center text-vo font-bold">Level 4</p>
+                <p class="text-center text-vo font-bold"><i class="glyphicon glyphicon-align-left"></i>&emsp;Level 4</p>
 
                 <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[2]">
+                    <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[3]">
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(3)"><i class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="ctrl.newIndex.value = 2;ctrl.newCategory(false,1,openNewCategory)">
+                            ng-click="ctrl.newIndex.value = 3;ctrl.newCategory(false,2,openNewCategory)">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
@@ -157,8 +157,8 @@
                                     ng-if = "tag4.children.length == 0" ng-click="ctrl.delete(tag4)" style="margin-left: 7px;">
                             </button>
                             <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag4)">
-                                <span ng-if="tag4.value == null">&nbsp;Edit</span>
-                                <span ng-if="tag4.value == 1">&nbsp;Save</span>
+                                <span ng-if="tag4.value == null" translate="BTN_EDIT"></span>
+                                <span ng-if="tag4.value == 1" translate="BTN_SAVE"></span>
                             </button>
                         </a>
                     </li>

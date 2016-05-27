@@ -225,6 +225,12 @@
     height: 30px;
 }
 
+.category-drag-minWidth{
+    border: 2px solid #d5e4fa;
+    margin: 2px 4px;
+    border-radius: 7px;
+}
+
 .category-drag-minWidth input{
     width:84% ! important;
 }
