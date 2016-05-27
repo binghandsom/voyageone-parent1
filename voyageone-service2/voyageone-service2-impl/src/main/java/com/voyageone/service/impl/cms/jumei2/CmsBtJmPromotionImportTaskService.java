@@ -93,22 +93,22 @@ public class CmsBtJmPromotionImportTaskService {
 
         //读取product
         HSSFSheet productSheet = book.getSheet("Product");
-        List<ProductImportBean> listProductModel = new ArrayList<>();//导入的集合
+        List<ProductImportBean> listProductImport = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合  导出错误文件
         List<ExcelColumn> listProductColumn = getProductImportColumn();//配置列信息
-        ExcelImportUtil.importSheet(productSheet, listProductColumn, listProductModel, listProducctErrorMap, ProductImportBean.class);
+        ExcelImportUtil.importSheet(productSheet, listProductColumn, listProductImport, listProducctErrorMap, ProductImportBean.class);
 
         //读取sku
         HSSFSheet skuSheet = book.getSheet("Sku");
-        List<SkuImportBean> listSkuModel = new ArrayList<>();
+        List<SkuImportBean> listSkuImport = new ArrayList<>();
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();
         List<ExcelColumn> listSkuColumn = getSkuImportColumn();
-        ExcelImportUtil.importSheet(skuSheet, listSkuColumn, listSkuModel, listSkuErrorMap, SkuImportBean.class);
+        ExcelImportUtil.importSheet(skuSheet, listSkuColumn, listSkuImport, listSkuErrorMap, SkuImportBean.class);
 
         //check
-        check(modelCmsBtJmPromotion,listProductModel,listSkuModel,listProducctErrorMap,listSkuErrorMap);//check 移除不能导入的product
+        check(modelCmsBtJmPromotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap);//check 移除不能导入的product
 
-
+        saveImport(modelCmsBtJmPromotion,listProductImport,listSkuImport);
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
@@ -117,9 +117,9 @@ public class CmsBtJmPromotionImportTaskService {
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
             modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
         }
-        modelCmsBtJmPromotionImportTask.setSuccessRows(listProductModel.size());
-
+        modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
     }
+
     public void check(CmsBtJmPromotionModel model,List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel,List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap) throws IllegalAccessException {
         List<ProductImportBean> listErroProduct=new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
