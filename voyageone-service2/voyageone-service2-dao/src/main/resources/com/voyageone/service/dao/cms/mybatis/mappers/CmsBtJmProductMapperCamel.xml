@@ -7,7 +7,8 @@
         `product_name_cn`, `vo_category_name`, `vo_brand_name`, `brand_name`, `product_type`, 
         `size_type`, `product_des_en`, `attribute`, `foreign_language_name`, `address_of_produce`, 
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
-        `creater`, `modified`, `modifier`, `created`, `image1`
+        `creater`, `modified`, `modifier`, `created`, `image1`, `product_long_name`, `product_medium_name`, 
+        `product_short_name`, `search_meta_text_custom`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -93,6 +94,18 @@
             `created`,
             <if test="image1 != null" >
                 `image1`,
+            </if>
+            <if test="productLongName != null" >
+                `product_long_name`,
+            </if>
+            <if test="productMediumName != null" >
+                `product_medium_name`,
+            </if>
+            <if test="productShortName != null" >
+                `product_short_name`,
+            </if>
+            <if test="searchMetaTextCustom != null" >
+                `search_meta_text_custom`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -180,6 +193,18 @@
             <if test="image1 != null" >
                 #{image1,jdbcType=VARCHAR},
             </if>
+            <if test="productLongName != null" >
+                #{productLongName,jdbcType=VARCHAR},
+            </if>
+            <if test="productMediumName != null" >
+                #{productMediumName,jdbcType=VARCHAR},
+            </if>
+            <if test="productShortName != null" >
+                #{productShortName,jdbcType=VARCHAR},
+            </if>
+            <if test="searchMetaTextCustom != null" >
+                #{searchMetaTextCustom,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -263,6 +288,18 @@
             </if>
             <if test="image1 != null" >
                 `image1` = #{image1,jdbcType=VARCHAR},
+            </if>
+            <if test="productLongName != null" >
+                `product_long_name` = #{productLongName,jdbcType=VARCHAR},
+            </if>
+            <if test="productMediumName != null" >
+                `product_medium_name` = #{productMediumName,jdbcType=VARCHAR},
+            </if>
+            <if test="productShortName != null" >
+                `product_short_name` = #{productShortName,jdbcType=VARCHAR},
+            </if>
+            <if test="searchMetaTextCustom != null" >
+                `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -353,6 +390,18 @@
             <if test="image1 != null" >
                 and `image1` = #{image1,jdbcType=VARCHAR}
             </if>
+            <if test="productLongName != null" >
+                and `product_long_name` = #{productLongName,jdbcType=VARCHAR}
+            </if>
+            <if test="productMediumName != null" >
+                and `product_medium_name` = #{productMediumName,jdbcType=VARCHAR}
+            </if>
+            <if test="productShortName != null" >
+                and `product_short_name` = #{productShortName,jdbcType=VARCHAR}
+            </if>
+            <if test="searchMetaTextCustom != null" >
+                and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -435,6 +484,18 @@
             </if>
             <if test="image1 != null" >
                 and `image1` = #{image1,jdbcType=VARCHAR}
+            </if>
+            <if test="productLongName != null" >
+                and `product_long_name` = #{productLongName,jdbcType=VARCHAR}
+            </if>
+            <if test="productMediumName != null" >
+                and `product_medium_name` = #{productMediumName,jdbcType=VARCHAR}
+            </if>
+            <if test="productShortName != null" >
+                and `product_short_name` = #{productShortName,jdbcType=VARCHAR}
+            </if>
+            <if test="searchMetaTextCustom != null" >
+                and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

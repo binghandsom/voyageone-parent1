@@ -7,7 +7,6 @@
         `market_price`, `deal_price`, `app_id`, `created`, `pc_id`, `modified`, `discount`, 
         `error_msg`, `sku_count`, `quantity`, `activity_start`, `activity_end`, `deal_end_time_state`, 
         `deal_end_time`, `synch_status`, `update_status`, `price_status`, `creater`, `modifier`, 
-        `product_long_name`, `product_medium_name`, `product_short_name`, `search_meta_text_custom`, 
         `tag_id`, `retail_price`, `sale_price`, `msrp_rmb`
     </sql>
 
@@ -91,18 +90,6 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
-            </if>
-            <if test="productLongName != null" >
-                `product_long_name`,
-            </if>
-            <if test="productMediumName != null" >
-                `product_medium_name`,
-            </if>
-            <if test="productShortName != null" >
-                `product_short_name`,
-            </if>
-            <if test="searchMetaTextCustom != null" >
-                `search_meta_text_custom`,
             </if>
             <if test="tagId != null" >
                 `tag_id`,
@@ -199,18 +186,6 @@
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="productLongName != null" >
-                #{productLongName,jdbcType=VARCHAR},
-            </if>
-            <if test="productMediumName != null" >
-                #{productMediumName,jdbcType=VARCHAR},
-            </if>
-            <if test="productShortName != null" >
-                #{productShortName,jdbcType=VARCHAR},
-            </if>
-            <if test="searchMetaTextCustom != null" >
-                #{searchMetaTextCustom,jdbcType=VARCHAR},
-            </if>
             <if test="tagId != null" >
                 #{tagId,jdbcType=INTEGER},
             </if>
@@ -303,18 +278,6 @@
             </if>
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="productLongName != null" >
-                `product_long_name` = #{productLongName,jdbcType=VARCHAR},
-            </if>
-            <if test="productMediumName != null" >
-                `product_medium_name` = #{productMediumName,jdbcType=VARCHAR},
-            </if>
-            <if test="productShortName != null" >
-                `product_short_name` = #{productShortName,jdbcType=VARCHAR},
-            </if>
-            <if test="searchMetaTextCustom != null" >
-                `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR},
             </if>
             <if test="tagId != null" >
                 `tag_id` = #{tagId,jdbcType=INTEGER},
@@ -414,18 +377,6 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="productLongName != null" >
-                and `product_long_name` = #{productLongName,jdbcType=VARCHAR}
-            </if>
-            <if test="productMediumName != null" >
-                and `product_medium_name` = #{productMediumName,jdbcType=VARCHAR}
-            </if>
-            <if test="productShortName != null" >
-                and `product_short_name` = #{productShortName,jdbcType=VARCHAR}
-            </if>
-            <if test="searchMetaTextCustom != null" >
-                and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
-            </if>
             <if test="tagId != null" >
                 and `tag_id` = #{tagId,jdbcType=INTEGER}
             </if>
@@ -517,18 +468,6 @@
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="productLongName != null" >
-                and `product_long_name` = #{productLongName,jdbcType=VARCHAR}
-            </if>
-            <if test="productMediumName != null" >
-                and `product_medium_name` = #{productMediumName,jdbcType=VARCHAR}
-            </if>
-            <if test="productShortName != null" >
-                and `product_short_name` = #{productShortName,jdbcType=VARCHAR}
-            </if>
-            <if test="searchMetaTextCustom != null" >
-                and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
             </if>
             <if test="tagId != null" >
                 and `tag_id` = #{tagId,jdbcType=INTEGER}

@@ -7,18 +7,16 @@ import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUp
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @Repository
 public interface CmsBtJmPromotionProductDaoExt {
-    public CmsBtJmPromotionProductModel getByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+
 
     public List getListByWhere(Map<String, Object> map);
 
-    public List getPageByWhere(Map<String, Object> map);
-
-    public int getCountByWhere(Map<String, Object> ma);
 
     public List getExportInfoListByPromotionId(int promotionId);
 
@@ -32,7 +30,18 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     public int jmNewByProductIdListInfo(ProductIdListInfo parameter);
 
-    public int updateDealEndTimeAll( ParameterUpdateDealEndTimeAll parameter);
+    public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter);
 
     public int updateDealEndTime(ParameterUpdateDealEndTime parameter);
+
+    //jm2 begin
+    public List getPageByWhere(Map<String, Object> map);//add
+
+    public int getCountByWhere(Map<String, Object> ma);//add
+
+    //add
+    public boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+
+    public CmsBtJmPromotionProductModel getByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+    //jm2 end
 }

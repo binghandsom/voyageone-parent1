@@ -115,6 +115,26 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected String image1;
 
+    /**
+     * 长标题
+     */
+    protected String productLongName;
+
+    /**
+     * 中标题
+     */
+    protected String productMediumName;
+
+    /**
+     * 短标题
+     */
+    protected String productShortName;
+
+    /**
+     * 自定义自定义搜索词
+     */
+    protected String searchMetaTextCustom;
+
     public String getChannelId() {
         return channelId;
     }
@@ -281,5 +301,37 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setImage1(String image1) {
         this.image1 = image1 == null ? null : image1.trim();
+    }
+
+    public String getProductLongName() {
+        return productLongName;
+    }
+
+    public void setProductLongName(String productLongName) {
+        this.productLongName = productLongName == null ? null : productLongName.trim();
+    }
+
+    public String getProductMediumName() {
+        return productMediumName;
+    }
+
+    public void setProductMediumName(String productMediumName) {
+        this.productMediumName = productMediumName == null ? null : productMediumName.trim();
+    }
+
+    public String getProductShortName() {
+        return productShortName;
+    }
+
+    public void setProductShortName(String productShortName) {
+        this.productShortName = productShortName == null ? null : productShortName.trim();
+    }
+
+    public String getSearchMetaTextCustom() {
+        return searchMetaTextCustom;
+    }
+
+    public void setSearchMetaTextCustom(String searchMetaTextCustom) {
+        this.searchMetaTextCustom = searchMetaTextCustom == null ? null : searchMetaTextCustom.trim();
     }
 }

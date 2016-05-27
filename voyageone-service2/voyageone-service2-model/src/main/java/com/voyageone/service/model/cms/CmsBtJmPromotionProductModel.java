@@ -116,26 +116,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer priceStatus;
 
     /**
-     * 长标题
-     */
-    protected String productLongName;
-
-    /**
-     * 中标题
-     */
-    protected String productMediumName;
-
-    /**
-     * 短标题
-     */
-    protected String productShortName;
-
-    /**
-     * 自定义搜索词
-     */
-    protected String searchMetaTextCustom;
-
-    /**
      * tag
      */
     protected Integer tagId;
@@ -313,38 +293,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setPriceStatus(Integer priceStatus) {
         this.priceStatus = priceStatus;
-    }
-
-    public String getProductLongName() {
-        return productLongName;
-    }
-
-    public void setProductLongName(String productLongName) {
-        this.productLongName = productLongName == null ? null : productLongName.trim();
-    }
-
-    public String getProductMediumName() {
-        return productMediumName;
-    }
-
-    public void setProductMediumName(String productMediumName) {
-        this.productMediumName = productMediumName == null ? null : productMediumName.trim();
-    }
-
-    public String getProductShortName() {
-        return productShortName;
-    }
-
-    public void setProductShortName(String productShortName) {
-        this.productShortName = productShortName == null ? null : productShortName.trim();
-    }
-
-    public String getSearchMetaTextCustom() {
-        return searchMetaTextCustom;
-    }
-
-    public void setSearchMetaTextCustom(String searchMetaTextCustom) {
-        this.searchMetaTextCustom = searchMetaTextCustom == null ? null : searchMetaTextCustom.trim();
     }
 
     public Integer getTagId() {

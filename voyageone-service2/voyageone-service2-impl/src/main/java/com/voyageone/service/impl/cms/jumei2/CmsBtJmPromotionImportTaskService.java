@@ -6,6 +6,8 @@ import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
 import com.voyageone.service.bean.cms.businessmodel.*;
+import com.voyageone.service.bean.cms.jumei2.ProductImportBean;
+import com.voyageone.service.bean.cms.jumei2.SkuImportBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.cms.jumei.*;
@@ -37,6 +39,8 @@ public class CmsBtJmPromotionImportTaskService {
     CmsBtJmPromotionImportTaskDaoExt cmsBtJmPromotionImportTaskDaoExt;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJmPromotion;
+    @Autowired
+    CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
     @Autowired
     TransactionRunner transactionRunner;
 
@@ -73,30 +77,17 @@ public class CmsBtJmPromotionImportTaskService {
         HSSFWorkbook book = null;
         book = new HSSFWorkbook(fileInputStream);
         HSSFSheet productSheet = book.getSheet("Product");
-        List<CmsBtJmImportProduct> listProductModel = new ArrayList<>();//导入的集合
+        List<ProductImportBean> listProductModel = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合  导出错误文件
-        List<ExcelColumn> listProductColumn = EnumJMProductImportColumn.getListExcelColumn();//配置列信息
-        ExcelImportUtil.importSheet(productSheet, listProductColumn, listProductModel, listProducctErrorMap, CmsBtJmImportProduct.class);
+        List<ExcelColumn> listProductColumn = getProductImportColumn();//配置列信息
+        ExcelImportUtil.importSheet(productSheet, listProductColumn, listProductModel, listProducctErrorMap, ProductImportBean.class);
 
         HSSFSheet skuSheet = book.getSheet("Sku");
-        List<CmsBtJmImportSku> listSkuModel = new ArrayList<>();
+        List<SkuImportBean> listSkuModel = new ArrayList<>();
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();
-        List<ExcelColumn> listSkuColumn = EnumJMSkuImportColumn.getListExcelColumn();
-        ExcelImportUtil.importSheet(skuSheet, listSkuColumn, listSkuModel, listSkuErrorMap, CmsBtJmImportSku.class);
-
-        HSSFSheet specialImageSheet = book.getSheet("SpecialImage");
-        List<CmsBtJmImportSpecialImage> listSpecialImageModel = new ArrayList<>();
-        List<Map<String, Object>> listSpecialErrorMap = new ArrayList<>();
-        List<ExcelColumn> listSpecialColumn = EnumJMSpecialImageImportColumn.getListExcelColumn();
-        ExcelImportUtil.importSheet(specialImageSheet, listSpecialColumn, listSpecialImageModel, listSpecialErrorMap, CmsBtJmImportSpecialImage.class);
-
-        JmProductImportAllInfo info = new JmProductImportAllInfo();
-        info.setModelCmsBtJmPromotion(modelCmsBtJmPromotion);
-        info.setListProductModel(listProductModel);
-        info.setListSkuModel(listSkuModel);
-        info.setListSpecialImageModel(listSpecialImageModel);
-        // saveJmProductImportAllInfo(info, modelCmsBtJmPromotionImportTask.getCreater());
-        if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0 | listSpecialErrorMap.size() > 0) {
+        List<ExcelColumn> listSkuColumn = getSkuImportColumn();
+        ExcelImportUtil.importSheet(skuSheet, listSkuColumn, listSkuModel, listSkuErrorMap, SkuImportBean.class);
+        if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             // serviceCmsBtJmPromotionExportTask.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, listSpecialErrorMap, true);
@@ -105,11 +96,40 @@ public class CmsBtJmPromotionImportTaskService {
             modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
         }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductModel.size());
-    }
 
+    }
+    public void check( List<ProductImportBean> listProductModel,CmsBtJmPromotionModel model, List<SkuImportBean> listSkuModel) {
+        List<Map<String,Object>> listProductError=new ArrayList<>();
+        for (ProductImportBean product : listProductModel) {
+            if(daoExtCmsBtJmPromotionProduct.existsCode(model.getChannelId(),product.getProductCode(),model.getActivityStart(),model.getActivityEnd()))
+            { //活动日期重叠
+
+            }
+        }
+    }
+    public void  saveImport( List<ProductImportBean> listProductModel,CmsBtJmPromotionModel model, List<SkuImportBean> listSkuModel) {
+        for (ProductImportBean product : listProductModel) {
+
+        }
+        for (SkuImportBean sku : listSkuModel) {
+
+        }
+    }
     public List<ExcelColumn> getProductImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "", ""));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码"));
+        list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID"));
+        list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID"));
+        list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购"));
+        list.add(new ExcelColumn("promotion_tag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）"));
+        return list;
+    }
+    public List<ExcelColumn> getSkuImportColumn() {
+        List<ExcelColumn> list = new ArrayList<>();
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码"));
+        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "APP端模块ID"));
+        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "PC端模块ID"));
+        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "Deal每人限购"));
         return list;
     }
 }
