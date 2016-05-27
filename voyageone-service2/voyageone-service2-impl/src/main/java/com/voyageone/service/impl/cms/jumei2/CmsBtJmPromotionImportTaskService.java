@@ -108,7 +108,10 @@ public class CmsBtJmPromotionImportTaskService {
         //check
         check(modelCmsBtJmPromotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap);//check 移除不能导入的product
 
+        //save
         saveImport(modelCmsBtJmPromotion,listProductImport,listSkuImport);
+
+        //导出未通过check的记录
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
             String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
