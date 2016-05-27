@@ -56,7 +56,7 @@
                                     <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
                                         | translate}}
                                     </button>
-                                    <button class="btn btn-vo" ng-click="refreshTable()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                    <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
                                         | translate}}
                                     </button>
                                     <span ng-controller="popupCtrl">
@@ -75,7 +75,6 @@
             <table class="table table-hover-new text-center">
                 <thead>
                 <tr>
-                    <th class="text-center" style="width:7%" translate="TXT_SEQ"></th>
                     <th class="text-center" style="width:8%" translate="TXT_CHANNEL_ID"></th>
                     <th class="text-left" style="width:10%" translate="TXT_NAME"></th>
                     <th class="text-left" style="width:30%" translate="TXT_FULL_NAME"></th>
@@ -85,7 +84,6 @@
                 </thead>
                 <tbody ng-if="tableSource.length" class="table-hover">
                 <tr ng-repeat="el in tableSource">
-                    <td class="text-center mfb-xt3">{{$index+1}}</td>
                     <td class="text-center">{{el.order_channel_id}}</td>
                     <td class="text-left">{{el.name}}</td>
                     <td class="text-left">{{el.full_name}}</td>

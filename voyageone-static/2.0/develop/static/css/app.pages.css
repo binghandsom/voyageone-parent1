@@ -177,3 +177,50 @@
     top: 15px;
     left: 1px;
 }
+
+/**为店铺管理页面和标签管理页面提供样式 addedy by tony-piao*/
+.category_drag_list_dp {
+    margin: 0px;
+    padding: 4px 4px 0px 4px;
+    height: 200px;
+    overflow-y: auto;
+    overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    color: #3366cc;
+}
+
+.category_drag_list_dp ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.category_drag_list_dp li a:link {
+    float: left;
+    width: 100%;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.category_drag_list_dp li a:hover {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    background: #dcf3f9;
+    color: #333;
+}
+
+.category_drag_list_dp li .indexSelected {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 2px;
+    background: #dcf3f9;
+    color: #333
+}

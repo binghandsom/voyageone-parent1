@@ -13,6 +13,7 @@ import com.voyageone.service.impl.cms.ChannelService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.bean.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,9 @@ public class CmsChannelController extends CmsController {
     @Resource
     ChannelService channelService;
 
+    @Autowired
+    CmsChannelService cmsChannelService;
+
     @Resource
     CompanyDao companyDao;
 
@@ -52,10 +56,8 @@ public class CmsChannelController extends CmsController {
 
     @RequestMapping("update")
     public AjaxResponse doUpdate(@RequestBody OrderChannelBean bean) {
-
-
         bean.setModifier(getUser().getUserName());
-        channelService.updateById(bean);
+        cmsChannelService.update(bean);
         return success(true);
     }
 
@@ -86,7 +88,7 @@ public class CmsChannelController extends CmsController {
     @RequestMapping("save")
     public AjaxResponse save(@RequestBody OrderChannelBean bean) {
         bean.setCreater(getUser().getUserName());
-        channelService.save(bean);
+        cmsChannelService.save(bean);
         return success(true);
     }
 
