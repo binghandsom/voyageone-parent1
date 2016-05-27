@@ -48,37 +48,20 @@
                                 </div>
                                 <!-- onoff switch -->
                             </div>
-                            <label class="m-t-xs col-sm-2" translate="TXT_IS_WAITING_APPROVE"
-                                   ng-if="!ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove"></label>
-
-                            <div class="col-sm-2 text-left"
-                                 ng-if="!ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove">
-                                <div class="onoffswitch">
-                                    <input type="checkbox" name="switchIsWaitingApprove" class="onoffswitch-checkbox"
-                                           id="switchIsWaitingApprove"
-                                           ng-model="ctrl.productDetails.productStatus.statusInfo.isWaitingApprove">
-                                    <label class="onoffswitch-label" for="switchIsWaitingApprove">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
-                                </div>
-                                <!-- onoff switch -->
-                            </div>
-                            <label class="m-t-xs col-sm-2" translate="TXT_IS_APPROVED"
-                                   ng-if="ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove"></label>
-
-                            <div class="col-sm-2 text-left"
-                                 ng-if="ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove">
-                                <div class="onoffswitch">
-                                    <input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox"
-                                           id="switchIsApprove"
-                                           ng-model="ctrl.productDetails.productStatus.statusInfo.isApproved"
-                                           ng-disabled="ctrl.productDetails.productStatus.statusInfo.isDisable">
-                                    <label class="onoffswitch-label" for="switchIsApprove">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
-                                </div>
+                            <label class="m-t-xs col-sm-2 text-right" translate="TXT_STATUS"></label>
+                            <div class="col-sm-6 text-left m-t-xs">
+                                <label class="checkbox-inline c-radio" ng-repeat="productStatus in ctrl.productStatusList">
+                                    <input ng-disabled="ctrl.productDetails.productStatus.isApproved" name="priceType" type="radio" ng-value="productStatus.value" ng-model="ctrl.productDetails.productStatus.approveStatus"><span class="fa fa-check"></span> {{productStatus.name}}
+                                </label>
+                                <!--<div class="onoffswitch">-->
+                                    <!--<input type="checkbox" name="switchIsWaitingApprove" class="onoffswitch-checkbox"-->
+                                           <!--id="switchIsWaitingApprove"-->
+                                           <!--ng-model="ctrl.productDetails.productStatus.statusInfo.isWaitingApprove">-->
+                                    <!--<label class="onoffswitch-label" for="switchIsWaitingApprove">-->
+                                        <!--<span class="onoffswitch-inner"></span>-->
+                                        <!--<span class="onoffswitch-switch"></span>-->
+                                    <!--</label>-->
+                                <!--</div>-->
                                 <!-- onoff switch -->
                             </div>
                         </div>

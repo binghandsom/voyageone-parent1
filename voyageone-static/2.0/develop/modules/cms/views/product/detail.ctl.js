@@ -73,6 +73,7 @@ define([
             this.alert = alert;
 
             this.productDetails = null;
+            this.productStatusList = null;
             this.productDetailsCopy = null;
             this.currentImage = "";
             this.errorMsg = "";
@@ -90,6 +91,7 @@ define([
                 self.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
+                        self.productStatusList = res.data.productStatusList;
                         self.inventoryList = res.data.inventoryList;
                         self._orgChaName = res.data.orgChaName;
                         self._isminimall = res.data.isminimall;
@@ -112,7 +114,7 @@ define([
                 // 尝试检查商品的 field 验证
                 var invalidNames = validSchema(self.productDetails);
 
-                if (invalidNames.length && self.productDetails.productStatus.statusInfo.isApproved) {
+                if (invalidNames.length && self.productDetails.productStatus.approveStatus == 'Approved') {
                     return self.alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
                 }
 
@@ -132,7 +134,8 @@ define([
                     .then(function (res) {
                         self.productDetails.modified = res.modified;
                         self.productDetails.productStatus.approveStatus = res.approveStatus;
-                        self.productDetailService._setProductStatus(self.productDetails.productStatus);
+                        self.productDetails.productStatus.isApproved = res.isApproved;
+                        //self.productDetailService._setProductStatus(self.productDetails.productStatus);
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
@@ -207,7 +210,7 @@ define([
                 self.tempImage[context.imageType].push(context.base64);
 
                 self.productDetails = context.productInfo;
-                self.productDetailService._setProductStatus(self.productDetails.productStatus);
+                //self.productDetailService._setProductStatus(self.productDetails.productStatus);
                 self._orgChaName = context.orgChaName;
                 self._isminimall = context.isminimall;
                 self._isMain = context.isMain;

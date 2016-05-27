@@ -91,11 +91,12 @@ public class CmsProductDetailService extends BaseAppService {
             productStatus.setTranslateStatus(false);
         }
 
-//        if (COMPLETE_STATUS.equals(productValueModel.getFields().getEditStatus())) {
-//            productStatus.setEditStatus(true);
-//        } else {
-//            productStatus.setEditStatus(false);
-//        }
+        // 设置是否approve标签
+        if (CmsConstants.ProductStatus.Approved.name().equals(productValueModel.getFields().getStatus())) {
+            productStatus.setIsApproved(true);
+        } else {
+            productStatus.setIsApproved(false);
+        }
 
         //获取商品图片信息.
         Map<String, List<CmsBtProductModel_Field_Image>> productImages = new HashMap<>();
@@ -286,7 +287,7 @@ public class CmsProductDetailService extends BaseAppService {
     /**
      * 保存全部产品信息.
      */
-    public String updateProductAllInfo(String channelId, String userName, Map requestMap) {
+    public Map<String, Object> updateProductAllInfo(String channelId, String userName, Map requestMap) {
 
         String categoryId = requestMap.get("categoryId").toString();
         Long productId = Long.valueOf(requestMap.get("productId").toString());
@@ -366,7 +367,15 @@ public class CmsProductDetailService extends BaseAppService {
             productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
         }
 
-        return newModified;
+        // 设置返回值
+        Map<String, Object> result = new HashMap<>();
+        // 设置返回新的时间戳
+        result.put("modified", newModified);
+        // 设置返回approve状态
+        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
+        // 设置返回status状态
+        result.put("approveStatus", newProduct.getFields().getStatus());
+        return result;
     }
 
     /**
