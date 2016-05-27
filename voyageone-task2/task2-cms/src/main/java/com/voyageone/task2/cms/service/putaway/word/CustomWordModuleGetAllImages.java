@@ -85,7 +85,11 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     response = imageCreateService.getImage(request);
                     completeImageUrl = imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
                 } catch (Exception e) {
-                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + cmsBtProductModelFieldImage.getName()));
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(
+                                    "channelId:" + systemParam.getOrderChannelId() +
+                                    ". cartId:" + systemParam.getCartId() +
+                                    ". groupId:" + systemParam.getMainSxProduct().getCmsBtProductModelGroupPlatform().getGroupId() +
+                                    ". 图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + cmsBtProductModelFieldImage.getName()));
                 }
 
                 // 20160513 tom 图片服务器切换 END

@@ -89,7 +89,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                     // 20160513 tom 图片服务器切换 START
 //                    String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
 
-                    String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName());
+                    String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName(), systemParam);
                     // 20160513 tom 图片服务器切换 END
                     imageUrlList.add(completeImageUrl);
                 }
@@ -111,7 +111,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 20160513 tom 图片服务器切换 START
 //                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
 
-                paddingImage = getImageByTemplateId(expressionParser, imageTemplate, paddingImageKey.trim());
+                paddingImage = getImageByTemplateId(expressionParser, imageTemplate, paddingImageKey.trim(), systemParam);
                 // 20160513 tom 图片服务器切换 END
                 paddingImage = UploadImageHandler.encodeImageUrl(paddingImage);
                 imageUrlList.add(String.format(imageTemplate, paddingImage));
@@ -125,7 +125,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 20160513 tom 图片服务器切换 START
 //                String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
 
-                String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName());
+                String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName(), systemParam);
                 // 20160513 tom 图片服务器切换 END
                 imageUrlList.add(completeImageUrl);
             }else {
@@ -147,7 +147,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
     }
 
     // 20160513 tom 图片服务器切换 START
-    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName) throws TaskSignal {
+    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName, CustomValueSystemParam systemParam) throws TaskSignal {
 
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
@@ -161,7 +161,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(
+                            "channelId:" + systemParam.getOrderChannelId() +
+                            ". cartId:" + systemParam.getCartId() +
+                            ". groupId:" + systemParam.getMainSxProduct().getCmsBtProductModelGroupPlatform().getGroupId() +
+                            "图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName));
         }
     }
     // 20160513 tom 图片服务器切换 END
