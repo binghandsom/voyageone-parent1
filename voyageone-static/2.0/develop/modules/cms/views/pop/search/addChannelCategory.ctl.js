@@ -56,22 +56,17 @@ define([
                     var category = map[item.categoryId];
 
                     while(category) {
-                        if (cIds.indexOf(category.catId) < 0) cIds.unshift(category.catId);
-                        if (cNames.indexOf(category.catName) < 0) cNames.unshift(category.catName);
+                        if (cIds.indexOf(category.catId) < 0) cIds.push(category.catId);
+                        if (cNames.indexOf(category.catName) < 0) cNames.push(category.catName);
 
                         if (category.parent) {
-                            if (fullCNames.indexOf(category.catPath) < 0) fullCNames.unshift(category.catPath);
-                            if (fullCIds.indexOf(category.fullCatCId) < 0)  fullCIds.unshift(category.fullCatCId);
+                            if (fullCNames.indexOf(category.catPath) < 0) fullCNames.push(category.catPath);
+                            if (fullCIds.indexOf(category.fullCatCId) < 0)  fullCIds.push(category.fullCatCId);
                         }
 
                         category = category.parent;
                     }
                 });
-
-                cIds = cIds.map(function(i){return {cId:i};});
-                cNames = cNames.map(function(i){return {cName:i};});
-                fullCNames = fullCNames.map(function(i){return {fullCName:i};});
-                fullCIds = fullCIds.map(function(i){return {fullCId:i};});
 
                 console.log(cIds);
                 console.log(cNames);
