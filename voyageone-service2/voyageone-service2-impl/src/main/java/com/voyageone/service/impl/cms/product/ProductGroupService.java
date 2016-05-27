@@ -193,6 +193,10 @@ public class ProductGroupService extends BaseService {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (String code : model.getProductCodes()) {
 
+                if (!isPublishedProducts.containsKey(code)) {
+                    continue;
+                }
+
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap = new HashMap<>();
                 bulkQueryMap.put("fields.code", code);
