@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
@@ -41,38 +42,55 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.PAGE)
     public AjaxResponse page(@RequestBody ReqParam param) {
+
         List<CmsBtBeatInfoBean> beatInfoModels =
-                taskPictureService.getAllBeat(param.getTask_id(), param.getFlag(), param.getOffset(), param.getSize());
-        int total = taskPictureService.getAllBeatCount(param.getTask_id(), param.getFlag());
-        List<Map> summary = taskPictureService.getBeatSummary(param.getTask_id());
+                taskPictureService.getAllBeat(param.getTask_id(), param.getFlag(), param.getSearchKey(),
+                        param.getOffset(), param.getSize());
+
+        int total = taskPictureService.getAllBeatCount(param.getTask_id(), param.getFlag(), param.getSearchKey());
+
+        List<Map<String, Object>> summary = taskPictureService.getBeatSummary(param.getTask_id());
+
+        CmsBtTasksBean task = taskService.getTaskWithPromotion(param.getTask_id());
+
         Map<String, Object> map = new HashMap<>();
+
         map.put("list", beatInfoModels);
         map.put("total", total);
         map.put("summary", summary);
+        map.put("task", task);
+
         return success(map);
     }
 
     @RequestMapping(BEAT.IMPORT)
     public AjaxResponse importBeat(@RequestParam int task_id, @RequestParam int size, @RequestParam MultipartFile file) {
+
         List<CmsBtBeatInfoBean> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
-        int total = taskPictureService.getAllBeatCount(task_id, null);
+
+        int total = taskPictureService.getAllBeatCount(task_id, null, null);
+
         Map<String, Object> map = new HashMap<>();
         map.put("list", beatInfoModels);
         map.put("total", total);
+
         return success(map);
     }
 
     @RequestMapping(BEAT.DOWNLOAD)
     public ResponseEntity<byte[]> downloadBeat(@RequestParam int task_id) {
+
         CmsBtTasksBean task = taskService.getTaskWithPromotion(task_id);
-        String filename = String.format("%s-%s.xls", task.getPromotion().getPromotionName(), task.getTask_name());
+
+        String filename = String.format("%s-%s.xls", task.getPromotion().getPromotionName(), task.getTaskName());
+
         return genResponseEntityFromBytes(filename,
                 taskPictureService.downloadBeatInfo(task_id));
     }
 
     @RequestMapping(BEAT.CONTROL)
     public AjaxResponse control(@RequestBody ReqParam param) {
-        return success(taskPictureService.control(param.getBeat_id(), param.getTask_id(), param.getFlag(), getUser()));
+        return success(taskPictureService.control(param.getBeat_id(), param.getTask_id(), param.getFlag(), param.getForce(), getUser()));
     }
 
     @RequestMapping(BEAT.ADD)
@@ -93,5 +111,11 @@ public class CmsTaskPictureController extends BaseController {
     @RequestMapping(BEAT.ADD_NUMIID)
     public AjaxResponse addNumiid(@RequestBody ReqParam param) {
         return success(taskPictureService.getNewNumiid(param.getTask_id()));
+    }
+
+    @RequestMapping(BEAT.GET_TEMPLATES)
+    public AjaxResponse getTemplates(@RequestBody ReqParam param) {
+        List<CmsBtImageTemplateModel> allTemplate = taskPictureService.getTemplatesByPromotion(param.getPromotionId());
+        return success(allTemplate);
     }
 }

@@ -2,6 +2,9 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
@@ -22,6 +25,9 @@ import java.util.*;
 public class CustomWordModuleImageWithParam extends CustomWordModule {
 
     public final static String moduleName = "ImageWithParam";
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     public CustomWordModuleImageWithParam() {
         super(moduleName);
@@ -72,7 +78,24 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             imageParams.add("");
         }
 
-        String parseResult = String.format(imageTemplate, imageParams.toArray());
+        // 20160513 tom 图片服务器切换 START
+//        String parseResult = String.format(imageTemplate, imageParams.toArray());
+
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
+        request.setTemplateId(Integer.parseInt(imageTemplate));
+        request.setFile(imageTemplate + "_" + imageParams.get(0)); // 模板id + "_" + 第一个参数(一般是图片名)
+        request.setVParam(imageParams.toArray(new String[(imageParams.size())]));
+        ImageCreateGetResponse response = null;
+        try {
+            response = imageCreateService.getImage(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String parseResult = imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+        // 20160513 tom 图片服务器切换 END
+
 //        parseResult = sxProductService.encodeImageUrl(parseResult);
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             Set<String> url = new HashSet<>();

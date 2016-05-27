@@ -30,12 +30,14 @@ define([
                     $storeOpService.rePublist().then(function(resp){
                         if(resp.data == true)
                             notify.success("操作成功！");
+                        $scope.$dismiss();
                     });
                     break;
                 case 3:
                     $storeOpService.rePublistPrice().then(function(resp){
                         if(resp.data == true)
                             notify.success("操作成功！");
+                        $scope.$dismiss();
                     });
                     break;
                 default:
@@ -45,6 +47,7 @@ define([
                     $storeOpService.reUpload(cleanCommonProperties).then(function(resp){
                         if(resp.data == true)
                             notify.success("操作成功！");
+                        $scope.$dismiss();
                     });
             }
         }

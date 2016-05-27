@@ -618,7 +618,9 @@ public class ProductService extends BaseService {
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("catId", categoryId);
         updateMap.put("catPath", categoryPath);
-        updateMap.put("batchField.switchCategory", 1);
+        // bug CMS-30修正 edward 2016-05-24
+        if (!Channel.VOYAGEONE.getId().equals(channelId))
+            updateMap.put("batchField.switchCategory", 1);
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
 

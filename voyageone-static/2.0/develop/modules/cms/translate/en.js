@@ -1,6 +1,8 @@
 define(function() {
     return {
+        "TXT_IMAGE_STATUS": "Image Status",
         "TXT_REMINDER_WITH_COLON": "Reminder：",
+        "TXT_EDIT_TASK": "Edit Task ",
         "TXT_LOGOUT": "Logout",
         "TXT_HOME": "Home",
         "TXT_CATEGORY_VIEWS": "-- Category Views --",
@@ -507,6 +509,7 @@ define(function() {
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
         "BTN_RESET":"Reset",
+        "BTN_REFRESH_PAGE": "Refresh Page",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
@@ -522,6 +525,11 @@ define(function() {
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
         "CANT_BEAT": "Info Error",
+
+        "None": "No Image",
+        "Waiting": "Waiting",
+        "Error": "Error",
+        "Exists": "Success",
 
         /**分页显示*/
         "TXT_PAGER_SIZE": "page-size",

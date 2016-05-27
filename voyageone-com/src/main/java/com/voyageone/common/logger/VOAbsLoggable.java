@@ -158,4 +158,15 @@ public abstract class VOAbsLoggable {
         }
         logger.debug(format("Thread-%s\t| %s", Thread.currentThread().getId(), format(template, args)));
     }
+
+    /**
+     * logger.debug 的辅助方法
+     */
+    public void $debug(String msg, Throwable t) {
+        if (!getLogWithThread()) {
+            logger.debug(msg, t);
+            return;
+        }
+        logger.debug(format("Thread-%s\t| %s", Thread.currentThread().getId(), msg), t);
+    }
 }

@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtTaskJiagepiluDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel" />
     <sql id="Base_Column_List" >
-        `id`, `task_id`, `num_iid`, `product_code`, `syn_flag`, `message`, `created`, `creater`, 
-        `modified`, `modifier`
+        `id`, `task_id`, `num_iid`, `product_code`, `syn_flag`, `message`, `image_status`, 
+        `image_task_id`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -31,6 +31,12 @@
             </if>
             <if test="message != null" >
                 `message`,
+            </if>
+            <if test="imageStatus != null" >
+                `image_status`,
+            </if>
+            <if test="imageTaskId != null" >
+                `image_task_id`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -59,6 +65,12 @@
             </if>
             <if test="message != null" >
                 #{message,jdbcType=VARCHAR},
+            </if>
+            <if test="imageStatus != null" >
+                #{imageStatus,jdbcType=INTEGER},
+            </if>
+            <if test="imageTaskId != null" >
+                #{imageTaskId,jdbcType=INTEGER},
             </if>
             <if test="created == null" >
                 now(),
@@ -101,6 +113,12 @@
             </if>
             <if test="message != null" >
                 `message` = #{message,jdbcType=VARCHAR},
+            </if>
+            <if test="imageStatus != null" >
+                `image_status` = #{imageStatus,jdbcType=INTEGER},
+            </if>
+            <if test="imageTaskId != null" >
+                `image_task_id` = #{imageTaskId,jdbcType=INTEGER},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -146,6 +164,12 @@
             <if test="message != null" >
                 and `message` = #{message,jdbcType=VARCHAR}
             </if>
+            <if test="imageStatus != null" >
+                and `image_status` = #{imageStatus,jdbcType=INTEGER}
+            </if>
+            <if test="imageTaskId != null" >
+                and `image_task_id` = #{imageTaskId,jdbcType=INTEGER}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -180,6 +204,12 @@
             </if>
             <if test="message != null" >
                 and `message` = #{message,jdbcType=VARCHAR}
+            </if>
+            <if test="imageStatus != null" >
+                and `image_status` = #{imageStatus,jdbcType=INTEGER}
+            </if>
+            <if test="imageTaskId != null" >
+                and `image_task_id` = #{imageTaskId,jdbcType=INTEGER}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}

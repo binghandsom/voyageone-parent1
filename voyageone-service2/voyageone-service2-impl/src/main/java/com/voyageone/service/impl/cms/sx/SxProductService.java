@@ -19,6 +19,9 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.DictWord;
@@ -91,6 +94,8 @@ public class SxProductService extends BaseService {
     private BusinessLogService businessLogService;
     @Autowired
     private ConditionPropValueService conditionPropValueService;
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -591,10 +596,11 @@ public class SxProductService extends BaseService {
      * @param shopBean
      * @param expressionParser
      * @param user 上传图片用
+     * @param isItem true：商品 false：产品
      * @return Map<field_id, mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
-    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
@@ -610,7 +616,7 @@ public class SxProductService extends BaseService {
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
 
-        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp);
+        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
         if (!mappingTypePropsMap.isEmpty()) {
             // 所有sku取得
             List<String> skus = new ArrayList<>();
@@ -966,10 +972,11 @@ public class SxProductService extends BaseService {
      * @param fieldsMap
      * @param expressionParser ExpressionParser
      * @param mapSp 特殊属性Map
+     * @param isItem true：商品 false：产品
      * @return
      * @throws Exception
      */
-    private Map<CustomMappingType, List<Field>> getCustomPlatformProps(Map<String, Field> fieldsMap, ExpressionParser expressionParser, Map<String, Object> mapSp) throws Exception {
+    private Map<CustomMappingType, List<Field>> getCustomPlatformProps(Map<String, Field> fieldsMap, ExpressionParser expressionParser, Map<String, Object> mapSp, boolean isItem) throws Exception {
         SxData sxData = expressionParser.getSxData();
 
         //第一步，先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
@@ -978,6 +985,12 @@ public class SxProductService extends BaseService {
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
         for (CmsMtPlatformPropMappingCustomModel model : cmsMtPlatformPropMappingCustomModels) {
+            // add by morse.lu 2016/05/24 start
+            if (!isItem && CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO) {
+                // 不是商品，是产品
+                continue;
+            }
+            // add by morse.lu 2016/05/24 end
             Field field = fieldsMap.get(model.getPlatformPropId());
             if (field != null) {
                 List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(CustomMappingType.valueOf(model.getMappingType()));
@@ -1031,11 +1044,14 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
+                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCatId() + ". groupId:" + sxData.getGroupId();
+
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
                     AbstractSkuFieldBuilder skuFieldService = skuFieldBuilderService.getSkuFieldBuilder(cartId, allSkuFields);
                     if (skuFieldService == null) {
-                        throw new BusinessException("No sku builder find");
+                        sxData.setErrorMessage("No sku builder find." + errorLog);
+                        throw new BusinessException("No sku builder find." + errorLog);
                     }
 
                     skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
@@ -1045,7 +1061,8 @@ public class SxProductService extends BaseService {
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field)); // TODO：暂时只存放最大的field（即sku，颜色扩展，size扩展）以后再改
                     } catch (Exception e) {
                         $warn(e.getMessage());
-                        throw new BusinessException("Can't build SkuInfoField");
+                        sxData.setErrorMessage("Can't build SkuInfoField." + errorLog);
+                        throw new BusinessException("Can't build SkuInfoField." + errorLog);
                     }
                     break;
                 }
@@ -1410,6 +1427,25 @@ public class SxProductService extends BaseService {
     public String searchDictList(String channelId, int cartId, String paddingPropName, int imageIndex) {
         return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }
+
+    // 20160513 tom 图片服务器切换 START
+    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) throws Exception {
+
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(channelId);
+        request.setTemplateId(Integer.parseInt(imageTemplate));
+        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
+        String[] vPara = {imageName};
+        request.setVParam(vPara);
+        ImageCreateGetResponse response = null;
+        try {
+            response = imageCreateService.getImage(request);
+            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+        } catch (Exception e) {
+            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
+        }
+    }
+    // 20160513 tom 图片服务器切换 END
 
     private enum SkuSort {
         DIGIT("digit", 1), // 纯数字系列

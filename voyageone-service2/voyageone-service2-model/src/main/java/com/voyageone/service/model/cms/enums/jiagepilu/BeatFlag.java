@@ -1,4 +1,4 @@
-package com.voyageone.service.model.cms.enums;
+package com.voyageone.service.model.cms.enums.jiagepilu;
 
 /**
  * 价格披露 2 的状态码

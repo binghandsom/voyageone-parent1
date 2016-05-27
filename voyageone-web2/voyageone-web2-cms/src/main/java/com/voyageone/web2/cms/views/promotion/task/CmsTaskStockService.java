@@ -706,15 +706,15 @@ public class CmsTaskStockService extends BaseAppService {
     private CmsBtTasksBean createTasksByPromotionInfo(Map<String, Object> param) {
         CmsBtTasksBean cmsBtTasksBean = new CmsBtTasksBean();
         //任务名
-        cmsBtTasksBean.setTask_name((String) param.get("taskName"));
+        cmsBtTasksBean.setTaskName((String) param.get("taskName"));
         //活动类型
-        cmsBtTasksBean.setTask_type(Integer.parseInt(TASK_TYPE));
+        cmsBtTasksBean.setTaskType(Integer.parseInt(TASK_TYPE));
         //活动ID
-        cmsBtTasksBean.setPromotion_id(-1);
+        cmsBtTasksBean.setPromotionId(-1);
         //活动开始时间
-        cmsBtTasksBean.setActivity_start("");
+        cmsBtTasksBean.setActivityStart("");
         //活动结束时间
-        cmsBtTasksBean.setActivity_end("");
+        cmsBtTasksBean.setActivityEnd("");
         //channelId
         cmsBtTasksBean.setChannelId((String) param.get("channel_id"));
         //创建者

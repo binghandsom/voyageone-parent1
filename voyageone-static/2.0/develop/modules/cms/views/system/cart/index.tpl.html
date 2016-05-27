@@ -67,7 +67,6 @@
             <table class="table table-hover-new text-center">
                 <thead>
                 <tr>
-                    <th class="text-center col-sm-1" translate="TXT_SEQ"></th>
                     <th class="text-center col-sm-1" translate="TXT_CART_ID"></th>
                     <th class="text-left col-sm-1" translate="TXT_NAME"></th>
                     <th class="text-left col-sm-1" translate="TXT_SHORT_NAME"></th>
@@ -79,7 +78,6 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="el in vm.data track by el.cart_id">
-                    <td class="text-center">{{$index+1}}</td>
                     <td class="text-center">{{el.cart_id}}</td>
                     <td class="text-left">{{el.name}}</td>
                     <td class="text-left">{{el.short_name}}</td>

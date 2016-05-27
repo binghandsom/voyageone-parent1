@@ -58,7 +58,7 @@ public class MasterWordParser extends VOAbsLoggable {
             if (plainPropValueObj == null) {
                 return null;
             }
-            if (extra == null) {
+            if (extra == null || extra.size() == 0) {
                 return String.valueOf(plainPropValueObj);
             } else {
                 if (plainPropValueObj instanceof String) {

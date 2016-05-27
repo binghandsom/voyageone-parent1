@@ -144,9 +144,8 @@ public class BcbgAnalysisService extends BaseTaskService {
         transformer.new Context(channel, this).transform();
         $info("数据处理阶段结束");
 
-        // TODO 正式情况请打开
-        // 备份文件
-        //new Backup().fromData(feedFile, styleFile);
+//         备份文件
+        new Backup().fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {
