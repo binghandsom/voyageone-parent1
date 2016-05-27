@@ -29,7 +29,10 @@ public class CmsChannelCategoryController extends CmsController {
     public AjaxResponse getSellerCat(@RequestBody Map param) {
         String channelId = this.getUser().getSelChannelId();
         Integer cartId = Integer.valueOf(param.get("cartId").toString());
-        List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+
+        boolean isTree = Boolean.valueOf(param.getOrDefault("isTree", "true").toString());
+
+        List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId ,isTree);
         Map<String, Object> result = new HashMap<>();
         result.put("catTree", list);
         return success(result);

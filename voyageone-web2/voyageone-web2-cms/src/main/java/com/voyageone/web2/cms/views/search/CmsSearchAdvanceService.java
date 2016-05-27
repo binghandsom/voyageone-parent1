@@ -214,6 +214,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
             masterData.put("channelList", Channels.getUsJoiChannelList());
         }
 
+        //获取店铺列表
+        masterData.put("cartList",TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+
         return masterData;
     }
 
