@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.putaway.rule_parser;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.SxProductBean;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -48,7 +49,7 @@ public class ExpressionParser {
         this.skuWordParser = new SkuWordParser();
     }
 
-    public String parse(RuleExpression ruleExpression, Set<String> imageSet) {
+    public String parse(RuleExpression ruleExpression, Set<String> imageSet) throws TaskSignal {
         StringBuilder resultStr = new StringBuilder();
 
         if (ruleExpression != null) {

@@ -8,6 +8,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.SxProductBean;
+import com.voyageone.task2.cms.bean.tcb.AbortTaskSignalInfo;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
+import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetMainPrductImages;
@@ -36,12 +39,12 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) throws TaskSignal {
         return parse(customWord, expressionParser, systemParam, null);
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) throws TaskSignal {
         //user param
         CustomModuleUserParamGetMainPrductImages customModuleUserParamGetMainPrductImages = ((CustomWordValueGetMainProductImages) customWord.getValue()).getUserParam();
 
@@ -144,7 +147,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
     }
 
     // 20160513 tom 图片服务器切换 START
-    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName) {
+    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName) throws TaskSignal {
 
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
@@ -155,12 +158,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         ImageCreateGetResponse response = null;
         try {
             response = imageCreateService.getImage(request);
+            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName));
         }
-
-        return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
-
     }
     // 20160513 tom 图片服务器切换 END
 

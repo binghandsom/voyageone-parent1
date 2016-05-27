@@ -80,20 +80,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 
         // 20160513 tom 图片服务器切换 START
 //        String parseResult = String.format(imageTemplate, imageParams.toArray());
-
-        ImageCreateGetRequest request = new ImageCreateGetRequest();
-        request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
-        request.setTemplateId(Integer.parseInt(imageTemplate));
-        request.setFile(imageTemplate + "_" + imageParams.get(0)); // 模板id + "_" + 第一个参数(一般是图片名)
-        request.setVParam(imageParams.toArray(new String[(imageParams.size())]));
-        ImageCreateGetResponse response = null;
-        try {
-            response = imageCreateService.getImage(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String parseResult = imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.get(0));
         // 20160513 tom 图片服务器切换 END
 
 //        parseResult = sxProductService.encodeImageUrl(parseResult);

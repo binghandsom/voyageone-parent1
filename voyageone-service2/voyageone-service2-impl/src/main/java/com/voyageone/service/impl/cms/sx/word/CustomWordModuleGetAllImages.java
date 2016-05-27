@@ -73,21 +73,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 // 20160512 tom 有可能为空 add END
                 // 20160513 tom 图片服务器切换 START
 //                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
-
-                ImageCreateGetRequest request = new ImageCreateGetRequest();
-                request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
-                request.setTemplateId(Integer.parseInt(imageTemplate));
-                request.setFile(imageTemplate + "_" + cmsBtProductModelFieldImage.getName()); // 模板id + "_" + 第一个参数(一般是图片名)
-                String[] vPara = {cmsBtProductModelFieldImage.getName()};
-                request.setVParam(vPara);
-                ImageCreateGetResponse response = null;
-                try {
-                    response = imageCreateService.getImage(request);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                String completeImageUrl = imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+                String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, cmsBtProductModelFieldImage.getName());
                 // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {

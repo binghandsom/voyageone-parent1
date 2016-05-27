@@ -4,6 +4,9 @@ import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
+import com.voyageone.task2.cms.bean.tcb.AbortTaskSignalInfo;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
+import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
@@ -36,13 +39,13 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) throws TaskSignal {
         return parse(customWord, expressionParser, systemParam, null);
     }
 
     //public Str
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) throws TaskSignal {
         //user param
         CustomModuleUserParamImageWithParam customModuleUserParamImageWithParam= ((CustomWordValueImageWithParam) customWord.getValue()).getUserParam();
 
@@ -90,13 +93,15 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         request.setFile(imageTemplate + "_" + imageParams.get(0)); // 模板id + "_" + 第一个参数(一般是图片名)
         request.setVParam(imageParams.toArray(new String[(imageParams.size())]));
         ImageCreateGetResponse response = null;
+        String parseResult;
         try {
             response = imageCreateService.getImage(request);
+            parseResult = UploadImageHandler.encodeImageUrl(imageCreateService.getOssHttpURL(response.getResultData().getFilePath()));
         } catch (Exception e) {
             e.printStackTrace();
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageParams.get(0)));
         }
 
-        String parseResult = UploadImageHandler.encodeImageUrl(imageCreateService.getOssHttpURL(response.getResultData().getFilePath()));
         // 20160513 tom 图片服务器切换 END
         if (imageSet != null) {
             imageSet.add(parseResult);
