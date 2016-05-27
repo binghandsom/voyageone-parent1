@@ -67,11 +67,6 @@ define([
                         category = category.parent;
                     }
                 });
-
-                console.log(cIds);
-                console.log(cNames);
-                console.log(fullCNames);
-                console.log(fullCIds);
             }
         };
 
