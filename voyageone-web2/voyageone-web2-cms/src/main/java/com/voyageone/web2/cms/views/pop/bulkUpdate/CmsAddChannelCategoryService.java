@@ -88,12 +88,16 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         List<String> fullCNamesList = (List) params.get("fullCNames");
         List<String> fullCatCIdList = (List) params.get("fullCIds");
         List<String> codeList = (List) params.get("code");
+        //channelId
+        String channelId = (String) params.get("channelId");
+        //modifier
+        String modifier = (String) params.get("user");
         //check
 
         //公共处理
 
         //区分
-        productService.updateSellerCat(cIdsList,cNamesList,fullCNamesList,fullCatCIdList,codeList);
+        productService.updateSellerCat(cIdsList,cNamesList,fullCNamesList,fullCatCIdList,codeList,modifier,channelId);
 
     }
 }
