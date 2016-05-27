@@ -172,6 +172,7 @@ define([
          */
         function openAddPromotion (promotion, openAddToPromotion) {
             openAddToPromotion(promotion, getSelProductList()).then(function () {
+                searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -184,6 +185,7 @@ define([
          */
         function openJMActivity (promotion, openJMActivity) {
             openJMActivity(promotion, getSelProductList()).then(function () {
+                searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -195,6 +197,7 @@ define([
          */
         function openBulkUpdate (openFieldEdit) {
             openFieldEdit(getSelProductList()).then(function () {
+                searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -319,6 +322,7 @@ define([
                     .then(function () {
                         searchAdvanceService.addFreeTag(tagBean.tagPath, productIds).then(function () {
                             notify.success ($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            searchAdvanceService.clearSelList();
                             getGroupList();
                             getProductList();
                         })
