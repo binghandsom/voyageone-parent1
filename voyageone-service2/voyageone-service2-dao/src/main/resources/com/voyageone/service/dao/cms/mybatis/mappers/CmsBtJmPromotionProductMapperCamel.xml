@@ -4,10 +4,10 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionProductModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
-        `market_price`, `deal_price`, `app_id`, `created`, `pc_id`, `modified`, `discount`, 
-        `error_msg`, `sku_count`, `quantity`, `activity_start`, `activity_end`, `deal_end_time_state`, 
-        `deal_end_time`, `synch_status`, `update_status`, `price_status`, `creater`, `modifier`, 
-        `tag_id`, `retail_price`, `sale_price`, `msrp_rmb`
+        `market_price`, `deal_price`, `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, 
+        `sku_count`, `quantity`, `activity_start`, `activity_end`, `synch_status`, `update_status`, 
+        `price_status`, `retail_price`, `modifier`, `sale_price`, `msrp_rmb`, `created`, 
+        `creater`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -44,7 +44,6 @@
             <if test="appId != null" >
                 `app_id`,
             </if>
-            `created`,
             <if test="pcId != null" >
                 `pc_id`,
             </if>
@@ -67,12 +66,6 @@
             <if test="activityEnd != null" >
                 `activity_end`,
             </if>
-            <if test="dealEndTimeState != null" >
-                `deal_end_time_state`,
-            </if>
-            <if test="dealEndTime != null" >
-                `deal_end_time`,
-            </if>
             <if test="synchStatus != null" >
                 `synch_status`,
             </if>
@@ -82,8 +75,8 @@
             <if test="priceStatus != null" >
                 `price_status`,
             </if>
-            <if test="creater != null" >
-                `creater`,
+            <if test="retailPrice != null" >
+                `retail_price`,
             </if>
             <if test="modifier != null" >
                 `modifier`,
@@ -91,17 +84,15 @@
             <if test="modifier == null and creater != null" >
                 `modifier`,
             </if>
-            <if test="tagId != null" >
-                `tag_id`,
-            </if>
-            <if test="retailPrice != null" >
-                `retail_price`,
-            </if>
             <if test="salePrice != null" >
                 `sale_price`,
             </if>
             <if test="msrpRmb != null" >
                 `msrp_rmb`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -128,12 +119,6 @@
             </if>
             <if test="appId != null" >
                 #{appId,jdbcType=VARCHAR},
-            </if>
-            <if test="created == null" >
-                now(),
-            </if>
-            <if test="created != null" >
-                #{created,jdbcType=TIMESTAMP},
             </if>
             <if test="pcId != null" >
                 #{pcId,jdbcType=VARCHAR},
@@ -162,12 +147,6 @@
             <if test="activityEnd != null" >
                 #{activityEnd,jdbcType=TIMESTAMP},
             </if>
-            <if test="dealEndTimeState != null" >
-                #{dealEndTimeState,jdbcType=INTEGER},
-            </if>
-            <if test="dealEndTime != null" >
-                #{dealEndTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="synchStatus != null" >
                 #{synchStatus,jdbcType=INTEGER},
             </if>
@@ -177,8 +156,8 @@
             <if test="priceStatus != null" >
                 #{priceStatus,jdbcType=INTEGER},
             </if>
-            <if test="creater != null" >
-                #{creater,jdbcType=VARCHAR},
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=DECIMAL},
             </if>
             <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
@@ -186,17 +165,20 @@
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="tagId != null" >
-                #{tagId,jdbcType=INTEGER},
-            </if>
-            <if test="retailPrice != null" >
-                #{retailPrice,jdbcType=DECIMAL},
-            </if>
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DECIMAL},
             </if>
             <if test="msrpRmb != null" >
                 #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -228,9 +210,6 @@
             <if test="appId != null" >
                 `app_id` = #{appId,jdbcType=VARCHAR},
             </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
             <if test="pcId != null" >
                 `pc_id` = #{pcId,jdbcType=VARCHAR},
             </if>
@@ -258,12 +237,6 @@
             <if test="activityEnd != null" >
                 `activity_end` = #{activityEnd,jdbcType=TIMESTAMP},
             </if>
-            <if test="dealEndTimeState != null" >
-                `deal_end_time_state` = #{dealEndTimeState,jdbcType=INTEGER},
-            </if>
-            <if test="dealEndTime != null" >
-                `deal_end_time` = #{dealEndTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="synchStatus != null" >
                 `synch_status` = #{synchStatus,jdbcType=INTEGER},
             </if>
@@ -273,23 +246,23 @@
             <if test="priceStatus != null" >
                 `price_status` = #{priceStatus,jdbcType=INTEGER},
             </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
             </if>
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="tagId != null" >
-                `tag_id` = #{tagId,jdbcType=INTEGER},
-            </if>
-            <if test="retailPrice != null" >
-                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
             </if>
             <if test="salePrice != null" >
                 `sale_price` = #{salePrice,jdbcType=DECIMAL},
             </if>
             <if test="msrpRmb != null" >
                 `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -329,9 +302,6 @@
             <if test="appId != null" >
                 and `app_id` = #{appId,jdbcType=VARCHAR}
             </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
             <if test="pcId != null" >
                 and `pc_id` = #{pcId,jdbcType=VARCHAR}
             </if>
@@ -356,12 +326,6 @@
             <if test="activityEnd != null" >
                 and `activity_end` = #{activityEnd,jdbcType=TIMESTAMP}
             </if>
-            <if test="dealEndTimeState != null" >
-                and `deal_end_time_state` = #{dealEndTimeState,jdbcType=INTEGER}
-            </if>
-            <if test="dealEndTime != null" >
-                and `deal_end_time` = #{dealEndTime,jdbcType=TIMESTAMP}
-            </if>
             <if test="synchStatus != null" >
                 and `synch_status` = #{synchStatus,jdbcType=INTEGER}
             </if>
@@ -371,23 +335,23 @@
             <if test="priceStatus != null" >
                 and `price_status` = #{priceStatus,jdbcType=INTEGER}
             </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="tagId != null" >
-                and `tag_id` = #{tagId,jdbcType=INTEGER}
-            </if>
-            <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
             <if test="msrpRmb != null" >
                 and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -421,9 +385,6 @@
             <if test="appId != null" >
                 and `app_id` = #{appId,jdbcType=VARCHAR}
             </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
             <if test="pcId != null" >
                 and `pc_id` = #{pcId,jdbcType=VARCHAR}
             </if>
@@ -448,12 +409,6 @@
             <if test="activityEnd != null" >
                 and `activity_end` = #{activityEnd,jdbcType=TIMESTAMP}
             </if>
-            <if test="dealEndTimeState != null" >
-                and `deal_end_time_state` = #{dealEndTimeState,jdbcType=INTEGER}
-            </if>
-            <if test="dealEndTime != null" >
-                and `deal_end_time` = #{dealEndTime,jdbcType=TIMESTAMP}
-            </if>
             <if test="synchStatus != null" >
                 and `synch_status` = #{synchStatus,jdbcType=INTEGER}
             </if>
@@ -463,23 +418,23 @@
             <if test="priceStatus != null" >
                 and `price_status` = #{priceStatus,jdbcType=INTEGER}
             </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="tagId != null" >
-                and `tag_id` = #{tagId,jdbcType=INTEGER}
-            </if>
-            <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
             <if test="msrpRmb != null" >
                 and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

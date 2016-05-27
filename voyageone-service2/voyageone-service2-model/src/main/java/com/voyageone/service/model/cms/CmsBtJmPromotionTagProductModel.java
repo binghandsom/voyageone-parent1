@@ -19,6 +19,8 @@ public class CmsBtJmPromotionTagProductModel extends BaseModel {
 
     protected Integer cmsBtTagId;
 
+    protected String tagName;
+
     public String getChannelId() {
         return channelId;
     }
@@ -41,5 +43,13 @@ public class CmsBtJmPromotionTagProductModel extends BaseModel {
 
     public void setCmsBtTagId(Integer cmsBtTagId) {
         this.cmsBtTagId = cmsBtTagId;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName == null ? null : tagName.trim();
     }
 }

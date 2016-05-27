@@ -25,7 +25,7 @@ public class MapUtil {
         return map;
     }
 
-    public static <T> List<Map<String, Object>> toListMap(List<T> list) throws IllegalAccessException {
+    public static <T> List<Map<String, Object>> toMapList(List<T> list) throws IllegalAccessException {
         List<Field> listField = ReflectUtil.getListField(list.get(0).getClass());
         List<Map<String, Object>> listMap = new ArrayList();
         for (T entity : list) {

@@ -1,5 +1,4 @@
 package com.voyageone.service.daoext.cms;
-
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
@@ -14,34 +13,34 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionProductDaoExt {
 
+    List getListByWhere(Map<String, Object> map);
 
-    public List getListByWhere(Map<String, Object> map);
+    CmsBtJmPromotionProductModel getByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
+    List getExportInfoListByPromotionId(int promotionId);
 
-    public List getExportInfoListByPromotionId(int promotionId);
+    List getListCmsBtJmImportProductByPromotionId(int promotionId);
 
-    public List getListCmsBtJmImportProductByPromotionId(int promotionId);
+    int deleteByPromotionId(int promotionId);
 
-    public int deleteByPromotionId(int promotionId);
+    int deleteByProductIdListInfo(ProductIdListInfo parameter);
 
-    public int deleteByProductIdListInfo(ProductIdListInfo parameter);
+    int jmNewUpdateAll(int promotionId);
 
-    public int jmNewUpdateAll(int promotionId);
+    int jmNewByProductIdListInfo(ProductIdListInfo parameter);
 
-    public int jmNewByProductIdListInfo(ProductIdListInfo parameter);
+    int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter);
 
-    public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter);
-
-    public int updateDealEndTime(ParameterUpdateDealEndTime parameter);
+    int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 
     //jm2 begin
-    public List getPageByWhere(Map<String, Object> map);//add
+    List getPageByWhere(Map<String, Object> map);//add
 
-    public int getCountByWhere(Map<String, Object> ma);//add
+    int getCountByWhere(Map<String, Object> ma);//add
 
     //add
-    public boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+    boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
-    public CmsBtJmPromotionProductModel getByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+    CmsBtJmPromotionProductModel getByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
     //jm2 end
 }

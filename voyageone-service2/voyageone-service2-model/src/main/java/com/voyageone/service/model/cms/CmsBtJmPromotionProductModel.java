@@ -91,16 +91,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Date activityEnd;
 
     /**
-     * 0:未延迟 1:待更新 2成功 3失败
-     */
-    protected Integer dealEndTimeState;
-
-    /**
-     * 待更新延迟时间
-     */
-    protected Date dealEndTime;
-
-    /**
      * 更新聚美平台的状态:0:未更新 2:上新成功 3:上传异常
      */
     protected Integer synchStatus;
@@ -114,11 +104,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      * 价格状态 0:未更新 1:待更新 2:已更新  3:更新失败
      */
     protected Integer priceStatus;
-
-    /**
-     * tag
-     */
-    protected Integer tagId;
 
     /**
      * 中国指导售价   从sku来
@@ -255,22 +240,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
         this.activityEnd = activityEnd;
     }
 
-    public Integer getDealEndTimeState() {
-        return dealEndTimeState;
-    }
-
-    public void setDealEndTimeState(Integer dealEndTimeState) {
-        this.dealEndTimeState = dealEndTimeState;
-    }
-
-    public Date getDealEndTime() {
-        return dealEndTime;
-    }
-
-    public void setDealEndTime(Date dealEndTime) {
-        this.dealEndTime = dealEndTime;
-    }
-
     public Integer getSynchStatus() {
         return synchStatus;
     }
@@ -293,14 +262,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setPriceStatus(Integer priceStatus) {
         this.priceStatus = priceStatus;
-    }
-
-    public Integer getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId;
     }
 
     public BigDecimal getRetailPrice() {

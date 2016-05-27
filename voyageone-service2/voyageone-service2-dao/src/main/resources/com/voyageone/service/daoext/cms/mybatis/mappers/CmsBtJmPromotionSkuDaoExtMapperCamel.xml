@@ -32,4 +32,9 @@
         #{item}
     </foreach>
     </delete>
+
+    <select id="getBySkuCode"  resultMap="ResultMap">
+        select  *   from cms_bt_jm_promotion_sku  where  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId} and sku_code=#{skuCode} limit 1
+    </select>
+
 </mapper>

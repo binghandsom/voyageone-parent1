@@ -258,5 +258,9 @@
     <select id="existsCode" resultType="boolean">
         SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activity_start} &lt;=`activity_end`  and   #{activity_end}>=`activity_begin` limit 1
     </select>
+
+    <select id="getByProductCode"  resultMap="ResultMap">
+        select  *   from cms_bt_jm_promotion_product  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and product_code=#{productCode} limit 1
+    </select>
     <!--jm2 end-->
 </mapper>

@@ -43,18 +43,18 @@ public class JuMeiDealService {
     public void updateDealEndTime(ShopBean shopBean, CmsBtJmPromotionProductModel model) {
         try {
             HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
-            request.setEnd_time(getTime(model.getDealEndTime()));
+           // request.setEnd_time(getTime(model.getDealEndTime()));
             request.setJumei_hash_id(model.getJmHashId());
             HtDealUpdateDealEndTimeResponse response = serviceJumeiHtDeal.updateDealEndTime(shopBean, request);
-            if (response.is_Success()) {
-                model.setDealEndTimeState(2);
-                model.setActivityEnd(model.getDealEndTime());
-            } else {
-                model.setDealEndTimeState(3);
-                model.setErrorMsg("延迟Deal结束时间失败" + response.getBody());
-            }
+//            if (response.is_Success()) {
+//                model.setDealEndTimeState(2);
+//                model.setActivityEnd(model.getDealEndTime());
+//            } else {
+//                model.setDealEndTimeState(3);
+//                model.setErrorMsg("延迟Deal结束时间失败" + response.getBody());
+//            }
         } catch (Exception ex) {
-            model.setDealEndTimeState(3);
+           // model.setDealEndTimeState(3);
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
         }
     }

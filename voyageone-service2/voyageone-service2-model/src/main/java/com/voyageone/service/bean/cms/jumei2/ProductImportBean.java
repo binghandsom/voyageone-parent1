@@ -7,6 +7,8 @@ public class ProductImportBean {
     String appId;
     String pcId;
     int limit;
+    String promotionTag;
+    String errorMsg;
 
     public String getProductCode() {
         return productCode;
@@ -48,5 +50,11 @@ public class ProductImportBean {
         this.promotionTag = promotionTag;
     }
 
-    String promotionTag;
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
 }
