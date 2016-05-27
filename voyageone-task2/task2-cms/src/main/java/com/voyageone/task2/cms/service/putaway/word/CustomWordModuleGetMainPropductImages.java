@@ -165,7 +165,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                             "channelId:" + systemParam.getOrderChannelId() +
                             ". cartId:" + systemParam.getCartId() +
                             ". groupId:" + systemParam.getMainSxProduct().getCmsBtProductModelGroupPlatform().getGroupId() +
-                            "图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName));
+                            ". 图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName));
         }
     }
     // 20160513 tom 图片服务器切换 END

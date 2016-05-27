@@ -103,7 +103,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
                             "channelId:" + systemParam.getOrderChannelId() +
                             ". cartId:" + systemParam.getCartId() +
                             ". groupId:" + systemParam.getMainSxProduct().getCmsBtProductModelGroupPlatform().getGroupId() +
-                            "图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageParams.get(0)));
+                            ". 图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageParams.get(0)));
         }
 
         // 20160513 tom 图片服务器切换 END
