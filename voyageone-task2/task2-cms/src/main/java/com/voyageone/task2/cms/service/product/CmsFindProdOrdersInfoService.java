@@ -49,7 +49,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
     private static String queryStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',sku:'$sku'},count:{$sum:'$qty'}}}";
-    private static String grpqueryStr = "{},{'cartId':1,'groupId':1,'productCodes':1,'_id':1}";
+    private static String grpqueryStr = "{'cartId':{$ne:1}},{'cartId':1,'groupId':1,'productCodes':1,'_id':1}";
     private static String prodqueryStr = "{'fields.code':{$in:[%s]}},{'sales':1,'fields.code':1,'_id':0}";
 
     @Override
@@ -157,7 +157,9 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 // 所有销售数据
                 params = new Object[] { cartList2, chnObj.getOrder_channel_id(), skuCodeList };
                 List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr2, params), new JomgoAggregate(queryStr3, null));
-                if (!amtall.isEmpty()) {
+                if (amtall.isEmpty()) {
+                    $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, prodId=%d", chnObj.getOrder_channel_id(), prodObj.getProdId()));
+                } else {
                     Map sumallMap = new HashMap<>();
                     int sumall = 0;
                     for (Map hisInfo : amtall) {
@@ -174,9 +176,6 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                     }
                     sumallMap.put("cartId_0", sumall);
                     salesMap.put("code_sum_all", sumallMap);
-                } else {
-                    $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, prodId=%d", chnObj.getOrder_channel_id(), prodObj.getProdId()));
-                    continue;
                 }
 
                 // 合并sku销售数据
@@ -220,6 +219,65 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 skuSumAllList.addAll(skuCartSumList);
                 salesMap.put("skus", skuSumAllList);
 
+                // 没有的数据补零
+                Map sum7Map = (Map) salesMap.get("code_sum_7");
+                if (sum7Map == null) {
+                    sum7Map = new HashMap<>();
+                    for (Integer cartItem : cartList2) {
+                        sum7Map.put("cartId_" + cartItem, 0);
+                    }
+                    salesMap.put("code_sum_7", sum7Map);
+                } else {
+                    for (Integer cartItem : cartList2) {
+                        Integer qty = (Integer) sum7Map.get("cartId_" + cartItem);
+                        if (qty == null) {
+                            sum7Map.put("cartId_" + cartItem, 0);
+                        }
+                    }
+                }
+                Integer qty0 = (Integer) sum7Map.get("cartId_0");
+                if (qty0 == null) {
+                    sum7Map.put("cartId_0", 0);
+                }
+                Map sum30Map = (Map) salesMap.get("code_sum_30");
+                if (sum30Map == null) {
+                    sum30Map = new HashMap<>();
+                    for (Integer cartItem : cartList2) {
+                        sum30Map.put("cartId_" + cartItem, 0);
+                    }
+                    salesMap.put("code_sum_30", sum30Map);
+                } else {
+                    for (Integer cartItem : cartList2) {
+                        Integer qty = (Integer) sum30Map.get("cartId_" + cartItem);
+                        if (qty == null) {
+                            sum30Map.put("cartId_" + cartItem, 0);
+                        }
+                    }
+                }
+                qty0 = (Integer) sum30Map.get("cartId_0");
+                if (qty0 == null) {
+                    sum30Map.put("cartId_0", 0);
+                }
+                Map sumAllMap = (Map) salesMap.get("code_sum_all");
+                if (sumAllMap == null) {
+                    sumAllMap = new HashMap<>();
+                    for (Integer cartItem : cartList2) {
+                        sumAllMap.put("cartId_" + cartItem, 0);
+                    }
+                    salesMap.put("code_sum_all", sumAllMap);
+                } else {
+                    for (Integer cartItem : cartList2) {
+                        Integer qty = (Integer) sumAllMap.get("cartId_" + cartItem);
+                        if (qty == null) {
+                            sumAllMap.put("cartId_" + cartItem, 0);
+                        }
+                    }
+                }
+                qty0 = (Integer) sumAllMap.get("cartId_0");
+                if (qty0 == null) {
+                    sumAllMap.put("cartId_0", 0);
+                }
+
                 Map queryMap = new HashMap<>();
                 queryMap.put("prodId", prodObj.getProdId());
                 Map updateMap = new HashMap<>();
@@ -251,10 +309,6 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 List<String> codeList = grpObj.getProductCodes();
                 if (codeList == null || codeList.isEmpty()) {
                     $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d", chnObj.getOrder_channel_id(), grpObj.getGroupId()));
-                    continue;
-                }
-                if (grpObj.getCartId() == 1) {
-                    // feed数据不统计
                     continue;
                 }
 

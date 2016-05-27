@@ -59,6 +59,9 @@ public class CmsSearchInfoBean {
 
     private String sortThreeType;
 
+    private String sortSalesType = null;
+    private String sortSales = null;
+
     private Integer groupPageNum = 0;
 
     private Integer groupPageSize = 0;
@@ -362,4 +365,19 @@ public class CmsSearchInfoBean {
         this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
     }
 
+    public String getSortSalesType() {
+        return sortSalesType;
+    }
+
+    public void setSortSalesType(String sortSalesType) {
+        this.sortSalesType = sortSalesType;
+    }
+
+    public String getSortSales() {
+        return sortSales;
+    }
+
+    public void setSortSales(String sortSales) {
+        this.sortSales = sortSales;
+    }
 }

@@ -104,6 +104,18 @@
 								<!--</div>-->
 							<!--</div>-->
 						<!--</div>-->
+						<div class="form-group"><!-- 查询翻译状态 -->
+							<label class="col-sm-3 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+							<div class="col-sm-8">
+								<div class="col-sm-5">
+									<select class="form-control" ng-model="vm.searchInfo.transStsFlg">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+										<option value="0">商品信息未翻译</option>
+										<option value="1">商品信息已翻译</option>
+									</select>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -269,15 +281,23 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-group" style="margin-left: -67px;"><!-- 查询翻译状态 -->
-							<label class="col-sm-4 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label">销量排序</label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
-									<select class="form-control" ng-model="vm.searchInfo.transStsFlg">
+									<select class="form-control" ng-model="vm.searchInfo.sortSalesType" ng-options="salesType.value as salesType.name for salesType in vm.masterData.salesTypeList" ng-change="chkSalesTypeList()">
 										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-										<option value="0">商品信息未翻译</option>
-										<option value="1">商品信息已翻译</option>
 									</select>
+								</div>
+								<div class="col-sm-3 text-right">
+									<label class="checkbox-inline c-radio">
+										<input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.sortSales"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
+								<div class="col-sm-4">
+									<label class="checkbox-inline c-radio">
+										<input name="sortSales" type="radio" value="-1" ng-model="vm.searchInfo.sortSales"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
 								</div>
 							</div>
 						</div>
@@ -378,6 +398,7 @@
 							<th class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
 							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
+							<th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
 							<th class="text-left" translate="TXT_TIME"style="display:inline-block;width:150px;padding-left:8px"></th>
 						</tr>
 						</thead>
@@ -441,7 +462,7 @@
 									<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 								</td>
 								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
-
+								<td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="display:inline-block;width:100px; overflow:hidden;">{{prop3.value}}</td>
 								<td class="text-left" style="display:inline-block;width:150px;">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groupBean.timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
@@ -485,6 +506,7 @@
 							<td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
 							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
+							<th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:120px;padding-left:8px">{{prop3.name}}</th>
 							<td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
 							<td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
 						</tr>
@@ -548,6 +570,7 @@
 										<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 									</td>
 									<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}</td>
+									<td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:100px;">{{prop3.value}}</td>
 									<td class="text-center" style="display:inline-block;width:165px;">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>

@@ -55,9 +55,9 @@ define([
                 tempGroupSelect = new selectRowsFactory();
                 tempProductSelect = new selectRowsFactory();
                 // 获取group列表
-                _resetGroupList(res.data, res.data.commonProps, res.data.customProps);
+                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
                 // 获取product列表
-                _resetProductList(res.data, res.data.commonProps, res.data.customProps);
+                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
 
                 defer.resolve (res);
             });
@@ -74,11 +74,11 @@ define([
          * @param data
          * @returns {*}
          */
-        function getGroupList(data, pagination, list, commonProps, customProps) {
+        function getGroupList(data, pagination, list, commonProps, customProps, selSalesTypes) {
             var defer = $q.defer();
 
             $searchAdvanceService.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                _resetGroupList(res.data, commonProps, customProps);
+                _resetGroupList(res.data, commonProps, customProps, selSalesTypes);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -89,10 +89,10 @@ define([
          * @param data
          * @returns {*}
          */
-        function getProductList(data, pagination, list, commonProps, customProps) {
+        function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes) {
             var defer = $q.defer();
             $searchAdvanceService.getProductList(resetProductPagination(data, pagination)).then(function (res) {
-                _resetProductList(res.data, commonProps, customProps);
+                _resetProductList(res.data, commonProps, customProps, selSalesTypes);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -175,7 +175,7 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetGroupList (data, commonProps, customProps) {
+        function _resetGroupList (data, commonProps, customProps, selSalesTypes) {
             tempGroupSelect.clearCurrPageRows();
             _.forEach(data.groupList, function (groupInfo, index) {
 
@@ -199,6 +199,24 @@ define([
                     custArr.push({value: orgAttsitemVal});
                 });
                 groupInfo.custArr = custArr;
+                var selSalesTyeArr = [];
+                _.forEach(selSalesTypes, function (data) {
+                    var selValue = data.value;
+                    var dotIdx = selValue.indexOf(".", 6);
+                    var itemValObj = groupInfo.sales[selValue.substring(6, dotIdx)];
+                    var itemVal = null;
+                    if (itemValObj == undefined) {
+                        itemVal = "0";
+                    } else {
+                        dotIdx = selValue.lastIndexOf(".");
+                        itemVal = itemValObj[selValue.substring(dotIdx + 1)];
+                        if (itemVal == undefined) {
+                            itemVal = "0";
+                        }
+                    }
+                    selSalesTyeArr.push({value: itemVal});
+                });
+                groupInfo.selSalesTyeArr = selSalesTyeArr;
 
                 // 初始化数据选中需要的数组
                 tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.fields["code"], "prodIds": data.grpProdIdList[index]});
@@ -231,7 +249,7 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetProductList (data, commonProps, customProps) {
+        function _resetProductList (data, commonProps, customProps, selSalesTypes) {
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo, index) {
                 var commArr = [];
@@ -254,6 +272,24 @@ define([
                     custArr.push({value: orgAttsitemVal});
                 });
                 productInfo.custArr = custArr;
+                var selSalesTyeArr = [];
+                _.forEach(selSalesTypes, function (data) {
+                    var selValue = data.value;
+                    var dotIdx = selValue.indexOf(".", 6);
+                    var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
+                    var itemVal = null;
+                    if (itemValObj == undefined) {
+                        itemVal = "0";
+                    } else {
+                        dotIdx = selValue.lastIndexOf(".");
+                        itemVal = itemValObj[selValue.substring(dotIdx + 1)];
+                        if (itemVal == undefined) {
+                            itemVal = "0";
+                        }
+                    }
+                    selSalesTyeArr.push({value: itemVal});
+                });
+                productInfo.selSalesTyeArr = selSalesTyeArr;
 
                 // 初始化数据选中需要的数组
                 tempProductSelect.currPageRows({"id": productInfo.prodId, "code": productInfo.fields["code"]});
