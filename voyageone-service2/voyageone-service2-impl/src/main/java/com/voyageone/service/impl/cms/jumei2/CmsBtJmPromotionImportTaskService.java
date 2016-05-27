@@ -212,6 +212,7 @@ public class CmsBtJmPromotionImportTaskService {
             skuModel.setChannelId(saveInfo.productModel.getChannelId());
             skuModel.setSkuCode(skuImportBean.getSkuCode());
             saveInfo.skuList.add(skuModel);
+            skuModel=null;
         }
     }
     private List<SkuImportBean> getListSkuImportBeanByProductCode(List<SkuImportBean> listSkuImport,String productCode) {
