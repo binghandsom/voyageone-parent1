@@ -33,4 +33,27 @@ public class MapUtil {
         }
         return listMap;
     }
+    public static T toModel(Map<String, Object> map, Class<T> classInfo) throws IllegalAccessException, InstantiationException {
+        T model = classInfo.newInstance();
+        List<Field> listField = ReflectUtil.getListField(model.getClass());
+        return toModel(map, classInfo, listField);
+    }
+    public static T toModel(Map<String, Object> map, Class<T> classInfo, List<Field> listField) throws IllegalAccessException, InstantiationException {
+        T model = classInfo.newInstance();
+        for (Field field : listField) {
+            Object value = map.get(field.getName());
+            if (value != null) {
+                field.set(model, value);
+            }
+        }
+        return model;
+    }
+    public static List<T> toModelList(List<Map<String, Object>> listMap, Class<T> classInfo) throws InstantiationException, IllegalAccessException {
+        List<T> listModel = new ArrayList<>();
+        List<Field> listField = ReflectUtil.getListField(classInfo);
+        for (Map<String, Object> map : listMap) {
+            listModel.add(toModel(map, classInfo, listField));
+        }
+        return listModel;
+    }
 }
