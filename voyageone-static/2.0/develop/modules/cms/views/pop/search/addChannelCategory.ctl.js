@@ -67,7 +67,11 @@ define([
                         category = category.parent;
                     }
                 });
+                var self = this;
+                self.addChannelCategoryService.save({"cIds": cIds, "cNames": cNames, "fullCNames": fullCNames, "fullCatCId": fullCIds,"code": self.code}).then(function () {
+                });
             }
+
         };
 
         return PopAddChannelCategoryCtrl;
