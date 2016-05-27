@@ -651,7 +651,13 @@ public class SxProductService extends BaseService {
 
             } else if (resolveJdPriceSection_before(shopBean, field)) {
                 // 设置京东属性 - [价格][价位]
-                return resolveJdPriceSection(field, expressionParser.getSxData());
+                Map<String, Field> resolveField = resolveJdPriceSection(field, expressionParser.getSxData());
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
+                }
             } else {
                 MappingBean mappingBean = mapProp.get(field.getId());
                 if (mappingBean == null) {
