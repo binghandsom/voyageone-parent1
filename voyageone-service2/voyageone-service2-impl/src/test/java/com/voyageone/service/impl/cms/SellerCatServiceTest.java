@@ -46,7 +46,7 @@ public class SellerCatServiceTest {
 
     @Test
     public void testDeleteSellerCat() throws Exception {
-        sellerCatService.deleteSellerCat("010",23, "1124130579", "1124130582");
+        sellerCatService.deleteSellerCat("010",23, "1124130579", "1124130582", "ethan");
 
     }
 
