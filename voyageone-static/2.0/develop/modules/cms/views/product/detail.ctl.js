@@ -94,6 +94,9 @@ define([
                         self._orgChaName = res.data.orgChaName;
                         self._isminimall = res.data.isminimall;
                         self._isMain = res.data.isMain;
+                        if (self.$rootScope.imageUrl == undefined) {
+                            self.$rootScope.imageUrl = '';
+                        }
                         self.currentImage = self.$rootScope.imageUrl.replace('%s', self.productDetails.productImages.image1[0].image1) + ".jpg";
 
                         self.productDetailsCopy = angular.copy(self.productDetails);
