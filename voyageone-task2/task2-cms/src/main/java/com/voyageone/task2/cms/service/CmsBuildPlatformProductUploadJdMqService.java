@@ -11,7 +11,9 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiCheckField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
@@ -49,6 +51,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -154,18 +158,18 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JD.getId()));
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JD.getId()));
                 // 京东国际商品信息新增或更新(京东国际)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JG.getId()));
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JG.getId()));
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGJ.getId()));
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGJ.getId()));
                 // 京东国际商品信息新增或更新(京东国际 悦境)
                 doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGY.getId()));
             }
         }
 
         // 正常结束
-        $info("正常结束");
+        $info("主线程正常结束");
     }
 
     /**
@@ -205,10 +209,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
         executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
 //        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-
-        // 正常结束
-//        $info(String.format("京东指定渠道和平台新增或更新商品信息成功！[ChannelId:%s] [CartId:%s]", channelId, cartId));
-
     }
 
     /**
@@ -229,6 +229,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         long jdWareId = 0;
         // 上新数据
         SxData sxData = null;
+        // 新增或更新商品标志
+        boolean updateWare = false;
 
         try {
             // 上新用的商品数据信息取得
@@ -264,6 +266,15 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             skuList.forEach(sku -> strSkuCodeList.add(sku.getSkuCode()));
             // 取得每个SKU的逻辑库存信息
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
+            // 如果已Approved产品skuList为空，则中止该产品的上新流程
+            if (strSkuCodeList == null || strSkuCodeList.size() == 0) {
+                String errMsg = String.format("已Approved产品sku列表为空，中止该商品的上新处理！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                $error(errMsg);
+                sxData.setErrorMessage(errMsg);
+                throw new BusinessException(errMsg);
+            }
+            // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
 
@@ -332,14 +343,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             boolean retStatus = false;
 
             // 判断新增商品还是更新商品
-            // 新增或更新商品标志
-            boolean updateWare = false;
             // 只要numIId不为空，则为更新商品
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // 更新商品
                 updateWare = true;
                 // 取得更新对象商品id
                 jdWareId = Long.parseLong(sxData.getPlatform().getNumIId());
+                jdProductBean.setWareId(sxData.getPlatform().getNumIId());
             }
 
             // 新增或更新商品主处理
@@ -370,7 +380,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                 // 取得图片URL参数
                 ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-
                 // 京东要求图片必须是5张，商品主图的第一张已经在前面的共通属性里面设置了，这里最多只需要设置4张非主图
                 for (String picName : mainPicNameList) {
                     String picUrl = "";
@@ -466,7 +475,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
 
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
-                updateProductGroupStatus(sxData, jdProductBean.getOptionType());
+                updateProductGroupStatus(sxData);
 
                 // 回写ims_bt_product表(numIId)
                 sxProductService.updateImsBtProduct(sxData, getTaskName());
@@ -516,8 +525,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         }
 
         // 正常结束
-        $info(String.format("京东单个商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                channelId, cartId, groupId, jdWareId));
+        if (!updateWare) {
+            $info(String.format("京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    channelId, cartId, groupId, jdWareId));
+        } else {
+            $info(String.format("京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    channelId, cartId, groupId, jdWareId));
+        }
+
     }
 
     /**
@@ -594,12 +609,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         jdProductBean.setHigh("50");
         // 重量(单位:kg)(必须)
         jdProductBean.setWeight("1");
-//        // 进货价,精确到2位小数，单位:元(非必须)
-//        jdProductBean.setCostPrice(mainProduct.getXXX());                 // 不使用
-//        // 市场价, 精确到2位小数，单位:元(必须)
+        // 进货价,精确到2位小数，单位:元(非必须)
+//        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
+        // 市场价, 精确到2位小数，单位:元(必须)
         Double marketPrice = getItemPrice(productList, channelId, cartId, PriceType_marketprice);
         jdProductBean.setMarketPrice(String.valueOf(marketPrice));
-//        // 京东价,精确到2位小数，单位:元(必须)
+        // 京东价,精确到2位小数，单位:元(必须)
         Double jdPrice = getItemPrice(productList, channelId, cartId, PriceType_jdprice);
         sxData.setMaxPrice(jdPrice);
         jdProductBean.setJdPrice(String.valueOf(jdPrice));
@@ -636,7 +651,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                 // 读取图片
                 InputStream inputStream = jdWareService.getImgInputStream(picUrl, 3);
-                bytes = IOUtils.toByteArray(inputStream);
+                File picFile = new File("d:\\tmp\\40_010-1100921-2.jpg");    // for test
+                InputStream inputStream2 = new FileInputStream(picFile);      // for test
+                bytes = IOUtils.toByteArray(inputStream2);
                 // 取得图片就推出循环
                 break;
             } catch (Exception ex) {
@@ -644,10 +661,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         channelId, cartId, groupId, platformCategoryId, picName);
                 $error(errMsg);
                 ex.printStackTrace();
+                sxData.setErrorMessage(errMsg);
                 // 继续取下一张图片
             }
         }
         // 图片信息（图片尺寸为800*800，单张大小不超过 1024K）(必须)
+        if (bytes == null) {
+            throw new BusinessException(sxData.getErrorMessage());
+        }
         jdProductBean.setWareImage(bytes);
 
         // 包装清单(非必须)
@@ -694,6 +715,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //        jdProductBean.setAdContent(mainProduct.getXXX());                  // 不使用
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
 //        jdProductBean.setListTime(mainProduct.getXXX());                   // 不使用
+        // 品牌id
+        jdProductBean.setBrandId(sxData.getBrandCode());
 
         return jdProductBean;
     }
@@ -762,7 +785,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         sbAttributes.append(fieldId);                          // 属性id(fieldId)
                         sbAttributes.append(Separtor_Colon);                   // ":"
                         // 属性值设置(如果有多个，则用逗号分隔 "属性值1，属性值2，属性值3")
-                        sbAttributes.append(fieldValue.getValue().toString()); // 属性值id
+                        sbAttributes.append(((SingleCheckField)fieldValue).getValue().getValue()); // 属性值id
                         sbAttributes.append(Separtor_Vertical);                // "|"
                         break;
                     }
@@ -797,7 +820,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         sbInputPids.append(Separtor_Vertical);               // "|"
 
                         // 设置用户自行输入的属性值,结构:‘输入值|输入值2|输入值3’
-                        sbInputStrs.append(fieldValue.getValue().toString()); // 属性值id
+                        sbInputStrs.append(((InputField) fieldValue).getValue()); // 属性值id
                         sbInputStrs.append(Separtor_Vertical);                // "|"
                         break;
                     }
@@ -1311,20 +1334,20 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 检查一下
         String sxPricePropName;
         if (sxPriceConfig == null) {
-            return 0d;
+            return 0.0d;
         } else {
             // 取得价格属性名
             sxPricePropName = sxPriceConfig.getConfigValue1();
             if (StringUtils.isEmpty(sxPricePropName)) {
-                return 0d;
+                return 0.0d;
             }
         }
 
-        Double resultPrice = 0d;    //, onePrice = 0d;
+        Double resultPrice = 0.0d;    //, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel cmsProduct : sxProducts) {
             for (CmsBtProductModel_Sku cmsBtProductModelSku : cmsProduct.getSkus()) {
-                double skuPrice = 0;
+                double skuPrice = 0.00;
                 skuPrice = cmsBtProductModelSku.getDoubleAttribute(sxPricePropName);
                 skuPriceList.add(skuPrice);
             }
@@ -1355,16 +1378,16 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 检查一下
         String sxPricePropName;
         if (sxPriceConfig == null) {
-            return 0d;
+            return 0.0d;
         } else {
             // 取得价格属性名
             sxPricePropName = sxPriceConfig.getConfigValue1();
             if (StringUtils.isEmpty(sxPricePropName)) {
-                return 0d;
+                return 0.0d;
             }
         }
 
-        Double resultPrice = 0d;
+        Double resultPrice = 0.00d;
         // 取得该SKU的价格
         resultPrice = cmsBtProductModelSku.getDoubleAttribute(sxPricePropName);
 
@@ -1443,18 +1466,17 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * 回写product group表中的platformStatus(Onsale/InStock)
      *
      * @param sxData SxData 上新数据
-     * @param optionType String
      */
-    private void updateProductGroupStatus(SxData sxData, String optionType) {
+    private void updateProductGroupStatus(SxData sxData) {
         // 上新成功后回写product group表中的platformStatus
         // 设置PublishTime
         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
-        // 京东平台的操作类型(在售)
-        if (OptioinType_onsale.equals(optionType)) {
-            // platformStatus更新成"OnSale"
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+            // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
             sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
         } else {
-            // platformStatus更新成"InStock"
+            // platformActive是(ToInStock)时，把platformStatus更新成"InStock"(默认)
             sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
         }
         // 更新者
