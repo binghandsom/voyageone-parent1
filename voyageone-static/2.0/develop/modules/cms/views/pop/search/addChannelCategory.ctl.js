@@ -67,7 +67,7 @@ define([
                             if (fullCNames.indexOf(category.catPath) < 0) fullCNames.push(category.catPath);
                             if (fullCIds.indexOf(category.fullCatId) < 0)  fullCIds.push(category.fullCatId);
                         }
-                        while (category && category.isParent == 0) {
+                        while (category) {
                             if (cIds.indexOf(category.catId) < 0) cIds.push(category.catId);
                             if (cNames.indexOf(category.catName) < 0) cNames.push(category.catName);
                             category = category.parent;
@@ -83,7 +83,7 @@ define([
                         "fullCatId": fullCIds,
                         "code": self.code,
                         "cartId": self.cartId
-                    }).then(function () {
+                    }).then(function (res) {
                         self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                         self.$uibModalInstance.close();
                     });

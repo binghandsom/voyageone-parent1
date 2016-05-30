@@ -329,7 +329,7 @@ define([
                 $scope.vm.masterData.catList = [];
                 return;
             }
-            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
+            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false, "catId":  $scope.vm.searchInfo.catId})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
                 });
