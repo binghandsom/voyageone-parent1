@@ -17,13 +17,14 @@ define([
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
-        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService) {
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, $uibModalInstance) {
             this.code = context.productIds;
             this.cartList = [];
             this.channelCategoryList = null;
             this.isSelectCid = [];
             this.cartId = $rootScope.platformType.cartId.toString();
             this.addChannelCategoryService = $addChannelCategoryService;
+            this.$uibModalInstance = $uibModalInstance;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -54,17 +55,16 @@ define([
                     return item.selected;
                 }).forEach(function (item) {
                     var category = map[item.categoryId];
-                    if (category) {
+                    if (category && category.isParent == 0) {
                         if (fullCNames.indexOf(category.catPath) < 0) fullCNames.push(category.catPath);
-                        if (fullCIds.indexOf(category.fullCatCId) < 0)  fullCIds.push(category.fullCatCId);
+                        if (fullCIds.indexOf(category.fullCatId) < 0)  fullCIds.push(category.fullCatId);
                     }
-                    while (category) {
+                    while (category && category.isParent == 0) {
                         if (cIds.indexOf(category.catId) < 0) cIds.push(category.catId);
                         if (cNames.indexOf(category.catName) < 0) cNames.push(category.catName);
                         category = category.parent;
                     }
                 });
-                
                 if (fullCIds.length > 5) {
                     alert("Sorry,勾选的类目数目已超过最大值10，请重新勾选！");
                 }
@@ -74,11 +74,13 @@ define([
                     "cIds": cIds,
                     "cNames": cNames,
                     "fullCNames": fullCNames,
-                    "fullCatCId": fullCIds,
+                    "fullCatId": fullCIds,
                     "code": self.code,
                     "cartId": self.cartId
-                }).then(function () {
-
+                }).then(function (res) {
+                    self.modifiedCount = res.modifiedCount;
+                    self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                    self.$uibModalInstance.close();
                 });
             }
         };

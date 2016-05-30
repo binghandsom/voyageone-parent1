@@ -53,7 +53,7 @@ define([
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
-        $scope.getCartList = getCartList;
+        $scope.getCat = getCat;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         /**
@@ -98,6 +98,7 @@ define([
                 tagTypeSelectValue: '0'
             };
             $scope.vm.masterData.tagList = [];
+            $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{ inputVal: "", inputOpts: "" }];
         }
 
@@ -321,12 +322,17 @@ define([
         }
 
         /**
-         * 查询指定店铺cart类型下的所有标签(list形式)
+         * 查询指定店铺cart类型下的所有类目(list形式)
          */
-        function getCartList () {
-            sellerCatService.getCat({"cartId ":23,"isTree":false}).then(function(resp){
-                console.log("resp",resp);
-            });
+        function getCat () {
+            if ($scope.vm.searchInfo.cartId == '0' || $scope.vm.searchInfo.cartId == '' || $scope.vm.searchInfo.cartId == undefined) {
+                $scope.vm.masterData.catList = [];
+                return;
+            }
+            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
+                .then(function(resp){
+                    $scope.vm.masterData.catList = resp.data.catTree;
+                });
         }
 
         /**
