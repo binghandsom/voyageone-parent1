@@ -52,7 +52,7 @@ define([
              */
             save: function () {
                 var self = this;
-                if (self.channelCategoryList == null) {
+                if (self.cartId == "0" || self.cartId == "1") {
                     self.alert('INVALID_OPERATION_IN_CURRENT_CART_PATH');
                 } else {
                     var cIds = [], cNames = [], fullCNames = [], fullCIds = [];
