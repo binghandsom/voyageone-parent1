@@ -31,7 +31,7 @@ define([
             },
 
             typeName: function(task) {
-                switch (task.task_type) {
+                switch (task.taskType) {
                     case 0:
                         return '特价宝';
                     case 1:
@@ -55,9 +55,9 @@ define([
                 var ttt = this;
                 ttt.confirm('TXT_MSG_DO_DELETE').result.then(function () {
                     // 库存隔离
-                    if (task.task_type == '2') {
+                    if (task.taskType == '2') {
                         ttt.taskStockService.delTask({
-                            "taskId" : task.task_id
+                            "taskId" : task.id
                         }).then(function (res) {
                             ttt.notify.success('TXT_MSG_DELETE_SUCCESS');
                             ttt.search();

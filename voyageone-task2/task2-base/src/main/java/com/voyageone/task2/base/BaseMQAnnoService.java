@@ -1,11 +1,13 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.mq.config.VOMQRunnable;
+import com.voyageone.common.mq.config.VOMQStart;
+import com.voyageone.common.mq.config.VOMQStop;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MQControlHelper;
-import com.voyageone.service.impl.com.mq.config.VOMQRunnable;
 import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -67,19 +69,11 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             taskControlList = getControls();
             if (taskControlList == null) {
                 taskControlList = new ArrayList<>();
-            } else {
-                // set concurrentConsumers
-                String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
-                int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
-                MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
             }
         }
         if (taskControlList.isEmpty()) {
             $info("没有找到任何配置。");
             logIssue("没有找到任何配置！！！", getTaskName());
-            MQControlHelper.stop(getClass().getName());
-        }else{
-            MQControlHelper.start(getClass().getName());
         }
     }
 
@@ -89,13 +83,28 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         initControls();
         try {
             if (!taskControlList.isEmpty()) {
-                return TaskControlUtils.isRunnable(taskControlList);
+                return TaskControlUtils.isRunnable(taskControlList, true);
             }
         } catch (Exception ignored) {
         }
         return false;
     }
 
+    @VOMQStart
+    public boolean startMQ() {
+        MQControlHelper.start(getClass().getName());
+        // set concurrentConsumers
+        String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+        int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
+        MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
+        return true;
+    }
+
+    @VOMQStop
+    public boolean stopMQ() {
+        MQControlHelper.stop(getClass().getName());
+        return true;
+    }
     /**
      * 监听通知消息，执行任务
      *

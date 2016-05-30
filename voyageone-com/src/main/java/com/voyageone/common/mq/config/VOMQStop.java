@@ -1,9 +1,9 @@
-package com.voyageone.service.impl.com.mq.config;
+package com.voyageone.common.mq.config;
 
 import java.lang.annotation.*;
 
 /**
- * @author aooer 2016/4/18.
+ * @author chuanyu.liang 2016/4/18.
  * @version 2.0.0
  * @since 2.0.0
  */
@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface VOMQRunnable {
+public @interface VOMQStop {
 
 }

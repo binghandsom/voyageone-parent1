@@ -24,15 +24,15 @@
 									<label class="col-sm-4 control-label" translate="TXT_TIME_START"></label>
 									<div class="col-sm-8 form-inline">
 										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activity_start"
-												   max-date="ctrl.searchInfo.activity_end" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activityStart"
+												   max-date="ctrl.searchInfo.activityEnd" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>&nbsp;~&nbsp;
 										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activity_end"
-												   min-date="ctrl.searchInfo.activity_start" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activityEnd"
+												   min-date="ctrl.searchInfo.activityStart" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -87,41 +87,41 @@
                     <td class="mfb-xt3 text-center">{{$index+1}}</td>
                     <td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span
                             ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
-                    <td class="mfb-xxs text-left">{{task.task_name}}</td>
+                    <td class="mfb-xxs text-left">{{task.taskName}}</td>
                     <td class="mfb-xt text-left">{{ctrl.typeName(task)}}</td>
-                    <td class="mfb-xxt text-left">{{task.activity_start}} ~ {{task.activity_end}}</td>
+                    <td class="mfb-xxt text-left">{{task.activityStart}} ~ {{task.activityEnd}}</td>
                     <td class="mfb-xxs text-left">
-                        <a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{task.task_id}}" target="_blank">
+                        <a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">
                             <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
                                     class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
                             </button>
                         </a>
-                        <a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"
+                        <a ng-if="task.taskType == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"
                            target="_blank">
                             <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
                                     class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
                             </button>
                         </a>
-                        <a ng-if="task.task_type == 2" ng-href="#/promotion/task_stock/{{task.task_id}}"
+                        <a ng-if="task.taskType == 2" ng-href="#/promotion/task_stock/{{task.id}}"
                            target="_blank">
                             <button title="{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}
                             </button>
                         </a>
-                        <a ng-if="task.task_type == 2"
-                           ng-href="#/promotion/task_stock_increment/{{task.task_id}}" target="_blank">
+                        <a ng-if="task.taskType == 2"
+                           ng-href="#/promotion/task_stock_increment/{{::task.id}}" target="_blank">
                             <button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}
                             </button>
                         </a>
                     </td>
                     <td class="mfb-xxt text-center">
                         <button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
-                                ng-click="openMrbStock('lg',task)" ng-if="task.task_type == 2"><i class="fa fa-pencil"></i></button>
-                        <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(task)" ng-if="task.task_type == 2"><i
+                                ng-click="openMrbStock('lg',task)" ng-if="task.taskType == 2"><i class="fa fa-pencil"></i></button>
+                        <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(task)" ng-if="task.taskType == 2"><i
                                 class="fa  fa-trash-o"></i></button>
                         <!--<button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type != 2"><i-->
                                 <!--class="fa fa-cloud-download"></i></button>-->
-                        <button title="{{'BTN_DOWNLOAD_ERROR' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type == 2"
-                                ng-click="ctrl.download(task.task_id)"><i class="glyphicons glyphicons-cloud-download"></i></button>
+                        <button title="{{'BTN_DOWNLOAD_ERROR' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.taskType == 2"
+                                ng-click="ctrl.download(task.id)"><i class="glyphicons glyphicons-cloud-download"></i></button>
                     </td>
                 </tr>
                 </tbody>
