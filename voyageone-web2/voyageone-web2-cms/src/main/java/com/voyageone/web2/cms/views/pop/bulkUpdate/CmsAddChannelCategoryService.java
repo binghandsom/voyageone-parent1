@@ -194,7 +194,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //选择个数判断
         if(fullCatIdList.size()>10){
             // 类目选择check
-            throw new BusinessException("只能10個");
+            throw new BusinessException("7000090");
         }
     };
 }
