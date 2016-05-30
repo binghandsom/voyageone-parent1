@@ -131,7 +131,7 @@ public class SellerCatService extends BaseService {
         copyRoot.setModified(node.getModified());
         copyRoot.setCreater(node.getCreater());
         copyRoot.setModifier(node.getModifier());
-        copyRoot.setFullCatCId(node.getFullCatCId());
+        copyRoot.setFullCatId(node.getFullCatId());
         copyRoot.setCatPath(node.getCatPath());
         copyRoot.setChildren(new ArrayList<CmsBtSellerCatModel>());
         return copyRoot;
@@ -396,7 +396,7 @@ public class SellerCatService extends BaseService {
             if (comparedOne.getParentCatId().equals(root.getCatId())) {
                 children.add(comparedOne);
                 comparedOne.setCatPath(root.getCatPath() + ">" + comparedOne.getCatName());
-                comparedOne.setFullCatCId(root.getFullCatCId() + "-" + comparedOne.getCatId());
+                comparedOne.setFullCatId(root.getFullCatId() + "-" + comparedOne.getCatId());
             }
         }
         root.setChildren(children);
@@ -432,7 +432,7 @@ public class SellerCatService extends BaseService {
             {
                 results.add(node);
                 node.setCatPath(node.getCatName());
-                node.setFullCatCId(node.getCatId());
+                node.setFullCatId(node.getCatId());
             }
         }
         return results;

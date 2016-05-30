@@ -16,7 +16,7 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
     private String catPath;
     private String parentCatId;
     private Integer isParent;
-    private String fullCatCId;
+    private String fullCatId;
     private int cartId;
 
 
@@ -25,14 +25,14 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
     public CmsBtSellerCatModel() {
     }
 
-    public CmsBtSellerCatModel(String channelId, int cartId, String catId, String catName, String catPath,  String parentCatId, String fullCatCId , Integer isParent, List<CmsBtSellerCatModel> children) {
+    public CmsBtSellerCatModel(String channelId, int cartId, String catId, String catName, String catPath, String parentCatId, String fullCatId, Integer isParent, List<CmsBtSellerCatModel> children) {
         this.channelId = channelId;
         this.cartId = cartId;
         this.catId = catId;
         this.catName = catName;
         this.catPath = catPath;
         this.parentCatId = parentCatId;
-        this.fullCatCId = fullCatCId;
+        this.fullCatId = fullCatId;
         this.isParent = isParent;
         this.children = children;
     }
@@ -101,11 +101,11 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
         this.children = children;
     }
 
-    public String getFullCatCId() {
-        return fullCatCId;
+    public String getFullCatId() {
+        return fullCatId;
     }
 
-    public void setFullCatCId(String fullCatCId) {
-        this.fullCatCId = fullCatCId;
+    public void setFullCatId(String fullCatId) {
+        this.fullCatId = fullCatId;
     }
 }

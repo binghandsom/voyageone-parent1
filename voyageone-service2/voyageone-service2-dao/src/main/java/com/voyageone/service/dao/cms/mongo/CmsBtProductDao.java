@@ -177,7 +177,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             //删除fullCIds
             for(int i = fullCIds.size()-1; i >= 0; i--)
             {
-                if(fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatCId()))
+                if(fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatId()))
                 {
                     fullCIds.remove(i);
                     break;
@@ -204,7 +204,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         }
         for(int i = fullCIds.size()-1; i >= 0; i--)
         {
-            if(fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatCId()))
+            if(fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatId()))
             {
                 fullCNames.set(i , catModel.getCatPath());
                 break;

@@ -1,13 +1,11 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -109,7 +107,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             newNode.setModifier(creator);
             newNode.setCatPath(cName);
             newNode.setParentCatId("0");
-            newNode.setFullCatCId(cId);
+            newNode.setFullCatId(cId);
             newNode.setIsParent(0);
             newNode.setChildren(new ArrayList<CmsBtSellerCatModel>());
             insert(newNode);
@@ -133,7 +131,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
                 newNode.setCreater(creator);
                 newNode.setModifier(creator);
                 newNode.setCatPath(parent.getCatPath() + ">" + cName);
-                newNode.setFullCatCId(parent.getFullCatCId() + "-" + cId);
+                newNode.setFullCatId(parent.getFullCatId() + "-" + cId);
                 newNode.setParentCatId(parent.getCatId());
                 newNode.setIsParent(0);
                 newNode.setChildren(new ArrayList<CmsBtSellerCatModel>());
