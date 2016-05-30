@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.bean.search.index;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +65,16 @@ public class CmsSearchInfoBean {
     private Integer productPageNum = 0;
 
     private Integer productPageSize = 0;
+
+    public String getFullCatIdValue() {
+        return fullCatIdValue;
+    }
+
+    public void setFullCatIdValue(String fullCatIdValue) {
+        this.fullCatIdValue = fullCatIdValue;
+    }
+
+    private String fullCatIdValue;
 
     public String getOrgChaId() {
         return orgChaId;
