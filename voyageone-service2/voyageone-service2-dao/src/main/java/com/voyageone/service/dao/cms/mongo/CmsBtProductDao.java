@@ -1,8 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.google.common.base.Joiner;
-import com.mongodb.BulkWriteResult;
-import com.mongodb.WriteResult;
+import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
