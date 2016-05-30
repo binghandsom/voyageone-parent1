@@ -17,7 +17,7 @@ define([
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
-        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, $translate, alert, notify, $uibModalInstance) {
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, alert, notify, $uibModalInstance) {
             this.code = context.productIds;
             this.cartList = [];
             this.channelCategoryList = null;
@@ -27,7 +27,6 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.notify = notify;
             this.alert = alert;
-            this.$translate = $translate;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
