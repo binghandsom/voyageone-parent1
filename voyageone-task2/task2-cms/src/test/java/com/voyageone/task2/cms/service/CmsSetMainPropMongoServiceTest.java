@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsSetMainPropMongoServiceTest {
 
     @Autowired
-    CmsSetMainPropMongoService cmsSetMainPropMongoService;
+    private CmsSetMainPropMongoService cmsSetMainPropMongoService;
 
     @Test
     public void testOnStartup() throws Exception {

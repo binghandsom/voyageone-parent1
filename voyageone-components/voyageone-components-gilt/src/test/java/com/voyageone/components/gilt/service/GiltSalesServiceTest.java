@@ -19,7 +19,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class GiltSalesServiceTest {
 
-
     @Autowired
     private GiltSalesService giltSalesService;
 

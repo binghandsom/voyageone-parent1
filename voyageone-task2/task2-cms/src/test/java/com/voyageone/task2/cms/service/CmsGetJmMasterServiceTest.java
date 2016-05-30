@@ -27,9 +27,9 @@ public class CmsGetJmMasterServiceTest {
     private JmCategoryDao jmCategoryDao;
     @Autowired
     private JmMasterDao jmMasterDao;
-
     @Autowired
-    CmsGetJmMasterService cmsGetJmMasterService;
+    private CmsGetJmMasterService cmsGetJmMasterService;
+
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();

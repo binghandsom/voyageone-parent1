@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
-    ProductDao productDao;
+    private ProductDao productDao;
 
     @Test
     public void testExecuteCommand() {

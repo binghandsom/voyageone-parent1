@@ -10,11 +10,10 @@
 
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone"/>
-    <import resource="classpath*:datasource-jumei-config.xml" />
+    <import resource="classpath*:common-config.xml" />
     <import resource="classpath*:datasource-cms2-config.xml" />
     <import resource="classpath*:datasource-config-mongo-cms2.xml" />
     <!--&lt;!&ndash; MQ Config &ndash;&gt;-->
-    <import resource="classpath*:mq-config.xml" />
     <import resource="classpath*:redis-config.xml" />
     <!--&lt;!&ndash; 初始化处理 &ndash;&gt;-->
     <!--<bean class="com.voyageone.common.configs.Initializer" init-method="init"/>-->

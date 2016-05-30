@@ -44,7 +44,7 @@ public class CmsImageFileService extends BaseService {
     @Autowired
     private ImageCreateFileService imageCreateFileService;
     @Autowired
-    ImageTemplateService serviceCmsImageTemplate;
+    private ImageTemplateService serviceCmsImageTemplate;
     @Autowired
     private ImagePathCache imagePathCache;
 

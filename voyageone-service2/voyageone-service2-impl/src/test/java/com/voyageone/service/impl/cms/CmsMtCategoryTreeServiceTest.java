@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsMtCategoryTreeServiceTest {
 
     @Autowired
-    CategoryTreeService cmsMtCategoryTree;
+    private CategoryTreeService cmsMtCategoryTree;
 
 //    @Test
 //    public void testCreateCmsMtCategoryTreeFromPlatform1() throws Exception {

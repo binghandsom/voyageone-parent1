@@ -22,7 +22,7 @@ import java.util.List;
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtProductServiceTest {
     @Autowired
-    JumeiHtProductService service;
+    private JumeiHtProductService service;
 
     @Test
     public void testAddProductAndDeal() throws Exception {

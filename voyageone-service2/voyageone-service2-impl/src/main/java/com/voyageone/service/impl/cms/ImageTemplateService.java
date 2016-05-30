@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 public class ImageTemplateService extends BaseService {
 
     @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
+    private MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
     @Autowired
     private CmsBtImageTemplateDao dao;
 
     @Autowired
-    LiquidFireImageService serviceLiquidFireImage;
+    private LiquidFireImageService serviceLiquidFireImage;
 
     public List<CmsBtImageTemplateBean> getPage(ImageTempateParameter param, String channelId, String lang) {
         int pageIndex = param.getPageIndex();

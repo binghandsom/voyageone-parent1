@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FeedToCmsServiceTest {
 
     @Autowired
-    FeedCategoryTreeService feedCategoryTreeService;
+    private FeedCategoryTreeService feedCategoryTreeService;
 
     @Test
     public void testGetFeedCategory() throws Exception {

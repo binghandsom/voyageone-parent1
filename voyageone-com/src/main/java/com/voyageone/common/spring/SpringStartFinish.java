@@ -2,7 +2,9 @@ package com.voyageone.common.spring;
 
 import com.voyageone.common.mq.config.MQConfigInit;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
 
 /**
  * SpringStartFinish
@@ -11,6 +13,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * @version 2.0.0
  * @since 2.0.0
  */
+@Component()
+@Lazy(value = false)
 public class SpringStartFinish implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {

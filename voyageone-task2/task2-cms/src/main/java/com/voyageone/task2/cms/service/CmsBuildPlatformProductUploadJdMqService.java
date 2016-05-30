@@ -111,9 +111,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private final static String ColorId_MinPic = "0000000000";
 
     @Autowired
-    PlatformMappingService platformMappingService;
+    private PlatformMappingService platformMappingService;
     @Autowired
-    DictService dictService;
+    private DictService dictService;
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
     @Autowired
@@ -132,8 +132,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
-    // workload对象列表
-    private Set<WorkLoadBean> workLoadBeans;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {

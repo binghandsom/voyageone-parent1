@@ -1,25 +1,16 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.MainPropDao;
-import com.voyageone.task2.cms.dao.SuperFeedDao;
-
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 public class CmsSetMainPropService extends BaseTaskService {
-
-    @Autowired
-    SuperFeedDao superfeeddao;
-
-    @Autowired
-    private TransactionRunner transactionRunner;
 
 	@Autowired
     MainPropDao mainPropDao;

@@ -20,7 +20,7 @@ import java.util.List;
 public class CmsImagePostScene7ServiceTest {
 
     @Autowired
-    CmsImagePostScene7Service cmsImagePostScene7Service;
+    private CmsImagePostScene7Service cmsImagePostScene7Service;
 
     @Test
     public void testOnStartup() throws Exception {

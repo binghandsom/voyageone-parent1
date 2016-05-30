@@ -18,10 +18,10 @@ import java.util.Map;
 public class CmsMtChannelValuesService {
 
     @Autowired
-    CmsMtChannelValuesDao cmsMtChannelValuesDao;
+    private CmsMtChannelValuesDao cmsMtChannelValuesDao;
 
     @Autowired
-    CmsMtChannelValuesDaoExt cmsMtChannelValuesDaoExt;
+    private CmsMtChannelValuesDaoExt cmsMtChannelValuesDaoExt;
 
     /**
      * 插入ChannelValues
