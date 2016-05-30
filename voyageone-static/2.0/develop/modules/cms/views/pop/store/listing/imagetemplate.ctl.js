@@ -37,7 +37,6 @@ define([
         };
         $scope.ok = function(){
                 imageTemplateService.save($scope.model).then(function (res) {
-                    console.log(res);
                       if(res.data.result) {
                           $scope.$close();
                           context.search();

@@ -37,7 +37,9 @@ define([
             this.uploadItem = null;
             this.downloadUrl = urls.root + "/" + urls.download;
             this.summary = {};
+            this.task = null;
             this.$timeout = $timeout;
+            this.searchKey = null;
         }
 
         TaskBeatController.prototype = {
@@ -46,65 +48,72 @@ define([
             },
 
             importBeat: function () {
-                var ttt = this;
-                var uploadQueue = ttt.uploader.queue;
+                var self = this;
+                var uploadQueue = self.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
-                var uploadIt = function() {
-                    ttt.uploadItem = uploadItem;
+                var uploadIt = function () {
+                    self.uploadItem = uploadItem;
                     uploadItem.onSuccess = function (res) {
-                        ttt.$timeout(function () {
-                            ttt.uploadItem = null;
+                        self.$timeout(function () {
+                            self.uploadItem = null;
                         }, 500);
                         if (res.message) {
-                            ttt.alert(res.message);
-                            ttt.data = [];
-                            ttt.pageOption.curr = 1;
-                            ttt.pageOption.total = 0;
+                            self.alert(res.message);
                             return;
                         }
-                        ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                         if (res.data) {
-                            ttt.data = res.data.list;
-                            ttt.pageOption.curr = 1;
-                            ttt.pageOption.total = res.data.total;
+                            self.data = res.data.list;
+                            self.pageOption.curr = 1;
+                            self.pageOption.total = res.data.total;
                         }
                     };
                     uploadItem.formData = [{
-                        task_id: ttt.task_id,
-                        size: ttt.pageOption.size
+                        task_id: self.task_id,
+                        size: self.pageOption.size
                     }];
                     uploadItem.upload();
                 };
                 if (!uploadItem) {
-                    return ttt.alert('TXT_MSG_NO_UPLOAD');
+                    return self.alert('TXT_MSG_NO_UPLOAD');
                 }
-                if (!ttt.data.length) {
+                if (!self.data.length) {
                     uploadIt();
                     return;
                 }
-                ttt.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
+                self.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
             },
 
             getData: function () {
                 var self = this;
                 var po = self.pageOption;
+                var offset;
 
+                // 如果搜索的状态变更了。则需要重置页数到第一页
                 if (self.lastFlag !== self.flag) {
                     self.lastFlag = self.flag;
                     po.curr = 1;
                 }
 
-                var offset = (po.curr - 1) * po.size;
+                // 计算偏移量
+                offset = (po.curr - 1) * po.size;
+
                 self.taskBeatService.page({
                     task_id: self.task_id,
                     flag: self.flag,
+                    searchKey: self.searchKey,
                     offset: offset,
                     size: self.pageOption.size
-                }).then(function (res) {
-                    self.data = res.data.list;
-                    self.pageOption.total = res.data.total;
-                    self.summary = res.data.summary;
                 })
+                    .then(function (res) {
+
+                        var map = res.data;
+
+                        self.data = map.list;
+                        self.pageOption.total = map.total;
+                        self.summary = map.summary;
+                        self.task = map.task;
+                    })
             },
 
             download: function () {
@@ -115,7 +124,7 @@ define([
             controlOne: function (beatInfo, flag) {
                 var ttt = this;
                 var beat_id = beatInfo.id;
-                var changeIt = function() {
+                var changeIt = function () {
                     ttt.taskBeatService.control({
                         beat_id: beat_id,
                         flag: flag
@@ -133,14 +142,49 @@ define([
             },
 
             controlAll: function (flag) {
-                var ttt = this;
-                ttt.taskBeatService.control({
-                    task_id: ttt.task_id,
+
+                var self = this;
+
+                // 在统计信息中查找错误的统计
+                var errorSummary = self.summary.find(function (item) {
+                    return item.flag === 'CANT_BEAT';
+                });
+
+                // 如果错误统计有数据, 说明是存在错误数据的
+                // 就需要人为来确定是否要强制处理这些任务
+                if (errorSummary && errorSummary.count) {
+                    self.confirm('是否同时处理那些 Promotion 信息不协同的任务?')
+                        .result
+                        .then(function () {
+                            self.$controlAll(true, flag);
+                        }, function () {
+                            self.$controlAll(false, flag);
+                        });
+                    return;
+                }
+
+                // 否则, 直接处理即可
+                self.$controlAll(false, flag);
+            },
+
+            $controlAll: function (force, flag) {
+                var self = this;
+
+                self.taskBeatService.control({
+                    task_id: self.task_id,
+                    force: force,
                     flag: flag
                 }).then(function (res) {
                     if (!res.data)
-                        return ttt.alert('TXT_MSG_UPDATE_FAIL');
-                    ttt.getData();
+                        return self.alert('TXT_MSG_UPDATE_FAIL');
+                    self.getData();
+                });
+            },
+
+            updateTask: function (openNewBeatTask) {
+                var self = this;
+                openNewBeatTask({task: self.task}).then(function(newTask) {
+                    self.task = newTask;
                 });
             }
         };

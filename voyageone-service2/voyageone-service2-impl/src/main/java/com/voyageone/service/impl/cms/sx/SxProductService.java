@@ -563,6 +563,11 @@ public class SxProductService extends BaseService {
                 }
             }
 
+            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+
             List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
             List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
             productModelSku.forEach(sku -> {
@@ -651,7 +656,13 @@ public class SxProductService extends BaseService {
 
             } else if (resolveJdPriceSection_before(shopBean, field)) {
                 // 设置京东属性 - [价格][价位]
-                return resolveJdPriceSection(field, expressionParser.getSxData());
+                Map<String, Field> resolveField = resolveJdPriceSection(field, expressionParser.getSxData());
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
+                }
             } else {
                 MappingBean mappingBean = mapProp.get(field.getId());
                 if (mappingBean == null) {
@@ -1429,7 +1440,7 @@ public class SxProductService extends BaseService {
     }
 
     // 20160513 tom 图片服务器切换 START
-    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) {
+    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) throws Exception {
 
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId(channelId);
@@ -1440,11 +1451,10 @@ public class SxProductService extends BaseService {
         ImageCreateGetResponse response = null;
         try {
             response = imageCreateService.getImage(request);
+            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
         }
-
-        return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
     }
     // 20160513 tom 图片服务器切换 END
 

@@ -114,6 +114,13 @@ public class CmsConstants {
         String STORE_DESCRIPTION_IMAGE = "5";
     }
 
+    public interface StoreOperationType {
+        String REPUBLISH = "1";
+        String REIMPORT_FEED_CLEAR_COMMON_PROPERTY = "2";
+        String REIMPORT_FEED_NOT_CLEAR_COMMON_PROPERTY = "3";
+        String PRICE_SYNCHRONIZATION = "4";
+    }
+
     public interface JmMasterPlatCode {
         String BRND = "0";
         String PRICE_UNIT = "1";
