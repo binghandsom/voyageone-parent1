@@ -112,18 +112,20 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //根据codeList取得相关联的code
         List<String> allCodeList=getAllCodeList(codeList, channelId, cartId);
         //取得类目达标下面的个数
-        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT", String.valueOf(cartId));
+        int cnt = Integer.parseInt(Codes.getCodeName("MAX_SELLER_CAT_CNT", String.valueOf(cartId)));
         List<String> editFullCNamesList = new ArrayList<>();
-        if(cnt.equals("10")&&fullCatIdList.contains("-")){
+        if(cnt>0){
             for(String fullCatId:fullCatIdList){
                 String fullCatIds[]=fullCatId.split("-");
                 editFullCNamesList.add(fullCatIds[fullCatIds.length-1]);
             }
+        }else{
+            editFullCNamesList=fullCatIdList;
         }
         //数据check
         checkChannelCategory(fullCatIdList);
         //更新cms_bt_product表的SellerCat字段
-        Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, fullCatIdList, allCodeList, cartId, userName, channelId);
+        Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, editFullCNamesList, allCodeList, cartId, userName, channelId);
         //取得approved的code插入
         insertCmsBtSxWorkload(allCodeList, channelId, userName,cartId);
         return resultMap;
