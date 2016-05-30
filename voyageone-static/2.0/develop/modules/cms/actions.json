@@ -134,18 +134,16 @@
         "getListByWhere": "getListByWhere",
         "getEditModel": "getEditModel",
         "saveModel": "saveModel",
-        "delete":"delete"
+        "delete": "delete"
       },
       "jmPromotionProductAddService": {
         "root": "/cms/jm/promotion/product/",
         "add": "add"
       },
-
-
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
-        "getPromotionProductInfoCountByWhere":"getPromotionProductInfoCountByWhere",
+        "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
         "delete": "delete",
         "updateDealPrice": "updateDealPrice",
         "deleteByPromotionId": "deleteByPromotionId",
@@ -160,7 +158,8 @@
         "updateSkuDetail": "updateSkuDetail",
         "deletePromotionSku": "deletePromotionSku",
         "getProductMasterData": "getProductMasterData",
-         "updateJM":"updateJM"
+        "updateJM": "updateJM",
+        "batchUpdateDealPrice": "batchUpdateDealPrice"
       }
     },
     "cmsBtJmPromotionImportTask":{

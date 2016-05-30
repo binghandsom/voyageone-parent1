@@ -3,6 +3,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -42,5 +43,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     CmsBtJmPromotionProductModel getByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+
+    List getExportListByPromotionId(int promotionId );
+
+    int  batchUpdateDealPrice(@Param("listPromotionProduct") List<Long> listPromotionProductId,@Param("dealPrice") String dealPrice);
     //jm2 end
 }

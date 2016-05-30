@@ -115,13 +115,11 @@
     #{item}
 </foreach>
 </update>
-
-
     <!--jm2 begin-->
     <select id="getPageByWhere" resultType="MapModel">
         SELECT b.image1,b.product_Long_Name  AS productLongName,b.color_En,a.deal_Price AS colorEn,b.attribute
         ,a.retail_price,a.sale_price,a.msrp_rmb,a.jm_hash_id AS jmHashId,a.discount,a.sku_count AS skuCount
-        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status
+        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id
         FROM `cms_bt_jm_promotion_product` AS a
         JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -262,5 +260,29 @@
     <select id="getByProductCode"  resultMap="ResultMap">
         select  *   from cms_bt_jm_promotion_product  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and product_code=#{productCode} limit 1
     </select>
+
+    <select id="getExportListByPromotionId" resultType="MapModel">
+        SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag
+        FROM `cms_bt_jm_promotion_product`  AS a
+        JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
+        WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
+    </select>
+
+    <update id="batchUpdateDealPrice">
+                 UPDATE cms_bt_jm_promotion_product set deal_Price=${dealPrice}
+                 WHERE    id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    <!--<update id="batchUpdateDealPriceByDiscount">-->
+        <!--UPDATE cms_bt_jm_promotion_product set deal_Price=${discountPrice}-->
+        <!--WHERE    a.id in-->
+        <!--<foreach item="item" index="i" collection="listPromotionProduct"-->
+                 <!--open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    <!--</update>-->
     <!--jm2 end-->
 </mapper>

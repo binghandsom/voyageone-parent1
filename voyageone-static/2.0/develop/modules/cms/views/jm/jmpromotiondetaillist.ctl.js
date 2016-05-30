@@ -237,6 +237,16 @@ define([
             }
             return "更新完成";
         }
+        $scope.getSelectedProductIdList=function()
+        {
+            var listPromotionProductId = [];
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+                if ($scope.vm.modelList[i].isChecked) {
+                    listPromotionProductId.push($scope.vm.modelList[i].id);
+                }
+            }
+            return listPromotionProductId;
+        }
     }
     detailController.$inject = ['$scope', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;

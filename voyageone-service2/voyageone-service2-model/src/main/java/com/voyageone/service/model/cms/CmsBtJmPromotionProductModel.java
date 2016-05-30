@@ -120,6 +120,11 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected BigDecimal msrpRmb;
 
+    /**
+     * 专场标签（以|分隔）
+     */
+    protected String promotionTag;
+
     public String getChannelId() {
         return channelId;
     }
@@ -286,5 +291,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setMsrpRmb(BigDecimal msrpRmb) {
         this.msrpRmb = msrpRmb;
+    }
+
+    public String getPromotionTag() {
+        return promotionTag;
+    }
+
+    public void setPromotionTag(String promotionTag) {
+        this.promotionTag = promotionTag == null ? null : promotionTag.trim();
     }
 }

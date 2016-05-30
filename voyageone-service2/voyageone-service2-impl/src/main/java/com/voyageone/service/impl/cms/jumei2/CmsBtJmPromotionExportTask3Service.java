@@ -42,23 +42,99 @@ public class CmsBtJmPromotionExportTask3Service {
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.getByPromotionId(promotionId);
     }
-
-    public List<ExcelColumn> getProductExportColumn() {
-        List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码"));
-        list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID"));
-        list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID"));
-        list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购"));
-        list.add(new ExcelColumn("promotion_tag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）"));
-        return list;
+    public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
+        CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
+        String fileName = "Product" + DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
+        //"/usr/JMExport/"
+        String filePath = exportPath + "/" + fileName;
+        model.setBeginTime(new Date());
+        int TemplateType = model.getTemplateType();
+        try {
+            dao.update(model);
+            List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.getExportListByPromotionId(model.getCmsBtJmPromotionId());
+            List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.getExportListByPromotionId(model.getCmsBtJmPromotionId());
+            export(filePath, listProduct, listSku, false);
+            model.setSuccessRows(listProduct.size());
+            model.setFileName(fileName);
+        } catch (Exception ex) {
+            model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
+            model.setErrorCode(1);
+            ex.printStackTrace();
+        }
+        model.setIsExport(true);
+        model.setEndTime(new Date());
+        dao.update(model);
     }
-    public List<ExcelColumn> getSkuExportColumn() {
-        List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码"));
-        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "APP端模块ID"));
-        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "PC端模块ID"));
-        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "Deal每人限购"));
-        return list;
+    public void export(String fileName, List<Map<String, Object>> dataSourceProduct, List<Map<String, Object>> dataSourceSku, boolean isErrorColumn) {
+        ExportExcelInfo<Map<String, Object>> productInfo = getProductExportExcelInfo(dataSourceProduct,isErrorColumn);
+        ExportExcelInfo<Map<String, Object>> skuInfo = getSkuExportExcelInfo(dataSourceSku,isErrorColumn);
+        try {
+            ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo);
+        } catch (ExcelException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  ExportExcelInfo<Map<String, Object>> getProductExportExcelInfo(List<Map<String, Object>> dataSource,boolean isErrorColumn) {
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        info.setFileName("Product");
+        info.setSheet("Product");
+        info.setDisplayColumnName(true);
+        info.setDataSource(dataSource);
+        info.addExcelColumn("商品代码","productCode", "cms_bt_jm_promotion_product");
+        info.addExcelColumn("APP端模块ID","appId", "cms_bt_jm_promotion_product");
+        info.addExcelColumn("PC端模块ID","pcId", "cms_bt_jm_promotion_product");
+        info.addExcelColumn("Deal每人限购","limit", "cms_bt_jm_promotion_product");
+        info.addExcelColumn( "专场标签（以|分隔）","promotion_tag", "cms_bt_jm_promotion_product");
+
+
+        info.addExcelColumn("商品英文名称","foreignLanguageName", "cms_bt_jm_product");
+        info.addExcelColumn("商品中文名称","productNameCn", "cms_bt_jm_product");
+        info.addExcelColumn( "长标题","productLongName", "cms_bt_jm_product");
+        info.addExcelColumn("中标题","productMediumName", "cms_bt_jm_product");
+        info.addExcelColumn("短标题","productShortName", "cms_bt_jm_product");
+        info.addExcelColumn("自定义搜索词","searchMetaTextCustom", "cms_bt_jm_product");
+        info.addExcelColumn( "英文产地","origin", "cms_bt_jm_product");
+        info.addExcelColumn( "中文产地","addressOfProduce", "cms_bt_jm_product");
+        info.addExcelColumn( "适合人群","applicableCrowd", "cms_bt_jm_product");
+        info.addExcelColumn( "适合人群","specialNote", "cms_bt_jm_product");
+        info.addExcelColumn( "英文颜色","colorEn", "cms_bt_jm_product");
+        info.addExcelColumn( "中文颜色","attribute", "cms_bt_jm_product");
+        info.addExcelColumn("主数据品牌名称","brandName", "cms_bt_jm_product");
+        info.addExcelColumn("聚美品牌名称","brandName", "cms_bt_jm_product");
+        info.addExcelColumn("商品类别","productType", "cms_bt_jm_product");
+        info.addExcelColumn("尺码类别","sizeType", "cms_bt_jm_product");
+        info.addExcelColumn("使用方法_产品介绍","productDesEn", "cms_bt_jm_product");
+        info.addExcelColumn( "使用方法_产品介绍","productDesCn", "cms_bt_jm_product");
+        if (isErrorColumn) {
+            info.addExcelColumn(info.getErrorColumn());
+        }
+        return info;
+    }
+    public   ExportExcelInfo<Map<String, Object>>  getSkuExportExcelInfo(List<Map<String, Object>> dataSource,boolean isErrorColumn) {
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        info.setFileName("Product");
+        info.setSheet("Sku");
+        info.setDisplayColumnName(true);
+        info.setDataSource(dataSource);
+        info.addExcelColumn("商品代码", "productCode", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("APP端模块ID", "skuCode", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("PC端模块ID", "dealPrice", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("Deal每人限购", "marketPrice", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("规格", "format", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("商品条形码", "upc", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("尺码(VO系统)", "cmsSize", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("容量/尺码（聚美系统", "jmSize", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("海外官网价格", "msrpUsd", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("中国官网价格", "msrpRmb", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("中国指导售价", "retailPrice", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("中国最终售价", "salePrice", "cms_bt_jm_promotion_sku");
+        if (isErrorColumn) {
+            info.addExcelColumn(info.getErrorColumn());
+        }
+        return info;
     }
 }
 

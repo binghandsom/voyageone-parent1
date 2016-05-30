@@ -45,6 +45,11 @@ public class CmsBtJmSkuModel extends BaseModel {
     protected String format;
 
     /**
+     * 商品条形码
+     */
+    protected String upc;
+
+    /**
      * 尺码(VO系统)
      */
     protected String cmsSize;
@@ -57,12 +62,12 @@ public class CmsBtJmSkuModel extends BaseModel {
     /**
      * 海外官网价格
      */
-    protected BigDecimal msrp;
+    protected BigDecimal msrpUsd;
 
     /**
-     * 中国最终售价
+     * 中国官网价格
      */
-    protected BigDecimal salePrice;
+    protected BigDecimal msrpRmb;
 
     /**
      * 中国指导价格
@@ -70,9 +75,9 @@ public class CmsBtJmSkuModel extends BaseModel {
     protected BigDecimal retailPrice;
 
     /**
-     * 商品条形码
+     * 中国最终售价
      */
-    protected String upc;
+    protected BigDecimal salePrice;
 
     public String getChannelId() {
         return channelId;
@@ -122,6 +127,14 @@ public class CmsBtJmSkuModel extends BaseModel {
         this.format = format == null ? null : format.trim();
     }
 
+    public String getUpc() {
+        return upc;
+    }
+
+    public void setUpc(String upc) {
+        this.upc = upc == null ? null : upc.trim();
+    }
+
     public String getCmsSize() {
         return cmsSize;
     }
@@ -138,20 +151,20 @@ public class CmsBtJmSkuModel extends BaseModel {
         this.jmSize = jmSize == null ? null : jmSize.trim();
     }
 
-    public BigDecimal getMsrp() {
-        return msrp;
+    public BigDecimal getMsrpUsd() {
+        return msrpUsd;
     }
 
-    public void setMsrp(BigDecimal msrp) {
-        this.msrp = msrp;
+    public void setMsrpUsd(BigDecimal msrpUsd) {
+        this.msrpUsd = msrpUsd;
     }
 
-    public BigDecimal getSalePrice() {
-        return salePrice;
+    public BigDecimal getMsrpRmb() {
+        return msrpRmb;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
+    public void setMsrpRmb(BigDecimal msrpRmb) {
+        this.msrpRmb = msrpRmb;
     }
 
     public BigDecimal getRetailPrice() {
@@ -162,11 +175,11 @@ public class CmsBtJmSkuModel extends BaseModel {
         this.retailPrice = retailPrice;
     }
 
-    public String getUpc() {
-        return upc;
+    public BigDecimal getSalePrice() {
+        return salePrice;
     }
 
-    public void setUpc(String upc) {
-        this.upc = upc == null ? null : upc.trim();
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
     }
 }
