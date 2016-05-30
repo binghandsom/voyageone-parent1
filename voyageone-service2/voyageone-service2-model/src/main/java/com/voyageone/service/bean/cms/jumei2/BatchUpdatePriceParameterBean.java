@@ -2,7 +2,7 @@ package com.voyageone.service.bean.cms.jumei2;
 
 import java.util.List;
 
-public class UpdatePriceParameterBean {
+public class BatchUpdatePriceParameterBean {
     //价格值类型 1：价格 0：折扣
     int priceValueType;
     //价格类型  0：市场价 1：团购价

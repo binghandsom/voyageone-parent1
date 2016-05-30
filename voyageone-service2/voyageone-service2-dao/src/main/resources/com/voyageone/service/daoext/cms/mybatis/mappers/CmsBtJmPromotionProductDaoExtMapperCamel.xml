@@ -95,16 +95,8 @@
     #{item}
 </foreach>
 </delete>
-<update id="jmNewUpdateAll">
-    UPDATE  `cms_bt_jm_promotion_product` set update_state=1,error_msg=''  WHERE `cms_bt_jm_promotion_id`=#{promotionId}  and synch_state in (0,4)
-</update>
-<update id="jmNewByProductIdListInfo">
-    UPDATE  `cms_bt_jm_promotion_product` set update_state=1,error_msg=''  WHERE `cms_bt_jm_promotion_id`=#{promotionId}
-    and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"
-                                             open="(" separator="," close=")">
-    #{item}
-</foreach>
-</update>
+
+
 <update id="updateDealEndTimeAll">
     update cms_bt_jm_promotion_product set deal_end_time_state=1 where cms_bt_jm_promotion_id=#{promotionId} and deal_end_time=#{dealEndTime} and synch_state in (2,3)
 </update>
@@ -276,13 +268,29 @@
             #{item}
         </foreach>
     </update>
-    <!--<update id="batchUpdateDealPriceByDiscount">-->
-        <!--UPDATE cms_bt_jm_promotion_product set deal_Price=${discountPrice}-->
-        <!--WHERE    a.id in-->
-        <!--<foreach item="item" index="i" collection="listPromotionProduct"-->
-                 <!--open="(" separator="," close=")">-->
-            <!--#{item}-->
-        <!--</foreach>-->
-    <!--</update>-->
+    <update id="batchSynchPrice">
+        UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
+        WHERE    id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    <update id="synchAllPrice">
+        UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId}
+    </update>
+
+    <update id="jmNewUpdateAll">
+        UPDATE  `cms_bt_jm_promotion_product` set synch_status=1,error_msg=''  WHERE `cms_bt_jm_promotion_id`=#{promotionId}  and synch_status!=2
+    </update>
+
+    <update id="jmNewByProductIdListInfo">
+        UPDATE  `cms_bt_jm_promotion_product` set synch_status=1,error_msg=''  WHERE `cms_bt_jm_promotion_id`=#{promotionId}
+        and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"
+                                                 open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    </update>
     <!--jm2 end-->
 </mapper>

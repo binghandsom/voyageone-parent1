@@ -1,12 +1,9 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.bean.cms.jumei2.UpdatePriceParameterBean;
+import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
+import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
@@ -17,7 +14,6 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -56,7 +52,6 @@ public class CmsBtJmPromotionProduct3Service {
     public int delete(int id) {
         return dao.delete(id);
     }
-
     @VOTransactional
     public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(id);
@@ -65,21 +60,19 @@ public class CmsBtJmPromotionProduct3Service {
         dao.update(model);
         return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
     }
-
     @VOTransactional
     public void deleteByPromotionId(int promotionId) {
         daoExt.deleteByPromotionId(promotionId);
         daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
     }
-
     @VOTransactional
     public void deleteByProductIdList(ProductIdListInfo parameter) {
         daoExt.deleteByProductIdListInfo(parameter);
         daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
     }
-
+    //批量更新价格
     @VOTransactional
-    public void batchUpdateDealPrice(UpdatePriceParameterBean parameter) {
+    public void batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
         String price = "";
         if (parameter.getPriceValueType() == 1) {//价格
@@ -96,6 +89,14 @@ public class CmsBtJmPromotionProduct3Service {
         }
         daoExt.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
+    }
+    //批量同步价格
+    public void batchSynchPrice(BatchSynchPriceParameter parameter) {
+        daoExt.batchSynchPrice(parameter.getListPromotionProductId());
+    }
+    //全量同步价格
+    public void synchAllPrice(int promotionId) {
+        daoExt.synchAllPrice(promotionId);
     }
 }
 

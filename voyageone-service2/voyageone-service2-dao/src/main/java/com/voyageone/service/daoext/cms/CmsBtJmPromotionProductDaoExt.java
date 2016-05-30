@@ -47,5 +47,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     List getExportListByPromotionId(int promotionId );
 
     int  batchUpdateDealPrice(@Param("listPromotionProduct") List<Long> listPromotionProductId,@Param("dealPrice") String dealPrice);
+
+    int batchSynchPrice(List<Long> listPromotionProductId);
+
+    int synchAllPrice(int promotionId);
     //jm2 end
 }

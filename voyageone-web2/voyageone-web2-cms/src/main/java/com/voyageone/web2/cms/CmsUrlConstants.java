@@ -64,6 +64,8 @@ public interface CmsUrlConstants {
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
                 String UpdateJM = "updateJM";
                 String BatchUpdateDealPrice="batchUpdateDealPrice";
+                String BatchSynchPrice="batchSynchPrice";
+                String SynchAllPrice="synchAllPrice";
             }
         }
     }

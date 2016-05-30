@@ -6,7 +6,8 @@ import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotion
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.bean.cms.jumei2.UpdatePriceParameterBean;
+import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
+import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
@@ -252,11 +253,30 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
 
     //jm2 begin
+    //批量更新价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateDealPrice)
-    public AjaxResponse batchUpdateDealPrice(@RequestBody  UpdatePriceParameterBean parameter) {
-
+    public AjaxResponse batchUpdateDealPrice(@RequestBody BatchUpdatePriceParameterBean parameter) {
         service3.batchUpdateDealPrice(parameter);
         return success(null);
+    }
+   //批量同步价格
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
+    public AjaxResponse batchSynchPrice(@RequestBody BatchSynchPriceParameter parameter) {
+        service3.batchSynchPrice(parameter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SynchAllPrice)
+    public AjaxResponse synchAllPrice(@RequestBody int promotionId) {
+        service3.synchAllPrice(promotionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", promotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
     }
     //jm2 end
 }

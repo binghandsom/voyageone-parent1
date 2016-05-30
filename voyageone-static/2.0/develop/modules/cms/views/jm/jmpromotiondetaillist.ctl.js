@@ -237,8 +237,7 @@ define([
             }
             return "更新完成";
         }
-        $scope.getSelectedProductIdList=function()
-        {
+        $scope.getSelectedProductIdList = function () {
             var listPromotionProductId = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
                 if ($scope.vm.modelList[i].isChecked) {
@@ -246,6 +245,37 @@ define([
                 }
             }
             return listPromotionProductId;
+        }
+        $scope.batchSynchPrice = function () {
+            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var parameter={};
+            parameter.promotionId=vm.promotionId;
+            parameter.listPromotionProductId=listPromotionProductId;
+            jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        }
+        $scope.synchAllPrice=function()
+        {
+            jmPromotionDetailService.synchAllPrice({promotionId:  $scope.vm.promotionId}).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
         }
     }
     detailController.$inject = ['$scope', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];

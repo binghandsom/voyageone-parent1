@@ -214,7 +214,7 @@
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="deleteByPromotionId();">全量清空</a></li>
                     <li><a href="" ng-click="jmNewUpdateAll()">全量上传</a></li>
-                    <li><a href="">全量同步价格</a></li>
+                    <li><a href="" ng-click="synchAllPrice()">全量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelAllUpdateDealEndTime)">全量Deal延期</a></li>-->
                 </ul>
             </div>
@@ -225,7 +225,7 @@
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="deleteByProductIdList()">批量清空</a></li>
                     <li><a href="" ng-click="jmNewByProductIdListInfo()">批量上传</a></li>
-                    <li><a href="">批量同步价格</a></li>
+                    <li><a href="" ng-click="batchSynchPrice()">批量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
                     <!--<li><a href="">批量变更属性</a></li>-->
                     <li><a href="" ng-click="openPriceModify({search:search,listPromotionProductId:getSelectedProductIdList()})">批量变更价格</a></li>
