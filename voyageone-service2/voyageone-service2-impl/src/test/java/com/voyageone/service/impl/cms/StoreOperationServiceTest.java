@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.cms.CmsBtStoreOperationHistoryBean;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -87,7 +88,7 @@ public class StoreOperationServiceTest {
         model.setCreater("will" + System.currentTimeMillis());
         model.setOperationType(1 + "1");
 
-        List<CmsBtStoreOperationHistoryModel> result = storeOperationService.getHistoryBy(null);
+        List<CmsBtStoreOperationHistoryBean> result = storeOperationService.getHistoryBy(null);
         assertTrue(result.size() > 0);
     }
 }

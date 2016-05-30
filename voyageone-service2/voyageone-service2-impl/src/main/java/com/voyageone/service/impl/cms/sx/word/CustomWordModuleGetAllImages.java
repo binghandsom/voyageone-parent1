@@ -3,6 +3,9 @@ package com.voyageone.service.impl.cms.sx.word;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetAllImages;
@@ -26,6 +29,9 @@ import java.util.Set;
 public class CustomWordModuleGetAllImages extends CustomWordModule {
 
     public final static String moduleName = "GetAllImages";
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     public CustomWordModuleGetAllImages() {
         super(moduleName);
@@ -65,7 +71,10 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     continue;
                 }
                 // 20160512 tom 有可能为空 add END
-                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
+                // 20160513 tom 图片服务器切换 START
+//                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
+                String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, cmsBtProductModelFieldImage.getName());
+                // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {
                     parseResult += String.format(htmlTemplate, completeImageUrl);

@@ -25,9 +25,7 @@ define([
 
         $scope.save = function () {
             jmPromotionProductAddService.add($scope.vm).then(function(resp) {
-                console.log(resp);
                 notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                //$scope.$close();
                 $scope.$close();
             });
         };

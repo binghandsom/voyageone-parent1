@@ -2,8 +2,7 @@
  * Created by linanbin on 15/12/7.
  */
 
-define([
-], function () {
+define([], function () {
 
     function errorListController($scope, notify, $routeParams, $translate, $errorListService) {
 
@@ -26,7 +25,7 @@ define([
         /**
          * 初始化数据.
          */
-        function initialize () {
+        function initialize() {
             $errorListService.init()
                 .then(function (res) {
                     $scope.vm.masterData = res.data;
@@ -37,7 +36,7 @@ define([
         /**
          * 清空画面上显示的数据
          */
-        function clear () {
+        function clear() {
             $scope.vm.searchInfo = {
                 cartId: null,
                 catId: null,
@@ -48,7 +47,7 @@ define([
         /**
          * 检索
          */
-        function search () {
+        function search() {
             var data = angular.copy($scope.vm.searchInfo);
             if ($scope.vm.searchInfo.codes)
                 data.codes = $scope.vm.searchInfo.codes.split("\n");
@@ -61,8 +60,8 @@ define([
                 })
         }
 
-        function updateFinishStatus (id) {
-            $errorListService.updateFinishStatus({seq: id})
+        function updateFinishStatus(id) {
+            $errorListService.updateFinishStatus({id: id})
                 .then(function () {
                     notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     search();

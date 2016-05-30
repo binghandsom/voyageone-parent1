@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtTasksDaoExt">
+
+    <update id="updateConfig">
+        UPDATE voyageone_cms2.cms_bt_tasks
+        SET task_name = #{taskName},
+        config = #{config},
+        modified = NOW(),
+            modifier  = #{modifier}
+        WHERE id = #{id}
+              AND modified = #{modified}
+    </update>
+
+    <resultMap id="taskWithPromotion" type="com.voyageone.service.bean.cms.CmsBtTasksBean" autoMapping="true">
+        <id property="id" column="id"/>
+        <association property="promotion" autoMapping="true"
+                     javaType="com.voyageone.service.model.cms.CmsBtPromotionModel">
+            <id property="id" column="promotion_id"/>
+            <result property="channelId" column="channel_id"/>
+            <result property="cartId" column="cart_id"/>
+            <result property="promotionStatus" column="promotion_status"/>
+            <result property="promotionName" column="promotion_name"/>
+            <result property="preSaleEnd" column="pre_sale_end"/>
+            <result property="preSaleStart" column="pre_sale_start"/>
+            <result property="prePeriodStart" column="pre_period_start"/>
+            <result property="prePeriodEnd" column="pre_period_end"/>
+            <result property="activityStart" column="p_start"/>
+            <result property="activityEnd" column="p_end"/>
+            <result property="tejiabaoId" column="tejiabao_id"/>
+            <result property="promotionType" column="promotion_type"/>
+            <result property="refTagId" column="ref_tag_id"/>
+            <result property="active" column="is_active"/>
+            <result property="isAllPromotion" column="is_all_promotion"/>
+            <result property="created" column="p_created"/>
+            <result property="creater" column="p_creater"/>
+            <result property="modified" column="p_modified"/>
+            <result property="modifier" column="p_modifier"/>
+        </association>
+    </resultMap>
+
+    <select id="selectWithPromotion" resultMap="taskWithPromotion">
+        SELECT
+            t.id,
+            task_name,
+            task_type,
+            t.promotion_id,
+            t.activity_start,
+            t.activity_end,
+            config,
+            t.status,
+            t.created,
+            t.creater,
+            t.modified,
+            t.modifier,
+            t.channel_id,
+            cart_id,
+            promotion_status,
+            promotion_name,
+            pre_sale_end,
+            pre_sale_start,
+            pre_period_start,
+            pre_period_end,
+            p.activity_start  p_start,
+            p.activity_end    p_end,
+            tejiabao_id,
+            promotion_type,
+            ref_tag_id,
+            active,
+            is_all_promotion,
+            p.created         p_created,
+            p.creater         p_creater,
+            p.modified        p_modified,
+            p.modifier        p_modifier
+        FROM voyageone_cms2.cms_bt_tasks t
+        LEFT JOIN voyageone_cms2.cms_bt_promotion p
+        ON t.promotion_id = p.id
+        <where>
+            <if test="_parameter.containsKey('task_id') and task_id != null">
+                t.id = #{task_id}
+            </if>
+            <if test="_parameter.containsKey('channelId') and channelId != null">
+                and t.channel_id = #{channelId}
+            </if>
+            <if test="_parameter.containsKey('promotion_id') and promotion_id != null">
+                and t.promotion_id = #{promotion_id}
+            </if>
+            <if test="_parameter.containsKey('task_name') and task_name != null and task_name != ''">
+                AND task_name = #{task_name}
+            </if>
+            <if test="_parameter.containsKey('task_type') and task_type != null">
+                AND task_type = #{task_type,jdbcType=INTEGER}
+            </if>
+            <if test="_parameter.containsKey('searchKey') and searchKey != null and searchKey != ''">
+                AND task_name LIKE '%${searchKey}%'
+            </if>
+            <if test="_parameter.containsKey('activity_start') and activity_start != null and activity_start != ''">
+                and t.activity_start >= #{activity_start,jdbcType=VARCHAR}
+            </if>
+            <if test="_parameter.containsKey('activity_end') and activity_end != null and activity_end != ''">
+                and #{activity_end,jdbcType=VARCHAR} >= t.activity_end
+            </if>
+        </where>
+    </select>
+
+</mapper>

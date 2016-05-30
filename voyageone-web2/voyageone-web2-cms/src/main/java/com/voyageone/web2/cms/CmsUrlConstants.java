@@ -191,6 +191,8 @@ public interface CmsUrlConstants {
                 String ADD_NUMIID = "addNumiid";
 
                 String ADD_CHECK = "addCheck";
+
+                String GET_TEMPLATES = "getTemplates";
             }
 
             interface PRICE {

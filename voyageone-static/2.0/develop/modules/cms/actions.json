@@ -216,7 +216,8 @@
         "addNumiid": "addNumiid",
         "addCode": "addCode",
         "addCheck": "addCheck",
-        "add": "add"
+        "add": "add",
+        "getTemplates": "getTemplates"
       },
       "taskPriceService" : {
         "root": "/cms/task/price",

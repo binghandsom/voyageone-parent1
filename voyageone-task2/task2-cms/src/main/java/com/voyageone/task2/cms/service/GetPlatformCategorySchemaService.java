@@ -114,19 +114,41 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             String key = leafObj.getCatId();
 
             if(!savedList.contains(key)) {
-                // 到平台产品ID一览表中去找对应的项目
+                // 20160526 tom bug修正 START
+//                // 到平台产品ID一览表中去找对应的项目
+//                for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
+//                    // 如果channelId,cartId,categoryId完全一致，找到并推出循环
+//                    if (leafObj.getChannelId().equals(productId.getChannelId()) &&
+//                            cartId == productId.getCartId() &&
+//                            key.equals(productId.getCategoryId())) {
+//                        // 设置product id
+//                        savedList.add(key);
+//                        leafObj.setCartId(cartId);
+//                        allLeaves.add(leafObj);
+//                        break;
+//                    }
+//                }
+
+                boolean blnFound = false;
+                String strChannelId = "";
+                int intCartId = 0;
                 for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
                     // 如果channelId,cartId,categoryId完全一致，找到并推出循环
-                    if (leafObj.getChannelId().equals(productId.getChannelId()) &&
-                            cartId == productId.getCartId() &&
-                            key.equals(productId.getCategoryId())) {
-                        // 设置product id
-                        savedList.add(key);
-                        leafObj.setCartId(cartId);
-                        allLeaves.add(leafObj);
+                    if (key.equals(productId.getCategoryId())) {
+                        blnFound = true;
+                        strChannelId = productId.getChannelId();
+                        intCartId = productId.getCartId();
                         break;
                     }
                 }
+
+                if (!blnFound || (leafObj.getChannelId().equals(strChannelId) && cartId == intCartId) ) {
+                    // 设置product id
+                    savedList.add(key);
+                    leafObj.setCartId(cartId);
+                    allLeaves.add(leafObj);
+                }
+                // 20160526 tom bug修正 END
             }
 
         }
@@ -197,7 +219,10 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
                 }
             }
 
-            if (productIdStr != null){
+            // 20160526 tom bug修正 START
+//            if (productIdStr != null){
+            if (!StringUtils.isEmpty(productIdStr)){
+            // 20160526 tom bug修正 END
 
                 Long productId = Long.parseLong(productIdStr);
 

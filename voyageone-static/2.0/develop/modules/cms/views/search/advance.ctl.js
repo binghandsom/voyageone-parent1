@@ -37,7 +37,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = function(){
-            $scope.vm.status.open = false;//收缩搜索栏
+            //$scope.vm.status.open = false;//收缩搜索栏
             search();
         };
         $scope.exportFile = exportFile;
@@ -174,6 +174,7 @@ define([
          */
         function openAddPromotion (promotion, openAddToPromotion) {
             openAddToPromotion(promotion, getSelProductList()).then(function () {
+                searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -186,6 +187,7 @@ define([
          */
         function openJMActivity (promotion, openJMActivity) {
             openJMActivity(promotion, getSelProductList()).then(function () {
+                searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -197,6 +199,7 @@ define([
          */
         function openBulkUpdate (openFieldEdit) {
             openFieldEdit(getSelProductList()).then(function () {
+                searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -264,7 +267,7 @@ define([
         {
             if(m==null) return false;
             return m.inputOpts.lastIndexOf("null") > 0;
-        }
+        };
         function delCustAttribute (idx) {
             if ($scope.vm.custAttrList.length > 1) {
                 $scope.vm.custAttrList.splice(idx, 1);
@@ -331,6 +334,7 @@ define([
                     .then(function () {
                         searchAdvanceService.addFreeTag(tagBean.tagPath, productIds).then(function () {
                             notify.success ($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            searchAdvanceService.clearSelList();
                             getGroupList();
                             getProductList();
                         })
@@ -342,11 +346,16 @@ define([
 
 
         function openAdvanceImagedetail(item){
-            var image = _.map(item.fields.images1,function(entity){
-                return entity.image1;
-            }),picList = [];
-            picList[0] = image;
-            this.openImagedetail({'mainPic': image[0], 'picList': picList});
+            var picList = [];
+            for(var attr in item.fields){
+                if(attr.indexOf("images") >= 0){
+                    var image = _.map(item.fields[attr],function(entity){
+                        return entity.image1;
+                    });
+                    picList.push(image);
+                }
+            }
+            this.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
         }
     }
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];

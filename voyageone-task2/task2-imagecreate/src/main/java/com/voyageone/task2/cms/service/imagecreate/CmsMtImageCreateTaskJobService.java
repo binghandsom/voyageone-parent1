@@ -38,9 +38,7 @@ public class CmsMtImageCreateTaskJobService extends BaseMQCmsService {
         taskModel.setBeginTime(new Date());
         List<Runnable> threads = new ArrayList<>();
         for (CmsMtImageCreateTaskDetailModel modelTaskDetail : list) {
-            //if (modelTaskDetail.getStatus() == 0) {
             threads.add(() -> serviceImageCreateFile.createAndUploadImage(modelTaskDetail));
-            //}
         }
 
         if (!threads.isEmpty()) {

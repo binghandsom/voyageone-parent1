@@ -489,6 +489,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
                         queryObj.setProjection("{'fields.images1':1,'prodId': 1, 'fields.code': 1,'_id':0}");
                         queryObj.setQuery("{\"fields.code\":\"" + String.valueOf(pCdList.get(i)) + "\"}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
+                        // 如果根据code获取不到数据就跳过
+                        if (prod == null)
+                            continue;
                         List<CmsBtProductModel_Field_Image> fldImgList = prod.getFields().getImages1();
                         if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);
@@ -1065,10 +1068,10 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 result="\""+inputOptsKey+"\": { $ne:\"" + inputVal + "\"}}";
                 break;
             case "=null":
-                result="\""+inputOptsKey+"\":{$in:[null],$exists:true}";
+                result="\""+inputOptsKey+"\":{$in:[null,\"\"],$exists:true}";
                 break;
             case "!=null":
-                result="\""+inputOptsKey+"\":{$ne:[null]}";
+                result="$and:[{\""+inputOptsKey+"\": { $ne: null }},{\""+inputOptsKey +"\": { $ne: \"\" }}]";
                 break;
         }
         return  result;
@@ -1129,7 +1132,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
              */
         Sheet sheet = book.getSheetAt(0);
 
-        for (CmsBtProductModel item : items) {
+        for (CmsBtProductBean item : items) {
 
             Row row = FileUtils.row(sheet, startRowIndex);
 
@@ -1146,9 +1149,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
 
+            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
+
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
 
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroups().getNumIId());
+            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
 
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
 

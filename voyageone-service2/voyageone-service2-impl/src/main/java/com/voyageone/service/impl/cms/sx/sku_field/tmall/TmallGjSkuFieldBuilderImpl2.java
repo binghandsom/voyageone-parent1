@@ -119,6 +119,11 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.EXTENDSIZE_ALIASNAME) {
                     skuExtend_aliasnameField = platformProp;
                 }
+
+                // 暂时不知道匹配什么
+                if (type.intValue() == SkuTemplateConstants.UNKOWN) {
+                    addUnkownField(platformProp);
+                }
             }
         }
 
@@ -173,15 +178,15 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
 
                 buildSkuSize(skuFieldValue, expressionParser, cmsSkuProp, skuSubMappingMap.get(sku_sizeField.getId()), shopBean, user);
 
-                {
-                    List<Field> fList = ((MultiComplexField) skuField).getFields();
-                    for (Field fff : fList) {
-                        if (fff.getId().equals("in_prop_161712509")) {
-                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
-                            break;
-                        }
-                    }
-                }
+//                {
+//                    List<Field> fList = ((MultiComplexField) skuField).getFields();
+//                    for (Field fff : fList) {
+//                        if (fff.getId().equals("in_prop_161712509")) {
+//                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
+//                            break;
+//                        }
+//                    }
+//                }
 
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
                     String propId = mappingBean.getPlatformPropId();

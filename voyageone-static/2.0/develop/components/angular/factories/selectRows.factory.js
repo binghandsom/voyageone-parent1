@@ -32,6 +32,7 @@
             };
             this.clearSelectedList = function() {
                 _selectRowsInfo.selList = [];
+                _selectRowsInfo.selFlag = [];
             };
             this.selectRowsInfo = _selectRowsInfo;
         };

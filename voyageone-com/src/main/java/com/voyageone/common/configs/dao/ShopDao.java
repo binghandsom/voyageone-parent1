@@ -42,9 +42,31 @@ public class ShopDao extends BaseDao {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_getAll");
     }
 
+    /**
+     * 获取部分cart
+     * @return
+     */
+    public List<CartBean> getCarts(CartBean cartBean) {
+        return selectList(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_getList", cartBean);
+    }
+
+    /**
+     * 获取cart
+     * @return
+     */
+    public CartBean getCart(String cartId) {
+        CartBean cartBean = new CartBean();
+        cartBean.setCart_id(cartId);
+        return selectOne(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_getList", cartBean);
+    }
+
 
     public int insertOrUpdate(CartBean bean) {
         return insert(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_insertOrUpdate", bean);
+    }
+
+    public int update(CartBean bean) {
+        return update(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_Update", bean);
     }
 
     public int deleteLogic(String cart_id, String modifier) { //参数均不能为空!

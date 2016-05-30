@@ -59,12 +59,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">操作类型</label>
                                     <div class="col-sm-9">
-                                        <select class="form-control" ng-model="store.searchInfo.operationType">
-                                            <option value="" class="ng-binding" selected="selected">All</option>
-                                            <option value="重新上新所有商品" class="ng-binding">重新上新所有商品</option>
-                                            <option value="重新导入所有Feed商品(清空共通属性)" class="ng-binding">重新导入所有Feed商品(清空共通属性)</option>
-                                            <option value="重新导入所有Feed商品(不清空共通属性)" class="ng-binding">重新导入所有Feed商品(不清空共通属性)</option>
-                                            <option value="价格同步" class="ng-binding">价格同步</option>
+                                        <select class="form-control" ng-model="store.searchInfo.operationType"
+                                                ng-options="storeOperationType.value as storeOperationType.name for storeOperationType in store.storeOperationTypeList">
+                                            <option value="" translate="TXT_SELECT_NO_VALUE" />
+                                            <!--<option value="重新上新所有商品" class="ng-binding">重新上新所有商品</option>-->
+                                            <!--<option value="重新导入所有Feed商品(清空共通属性)" class="ng-binding">重新导入所有Feed商品(清空共通属性)</option>-->
+                                            <!--<option value="重新导入所有Feed商品(不清空共通属性)" class="ng-binding">重新导入所有Feed商品(不清空共通属性)</option>-->
+                                            <!--<option value="价格同步" class="ng-binding">价格同步</option>-->
                                         </select>
                                     </div>
                                 </div>
@@ -95,7 +96,6 @@
                             <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
                                 <thead>
                                 <tr>
-                                    <th class="mfb-xt text-center">序号</th>
                                     <th class="mfb-xxt text-center">操作类型</th>
                                     <th class="mfb-xxt text-center">操作者</th>
                                     <th class="mfb-xxt text-center">操作时间</th>
@@ -105,11 +105,10 @@
                             <div if-no-rows="store.storeDataList.length" style="padding-left:0px">
                                 <table class="table dropdown_table_main"  width="100%">
                                     <tbody >
-                                        <tr ng-repeat="productInfo in store.storeDataList">
-                                            <td class="mfb-xt text-center">{{$index + 1}}</td>
-                                            <td class="mfb-xxt text-center">{{productInfo.operationType}}</td>
-                                            <td class="mfb-xxt text-center">{{productInfo.modifier}}</td>
-                                            <td class="mfb-xxt text-center">{{productInfo.modified}}</td>
+                                        <tr ng-repeat="storeData in store.storeDataList">
+                                            <td class="mfb-xxt text-center">{{storeData.operationTypeName}}</td>
+                                            <td class="mfb-xxt text-center">{{storeData.modifier}}</td>
+                                            <td class="mfb-xxt text-center">{{storeData.modified}}</td>
                                         </tr>
                                     </tbody>
                                 </table>

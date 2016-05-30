@@ -18,6 +18,7 @@ define([
         this.getProductList = getProductList;
         this.exportFile = exportFile;
         this.addFreeTag = addFreeTag;
+        this.clearSelList = clearSelList;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
@@ -427,6 +428,11 @@ define([
                 result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.inStockTime.substring(0, 19));
 
             return result;
+        }
+
+        function clearSelList(){
+            tempGroupSelect.clearSelectedList();
+            tempProductSelect.clearSelectedList();
         }
     }
 });
