@@ -17,7 +17,7 @@ define([
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
-        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, $uibModalInstance) {
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, $translate, alert, notify, $uibModalInstance) {
             this.code = context.productIds;
             this.cartList = [];
             this.channelCategoryList = null;
@@ -25,6 +25,9 @@ define([
             this.cartId = $rootScope.platformType.cartId.toString();
             this.addChannelCategoryService = $addChannelCategoryService;
             this.$uibModalInstance = $uibModalInstance;
+            this.notify = notify;
+            this.alert = alert;
+            this.$translate = $translate;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -44,6 +47,7 @@ define([
              * 点击保存按钮时
              */
             save: function () {
+                var self = this;
 
                 var cIds = [], cNames = [], fullCNames = [], fullCIds = [];
 
@@ -65,11 +69,10 @@ define([
                         category = category.parent;
                     }
                 });
-                if (fullCIds.length > 5) {
-                    alert("Sorry,勾选的类目数目已超过最大值10，请重新勾选！");
+                if (fullCIds.length > 10) {
+                    self.alert('MAX_SELLER_CAT_CNT');
                 }
 
-                var self = this;
                 self.addChannelCategoryService.save({
                     "cIds": cIds,
                     "cNames": cNames,
@@ -77,8 +80,7 @@ define([
                     "fullCatId": fullCIds,
                     "code": self.code,
                     "cartId": self.cartId
-                }).then(function (res) {
-                    self.modifiedCount = res.modifiedCount;
+                }).then(function () {
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     self.$uibModalInstance.close();
                 });
