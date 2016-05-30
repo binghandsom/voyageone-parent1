@@ -551,6 +551,7 @@ define(function() {
         "TXT_STORE_CATEGORY_NAME":"store",
         "MAX_SELLER_CAT_DEPTH":"max level",
         "MAX_SELLER_CAT_CNT":"max tag counts less than 10",
-        "TXT_STORE_CATEGORY_SELECT":"Please select a tag"
+        "TXT_STORE_CATEGORY_SELECT":"Please select a tag",
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"当前目录下操作无效"
     };
 });
