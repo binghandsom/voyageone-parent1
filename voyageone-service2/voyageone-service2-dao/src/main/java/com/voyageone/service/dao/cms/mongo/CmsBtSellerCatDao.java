@@ -32,8 +32,9 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
      * @param cartId
      * @param parentCId
      * @param cId
+     * @return
      */
-    public void delete(String channelId, int cartId, String parentCId, String cId){
+    public CmsBtSellerCatModel delete(String channelId, int cartId, String parentCId, String cId){
 
 
         //如果是根节点
@@ -44,6 +45,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             if (resultList.size() > 0) {
                 CmsBtSellerCatModel me = resultList.get(0);
                 delete(me);
+                return me;
             }
         }
         //非根节点
@@ -52,10 +54,12 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             List<CmsBtSellerCatModel> allCat = select(queryStr);
             List<CmsBtSellerCatModel> resultList = findCId(allCat, parentCId);
             if (resultList.size() > 0) {
+                CmsBtSellerCatModel result = null;
                 CmsBtSellerCatModel parent = resultList.get(0);
                 List<CmsBtSellerCatModel> children = parent.getChildren();
                 for (int i = children.size() - 1; i >= 0; i--) {
                     if (children.get(i).getCatId().equals(cId)) {
+                        result = children.get(i);
                         children.remove(i);
                         break;
                     }
@@ -70,9 +74,12 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
                 for (CmsBtSellerCatModel model : allCat) {
                     update(model);
                 }
+                return result;
             }
+
         }
 
+        return null;
     }
 
 
@@ -149,7 +156,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
      * @param cId   店铺自定义分类Id
      * @param modifier 更新者
      */
-    public void update(String channelId, int cartId, String cName, String cId , String modifier) {
+    public  List<CmsBtSellerCatModel> update(String channelId, int cartId, String cName, String cId , String modifier) {
 
         String queryStr = "{'channelId':'" + channelId + "','cartId':" + cartId + "}";
 
@@ -191,7 +198,30 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             for (CmsBtSellerCatModel model: allCat) {
                 update(model);
             }
+
+            //展开result的所有node
+            List<CmsBtSellerCatModel> changedList = expandNode(result);
+
+            return changedList;
         }
+        return null;
+
+    }
+
+
+    /**
+     * 找出所有孩子节点
+     * @param root
+     * @return
+     */
+    private List<CmsBtSellerCatModel> expandNode(CmsBtSellerCatModel root)
+    {
+        List<CmsBtSellerCatModel> result = new ArrayList<>();
+        result.add(root);
+        for (CmsBtSellerCatModel model: root.getChildren()) {
+            result.addAll(expandNode(model) );
+        }
+        return  result;
     }
 
     private void updateChildren(List<CmsBtSellerCatModel> children, String parentCatPath, String modifier)
@@ -215,13 +245,11 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
             }
             else
             {
-                List<CmsBtSellerCatModel> childern = findCId(model.getChildren() ,cId );
-                result.addAll(childern);
+                List<CmsBtSellerCatModel> children = findCId(model.getChildren() ,cId );
+                result.addAll(children);
             }
 
         }
         return  result;
     }
-
-
 }

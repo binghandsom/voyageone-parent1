@@ -10,6 +10,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -28,6 +29,8 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
+
+    private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
     private JdShopService jdShopService;
@@ -222,7 +225,10 @@ public class SellerCatService extends BaseService {
 //            tbSellerCatService.updateSellerCat(shopBean, cId, cName);
 //        }
 
-        cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
+        List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
+
+        //更新product表中素所有的店铺内分类
+        cmsBtProductDao.updateSellerCat(channelId, changedList);
     }
 
     /**
@@ -246,9 +252,9 @@ public class SellerCatService extends BaseService {
 //        {
 //            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
 //        }
-        cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
-
+        CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中素所有的店铺内分类
+        cmsBtProductDao.deleteSellerCat(channelId, deleted);
     }
 
     /**

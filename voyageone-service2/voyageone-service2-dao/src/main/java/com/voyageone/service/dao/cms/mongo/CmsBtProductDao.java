@@ -126,6 +126,11 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     };
 
 
+    /**
+     * 删除Product对应的店铺内自定义分类
+     * @param channelId
+     * @param catModel
+     */
     public void deleteSellerCat(String channelId, CmsBtSellerCatModel catModel)
     {
         String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + catModel.getCatId() + "}";
@@ -182,4 +187,55 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     }
 
 
+    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel)
+    {
+        List<String> cIds = product.getSellerCats().getCid();
+        List<String> cNames = product.getSellerCats().getCNames();
+        List<String> fullCNames = product.getSellerCats().getFullCNames();
+        List<String> fullCIds = product.getSellerCats().getFullCIds();
+        //找到cId
+        for(int i = cIds.size()-1; i >= 0; i--)
+        {
+            if(cIds.get(i).equals(catModel.getCatId()))
+            {
+                cNames.set(i , catModel.getCatName());
+                break;
+            }
+        }
+        for(int i = fullCIds.size()-1; i >= 0; i--)
+        {
+            if(fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatCId()))
+            {
+                fullCNames.set(i , catModel.getCatPath());
+                break;
+            }
+        }
+    }
+
+    public void updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList) {
+        if (catList != null) {
+            StringBuffer sb = new StringBuffer();
+            int i = 0;
+
+            for (; i < catList.size(); i++) ;
+            {
+                if (i == 0) {
+                    sb.append("'").append(catList.get(i).getCatId()).append("'");
+                } else {
+                    sb.append(", '").append(catList.get(i).getCatId()).append("'");
+                }
+
+            }
+
+            String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + "'$elemMatch': { '$in': [" + sb.toString() + "]}";
+
+            List<CmsBtProductModel> allProduct = select(queryStr, channelId);
+
+            for (CmsBtProductModel model : allProduct) {
+                for (CmsBtSellerCatModel sellerCat : catList) {
+                    updateSellerCat(model, sellerCat);
+                }
+            }
+        }
+    }
 }
