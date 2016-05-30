@@ -20,6 +20,7 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
+                catPath:[]
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -95,7 +96,8 @@ define([
                 tags:[],
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
-                tagTypeSelectValue: '0'
+                tagTypeSelectValue: '0',
+                catPath:[]
             };
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
@@ -329,7 +331,7 @@ define([
                 $scope.vm.masterData.catList = [];
                 return;
             }
-            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false, "catId":  $scope.vm.searchInfo.catId})
+            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false, "cats":$scope.vm.searchInfo.catPath})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
                 });
