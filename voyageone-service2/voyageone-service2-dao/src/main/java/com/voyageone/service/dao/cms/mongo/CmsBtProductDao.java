@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
@@ -119,4 +120,66 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
         return select(PriceNotEqualQuery, channelId);
     }
+
+    public void updateSellerCat(String channelId, List<BulkUpdateModel> bulkList, String modifier, String $set){
+
+    };
+
+
+    public void deleteSellerCat(String channelId, CmsBtSellerCatModel catModel)
+    {
+        String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + catModel.getCatId() + "}";
+
+        List<CmsBtProductModel> allProduct = select(queryStr, channelId);
+
+        for (CmsBtProductModel model:allProduct) {
+
+            List<String> cIds = model.getSellerCats().getCid();
+            List<String> cNames = model.getSellerCats().getCNames();
+            List<String> fullCNames = model.getSellerCats().getFullCNames();
+            List<String> fullCIds = model.getSellerCats().getFullCIds();
+
+            //删除cId
+            for(int i = cIds.size()-1; i >= 0; i--)
+            {
+                if(cIds.get(i).equals(catModel.getCatId()))
+                {
+                    cIds.remove(i);
+                    break;
+                }
+            }
+
+            //删除cName
+            for(int i = cNames.size()-1; i >= 0; i--)
+            {
+                if(cNames.get(i).equals(catModel.getCatName()))
+                {
+                    cNames.remove(i);
+                    break;
+                }
+            }
+
+            //删除fullCNames
+            for(int i = fullCNames.size()-1; i >= 0; i--)
+            {
+                if(fullCNames.get(i).equals(catModel.getCatPath()))
+                {
+                    fullCNames.remove(i);
+                    break;
+                }
+            }
+
+            //删除fullCIds
+            for(int i = fullCIds.size()-1; i >= 0; i--)
+            {
+                if(fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatCId()))
+                {
+                    fullCIds.remove(i);
+                    break;
+                }
+            }
+        }
+    }
+
+
 }

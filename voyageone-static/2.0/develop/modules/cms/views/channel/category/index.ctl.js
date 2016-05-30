@@ -11,11 +11,13 @@ define([
     "use strict";
     return cms.controller('categoryController', (function (){
 
-        function CategoryController(platformMappingService,sellerCatService,$scope) {
+        function CategoryController(platformMappingService,sellerCatService,alert,confirm,$translate) {
 
             this.platformMappingService = platformMappingService;
             this.sellerCatService = sellerCatService;
-            this.scope = $scope;
+            this.alert = alert;
+            this.confirm = confirm;
+            this.translate = $translate;
             this.carts = [];
             this.tree = [];
             this.source = [] ;
@@ -33,6 +35,9 @@ define([
                 });
 
             },
+            /**
+             * 当选择店铺时初始化页面，并根据店铺深度(level)设置div宽度
+             */
             loadCategories:function(){
                 var self = this;
                 //获取店铺配置
@@ -43,6 +48,20 @@ define([
                     self.sellerCatService.getCat({"cartId":+self.cartInfo.cart}).then(function(res) {
                         self.source = res.data.catTree;
                         self.search(0);
+                        switch(+self.cartInfo.level){
+                            case 1:
+                                $(".category-drag-minWidth").css({"width":"90%"});
+                                break;
+                            case 2:
+                                $(".category-drag-minWidth").css({"width":"48%"});
+                                break;
+                            case 3:
+                                $(".category-drag-minWidth").css({"width":"32%"});
+                                break;
+                            case 4:
+                                $(".category-drag-minWidth").css({"width":"24%"});
+                                break;
+                        }
                     });
                 });
 
@@ -90,14 +109,8 @@ define([
             },
             newCategory:function(root,level,openNewCategory){
                 if(this.cartInfo.cart == null){
-                    alert("请选择一个店铺");
+                    this.alert(this.translate.instant("TXT_STORE_CATEGORY_SELECT"));
                     return;
-                }
-                for(var i=0,length=this.tree.length;i<length;i++){
-                    if(this.tree[i].length == this.cartInfo.maxTag){
-                        alert("超过了最大层数");
-                        return;
-                    }
                 }
                 openNewCategory({root:root,selectObject:this.selected[level],save:this.save,ctrl:this});
             },
@@ -111,11 +124,18 @@ define([
             },
             delete:function(node){
                 var self = this;
-                self.sellerCatService.delCat({"cartId":+this.cartInfo.cart,"catId":node.catId,"parentCatId":node.parentCatId}).then(function(res) {
-                    self.source = res.data.catTree;
-                    self.search(0);
+                self.confirm(this.translate.instant("TXT_MSG_DELETE_ITEM")).result.then(function () {
+                    self.sellerCatService.delCat({"cartId":+self.cartInfo.cart,"catId":node.catId,"parentCatId":node.parentCatId}).then(function(res) {
+                        self.source = res.data.catTree;
+                        self.search(0);
+                    });
                 });
+
             },
+            /**
+             * 修改结点名称
+             * @param node 树结构结点
+             */
             updateCat:function(node){
                     var self = this;
                     if(node.value == null){

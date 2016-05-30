@@ -422,6 +422,7 @@ define(function(){
         "TXT_MSG_TAG": "请正确选择和填写标签!",
         "TXT_MSG_TAG_EDITOR": "标签编辑页!",
         "TXT_MSG_TAG_PATH": "标签路径!",
+        "TXT_MSG_TAG_NAME": "标签名",
         "TXT_MSG_TAG_IMAGE": "标签名称小于50字节!",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功.",
         "TXT_ACTIVITY_NAME": "活动名称",
@@ -545,6 +546,13 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
+
+        /**店铺分类*/
+        "TXT_STORE_CATEGORY":"店铺分类",
+        "TXT_STORE_CATEGORY_NAME":"店铺",
+        "MAX_SELLER_CAT_DEPTH":"最大层数",
+        "MAX_SELLER_CAT_CNT":"可设置最大标签数",
+        "TXT_STORE_CATEGORY_SELECT":"请选择一个店铺"
     };
 });
