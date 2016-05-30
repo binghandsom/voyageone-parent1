@@ -86,7 +86,9 @@ public class CmsChannelCategoryController extends CmsController {
         String parentCId = String.valueOf(param.get("parentCatId"));
         String cId = String.valueOf(param.get("catId"));
 
-        sellerCatService.deleteSellerCat(channelId, cartId, parentCId, cId);
+        String modifier = this.getUser().getUserName();
+
+        sellerCatService.deleteSellerCat(channelId, cartId, parentCId, cId, modifier);
 
         List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         Map<String, Object> result = new HashMap<>();

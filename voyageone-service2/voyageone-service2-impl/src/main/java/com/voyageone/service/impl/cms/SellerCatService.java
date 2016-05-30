@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
+import com.taobao.api.domain.Product;
 import com.taobao.api.domain.SellerCat;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -12,14 +14,21 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 
 /**
@@ -39,6 +48,12 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private TbSellerCatService tbSellerCatService;
+
+    @Autowired
+    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
+
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
 
 
     private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
@@ -184,21 +199,21 @@ public class SellerCatService extends BaseService {
 
         String cId = "";
 
-//        String shopCartId = shopBean.getCart_id();
-//
-//
-//        if(isJDPlatform(shopCartId))
-//        {
-//            cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
-//        }
-//        else if (isTMPlatform(shopCartId))
-//        {
-//            cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-//        }
+        String shopCartId = shopBean.getCart_id();
+
+
+        if(isJDPlatform(shopCartId))
+        {
+            cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
+        }
+        else if (isTMPlatform(shopCartId))
+        {
+            cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
+        }
 
         //TestCode
-        Random random = new Random();
-        cId = String.valueOf(random.nextInt(1000) + 1000);
+//        Random random = new Random();
+//        cId = String.valueOf(random.nextInt(1000) + 1000);
 
         if(!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
@@ -217,21 +232,24 @@ public class SellerCatService extends BaseService {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
-//        String shopCartId = shopBean.getCart_id();
-//        if(isJDPlatform(shopCartId))
-//        {
-//            jdShopService.updateShopCategory(shopBean,cId, cName);
-//        }
-//        else if (isTMPlatform(shopCartId))
-//        {
-//            tbSellerCatService.updateSellerCat(shopBean, cId, cName);
-//        }
+        String shopCartId = shopBean.getCart_id();
+        if(isJDPlatform(shopCartId))
+        {
+            jdShopService.updateShopCategory(shopBean,cId, cName);
+        }
+        else if (isTMPlatform(shopCartId))
+        {
+            tbSellerCatService.updateSellerCat(shopBean, cId, cName);
+        }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
 
         //更新product表中素所有的店铺内分类
         if(changedList != null) {
-            cmsBtProductDao.updateSellerCat(channelId, changedList);
+            List<CmsBtProductModel>  list  =  cmsBtProductDao.updateSellerCat(channelId, changedList);
+            //插入上新表
+            insert2SxWorkload(channelId, cartId, modifier, list);
+
         }
     }
 
@@ -242,24 +260,59 @@ public class SellerCatService extends BaseService {
      * @param parentCId
      * @param cId
      */
-    public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId) {
+    public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId, String modifier) {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
-//        String shopCartId = shopBean.getCart_id();
-//
-//        if(isJDPlatform(shopCartId))
-//        {
-//            jdShopService.deleteShopCategory(shopBean, cId);
-//        }
-//        else if (isTMPlatform(shopCartId))
-//        {
-//            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
-//        }
+        String shopCartId = shopBean.getCart_id();
+
+        if(isJDPlatform(shopCartId))
+        {
+            jdShopService.deleteShopCategory(shopBean, cId);
+        }
+        else if (isTMPlatform(shopCartId))
+        {
+            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
+        }
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中素所有的店铺内分类
         if(deleted != null) {
-            cmsBtProductDao.deleteSellerCat(channelId, deleted);
+            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted);
+
+
+            //插入上新表
+            insert2SxWorkload(channelId, cartId, modifier, list);
+        }
+    }
+
+
+    /**
+     * 插入上新表
+     * @param channelId
+     * @param cartId
+     * @param modifier
+     * @param list
+     */
+    private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
+        if(list != null)
+        {
+            for (CmsBtProductModel product: list) {
+                if(product.getFields().getStatus().equals("Approved"))
+                {
+                    List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + product.getFields().getCode() + "\"}", channelId);
+                    Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
+
+                    CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                    model.setChannelId(channelId);
+                    model.setGroupId(platformsMap.get(cartId).intValue());
+                    model.setCartId(cartId);
+                    model.setPublishStatus(0);
+                    model.setCreater(modifier);
+                    model.setModifier(modifier);
+                    cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(model);
+                }
+
+            }
         }
     }
 
@@ -328,7 +381,6 @@ public class SellerCatService extends BaseService {
             cmsBtSellerCatModel.setModified(now);
             cmsBtSellerCatModel.setCreater(creator);
             cmsBtSellerCatModel.setModifier(creator);
-
             result.add(cmsBtSellerCatModel);
         }
 

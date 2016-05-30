@@ -135,13 +135,14 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param channelId
      * @param catModel
      */
-    public void deleteSellerCat(String channelId, CmsBtSellerCatModel catModel)
+    public List<CmsBtProductModel>  deleteSellerCat(String channelId, CmsBtSellerCatModel catModel)
     {
         String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
         for (CmsBtProductModel model:allProduct) {
+
 
             List<String> cIds = model.getSellerCats().getCid();
             List<String> cNames = model.getSellerCats().getCNames();
@@ -205,6 +206,8 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             bulkList.add(bulkModel);
             BulkWriteResult result = bulkUpdateWithMap(model.getChannelId(), bulkList, "", "$set");
         }
+
+        return  allProduct;
     }
 
 
@@ -255,7 +258,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 //        update(product);
     }
 
-    public void updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList) {
+    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList) {
         if (catList != null) {
             StringBuffer sb = new StringBuffer();
 
@@ -278,6 +281,8 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
                     updateSellerCat(model, sellerCat);
                 }
             }
+            return allProduct;
         }
+        return  null;
     }
 }
