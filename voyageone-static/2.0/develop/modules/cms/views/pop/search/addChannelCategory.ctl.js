@@ -17,7 +17,7 @@ define([
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
-        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, alert, notify, $uibModalInstance) {
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, notify, $uibModalInstance) {
             this.code = context.productIds;
             this.cartList = [];
             this.channelCategoryList = null;
@@ -26,7 +26,8 @@ define([
             this.addChannelCategoryService = $addChannelCategoryService;
             this.$uibModalInstance = $uibModalInstance;
             this.notify = notify;
-            this.alert = alert;
+            this.checkedCountValid = false;
+            this.cartIdValid = false;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -37,6 +38,7 @@ define([
                 var self = this;
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     self.cartList = res.data.cartList;
+                    self.cartIdValid = false;
                     if (self.cartId == "0" || self.cartId == "1") {
                         self.isSelectCid = [];
                         self.channelCategoryList = null;
@@ -53,7 +55,7 @@ define([
             save: function () {
                 var self = this;
                 if (self.cartId == "0" || self.cartId == "1") {
-                    self.alert('INVALID_OPERATION_IN_CURRENT_CART_PATH');
+                    self.cartIdValid = true;
                 } else {
                     var cIds = [], cNames = [], fullCNames = [], fullCIds = [];
                     var map = flatCategories(this.channelCategoryList);
@@ -74,7 +76,7 @@ define([
                         }
                     });
                     if (fullCIds.length > 10) {
-                        self.alert('MAX_SELLER_CAT_CNT');
+                        self.checkedCountValid = true;
                     }
                     self.addChannelCategoryService.save({
                         "cIds": cIds,

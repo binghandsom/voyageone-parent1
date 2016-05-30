@@ -7,8 +7,8 @@
     </div>
 
     <div class="modal-body">
-        <div class="row m-l-md m-r-md">
-            <div class="col-sm-10 col-sm-offset-1">
+        <div class="row m-l-md m-r-md" novalidate>
+            <div class="col-sm-12">
                 <div class="col-sm-12 m-b-sm">
                     <div class="col-sm-3 m-t-xs">
                         <label class="">{{'TXT_CART_NAME' | translate}}</label>
@@ -27,8 +27,8 @@
                         <div class="m-t-xs" ng-if="category.isParent == 0" ng-repeat="cid in isSelectCid"
                              ng-controller="selectRowsCtrl">
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" name="catsels.isChk" ng-checked="ctrl.isSelectCid[category.catId]"
-                                       ng-model="ctrl.isSelectCid[category.catId]" ng-click=" ">
+                                <input type="checkbox" ng-checked="ctrl.isSelectCid[category.catId]"
+                                       ng-model="ctrl.isSelectCid[category.catId]">
                                 <span class="fa fa-check"></span>&nbsp;
                                 <label>{{category.catName}}</label>
                             </label>
@@ -37,6 +37,12 @@
                              ng-init="categoryContainer = category.children">
                         </div>
                     </div>
+                    <div class="col-sm-12 text-center" ng-show="ctrl.cartIdValid">
+                        <h5 style="color: red;line-height: 160px;"><i class="fa fa-warning"></i> {{'INVALID_OPERATION_IN_CURRENT_CART_PATH' | translate}}</h5>
+                    </div>
+                </div>
+                <div class="col-sm-10 col-sm-offset-1 m-t-sm m-b-sm" ng-show="ctrl.checkedCountValid">
+                    <h5 style="color: red"><i class="fa fa-warning"></i> {{'MAX_SELLER_CAT_CNT' | translate}}</h5>
                 </div>
             </div>
         </div>
@@ -54,7 +60,7 @@
         </div>
         <div class="m-t-xs" ng-if="category.isParent == 0" ng-controller="selectRowsCtrl">
             <label class="checkbox-inline c-checkbox">
-                <input type="checkbox" name="catsels.isChk" ng-checked="ctrl.isSelectCid[category.catId]"
+                <input type="checkbox" ng-checked="ctrl.isSelectCid[category.catId]"
                        ng-model="ctrl.isSelectCid[category.catId]" ng-click=" ">
                 <span class="fa fa-check"></span>&nbsp;
                 <label>{{category.catName}}</label>

@@ -550,7 +550,7 @@ define(function() {
         "TXT_STORE_CATEGORY":"Store Category",
         "TXT_STORE_CATEGORY_NAME":"store",
         "MAX_SELLER_CAT_DEPTH":"max level",
-        "MAX_SELLER_CAT_CNT":"max tag counts less than 10",
+        "MAX_SELLER_CAT_CNT":"max tag counts should be less than 10",
         "TXT_STORE_CATEGORY_SELECT":"Please select a tag",
         "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in cart directory"
     };
