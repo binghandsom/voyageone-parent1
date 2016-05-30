@@ -299,10 +299,28 @@ public final class CommonUtil {
 
     /**
      * 获取图片的后缀名
-     * @param imageUrl
-     * @return
      */
-    public static String getImageExtend (String imageUrl) {
+    public static String getImageExtend(String imageUrl) {
         return imageUrl.substring(imageUrl.lastIndexOf(".")).toLowerCase();
+    }
+
+    /**
+     * 获取IP Set
+     */
+    public static Set<String> getLocalIPs() {
+        Set<String> ipList = new HashSet<>();
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress() && inetAddress.isSiteLocalAddress()) {
+                        ipList.add(inetAddress.getHostAddress());
+                    }
+                }
+            }
+        } catch (SocketException ignored) {
+        }
+        return ipList;
     }
 }
