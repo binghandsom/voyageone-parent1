@@ -276,3 +276,45 @@
     margin-top: 6px;
     display: block;
 }
+.data-priority-0,.data-priority-1,.data-priority-2,.data-priority-3,.data-priority-4
+{
+    border-left:3px solid red;
+    /*transition:border-left 0.09s;*/
+    transition:border-left 218ms ease-in,opacity 218ms ease-in;
+    -moz-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Firefox 4 */
+    -webkit-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Safari and Chrome */
+    -o-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Opera */
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    cursor: pointer;
+}
+.data-priority-0{
+    border-left:3px solid #fff;
+}
+.data-priority-0:hover{
+    border-left:6px solid #b3b3b3;
+}
+.data-priority-1:hover{
+    border-left:6px solid red;
+}
+.data-priority-2{
+    border-left:3px solid #ff9800;
+}
+.data-priority-2:hover{
+    border-left:6px solid #ff9800;
+}
+.data-priority-3{
+    border-left:3px solid #5bc0de;
+}
+.data-priority-3:hover{
+    border-left:6px solid #5bc0de;
+}
+ .data-priority-4 {
+     border-left:3px solid #5cb85c;
+ }
+.data-priority-4:hover{
+    border-left:6px solid #5cb85c;
+}
+
+

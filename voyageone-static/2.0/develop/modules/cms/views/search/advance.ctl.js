@@ -8,7 +8,7 @@ define([
     'modules/cms/service/search.advance.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert) {
+    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
 
         $scope.vm = {
             searchInfo: {
@@ -53,6 +53,7 @@ define([
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
+        $scope.getCartList = getCartList;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         /**
@@ -70,6 +71,8 @@ define([
                 $scope.vm.masterData = res.data;
                 $scope.vm.promotionList =  _.where(res.data.promotionList, {isAllPromotion: 0});
                 $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
+                $scope.vm.cartList = res.data.cartList;
+
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
@@ -318,6 +321,15 @@ define([
         }
 
         /**
+         * 查询指定店铺cart类型下的所有标签(list形式)
+         */
+        function getCartList () {
+            sellerCatService.getCat({"cartId ":23,"isTree":false}).then(function(resp){
+                console.log("resp",resp);
+            });
+        }
+
+        /**
          * 添加产品到指定自由标签
          */
         function addFreeTag (tagBean) {
@@ -350,6 +362,6 @@ define([
             this.openImagedetail({'mainPic': image[0], 'picList': picList});
         }
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
     return searchIndex;
 });

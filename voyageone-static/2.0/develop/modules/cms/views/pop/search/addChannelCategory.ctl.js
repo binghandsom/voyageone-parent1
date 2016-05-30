@@ -64,7 +64,7 @@ define([
                         category = category.parent;
                     }
                 });
-
+                
                 if (fullCIds.length > 5) {
                     alert("Sorry,勾选的类目数目已超过最大值10，请重新勾选！");
                 }
