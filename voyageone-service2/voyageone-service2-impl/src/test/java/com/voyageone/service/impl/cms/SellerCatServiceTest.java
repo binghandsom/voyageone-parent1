@@ -40,12 +40,13 @@ public class SellerCatServiceTest {
 
     @Test
     public void testUpdateSellerCat() throws Exception {
-        sellerCatService.updateSellerCat("010", 23 , "新系列", "1124130579" , "ethan");
+        sellerCatService.updateSellerCat("010", 23 , "新系列测试", "1124130579" , "ethan");
 
     }
 
     @Test
     public void testDeleteSellerCat() throws Exception {
+        sellerCatService.deleteSellerCat("010",23, "1124130579", "1124130582");
 
     }
 

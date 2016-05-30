@@ -7,13 +7,17 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
@@ -133,7 +137,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public void deleteSellerCat(String channelId, CmsBtSellerCatModel catModel)
     {
-        String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + catModel.getCatId() + "}";
+        String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
@@ -183,6 +187,23 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
                     break;
                 }
             }
+
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("sellerCats.cIds",cIds);
+            updateMap.put("sellerCats.cNames",cNames);
+            updateMap.put("sellerCats.fullCNames",fullCNames);
+            updateMap.put("sellerCats.fullCIds",fullCIds);
+
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId", model.getProdId());
+
+            BulkUpdateModel bulkModel = new BulkUpdateModel();
+            bulkModel.setUpdateMap(updateMap);
+            bulkModel.setQueryMap(queryMap);
+
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            bulkList.add(bulkModel);
+            BulkWriteResult result = bulkUpdateWithMap(model.getChannelId(), bulkList, "", "$set");
         }
     }
 
@@ -210,14 +231,35 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
                 break;
             }
         }
+
+
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("sellerCats.cNames",cNames);
+        updateMap.put("sellerCats.fullCNames",fullCNames);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", product.getProdId());
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        bulkList.add(model);
+        BulkWriteResult result = bulkUpdateWithMap(product.getChannelId(), bulkList, "", "$set");
+
+//        String strUpdate = String.format("{\"sellerCats.cNames\":%s, \"sellerCats.fullCNames\":%s}", JsonUtil.bean2Json(cNames),  JsonUtil.bean2Json(fullCNames));
+//        String strQuery = String.format("{\"prodId\":%s}", product.getProdId());
+//        updateFirst(strQuery, strUpdate, product.getChannelId()) ;
+//        update(product);
     }
 
     public void updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList) {
         if (catList != null) {
             StringBuffer sb = new StringBuffer();
-            int i = 0;
 
-            for (; i < catList.size(); i++) ;
+            for (int i = 0 ; i < catList.size(); i++)
             {
                 if (i == 0) {
                     sb.append("'").append(catList.get(i).getCatId()).append("'");
@@ -227,7 +269,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             }
 
-            String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + "'$elemMatch': { '$in': [" + sb.toString() + "]}";
+            String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + "{'$elemMatch': { '$in': [" + sb.toString() + "]}}}";
 
             List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 

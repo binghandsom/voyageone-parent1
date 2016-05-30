@@ -60,7 +60,7 @@ public class CmsBtSellerCatDaoTest {
 
     @Test
     public void testUpdate() throws Exception {
-       cmsBtSellerCatDao.update("010", 20, "手镯", "212", "test");
+        cmsBtSellerCatDao.update("010", 23 , "新系列", "1124130579" , "ethan");
     }
 
 

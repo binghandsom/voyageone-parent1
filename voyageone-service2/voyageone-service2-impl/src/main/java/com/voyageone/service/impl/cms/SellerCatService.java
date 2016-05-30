@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.taobao.api.domain.SellerCat;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -30,6 +31,7 @@ public class SellerCatService extends BaseService {
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
 
+    @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
@@ -228,7 +230,9 @@ public class SellerCatService extends BaseService {
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
 
         //更新product表中素所有的店铺内分类
-        cmsBtProductDao.updateSellerCat(channelId, changedList);
+        if(changedList != null) {
+            cmsBtProductDao.updateSellerCat(channelId, changedList);
+        }
     }
 
     /**
@@ -254,7 +258,9 @@ public class SellerCatService extends BaseService {
 //        }
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中素所有的店铺内分类
-        cmsBtProductDao.deleteSellerCat(channelId, deleted);
+        if(deleted != null) {
+            cmsBtProductDao.deleteSellerCat(channelId, deleted);
+        }
     }
 
     /**
