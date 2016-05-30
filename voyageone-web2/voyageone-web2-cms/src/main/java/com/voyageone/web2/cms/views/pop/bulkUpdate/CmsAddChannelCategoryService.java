@@ -101,7 +101,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         List<String> cIdsList = (List) params.get("cIds");
         List<String> cNamesList = (List) params.get("cNames");
         List<String> fullCNamesList = (List) params.get("fullCNames");
-        List<String> fullCatCIdList = (List) params.get("fullCatCId");
+        List<String> fullCatIdList = (List) params.get("fullCatId");
         List<String> codeList = (List) params.get("code");
         //cartId
         int cartId= Integer.parseInt(String.valueOf(params.get("cartId")));
@@ -111,10 +111,21 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         String userName = (String) params.get("userName");
         //根据codeList取得相关联的code
         List<String> allCodeList=getAllCodeList(codeList, channelId, cartId);
+        //取得类目达标下面的个数
+        String cnt = Codes.getCodeName("SELLER_CATS", String.valueOf(cartId));
+        List<String> editFullCNamesList = new ArrayList<>();
+        if(cnt!=null){
+            for(String fullCatId:fullCatIdList){
+                String fullCatIds[]=fullCatId.split("-");
+                editFullCNamesList.add(fullCatIds[fullCatIds.length-1]);
+            }
+        }else{
+            editFullCNamesList=fullCatIdList;
+        }
         //数据check
-        checkChannelCategory(fullCatCIdList);
+        checkChannelCategory(fullCatIdList,cartId);
         //更新cms_bt_product表的SellerCat字段
-        Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, fullCatCIdList, allCodeList, cartId, userName, channelId);
+        Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, editFullCNamesList, allCodeList, cartId, userName, channelId);
         //取得approved的code插入
         insertCmsBtSxWorkload(allCodeList, channelId, userName,cartId);
         return resultMap;
@@ -179,12 +190,16 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     }
     /**
      * 数据check
-     * @param fullCatCIdList
+     * @param fullCatIdList
+     * @param cartId
      */
-    public void checkChannelCategory(List<String> fullCatCIdList){
-        if(fullCatCIdList.size()>10){
+    public void checkChannelCategory(List<String> fullCatIdList, int cartId){
+        //取得类目达标下面的个数
+        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT", String.valueOf(cartId));
+        //选择个数判断
+        if(fullCatIdList.size()>Integer.parseInt(cnt)){
             // 类目选择check
-            throw new BusinessException("只能10個");
+            throw new BusinessException("7000090",cnt);
         }
     };
 }

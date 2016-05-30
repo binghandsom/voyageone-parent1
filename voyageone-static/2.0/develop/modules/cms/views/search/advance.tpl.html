@@ -193,17 +193,18 @@
 								</div>
 							</div>
 						</div>
+
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME' | translate}}</label>
 							<div class="col-sm-3">
-								<select class="form-control" ng-model="vm.searchInfo.cartId" ng-change="getCartList()"
+								<select class="form-control" ng-model="vm.searchInfo.cartId" ng-change="getCat()"
 										ng-options="cartType.value as cartType.name for cartType in vm.masterData.cartList">
 									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
 								</select>
 							</div>
 							<div class="col-sm-5">
-								<select multiple chosen class="form-control" ng-model="vm.searchInfo.tags"
-										ng-options="tag.tagPath as tag.tagPathName for tag in vm.masterData.tagList">
+								<select multiple chosen class="form-control" ng-model="vm.searchInfo.fullCatIdValue"
+										ng-options="cat.catName as cat.catPath for cat in vm.masterData.catList">
 								</select>
 							</div>
 						</div>
