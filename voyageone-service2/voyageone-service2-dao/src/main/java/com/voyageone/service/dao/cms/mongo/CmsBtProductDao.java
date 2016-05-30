@@ -1,8 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.google.common.base.Joiner;
-import com.mongodb.BulkWriteResult;
-import com.mongodb.WriteResult;
+import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
@@ -120,9 +119,4 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
         return select(PriceNotEqualQuery, channelId);
     }
-
-    public void updateSellerCat(String channelId, List<BulkUpdateModel> bulkList, String modifier, String $set){
-
-    };
-
 }

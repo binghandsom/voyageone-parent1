@@ -39,7 +39,11 @@ public class CmsAddChannelCategoryController  extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_CHANNEL_CATEGORY.SAVE_CHANNEL_CATEGORY_INFO)
     public AjaxResponse save (@RequestBody Map<String, Object> params){
-        cmsAddChannelCategoryService.saveChannelCategory(params);
-        return success(params);
+        //公司平台销售渠道
+        params.put("channelId", this.getUser().getSelChannelId());
+        //创建者/更新者用
+        params.put("userName", this.getUser().getUserName());
+        Map<String, Object> resultMap=cmsAddChannelCategoryService.saveChannelCategory(params);
+        return success(resultMap);
     }
 }
