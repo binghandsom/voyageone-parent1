@@ -15,8 +15,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtSpuServiceTest {
+
     @Autowired
-    JumeiHtSpuService service;
+    private JumeiHtSpuService service;
 
     @Test
     public void testAddSpu() throws Exception {

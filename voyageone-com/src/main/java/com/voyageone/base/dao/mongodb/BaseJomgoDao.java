@@ -11,11 +11,12 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * BaseJomgoDao
@@ -72,12 +73,9 @@ public abstract class BaseJomgoDao<T> {
     /**
      * 通过反射, 获得定义Class时声明的父类的泛型参数的类型. 如无法找到, 返回Object.class.
      *
-     * @param clazz
-     *            clazz The class to introspect
-     * @param index
-     *            the Index of the generic ddeclaration,start from 0.
-     * @return the index generic declaration, or Object.class if cannot be
-     *         determined
+     * @param clazz clazz The class to introspect
+     * @param index the Index of the generic ddeclaration,start from 0.
+     * @return       the index generic declaration, or Object.class if cannot be determined
      */
     @SuppressWarnings("unchecked")
     public static Class<Object> getSuperClassGenricType(final Class clazz, final int index) {

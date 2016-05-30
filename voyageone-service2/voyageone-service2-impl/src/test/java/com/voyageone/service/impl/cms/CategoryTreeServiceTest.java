@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 public class CategoryTreeServiceTest {
 
     @Autowired
-    CategoryTreeService categoryTreeService;
+    private CategoryTreeService categoryTreeService;
     @Test
     public void testAddCategory() throws Exception {
         String catpath[] = { "童装/婴儿装/亲子装>儿童礼服" ,

@@ -20,7 +20,7 @@ import java.util.List;
 public class CmsBtChannelCategoryServiceTest {
 
     @Autowired
-    ChannelCategoryService cmsBtChannelCategoryService;
+    private ChannelCategoryService cmsBtChannelCategoryService;
 
     @Test
     public void testGeCategorysByChannelId() {

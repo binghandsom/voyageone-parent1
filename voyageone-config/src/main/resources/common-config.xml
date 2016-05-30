@@ -8,11 +8,6 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <!-- ApplicationContextAware -->
-    <bean class="com.voyageone.common.spring.SpringContext" lazy-init="false" />
-    <!-- ApplicationContextAware -->
-    <bean class="com.voyageone.common.spring.SpringStartFinish" lazy-init="false" />
-
     <bean id="voAopLoggable" class="com.voyageone.common.logger.VOAopLoggable"/>
 
     <!-- aop task2 Service.onStartup() 日志输出配置 -->

@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ImportExcelFileServiceTest {
 
     @Autowired
-    ImportExcelFileService importExcelFileService;
+    private ImportExcelFileService importExcelFileService;
 
     @Test
     public void testOnStartup() throws Exception {

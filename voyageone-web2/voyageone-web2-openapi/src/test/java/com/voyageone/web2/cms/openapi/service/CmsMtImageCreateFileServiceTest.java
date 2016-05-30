@@ -26,7 +26,7 @@ import java.util.*;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsMtImageCreateFileServiceTest {
     @Autowired
-    CmsImageFileService service;
+    private CmsImageFileService service;
     @Autowired
     private CmsBtImageTemplateDao dao;
     @Autowired

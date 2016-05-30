@@ -30,18 +30,18 @@ import javax.annotation.Resource;
 import java.util.*;
 
 @Service
-public class GetPlatformCategoryTreesService extends BaseTaskService{
+public class GetPlatformCategoryTreesService extends BaseTaskService {
 
     private final static String JOB_NAME = "getPlatformCategoryTreesTask";
 
     @Autowired
-    BrandDao brandDao;
+    private BrandDao brandDao;
     @Autowired
-    TbCategoryService tbCategoryService;
+    private TbCategoryService tbCategoryService;
     @Autowired
-    CmsMtPlatformCategoryDao platformCategoryDao;
+    private CmsMtPlatformCategoryDao platformCategoryDao;
     @Autowired
-    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
     @Resource(name = "availableChannelList")
     List availableChannelList;
@@ -50,20 +50,21 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
     }
+
     @Override
     public String getTaskName() {
         return JOB_NAME;
     }
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 获取天猫系所有店铺
         List<ShopBean> shopList = Shops.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
 
-        for (Iterator<ShopBean> it = shopList.iterator();it.hasNext();){
+        for (Iterator<ShopBean> it = shopList.iterator(); it.hasNext(); ) {
             ShopBean shop = it.next();
-            if (StringUtils.isEmpty(shop.getAppKey())||StringUtils.isEmpty(shop.getAppSecret())){
+            if (StringUtils.isEmpty(shop.getAppKey()) || StringUtils.isEmpty(shop.getAppSecret())) {
                 $info("Cart " + shop.getCart_id() + " " + shop.getCart_name() + " 对应的app key 和 app secret key 不存在，不做处理！！！");
                 it.remove();
             }
@@ -74,8 +75,8 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
         // 循环所有店铺
         for (ShopBean shop : shopList) {
-            if (availableChannelList != null && availableChannelList.size()>0){
-                if (availableChannelList.contains(shop.getOrder_channel_id())){
+            if (availableChannelList != null && availableChannelList.size() > 0) {
+                if (availableChannelList.contains(shop.getOrder_channel_id())) {
                     // 判断该Shop是否需要运行任务
                     boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
 
@@ -84,7 +85,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
                         doSetPlatformCategoryTm(shop);
                     }
                 }
-            }else {
+            } else {
                 // 判断该Shop是否需要运行任务
                 boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
 
@@ -103,6 +104,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
     /**
      * 第三方平台类目信息取得（天猫系）
+     *
      * @param shop 店铺信息
      */
     private void doSetPlatformCategoryTm(ShopBean shop) throws ApiException {
@@ -119,12 +121,12 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         List<PlatformCategoriesModel> platformCategoriesModelList = new ArrayList<>();
         // 循环所有父类目，获取所有子类目
         List<ItemCat> subCatsAll = new ArrayList<>();
-        if (sellerAuthorize.getItemCats() != null && sellerAuthorize.getItemCats().size() > 0 ) {
+        if (sellerAuthorize.getItemCats() != null && sellerAuthorize.getItemCats().size() > 0) {
             // 插入该店的所有一级类目数据
             subCatsAll.addAll(sellerAuthorize.getItemCats());
 
             // 循环一级类目，获取所有子类目
-            for(ItemCat itemcat : sellerAuthorize.getItemCats()) {
+            for (ItemCat itemcat : sellerAuthorize.getItemCats()) {
                 List<ItemCat> subCats = tbCategoryService.getCategory(shop, itemcat.getCid());
                 // 返回错误的场合
                 if (subCats == null) {
@@ -200,7 +202,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
         /** 保存类目信息 */
         List<CmsMtPlatformCategoryTreeModel> platformCategoryMongoBeanList = new ArrayList<>();
-        for (PlatformCategoriesModel category: platformCategoriesModelList){
+        for (PlatformCategoriesModel category : platformCategoriesModelList) {
             CmsMtPlatformCategoryTreeModel mongoModel = new CmsMtPlatformCategoryTreeModel();
 //            mongoModel.setCartId(null);
             mongoModel.setCatId(category.getPlatformCid());
@@ -218,14 +220,14 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         }
 
         //获取类目树
-        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList,Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
+        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList, Integer.valueOf(shop.getCart_id()), shop.getOrder_channel_id());
 
         //删除原有类目信息
-        WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
+        WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()), shop.getOrder_channel_id());
 
         $info("批量删除类目 CART_ID 为：" + shop.getCart_id() + "  channel id: " + shop.getOrder_channel_id() + " 的数据为: " + delCatRes.getN() + "条...");
 
-        if(savePlatformCatModels.size()>0){
+        if (savePlatformCatModels.size() > 0) {
             $info("保存最新的类目信息: " + savePlatformCatModels.size() + "条记录。");
             //保存最新的类目信息
             platformCategoryDao.insertWithList(savePlatformCatModels);
@@ -244,7 +246,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
     /**
      * 创建各渠道的平台类目层次关系.
      */
-    private List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList,int cartId,String channelId) {
+    private List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, int cartId, String channelId) {
         // 设置类目层次关系.
         List<CmsMtPlatformCategoryTreeModel> assistPlatformCatList = new ArrayList<>(platformCatModelList);
 
@@ -296,18 +298,18 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         List<Brand> ret = new ArrayList<>();
 
         if (brands != null) {
-            for (int i = 0; i < brands.size(); i++){
+            for (int i = 0; i < brands.size(); i++) {
                 Boolean dup = false;
                 Brand brand = brands.get(i);
                 Long vid = brand.getVid();
-                for (int j = i + 1; j < brands.size(); j++){
+                for (int j = i + 1; j < brands.size(); j++) {
                     //查看是否有重复
-                    if (vid.longValue() == brands.get(j).getVid().longValue()){
+                    if (vid.longValue() == brands.get(j).getVid().longValue()) {
                         dup = true;
                     }
                 }
                 //没有重复才添加
-                if (!dup){
+                if (!dup) {
                     ret.add(brand);
                 }
             }
@@ -318,8 +320,9 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
 
     /**
      * 重建第三方平台指定店铺品牌信息
-     * @param brands 品牌信息
-     * @param shop shop
+     *
+     * @param brands   品牌信息
+     * @param shop     shop
      * @param JOB_NAME job name
      */
     @Transactional
@@ -328,7 +331,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
         int delCount = brandDao.delBrandsByShop(shop);
         $info("删除该店的所有品牌数据: " + delCount + "条。");
         //插入该店的所有品牌数据
-        if(brands != null && brands.size() > 0){
+        if (brands != null && brands.size() > 0) {
             $info("插入该店的所有品牌数据,CartId: " + shop.getCart_id());
             brandDao.insertBrands(brands, shop, JOB_NAME);
         }

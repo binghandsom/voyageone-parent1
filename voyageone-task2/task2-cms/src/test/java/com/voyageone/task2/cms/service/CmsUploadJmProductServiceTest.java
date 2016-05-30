@@ -24,10 +24,11 @@ import java.util.List;
 public class CmsUploadJmProductServiceTest {
 
     @Autowired
-    CmsUploadJmProductService cmsUploadJmProductService;
+    private CmsUploadJmProductService cmsUploadJmProductService;
 
     @Autowired
-    JumeiProductService jumeiProductService;
+    private JumeiProductService jumeiProductService;
+
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
@@ -37,7 +38,7 @@ public class CmsUploadJmProductServiceTest {
     @Test
     public void testGetTime() throws Exception {
 
-        Long a=CmsUploadJmProductService.getTime("2016-03-10 10:00:00");
+        Long a = CmsUploadJmProductService.getTime("2016-03-10 10:00:00");
         System.out.println(a);
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("131");
@@ -45,7 +46,7 @@ public class CmsUploadJmProductServiceTest {
         shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
         shopBean.setApp_url("http://openapi.ext.jumei.com/");
         JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductByName(shopBean, "D G迷人小号皮质圆形挎包 1124229756");
-        return ;
+        return;
     }
 
     @Test
@@ -55,7 +56,7 @@ public class CmsUploadJmProductServiceTest {
         shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
         shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
         shopBean.setApp_url("http://openapi.ext.jumei.com/");
-        String[] productList= {"2382646",
+        String[] productList = {"2382646",
                 "2383491",
                 "2382859",
                 "2382969",
@@ -105,20 +106,20 @@ public class CmsUploadJmProductServiceTest {
                 "2385502",
                 "2385511"};
 
-        FileWriter fw=new FileWriter("f:\\jumei_hash_id4.csv");
-        PrintWriter pw=new PrintWriter(fw);
+        FileWriter fw = new FileWriter("f:\\jumei_hash_id4.csv");
+        PrintWriter pw = new PrintWriter(fw);
 
         try {
-            for(int i=0;i<productList.length;i++){
+            for (int i = 0; i < productList.length; i++) {
                 JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shopBean, productList[i]);
-                pw.println((i+1)+","+jmGetProductInfoRes.getProduct_id() + "," + jmGetProductInfoRes.getHash_ids());
-                if(i%10 == 0){
+                pw.println((i + 1) + "," + jmGetProductInfoRes.getProduct_id() + "," + jmGetProductInfoRes.getHash_ids());
+                if (i % 10 == 0) {
                     pw.flush();
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
-        }finally {
+        } finally {
             pw.close();
             fw.close();
         }

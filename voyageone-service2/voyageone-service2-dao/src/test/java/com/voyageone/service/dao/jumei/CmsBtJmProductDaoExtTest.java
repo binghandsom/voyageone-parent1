@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsBtJmProductDaoExtTest {
     @Autowired
-    CmsBtJmProductDaoExt daoExt;
+    private CmsBtJmProductDaoExt daoExt;
 
     @Test
     public void  getByProductCodeChannelIdTest()

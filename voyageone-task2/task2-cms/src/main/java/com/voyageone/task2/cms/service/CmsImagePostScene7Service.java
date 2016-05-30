@@ -48,21 +48,21 @@ public class CmsImagePostScene7Service extends BaseTaskService {
     private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
 
     @Autowired
-    CmsBtImagesDaoExt cmsBtImagesDaoExt;
+    private CmsBtImagesDaoExt cmsBtImagesDaoExt;
 
     @Autowired
-    PlatformImagesService platformImagesService;
+    private PlatformImagesService platformImagesService;
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @Autowired
-    ProductGroupService productGroupService;
+    private ProductGroupService productGroupService;
 //    @Autowired
 //    ImagesService imagesService;
 
     @Autowired
-    ImageTemplateService imageTemplateService;
+    private ImageTemplateService imageTemplateService;
 
     @Autowired
     private ImageCreateService imageCreateService;

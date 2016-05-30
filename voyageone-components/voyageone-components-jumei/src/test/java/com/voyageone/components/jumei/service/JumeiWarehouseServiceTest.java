@@ -18,7 +18,7 @@ import java.util.List;
 public class JumeiWarehouseServiceTest {
 
     @Autowired
-    JumeiWarehouseService warehouseService;
+    private JumeiWarehouseService warehouseService;
 
     @Test
     public void testGet() throws Exception {

@@ -18,7 +18,7 @@ import java.util.List;
 public class JumeiCategoryServiceTest {
 
     @Autowired
-    JumeiCategoryService categoryService;
+    private JumeiCategoryService categoryService;
 
     @Test
     public void testGet() throws Exception {
