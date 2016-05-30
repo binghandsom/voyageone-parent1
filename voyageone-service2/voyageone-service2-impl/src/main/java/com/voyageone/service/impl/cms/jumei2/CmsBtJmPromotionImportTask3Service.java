@@ -36,7 +36,7 @@ import java.util.*;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsBtJmPromotionImportTaskService {
+public class CmsBtJmPromotionImportTask3Service {
     private static final int PlatformId = 27;
     @Autowired
     CmsBtJmPromotionImportTaskDao cmsBtJmPromotionImportTaskDao;

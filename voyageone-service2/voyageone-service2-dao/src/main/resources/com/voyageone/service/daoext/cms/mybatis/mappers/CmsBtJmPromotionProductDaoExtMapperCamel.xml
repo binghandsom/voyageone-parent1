@@ -119,7 +119,7 @@
 
     <!--jm2 begin-->
     <select id="getPageByWhere" resultType="MapModel">
-        SELECT b.image1,a.product_Long_Name  AS productLongName,b.color_En,a.deal_Price AS colorEn,b.attribute
+        SELECT b.image1,b.product_Long_Name  AS productLongName,b.color_En,a.deal_Price AS colorEn,b.attribute
         ,a.retail_price,a.sale_price,a.msrp_rmb,a.jm_hash_id AS jmHashId,a.discount,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status
         FROM `cms_bt_jm_promotion_product` AS a
