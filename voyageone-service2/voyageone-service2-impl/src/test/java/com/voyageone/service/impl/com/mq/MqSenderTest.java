@@ -33,11 +33,34 @@ public class MqSenderTest extends TestCase {
 //            sender.sendMessage("voyageone_mq_error_handle_testing", message);
 //        }
 
-        for (int i : taskIds) {
+//        for (int i : taskIds) {
+//            Map<String, Object> message = new HashMap<>();
+//            message.put("id", i);
+//            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
+//        }
+
+        for (int i=0;i<1000;i++) {
             Map<String, Object> message = new HashMap<>();
-            message.put("id", i);
+            message.put("id", 123);
+            message.put("no", i);
             sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
+            Thread.sleep(1000);
         }
     }
 
+    @Test
+    public void testStopMq() throws Exception {
+        Map<String, Object> message = new HashMap<>();
+        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("active", "stop");
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false);
+    }
+
+    @Test
+    public void testStartMq() throws Exception {
+        Map<String, Object> message = new HashMap<>();
+        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("active", "start");
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false);
+    }
 }

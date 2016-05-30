@@ -32,11 +32,4 @@ public class CmsImageFileSendTaskTest {
         sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, map);
     }
 
-    @Autowired
-    private MqAdminHandler adminHandler;
-
-    @Test
-    public void testGetCount() {
-        adminHandler.getQueueCount(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob);
-    }
 }
