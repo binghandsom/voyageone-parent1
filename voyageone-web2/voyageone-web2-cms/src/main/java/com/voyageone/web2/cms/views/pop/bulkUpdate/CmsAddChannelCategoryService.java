@@ -123,7 +123,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             editFullCNamesList=fullCatIdList;
         }
         //数据check
-        checkChannelCategory(fullCatIdList);
+        checkChannelCategory(fullCatIdList,cartId);
         //更新cms_bt_product表的SellerCat字段
         Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, editFullCNamesList, allCodeList, cartId, userName, channelId);
         //取得approved的code插入
@@ -191,12 +191,15 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     /**
      * 数据check
      * @param fullCatIdList
+     * @param cartId
      */
-    public void checkChannelCategory(List<String> fullCatIdList){
+    public void checkChannelCategory(List<String> fullCatIdList, int cartId){
+        //取得类目达标下面的个数
+        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT", String.valueOf(cartId));
         //选择个数判断
-        if(fullCatIdList.size()>10){
+        if(fullCatIdList.size()>Integer.parseInt(cnt)){
             // 类目选择check
-            throw new BusinessException("7000090");
+            throw new BusinessException("7000090",cnt);
         }
     };
 }
