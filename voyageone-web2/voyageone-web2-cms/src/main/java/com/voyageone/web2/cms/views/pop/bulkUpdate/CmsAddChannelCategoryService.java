@@ -104,7 +104,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         List<String> fullCatCIdList = (List) params.get("fullCatCId");
         List<String> codeList = (List) params.get("code");
         //cartId
-        int cartId= (int) params.get("cartId");
+        int cartId= Integer.parseInt(String.valueOf(params.get("cartId")));
         //channelId
         String channelId = (String) params.get("channelId");
         //modifier
@@ -116,7 +116,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //更新cms_bt_product表的SellerCat字段
         Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, fullCatCIdList, allCodeList, cartId, userName, channelId);
         //取得approved的code插入
-        insertCmsBtSxWorkload(allCodeList, channelId, userName);
+        insertCmsBtSxWorkload(allCodeList, channelId, userName,cartId);
         return resultMap;
     }
 
@@ -125,30 +125,38 @@ public class CmsAddChannelCategoryService extends BaseAppService {
      * @param allCodeList
      * @param channelId
      * @param userName
+     * @param cartId
      */
-    private void insertCmsBtSxWorkload(List<String> allCodeList, String channelId, String userName) {
-        JomgoQuery queryObject = new JomgoQuery();
+    private void insertCmsBtSxWorkload(List<String> allCodeList, String channelId, String userName, int cartId) {
         //根据allCodeList在cms_bt_product取得已经approved的code
         String[] codeArr = new String[allCodeList.size()];
         codeArr = allCodeList.toArray(codeArr);
-        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") +"fields.status"+"Approved"+"}");
+        JomgoQuery queryObject = new JomgoQuery();
+        StringBuilder sbQuery = new StringBuilder();
+        sbQuery.append(MongoUtils.splicingValue("fields.code", codeArr, "$in"));
+        sbQuery.append(",");
+        sbQuery.append(MongoUtils.splicingValue("fields.status","Approved"));
+        queryObject.setQuery("{" + sbQuery.toString() + "}");
         List<CmsBtProductModel> rst = cmsBtProductDao.select(queryObject, channelId);
         //根据rst的code在cms_bt_product_group获取所有的可上新的平台group信息
         List<CmsBtSxWorkloadModel> models = new ArrayList<>();
         for(CmsBtProductModel cmsBtProductModel:rst){
             //循环取得allCode
             String code = cmsBtProductModel.getFields().getCode();
-            int cartId = Integer.parseInt(cmsBtProductModel.getCatId());
             CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
             Long groupId= groupModel.getGroupId();
             model.setChannelId(groupModel.getChannelId());
             model.setGroupId(new Integer(String.valueOf(groupId)));
-            model.setCartId(Integer.parseInt(cmsBtProductModel.getCatId()));
+            model.setCartId(cartId);
             model.setPublishStatus(0);
             model.setModifier(userName);
+            model.setCreater(userName);
+            models.add(model);
         }
-        cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+        if (models.size() > 0) {
+            cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+        }
     }
 
     /**
