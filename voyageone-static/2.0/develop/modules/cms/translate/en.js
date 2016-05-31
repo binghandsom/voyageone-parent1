@@ -552,6 +552,7 @@ define(function() {
         "MAX_SELLER_CAT_DEPTH":"max level",
         "MAX_SELLER_CAT_CNT":"max tag counts should be less than ",
         "TXT_STORE_CATEGORY_SELECT":"Please select a tag",
-        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in cart directory"
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in cart directory",
+        "CATEGORY_EDIT":"Category edit"
     };
 });
