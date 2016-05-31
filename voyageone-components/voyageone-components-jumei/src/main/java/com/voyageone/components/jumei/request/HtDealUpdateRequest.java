@@ -25,10 +25,6 @@ public class HtDealUpdateRequest implements BaseJMRequest {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getJumei_hash_id() {
         return jumei_hash_id;
     }
