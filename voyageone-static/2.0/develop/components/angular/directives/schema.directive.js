@@ -267,6 +267,9 @@
                                 break;
                         }
                     });
+                    /**
+                     * 根据type类型匹配模板
+                     */
                     getTemplate().getHtml().then(function (html) {
                         if (schema.tipMsg() != null && scope.$hastip) return schemas.multiComplex_tip.getHtml().then(function (tipHtml) {
                             compileTemplate(html + tipHtml);
@@ -320,7 +323,14 @@
                      * @param index
                      */
                     scope.delField = function (index) {
-                        field.complexValues.splice(index, 1);
+                        if(field.complexValues.length == 1){
+                            for(var attr in field.complexValues[0].fieldMap){
+                                if(attr.indexOf("image") >= 0)
+                                    field.complexValues[0].fieldMap[attr].value = "";
+                            }
+                        }
+                        else
+                            field.complexValues.splice(index, 1);
                     };
                     function getTemplate() {
                         switch (schema.type()) {

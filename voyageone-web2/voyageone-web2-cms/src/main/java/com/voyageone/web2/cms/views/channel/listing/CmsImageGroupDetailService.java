@@ -39,7 +39,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
 
     private final int FILE_LIMIT_SIZE = 3145728;
 
-    private final String IMAGE_TYPE = "jpg";
+    private final String IMAGE_TYPE = "jpg,png";
 
     @Autowired
     private ImageGroupService imageGroupService;
