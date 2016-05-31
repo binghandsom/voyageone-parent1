@@ -27,6 +27,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("code", code);
     }
 
+    //originalCode 产品originalCode
+    public String getOriginalCode() {
+        return getAttribute("originalCode");
+    }
+
+    public void setOriginalCode(String originalCode) {
+        setAttribute("originalCode", originalCode);
+    }
+
     //brand 品牌
     public String getBrand() {
         return getAttribute("brand");
