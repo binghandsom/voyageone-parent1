@@ -9,7 +9,8 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">种类</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="vm.cat_path" ng-options="category.catPath as category.catPath for category in categoryList | filter:{isParent:0}" ng-change="valueChange(vm.cat_path)">
+                    <select chosen class="form-control" ng-model="vm.cat_path" width="'100%'"
+                            ng-options="category.catPath as category.catPath for category in categoryList | filter:{isParent:0}" ng-change="valueChange(vm.cat_path)">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
