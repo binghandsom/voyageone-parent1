@@ -66,6 +66,8 @@ public interface CmsUrlConstants {
                 String BatchUpdateDealPrice="batchUpdateDealPrice";
                 String BatchSynchPrice="batchSynchPrice";
                 String SynchAllPrice="synchAllPrice";
+                String BatchCopyDeal="batchCopyDeal";
+                String CopyDealAll="copyDealAll";
             }
         }
     }

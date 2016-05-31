@@ -44,12 +44,16 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     CmsBtJmPromotionProductModel getByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List getExportListByPromotionId(int promotionId );
+    List getExportListByPromotionId(int promotionId);
 
-    int  batchUpdateDealPrice(@Param("listPromotionProduct") List<Long> listPromotionProductId,@Param("dealPrice") String dealPrice);
+    int batchUpdateDealPrice(@Param("listPromotionProduct") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
     int batchSynchPrice(List<Long> listPromotionProductId);
 
     int synchAllPrice(int promotionId);
+
+    int batchCopyDeal(@Param("listPromotionProduct") List<Long> listPromotionProductId);
+
+    int copyDealAll(int promotionId);
     //jm2 end
 }

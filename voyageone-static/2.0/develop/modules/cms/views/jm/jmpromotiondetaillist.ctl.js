@@ -277,6 +277,36 @@ define([
                 alert($translate.instant('TXT_FAIL'));
             });
         }
+        $scope.batchCopyDeal = function () {
+            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var parameter={};
+            parameter.promotionId=vm.promotionId;
+            parameter.listPromotionProductId=listPromotionProductId;
+            jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        }
+        $scope.copyDealAll=function() {
+            jmPromotionDetailService.copyDealAll({promotionId: $scope.vm.promotionId}).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        }
     }
     detailController.$inject = ['$scope', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;

@@ -161,9 +161,10 @@
         "updateJM": "updateJM",
         "batchUpdateDealPrice": "batchUpdateDealPrice",
         "batchSynchPrice": "batchSynchPrice",
-        "synchAllPrice":"synchAllPrice"
-      }
-    },
+        "synchAllPrice": "synchAllPrice",
+        "batchCopyDeal": "batchCopyDeal",
+        "copyDealAll": "copyDealAll"
+      },
     "cmsBtJmPromotionImportTask":{
       "cmsBtJmPromotionImportTaskService":{
         "root":"/cms/CmsBtJmPromotionImportTask/index",

@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.bean.cms.jumei2.BatchCopyDealParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -52,6 +53,7 @@ public class CmsBtJmPromotionProduct3Service {
     public int delete(int id) {
         return dao.delete(id);
     }
+
     @VOTransactional
     public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(id);
@@ -60,16 +62,19 @@ public class CmsBtJmPromotionProduct3Service {
         dao.update(model);
         return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
     }
+
     @VOTransactional
     public void deleteByPromotionId(int promotionId) {
         daoExt.deleteByPromotionId(promotionId);
         daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
     }
+
     @VOTransactional
     public void deleteByProductIdList(ProductIdListInfo parameter) {
         daoExt.deleteByProductIdListInfo(parameter);
         daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
     }
+
     //批量更新价格
     @VOTransactional
     public void batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
@@ -90,13 +95,25 @@ public class CmsBtJmPromotionProduct3Service {
         daoExt.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
     }
+
     //批量同步价格
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
         daoExt.batchSynchPrice(parameter.getListPromotionProductId());
     }
+
     //全量同步价格
     public void synchAllPrice(int promotionId) {
         daoExt.synchAllPrice(promotionId);
+    }
+
+    //批量再售
+    public void batchCopyDeal(BatchCopyDealParameter parameter) {
+        daoExt.batchCopyDeal(parameter.getListPromotionProductId());
+    }
+
+    //全部再售
+    public void copyDealAll(int promotionId) {
+        daoExt.copyDealAll(promotionId);
     }
 }
 

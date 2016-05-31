@@ -6,6 +6,7 @@ import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotion
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.bean.cms.jumei2.BatchCopyDealParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
 import com.voyageone.service.impl.cms.jumei.*;
@@ -119,7 +120,6 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
 
 
-
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
@@ -181,6 +181,28 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
+    //所有未上新商品上新
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
+    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
+        serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", promotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //部分商品上新
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
+    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
+        serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
     /**
      * 更新产品信息
      *
@@ -239,7 +261,8 @@ public class CmsJmPromotionDetailController extends CmsController {
         service3.batchUpdateDealPrice(parameter);
         return success(null);
     }
-   //批量同步价格
+
+    //批量同步价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
     public AjaxResponse batchSynchPrice(@RequestBody BatchSynchPriceParameter parameter) {
         service3.batchSynchPrice(parameter);
@@ -249,6 +272,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SynchAllPrice)
     public AjaxResponse synchAllPrice(@RequestBody int promotionId) {
         service3.synchAllPrice(promotionId);
@@ -259,24 +283,22 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-
-    //所有未上新商品上新
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
-    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
-        serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
+    //批量再售
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchCopyDeal)
+    public AjaxResponse batchCopyDeal(BatchCopyDealParameter parameter) {
+        service3.batchCopyDeal(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", promotionId);
+        map.put("id", parameter.getPromotionId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }
-
-    //部分商品上新
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
-    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
-        serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
+    //全部再售
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
+    public AjaxResponse copyDealAll(int promotionId) {
+        service3.copyDealAll(promotionId);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", parameter.getPromotionId());
+        map.put("id", promotionId);
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
