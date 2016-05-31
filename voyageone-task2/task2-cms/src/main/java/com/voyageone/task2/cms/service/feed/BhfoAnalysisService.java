@@ -392,13 +392,13 @@ public class BhfoAnalysisService extends BaseAnalysisService {
                 superfeed.add(superfeedBhfobean);
                 cnt++;
                 if (superfeed.size() > 1000) {
-                    transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                    transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
                 }
             }
 
             if (superfeed.size() > 0) {
-                transactionRunnerCms2.runWithTran(() -> insertSuperFeed(superfeed));
+                transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                 superfeed.clear();
             }
             reader.close();

@@ -7,7 +7,6 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
 import com.voyageone.service.impl.cms.CustomWordService;
@@ -55,6 +54,8 @@ public class TranslationService extends BaseAppService {
             "fields.shortTitle",
             "fields.longDesCn",
             "fields.shortDesCn",
+            "fields.originalDesCn",
+            "fields.originalTitleCn",
             "fields.model",
             "fields.images1", "fields.images2", "fields.images3", "fields.images4",
             "fields.translator",
@@ -248,10 +249,10 @@ public class TranslationService extends BaseAppService {
             translationBean.setProductName(productModel.getFields().getProductNameEn());
             translationBean.setShortDescription(productModel.getFields().getShortDesEn());
 
-            translationBean.setLongTitle(productModel.getFields().getLongTitle());
+            translationBean.setLongTitle(StringUtils.isEmpty(productModel.getFields().getLongTitle()) ? productModel.getFields().getOriginalTitleCn() : productModel.getFields().getLongTitle());
             translationBean.setMiddleTitle(productModel.getFields().getMiddleTitle());
             translationBean.setShortTitle(productModel.getFields().getShortTitle());
-            translationBean.setLongDesCn(productModel.getFields().getLongDesCn());
+            translationBean.setLongDesCn(StringUtils.isEmpty(productModel.getFields().getLongDesCn()) ? productModel.getFields().getOriginalDesCn(): productModel.getFields().getLongDesCn());
             translationBean.setShortDesCn(productModel.getFields().getShortDesCn());
             translationBean.setModel(productModel.getFields().getModel());
             translationBean.setProductCode(productModel.getFields().getCode());

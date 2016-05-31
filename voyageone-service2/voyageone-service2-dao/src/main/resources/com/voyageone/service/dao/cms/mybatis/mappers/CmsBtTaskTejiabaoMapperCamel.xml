@@ -1,152 +1,214 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtTaskTejiabaoDao">
-    <resultMap id="ResultMap" type="CmsBtTaskTejiabaoModel">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtTaskTejiabaoDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel" />
+    <sql id="Base_Column_List" >
+        `id`, `promotion_id`, `task_type`, `key`, `num_iid`, `syn_flg`, `err_msg`, `created`, 
+        `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
-        select
-        `id`,`promotion_id`,`task_type`,`key`,`num_iid`,`syn_flg`,`err_msg`,`created`,`creater`,`modified`,`modifier`
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_task_tejiabao
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="promotionId != null">
-                AND `promotion_id` = #{promotionId}
-            </if>
-            <if test="taskType != null">
-                AND `task_type` = #{taskType}
-            </if>
-            <if test="key != null">
-                AND `key` = #{key}
-            </if>
-            <if test="numIid != null">
-                AND `num_iid` = #{numIid}
-            </if>
-            <if test="synFlg != null">
-                AND `syn_flg` = #{synFlg}
-            </if>
-            <if test="errMsg != null">
-                AND `err_msg` = #{errMsg}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`promotion_id`,`task_type`,`key`,`num_iid`,`syn_flg`,`err_msg`,`created`,`creater`,`modified`,`modifier`
-        from cms_bt_task_tejiabao
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="promotionId != null">
-                AND `promotion_id` = #{promotionId}
-            </if>
-
-            <if test="taskType != null">
-                AND `task_type` = #{taskType}
-            </if>
-
-            <if test="key != null">
-                AND `key` = #{key}
-            </if>
-
-            <if test="numIid != null">
-                AND `num_iid` = #{numIid}
-            </if>
-
-            <if test="synFlg != null">
-                AND `syn_flg` = #{synFlg}
-            </if>
-
-            <if test="errMsg != null">
-                AND `err_msg` = #{errMsg}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`promotion_id`,`task_type`,`key`,`num_iid`,`syn_flg`,`err_msg`,`created`,`creater`,`modified`,`modifier` from cms_bt_task_tejiabao where id=#{id}
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_task_tejiabao
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                `promotion_id`,
+            </if>
+            <if test="taskType != null" >
+                `task_type`,
+            </if>
+            <if test="key != null" >
+                `key`,
+            </if>
+            <if test="numIid != null" >
+                `num_iid`,
+            </if>
+            <if test="synFlg != null" >
+                `syn_flg`,
+            </if>
+            <if test="errMsg != null" >
+                `err_msg`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="taskType != null" >
+                #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="key != null" >
+                #{key,jdbcType=VARCHAR},
+            </if>
+            <if test="numIid != null" >
+                #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null" >
+                #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errMsg != null" >
+                #{errMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel" >
         update cms_bt_task_tejiabao
-        set
+        <set >
+            <if test="promotionId != null" >
+                `promotion_id` = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="taskType != null" >
+                `task_type` = #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="key != null" >
+                `key` = #{key,jdbcType=VARCHAR},
+            </if>
+            <if test="numIid != null" >
+                `num_iid` = #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null" >
+                `syn_flg` = #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errMsg != null" >
+                `err_msg` = #{errMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `promotion_id`=#{promotionId}
-            ,`task_type`=#{taskType}
-            ,`key`=#{key}
-            ,`num_iid`=#{numIid}
-            ,`syn_flg`=#{synFlg}
-            ,`err_msg`=#{errMsg}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_task_tejiabao
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_task_tejiabao
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_task_tejiabao
-        (
-              `promotion_id`,
-              `task_type`,
-              `key`,
-              `num_iid`,
-              `syn_flg`,
-              `err_msg`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{promotionId},
-              #{taskType},
-              #{key},
-              #{numIid},
-              #{synFlg},
-              #{errMsg},
-              #{created},
-              #{creater},
-              #{modified},
-              #{modifier}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_task_tejiabao
+        <where >
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null" >
+                and `key` = #{key,jdbcType=VARCHAR}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlg != null" >
+                and `syn_flg` = #{synFlg,jdbcType=INTEGER}
+            </if>
+            <if test="errMsg != null" >
+                and `err_msg` = #{errMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_task_tejiabao
+        <where >
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null" >
+                and `key` = #{key,jdbcType=VARCHAR}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlg != null" >
+                and `syn_flg` = #{synFlg,jdbcType=INTEGER}
+            </if>
+            <if test="errMsg != null" >
+                and `err_msg` = #{errMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

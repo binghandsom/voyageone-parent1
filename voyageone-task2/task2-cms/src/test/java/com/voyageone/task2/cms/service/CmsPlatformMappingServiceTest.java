@@ -26,8 +26,8 @@ public class CmsPlatformMappingServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("018");
-        taskControlBean.setCfg_val2("23");
+        taskControlBean.setCfg_val1("017");
+        taskControlBean.setCfg_val2("29");
         taskControlList.add(taskControlBean);
         cmsPlatformMappingService.onStartup(taskControlList);
     }

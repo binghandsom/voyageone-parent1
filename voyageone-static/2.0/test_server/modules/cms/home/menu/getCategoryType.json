@@ -1,8 +1,0 @@
-{
-  "data": [
-    {"cTypeId": "TM", "name": "天猫"},
-    {"cTypeId": "TG", "name": "天猫国际"},
-    {"cTypeId": "Master", "name": "主数据"},
-    {"cTypeId": "", "name": "京东"}
-  ]
-}

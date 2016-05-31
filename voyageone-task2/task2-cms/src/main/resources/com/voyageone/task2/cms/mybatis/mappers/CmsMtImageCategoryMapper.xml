@@ -38,4 +38,28 @@
         FROM voyageone_cms2.cms_mt_image_category
         WHERE cart_id = #{cart_id} AND channel_id = #{channel_id} AND type = #{type}
     </select>
+
+    <insert id="cms_mt_image_category_insert" parameterType="com.voyageone.task2.cms.model.CmsMtImageCategoryModel">
+        INSERT IGNORE INTO voyageone_cms2.cms_mt_image_category(
+        category_tid,
+        category_name,
+        type,
+        channel_id,
+        cart_id,
+        created,
+        creater,
+        modified,
+        modifier)
+        VALUES (
+        #{category_tid},
+        #{category_name},
+        #{type},
+        #{channel_id},
+        #{cart_id},
+        now(),
+        #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
 </mapper>

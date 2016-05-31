@@ -1,94 +1,138 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" />
+    <sql id="Base_Column_List" >
+        `id`, `operation_type`, `modified`, `modifier`, `created`, `creater`
+    </sql>
 
-    <select id="selectList" resultType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel">
-
-        select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="operationType != null">
-                AND `operation_type` = #{operationType}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel">
-        select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="operationType != null">
-                AND `operation_type` = #{operationType}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel">
-        select `id`,`operation_type`,`modified`,`modifier`,`created`,`creater` from cms_bt_store_operation_history where id=#{id}
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_store_operation_history
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_store_operation_history
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="operationType != null" >
+                `operation_type`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="operationType != null" >
+                #{operationType,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" >
         update cms_bt_store_operation_history
-        set
+        <set >
+            <if test="operationType != null" >
+                `operation_type` = #{operationType,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `operation_type`=#{operationType}
-            ,`modifier`=#{modifier}
-         where id=#{id}
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_store_operation_history where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_store_operation_history
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_store_operation_history
-        (
-              `operation_type`,
-              `modified`,
-              `modifier`,
-              `created`,
-              `creater`
-        )
-        VALUES(
-              #{operationType},
-        now(),
-        #{creater},
-        now(),
-              #{creater}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_store_operation_history
+        <where >
+            <if test="operationType != null" >
+                and `operation_type` = #{operationType,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_store_operation_history
+        <where >
+            <if test="operationType != null and operationType != ''" >
+                and `operation_type` = #{operationType,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null and modified != ''" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null and modifier != ''" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null and created != ''" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null and creater != ''" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

@@ -11,6 +11,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -114,15 +115,18 @@ public abstract class BaseJomgoDao<T> {
         return null;
     }
 
-    public WriteResult update(BaseMongoModel model) {
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
-        model.setModified(DateTimeUtil.getNowTimeStamp());
-        return mongoTemplate.save(model, collectionName);
-    }
-
     public WriteResult delete(BaseMongoModel model) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
         return mongoTemplate.removeById(model.get_id(), collectionName);
+    }
+
+    public WriteResult update(BaseMongoModel model) {
+//        if (StringUtils.isEmpty(model.get_id())) {
+//            throw new RuntimeException("_id is empty");
+//        }
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
+        model.setModified(DateTimeUtil.getNowTimeStamp());
+        return mongoTemplate.save(model, collectionName);
     }
 
     public CommandResult executeCommand(String jsonCommand) {

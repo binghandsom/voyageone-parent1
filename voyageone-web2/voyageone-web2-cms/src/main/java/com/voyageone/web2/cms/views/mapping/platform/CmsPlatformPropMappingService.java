@@ -6,6 +6,7 @@ import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.bean.cms.*;
@@ -14,7 +15,7 @@ import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformMappingService;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -26,10 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -76,12 +74,11 @@ class CmsPlatformPropMappingService extends BaseAppService {
 
         // 转换类目属性
         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
-
-        // 对特殊字段进行过滤
-        fieldMap.remove("product_images");
-        fieldMap.remove("item_images");
-        fieldMap.remove("description");
-        fieldMap.remove("wap_desc");
+        // 20160525 tom 同时显示product的信息 START
+        if (platformCatSchemaModel.getPropsProduct() != null) {
+            fieldMap.putAll(SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsProduct()));
+        }
+        // 20160525 tom 同时显示product的信息 END
 
         // 转换简化的 mapping 信息
         List<MappingBean> mappingBeen = platformMappingModel.getProps();
@@ -101,6 +98,63 @@ class CmsPlatformPropMappingService extends BaseAppService {
     }
 
     /**
+     * 直接获取平台类目和 Mapping 的所有信息
+     *
+     * @param categoryId 平台类目 ID
+     * @param cartId     平台 ID
+     * @param user       用户配置
+     * @return CmsMtCategorySchemaModel
+     */
+    CmsMtCategorySchemaModel getPlatformCategorySchema(String categoryId, int cartId, UserSessionBean user) {
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(categoryId, cartId);
+        if (platformCatSchemaModel == null) {
+            $warn("getPlatformCategorySchema 没有该类目的数据 categoryId=" + categoryId + " cartId=" + cartId);
+            return null;
+        }
+
+        // 转换类目属性
+        String itemSchema = platformCatSchemaModel.getPropsItem();
+        String productSchema = platformCatSchemaModel.getPropsProduct();
+        List<com.voyageone.common.masterdate.schema.field.Field> masterFields = new ArrayList<>();
+        List<com.voyageone.common.masterdate.schema.field.Field> itemFields = new ArrayList<>();
+        List<com.voyageone.common.masterdate.schema.field.Field> prodFields = new ArrayList<>();
+        //取得商品fields from item schema
+        if (!com.voyageone.common.util.StringUtils.isEmpty(itemSchema)) {
+            itemFields = com.voyageone.common.masterdate.schema.factory.SchemaReader.readXmlForList(itemSchema);
+        }
+        //取得产品fields from item schema
+        if (!com.voyageone.common.util.StringUtils.isEmpty(productSchema)) {
+            prodFields = com.voyageone.common.masterdate.schema.factory.SchemaReader.readXmlForList(productSchema);
+        }
+
+        for (com.voyageone.common.masterdate.schema.field.Field proField : prodFields) {
+            proField.setInputLevel(1);
+            masterFields.add(proField);
+        }
+        for (com.voyageone.common.masterdate.schema.field.Field itemField : itemFields) {
+            itemField.setInputLevel(2);
+            //判断产品和商品中是否有相同的属性id，有则修改id名字加以区分
+            if (masterFields.contains(itemField)) {
+                itemField.setInputOrgId(itemField.getId());
+                com.voyageone.common.masterdate.schema.field.Field upField = FieldUtil.getFieldById(masterFields, itemField.getId());
+                if (upField != null) {
+                    String newId = itemField.getId() + "_productLevel";
+                    upField.setId(newId);
+                    FieldUtil.renameDependFieldId(upField, itemField.getId(), newId, masterFields);
+                }
+            }
+            masterFields.add(itemField);
+        }
+
+        CmsMtCategorySchemaModel masterSchemaModel = new CmsMtCategorySchemaModel(platformCatSchemaModel.getCatId(), platformCatSchemaModel.getCatFullPath(), masterFields);
+        masterSchemaModel.setModifier(user.getUserName());
+        masterSchemaModel.setCreater(user.getUserName());
+        masterSchemaModel.setSku(null);
+
+        return masterSchemaModel;
+    }
+
+    /**
      * 获取主数据类目 Schema
      *
      * @param categoryId 主数据类目
@@ -113,7 +167,7 @@ class CmsPlatformPropMappingService extends BaseAppService {
     /**
      * 获取当前渠道的所有可用字典
      */
-    List<CmsMtPlatFormDictModel> getDictList(String cartId, String lang, UserSessionBean user) {
+    List<CmsMtPlatformDictModel> getDictList(String cartId, String lang, UserSessionBean user) {
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(user.getSelChannelId());
         params.setCartId(cartId);
@@ -242,6 +296,11 @@ class CmsPlatformPropMappingService extends BaseAppService {
 
             // 转换类目属性
             Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
+            // 20160525 tom 同时保存product的信息 START
+            if (platformCatSchemaModel.getPropsProduct() != null) {
+                fieldMap.putAll(SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsProduct()));
+            }
+            // 20160525 tom 同时保存product的信息 END
 
             // 查找并补全
             mappingBean = fixMappingStruct(platformMappingModel, fieldMap, mappingPath);

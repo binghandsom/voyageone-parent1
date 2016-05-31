@@ -80,39 +80,31 @@
 					<thead>
 					<tr>
 						<th class="mfb-xt text-center" translate="TXT_SEQ"></th>
-						<th class="mfb-xxx text-left" translate="TXT_PROMOTION_NAME"></th>
-						<!--<th class="mfb-xt text-center" translate="TXT_GROUP_ID"></th>-->
-						<th class="mfb-xxs text-left" translate="TXT_GROUP_NAME"></th>
-						<!--<th class="mfb-xxt text-left" translate="TXT_PRODUCT_CODE"></th>-->
 						<th class="mfb-xxs text-left" translate="TXT_PRODUCT_NAME"></th>
-						<!--<th class="mfb-xxt text-left" translate="TXT_ERROR_CODE"></th>-->
 						<th class="mfb-xxs text-left" translate="TXT_ERROR_MESSAGE"></th>
 						<th class="mfb-xxx text-left" translate="TXT_ERROR_CREATE_TIME"></th>
 						<th class="mfb-x text-center" translate="TXT_ERROR_IS_FIX"></th>
 					</tr>
 					</thead>
 					<tbody ng-if="vm.errorList.length">
-					<tr ng-repeat="errorInfo in vm.errorList">
-						<td class="mfb-xt text-center" ng-bind="errorInfo.seq"></td>
-						<td class="mfb-xxx text-left text-u-l">
-							<a ng-if="errorInfo.promotionId" ng-href="#/promotion/detail/{{errorInfo.promotionId}}" ng-bind="errorInfo.promotionName"></a>
-							<span ng-if="!errorInfo.promotionId" ng-bind="errorInfo.promotionName"></span>
-						</td>
+					<tr ng-repeat="errorInfo in vm.errorList track by errorInfo.id">
+						<td class="mfb-xt text-center" ng-bind="::errorInfo.id"></td>
 						<td class="mfb-xxs text-left text-u-l">
-							<a ng-if="errorInfo.groupId" ng-href="#/group/detail/{{errorInfo.groupId}}" ng-bind="errorInfo.groupName"></a>
+							<a target='cms-error-detail'
+							   ng-if="errorInfo.productId"
+							   ng-href="#/product/detail/{{::errorInfo.productId}}">
+								<span ng-bind="::errorInfo.code"></span><br/><span ng-bind="::errorInfo.productName"></span>
+							</a>
 						</td>
-						<!--<td class="mfb-xxt text-center text-u-l" ng-bind="errorInfo.groupName"></td>-->
-						<td class="mfb-xxs text-left text-u-l">
-							<a ng-if="errorInfo.productId" ng-href="#/product/detail/{{errorInfo.productId}}">{{errorInfo.code}}<br/>{{errorInfo.productName}}</a>
-							<!--<span ng-if="!errorInfo.productId" ng-bind="errorInfo.productName"></span>-->
-						</td>
-						<!--<td class="mfb-xxt text-left" ng-bind="errorInfo.productName"></td>-->
-						<!--<td class="mfb-xxt text-left" ng-bind=""></td>-->
-						<td class="mfb-xxs text-left" >{{errorInfo.errorCode}}<br/>{{errorInfo.errMsg}}</td>
-						<td class="mfb-xxx text-left" ng-bind="errorInfo.created.substring(0, 19)"></td>
+						<td class="mfb-xxs text-left">
+                            <span ng-bind="::errorInfo.errorCode"></span><br/><span ng-bind="::errorInfo.errMsg"></span>
+                        </td>
+						<td class="mfb-xxx text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
 						<td class="mfb-x text-left">
 							<div class="onoffswitch">
-								<input type="checkbox" ng-model="errorInfo.status" name="onoffswitch" ng-change="updateFinishStatus(errorInfo.seq)" class="onoffswitch-checkbox" id="myonoffswitch5">
+								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5"
+                                       ng-change="updateFinishStatus(errorInfo.seq)"
+                                       ng-model="errorInfo.status">
 								<label class="onoffswitch-label" for="myonoffswitch5">
 									<span class="onoffswitch-inner"></span>
 									<span class="onoffswitch-switch"></span>

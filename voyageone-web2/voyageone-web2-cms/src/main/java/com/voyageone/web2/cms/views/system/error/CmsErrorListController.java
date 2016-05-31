@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,7 +33,7 @@ public class CmsErrorListController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SYSTEM.ERROR.SEARCH)
     public AjaxResponse search(@RequestBody Map params) {
-        return success(cmsSystemErrorConService.search(params, getUser()));
+        return success(cmsSystemErrorConService.search(params));
     }
 
     @RequestMapping(CmsUrlConstants.SYSTEM.ERROR.UPDATE_FINISH_STATUS)

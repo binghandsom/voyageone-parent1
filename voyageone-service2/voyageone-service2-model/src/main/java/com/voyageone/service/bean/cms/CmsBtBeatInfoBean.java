@@ -1,8 +1,8 @@
 package com.voyageone.service.bean.cms;
 
+import com.voyageone.base.dao.mysql.BaseModel;
 import com.voyageone.common.Constants;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
 import com.voyageone.service.model.cms.enums.BeatFlag;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,10 +12,8 @@ import org.apache.commons.lang3.StringUtils;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
+public class CmsBtBeatInfoBean extends BaseModel {
 
-    //    private int id;
-//
     private int task_id;
 
     private long num_iid;
@@ -32,14 +30,6 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
     private CmsBtTasksBean task;
 
-    //    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-//
     public int getTask_id() {
         return task_id;
     }
@@ -73,11 +63,11 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
     }
 
     public BeatFlag getBeatFlag() {
-        return BeatFlag.valueOf(getSynFlag());
+        return BeatFlag.valueOf(getSyn_flag());
     }
 
     public void setBeatFlag(BeatFlag flag) {
-        setSynFlag(flag.getFlag());
+        setSyn_flag(flag.getFlag());
     }
 
     public String getMessage() {

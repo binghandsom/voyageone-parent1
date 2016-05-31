@@ -13,11 +13,8 @@
                                     <label class="col-sm-3 control-label" translate="TXT_TAG_TYPE"></label>
 
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="initialize()">
-                                            <option value="1" translate="TXT_TAG_STORE_CLASSIFY"></option>
-                                            <option value="2" translate="TXT_TAG_PROMOTION"></option>
-                                            <option value="3" translate="TXT_TAG_GOODS"></option>
-                                            <option value="4" translate="TXT_TAG_FREE"></option>
+                                        <select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="initialize()"
+                                                ng-options="tagType.value as tagType.name for tagType in vm.tagTypeList">
                                         </select>
                                     </div>
                                 </div>
@@ -43,7 +40,7 @@
                             ng-click="newIndex.value = 0;openNewTag({first:true,tagSelectObject:selected[0],tagInfo:vm,save:save})">
                         <i class="fa fa-plus"></i></button>
                 </div>
-                <div class="category_drag_list_qh">
+                <div class="category_drag_list_dp">
                     <ul>
                         <li ng-repeat="tag1 in tree[0]">
                             <a href="javascript:void(0)" ng-click="selected[0] = tag1;search(1);" ng-class="{indexSelected:selected[0] == tag1}">
@@ -70,7 +67,7 @@
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
-            <div class="category_drag_list_qh">
+            <div class="category_drag_list_dp">
                 <ul>
                     <li ng-repeat="tag2 in tree[1]">
                         <a href="javascript:void(0)" ng-click="selected[1] = tag2;search(2)"  ng-class="{indexSelected:selected[1] == tag2}">
@@ -96,7 +93,7 @@
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
-            <div class="category_drag_list_qh">
+            <div class="category_drag_list_dp">
                 <ul>
                     <li ng-repeat="tag3 in tree[2]">
                         <a href="javascript:void(0)" ng-click="selected[2] = tag3"  ng-class="{indexSelected:selected[2] == tag3}">

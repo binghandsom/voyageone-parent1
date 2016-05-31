@@ -15,15 +15,19 @@ public class MQConfigUtils {
     private static String addStr = null;
 
     public static String getAddStrQueneName(String queneName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(queneName).append("_").append(getIP()).append(EXISTS_IP);
+        return sb.toString();
+    }
+
+    public static String getIP(){
         if (addStr == null) {
             try {
-                addStr = InetAddress.getLocalHost().getHostAddress().replaceAll("\\.", "_");
+                addStr= InetAddress.getLocalHost().getHostAddress().replaceAll("\\.", "_");
             } catch (UnknownHostException ignored) {
-                addStr = "UnknownHost";
+                addStr= "UnknownHost";
             }
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(queneName).append("_").append(addStr).append(EXISTS_IP);
-        return sb.toString();
+        return addStr;
     }
 }

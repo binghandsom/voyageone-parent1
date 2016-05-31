@@ -10,6 +10,8 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
@@ -19,8 +21,10 @@ import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -117,15 +121,6 @@ public class PromotionDetailService extends BaseService {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             }
         });
-
-        if (tagId != null) {
-
-            Map<Long, List<String>> productIdTagPathsMap = new HashMap<>();
-            List<String> tagPathList = new ArrayList<>();
-            productIdTagPathsMap.put(productInfo.getProdId(), tagPathList);
-            tagPathList.add(tagPath);
-            productTagService.saveTagProducts(channelId, productIdTagPathsMap, modifier);
-        }
     }
 
 
@@ -138,7 +133,7 @@ public class PromotionDetailService extends BaseService {
             code.setPromotionId(cmsBtPromotionGroupsBean.getPromotionId());
             code.setNumIid(cmsBtPromotionGroupsBean.getNumIid());
             code.setModifier(cmsBtPromotionGroupsBean.getModifier());
-            code.setCreater(cmsBtPromotionGroupsBean.getModified());
+            code.setModified(cmsBtPromotionGroupsBean.getModified());
             code.setModelId(cmsBtPromotionGroupsBean.getModelId());
             if (cmsPromotionCodeDao.updatePromotionCode(code) == 0) {
                 cmsPromotionCodeDao.insertPromotionCode(code);
@@ -151,17 +146,22 @@ public class PromotionDetailService extends BaseService {
                 cmsBtPromotionSkuModel.setPromotionId(cmsBtPromotionGroupsBean.getPromotionId());
                 cmsBtPromotionSkuModel.setCatPath(cmsBtPromotionGroupsBean.getCatPath());
                 cmsBtPromotionSkuModel.setModifier(cmsBtPromotionGroupsBean.getModifier());
-                cmsBtPromotionSkuModel.setCreater(cmsBtPromotionGroupsBean.getModified());
+                cmsBtPromotionSkuModel.setModified(cmsBtPromotionGroupsBean.getModified());
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             });
         }
     }
 
+    @Autowired
+    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
+    @Autowired
+    CmsBtTagDao daoTag;
     /**
      * 修改
      */
     @VOTransactional
     public void update(CmsBtPromotionCodesBean promotionCodeModel, String modifier) {
+        CmsBtPromotionCodesModel oldPromotionCodesModel = daoCmsBtPromotionCodes.select(promotionCodeModel.getId());
         if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
 //            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(),
 //                    PromotionTypeEnums.Type.TEJIABAO.getTypeId(),
@@ -175,9 +175,38 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionTask.setNumIid(promotionCodeModel.getNumIid());
             cmsBtPromotionTask.setCreater(modifier);
             cmsBtPromotionTask.setModifier(modifier);
-
             cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
+
+            CmsBtTagModel modelTag = daoTag.select(oldPromotionCodesModel.getTagId());//获取修改前的tag
+            updateCmsBtProductTags(promotionCodeModel, modelTag.getTagPath(),modifier);//更新商品Tags
         }
+    }
+    /**
+     * 更新商品Tags
+     */
+    private void updateCmsBtProductTags(CmsBtPromotionCodesBean promotionCodeModel,String oldTagPath,String modifier) {
+        //更新商品Tags  sunpt
+        CmsBtProductModel productModel = productService.getProductByCode(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductCode());
+        if(productModel != null) {
+            List<String> tags = productModel.getTags();
+            int size = tags.size();
+            boolean isUpdate = false;
+            for (int i = 0; i < size; i++) {
+                if (oldTagPath.equals(tags.get(i))) {
+                    //存在替换
+                    tags.set(i, promotionCodeModel.getTagPath());
+                    isUpdate = true;
+                    break;
+                }
+            }
+            if (!isUpdate)//没有更新 就添加
+            {
+                tags.add(promotionCodeModel.getTagPath());
+            }
+            productModel.setTags(tags);
+            productService.updateTags(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductId(), tags, modifier);
+        }
+       //productService.update(productModel);
     }
 
     /**
@@ -191,15 +220,11 @@ public class PromotionDetailService extends BaseService {
             param.put("promotionId", item.getPromotionId());
             param.put("modelId", item.getModelId());
 
-            Map<Long, List<String>> productIdTagsMap = new HashMap<>();
             List<CmsBtPromotionCodesBean> codes = cmsPromotionCodeDao.selectPromotionCodeList(param);
             codes.forEach(code -> {
-                Long productId = new Long(code.getProductId());
-                if (!productIdTagsMap.containsKey(productId)) {
-                    productIdTagsMap.put(productId, new ArrayList<>());
-                }
-                List<String> tagPathList = productIdTagsMap.get(productId);
-                tagPathList.add(code.getTagPath());
+                List<Long> prodIdList = new ArrayList<Long>();
+                prodIdList.add(code.getProductId());
+                productTagService.delete(channelId, code.getTagPath(), prodIdList, "tags", modifier);
 
                 CmsBtTaskTejiabaoModel promotionTask = new CmsBtTaskTejiabaoModel();
                 promotionTask.setPromotionId(item.getPromotionId());
@@ -207,16 +232,10 @@ public class PromotionDetailService extends BaseService {
                 promotionTask.setTaskType(0);
                 promotionTask.setSynFlg(1);
                 cmsPromotionTaskDao.updatePromotionTask(promotionTask);
-
             });
 
-            if(codes.size() > 0){
-                productTagService.delete(channelId, productIdTagsMap, modifier);
-            }
             cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getProductModel());
             cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getProductModel());
-
-
         }
     }
 
@@ -352,7 +371,7 @@ public class PromotionDetailService extends BaseService {
             List<Long> poIds = new ArrayList<>();
             poIds.add(item.getProductId());
             if (!StringUtil.isEmpty(item.getTagPath())) {
-                productTagService.delete(channelId, item.getTagPath(), poIds, operator);
+                productTagService.delete(channelId, item.getTagPath(), poIds, "tags", operator);
             }
         }
     }

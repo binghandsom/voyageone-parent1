@@ -1,16 +1,17 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.PostResponse;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,11 +111,14 @@ public class HttpUtils {
         return null;
     }
 
-    public static String get(String url, String param,String authorization) {
-        if (!StringUtils.isEmpty(param)) url += "?" + param;
+    public static String get(String url, String param, String authorization) {
+        String urlTmp = url;
+        if (!StringUtils.isEmpty(param)) {
+            urlTmp += "?" + param;
+        }
         HttpURLConnection connection = null;
         try {
-            connection = getConnection(url, "GET");
+            connection = getConnection(urlTmp, "GET");
             connection.setRequestProperty("Authorization", "Basic " + authorization);
             connection.connect();
             try (InputStream inputStream = connection.getInputStream()) {
@@ -135,22 +139,22 @@ public class HttpUtils {
         HttpPost post = new HttpPost(new URI(url));
 
         // setHeader Accept
-        post.setHeader("Accept",StringUtils.isEmpty(accept)?"application/json":accept);
+        post.setHeader("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
         // setHeader Authorization
-        if(!StringUtils.isEmpty(token)) post.setHeader("Authorization","Bearer " + token);
+        if (!StringUtils.isEmpty(token)) post.setHeader("Authorization", "Bearer " + token);
 
         //setBody
         post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
 
         //测试启用代理
-        post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
+        //post.setConfig(RequestConfig.custom().setProxy(new HttpHost("192.168.1.146",808)).build());
 
         //post request
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpResponse response = httpclient.execute(post);
 
         //从服务器获得输入流
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()),10*1024);
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 10 * 1024);
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = buffer.readLine()) != null) {
@@ -162,8 +166,28 @@ public class HttpUtils {
         return sb.toString();
     }
 
-    public static String put(String url, String jsonParam,String authorization)
-    {
+    public static String targetGet(String url, String jsonBody, String accept, String token) throws Exception {
+        HttpGet get = new HttpGet(new URI(url));
+        // setHeader Accept
+        get.setHeader("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
+        // setHeader Authorization
+        if (!StringUtils.isEmpty(token)) get.setHeader("Authorization", "Bearer " + token);
+        //post request
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpResponse response = httpclient.execute(get);
+        //从服务器获得输入流
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 10 * 1024);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = buffer.readLine()) != null) {
+            sb.append(line);
+        }
+        //关闭流
+        buffer.close();
+        return sb.toString();
+    }
+
+    public static String put(String url, String jsonParam, String authorization) {
 
         InputStream input = null;//输入流
         InputStreamReader isr = null;
@@ -172,7 +196,7 @@ public class HttpUtils {
         String line;
 
         try {
-	            /*post向服务器请求数据*/
+                /*post向服务器请求数据*/
             HttpPut request = new HttpPut(url);
             StringEntity se = new StringEntity(jsonParam);
             request.setEntity(se);
@@ -181,13 +205,11 @@ public class HttpUtils {
             request.setHeader("Authorization", "Basic " + authorization);
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
-            //int code = response.getStatusLine().getStatusCode();
-            // System.out.println("postCode= " + code);
 
             //从服务器获得输入流
             input = response.getEntity().getContent();
             isr = new InputStreamReader(input);
-            buffer = new BufferedReader(isr,10*1024);
+            buffer = new BufferedReader(isr, 10 * 1024);
 
             sb = new StringBuilder();
             while ((line = buffer.readLine()) != null) {
@@ -198,18 +220,18 @@ public class HttpUtils {
 
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
-            System.out.println("请求异常数据异常");
+            logger.error("请求异常数据异常");
             logger.error(e.getMessage(), e);
             return null;
         } finally {
             try {
-                if(buffer != null) {
+                if (buffer != null) {
                     buffer.close();
                 }
-                if(isr != null) {
+                if (isr != null) {
                     isr.close();
                 }
-                if(input != null) {
+                if (input != null) {
                     input.close();
                 }
             } catch (Exception ignored) {
@@ -217,8 +239,7 @@ public class HttpUtils {
         }
     }
 
-    public static String patch(String url, String jsonParam,String authorization)
-    {
+    public static String patch(String url, String jsonParam, String authorization) {
 
         InputStream input = null;//输入流
         InputStreamReader isr = null;
@@ -234,15 +255,13 @@ public class HttpUtils {
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
             request.setHeader("Authorization", "Basic " + authorization);
-            CloseableHttpClient httpclient= HttpClients.createDefault();
+            CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
-            // int code = response.getStatusLine().getStatusCode();
-            // System.out.println("postCode= " + code);
 
             //从服务器获得输入流
             input = response.getEntity().getContent();
             isr = new InputStreamReader(input);
-            buffer = new BufferedReader(isr,10*1024);
+            buffer = new BufferedReader(isr, 10 * 1024);
 
             sb = new StringBuilder();
             while ((line = buffer.readLine()) != null) {
@@ -252,18 +271,18 @@ public class HttpUtils {
             return sb.toString();
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
-            System.out.println("请求异常数据异常");
+            logger.error("请求异常数据异常");
             logger.error(e.getMessage(), e);
             return null;
         } finally {
             try {
-                if(buffer != null) {
+                if (buffer != null) {
                     buffer.close();
                 }
-                if(isr != null) {
+                if (isr != null) {
                     isr.close();
                 }
-                if(input != null) {
+                if (input != null) {
                     input.close();
                 }
             } catch (Exception ignored) {
@@ -273,12 +292,14 @@ public class HttpUtils {
 
 
     public static String get(String url, String param) {
-
-        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        String urlTmp = url;
+        if (!StringUtils.isEmpty(param)) {
+            urlTmp += "?" + param;
+        }
 
         HttpURLConnection connection = null;
         try {
-            connection = getConnection(url, "GET");
+            connection = getConnection(urlTmp, "GET");
 
             connection.connect();
 
@@ -304,14 +325,18 @@ public class HttpUtils {
      * @throws IOException
      */
     public static InputStream getInputStream(String url, String param) throws IOException {
-        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        String urlTmp = url;
+        if (!StringUtils.isEmpty(param)) {
+            urlTmp += "?" + param;
+        }
 
-        HttpURLConnection connection = getConnection(url, "GET");
+        HttpURLConnection connection = getConnection(urlTmp, "GET");
 
         connection.connect();
 
         return connection.getInputStream();
     }
+
     /**
      * 使用 get 方式，获取输入流(Https)
      *
@@ -321,9 +346,12 @@ public class HttpUtils {
      * @throws IOException
      */
     public static InputStream getHttpsInputStream(String url, String param) throws IOException {
-        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        String urlTmp = url;
+        if (!StringUtils.isEmpty(param)) {
+            urlTmp += "?" + param;
+        }
 
-        HttpsURLConnection connection = getHttpsConnection(url, "GET");
+        HttpsURLConnection connection = getHttpsConnection(urlTmp, "GET");
 
         connection.connect();
 
@@ -567,13 +595,15 @@ public class HttpUtils {
     public static String get(String url, String param, String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) {
 
         SSLSocketFactory ssf = getSsf(clientTrustCerFile, clientTrustCerPwd, clientKeyPwd);
-
-        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        String urlTmp = url;
+        if (!StringUtils.isEmpty(param)) {
+            urlTmp += "?" + param;
+        }
 
         HttpsURLConnection connection = null;
         try {
 
-            connection = getHttpsConnection(url, "GET");
+            connection = getHttpsConnection(urlTmp, "GET");
 
             if (ssf != null) {
                 connection.setSSLSocketFactory(ssf);
@@ -626,7 +656,7 @@ public class HttpUtils {
         return connection;
     }
 
-    public static SSLSocketFactory getSsf(String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd)  {
+    public static SSLSocketFactory getSsf(String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) {
 
         SSLSocketFactory ssf;
 
@@ -664,7 +694,7 @@ public class HttpUtils {
         return ssf;
     }
 
-    public static String post(String url, String param,String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) throws IOException {
+    public static String post(String url, String param, String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) throws IOException {
 
         String readConent = "";
         SSLSocketFactory ssf = getSsf(clientTrustCerFile, clientTrustCerPwd, clientKeyPwd);
@@ -674,7 +704,7 @@ public class HttpUtils {
             connection = sendHttpsPost(url, param, ssf);
 
             try (InputStream inputStream = connection.getInputStream()) {
-                readConent =  readConnection(inputStream);
+                readConent = readConnection(inputStream);
             }
 
             connection.disconnect();
@@ -693,8 +723,8 @@ public class HttpUtils {
     /**
      * 使用 post method 发送 http 请求
      *
-     * @param url            请求地址
-     * @param param          请求参数
+     * @param url   请求地址
+     * @param param 请求参数
      * @return http 连接
      * @throws IOException
      */
@@ -728,15 +758,33 @@ public class HttpUtils {
     /**
      * 根据url获取输入流
      *
-     * @param urlString   地址
+     * @param urlString 地址
      * @return 输入流
      * @throws IOException
      */
     public static InputStream getInputStream(String urlString) throws IOException {
+//        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
-
-        return url.openStream();
+        HttpURLConnection con = (HttpURLConnection)  url.openConnection();
+        con.setConnectTimeout(60000);
+        con.setReadTimeout(60000);
+        if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
+            return getInputStream(con.getHeaderField("Location"));
+        }else{
+            return url.openStream();
+        }
     }
 
 
+    public static boolean exists(String URLName) {
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection con = (HttpURLConnection) new URL(URLName).openConnection();
+            con.setRequestMethod("HEAD");
+            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -3,6 +3,9 @@ package com.voyageone.service.impl.cms.sx.word;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetAllImages;
@@ -25,10 +28,10 @@ import java.util.Set;
  */
 public class CustomWordModuleGetAllImages extends CustomWordModule {
 
-    @Autowired
-    private SxProductService sxProductService;
-
     public final static String moduleName = "GetAllImages";
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     public CustomWordModuleGetAllImages() {
         super(moduleName);
@@ -40,7 +43,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 //    }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         //user param
         CustomModuleUserParamGetAllImages customModuleUserParamGetAllImages = ((CustomWordValueGetAllImages) customWord.getValue()).getUserParam();
 
@@ -68,7 +71,24 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     continue;
                 }
                 // 20160512 tom 有可能为空 add END
-                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
+                // 20160513 tom 图片服务器切换 START
+//                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
+
+                ImageCreateGetRequest request = new ImageCreateGetRequest();
+                request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
+                request.setTemplateId(Integer.parseInt(imageTemplate));
+                request.setFile(imageTemplate + "_" + cmsBtProductModelFieldImage.getName()); // 模板id + "_" + 第一个参数(一般是图片名)
+                String[] vPara = {cmsBtProductModelFieldImage.getName()};
+                request.setVParam(vPara);
+                ImageCreateGetResponse response = null;
+                try {
+                    response = imageCreateService.getImage(request);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                String completeImageUrl = imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+                // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {
                     parseResult += String.format(htmlTemplate, completeImageUrl);

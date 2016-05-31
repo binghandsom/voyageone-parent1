@@ -3,10 +3,6 @@
  */
 
 define([], function () {
-
-    function indexController($scope) {
+    return function IndexController() {
     };
-
-    indexController.$inject = ['$scope'];
-    return indexController;
 });

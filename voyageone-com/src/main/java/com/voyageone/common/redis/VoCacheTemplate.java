@@ -27,6 +27,7 @@ public class VoCacheTemplate<K,V> extends RedisTemplate<K,V>{
         if (local) ((LocalHashOperations)opsForHash()).delete(key); else super.delete(key);
     }
 
+    @Override
     public Boolean hasKey(K key) {
         return local?((LocalHashOperations)opsForHash()).hasKey(key):super.hasKey(key);
     }

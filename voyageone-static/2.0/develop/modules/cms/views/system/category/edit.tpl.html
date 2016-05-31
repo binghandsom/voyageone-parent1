@@ -64,7 +64,7 @@
 <script id="fieldView" type="text/ng-template">
 	<!-- input -->
 	<div class="col-sm-12 "ng-class="{'category_mapping_bg_one':level==0 && (field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'),'category_mapping_bg':level==0 && field.type!='MULTICOMPLEX'&& field.type!='COMPLEX','category_mapping_bg_list':level>0}">
-		<div class="col-sm-2 text-left " ng-class="{'m-l-lg':level==1,'m-l-xlg':level==2,'m-l-xxlg':level==3,'m-l-xxxlg':level==4}"><i ng-class="{'fa fa-minus':field.fields==null,'fa fa-plus':field.fields!=null}"></i><span ng-class="{'vo_reqfield':isRequiredField(field)}">{{field.name}}</span> </div>
+		<div class="col-sm-2 text-left " ng-class="{'m-l-lg':level==1,'m-l-xlg':level==2,'m-l-xxlg':level==3,'m-l-xxxlg':level==4}"><i ng-class="{'fa fa-minus':field.fields==null,'fa fa-plus':field.fields!=null}"></i><span ng-class="{'vo_reqfield':isRequiredField(field)}">{{::field.name||field.id}}</span> </div>
 		<div class="pull-right">
 			<span class="badge" ng-class="{'badge-initialize':field.type == 'INPUT','badge-darkPurple': field.type == 'LABEL', 'badge-success':field.type == 'SINGLECHECK','badge-darkBlue': field.type == 'MULTICHECK' , 'badge-refresh':field.type == 'COMPLEX', 'badge-Purple':field.type == 'MULTICOMPLEX'}">{{field.type}}</span>
 		</div>

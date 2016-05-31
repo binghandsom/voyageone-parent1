@@ -12,7 +12,7 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_NUM_IID"></label>
 									<label class="col-sm-5 control-label text-left text-vo">
-										<a ng-href="https://detail.tmall.com/item.htm?id={{vm.groupInfo.numIId}}"
+										<a ng-href="{{$root.productUrl}}{{vm.groupInfo.numIId}}"
 										   target="_blank" class="text-u-l" ng-bind="vm.groupInfo.numIId"></a>
 									</label>
 									<label class="col-sm-3 col-sm-1-off text-left label" ng-bind="vm.groupInfo.platformStatus"
@@ -158,7 +158,7 @@
 					<div class="col-sm-12 dropdown_table_main" if-no-rows="vm.productList.length">
 						<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
 							<tbody ng-repeat="productInfo in vm.productList">
-							<tr ng-class="{'table_bg_green_mint': productInfo.groups.publishTime}" class="table_bg_gray">
+							<tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
 								<td colspan="9" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-radio">
 										<input type="radio" name="radioMainProduct" ng-checked="productInfo.fields.code == vm.groupInfo.mainProductCode" ng-click="setMainProduct(productInfo.fields.code)">
@@ -179,9 +179,9 @@
 									<span class="pull-right">{{'TXT_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.catPath}}</span>
 								</td>
 							</tr>
-							<tr ng-class="{'table_bg_green_mint': productInfo.groups.publishTime}">
+							<tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
 								<td class="mfb-xxt">
-									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
+									<img image="{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 								</td>
 								<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 								<td class="mfb-xxt text-center">
@@ -210,14 +210,14 @@
 											type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>
 								</td>
 								<td class="mfb-xxt text-left">
-									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
+									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groupBean.timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
-											<ul ng-if="productInfo.groups.publishTime">
+											<ul ng-if="productInfo.groupBean.publishTime">
 												<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
 												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
-												<li><span>{{productInfo.groups.publishTime}}</span></li>
+												<li><span>{{productInfo.groupBean.publishTime}}</span></li>
 											</ul>
-											<ul ng-if="!productInfo.groups.publishTime">
+											<ul ng-if="!productInfo.groupBean.publishTime">
 												<li>{{'TXT_CREATE_TIME' | translate}}</li>
 												<!--<li><span>{{productInfo.publishDate}}</span></li>-->
 												<li><span>{{productInfo.created}}</span></li>

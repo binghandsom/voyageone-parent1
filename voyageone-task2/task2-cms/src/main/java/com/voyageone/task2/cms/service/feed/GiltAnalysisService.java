@@ -1,19 +1,20 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.gilt.service.GiltSkuService;
-import com.voyageone.components.gilt.bean.GiltCategory;
-import com.voyageone.components.gilt.bean.GiltImage;
-import com.voyageone.components.gilt.bean.GiltPageGetSkusRequest;
-import com.voyageone.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.gilt.bean.GiltCategory;
+import com.voyageone.components.gilt.bean.GiltImage;
+import com.voyageone.components.gilt.bean.GiltPageGetSkusRequest;
+import com.voyageone.components.gilt.bean.GiltSku;
+import com.voyageone.components.gilt.service.GiltSkuService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
@@ -38,27 +39,22 @@ import static java.util.stream.Collectors.joining;
 @Service
 public class GiltAnalysisService extends BaseTaskService {
 
-    @Autowired
-    private SuperFeed2Dao superfeeddao;
-
-    @Autowired
-    private Transformer transformer;
-
-    @Autowired
-    private GiltFeedDao giltFeedDao;
-
-    @Autowired
-    private GiltInsert insertService;
-
-    @Autowired
-    private GiltSkuService giltSkuService;
-
     private static int pageIndex = 0;
-
-    private Long lastExecuteTime = 0L;
-
     //允许webSericce请求超时的连续最大次数
     private static int ALLOWLOSEPAGECOUNT = 10;
+    @Autowired
+    private SuperFeed2Dao superfeeddao;
+    @Autowired
+    private Transformer transformer;
+    @Autowired
+    private GiltFeedDao giltFeedDao;
+    @Autowired
+    private TaskDao taskDao;
+    @Autowired
+    private GiltInsert insertService;
+    @Autowired
+    private GiltSkuService giltSkuService;
+    private Long lastExecuteTime = 0L;
 
     private static ThirdPartyConfigBean getFeedGetConfig() {
         return ThirdPartyConfigs.getThirdPartyConfig(GILT.getId(), "feed_get_config");
@@ -98,6 +94,10 @@ public class GiltAnalysisService extends BaseTaskService {
 
         Long scheduled = 24 * 60 * 60 * 1000L;
         String val1 = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.scheduled_time);
+        TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList,TaskControlEnums.Name.run_flg).get(0);
+        if(!StringUtils.isEmpty(taskControlBean.getEnd_time())){
+            lastExecuteTime = Long.parseLong(taskControlBean.getEnd_time());
+        }
         if (!StringUtils.isEmpty(val1)) {
             scheduled = Integer.parseInt(val1) * 60 * 60 * 1000L;
         }
@@ -112,6 +112,9 @@ public class GiltAnalysisService extends BaseTaskService {
             $info("产品信息插入开始");
             superFeedImport(taskControlList);
             $info("产品信息插入完成");
+
+            taskControlBean.setEnd_time(lastExecuteTime.toString());
+            taskDao.updateTaskControl(taskControlBean);
 
     //        $info("transform开始");
     //        transformer.new Context(GILT, this).transform();
@@ -249,8 +252,8 @@ public class GiltAnalysisService extends BaseTaskService {
                 clientSkuModel.setUpc(codes[0]);
                 clientSkuModel.setActive(true);
                 String now = DateTimeUtil.getNow();
-                clientSkuModel.setCreated(now);
-                clientSkuModel.setModified(now);
+                clientSkuModel.setCreatedStr(now);
+                clientSkuModel.setModifiedStr(now);
                 clientSkuModel.setCreater(getTaskName());
                 clientSkuModel.setModifier(getTaskName());
                 clientSkuModels.add(clientSkuModel);

@@ -4,22 +4,24 @@ import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.top.schema.exception.TopSchemaException;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.bean.ItemSchema;
+import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.model.cms.CmsMtPlatformProductIdListModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.BrandDao;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.components.tmall.service.TbCategoryService;
-import com.voyageone.components.tmall.bean.ItemSchema;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.StringUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.commons.beanutils.BeanUtils;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +32,9 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
     private final static String JOB_NAME = "getPlatformCategorySchemaTask";
 
+    // Active有效
+    private final static int Active_1 = 1;
+
     @Autowired
     BrandDao brandDao;
 
@@ -37,13 +42,13 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
     TbCategoryService tbCategoryService;
 
     @Autowired
+    private PlatformCategoryService platformCategoryService;
+
+    @Autowired
     CmsMtPlatformCategoryDao platformCategoryDao;
 
     @Autowired
     CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
-
-    @Resource(name = "categoryProductMap")
-    Map<String,String> categoryProductMap;
 
     @Resource(name = "paltformCartList")
     List<String> paltformCartList;
@@ -51,8 +56,8 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
     @Resource(name = "availableChannelList")
     List availableChannelList;
 
-    @Resource(name = "productChannelMap")
-    Map<String,String> productChannelMap;
+    // 有效的平台产品ID一览表
+    List<CmsMtPlatformProductIdListModel> cmsMtPlatformProductIdList = null;
 
     @Override
     public SubSystem getSubSystem() {
@@ -66,6 +71,13 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
+
+        // 取得有效的平台产品ID一览表(条件：active='1')
+        cmsMtPlatformProductIdList = platformCategoryService.getPlatformProductIdList(Active_1);
+        if (cmsMtPlatformProductIdList == null) {
+            $warn("获取有效的平台产品ID一览表数据失败！");
+            cmsMtPlatformProductIdList = new ArrayList<>();
+        }
 
         for (String cartId:paltformCartList){
             doSetPlatformPropTm(Integer.valueOf(cartId));
@@ -102,13 +114,41 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             String key = leafObj.getCatId();
 
             if(!savedList.contains(key)) {
-                if (categoryProductMap.containsKey(key) && !productChannelMap.get(categoryProductMap.get(key)).equals(leafObj.getChannelId())) {
-                    continue;
-                } else {
+                // 20160526 tom bug修正 START
+//                // 到平台产品ID一览表中去找对应的项目
+//                for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
+//                    // 如果channelId,cartId,categoryId完全一致，找到并推出循环
+//                    if (leafObj.getChannelId().equals(productId.getChannelId()) &&
+//                            cartId == productId.getCartId() &&
+//                            key.equals(productId.getCategoryId())) {
+//                        // 设置product id
+//                        savedList.add(key);
+//                        leafObj.setCartId(cartId);
+//                        allLeaves.add(leafObj);
+//                        break;
+//                    }
+//                }
+
+                boolean blnFound = false;
+                String strChannelId = "";
+                int intCartId = 0;
+                for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
+                    // 如果channelId,cartId,categoryId完全一致，找到并推出循环
+                    if (key.equals(productId.getCategoryId())) {
+                        blnFound = true;
+                        strChannelId = productId.getChannelId();
+                        intCartId = productId.getCartId();
+                        break;
+                    }
+                }
+
+                if (!blnFound || (leafObj.getChannelId().equals(strChannelId) && cartId == intCartId) ) {
+                    // 设置product id
                     savedList.add(key);
                     leafObj.setCartId(cartId);
                     allLeaves.add(leafObj);
                 }
+                // 20160526 tom bug修正 END
             }
 
         }
@@ -165,10 +205,24 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
             ItemSchema result;
 
-            // 调用API获取产品属性规则
-            String productIdStr =categoryProductMap.get(platformCategoriesModel.getCatId());
+            // 取得productId值
+            String productIdStr = "";
+            // 到平台产品ID一览表中去找对应的项目
+            for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
+                // 如果channelId,cartId,categoryId完全一致，找到并推出循环
+                if (platformCategoriesModel.getChannelId().equals(productId.getChannelId()) &&
+                        platformCategoriesModel.getCartId() == productId.getCartId() &&
+                        platformCategoriesModel.getCatId().equals(productId.getCategoryId())) {
+                    // 取得product id的值
+                    productIdStr = productId.getPlatformProductId();
+                    break;
+                }
+            }
 
-            if (productIdStr != null){
+            // 20160526 tom bug修正 START
+//            if (productIdStr != null){
+            if (!StringUtils.isEmpty(productIdStr)){
+            // 20160526 tom bug修正 END
 
                 Long productId = Long.parseLong(productIdStr);
 

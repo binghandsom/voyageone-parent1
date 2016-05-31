@@ -18,10 +18,8 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.*;
+//import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -31,6 +29,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.DataAmountService;
+import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -113,6 +112,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     private DataAmountService dataAmountService;
+
+    @Autowired
+    private ImagesService imagesService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -568,7 +570,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 List<String> transBaiduCn; // 百度翻译 - 输出参数
                 try {
-                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
+//                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
                         // lucky vitamin 和 BHFO不做翻译
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                             field.setOriginalTitleCn(""); // 标题
@@ -576,21 +578,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
                             field.setOriginalDesCn(""); // 长描述
                         }
-                    } else {
-                        if (transBaiduOrg.size() > 0) {
-                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
-                            if (transBaiduOrg.size() == 2) {
-                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
-                            } else {
-                                if ("标题".equals(transFlg)) {
-                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-                                } else {
-                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
-                                }
-                            }
-                        }
-                    }
+//                    } else {
+//                        if (transBaiduOrg.size() > 0) {
+//                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+//                            if (transBaiduOrg.size() == 2) {
+//                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+//                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+//                            } else {
+//                                if ("标题".equals(transFlg)) {
+//                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+//                                } else {
+//                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
+//                                }
+//                            }
+//                        }
+//                    }
 
                 } catch (Exception e) {
                     // 翻译失败的场合,全部设置为空, 运营自己翻译吧
@@ -613,25 +615,25 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
-            {
-                if (newFlg) {
-                    List<Map<String, Object>> multiComplex = new LinkedList<>();
+//            {
+//                if (newFlg) {
+            List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                    List<String> lstImageOrg = feed.getImage();
-                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                        for (String imgOrg : lstImageOrg) {
-                            Map<String, Object> multiComplexChildren = new HashMap<>();
-                            // jeff 2016/04 change start
-                            // multiComplexChildren.put("image1", imgOrg);
-                            multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
-                            // jeff 2016/04 add end
-                            multiComplex.add(multiComplexChildren);
-                        }
-                    }
-
-                    field.put("images1", multiComplex);
+            List<String> lstImageOrg = feed.getImage();
+            if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                for (String imgOrg : lstImageOrg) {
+                    Map<String, Object> multiComplexChildren = new HashMap<>();
+                    // jeff 2016/04 change start
+                    // multiComplexChildren.put("image1", imgOrg);
+                    multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                    // jeff 2016/04 add end
+                    multiComplex.add(multiComplexChildren);
                 }
             }
+
+            field.put("images1", multiComplex);
+//                }
+//            }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
 
@@ -966,6 +968,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping) {
 
+            // jeff 2016/05 add start
+            boolean numIdNoSet = doSetGroup(feed);
+            if (numIdNoSet) {
+                String catPath = mapping.getMainCategoryPath();
+                product.setCatId(MD5.getMD5(catPath)); // 主类目id
+                product.setCatPath(catPath); // 主类目path
+            }
+            // jeff 2016/04 add end
+
             // 注意: 价格是在外面共通方法更新的, 这里不需要更新
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
@@ -1022,6 +1033,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
                 if (!blnFound) {
+                    // 获取当前channel, 有多少个platform
+                    List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+                    List<Integer> skuCarts = new ArrayList<>();
+                    if (typeChannelBeanListApprove != null) {
+                        for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+                            skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
+                        }
+                    }
+
                     CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
                     sku.setSkuCode(feedSku.getSku());
                     sku.setBarcode(feedSku.getBarcode()); // barcode
@@ -1035,6 +1055,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         sku.putAll(doSetCustomSkuInfo(feed, skuFieldSchemaList));
                     }
 
+                    // 增加默认渠道
+                    sku.setSkuCarts(skuCarts);
+
                     product.getSkus().add(sku);
                 }
 
@@ -1045,7 +1068,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/04 change start
 //            CmsBtProductGroupModel group = doSetGroup(feed, product);
 //            product.setGroups(group);
-            doSetGroup(feed);
+//            doSetGroup(feed);
             // jeff 2016/04 change end
 
             // TOM 20160413 这是一个错误, 这段话不应该要的 START
@@ -1063,20 +1086,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * 设置group
          *
          * @param feed 品牌方提供的数据
-         * @return 设置好了的group
+         * @return NumID是否都是空 1：是 2：否
          */
         // jeff 2016/04 change start
         // private CmsBtProductGroupModel doSetGroup(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
-        private void doSetGroup(CmsBtFeedInfoModel feed) {
+//        private void doSetGroup(CmsBtFeedInfoModel feed) {
+        private boolean doSetGroup(CmsBtFeedInfoModel feed) {
 //            CmsBtProductGroupModel group = product.getGroups();
 //            if (group == null) {
 //                group = new CmsBtProductGroupModel();
 //            }
 
+            boolean result = true;
+
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
-                return;
+                return result;
             }
 
             // 根据code, 到group表中去查找所有的group信息
@@ -1089,6 +1115,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 for (CmsBtProductGroupModel group : existGroups) {
                     if (group.getCartId() == Integer.parseInt(shop.getValue())) {
                         blnFound = true;
+                        // NumId有值
+                        if (!StringUtils.isEmpty(group.getNumIId())) {
+                            result = false;
+                        }
                     }
                 }
                 if (blnFound) {
@@ -1163,6 +1193,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
 
             }
+
+            return result;
         }
 
         // jeff 2016/04 change end
@@ -1283,19 +1315,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private String doUpdateImage(String channelId, String code, String originalUrl) {
 
             // 检查是否存在该Image
-            CmsBtImagesModel param = new CmsBtImagesModel();
-            param.setChannelId(channelId);
-            param.setCode(code);
-            param.setOriginalUrl(originalUrl);
-            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
+//            CmsBtImagesModel param = new CmsBtImagesModel();
+//            param.setChannelId(channelId);
+//            param.setCode(code);
+//            param.setOriginalUrl(originalUrl);
+//            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
+            CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
 
             // 不存在则插入
-            if (findImage.size() == 0) {
+            if (findImage == null) {
                 // 图片名最后一部分的值（索引）
                 int index = 1;
 
                 // 检查该code是否存在该Image（为了取得图片名最后一部分中的索引的最大值）
-                param = new CmsBtImagesModel();
+                CmsBtImagesModel param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
                 List<CmsBtImagesModel> oldImages = cmsBtImageDaoExt.selectImages(param);
@@ -1317,14 +1350,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
+                newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
-                cmsBtImageDaoExt.insertImages(newModel);
+                imagesService.insert(newModel);
 
                 return newModel.getImgName();
             } else {
-                return findImage.get(0).getImgName();
+
+                // 如果原始图片的地址发生变更则做更新操作
+                if (!originalUrl.equals(findImage.getOriginalUrl())) {
+                    findImage.setOriginalUrl(originalUrl);
+                    findImage.setUpdFlg(0);
+                    findImage.setModifier(getTaskName());
+                    imagesService.update(findImage);
+                }
+
+                return findImage.getImgName();
             }
         }
 

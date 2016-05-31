@@ -17,6 +17,8 @@ define([
         this.getGroupList = getGroupList;
         this.getProductList = getProductList;
         this.exportFile = exportFile;
+        this.addFreeTag = addFreeTag;
+        this.clearSelList = clearSelList;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
@@ -92,6 +94,21 @@ define([
             var defer = $q.defer();
             $searchAdvanceService.getProductList(resetProductPagination(data, pagination)).then(function (res) {
                 _resetProductList(res.data, commonProps, customProps);
+                defer.resolve (res);
+            });
+            return defer.promise;
+        }
+
+        /**
+         * 检索group和product
+         * @param data
+         * @returns {*}
+         */
+        function addFreeTag(tagPath, prodIdList) {
+            var defer = $q.defer();
+            var data = {"tagPath":tagPath, "prodIdList":prodIdList};
+
+            $searchAdvanceService.addFreeTag(data).then(function (res) {
                 defer.resolve (res);
             });
             return defer.promise;
@@ -175,10 +192,12 @@ define([
                 var custArr = [];
                 _.forEach(customProps, function (data) {
                     var itemVal = groupInfo.feed.cnAtts[data.feed_prop_original];
+                    var orgAttsitemVal= groupInfo.feed.orgAtts[data.feed_prop_original];
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
                     custArr.push({value: itemVal});
+                    custArr.push({value: orgAttsitemVal});
                 });
                 groupInfo.custArr = custArr;
 
@@ -190,12 +209,12 @@ define([
                 //groupInfo.inventoryDetail = _setInventoryDetail(groupInfo.skus);
 
                 // 设置price detail
-                groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups);
+                groupInfo.groupBean.priceDetail = _setPriceDetail(groupInfo.groupBean);
 
-                groupInfo.groups.priceSale = _setPriceSale(groupInfo.groups);
+                groupInfo.groupBean.priceSale = _setPriceSale(groupInfo.groupBean);
 
                 // 设置time detail
-                groupInfo.groups.timeDetail = _setTimeDetail(groupInfo);
+                groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
 
                 groupInfo.grpImgList = data.grpImgList[index];
 
@@ -228,10 +247,12 @@ define([
                 var custArr = [];
                 _.forEach(customProps, function (data) {
                     var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
+                    var orgAttsitemVal= productInfo.feed.orgAtts[data.feed_prop_original];
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
                     custArr.push({value: itemVal});
+                    custArr.push({value: orgAttsitemVal});
                 });
                 productInfo.custArr = custArr;
 
@@ -250,7 +271,7 @@ define([
                 productInfo.priceSale = _setPriceSale(productInfo.fields);
 
                 // 设置time detail
-                productInfo.groups.timeDetail = _setTimeDetail(productInfo);
+                productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 
                 productInfo._prodChgInfo = data.prodChgInfoList[index];
                 productInfo._prodOrgChaName = data.prodOrgChaNameList[index];
@@ -285,9 +306,9 @@ define([
             _.forEach(skus, function (sku) {
                 var cartInfo = "";
                 _.forEach(sku.skuCarts, function (skuCart) {
-                    var c =  Carts.valueOf(parseInt(skuCart));
-                    if(c) cartInfo += c.name + ",";
-
+                    var CartInfo = Carts.valueOf(parseInt(skuCart));
+                    if (!_.isUndefined(CartInfo))
+                        cartInfo += CartInfo.name + ",";
                 });
                 result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
             });
@@ -363,7 +384,7 @@ define([
             if(!_.isEmpty(product.created))
                 result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
-            var platforms = product.groups;
+            var platforms = product.groupBean;
             if(!_.isEmpty(platforms.publishTime))
                 result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
@@ -371,6 +392,11 @@ define([
                 result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.inStockTime.substring(0, 19));
 
             return result;
+        }
+
+        function clearSelList(){
+            tempGroupSelect.clearSelectedList();
+            tempProductSelect.clearSelectedList();
         }
     }
 });

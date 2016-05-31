@@ -2,7 +2,9 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -416,7 +418,25 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //产品库存
     public Integer getQuantity() {
-        return Integer.parseInt(getAttribute("quantity") != null ? getAttribute("quantity").toString() : "0");
+        Object value = getAttribute("quantity");
+
+        if (value == null)
+            return 0;
+
+        if (value instanceof String) {
+
+            String stringValue = (String) value;
+
+            if (StringUtils.isEmpty(stringValue))
+                return 0;
+            else
+                return Integer.valueOf(stringValue);
+        }
+
+        if (value instanceof Integer)
+            return (Integer) value;
+
+        throw new BusinessException("你跟我扯淡呢!!!类型都不对!!!");
     }
     public void setQuantity(Integer quantity) {
         setAttribute("quantity", quantity);

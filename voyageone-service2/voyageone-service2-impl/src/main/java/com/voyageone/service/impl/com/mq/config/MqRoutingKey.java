@@ -6,6 +6,7 @@ package com.voyageone.service.impl.com.mq.config;
  * @since 2.0.0
  */
 public class MqRoutingKey {
+
     /**
      * jumei mq task
      */
@@ -18,6 +19,11 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_JuMeiProductUpdateDealEndTimeJob = "voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue";
 
     /**
+     * image create task
+     */
+    public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
+
+    /**
      * jd mq task
      */
     public static final String CMS_BATCH_PlatformCategoryTreeJdJob = "voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue";
@@ -25,5 +31,10 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_PlatformCategorySchemaJdJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue";
 
     public static final String CMS_BATCH_PlatformProductUploadJdJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadJdJob_queue";
+
+    /**
+     * tmall mq task
+     */
+    public static final String CMS_BATCH_PlatformProductUploadTmJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadTmJob_queue";
 
 }

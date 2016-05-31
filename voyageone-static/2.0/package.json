@@ -1,32 +1,34 @@
 {
   "name": "voyageone_cms",
-  "version": "0.2.0",
-  "devDependencies": {
-    "gulp": "*",
-    "gulp-ng-annotate": "*",
-    "gulp-concat": "*",
-    "gulp-debug": "*",
-    "gulp-header": "*",
-    "gulp-footer": "*",
-    "gulp-minify-css": "*",
-    "gulp-uglify": "*",
-    "gulp-sourcemaps": "*",
-    "gulp-ng-html2js": "*",
-    "through2": "*",
-    "gulp-util": "*",
-    "gulp-minify-html": "*",
-    "gulp-replace": "*",
-    "gulp-rename": "*",
-    "extend": "*",
-    "express": "*",
-    "glob": "*"
-  },
+  "version": "2.0.0",
   "description": "VoyageOne Front Project v2",
   "scripts": {
     "prebuild-dev-pkg": "gulp build-angular-suff",
     "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
-    "build-css-pkg": "node node_scripts/npm-build-css-package.js"
+    "build-css-pkg": "node node_scripts/npm-build-css-package.js",
+    "lite": "lite-server"
   },
   "author": "VoyageOne",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "gulp": "",
+    "gulp-ng-annotate": "",
+    "gulp-concat": "",
+    "gulp-debug": "",
+    "gulp-header": "",
+    "gulp-footer": "",
+    "gulp-minify-css": "",
+    "gulp-uglify": "",
+    "gulp-sourcemaps": "",
+    "gulp-ng-html2js": "",
+    "through2": "",
+    "gulp-util": "",
+    "gulp-minify-html": "",
+    "gulp-replace": "",
+    "gulp-rename": "",
+    "extend": "",
+    "glob": "",
+    "lite-server": "",
+    "request": ""
+  }
 }

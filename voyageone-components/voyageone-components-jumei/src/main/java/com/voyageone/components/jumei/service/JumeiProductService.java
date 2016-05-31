@@ -17,12 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by chuanyu.liang on 2016/1/25.
+ * JumeiProductService
+ *
+ * @author chuanyu.laing on 2016/1/25.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class JumeiProductService extends JmBase {
 
-    private static String PRODUCT_NEW = "v1/htProduct/addProductAndDeal";
+    private static final String PRODUCT_NEW = "v1/htProduct/addProductAndDeal";
 
     /**
      * 创建商品并同时创建Deal
@@ -88,22 +92,19 @@ public class JumeiProductService extends JmBase {
         /**
          * set jumei_hash_id from result
          */
-        //product.getDealInfo().setPartner_deal_id((String) getValue(resultMap, "dealInfo", "partner_deal_id"));
         List<Map<String, Object>> dealInfos = (List<Map<String, Object>>) resultMap.get("dealInfo");
         if(dealInfos != null){
             for(Map<String, Object> dealInfo : dealInfos){
                 if(product.getDealInfo().getPartner_deal_id().equalsIgnoreCase((String) dealInfo.get("partner_deal_id"))){
                     product.getDealInfo().setJumei_hash_id((String) dealInfo.get("jumei_hash_id"));
                     String jumei_hash_id = product.getDealInfo().getJumei_hash_id();
-                    if(StringUtils.isEmpty(jumei_hash_id) || jumei_hash_id.substring(jumei_hash_id.length()-2).equalsIgnoreCase("p0")){
+                    if(StringUtils.isEmpty(jumei_hash_id) || "p0".equalsIgnoreCase(jumei_hash_id.substring(jumei_hash_id.length() - 2))){
                         throw new BusinessException("jumei_hash_id不正确："+jumei_hash_id);
                     }
                     break;
                 }
             }
         }
-
-//        product.getDealInfo().setJumei_hash_id((String) getValue(resultMap, "dealInfo", "jumei_hash_id"));
     }
 
     private Object getValue(Map<String, Object> dataMap, String parentKey, String key) {
@@ -140,7 +141,7 @@ public class JumeiProductService extends JmBase {
         params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage,hash_ids,category_v3_4,spus");
 
         String reqResult = reqJmApi(shopBean, PRODUCT_GET, params);
-        JmGetProductInfoRes resultBean = JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
+        return JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
 
 //        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
 //        resultBean.setName((String) getValue(resultMap, "name"));
@@ -158,7 +159,7 @@ public class JumeiProductService extends JmBase {
 //        resultBean.setNormalImage((String) getValue(resultMap, "normalImage"));
 //        resultBean.setVerticalImage((String) getValue(resultMap, "verticalImage"));
 //        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
-        return resultBean;
+//        return resultBean;
     }
     public JmGetProductInfoRes getProductByName(ShopBean shopBean, String productName) throws Exception {
         Map<String, Object> params = new HashMap<>();
@@ -166,7 +167,7 @@ public class JumeiProductService extends JmBase {
         params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage,hash_ids,category_v3_4,spus");
 
         String reqResult = reqJmApi(shopBean, PRODUCT_GET, params);
-        JmGetProductInfoRes resultBean = JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
+        return JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
 
 //        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
 //        resultBean.setName((String) getValue(resultMap, "name"));
@@ -185,6 +186,6 @@ public class JumeiProductService extends JmBase {
 //        resultBean.setNormalImage((String) getValue(resultMap, "normalImage"));
 //        resultBean.setVerticalImage((String) getValue(resultMap, "verticalImage"));
 //        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
-        return resultBean;
+//        return resultBean;
     }
 }

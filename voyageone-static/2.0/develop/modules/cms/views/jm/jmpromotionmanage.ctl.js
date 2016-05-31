@@ -8,8 +8,7 @@ define([
                     status: {
                         open: true
                     }};
-        $scope.searchInfo = {
-        };
+        $scope.searchInfo = { };
         $scope.datePicker = [];
         $scope.initialize = function () {
             jmPromotionService.init().then(function (res) {

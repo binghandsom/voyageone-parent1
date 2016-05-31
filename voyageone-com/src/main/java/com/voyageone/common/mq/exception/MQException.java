@@ -10,7 +10,7 @@ import org.springframework.amqp.core.Message;
  */
 public class MQException extends AmqpException {
 
-    private Message mqMessage;
+    private final Message mqMessage;
 
     public Message getMqMessage() {
         return mqMessage;

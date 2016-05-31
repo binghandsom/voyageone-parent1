@@ -61,6 +61,23 @@
             <artifactId>voyageone-components-tmall</artifactId>
             <version>${voyageone.components.tmall.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-liquifire</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-uscdn</artifactId>
+            <version>${voyageone.components.uscdn.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-imagecreate</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <finalName>voyageone-service2-impl</finalName>

@@ -40,7 +40,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
     @Autowired
     protected Transformer transformer;
     @Autowired
-    protected TransactionRunner transactionRunnerCms2;
+    protected TransactionRunner transactionRunner;
 
     protected abstract  void updateFull(List<String> itemIds);
 
@@ -51,7 +51,6 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
 
     /**
      * 读入feed文件并插入zzwork表
-     * @return
      */
     protected abstract  int superFeedImport();
 
@@ -60,8 +59,6 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
 
     /**
      * 根据类目获取该类目小的产品数据
-     * @param categorPath
-     * @return
      */
     protected abstract List<CmsBtFeedInfoModel> getFeedInfoByCategory(String categorPath);
 
@@ -110,8 +107,29 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         return true;
     }
 
-    protected HashMap<String, Object> getColumns() {
-        HashMap<String, Object> map = new HashMap<>();
+    protected boolean backupFeedFile(String channel_id,FeedEnums.Name name) {
+        $info("备份处理文件开始");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date_ymd = sdf.format(date);
+
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id,  name));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
+        File file = new File(filename);
+        File file_backup = new File(filename_backup);
+
+        if (!file.renameTo(file_backup)) {
+//            $error("产品文件备份失败");
+            $info(file_backup+"备份失败");
+        }
+
+        $info("备份处理文件结束");
+        return true;
+    }
+
+    protected Map<String, Object> getColumns() {
+        Map<String, Object> map = new HashMap<>();
         map.put("category", Feeds.getVal1(channel, FeedEnums.Name.category_column));
         map.put("channel_id", channel.getId());
         map.put("m_brand", Feeds.getVal1(channel, FeedEnums.Name.model_m_brand));

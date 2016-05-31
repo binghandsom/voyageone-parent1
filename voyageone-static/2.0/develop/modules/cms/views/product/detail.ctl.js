@@ -61,10 +61,11 @@ define([
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
+        function ProductDetailController($routeParams, $rootScope, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
+            this.$rootScope = $rootScope;
             this.productDetailService = productDetailService;
             this.feedMappingService = feedMappingService;
             this.notify = notify;
@@ -93,6 +94,7 @@ define([
                         self._orgChaName = res.data.orgChaName;
                         self._isminimall = res.data.isminimall;
                         self._isMain = res.data.isMain;
+                        self.currentImage = self.$rootScope.imageUrl.replace('%s', self.productDetails.productImages.image1[0].image1) + ".jpg";
 
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady

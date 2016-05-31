@@ -61,9 +61,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 根据channelId和groupId取得单个group数据
-     * @param channelId
-     * @param groupId
-     * @return
      */
     public CmsBtProductGroupModel getProductGroupByGroupId(String channelId, Long groupId) {
         JomgoQuery query = new JomgoQuery();
@@ -73,18 +70,38 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 根据条件获取group数据
-     * @param channelId
-     * @param query
-     * @return
+     * @param channelId String
+     * @param query String
+     * @return CmsBtProductGroupModel
+     */
+    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, String query) {
+        return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
+     * 根据条件获取group数据
+     * @param channelId String
+     * @param query JomgoQuery
+     * @return CmsBtProductGroupModel
      */
     public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JomgoQuery query) {
         return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
     }
 
     /**
-     * 更新group数据
-     * @param model
+     * 根据channelId和产品Code检索出productGroup数据.
+     * @param channelId
+     * @param code
      * @return
+     */
+    public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(String.format("{\"productCodes\": \"%s\", \"cartId\": %d}", code, cartId));
+        return getProductGroupByQuery(channelId, query);
+    }
+
+    /**
+     * 更新group数据
      */
     public WriteResult update(CmsBtProductGroupModel model) {
         return cmsBtProductGroupDao.update(model);
@@ -92,8 +109,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 插入新的group数据
-     * @param model
-     * @return
      */
     public WriteResult insert(CmsBtProductGroupModel model) {
         return cmsBtProductGroupDao.insert(model);
@@ -146,8 +161,8 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 更新该model对应的所有和上新有关的状态信息
-     * @param model(model中包含的productCodes,是这次平台上新处理的codes)
-     * @return
+     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @return CmsBtProductGroupModel
      */
     public CmsBtProductGroupModel updateGroupsPlatformStatus (CmsBtProductGroupModel model) {
 
@@ -159,7 +174,7 @@ public class ProductGroupService extends BaseService {
 
             // 获取以前的产品carts信息,用于判断是否需要更新publishTime
             JomgoQuery queryObject = new JomgoQuery();
-            StringBuffer sbQuery = new StringBuffer();
+            StringBuilder sbQuery = new StringBuilder();
             sbQuery.append(MongoUtils.splicingValue("carts.cartId", model.getCartId()));
             sbQuery.append(",");
             sbQuery.append(MongoUtils.splicingValue("fields.code", model.getProductCodes().toArray(new String[model.getProductCodes().size()]), "$in"));
@@ -171,8 +186,7 @@ public class ProductGroupService extends BaseService {
             Map<String, Boolean> isPublishedProducts = new HashMap<>();
             for(CmsBtProductModel product : products) {
                 isPublishedProducts.put(product.getFields().getCode(),
-                        product.getCarts().size() >0 && !StringUtils.isEmpty(product.getCarts().get(0).getPublishTime())
-                                ? true : false);
+                        product.getCarts().size() > 0 && !StringUtils.isEmpty(product.getCarts().get(0).getPublishTime()));
             }
 
             // 批量更新产品的平台状态.
@@ -213,8 +227,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 更新group的platformActive
-     * @param model
-     * @return
      */
     public WriteResult updateGroupsPlatformActiveBympCode (CmsBtProductGroupModel model) {
 

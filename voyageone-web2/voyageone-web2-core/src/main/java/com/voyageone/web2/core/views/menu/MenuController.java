@@ -1,6 +1,5 @@
 package com.voyageone.web2.core.views.menu;
 
-import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreUrlConstants;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,7 +33,7 @@ public class MenuController extends BaseController {
         Integer userId = getUser().getUserId();
         String channelId = getUser().getSelChannelId();
         String applicationId=getUser().getApplicationId();
-        Map<String, Object> resultbean =menuService.getMenuHeaderInfo(userId,channelId,applicationId);
+        Map<String, Object> resultBean =menuService.getMenuHeaderInfo(userId,channelId,applicationId);
 
 
         // 获取用户相关信息
@@ -44,10 +42,10 @@ public class MenuController extends BaseController {
         userInfo.put("channelName", getUser().getSelChannel().getFullName());
         userInfo.put("language", getLang());
         userInfo.put("application",getUser().getApplication());
-        resultbean.put("userInfo", userInfo);
+        resultBean.put("userInfo", userInfo);
 
         // 返回用户信息
-        return success(resultbean);
+        return success(resultBean);
     }
 
     @RequestMapping(CoreUrlConstants.MENU.SET_LANGUAGE)

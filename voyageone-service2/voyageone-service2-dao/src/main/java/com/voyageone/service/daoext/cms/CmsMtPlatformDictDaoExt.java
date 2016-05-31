@@ -2,7 +2,7 @@ package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsMtPlatFormDictModel;
+import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Repository
 public class CmsMtPlatformDictDaoExt extends ServiceBaseDao {
 
-    public List<CmsMtPlatFormDictModel> selectByChannel(CmsDictionaryIndexBean params) {
+    public List<CmsMtPlatformDictModel> selectByChannel(CmsDictionaryIndexBean params) {
         return selectList("cms_mt_dict_selectByCondition", params);
     }
 
@@ -25,31 +25,31 @@ public class CmsMtPlatformDictDaoExt extends ServiceBaseDao {
         return selectOne("cms_mt_dict_selectAllCount", params);
     }
 
-    public int insertDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return insert("cms_mt_dict_insertDict", cmsMtPlatFormDictModel);
+    public int insertDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        return insert("cms_mt_dict_insertDict", cmsMtPlatformDictModel);
     }
 
 //    public int insertDictLog(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
 //        return insert("cms_mt_dict_insertDict_log", cmsMtPlatFormDictModel);
 //    }
 
-    public int updateDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return update("cms_mt_dict_updateDict", cmsMtPlatFormDictModel);
+    public int updateDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        return update("cms_mt_dict_updateDict", cmsMtPlatformDictModel);
     }
 
-    public int deleteDict(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return delete("cms_mt_dict_deleteDict", cmsMtPlatFormDictModel);
+    public int deleteDict(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        return delete("cms_mt_dict_deleteDict", cmsMtPlatformDictModel);
     }
 
-    public List<CmsMtPlatFormDictModel> selectByName(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return selectList("cms_mt_dict_selectByName", cmsMtPlatFormDictModel);
+    public List<CmsMtPlatformDictModel> selectByName(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        return selectList("cms_mt_dict_selectByName", cmsMtPlatformDictModel);
     }
 
-    public CmsMtPlatFormDictModel selectById(CmsMtPlatFormDictModel cmsMtPlatFormDictModel) {
-        return selectOne("cms_mt_dict_selectById", cmsMtPlatFormDictModel);
+    public CmsMtPlatformDictModel selectById(CmsMtPlatformDictModel cmsMtPlatformDictModel) {
+        return selectOne("cms_mt_dict_selectById", cmsMtPlatformDictModel);
     }
 
-    public List<CmsMtPlatFormDictModel> selectSimpleDict(String channel_id) {
+    public List<CmsMtPlatformDictModel> selectSimpleDict(String channel_id) {
         return selectList("cms_mt_dict_selectSimpleDict", parameters("channel_id", channel_id));
     }
 
@@ -60,10 +60,10 @@ public class CmsMtPlatformDictDaoExt extends ServiceBaseDao {
      * @param cartId         int            平台id
      * @return List<CmsMtDictModel> 字典对象列表
      */
-    public List<CmsMtPlatFormDictModel> selectByChannelCartId(String orderChannelId, int cartId) {
+    public List<CmsMtPlatformDictModel> selectByChannelCartId(String orderChannelId, int cartId) {
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("order_channel_id", orderChannelId);
+        dataMap.put("orderChannelId", orderChannelId);
         dataMap.put("cartId", cartId);
-        return selectOne("cms_mt_dict_selectByChannelCartId", dataMap);
+        return selectList("cms_mt_dict_selectByChannelCartId", dataMap);
     }
 }

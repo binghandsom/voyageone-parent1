@@ -1,0 +1,117 @@
+<div class="modal-content" style="width: 730px;left: -60px;margin-top: -1px;">
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_EDIT' | translate}}</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">channelId</label>
+                <div class="col-sm-7">
+                    <input class="form-control" ng-model="model.channelId" />
+                </div>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">{{'TXT_PLATFORM' | translate}}</label>
+                <div class="col-sm-7">
+                    <select class="form-control" ng-model="model.cartId" width="'416px'"
+                            ng-options="brand.value as brand.name for brand in vm.platformList">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}...</option>
+                    </select>
+                </div>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">{{'TXT_TEMPLATE_NAME' | translate}}</label>
+                <div class="col-sm-7">
+                    <input class="form-control" ng-model="model.imageTemplateName" />
+                </div>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <!--<div class="col-sm-7 text-u-red">最大80字</div>-->
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
+                <div class="col-sm-7">
+                    <select multiple chosen class="form-control" width="'404px'"  ng-model="model.brandName"
+                            ng-options="brand.value as brand.name for brand in vm.brandNameList">
+                    </select>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
+                <div class="col-sm-7">
+                    <select multiple chosen class="form-control" width="'404px'"  ng-model="model.productType"
+                            ng-options="productType.value as productType.name for productType in vm.productTypeList">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
+                <div class="col-sm-7">
+                    <select multiple chosen class="form-control" width="'404px'" ng-model="model.sizeType"
+                            ng-options="sizeType.value as sizeType.name for sizeType in vm.sizeTypeList">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">{{'TXT_VIEW_TYPE' | translate}}</label>
+                <div class="col-sm-7">
+                    <select class="form-control" ng-model="model.viewType" >
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}...</option>
+                        <option value="1">PC</option>
+                        <option value="2">APP</option>
+                    </select>
+                </div>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">{{'TXT_TEMPLATE_TYPE' | translate}}</label>
+                <div class="col-sm-7">
+                    <select class="form-control" ng-model="model.imageTemplateType" width="'416px'"
+                            ng-options="m.value as m.name for m in vm.imageTemplateList">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}...</option>
+                    </select>
+
+                </div>
+                <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">{{'TXT_TEMPLATE_CONTENT' | translate}}</label>
+                <div class="col-sm-7">
+                    <textarea class="form-control no-resize" ng-model="model.imageTemplateContent"  rows="15" placeholder="{{'TXT_MSG_IMPORT' | translate}}"></textarea>
+                </div>
+                <label class="col-sm-2 control-label text-u-red text-left" >{{'TXT_REPlACEMENT_SYMBOL_IS' | translate}} %s</label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label vo_reqfield">{{'TXT_COMMENT' | translate}}</label>
+                <div class="col-sm-7">
+                    <textarea class="form-control no-resize" ng-model="model.comment"  rows="3" placeholder="{{'TXT_MSG_IMPORT' | translate}}"></textarea>
+                </div>
+            </div>
+            <div class="form-group" ng-controller="popupCtrl" style="margin-bottom: -10px;">
+                <div class="col-sm-3 col-sm-offset-3">
+                    <!--<label class="col-sm-15 control-label text-u-red text-left">{{'TXT_REPlACEMENT_SYMBOL_IS' | translate}} %s</label>-->
+                    <button class="btn btn-default" ng-click="openImgTplPreview(model.imageTemplateContent)" style="margin-left: 360px; display: flex;">{{'TXT_PREVIEW' | translate}}</button>
+                </div>
+            </div>
+        </form>
+        <!--<div class="col-sm-4">-->
+            <!--<div class="form-group">-->
+                <!--<img class="col-sm-12" src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$sn20-650$&amp;$img=sneakerhead/air-jordan-jumpman-team-ii-819175417-1">-->
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>
+</div>
+    <!-- .vo_modal -->

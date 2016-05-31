@@ -17,27 +17,27 @@
     <update id="cms_bt_beat_info_updateNoCodeMessage">
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t
-                ON b.task_id = t.task_id
+                ON b.task_id = t.id
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
                 ON pc.promotion_id = t.promotion_id
                    AND pc.product_code = b.product_code
         SET b.message = #{message},
         b.syn_flag = #{syn_flag}
-        WHERE t.task_id = #{task_id}
-              AND pc.seq IS NULL;
+        WHERE t.id = #{task_id}
+              AND pc.id IS NULL;
     </update>
 
     <update id="cms_bt_beat_info_updateNoNumiidMessage">
         UPDATE voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t
-                ON b.task_id = t.task_id
+                ON b.task_id = t.id
         LEFT JOIN voyageone_cms2.cms_bt_promotion_groups pm
                 ON pm.promotion_id = t.promotion_id
                    AND pm.num_iid = b.num_iid
         SET b.message = #{message},
         b.syn_flag = #{syn_flag}
-        WHERE t.task_id = #{task_id}
-              AND pm.seq IS NULL;
+        WHERE t.id = #{task_id}
+              AND pm.id IS NULL;
     </update>
 
     <select id="cms_bt_beat_info_selectListByTask" resultType="com.voyageone.service.bean.cms.CmsBtBeatInfoBean">
@@ -58,7 +58,7 @@
 
     <select id="cms_bt_beat_info_selectListByTask_page" resultMap="beatInfoWithPromotionCode">
         SELECT
-        id,
+        b.id,
         b.task_id,
         b.num_iid,
         b.product_code,
@@ -71,11 +71,11 @@
         pc.promotion_price
         FROM voyageone_cms2.cms_bt_task_jiagepilu b
         JOIN voyageone_cms2.cms_bt_tasks t
-        ON b.task_id = t.task_id
+        ON b.task_id = t.id
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes pc
         ON t.promotion_id = pc.promotion_id
         AND b.product_code = pc.product_code
-        WHERE t.task_id = #{task_id}
+        WHERE t.id = #{task_id}
         <if test="flag != null">
             AND syn_flag = #{flag.flag}
         </if>
@@ -183,14 +183,14 @@
 
     <select id="cms_bt_beat_info_selectListByNumiidInOtherTask" resultMap="beatInfoWithPromotion">
         <include refid="cms_bt_beat_info_join_promotion"/>
-        WHERE p.promotion_id = #{promotion_id}
+        WHERE p.id = #{promotion_id}
         AND b.num_iid = #{num_iid}
         AND b.task_id != #{task_id}
     </select>
 
     <sql id="cms_bt_beat_info_join_promotion">
         SELECT
-            id,
+            b.id,
             b.task_id,
             num_iid,
             product_code,
@@ -200,7 +200,7 @@
             b.creater,
             b.modified,
             b.modifier,
-            p.promotion_id,
+            p.id promotion_id,
             p.channel_id,
             cart_id,
             promotion_status,
@@ -214,7 +214,7 @@
             tejiabao_id,
             promotion_type,
             ref_tag_id,
-            is_active,
+            active,
             is_all_promotion,
             p.created  p_created,
             p.creater  p_creater,
@@ -222,9 +222,9 @@
             p.modifier p_modifier
         FROM voyageone_cms2.cms_bt_promotion p
             JOIN voyageone_cms2.cms_bt_tasks t
-                ON p.promotion_id = t.promotion_id
+                ON p.id = t.promotion_id
         JOIN voyageone_cms2.cms_bt_task_jiagepilu b
-                ON t.task_id = b.task_id
+                ON t.id = b.task_id
     </sql>
 
     <resultMap id="beatInfoWithPromotion" type="com.voyageone.service.bean.cms.CmsBtBeatInfoBean" autoMapping="true">
@@ -248,7 +248,7 @@
 
     <select id="cms_bt_beat_info_selectListNeedBeatFullData" resultMap="beatInfo_With_Code_Task">
         SELECT
-            id,
+            b.id,
             b.task_id,
             b.num_iid,
             b.product_code,
@@ -259,7 +259,7 @@
             b.modified,
             b.modifier,
 
-            t.task_id        task_task_id,
+            t.id        task_task_id,
             task_name        task_task_name,
             task_type        task_task_type,
             t.promotion_id   task_promotion_id,
@@ -272,7 +272,7 @@
             t.modified       task_modified,
             t.modifier       task_modifier,
 
-            p.promotion_id promotion_promotion_id,
+            p.id promotion_promotion_id,
             p.channel_id promotion_channel_id,
             cart_id promotion_cart_id,
             promotion_status promotion_promotion_status,
@@ -286,7 +286,7 @@
             tejiabao_id promotion_tejiabao_id,
             promotion_type promotion_promotion_type,
             ref_tag_id promotion_ref_tag_id,
-            is_active promotion_is_active,
+            active promotion_is_active,
             is_all_promotion promotion_is_all_promotion,
             p.created promotion_created,
             p.creater promotion_creater,
@@ -316,13 +316,13 @@
             c.modifier       code_modifier
 
         FROM voyageone_cms2.cms_bt_task_jiagepilu b
-            JOIN voyageone_cms2.cms_bt_tasks t ON t.task_id = b.task_id
-            JOIN voyageone_cms2.cms_bt_promotion p ON p.promotion_id = t.promotion_id
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_groups m ON m.promotion_id = p.promotion_id AND b.num_iid = m.num_iid
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes c ON c.promotion_id = p.promotion_id AND c.product_code =
+            JOIN voyageone_cms2.cms_bt_tasks t ON t.id = b.task_id
+            JOIN voyageone_cms2.cms_bt_promotion p ON p.id = t.promotion_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_groups m ON m.promotion_id = p.id AND b.num_iid = m.num_iid
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes c ON c.promotion_id = p.id AND c.product_code =
         b.product_code
         WHERE (
-                  p.is_active = 1
+                  p.active = 1
                   AND #{now} > t.activity_start
                   AND #{now} &lt; t.activity_end
                   AND b.syn_flag = #{upFlag}

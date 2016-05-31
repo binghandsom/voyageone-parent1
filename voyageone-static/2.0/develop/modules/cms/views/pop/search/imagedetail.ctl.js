@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popImageDetailCtl', function ($scope, context) {
+    angularAMD.controller('popImageDetailCtl', function ($scope, $rootScope, context) {
         $scope.vm = {
             picInfo : context
         };
@@ -23,14 +23,15 @@ define([
                 // 直接使用传入的图片url
             } else {
                 // 传入的是图片名，必须拼接图片服务器的url
-                picObj.mainPic = "http://image.sneakerhead.com/is/image/sneakerhead/" + picObj.mainPic;
-
+                picObj.mainPic =  $rootScope.imageUrl.replace("%s", picObj.mainPic) + ".jpg";//"http://image.sneakerhead.com/is/image/sneakerhead/" + ;
                 var picList = picObj.picList;
-                _.forEach(picList, function (itemList) {
-                    _.forEach(itemList, function (picName) {
-                        picName = "http://image.sneakerhead.com/is/image/sneakerhead/" + picName;
-                    });
-                });
+
+                //框架foreach无法改变值，所以用js源生循环
+                for(var i=0,length=picList.length;i<length;i++){
+                     for(var j=0,length2=picList[i].length;j<length2;j++){
+                         picList[i][j] = $rootScope.imageUrl.replace("%s", picList[i][j]) + ".jpg";
+                     }
+                 }
             }
         };
     });

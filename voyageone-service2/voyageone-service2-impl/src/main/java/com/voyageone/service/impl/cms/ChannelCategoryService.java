@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.dao.cms.CmsMtChannelCategoryConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
 import com.voyageone.service.daoext.cms.CmsMtChannelCategoryConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -18,6 +19,9 @@ import java.util.List;
 
 @Service
 public class ChannelCategoryService extends BaseService {
+
+    @Autowired
+    private CmsMtChannelCategoryConfigDao cmsMtChannelCategoryConfigDao;
 
     @Autowired
     private CmsMtChannelCategoryConfigDaoExt cmsMtChannelCategoryConfigDaoExt;
@@ -127,4 +131,15 @@ public class ChannelCategoryService extends BaseService {
     public void saveWithList(List<CmsMtChannelCategoryConfigModel> models) {
         cmsMtChannelCategoryConfigDaoExt.insertWithList(models);
     }
+
+    @VOTransactional
+    public void saveWithListOne(List<CmsMtChannelCategoryConfigModel> models) {
+        System.out.println(JacksonUtil.bean2Json(cmsMtChannelCategoryConfigDao.select(15)));
+        cmsMtChannelCategoryConfigDaoExt.insertWithList(models.subList(1, models.size()));
+        cmsMtChannelCategoryConfigDao.insert(models.get(0));
+        if (true) {
+            throw new RuntimeException("bb");
+        }
+    }
+
 }

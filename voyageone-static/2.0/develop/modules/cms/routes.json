@@ -66,6 +66,7 @@
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
   "search_feedsearch": {
+    "url": "/search/feedsearch/",
     "hash": "/search/feedsearch",
     "templateUrl": "views/search/feedsearch.tpl.html",
     "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
@@ -164,6 +165,35 @@
     "templateUrl": "views/channel/taglist/index.tpl.html",
     "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
   },
+  "channel_listing_sizechart": {
+    "hash": "/channel/sizechart",
+    "templateUrl": "views/channel/sizechart/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/sizechart/index.ctl"
+  },
+  "channel_listing_sizechart_detail": {
+    "hash": "/channel/sizechart/detail/:sizeChartId",
+    "templateUrl": "views/channel/sizechart/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/sizechart/detail.ctl"
+  },
+  "channel_imagetemplate_list": {
+    "hash": "/channel/imagetemplatelist",
+    "templateUrl": "views/channel/imagetemplatelist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/imagetemplatelist/index.ctl"
+  },
+  "channel_imagegroup_list": {
+    "url": "/channel/imagegrouplist/",
+    "hash": "/channel/imagegrouplist/",
+    "templateUrl": "views/channel/imagegrouplist/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/imagegrouplist/index.ctl",
+    "controller": "imageGroupController as ctrl"
+  },
+  "channel_listing_imagegrouplist_detail": {
+    "url": "/channel/imagegrouplist/detail/",
+    "hash": "/channel/imagegrouplist/detail/:imageGroupId",
+    "templateUrl": "views/channel/imagegrouplist/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/imagegrouplist/detail.ctl",
+    "controller": "imageGroupDetailController as ctrl"
+  },
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
@@ -195,6 +225,16 @@
     "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl",
     "controller": "storeOperationController as store"
   },
+  "system_category_setting": {
+    "hash": "/system/categorysetting/:type",
+    "templateUrl": "views/system/categorysetting/maincatunion.tpl.html",
+    "controllerUrl": "modules/cms/views/system/categorysetting/maincatunion.ctl"
+  },
+  "system_category_union": {
+    "hash": "/system/categorysetting_catunion",
+    "templateUrl": "views/system/categorysetting/catunion.tpl.html",
+    "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl"
+  },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list/:parentId",
     "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
@@ -220,6 +260,10 @@
     "hash": "/system/cart/index",
     "templateUrl": "views/system/cart/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/cart/index.ctl"
+  },
+  "image_create": {
+    "hash": "/imagecreate/index",
+    "templateUrl": "views/imagecreate/index.tpl.html",
+    "controllerUrl": "modules/cms/views/imagecreate/index.ctl"
   }
-
 }

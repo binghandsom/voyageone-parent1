@@ -136,7 +136,7 @@ public class ProductGroupServiceTest {
 
     @Test
     public void testUpdateGroupsPlatformStatus() throws Exception {
-        CmsBtProductGroupModel model = service.getProductGroupByGroupId("010", 39795L);
+        CmsBtProductGroupModel model = service.getProductGroupByGroupId("010", 51944L);
         model.setNumIId("1234567890");
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");

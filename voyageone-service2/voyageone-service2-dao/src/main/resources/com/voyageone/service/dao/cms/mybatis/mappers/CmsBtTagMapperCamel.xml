@@ -1,182 +1,259 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtTagDao">
-    <resultMap id="ResultMap" type="CmsBtTagModel">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtTagDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTagModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `tag_name`, `tag_path`, `tag_path_name`, `tag_type`, `tag_status`, 
+        `sort_order`, `parent_tag_id`, `active`, `created`, `creater`, `modified`, `modifier`
+    </sql>
 
-    </resultMap>
-
-    <select id="selectList" resultMap="ResultMap">
-
-        select
-        `id`,`channel_id`,`tag_name`,`tag_path`,`tag_path_name`,`tag_type`,`tag_status`,`sort_order`,`parent_tag_id`,`active`,`created`,`creater`,`modified`,`modifier`
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
         from cms_bt_tag
-        <where>
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-            <if test="tagName != null">
-                AND `tag_name` = #{tagName}
-            </if>
-            <if test="tagPath != null">
-                AND `tag_path` = #{tagPath}
-            </if>
-            <if test="tagPathName != null">
-                AND `tag_path_name` = #{tagPathName}
-            </if>
-            <if test="tagType != null">
-                AND `tag_type` = #{tagType}
-            </if>
-            <if test="tagStatus != null">
-                AND `tag_status` = #{tagStatus}
-            </if>
-            <if test="sortOrder != null">
-                AND `sort_order` = #{sortOrder}
-            </if>
-            <if test="parentTagId != null">
-                AND `parent_tag_id` = #{parentTagId}
-            </if>
-            <if test="active != null">
-                AND `active` = #{active}
-            </if>
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-    </select>
-    <select id="selectOne" resultMap="ResultMap">
-        select
-        `id`,`channel_id`,`tag_name`,`tag_path`,`tag_path_name`,`tag_type`,`tag_status`,`sort_order`,`parent_tag_id`,`active`,`created`,`creater`,`modified`,`modifier`
-        from cms_bt_tag
-        <where>
-
-            <if test="id != null">
-                AND `id` = #{id}
-            </if>
-
-            <if test="channelId != null">
-                AND `channel_id` = #{channelId}
-            </if>
-
-            <if test="tagName != null">
-                AND `tag_name` = #{tagName}
-            </if>
-
-            <if test="tagPath != null">
-                AND `tag_path` = #{tagPath}
-            </if>
-
-            <if test="tagPathName != null">
-                AND `tag_path_name` = #{tagPathName}
-            </if>
-
-            <if test="tagType != null">
-                AND `tag_type` = #{tagType}
-            </if>
-
-            <if test="tagStatus != null">
-                AND `tag_status` = #{tagStatus}
-            </if>
-
-            <if test="sortOrder != null">
-                AND `sort_order` = #{sortOrder}
-            </if>
-
-            <if test="parentTagId != null">
-                AND `parent_tag_id` = #{parentTagId}
-            </if>
-
-            <if test="active != null">
-                AND `active` = #{active}
-            </if>
-
-            <if test="created != null">
-                AND `created` = #{created}
-            </if>
-
-            <if test="creater != null">
-                AND `creater` = #{creater}
-            </if>
-
-            <if test="modified != null">
-                AND `modified` = #{modified}
-            </if>
-
-            <if test="modifier != null">
-                AND `modifier` = #{modifier}
-            </if>
-        </where>
-        limit 1
-    </select>
-    <select id="select" resultMap="ResultMap">
-        select `id`,`channel_id`,`tag_name`,`tag_path`,`tag_path_name`,`tag_type`,`tag_status`,`sort_order`,`parent_tag_id`,`active`,`created`,`creater`,`modified`,`modifier` from cms_bt_tag where id=#{id}
+        where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update">
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_tag
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="tagName != null" >
+                `tag_name`,
+            </if>
+            <if test="tagPath != null" >
+                `tag_path`,
+            </if>
+            <if test="tagPathName != null" >
+                `tag_path_name`,
+            </if>
+            <if test="tagType != null" >
+                `tag_type`,
+            </if>
+            <if test="tagStatus != null" >
+                `tag_status`,
+            </if>
+            <if test="sortOrder != null" >
+                `sort_order`,
+            </if>
+            <if test="parentTagId != null" >
+                `parent_tag_id`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="tagName != null" >
+                #{tagName,jdbcType=VARCHAR},
+            </if>
+            <if test="tagPath != null" >
+                #{tagPath,jdbcType=VARCHAR},
+            </if>
+            <if test="tagPathName != null" >
+                #{tagPathName,jdbcType=VARCHAR},
+            </if>
+            <if test="tagType != null" >
+                #{tagType,jdbcType=INTEGER},
+            </if>
+            <if test="tagStatus != null" >
+                #{tagStatus,jdbcType=INTEGER},
+            </if>
+            <if test="sortOrder != null" >
+                #{sortOrder,jdbcType=INTEGER},
+            </if>
+            <if test="parentTagId != null" >
+                #{parentTagId,jdbcType=INTEGER},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=INTEGER},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" >
         update cms_bt_tag
-        set
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="tagName != null" >
+                `tag_name` = #{tagName,jdbcType=VARCHAR},
+            </if>
+            <if test="tagPath != null" >
+                `tag_path` = #{tagPath,jdbcType=VARCHAR},
+            </if>
+            <if test="tagPathName != null" >
+                `tag_path_name` = #{tagPathName,jdbcType=VARCHAR},
+            </if>
+            <if test="tagType != null" >
+                `tag_type` = #{tagType,jdbcType=INTEGER},
+            </if>
+            <if test="tagStatus != null" >
+                `tag_status` = #{tagStatus,jdbcType=INTEGER},
+            </if>
+            <if test="sortOrder != null" >
+                `sort_order` = #{sortOrder,jdbcType=INTEGER},
+            </if>
+            <if test="parentTagId != null" >
+                `parent_tag_id` = #{parentTagId,jdbcType=INTEGER},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
 
-            `channel_id`=#{channelId}
-            ,`tag_name`=#{tagName}
-            ,`tag_path`=#{tagPath}
-            ,`tag_path_name`=#{tagPathName}
-            ,`tag_type`=#{tagType}
-            ,`tag_status`=#{tagStatus}
-            ,`sort_order`=#{sortOrder}
-            ,`parent_tag_id`=#{parentTagId}
-            ,`active`=#{active}
-            ,`modifier`=#{modifier}
-         where id=#{id}   
-   </update>
-
-    <delete id="delete">
-        delete from  cms_bt_tag
-        where id=#{id}
-
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_tag
+        where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cms_bt_tag
-        (
-              `channel_id`,
-              `tag_name`,
-              `tag_path`,
-              `tag_path_name`,
-              `tag_type`,
-              `tag_status`,
-              `sort_order`,
-              `parent_tag_id`,
-              `active`,
-              `created`,
-              `creater`,
-              `modified`,
-              `modifier`
-        )
-        VALUES(
-              #{channelId},
-              #{tagName},
-              #{tagPath},
-              #{tagPathName},
-              #{tagType},
-              #{tagStatus},
-              #{sortOrder},
-              #{parentTagId},
-              #{active},
-              now(),
-              #{creater},
-              now(),
-              #{creater}
-        )
-    </insert>
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_tag
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="tagName != null" >
+                and `tag_name` = #{tagName,jdbcType=VARCHAR}
+            </if>
+            <if test="tagPath != null" >
+                and `tag_path` = #{tagPath,jdbcType=VARCHAR}
+            </if>
+            <if test="tagPathName != null" >
+                and `tag_path_name` = #{tagPathName,jdbcType=VARCHAR}
+            </if>
+            <if test="tagType != null" >
+                and `tag_type` = #{tagType,jdbcType=INTEGER}
+            </if>
+            <if test="tagStatus != null" >
+                and `tag_status` = #{tagStatus,jdbcType=INTEGER}
+            </if>
+            <if test="sortOrder != null" >
+                and `sort_order` = #{sortOrder,jdbcType=INTEGER}
+            </if>
+            <if test="parentTagId != null" >
+                and `parent_tag_id` = #{parentTagId,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_tag
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="tagName != null" >
+                and `tag_name` = #{tagName,jdbcType=VARCHAR}
+            </if>
+            <if test="tagPath != null" >
+                and `tag_path` = #{tagPath,jdbcType=VARCHAR}
+            </if>
+            <if test="tagPathName != null" >
+                and `tag_path_name` = #{tagPathName,jdbcType=VARCHAR}
+            </if>
+            <if test="tagType != null" >
+                and `tag_type` = #{tagType,jdbcType=INTEGER}
+            </if>
+            <if test="tagStatus != null" >
+                and `tag_status` = #{tagStatus,jdbcType=INTEGER}
+            </if>
+            <if test="sortOrder != null" >
+                and `sort_order` = #{sortOrder,jdbcType=INTEGER}
+            </if>
+            <if test="parentTagId != null" >
+                and `parent_tag_id` = #{parentTagId,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

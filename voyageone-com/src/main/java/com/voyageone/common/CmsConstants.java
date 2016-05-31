@@ -2,6 +2,9 @@ package com.voyageone.common;
 
 public class CmsConstants {
 
+    // 从上新的任务表中一次数据抽出最大件数
+    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
+
     /**
      * 产品状态
      */
@@ -82,6 +85,9 @@ public class CmsConstants {
         // 全店操作配置最小间隔时间
         String STORE_OPERATION_INTERVAL_TIME = "STORE_OPERATION_INTERVAL_TIME";
 
+        // 原始图片的判断存在依据
+        String IMAGE_COMPARE_RULE = "IMAGE_COMPARE_RULE";
+
         // 价格相关
         String PRICE = "PRICE";
         String PRICE_SX_PRICE = ".sx_price";
@@ -92,6 +98,27 @@ public class CmsConstants {
     public interface DataAmount {
         String FEED_TO_MASTER_INSERT = "FEED_TO_MASTER_INSERT";
         String FEED_TO_MASTER_UPDATE = "FEED_TO_MASTER_UPDATE";
+    }
+
+    public interface ImageUploadStatus {
+        String NOT_UPLOAD = "1";
+        String WAITING_UPLOAD = "2";
+        String UPLOAD_SUCCESS = "3";
+        String UPLOAD_FAIL = "4";
+    }
+
+    public interface ImageType {
+        String SIZE_CHART_IMAGE = "2";
+        String BRAND_STORY_IMAGE = "3";
+        String SHIPPING_DESCRIPTION_IMAGE = "4";
+        String STORE_DESCRIPTION_IMAGE = "5";
+    }
+
+    public interface StoreOperationType {
+        String REPUBLISH = "1";
+        String REIMPORT_FEED_CLEAR_COMMON_PROPERTY = "2";
+        String REIMPORT_FEED_NOT_CLEAR_COMMON_PROPERTY = "3";
+        String PRICE_SYNCHRONIZATION = "4";
     }
 
     public interface JmMasterPlatCode {
@@ -135,4 +162,22 @@ public class CmsConstants {
         int property4CellNum = 24;
         int size = 25;
     }
+
+    /**
+     * 判断原始图片是否存在的依据
+     */
+    public interface IMAGE_COMPARE_RULE {
+        String ORIGINAL_URL = "1";
+        String ORIGINAL_IAMGE_NAME = "2";
+    }
+
+    /**
+     * 上新的任务表中的上新状态值
+     */
+    public interface SxWorkloadPublishStatusNum {
+        int initNum = 0;
+        int okNum = 1;
+        int errorNum = 2;
+    }
+
 }
