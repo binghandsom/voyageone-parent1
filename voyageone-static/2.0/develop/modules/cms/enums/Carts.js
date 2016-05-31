@@ -70,6 +70,16 @@ define(['underscore'], function (_) {
         JGY: new Cart('JGY', 29, '京东悦境'),
 
         /**
+         * 京东匠心界
+         */
+        JGJ: new Cart('JGJ', 928, '京东匠心界'),
+
+        /**
+         * 京东悦境
+         */
+        JGY: new Cart('JGY', 929, '京东悦境'),
+
+        /**
          * Mini Mall
          */
         MM: new Cart('US', 99, 'US Joi'),
