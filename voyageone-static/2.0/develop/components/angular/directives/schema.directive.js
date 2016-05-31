@@ -320,7 +320,14 @@
                      * @param index
                      */
                     scope.delField = function (index) {
-                        field.complexValues.splice(index, 1);
+                        if(field.complexValues.length == 1){
+                            for(var attr in field.complexValues[0].fieldMap){
+                                if(attr.indexOf("image") >= 0)
+                                    field.complexValues[0].fieldMap[attr].value = "";
+                            }
+                        }
+                        else
+                            field.complexValues.splice(index, 1);
                     };
                     function getTemplate() {
                         switch (schema.type()) {
