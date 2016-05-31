@@ -14,7 +14,7 @@
     <import resource="classpath*:datasource-cms2-config.xml" />
     <import resource="classpath*:datasource-config-mongo-cms2.xml" />
     <!-- MQ Config -->
-    <import resource="classpath*:mq-config.xml" />
+    <!--<import resource="classpath*:mq-config.xml" />-->
     <!-- Redis Config -->
     <import resource="classpath*:redis-config.xml" />
 

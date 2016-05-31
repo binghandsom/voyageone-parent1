@@ -159,7 +159,8 @@ public class JuMeiProductPlatform3Service {
             updateData.setDeal_price(skuPriceBean.getDealPrice());
             updateData.setMarket_price(skuPriceBean.getMarketPrice());
         }
-        serviceJumeiHtDeal.updateDealPriceBatch(shopBean,request);
+        request.setUpdate_data(list);
+        serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
     }
     private Long getTime(Date d) throws Exception {
         long l = d.getTime() / 1000 - 8 * 3600;

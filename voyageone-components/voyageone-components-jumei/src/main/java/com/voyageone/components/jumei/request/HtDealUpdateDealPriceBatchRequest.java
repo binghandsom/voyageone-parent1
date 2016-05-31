@@ -5,6 +5,7 @@ import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateDat
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,13 +14,13 @@ import java.util.Map;
 public class HtDealUpdateDealPriceBatchRequest implements BaseJMRequest {
     private String url = "/v1/htDeal/updateDealPriceBatch";
     //修改的数据;
-    private com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData update_data;
+    private List<HtDeal_UpdateDealPriceBatch_UpdateData> update_data;
 
-    public HtDeal_UpdateDealPriceBatch_UpdateData getUpdate_data() {
+    public List<HtDeal_UpdateDealPriceBatch_UpdateData> getUpdate_data() {
         return update_data;
     }
 
-    public void setUpdate_data(HtDeal_UpdateDealPriceBatch_UpdateData update_data) {
+    public void setUpdate_data(List<HtDeal_UpdateDealPriceBatch_UpdateData> update_data) {
         this.update_data = update_data;
     }
 
@@ -28,9 +29,6 @@ public class HtDealUpdateDealPriceBatchRequest implements BaseJMRequest {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     @Override
     public Map<String, Object> getParameter() throws IOException {

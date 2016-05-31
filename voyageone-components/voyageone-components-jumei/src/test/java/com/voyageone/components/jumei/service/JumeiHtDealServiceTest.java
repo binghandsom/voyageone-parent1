@@ -3,9 +3,12 @@ package com.voyageone.components.jumei.service;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.JumeiHtDealService;
+import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
 import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
+import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
 import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
+import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
@@ -46,6 +51,25 @@ public class JumeiHtDealServiceTest {
         request.setStart_time(new Date().getTime());
         request.setEnd_time(new Date().getTime()+100000000);
         HtDealCopyDealResponse response = htDealService.copyDeal(shopBean, request);
+    }
+    @Test
+    public void  updateDealPriceBatch() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey("72");
+        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
+        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
+        shopBean.setApp_url("http://openapi.ext.jmrd.com:8823");
+
+        HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
+        List<HtDeal_UpdateDealPriceBatch_UpdateData> list=new ArrayList<>();
+        HtDeal_UpdateDealPriceBatch_UpdateData updateData=new HtDeal_UpdateDealPriceBatch_UpdateData();
+        updateData.setJumei_hash_id("ht1454411913p2225506");
+        updateData.setJumei_sku_no("ht1454411913p2225506");
+        updateData.setMarket_price(5);
+        updateData.setDeal_price(4);
+        list.add(updateData);
+        request.setUpdate_data(list);
+        HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
     }
 
 }
