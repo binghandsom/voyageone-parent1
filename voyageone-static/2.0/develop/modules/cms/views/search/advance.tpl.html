@@ -540,7 +540,7 @@
 											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
-										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0">&nbsp;&nbsp;
+										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
 											<button ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
 													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
 										</span>
