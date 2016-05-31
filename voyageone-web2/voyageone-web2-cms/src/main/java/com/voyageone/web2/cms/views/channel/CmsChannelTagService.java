@@ -34,7 +34,7 @@ public class CmsChannelTagService extends BaseAppService {
         Map<String, Object> result = new HashMap<>();
         List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
         //取得所有的标签类型
-        result.put("tagTree",convertToTree(tagsList));
+        result.put("tagTree",tagsList);
         //标签类型
         result.put("tagTypeList", Types.getTypeList(74, lang));
         //返回数据类型
