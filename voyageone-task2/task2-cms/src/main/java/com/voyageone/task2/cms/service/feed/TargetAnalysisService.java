@@ -486,7 +486,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]) / 16.0);
                 return convertWeight.toString();
             }else if("lb".equalsIgnoreCase(temp[1])){
-                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));;
+                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
                 return convertWeight.toString();
             }else{
                 throw new BusinessException("重量转换失败：" + weight);
