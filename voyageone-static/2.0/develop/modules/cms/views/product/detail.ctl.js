@@ -96,7 +96,7 @@ define([
                         self._orgChaName = res.data.orgChaName;
                         self._isminimall = res.data.isminimall;
                         self._isMain = res.data.isMain;
-                        self.currentImage = self.$rootScope.imageUrl.replace('%s', self.productDetails.productImages.image1[0].image1) + ".jpg";
+                        self.currentImage = res.data.defaultImage;
 
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady

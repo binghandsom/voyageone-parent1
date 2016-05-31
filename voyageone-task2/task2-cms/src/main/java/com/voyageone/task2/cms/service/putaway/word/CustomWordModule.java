@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.ims.rule_expression.CustomWord;
 import org.slf4j.Logger;
@@ -21,8 +22,8 @@ public abstract class CustomWordModule {
         this.moduleName = moduleName;
     }
 
-    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam);
-    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet);
+    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) throws TaskSignal;
+    abstract public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) throws TaskSignal;
 
     @Override
     public boolean equals(Object obj) {

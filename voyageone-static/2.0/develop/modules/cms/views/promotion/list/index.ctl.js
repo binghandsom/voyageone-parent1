@@ -4,9 +4,9 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (_) {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, cookieService,$filter) {
+    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, cookieService) {
 
-        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":0},{"name":"Close","value":1}],"promotionIdList": []};
+        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":0},{"name":"Close","value":1}],"promotionIdList": [],status: {open: true}};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 0, fetch: $scope.search};
         $scope.datePicker = [];
@@ -14,7 +14,6 @@ define([
         $scope.initialize = function () {
             promotionService.init().then(function (res) {
                 $scope.vm.platformTypeList = res.data.platformTypeList;
-                //$scope.vm.promotionStatus = res.data.promotionStatus;
                 $scope.search();
             });
         };
@@ -38,9 +37,8 @@ define([
                     if(item.activityEnd) item.activityEnd = new Date(item.activityEnd);
                     if(item.preSaleStart) item.preSaleStart = new Date(item.preSaleStart);
                     if(item.preSaleEnd) item.preSaleEnd = new Date(item.preSaleEnd);
-                })
+                });
                 $scope.groupPageOption.total = $scope.vm.promotionList.length;
-            }, function (res) {
             })
         };
 
@@ -50,20 +48,20 @@ define([
                 promotionService.delPromotion(data).then(function () {
                     $scope.vm.promotionList.splice(index, 1);
                     $scope.groupPageOption.total = $scope.vm.promotionList.size;
-                }, function (res) {
                 })
             })
 
         };
 
         $scope.teJiaBaoInit = function(promotionId){
-            promotionDetailService.teJiaBaoInit(promotionId).then(function (res) {
+            promotionDetailService.teJiaBaoInit(promotionId).then(function () {
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 $location.path(cRoutes.promotion_task_price.url + promotionId);
             })
         };
-    }
+    };
 
+    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService'];
 
     return indexController;
 });

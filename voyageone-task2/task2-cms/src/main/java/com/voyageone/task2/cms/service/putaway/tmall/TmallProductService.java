@@ -300,7 +300,7 @@ public class TmallProductService {
             logger.debug("product_match_schema:" + searchSchema);
 
             if (searchSchema == null) {
-                logger.info("No match schema found");
+                logger.info("No match product schema found from Tmall");
                 // modified by morse.lu 2016/05/24 start
 //                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
                 // 允许无产品，只有商品
@@ -524,6 +524,15 @@ public class TmallProductService {
 
             String productSchema = cmsMtPlatformCategorySchemaModel.getPropsProduct();
             logger.debug("productSchema:" + productSchema);
+            // added by morse.lu 2016/05/27 start
+            if (productSchema == null) {
+                logger.info("No match product schema found from cms");
+                // 允许无产品，只有商品
+                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
+                tmallUploadRunState.getContextBuildFields().clearContext();
+                return;
+            }
+            // added by morse.lu 2016/05/27 end
 
             Map<String, Field> fieldMap;
             try {
@@ -1341,6 +1350,11 @@ public class TmallProductService {
         List<Double> skuPriceList = new ArrayList<>();
         for (SxProductBean sxProduct : sxProducts) {
             CmsBtProductModel cmsProduct = sxProduct.getCmsBtProductModel();
+
+            if (!cmsProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
+
             for (CmsBtProductModel_Sku cmsBtProductModelSku : cmsProduct.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());

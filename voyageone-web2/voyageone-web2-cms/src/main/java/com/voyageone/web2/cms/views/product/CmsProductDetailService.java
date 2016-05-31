@@ -23,6 +23,7 @@ import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -63,6 +64,8 @@ public class CmsProductDetailService extends BaseAppService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    ImageTemplateService imageTemplateService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -193,6 +196,13 @@ public class CmsProductDetailService extends BaseAppService {
             }
         }
         infoMap.put("isMain", isMain ? 1 : 0);
+
+        // 设置默认第一张图片
+        String defaultImageUrl = imageTemplateService.getDefaultImageUrl(channelId);
+        Map<String, Object> defaultImage = productValueModel.getFields().getImages1().get(0);
+        if (defaultImage.size() > 0)
+            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))) + ".jpg");
+
         return infoMap;
     }
 
