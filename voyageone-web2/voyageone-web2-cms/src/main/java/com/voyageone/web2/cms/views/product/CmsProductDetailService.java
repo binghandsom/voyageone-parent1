@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
@@ -103,10 +104,10 @@ public class CmsProductDetailService extends BaseAppService {
 
         //获取商品图片信息.
         Map<String, List<CmsBtProductModel_Field_Image>> productImages = new HashMap<>();
-        productImages.put("image1",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE));
-        productImages.put("image2",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
-        productImages.put("image3",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
-        productImages.put("image4",productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
+        productImages.put("image1", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE));
+        productImages.put("image2", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
+        productImages.put("image3", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
+        productImages.put("image4", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
 
         // 获取feed方数据.
         Map<String, String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
@@ -184,7 +185,7 @@ public class CmsProductDetailService extends BaseAppService {
         }
 
         // 判断是否是minimall用户
-        boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        boolean isMiniMall = Channels.isUsJoi(channelId);
         infoMap.put("isminimall", isMiniMall ? 1 : 0);
 
         // 判断是否主商品
@@ -335,7 +336,7 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
 
         //执行product的carts更新
-        if(productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
             // 执行carts更新
             List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), oldProduct.getCarts());
@@ -347,7 +348,7 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
 
         //执行product上新
-        if(productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
             // 插入上新程序
             productService.insertSxWorkLoad(channelId, newProduct, userName);
@@ -476,7 +477,7 @@ public class CmsProductDetailService extends BaseAppService {
      * 获取 feed info model.
      */
     private Map<String, String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
-        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productValueModel.getFields().getCode());
+        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productValueModel.getFields().getOriginalCode() == null ? productValueModel.getFields().getCode() : productValueModel.getFields().getOriginalCode());
         Map<String, String> feedAttributes = new HashMap<>();
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.

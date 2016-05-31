@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import org.springframework.beans.BeanUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -262,6 +263,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         } else {
             cmsBtFeedInfoModel.setImage(new ArrayList<>());
         }
+
+        this.getSkus().forEach(cmsBtFeedInfoModel_sku -> cmsBtFeedInfoModel_sku.setImage(cmsBtFeedInfoModel.getImage().stream().collect(Collectors.toList())));
 
         cmsBtFeedInfoModel.setBrand(this.getBrand());
         cmsBtFeedInfoModel.setWeight(this.getWeight());
