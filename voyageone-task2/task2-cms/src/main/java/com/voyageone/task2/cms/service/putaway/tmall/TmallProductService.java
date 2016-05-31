@@ -290,6 +290,15 @@ public class TmallProductService {
         // 临时写死上新target店铺
         ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
 //        ShopBean shopBean = getShop(orderChannelId, cartId);
+
+        String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
+        if (!StringUtils.isEmpty(productCode)) {
+            tmallUploadRunState.setProduct_code(productCode);
+            workLoadBean.setProductId(tmallUploadRunState.getProduct_code());
+            //找到产品ID，下一步要上传商品，因此任务状态变为上传商品状态
+            tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
+            return;
+        }
         // modified by morse.lu 2016/05/15 end
 
         List<String> productCodeList = new ArrayList<>();
