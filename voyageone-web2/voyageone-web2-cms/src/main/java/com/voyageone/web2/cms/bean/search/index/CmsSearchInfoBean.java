@@ -66,15 +66,15 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
-    public String getFullCatIdValue() {
-        return fullCatIdValue;
+    private List<String>  cidValue;
+
+    public List<String> getCidValue() {
+        return cidValue;
     }
 
-    public void setFullCatIdValue(String fullCatIdValue) {
-        this.fullCatIdValue = fullCatIdValue;
+    public void setCidValue(List<String> cidValue) {
+        this.cidValue = cidValue;
     }
-
-    private String fullCatIdValue;
 
     public String getOrgChaId() {
         return orgChaId;
