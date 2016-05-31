@@ -246,6 +246,12 @@
     list-style: none outside none;
     margin: 4px 0 0 -48px;
     text-align: center;
+    min-height: 144px;
+}
+@media screen and (max-width: 1441px) {
+    .stat-boxes{
+        min-height: 216px;
+    }
 }
 .stat-boxes li{
     background-color: #F6F6F6;
@@ -265,7 +271,7 @@
     font-size: 12px;
     padding: 9px 0px 8px 0;
     text-align: center;
-    width: 80px;
+    width: 110px;
     color: #666666;
     text-shadow: 0 1px 0 #ffffff;
     float: left;
