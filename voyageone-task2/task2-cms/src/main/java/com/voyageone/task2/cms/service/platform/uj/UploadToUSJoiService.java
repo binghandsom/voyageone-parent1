@@ -80,8 +80,8 @@ public class UploadToUSJoiService extends BaseTaskService{
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
+        String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
         try {
-            String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
             $info(String.format("channelId:%s  groupId:%d  复制到%s 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
             List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
             $info("productModels"+productModels.size());
@@ -226,11 +226,11 @@ public class UploadToUSJoiService extends BaseTaskService{
             }
             sxWorkLoadBean.setPublishStatus(1);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
         }catch (Exception e){
             sxWorkLoadBean.setPublishStatus(2);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
             e.printStackTrace();
             issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
             throw e;
