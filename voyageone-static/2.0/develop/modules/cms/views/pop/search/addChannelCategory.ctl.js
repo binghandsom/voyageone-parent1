@@ -28,6 +28,7 @@ define([
             this.notify = notify;
             this.checkedCountValid = false;
             this.cartIdValid = false;
+            this.cnt = "";
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -37,8 +38,10 @@ define([
             init: function () {
                 var self = this;
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
-                    self.cartList = res.data.cartList;
+                    self.checkedCountValid = false;
                     self.cartIdValid = false;
+                    self.cartList = res.data.cartList;
+                    self.cnt = res.data.cnt;
                     if (self.cartId == "0" || self.cartId == "1") {
                         self.isSelectCid = [];
                         self.channelCategoryList = null;
@@ -75,7 +78,7 @@ define([
                             category = category.parent;
                         }
                     });
-                    if (fullCIds.length > 10) {
+                    if (fullCIds.length > self.cnt) {
                         self.checkedCountValid = true;
                     } else {
                         self.addChannelCategoryService.save({
