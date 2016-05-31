@@ -285,7 +285,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //批量再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchCopyDeal)
-    public AjaxResponse batchCopyDeal(BatchCopyDealParameter parameter) {
+    public AjaxResponse batchCopyDeal(@RequestBody BatchCopyDealParameter parameter) {
         service3.batchCopyDeal(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
@@ -295,7 +295,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
     //全部再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
-    public AjaxResponse copyDealAll(int promotionId) {
+    public AjaxResponse copyDealAll(@RequestBody int promotionId) {
         service3.copyDealAll(promotionId);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", promotionId);

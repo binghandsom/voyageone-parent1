@@ -249,7 +249,7 @@ define([
         $scope.batchSynchPrice = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
             var parameter={};
-            parameter.promotionId=vm.promotionId;
+            parameter.promotionId= $scope.vm.promotionId;
             parameter.listPromotionProductId=listPromotionProductId;
             jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                 if (res.data.result) {
@@ -265,7 +265,7 @@ define([
         }
         $scope.synchAllPrice=function()
         {
-            jmPromotionDetailService.synchAllPrice({promotionId:  $scope.vm.promotionId}).then(function (res) {
+            jmPromotionDetailService.synchAllPrice( $scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert($translate.instant('TXT_SUCCESS'));
@@ -280,7 +280,7 @@ define([
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
             var parameter={};
-            parameter.promotionId=vm.promotionId;
+            parameter.promotionId= $scope.vm.promotionId;
             parameter.listPromotionProductId=listPromotionProductId;
             jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
                 if (res.data.result) {
@@ -295,7 +295,7 @@ define([
             });
         }
         $scope.copyDealAll=function() {
-            jmPromotionDetailService.copyDealAll({promotionId: $scope.vm.promotionId}).then(function (res) {
+            jmPromotionDetailService.copyDealAll( $scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert($translate.instant('TXT_SUCCESS'));

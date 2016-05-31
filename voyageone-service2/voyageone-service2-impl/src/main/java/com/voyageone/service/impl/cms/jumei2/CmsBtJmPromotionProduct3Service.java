@@ -98,6 +98,7 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量同步价格
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
+        if(parameter.getListPromotionProductId().size()==0) return;
         daoExt.batchSynchPrice(parameter.getListPromotionProductId());
     }
 
@@ -108,6 +109,7 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量再售
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
+        if(parameter.getListPromotionProductId().size()==0) return;
         daoExt.batchCopyDeal(parameter.getListPromotionProductId());
     }
 
