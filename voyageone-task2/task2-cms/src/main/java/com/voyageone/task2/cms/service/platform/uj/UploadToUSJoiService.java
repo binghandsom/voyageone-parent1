@@ -109,7 +109,7 @@ public class UploadToUSJoiService extends BaseTaskService{
                 if (pr == null) {
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
-                    creatGroup(productModel);
+                    creatGroup(productModel, usJoiChannelId);
 
 
                     List<ProductPriceBean> productPrices = new ArrayList<>();
@@ -277,11 +277,11 @@ public class UploadToUSJoiService extends BaseTaskService{
         return groupObj;
     }
 
-    private void creatGroup(CmsBtProductModel cmsBtProductModel) {
+    private void creatGroup(CmsBtProductModel cmsBtProductModel,String usJoiChannel) {
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
 
         // 获取当前channel, 有多少个platform
-        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(ChannelConfigEnums.Channel.VOYAGEONE.getId(), "D", "en"); // 取得展示用数据
+        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(usJoiChannel, "D", "en"); // 取得展示用数据
         if (typeChannelBeanList == null) {
             return;
         }
