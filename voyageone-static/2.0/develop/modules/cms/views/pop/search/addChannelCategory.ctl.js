@@ -77,18 +77,19 @@ define([
                     });
                     if (fullCIds.length > 10) {
                         self.checkedCountValid = true;
+                    } else {
+                        self.addChannelCategoryService.save({
+                            "cIds": cIds,
+                            "cNames": cNames,
+                            "fullCNames": fullCNames,
+                            "fullCatId": fullCIds,
+                            "code": self.code,
+                            "cartId": self.cartId
+                        }).then(function (res) {
+                            self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                            self.$uibModalInstance.close();
+                        });
                     }
-                    self.addChannelCategoryService.save({
-                        "cIds": cIds,
-                        "cNames": cNames,
-                        "fullCNames": fullCNames,
-                        "fullCatId": fullCIds,
-                        "code": self.code,
-                        "cartId": self.cartId
-                    }).then(function (res) {
-                        self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                        self.$uibModalInstance.close();
-                    });
                 }
             }
         };
