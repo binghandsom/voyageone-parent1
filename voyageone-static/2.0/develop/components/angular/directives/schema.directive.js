@@ -267,6 +267,9 @@
                                 break;
                         }
                     });
+                    /**
+                     * 根据type类型匹配模板
+                     */
                     getTemplate().getHtml().then(function (html) {
                         if (schema.tipMsg() != null && scope.$hastip) return schemas.multiComplex_tip.getHtml().then(function (tipHtml) {
                             compileTemplate(html + tipHtml);

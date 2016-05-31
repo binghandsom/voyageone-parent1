@@ -2,6 +2,7 @@ package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -89,8 +90,12 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
 
         } catch (BusinessException be) {
             status = TaskControlEnums.Status.ERROR;
+            $error("出现业务异常，任务退出", be);
+            issueLog.log(be, ErrorType.BatchJob,getSubSystem());
         } catch (Exception e) {
+            $error("出现异常，任务退出", e);
             status = TaskControlEnums.Status.ERROR;
+            issueLog.log(e, ErrorType.BatchJob, getSubSystem());
         }
 
         // 任务监控历史记录添加:结束

@@ -29,10 +29,13 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ImageTemplateService extends BaseService {
+
     @Autowired
     MongoSequenceService commSequenceMongoService; // DAO: Sequence
+
     @Autowired
     private CmsBtImageTemplateDao dao;
+
     @Autowired
     LiquidFireImageService serviceLiquidFireImage;
 
@@ -310,7 +313,7 @@ public class ImageTemplateService extends BaseService {
         List<CmsBtImageTemplateModel> templateModelList = dao.selectTemplateForImageUpload(channelId, brandName, productType, sizeType);
 
         List<CmsBtImageTemplateModel> noParamTemplateList = templateModelList.stream().filter(cmsBtImageTemplateModel ->
-                        cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
+                cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
         ).collect(Collectors.toList());
 
         // TODO: 16/5/10 根据有限顺序判断返回的只对应其中一个templateid
@@ -376,5 +379,9 @@ public class ImageTemplateService extends BaseService {
         String tempUrl = this.getDefaultImageUrl(channelId);
 
         return tempUrl.replace("%s", imageName) + ".jpg";
+    }
+
+    public List<CmsBtImageTemplateModel> getAllTemplate(String channel, Integer cart) {
+        return dao.selectAll(channel, cart);
     }
 }

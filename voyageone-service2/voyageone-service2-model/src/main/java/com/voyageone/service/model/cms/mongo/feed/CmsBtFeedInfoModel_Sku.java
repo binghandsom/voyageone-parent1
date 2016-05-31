@@ -16,6 +16,7 @@ public class CmsBtFeedInfoModel_Sku {
     private String barcode;
     private String clientSku;
     private List<String> image;
+    private Integer qty;
 
     public Double getPriceCurrent() {
         return priceCurrent;
@@ -87,6 +88,14 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setClientSku(String clientSku) {
         this.clientSku = clientSku;
+    }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
     }
 
     public List<String> getImage() { return image; }

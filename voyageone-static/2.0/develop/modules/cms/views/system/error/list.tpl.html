@@ -97,15 +97,15 @@
 							</a>
 						</td>
 						<td class="mfb-xxs text-left">
-                            <span ng-bind="::errorInfo.errorCode"></span><br/><span ng-bind="::errorInfo.errMsg"></span>
+                            <span ng-bind="::errorInfo.errorCode"></span><br/><span ng-bind="::errorInfo.errorMsg"></span>
                         </td>
 						<td class="mfb-xxx text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
 						<td class="mfb-x text-left">
 							<div class="onoffswitch">
-								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5"
-                                       ng-change="updateFinishStatus(errorInfo.seq)"
+								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="{{errorInfo.id}}"
+                                       ng-change="updateFinishStatus(errorInfo.id)"
                                        ng-model="errorInfo.status">
-								<label class="onoffswitch-label" for="myonoffswitch5">
+								<label class="onoffswitch-label" for="{{errorInfo.id}}">
 									<span class="onoffswitch-inner"></span>
 									<span class="onoffswitch-switch"></span>
 								</label>

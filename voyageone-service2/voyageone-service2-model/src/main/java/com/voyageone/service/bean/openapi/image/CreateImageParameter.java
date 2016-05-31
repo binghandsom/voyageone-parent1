@@ -9,19 +9,12 @@ import com.voyageone.service.bean.openapi.OpenApiException;
  * Created by dell on 2016/4/26.
  */
 public class CreateImageParameter {
-    protected String channelId;//
+    protected String channelId;
     protected long templateId;
     protected String file;
-    protected String[] vParam;
     protected boolean isUploadUsCdn = false;
-
-    public boolean isUploadUsCdn() {
-        return isUploadUsCdn;
-    }
-
-    public void setUploadUsCdn(boolean uploadUsCdn) {
-        isUploadUsCdn = uploadUsCdn;
-    }
+    protected boolean skipCache = false;
+    protected String[] vParam;
 
     public String getChannelId() {
         return channelId;
@@ -45,6 +38,22 @@ public class CreateImageParameter {
 
     public void setFile(String file) {
         this.file = file;
+    }
+
+    public boolean isUploadUsCdn() {
+        return isUploadUsCdn;
+    }
+
+    public void setUploadUsCdn(boolean uploadUsCdn) {
+        isUploadUsCdn = uploadUsCdn;
+    }
+
+    public boolean isSkipCache() {
+        return skipCache;
+    }
+
+    public void setSkipCache(boolean skipCache) {
+        this.skipCache = skipCache;
     }
 
     public String[] getVParam() {

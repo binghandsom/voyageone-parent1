@@ -158,6 +158,11 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.EXTENDSIZE_ALIASNAME) {
                     skuExtend_aliasnameField = platformProp;
                 }
+
+                // 暂时不知道匹配什么
+                if (type.intValue() == SkuTemplateConstants.UNKOWN) {
+                    addUnkownField(platformProp);
+                }
             }
         }
 

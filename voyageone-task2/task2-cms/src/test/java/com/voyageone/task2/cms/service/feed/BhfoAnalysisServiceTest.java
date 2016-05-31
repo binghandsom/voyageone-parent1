@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.bean.SuperfeedBhfoBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,12 @@ public class BhfoAnalysisServiceTest {
     @Test
     public void testOnStartup() throws Exception {
         bhfoAnalysisService.onStartup(new ArrayList<TaskControlBean>());
+    }
+
+    @Test
+    public void testBean(){
+        SuperfeedBhfoBean superfeedBhfoBean = new SuperfeedBhfoBean();
+        superfeedBhfoBean.getMd5();
+
     }
 }

@@ -69,6 +69,7 @@
 
                             // 取所有错误的 angular 错误名称, 如 required
                             var errorKeys = Object.keys($error);
+                            var translateParam = {field: fieldName, form: formName};
 
                             // 取第一个
                             var error = errorKeys[0];
@@ -79,8 +80,15 @@
                                 return;
                             }
 
+                            // 对长度类型检查, 补充参数
+                            if (['maxlength', 'minlength', 'max', 'min'].indexOf(error) > -1) {
+
+                                var targetInput = $('form[name="'+ formName +'"] [name="'+ fieldName +'"]');
+                                translateParam.length = targetInput.attr(error);
+                            }
+
                             // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                            $translate(errorTypes[error], {field: fieldName, form: formName}).then(show, show);
+                            $translate(errorTypes[error], translateParam).then(show, show);
 
                         }, true);
 
