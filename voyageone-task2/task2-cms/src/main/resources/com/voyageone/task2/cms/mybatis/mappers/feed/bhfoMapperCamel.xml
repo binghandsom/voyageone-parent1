@@ -3388,6 +3388,7 @@
       <result column="price_net" property="priceNet" />
       <result column="price_client_retail" property="priceClientRetail" />
       <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
     </collection>
     <collection property="image" javaType="ArrayList" ofType="String" >
       <result column="image" property="image" />
@@ -3421,6 +3422,9 @@
     ,${image} as image
     ,${client_product_url} as client_product_url
     ,${product_type} as product_type
+    <if test="quantity != null">
+      ,${quantity} as quantity
+    </if>
     <if test="attr != null">
       ,${attr}
     </if>

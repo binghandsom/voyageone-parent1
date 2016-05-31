@@ -11,6 +11,8 @@ public class CmsMtCategoryTreeModel extends BaseMongoModel {
     private String catPath = "";
     private String parentCatId = "0";
     private int isParent = 0;
+    private String singleSku;
+
     private List<CmsMtCategoryTreeModel> children = new ArrayList<>();
 
     public String getCatId() {
@@ -61,4 +63,7 @@ public class CmsMtCategoryTreeModel extends BaseMongoModel {
         this.children = children;
     }
 
+    public String getSingleSku() { return singleSku; }
+
+    public void setSingleSku(String singleSku) { this.singleSku = singleSku; }
 }

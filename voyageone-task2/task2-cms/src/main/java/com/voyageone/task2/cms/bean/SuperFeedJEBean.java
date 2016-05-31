@@ -1857,6 +1857,8 @@ public class SuperFeedJEBean {
 		temp.append(this.Attribute93Value);
 		temp.append(this.Attribute94Name);
 		temp.append(this.Attribute94Value);
+		temp.append(this.Attribute95Name);
+		temp.append(this.Attribute95Value);
 		temp.append(this.HarmonizedCode);
 		temp.append(this.Height);
 		temp.append(this.Length);
