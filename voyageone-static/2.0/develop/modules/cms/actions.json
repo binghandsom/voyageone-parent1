@@ -27,9 +27,9 @@
         "search": "search",
         "getGroupList": "getGroupList",
         "getProductList": "getProductList",
-        "exportProducts":"exportProducts",
-        "getCustColumnsInfo":"getCustColumnsInfo",
-        "saveCustColumnsInfo":"saveCustColumnsInfo",
+        "exportProducts": "exportProducts",
+        "getCustColumnsInfo": "getCustColumnsInfo",
+        "saveCustColumnsInfo": "saveCustColumnsInfo",
         "addFreeTag": "addFreeTag"
       },
       "$feedSearchService": {
@@ -48,14 +48,14 @@
       }
     },
     "product": {
-      "$productDetailService":{
-        "root":"/cms/product/detail/",
-        "getProductInfo":"getProductInfo",
-        "updateProductMasterInfo":"updateProductMasterInfo",
-        "updateProductSkuInfo":"updateProductSkuInfo",
-        "updateProductAllInfo":"updateProductAllInfo",
-        "changeCategory":"changeCategory",
-        "revertCategory":"revertCategory"
+      "$productDetailService": {
+        "root": "/cms/product/detail/",
+        "getProductInfo": "getProductInfo",
+        "updateProductMasterInfo": "updateProductMasterInfo",
+        "updateProductSkuInfo": "updateProductSkuInfo",
+        "updateProductAllInfo": "updateProductAllInfo",
+        "changeCategory": "changeCategory",
+        "revertCategory": "revertCategory"
       }
     },
     "mapping": {
@@ -94,25 +94,25 @@
       "$dictionaryService": {
         "root": "/cms/mapping/dictionary",
         "init": "init",
-        "getDict" : "getDict",
-        "getDictList" : "getDictList",
-        "getConst" : "getConst",
-        "getCustoms" : "getCustoms",
-        "setDict" : "setDict",
-        "delDict" : "delDict",
-        "addDict" : "addDict"
+        "getDict": "getDict",
+        "getDictList": "getDictList",
+        "getConst": "getConst",
+        "getCustoms": "getCustoms",
+        "setDict": "setDict",
+        "delDict": "delDict",
+        "addDict": "addDict"
       }
     },
     "promotion": {
-      "promotionService" : {
+      "promotionService": {
         "root": "/cms/promotion/index",
         "init": "init",
-        "initByPromotionId":"initByPromotionId",
+        "initByPromotionId": "initByPromotionId",
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",
         "delPromotion": "delPromotion",
-        "exportPromotion":"exportPromotion"
+        "exportPromotion": "exportPromotion"
       },
       "promotionDetailService": {
         "root": "/cms/promotion/detail",
@@ -120,10 +120,10 @@
         "getPromotionCode": "getPromotionCode",
         "getPromotionSku": "getPromotionSku",
         "uploadPromotion": "uploadPromotion",
-        "teJiaBaoInit" : "teJiaBaoInit",
-        "updatePromotionProduct" : "updatePromotionProduct",
-        "delPromotionModel" : "delPromotionModel",
-        "delPromotionCode":"delPromotionCode"
+        "teJiaBaoInit": "teJiaBaoInit",
+        "updatePromotionProduct": "updatePromotionProduct",
+        "delPromotionModel": "delPromotionModel",
+        "delPromotionCode": "delPromotionCode"
       }
     },
     "jmpromotion": {
@@ -165,268 +165,267 @@
         "batchCopyDeal": "batchCopyDeal",
         "copyDealAll": "copyDealAll"
       },
-    "cmsBtJmPromotionImportTask":{
-      "cmsBtJmPromotionImportTaskService":{
-        "root":"/cms/CmsBtJmPromotionImportTask/index",
-        "getByPromotionId":"getByPromotionId"
-      }
-    },
-    "cmsBtJmPromotionExportTask":{
-      "cmsBtJmPromotionExportTaskService": {
-        "root": "/cms/CmsBtJmPromotionExportTask/index",
-        "getByPromotionId": "getByPromotionId",
-        "addExport": "addExport"
-      }
-    },
-    "cmsMtImageCreate":{
-      "cmsMtImageCreateService":{
-        "root":"/cms/imagecreate/index",
-        "getPageByWhere":"getPageByWhere",
-        "getCountByWhere":"getCountByWhere"
-      }
-},
-    "imageManager": {
-      "$CmsMtMasterInfoService": {
-        "root": "/cms/cmsmtmasterinfo/index",
-        "search": "getListByWhere",
-        "addImage": "insert",
-        "saveImage": "update",
-        "deleteImage": "delete",
-        "updateJMImg": "updateJMImg",
-        "getCountByWhere":"getCountByWhere",
-        "loadJmMasterBrand":"loadJmMasterBrand"
+      "cmsBtJmPromotionImportTask": {
+        "cmsBtJmPromotionImportTaskService": {
+          "root": "/cms/CmsBtJmPromotionImportTask/index",
+          "getByPromotionId": "getByPromotionId"
+        }
       },
-      "$CmsMtJmConfigService": {
-        "root": "/cms/cmsmtjmconfig/index",
-        "init": "init",
-        "insert": "insert",
-        "update": "update",
-        "getByKey": "getByKey"
-      }
-    },
-    "task": {
-      "taskService": {
-        "root": "/cms/promotion/task",
-        "page": "page"
+      "cmsBtJmPromotionExportTask": {
+        "cmsBtJmPromotionExportTaskService": {
+          "root": "/cms/CmsBtJmPromotionExportTask/index",
+          "getByPromotionId": "getByPromotionId",
+          "addExport": "addExport"
+        }
       },
-      "taskBeatService": {
-        "root": "/cms/task/beat",
-        "create": "create",
-        "page": "page",
-        "import": "import",
-        "download": "download",
-        "control": "control",
-        "addNumiid": "addNumiid",
-        "addCode": "addCode",
-        "addCheck": "addCheck",
-        "add": "add"
+      "cmsMtImageCreate": {
+        "cmsMtImageCreateService": {
+          "root": "/cms/imagecreate/index",
+          "getPageByWhere": "getPageByWhere",
+          "getCountByWhere": "getCountByWhere"
+        }
       },
-      "taskPriceService" : {
-        "root": "/cms/task/price",
-        "getPriceList": "getPriceList",
-        "updateTaskStatus": "updateTaskStatus"
-      },
-      "taskStockService": {
-        "root": "/cms/promotion/task_stock",
-        "initNewTask": "initNewTask",
-        "saveTask": "saveTask",
-        "delTask": "delTask",
-        "searchStock": "searchStock",
-        "getCommonStockList": "getCommonStockList",
-        "getRealStockList": "getRealStockList",
-        "initNewRecord": "initNewRecord",
-        "getUsableStock": "getUsableStock",
-        "saveNewRecord": "saveNewRecord",
-        "importStockInfo": "importStockInfo",
-        "exportStockInfo": "exportStockInfo",
-        "executeStockSeparation": "executeStockSeparation",
-        "executeStockRevert": "executeStockRevert",
-        "saveRecord": "saveRecord",
-        "delRecord": "delRecord",
-        "getSkuSeparationDetail": "getSkuSeparationDetail",
-        "exportErrorInfo": "exportErrorInfo"
-      },
-      "taskStockIncrementService": {
-        "root": "/cms/promotion/task_stock_increment",
-        "searchTask": "searchTask",
-        "searchSubTask": "searchSubTask",
-        "saveTask": "saveTask",
-        "delTask": "delTask",
-        "getPlatFormList": "getPlatFormList"
-      },
-      "taskStockIncrementDetailService": {
-        "root": "/cms/promotion/task_stock_increment_detail",
-        "searchItem": "searchItem",
-        "saveItem": "saveItem",
-        "delItem": "delItem",
-        "importStockInfo": "importStockInfo",
-        "exportStockInfo": "exportStockInfo",
-        "executeStockIncrementSeparation": "executeStockIncrementSeparation"
-      }
-    },
-    "system": {
-      "category": {
-        "systemCategoryService": {
-          "root": "/cms/system/category",
-          "getCategoryList": "getCategoryList",
-          "getCategoryDetail":"getCategoryDetail",
-          "updateCategorySchema":"updateCategorySchema"
+      "imageManager": {
+        "$CmsMtMasterInfoService": {
+          "root": "/cms/cmsmtmasterinfo/index",
+          "search": "getListByWhere",
+          "addImage": "insert",
+          "saveImage": "update",
+          "deleteImage": "delete",
+          "updateJMImg": "updateJMImg",
+          "getCountByWhere": "getCountByWhere",
+          "loadJmMasterBrand": "loadJmMasterBrand"
         },
-        "categorySettingService": {
-          "root": "/cms/system/category/setting",
-          "getMasterSubCategoryList":"getMasterSubCategoryList",
-          "getPlatformSubCategoryList":"getPlatformSubCategoryList"
+        "$CmsMtJmConfigService": {
+          "root": "/cms/cmsmtjmconfig/index",
+          "init": "init",
+          "insert": "insert",
+          "update": "update",
+          "getByKey": "getByKey"
         }
       },
-      "systemCartService":{
-        "root":"/cms/system/cart",
-        "search":"list",
-        "delete":"delete",
-        "saveOrUpdate":"saveOrUpdate",
-        "save":"save"
-      },
-      "platform":{
-        "platformService":{
-          "root": "/cms/system/platform",
-          "list":"list"
+      "task": {
+        "taskService": {
+          "root": "/cms/promotion/task",
+          "page": "page"
+        },
+        "taskBeatService": {
+          "root": "/cms/task/beat",
+          "create": "create",
+          "page": "page",
+          "import": "import",
+          "download": "download",
+          "control": "control",
+          "addNumiid": "addNumiid",
+          "addCode": "addCode",
+          "addCheck": "addCheck",
+          "add": "add"
+        },
+        "taskPriceService": {
+          "root": "/cms/task/price",
+          "getPriceList": "getPriceList",
+          "updateTaskStatus": "updateTaskStatus"
+        },
+        "taskStockService": {
+          "root": "/cms/promotion/task_stock",
+          "initNewTask": "initNewTask",
+          "saveTask": "saveTask",
+          "delTask": "delTask",
+          "searchStock": "searchStock",
+          "getCommonStockList": "getCommonStockList",
+          "getRealStockList": "getRealStockList",
+          "initNewRecord": "initNewRecord",
+          "getUsableStock": "getUsableStock",
+          "saveNewRecord": "saveNewRecord",
+          "importStockInfo": "importStockInfo",
+          "exportStockInfo": "exportStockInfo",
+          "executeStockSeparation": "executeStockSeparation",
+          "executeStockRevert": "executeStockRevert",
+          "saveRecord": "saveRecord",
+          "delRecord": "delRecord",
+          "getSkuSeparationDetail": "getSkuSeparationDetail",
+          "exportErrorInfo": "exportErrorInfo"
+        },
+        "taskStockIncrementService": {
+          "root": "/cms/promotion/task_stock_increment",
+          "searchTask": "searchTask",
+          "searchSubTask": "searchSubTask",
+          "saveTask": "saveTask",
+          "delTask": "delTask",
+          "getPlatFormList": "getPlatFormList"
+        },
+        "taskStockIncrementDetailService": {
+          "root": "/cms/promotion/task_stock_increment_detail",
+          "searchItem": "searchItem",
+          "saveItem": "saveItem",
+          "delItem": "delItem",
+          "importStockInfo": "importStockInfo",
+          "exportStockInfo": "exportStockInfo",
+          "executeStockIncrementSeparation": "executeStockIncrementSeparation"
         }
       },
-      "error": {
-        "$errorListService": {
-          "root":"/cms/system/error",
+      "system": {
+        "category": {
+          "systemCategoryService": {
+            "root": "/cms/system/category",
+            "getCategoryList": "getCategoryList",
+            "getCategoryDetail": "getCategoryDetail",
+            "updateCategorySchema": "updateCategorySchema"
+          },
+          "categorySettingService": {
+            "root": "/cms/system/category/setting",
+            "getMasterSubCategoryList": "getMasterSubCategoryList",
+            "getPlatformSubCategoryList": "getPlatformSubCategoryList"
+          }
+        },
+        "systemCartService": {
+          "root": "/cms/system/cart",
+          "search": "list",
+          "delete": "delete",
+          "saveOrUpdate": "saveOrUpdate",
+          "save": "save"
+        },
+        "platform": {
+          "platformService": {
+            "root": "/cms/system/platform",
+            "list": "list"
+          }
+        },
+        "error": {
+          "$errorListService": {
+            "root": "/cms/system/error",
+            "init": "init",
+            "search": "search",
+            "updateFinishStatus": "updateFinishStatus"
+          }
+        },
+        "$storeOpService": {
+          "root": "/cms/system/store_operation/",
+          "init": "init",
+          "rePublist": "rePublish",
+          "reUpload": "reUpload",
+          "rePublistPrice": "rePublishPrice",
+          "getHistory": "getHistory"
+        }
+      },
+      "pop": {
+        "$addToPromotionService": {
+          "root": "/cms/pop/add_to_promotion",
+          "getPromotionTags": "getPromotionTags",
+          "addToPromotion": "addToPromotion",
+          "checkPromotionTags": "checkPromotionTags"
+        },
+        "$fieldEditService": {
+          "root": "/cms/pop/field_edit",
+          "getPopOptions": "getPopOptions",
+          "setProductFields": "setProductFields"
+        },
+        "$promotionHistoryService": {
+          "root": "/cms/pop/history_promotion",
+          "getPromotionHistory": "getPromotionHistory"
+        },
+        "$priceHistoryService": {
+          "root": "/cms/pop/history_price",
+          "getPriceHistory": "getPriceHistory"
+        }
+      },
+      "translation": {
+        "translationService": {
+          "root": "/cms/translation/tasks",
+          "getTasks": "getTasks",
+          "searchHistoryTasks": "searchHistoryTasks",
+          "assignTasks": "assignTasks",
+          "copyFormMainProduct": "copyFormMainProduct",
+          "saveTask": "saveTask",
+          "submitTask": "submitTask",
+          "cancelTask": "cancelTask",
+          "getFeedAttributes": "getFeedAttributes"
+        }
+      },
+      "channel": {
+        "custom": {
+          "attributeService": {
+            "root": "/cms/channel/custom/prop",
+            "init": "get",
+            "getCatTree": "getCatTree",
+            "save": "update",
+            "getCatList": "getCatList"
+          }
+        },
+        "value": {
+          "attributeValueService": {
+            "root": "/cms/channel/custom/value",
+            "init": "get",
+            "add": "create",
+            "save": "update"
+          }
+        },
+        "usjoi": {
+          "usjoiService": {
+            "root": "/cms/channel/usjoi/",
+            "getList": "getList",
+            "update": "update",
+            "getCarts": "getCarts",
+            "save": "save",
+            "getCompanys": "getCompanys",
+            "updateCartIds": "updateCartIds",
+            "genKey": "genKey"
+          }
+        },
+        "tag": {
+          "channelTagService": {
+            "root": "/cms/channel/tag",
+            "init": "init",
+            "save": "saveTag",
+            "del": "delTag",
+            "getTagList": "getTagList"
+          }
+        },
+        "imageTemplateService": {
+          "root": "/cms/channel/image_template",
+          "init": "init",
+          "getPage": "getPage",
+          "getCount": "getCount",
+          "save": "save",
+          "delete": "delete",
+          "get": "get",
+          "getTemplateParameter": "getTemplateParameter",
+          "getDownloadUrl": "getDownloadUrl"
+        },
+        "imageGroupService": {
+          "root": "/cms/channel/image_group",
           "init": "init",
           "search": "search",
-          "updateFinishStatus": "updateFinishStatus"
-        }
-      },
-      "$storeOpService":{
-        "root":"/cms/system/store_operation/",
-        "init":"init",
-        "rePublist":"rePublish",
-        "reUpload":"reUpload",
-        "rePublistPrice":"rePublishPrice",
-        "getHistory":"getHistory"
-      }
-    },
-    "pop": {
-      "$addToPromotionService": {
-        "root": "/cms/pop/add_to_promotion",
-        "getPromotionTags": "getPromotionTags",
-        "addToPromotion": "addToPromotion",
-        "checkPromotionTags": "checkPromotionTags"
-      },
-      "$fieldEditService": {
-        "root": "/cms/pop/field_edit",
-        "getPopOptions": "getPopOptions",
-        "setProductFields": "setProductFields"
-      },
-      "$promotionHistoryService": {
-        "root": "/cms/pop/history_promotion",
-        "getPromotionHistory": "getPromotionHistory"
-      },
-      "$priceHistoryService": {
-        "root": "/cms/pop/history_price",
-        "getPriceHistory": "getPriceHistory"
-      }
-    },
-    "translation": {
-      "translationService":{
-        "root":"/cms/translation/tasks",
-        "getTasks":"getTasks",
-        "searchHistoryTasks":"searchHistoryTasks",
-        "assignTasks":"assignTasks",
-        "copyFormMainProduct":"copyFormMainProduct",
-        "saveTask":"saveTask",
-        "submitTask":"submitTask",
-        "cancelTask":"cancelTask",
-        "getFeedAttributes":"getFeedAttributes"
-      }
-    },
-    "channel": {
-      "custom": {
-        "attributeService": {
-          "root":"/cms/channel/custom/prop",
-          "init": "get",
-          "getCatTree": "getCatTree",
-          "save": "update",
-          "getCatList": "getCatList"
-
-        }
-      },
-      "value": {
-        "attributeValueService": {
-          "root":"/cms/channel/custom/value",
-          "init": "get",
-          "add" : "create",
-          "save": "update"
-        }
-      },
-      "usjoi":{
-          "usjoiService":{
-            "root":"/cms/channel/usjoi/",
-            "getList":"getList",
-            "update":"update",
-            "getCarts":"getCarts",
-            "save":"save",
-            "getCompanys":"getCompanys",
-            "updateCartIds":"updateCartIds",
-            "genKey":"genKey"
-          }
-      },
-      "tag": {
-        "channelTagService": {
-          "root": "/cms/channel/tag",
+          "save": "save",
+          "delete": "delete"
+        },
+        "imageGroupDetailService": {
+          "root": "/cms/channel/image_group_detail",
           "init": "init",
-          "save": "saveTag",
-          "del": "delTag",
-          "getTagList": "getTagList"
-        }
-      },
-      "imageTemplateService":{
-        "root":"/cms/channel/image_template",
-        "init": "init",
-        "getPage": "getPage",
-        "getCount": "getCount",
-        "save": "save",
-        "delete": "delete",
-        "get":"get",
-        "getTemplateParameter":"getTemplateParameter",
-        "getDownloadUrl":"getDownloadUrl"
-
-       },
-      "imageGroupService": {
-        "root": "/cms/channel/image_group",
-        "init": "init",
-        "search": "search",
-        "save": "save",
-        "delete": "delete"
-      },
-      "imageGroupDetailService": {
-        "root": "/cms/channel/image_group_detail",
-        "init": "init",
-        "search": "search",
-        "save": "save",
-        "saveImage": "saveImage",
-        "saveUploadImage": "saveUploadImage",
-        "delete": "delete",
-        "refresh": "refresh",
-        "move": "move"
-      },
-      "sizeChart":{
-        "sizeChartService": {
-          "root": "/cms/channel/sizeChartList",
-          "init": "sizeChartInit",
-          "search": "sizeChartSearch",
-          "delete": "sizeChartDelete",
-          "editSave": "sizeChartEditSave"
-        }
-    },
-      "sizeChartDetail":{
-        "sizeChartDetailService": {
-          "root": "/cms/channel/sizeChartDetail",
-          "init": "sizeChartDetailSearch",
-          "detailSave": "sizeChartDetailSave",
-          "detailSizeMapSave": "sizeChartDetailSizeMapSave"
+          "search": "search",
+          "save": "save",
+          "saveImage": "saveImage",
+          "saveUploadImage": "saveUploadImage",
+          "delete": "delete",
+          "refresh": "refresh",
+          "move": "move"
+        },
+        "sizeChart": {
+          "sizeChartService": {
+            "root": "/cms/channel/sizeChartList",
+            "init": "sizeChartInit",
+            "search": "sizeChartSearch",
+            "delete": "sizeChartDelete",
+            "editSave": "sizeChartEditSave"
+          }
+        },
+        "sizeChartDetail": {
+          "sizeChartDetailService": {
+            "root": "/cms/channel/sizeChartDetail",
+            "init": "sizeChartDetailSearch",
+            "detailSave": "sizeChartDetailSave",
+            "detailSizeMapSave": "sizeChartDetailSizeMapSave"
+          }
         }
       }
     }
