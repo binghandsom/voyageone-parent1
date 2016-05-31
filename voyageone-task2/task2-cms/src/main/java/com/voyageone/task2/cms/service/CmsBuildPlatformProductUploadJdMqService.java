@@ -51,8 +51,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -652,9 +650,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                 // 读取图片
                 InputStream inputStream = jdWareService.getImgInputStream(picUrl, 3);
-                File picFile = new File("d:\\tmp\\40_010-1100921-2.jpg");    // for test
-                InputStream inputStream2 = new FileInputStream(picFile);      // for test
-                bytes = IOUtils.toByteArray(inputStream2);
+                bytes = IOUtils.toByteArray(inputStream);
                 // 取得图片就推出循环
                 break;
             } catch (Exception ex) {
