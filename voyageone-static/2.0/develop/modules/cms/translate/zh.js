@@ -552,7 +552,7 @@ define(function(){
         "TXT_STORE_CATEGORY":"店铺分类",
         "TXT_STORE_CATEGORY_NAME":"店铺",
         "MAX_SELLER_CAT_DEPTH":"最大层数",
-        "MAX_SELLER_CAT_CNT":"可设置最大标签数应小于10",
+        "MAX_SELLER_CAT_CNT":"可设置最大标签数应小于",
         "TXT_STORE_CATEGORY_SELECT":"请选择一个店铺",
         "INVALID_OPERATION_IN_CURRENT_CART_PATH":"当前店铺路径下操作无效"
     };
