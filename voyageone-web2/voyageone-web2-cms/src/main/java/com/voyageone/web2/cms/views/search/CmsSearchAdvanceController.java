@@ -86,13 +86,14 @@ public class CmsSearchAdvanceController extends CmsController {
         if (endIdx > groupListTotal) {
             endIdx = groupListTotal;
         }
-        List<String> currGrpList = groupCodeList.subList(0, endIdx);
-        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
-        searchIndexService.checkProcStatus(grpInfoList, getLang());
-        resultBean.put("groupList", grpInfoList);
+
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> currGrpList = grpInfoList.subList(0, endIdx);
+        searchIndexService.checkProcStatus(currGrpList, getLang());
+        resultBean.put("groupList", currGrpList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        infoArr = searchIndexService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        infoArr = searchIndexService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -130,13 +131,14 @@ public class CmsSearchAdvanceController extends CmsController {
         if (endIdx > groupListTotal) {
             endIdx = groupListTotal;
         }
-        List<String> currGrpList = groupCodeList.subList(staIdx, endIdx);
-        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
-        searchIndexService.checkProcStatus(grpInfoList, getLang());
-        resultBean.put("groupList", grpInfoList);
+
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> currGrpList = grpInfoList.subList(staIdx, endIdx);
+        searchIndexService.checkProcStatus(currGrpList, getLang());
+        resultBean.put("groupList", currGrpList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        List[] infoArr = searchIndexService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        List[] infoArr = searchIndexService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动

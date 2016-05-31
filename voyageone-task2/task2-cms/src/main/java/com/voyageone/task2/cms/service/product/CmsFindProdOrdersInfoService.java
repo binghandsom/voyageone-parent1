@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoAggregate;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -50,7 +51,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
     private static String queryStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',sku:'$sku'},count:{$sum:'$qty'}}}";
     private static String grpqueryStr = "{'cartId':{$ne:1}},{'cartId':1,'groupId':1,'productCodes':1,'_id':1}";
-    private static String prodqueryStr = "{'fields.code':{$in:[%s]}},{'sales':1,'fields.code':1,'_id':0}";
+    private static String prodqueryStr = "{'fields.code':{$in:#}}";
 
     @Override
     public SubSystem getSubSystem() {
@@ -74,12 +75,14 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         String begDate1 = DateTimeUtil.getDateBeforeDays(7);
         String begDate2 = DateTimeUtil.getDateBeforeDays(30);
 
+        JomgoQuery qryObj = new JomgoQuery();
+        qryObj.setProjection("{'_id':0,'prodId':1,'skus.skuCode':1,'skus.skuCarts':1}");
+        qryObj.setLimit(500);
+        int prodIdx = 0;
         for (OrderChannelBean chnObj : list) {
-            if (!"010".equals(chnObj.getOrder_channel_id())) {
-                continue;
-            }
             // 针对各店铺产品进行统计
-            List<CmsBtProductModel> prodList = cmsBtProductDao.select("{},{'_id':0,'prodId':1,'skus.skuCode':1,'skus.skuCarts':1}", chnObj.getOrder_channel_id());
+            qryObj.setSkip(prodIdx * 500);
+            List<CmsBtProductModel> prodList = cmsBtProductDao.select(qryObj, chnObj.getOrder_channel_id());
             if (prodList == null || prodList.isEmpty()) {
                 $warn("CmsFindProdOrdersInfoService 该店铺无产品数据！ + channel_id=" + chnObj.getOrder_channel_id());
                 continue;
@@ -282,11 +285,19 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 queryMap.put("prodId", prodObj.getProdId());
                 Map updateMap = new HashMap<>();
                 updateMap.put("sales", salesMap);
+                updateMap.put("modifier", getTaskName());
+                updateMap.put("modified", DateTimeUtil.getNow());
 
                 BulkUpdateModel updModel = new BulkUpdateModel();
                 updModel.setQueryMap(queryMap);
                 updModel.setUpdateMap(updateMap);
                 bulkList.add(updModel);
+                // 批量更新
+                if (!bulkList.isEmpty() && bulkList.size() % 500 == 0) {
+                    BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
+                    $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
+                    bulkList = new ArrayList<>();
+                }
             }
 
             // 批量更新
@@ -297,9 +308,20 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         }
 
         // 再统计group的数据
+        JomgoQuery grpqryObj = new JomgoQuery();
+        grpqryObj.setQuery("{'cartId':{$ne:1}}");
+        grpqryObj.setProjection("{'groupId':1,'groupId':1,'productCodes':1,'_id':1}");
+        grpqryObj.setLimit(500);
+        int grpIdx = 0;
+
+        JomgoQuery prodQryObj = new JomgoQuery();
+        prodQryObj.setQuery(prodqueryStr);
+        prodQryObj.setProjection("{'sales':1,'fields.code':1,'_id':0}");
+
         for (OrderChannelBean chnObj : list) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
-            List<CmsBtProductGroupModel> getList = cmsBtProductGroupDao.select(grpqueryStr, chnObj.getOrder_channel_id());
+            grpqryObj.setSkip(grpIdx * 500);
+            List<CmsBtProductGroupModel> getList = cmsBtProductGroupDao.select(grpqryObj, chnObj.getOrder_channel_id());
             if (getList == null || getList.isEmpty()) {
                 $warn(String.format("CmsFindProdOrdersInfoService 该店铺无group数据！ channel_id=%s", chnObj.getOrder_channel_id()));
                 continue;
@@ -315,8 +337,9 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 int sum7 = 0;
                 int sum30 = 0;
                 int sumall = 0;
-                String codeStr = codeList.stream().map(code -> "'" + code + "'").collect(Collectors.joining(","));
-                List<CmsBtProductModel> prodList = cmsBtProductDao.select(String.format(prodqueryStr, codeStr), chnObj.getOrder_channel_id());
+
+                prodQryObj.setParameters(codeList);
+                List<CmsBtProductModel> prodList = cmsBtProductDao.select(prodQryObj, chnObj.getOrder_channel_id());
                 if (prodList == null || prodList.isEmpty()) {
                     $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d codeStr=%s", chnObj.getOrder_channel_id(), grpObj.getGroupId(), codeList.toString()));
                     continue;
@@ -350,11 +373,20 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 salesMap.put("code_sum_30", sum30);
                 salesMap.put("code_sum_all", sumall);
                 updateMap.put("sales", salesMap);
+                updateMap.put("modifier", getTaskName());
+                updateMap.put("modified", DateTimeUtil.getNow());
 
                 BulkUpdateModel updModel = new BulkUpdateModel();
                 updModel.setQueryMap(queryMap);
                 updModel.setUpdateMap(updateMap);
                 bulkList.add(updModel);
+
+                // 批量更新
+                if (!bulkList.isEmpty() && bulkList.size() % 500 == 0) {
+                    BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
+                    $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
+                    bulkList = new ArrayList<>();
+                }
             }
 
             // 批量更新

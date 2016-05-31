@@ -216,7 +216,11 @@ public class BaseJomgoPartTemplate {
         if (StringUtils.isEmpty(queryObject.getQuery())) {
             find = getCollection(collectionName).find();
         } else {
-            find = getCollection(collectionName).find(queryObject.getQuery());
+            if (queryObject.getParameters() == null || queryObject.getParameters().length == 0) {
+                find = getCollection(collectionName).find(queryObject.getQuery());
+            } else {
+                find = getCollection(collectionName).find(queryObject.getQuery(), queryObject.getParameters());
+            }
         }
 
         //column
