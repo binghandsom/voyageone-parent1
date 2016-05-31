@@ -41,6 +41,14 @@ public class MqSender extends BaseService {
 
 
     public void sendMessage(String routingKey, Map<String, Object> messageMap) {
+        sendMessage(null, routingKey, messageMap);
+    }
+
+    public void sendMessage(String exchange, String routingKey, Map<String, Object> messageMap) {
+        sendMessage(null, routingKey, messageMap, voRabbitMqLocalConfig.isLocal(), true);
+    }
+
+    public void sendMessage(String exchange, String routingKey, Map<String, Object> messageMap, boolean isLoad, boolean isDeclareQueue) {
         try {
             // isload add ipaddress to routingKey
             if (annotationProcessorByIP.isLocal() && !routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
@@ -48,7 +56,10 @@ public class MqSender extends BaseService {
             }
 
             //declareQueue
-            amqpAdmin.declareQueue(new Queue(routingKey, true, false, voRabbitMqLocalConfig.isLocal()));
+            if (isDeclareQueue) {
+                amqpAdmin.declareQueue(new Queue(routingKey, true, false, voRabbitMqLocalConfig.isLocal()));
+            }
+
             if (messageMap == null) {
                 messageMap = new HashMap<>();
             }
@@ -63,7 +74,11 @@ public class MqSender extends BaseService {
             Message message = new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
                 setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
             }});
-            amqpTemplate.send(routingKey, message);
+            if (exchange == null) {
+                amqpTemplate.send(routingKey, message);
+            } else {
+                amqpTemplate.send(exchange, routingKey, message);
+            }
 
         } catch (Exception e) {
             $error(e.getMessage(), e);

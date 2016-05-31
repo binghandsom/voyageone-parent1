@@ -15,7 +15,7 @@ import java.util.Random;
 public class ProductDao {
 
     @Autowired
-    BaseJomgoTemplate mongoTemplate;
+    private BaseJomgoTemplate mongoTemplate;
 
     public void testExecuteCommand() {
         String cmd = "{collMod: \"" + Product.getCollectionName("013") + "\", usePowerOf2Sizes : true }";

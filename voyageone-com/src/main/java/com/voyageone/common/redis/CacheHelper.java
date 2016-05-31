@@ -1,8 +1,8 @@
 package com.voyageone.common.redis;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.spring.SpringContext;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -22,20 +22,13 @@ public class CacheHelper {
 
     private final static String RELAOD = "reload";
 
-    private static RedisTemplate template;
-
-    @Autowired
-    public void setTemplate(RedisTemplate template) {
-        CacheHelper.template = template;
-    }
-
     @SuppressWarnings("unchecked")
     public static RedisTemplate<String, Map<String, Object>> getCacheTemplate() {
-        return template;
+        return SpringContext.getBean(RedisTemplate.class);
     }
 
     public static HashOperations getHashOperation() {
-        return template.opsForHash();
+        return getCacheTemplate().opsForHash();
     }
 
     @SuppressWarnings("unchecked")

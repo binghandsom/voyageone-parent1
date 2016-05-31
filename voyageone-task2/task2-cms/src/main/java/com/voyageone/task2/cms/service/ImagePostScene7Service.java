@@ -36,7 +36,7 @@ public class ImagePostScene7Service {
 	private ImageDao imageDao;
 
 	@Autowired
-	IssueLog issueLog;
+	private IssueLog issueLog;
 
 	@Autowired
 	private TransactionRunner transactionRunner;
@@ -46,7 +46,7 @@ public class ImagePostScene7Service {
 
 	private static Map<String, Integer> fileNotFoundUrlMap = new HashMap<String, Integer>();
 
-	private static int retryTimes = 5;
+	private final static int retryTimes = 5;
 
 	/**
 	 * 取出要处理的图片url列表

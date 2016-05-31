@@ -20,8 +20,10 @@ import java.util.Date;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtDealServiceTest {
+
     @Autowired
-    JumeiHtDealService htDealService;
+    private JumeiHtDealService htDealService;
+
     @Test
     public void testUpdateDeal() throws Exception {
         ShopBean shopBean = new ShopBean();
@@ -34,7 +36,7 @@ public class JumeiHtDealServiceTest {
 //        request.setJumei_hash_id("ht1454411913p2225506");
         request.setJumei_hash_id("ht1463986241p222551454");
 
-        HtDealUpdate_DealInfo dealInfo=new HtDealUpdate_DealInfo();
+        HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         dealInfo.setUser_purchase_limit("20");
         dealInfo.setProduct_long_name("更新后长名字(李测试)");
         request.setUpdate_data(dealInfo);
@@ -50,7 +52,7 @@ public class JumeiHtDealServiceTest {
     }
 
     @Test
-    public void  testCopyDeal() throws Exception {
+    public void testCopyDeal() throws Exception {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
@@ -61,7 +63,7 @@ public class JumeiHtDealServiceTest {
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         request.setJumei_hash_id("ht1463986241p222551454");
         request.setStart_time(new Date().getTime());
-        request.setEnd_time(new Date().getTime()+100000000);
+        request.setEnd_time(new Date().getTime() + 100000000);
         HtDealCopyDealResponse response = htDealService.copyDeal(shopBean, request);
         if (response != null && response.is_Success()) {
             // 更新Deal(特卖)成功
@@ -74,7 +76,7 @@ public class JumeiHtDealServiceTest {
     }
 
     @Test
-    public void  testUpdateDealEndTime() throws Exception {
+    public void testUpdateDealEndTime() throws Exception {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
@@ -83,7 +85,7 @@ public class JumeiHtDealServiceTest {
 
         HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
         request.setJumei_hash_id("ht1463986241p222551454");
-        request.setEnd_time(new Date().getTime()+100000000);
+        request.setEnd_time(new Date().getTime() + 100000000);
 
         HtDealUpdateDealEndTimeResponse response = htDealService.updateDealEndTime(shopBean, request);
         if (response != null && response.is_Success()) {

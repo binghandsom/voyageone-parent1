@@ -18,8 +18,9 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.*;
-//import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -54,8 +55,6 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.ItemDetailsBean;
 import com.voyageone.task2.cms.dao.ItemDetailsDao;
-import com.voyageone.task2.cms.dao.MainPropDao;
-import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
@@ -67,39 +66,36 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+//import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
+
 @Service
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
-    SuperFeedDao superfeeddao;
-
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
     @Autowired
-    MainPropDao mainPropDao;
+    private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
-    CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
+    private CmsBtProductDao cmsBtProductDao; // DAO: 商品的值
     @Autowired
-    CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
+    private MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
-    CmsBtProductDao cmsBtProductDao; // DAO: 商品的值
+    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
     @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
+    private ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
     @Autowired
-    CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
+    private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
     @Autowired
-    ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
+    private FeedCustomPropService customPropService;
     @Autowired
-    TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
+    private ProductSkuService productSkuService;
     @Autowired
-    FeedCustomPropService customPropService;
+    private ProductService productService;
     @Autowired
-    ProductSkuService productSkuService;
-    @Autowired
-    ProductService productService;
-    @Autowired
-    ProductGroupService productGroupService;
+    private ProductGroupService productGroupService;
     // jeff 2016/04 add start
     @Autowired
-    ProductPriceLogService productPriceLogService;
+    private ProductPriceLogService productPriceLogService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired

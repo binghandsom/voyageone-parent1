@@ -19,7 +19,8 @@ import java.util.List;
 public class CmsPlatformMappingServiceTest {
 
     @Autowired
-    CmsPlatformMappingService cmsPlatformMappingService;
+    private CmsPlatformMappingService cmsPlatformMappingService;
+
     @Test
     public void testOnStartup() throws Exception {
 

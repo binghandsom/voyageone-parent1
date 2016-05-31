@@ -22,10 +22,10 @@ import java.util.*;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsProductServiceTest {
     @Autowired
-    ProductService cmsProductService;
+    private ProductService cmsProductService;
 
     @Autowired
-    CmsBtProductDao cmsBtProductDao;
+    private CmsBtProductDao cmsBtProductDao;
 
 //    @Test
 //    public void testInsertCmsBtProduct() throws Exception {

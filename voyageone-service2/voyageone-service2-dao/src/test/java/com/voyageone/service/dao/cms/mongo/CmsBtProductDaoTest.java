@@ -21,7 +21,7 @@ import java.util.List;
 public class CmsBtProductDaoTest {
 
     @Autowired
-    CmsBtProductDao cmsBtProductDao;
+    private CmsBtProductDao cmsBtProductDao;
 
 //    @Test
 //    public void testGetModelCode() throws Exception {

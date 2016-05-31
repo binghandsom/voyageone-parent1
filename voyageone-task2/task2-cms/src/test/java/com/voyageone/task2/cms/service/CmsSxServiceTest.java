@@ -17,10 +17,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsSxServiceTest {
 
     @Autowired
-    AliSx aliSx;
+    private AliSx aliSx;
 
     @Autowired
-    JmSx jmSx;
+    private JmSx jmSx;
 
     @Test
     public void testAliSx() throws Exception {

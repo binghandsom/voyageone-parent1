@@ -41,7 +41,7 @@ public class ImageGroupService extends BaseService {
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
+    private MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
     /**
      * 新建ImageGroup信息

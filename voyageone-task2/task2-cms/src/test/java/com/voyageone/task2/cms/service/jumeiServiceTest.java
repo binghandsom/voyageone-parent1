@@ -13,12 +13,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class jumeiServiceTest {
-     @Autowired
-     JumeiProductService productService;
+    @Autowired
+    private JumeiProductService productService;
 
     @Test
     public void testGet() throws Exception {
-        JumeiProductService productService =new JumeiProductService();
+        JumeiProductService productService = new JumeiProductService();
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
@@ -26,9 +26,10 @@ public class jumeiServiceTest {
         shopBean.setApp_url("http://182.138.102.82:8868/");
         JmGetProductInfoRes productBean = productService.getProductById(shopBean, "55703");
     }
+
     @Test
     public void testGet2() throws Exception {
-        JumeiProductService productService =new JumeiProductService();
+        JumeiProductService productService = new JumeiProductService();
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("131");
         shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");

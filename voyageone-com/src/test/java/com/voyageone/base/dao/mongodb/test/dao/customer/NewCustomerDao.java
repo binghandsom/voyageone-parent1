@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public class NewCustomerDao {
 
     @Autowired
-    MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
 
     public void saveWithDBObject(DBObject entity) {
         mongoTemplate.save(entity);

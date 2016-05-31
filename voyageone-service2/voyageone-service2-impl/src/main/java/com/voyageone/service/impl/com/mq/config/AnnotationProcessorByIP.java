@@ -31,7 +31,6 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.*;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
 import org.springframework.core.Ordered;
@@ -43,7 +42,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -95,9 +93,6 @@ public class AnnotationProcessorByIP
     public void setAmqpAdmin(AmqpAdmin amqpAdmin) {
         this.amqpAdmin = amqpAdmin;
     }
-
-    @Autowired
-    private MqDisAllowConsumerIpConfig mqDisAllowConsumerIpConfig;
 
     @Override
     public int getOrder() {
@@ -202,40 +197,6 @@ public class AnnotationProcessorByIP
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
         final RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
-
-        /**
-         * mq 不允许消费的ip过滤
-         */
-        if(classLevelListener != null&&!StringUtils.isEmpty(classLevelListener.queues())){
-            Map<String,List<String>> mqDisallowConsumerIpMap=mqDisAllowConsumerIpConfig.getMqDisallowConsumerIpMap();
-            for(String queue:classLevelListener.queues())
-                if(mqDisallowConsumerIpMap.containsKey(queue)&&mqDisallowConsumerIpMap.get(queue).contains(MQConfigUtils.getIP()))
-                    return bean;
-        }
-        /**
-         * add VOMQRunnable aooer start
-         */
-        final boolean[] isVomqRunnable = {true};
-        if (classLevelListener != null) {
-            ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
-                @Override
-                public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                    VOMQRunnable vomqRunnable = AnnotationUtils.findAnnotation(method, VOMQRunnable.class);
-                    if (vomqRunnable != null) {
-                        try {
-                            isVomqRunnable[0] = (boolean) method.invoke(bean);
-                        } catch (InvocationTargetException ignored) {
-                        }
-                    }
-                }
-            });
-        }
-        if (!isVomqRunnable[0]) {
-            return bean;
-        }
-        /**
-         * add VOMQRunnable aooer end
-         */
         final List<Method> multiMethods = new ArrayList<>();
         ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
 
@@ -359,7 +320,6 @@ public class AnnotationProcessorByIP
                         rabbitAdmin + "' was found in the application context", ex);
             }
         }
-
 
         RabbitListenerContainerFactory<?> factory = null;
         String containerFactoryBeanName = resolve(rabbitListener.containerFactory());

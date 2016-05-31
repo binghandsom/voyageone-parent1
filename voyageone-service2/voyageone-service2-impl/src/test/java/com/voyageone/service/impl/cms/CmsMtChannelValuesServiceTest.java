@@ -17,7 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsMtChannelValuesServiceTest {
 
     @Autowired
-    CmsMtChannelValuesService cmsMtChannelValuesService;
+    private CmsMtChannelValuesService cmsMtChannelValuesService;
+
     @Test
     public void testInsertCmsMtChannelValues() throws Exception {
         CmsMtChannelValuesModel cmsMtChannelValuesModel = new CmsMtChannelValuesModel();

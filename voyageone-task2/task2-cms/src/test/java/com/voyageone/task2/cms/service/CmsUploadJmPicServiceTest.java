@@ -26,10 +26,10 @@ import java.util.List;
 public class CmsUploadJmPicServiceTest {
 
     @Autowired
-    CmsUploadJmPicService cmsUploadJmPicService;
+    private CmsUploadJmPicService cmsUploadJmPicService;
 
     @Autowired
-    JumeiImageFileService jumeiImageFileService;
+    private JumeiImageFileService jumeiImageFileService;
 
     @Test
     public void testOnStartup() throws Exception {

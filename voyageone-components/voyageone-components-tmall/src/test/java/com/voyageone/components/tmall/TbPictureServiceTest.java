@@ -26,6 +26,7 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:test-context.xml")
 public class TbPictureServiceTest {
+
     @Autowired
     private TbPictureService tbPictureService;
 

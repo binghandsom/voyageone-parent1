@@ -30,10 +30,10 @@ public class NewCustomerDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Qualifier("newCustomerJpaDao")
     @Autowired
-    NewCustomerJpaDao customerJpaDao;
+    private NewCustomerJpaDao customerJpaDao;
 
     @Autowired
-    NewCustomerDao customerDao;
+    private NewCustomerDao customerDao;
 
     @Test
     public void saveTest() {

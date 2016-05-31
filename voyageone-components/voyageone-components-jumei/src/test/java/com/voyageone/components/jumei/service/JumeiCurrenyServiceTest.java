@@ -18,7 +18,7 @@ import java.util.List;
 public class JumeiCurrenyServiceTest {
 
     @Autowired
-    JumeiCurrencyService currencyService;
+    private JumeiCurrencyService currencyService;
 
     @Test
     public void testGet() throws Exception {

@@ -23,7 +23,7 @@ import java.util.List;
 public class CmsMtPlatformCategorySchemaDaoTest {
 
     @Autowired
-    CmsMtPlatformCategorySchemaDao schemaDao;
+    private CmsMtPlatformCategorySchemaDao schemaDao;
 
     @Test
     public void testDeletePlatformCategorySchemaByCartId() throws Exception {
