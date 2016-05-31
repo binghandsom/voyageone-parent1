@@ -24,6 +24,7 @@ public class JuMeiProductUpdateJobService extends BaseMQCmsService {
 //    @Autowired
 //    private JuMeiProductPlatformService service;
 
+    @Autowired
     private JuMeiProductPlatform3Service service;
 
     @Override
