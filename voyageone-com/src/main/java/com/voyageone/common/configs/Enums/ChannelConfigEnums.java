@@ -612,8 +612,8 @@ public class ChannelConfigEnums {
                 case "019": return SUMMERGURU;
                 case "020": return EDCSKINCARE;
                 case "021": return BHFO_MINIMALL;
-                case "927": return USJGJ;
-                case "928": return USJGY;
+                case "928": return USJGJ;
+                case "929": return USJGY;
                 case "997": return VOYAGEONE;
                 case "998": return THIRD_PARTY;
                 default: return null;
