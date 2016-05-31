@@ -79,12 +79,20 @@ public class JuMeiProductPlatform3Service {
                 jmHtDealCopy(model, shopBean, modelJmProduct.getOriginJmHashId());//再售
                 jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
                 jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);//更新价格
+                model.setSynchStatus(2);
+                model.setPriceStatus(0);
+                model.setUpdateStatus(0);
+                model.setErrorMsg("");
+                daoCmsBtJmPromotionProduct.update(model);
             }
             else if (model.getPriceStatus() == 1) //更新价格
             {
                 CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.getByProductCodeChannelId(model.getProductCode(), model.getChannelId());
                 List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionProductId(modelJmProduct.getId());
                 jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);
+                model.setPriceStatus(2);
+                model.setErrorMsg("");
+                daoCmsBtJmPromotionProduct.update(model);
             }
         } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
