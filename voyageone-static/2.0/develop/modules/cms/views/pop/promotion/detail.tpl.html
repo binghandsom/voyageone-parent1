@@ -14,18 +14,26 @@
                     <input id="promotionName" name="promotionName" class="form-control"
                            ng-model="promotion.promotionName" required title="Promotion Name">
                 </div>
-                <label ng-if="promotionForm.promotionName.$invalid" class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
-            </div><!-- .form-group -->
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.promotionName" class="vo-message-warning"></vo-message>
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
-                <div class="col-sm-7">
+                <div class="col-sm-7 m-t-xs">
                     <label ng-repeat="cart in cartList" class="c-radio">
-                        <input type="radio" name="cartId" ng-model="promotion.cartId" ng-required="!promotion.cartId" value="{{::cart.value}}">
+                        <input type="radio" name="promotionCartId" class="form-control" ng-model="promotion.cartId" value="{{::cart.value}}" required>
                         <span class="fa fa-check"></span><b>&nbsp;{{::cart.name}}</b>
                     </label>
                 </div>
-                <label ng-if="promotionForm.cartId.$invalid" class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
-            </div><!-- .form-group -->
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.promotionCartId"></vo-message>
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
                 <div class="col-sm-7 form-inline">
@@ -107,8 +115,11 @@
                                 class="glyphicon glyphicon-calendar"></i></button></span>
                     </div>
                 </div>
-                <label ng-if="promotionForm.promotionTimeStart.$invalid || promotionForm.promotionTimeEnd.$invalid"
-                       class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.promotionTimeStart && promotionForm.promotionTimeEnd" class="vo-message-success"></vo-message>
+                </div>
             </div>
             <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
                 <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
@@ -137,8 +148,15 @@
             </thead>
             <tbody>
             <tr ng-repeat="tag in promotion.tagList">
-                <td class="mfb-xxxsm"><input class="form-control" ng-model="tag.tagName"  ng-required="true" maxlength="20">
-                    <label ng-if="!tag.tagName" class="col-lm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+                <td class="mfb-xxxsm">
+                    <form role="form" novalidate name="tagListForm">
+                        <input class="form-control" ng-model="tag.tagName" name="tagName" ng-required="true" maxlength="20" required>
+                        <div class="form-group">
+                            <div class="col-sm-7 m-t-xs">
+                                <vo-message target="tagListForm.tagName" class="vo-message-info"></vo-message>
+                            </div>
+                        </div>
+                    </form>
                 </td>
                 <td class="mfb-xxs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(promotion.tagList,tag)"><i class="fa fa-trash-o"></i></button></td>
             </tr>

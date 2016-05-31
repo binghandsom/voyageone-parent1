@@ -9,7 +9,18 @@ schema-item .ng-invalid select,
 schema-item .ng-invalid .c-checkbox span,
 .vo-validate.ng-invalid input,
 .vo-validate.ng-invalid select,
-.vo-validate.ng-invalid .c-checkbox span
-{
+.vo-validate.ng-invalid .c-checkbox span {
     border: 1px solid red;
+}
+
+vo-message {
+    width: 100%;
+    font-weight: bold;
+    display: inline-block;
+    padding: 2px 6px 3px 8px;
+    border-left: 6px solid #E67E22;
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px gray;
+    color: #fff;
+    background: #f22613;
 }
