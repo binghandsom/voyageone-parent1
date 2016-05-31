@@ -6,10 +6,13 @@ import com.jd.open.api.sdk.response.ware.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.JdBase;
 import com.voyageone.components.jd.JdConstants;
 import com.voyageone.components.jd.bean.JdProductBean;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -125,6 +128,8 @@ public class JdWareService extends JdBase {
         if (jdProduct.getAdContent() != null)         request.setAdContent(jdProduct.getAdContent());
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
         if (jdProduct.getListTime() != null)          request.setListTime(jdProduct.getListTime());
+        // 品牌id
+        if (jdProduct.getBrandId() != null)           request.setBrandId(jdProduct.getBrandId());
 
         long wareId = 0;
 
@@ -137,6 +142,10 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 返回商品ID
                     wareId = response.getWareId();
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API新增京东商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() +
+                            ",cart_id:" + shop.getCart_id() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -262,6 +271,10 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 返回商品更改时间
                     retModified = response.getModified();
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API修改商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
+                            shop.getCart_id() + ",ware_id:" + request.getWareId() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -270,7 +283,6 @@ public class JdWareService extends JdBase {
             throw new BusinessException(shop.getShop_name() + "修改京东商品信息失败 " + ex.getMessage());
         }
 
-        logger.error("调用京东API修改商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId());
         return retModified;
     }
 
@@ -300,6 +312,10 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(strReturnCode)) {
                     // 返回删除商品成功
                     return true;
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API删除商品失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
+                            shop.getCart_id() + ",ware_id:" + request.getWareId() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
 
@@ -322,10 +338,16 @@ public class JdWareService extends JdBase {
      * @param strWareId String   商品id
      * @param attrValueId String 属性值Id(颜色值Id)
      * @param picUrl String      图片url
+     * @param picName string     图片名
      * @param isMainPic Boolean  是否主图
      * @return boolean           新增主图是否成功
      */
-    public boolean addWarePropimg(ShopBean shop, String strWareId, String attrValueId, String picUrl, Boolean isMainPic) throws BusinessException {
+    public boolean addWarePropimg(ShopBean shop, String strWareId, String attrValueId, String picUrl, String picName, Boolean isMainPic) throws BusinessException {
+        // 如果图片Url为空，返回false
+        if (StringUtils.isEmpty(picUrl)) {
+            logger.error("调用京东API根据商品Id，销售属性值Id增加图片时传入的图片URL为空 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + strWareId + ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
+            return false;
+        }
         WarePropimgAddRequest request = new WarePropimgAddRequest();
 
         // 商品id(必须)
@@ -337,10 +359,15 @@ public class JdWareService extends JdBase {
         request.setMainPic(isMainPic);
         // 图片数据（注意：签名时不需要添加此参数，image参数通过post 输出流方式发送）图片类型只支持：png和jpg格式，图片须800x800；不能大于1M
         InputStream is = getImgInputStream(picUrl, MAX_RETRY_TIMES);
-        com.jd.open.api.sdk.FileItem fileItem = new com.jd.open.api.sdk.FileItem(is.toString());
-        request.setImage(fileItem);
+        Assert.notNull(is, "inputStream为null，图片流获取失败！picUrl=" + picUrl);
+        String picFileName = strWareId + "-" + attrValueId + "-" + picName;
 
         try {
+            // 图片设置
+            byte[] picBytes = IOUtils.toByteArray(is);
+            com.jd.open.api.sdk.FileItem fileItem = new com.jd.open.api.sdk.FileItem(picFileName, picBytes);
+            request.setImage(fileItem);
+
             // 调用京东根据商品Id，销售属性值Id增加图片API(360buy.ware.propimg.add)
             WarePropimgAddResponse response = reqApi(shop, request);
 
@@ -350,35 +377,21 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(strReturnCode)) {
                     // 返回上传图片成功
                     return true;
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
+                            shop.getCart_id() + ",ware_id:" + request.getWareId() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc() +
+                            ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
                 }
             }
 
         } catch (Exception ex) {
-            logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
+            logger.error("调用京东API根据商品Id，销售属性值Id增加图片异常 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
 
             throw new BusinessException(shop.getShop_name() + "京东根据商品Id，销售属性值Id增加图片失败 " + ex.getMessage());
         }
 
-        logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
         return false;
-    }
-
-    /**
-     * 获取网络图片流，遇错重试
-     *
-     * @param url   imgUrl
-     * @param retry retrycount
-     * @return inputStream / throw Exception
-     */
-    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
-        if (--retry > 0) {
-            try {
-                return HttpUtils.getInputStream(url, null);
-            } catch (Exception e) {
-                getImgInputStream(url, retry);
-            }
-        }
-        throw new BusinessException("通过URL取得图片失败. url:"+url);
     }
 
     /**
@@ -404,10 +417,14 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 返回图片列表
                     imageList = response.getImages();
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API获取商品上的所有图片列表失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
+                            shop.getCart_id() + ",ware_id:" + wareId + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
-            logger.error("调用京东API获取商品上的所有图片列表失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
+            logger.error("调用京东API获取商品上的所有图片列表异常 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
 
             throw new BusinessException(shop.getShop_name() + "获取京东获取商品上的所有图片列表失败 " + ex.getMessage());
         }
@@ -443,15 +460,20 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 返回图片列表
                     return response.getSuccess();
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API删除指定商品上的所有图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
+                            shop.getCart_id() + ",ware_id:" + wareId + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc() +
+                            ",colorIds:" + colorIds + ",imgIndexes:" + indexes);
                 }
             }
         } catch (Exception ex) {
-            logger.error("调用京东API删除指定商品上的所有图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
+            logger.error("调用京东API删除指定商品上的所有图片异常 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId +
+                    ",colorIds:" + colorIds + ",imgIndexes:" + indexes);
 
             throw new BusinessException(shop.getShop_name() + "调用京东API删除指定商品上的所有图片失败 " + ex.getMessage());
         }
 
-        logger.error("调用京东API删除指定商品上的所有图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id() + ",ware_id:" + wareId);
         return false;
     }
 
@@ -483,6 +505,10 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 返回图片删除成功
                     return true;
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API根据商品Id，销售属性值Id删除图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
+                            shop.getCart_id() + ",ware_id:" + wareId + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -519,6 +545,10 @@ public class JdWareService extends JdBase {
                 // 京东返回正常的场合
                 if (response.getSuccess()) {
                     return true;
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API设置商品运费模板失败 " + "wareId:" + wareId + ",transportId:" + transportId +
+                            ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -556,6 +586,10 @@ public class JdWareService extends JdBase {
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 返回设置关联版式到商品成功
                     return true;
+                } else {
+                    // 京东返回失败的场合
+                    logger.error("调用京东API设置商品关联版式失败 " + "版式id:" + layoutId + ",商品编号集合:" + wareIds +
+                            ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -568,7 +602,45 @@ public class JdWareService extends JdBase {
         return false;
     }
 
+    /**
+     * 获取网络图片流，遇错重试
+     *
+     * @param url   imgUrl
+     * @param retry retrycount
+     * @return inputStream / throw Exception
+     */
+    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
+        if (--retry > 0) {
+            try {
+                return HttpUtils.getInputStream(url, null);
+            } catch (Exception e) {
+                getImgInputStream(url, retry);
+            }
+        }
+        throw new BusinessException("通过URL取得图片失败. url:"+url);
+    }
 
+    /**
+     * 将图片流转为图片文件
+     *
+     * @param ins InputStream  图片流
+     * @param file File  图片文件（返回值）
+     * @return 无
+     */
+//    public static void inputstreamToFile(InputStream ins, File file) {
+//        try {
+//            OutputStream os = new FileOutputStream(file);
+//            int bytesRead = 0;
+//            byte[] buffer = new byte[8192];
+//            while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+//                os.write(buffer, 0, bytesRead);
+//            }
+//            os.close();
+//            ins.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 //    /**
 //     * 京东增加SKU信息
