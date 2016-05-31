@@ -387,7 +387,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         // 取得图片URL
                         picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                         // 上传主产品的其余4张非主图片
-                        jdWareService.addWarePropimg(shopProp, String.valueOf(jdWareId), ColorId_MinPic, picUrl, false);
+                        jdWareService.addWarePropimg(shopProp, String.valueOf(jdWareId), ColorId_MinPic, picUrl, picName, false);
                     } catch (Exception ex) {
                         $error("京东上传主商品非主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", jdWareId, ColorId_MinPic, picName);
                         ex.printStackTrace();
@@ -471,20 +471,20 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
                 // 新增或更新商品成功时
-                 // 回写workload表   (成功1)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+                // 回写ims_bt_product表(numIId)
+                sxProductService.updateImsBtProduct(sxData, getTaskName());
 
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
                 updateProductGroupStatus(sxData);
-
-                // 回写ims_bt_product表(numIId)
-                sxProductService.updateImsBtProduct(sxData, getTaskName());
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
                 updateJdWareTransportId(shopProp, sxData, jdWareId);
                 // 设置京东关联板式
                 updateJdWareLayoutId(shopProp, sxData, jdWareId);
+
+                // 回写workload表   (成功1)
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -494,8 +494,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                     sxData.setErrorMessage(errMsg);
                 }
-                // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, getTaskName());
 
@@ -506,6 +504,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     // 设置京东关联板式
                     updateJdWareLayoutId(shopProp, sxData, jdWareId);
                 }
+
+                // 回写workload表   (失败2)
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 return;
             }
         } catch (Exception ex) {
@@ -1054,8 +1055,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         productPicNameList.add("京东产品图片-5");
 
         // 检索     调用API【根据商品Id，检索商品图片】(更新时)
-        // 删除图片  调用API【删除商品图片】(更新时)
-        // 增加图片  调用API【根据商品Id，销售属性值Id增加图片】(新增或更新时)
+        // 删除图片(更新时)  调用API【删除商品图片】  因为京东不能删除全部的图片，所以一定要留一张不删，等5张图片上完后再删除
+        // 增加图片  调用API【根据商品Id，销售属性值Id增加图片】(新增或更新时)  京东最多可上传6张图片
+        // 删除修改前没删除的最后一张图片图片(更新时)  调用API【删除商品图片】
+
+        // 更新的时候，保存更新之前的颜色和图片INDEX列表用（不包含颜色值Id为0000000000主图）
+        Map<String,List<String>> colorIndexesMap = new HashMap<>();
 
         // 更新商品的时候需要事先删除京东平台上已有的SKU图片，新增的时候不需要
         if (updateFlg) {
@@ -1075,50 +1080,66 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 删除商品图片的接口，支持批量 颜色和排序的数组长度要一致 删除时按数组对应的坐标删除
 
             // 取出商品图片列表中的要删除颜色值Id列表(去掉重复，去掉主图颜色值Id(ID0000000000))
-            List<String> picColorIds = new ArrayList<>();
             for (Image img : wareIdPics) {
                 // 过滤掉主图的颜色值Id0000000000
                 if (ColorId_MinPic.equals(img.getColorId())) {
                     continue;
                 }
 
-                // 如果要删除颜色值Id列表中不存在的时候，追加
-                if (!picColorIds.contains(img.getColorId())) {
-                    picColorIds.add(img.getColorId());
+                // 如果删除对象MAP中没有这个颜色
+                if (!colorIndexesMap.containsKey(img.getColorId())) {
+                    List<String> idxList = new ArrayList<>();
+                    colorIndexesMap.put(img.getColorId(), idxList);
+                }
+
+                // 将图片index追加到列表中
+                if (colorIndexesMap.containsKey(img.getColorId())){
+                    colorIndexesMap.get(img.getColorId()).add(img.getImgIndex().toString());
                 }
             }
 
             // 根据要删除的列表及图片列表作成删除用的颜色id数组和图片位置数组("123,234,345")
+            // 因为每种颜色的图片不能全部删除，必须要留一张图片
             StringBuffer sbDelColorIds = new StringBuffer();
             StringBuffer sbDelImgIndexes = new StringBuffer();
-            for (String strColorId : picColorIds) {
-                // 颜色id数组("jingdong,yanfa,pop")
-                sbDelColorIds.append(strColorId);
-                sbDelColorIds.append(Separtor_Coma);   // ","
+            // 循环作成要删除图片的颜色ID和图片index列表（每种颜色留一张图片）
+            for (Map.Entry<String, List<String>> entry : colorIndexesMap.entrySet()) {
+                // 颜色Id
+                String colorId = entry.getKey();
+                // 图片位置列表
+                List<String> idxList = entry.getValue();
 
-                // 图片位置数组("123,234,345")
-                for (Image pic : wareIdPics) {
-                    // 删除对象图片id与图片id一致的时候
-                    if (strColorId.equals(pic.getColorId())) {
-                        // 该颜色对应图片位置拼起来("123")
-                        sbDelImgIndexes.append(pic.getImgIndex());
-                    }
+                // 如果该颜色对应的图片index个数等于1件或0件时，不作为图片删除对象
+                if (idxList == null || idxList.size() <= 1) {
+                    continue;
                 }
-                // 一种颜色对应图片位置最后的逗号("123,")
-                sbDelImgIndexes.append(Separtor_Coma);   // ","
-            }
 
+                // 图片位置列表
+                for (int i = 0; i < idxList.size(); i++) {
+                    // 由于不能删除每种颜色的全部图片，最后一张图片留着，不删除（新的5张图片传好之后再删除）
+                    if (i == idxList.size() - 1) {
+                        continue;
+                    }
+
+                    // 颜色id
+                    sbDelColorIds.append(entry.getKey());
+                    sbDelColorIds.append(",");   // ","
+
+                    // 图片index
+                    sbDelImgIndexes.append(idxList.get(i));
+                    sbDelImgIndexes.append(",");   // ","
+                }
+            }
             // 移除颜色id值数组最后的"，"
             if (sbDelColorIds.length() > 0) {
                 sbDelColorIds.deleteCharAt(sbDelColorIds.length() - 1);
             }
-
             // 移除图片位置最后的"，"
             if (sbDelImgIndexes.length() > 0) {
                 sbDelImgIndexes.deleteCharAt(sbDelImgIndexes.length() - 1);
             }
 
-            // 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）
+            // 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）每种颜色留一张图片
             retUploadPics = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
 
             // 删除商品图片失败
@@ -1161,7 +1182,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
 
                     // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
-                    skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, !uploadProductPicResult);
+                    skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
 
                     // 5张图片只有曾经有一张上传成功就认为SKU图片上传成功
                     uploadProductPicResult = uploadProductPicResult || skuPicResult;
@@ -1186,6 +1207,49 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 图片上传返回状态判断(该商品下所有产品的图片均上传成功时，才返回成功，否则返回失败)
             retUploadPics = retUploadPics && uploadProductPicResult;
+        }
+
+        // 更新时，删除修改前没删除的最后一张图片（不删除颜色值Id为0000000000，以及更新前就没有图片的颜色）
+        if (updateFlg) {
+            // 删除修改前没删除的最后一张图片
+            StringBuffer sbDelLastColorIds = new StringBuffer();
+            StringBuffer sbDelLastImgIndexes = new StringBuffer();
+            // 循环作成要删除图片的颜色ID和图片index列表
+            for (Map.Entry<String, List<String>> entry : colorIndexesMap.entrySet()) {
+                // 颜色Id
+                String colorId = entry.getKey();
+                // 图片位置列表
+                List<String> idxList = entry.getValue();
+
+                // 如果该颜色对应的图片index个数等于或0件时，不作为图片删除对象
+                if (idxList == null || idxList.size() == 0) {
+                    continue;
+                }
+
+                // 颜色id
+                sbDelLastColorIds.append(colorId);
+                sbDelLastColorIds.append(",");   // ","
+
+                // 图片index
+                sbDelLastImgIndexes.append("1");   // index=1(之前没删的最后一张图片)
+                sbDelLastImgIndexes.append(",");   // ","
+            }
+            // 移除颜色id值数组最后的"，"
+            if (sbDelLastColorIds.length() > 0) {
+                sbDelLastColorIds.deleteCharAt(sbDelLastColorIds.length() - 1);
+            }
+
+            // 移除图片位置最后的"，"
+            if (sbDelLastImgIndexes.length() > 0) {
+                sbDelLastImgIndexes.deleteCharAt(sbDelLastImgIndexes.length() - 1);
+            }
+
+            // 调用API【删除商品图片】批量删除该商品全部SKU的残留的最后一张图片
+            boolean delSkuLastPicResult = false;
+            delSkuLastPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelLastColorIds.toString(), sbDelLastImgIndexes.toString());
+
+            // 删除商品修改前的最后一张图片失败
+            retUploadPics = retUploadPics && delSkuLastPicResult;
         }
 
         return retUploadPics;
