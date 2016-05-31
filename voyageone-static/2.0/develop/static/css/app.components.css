@@ -20,7 +20,7 @@ vo-message {
     padding: 2px 6px 3px 8px;
     border-left: 6px solid #E67E22;
     border-radius: 4px;
-    box-shadow: 2px 2px 5px gray;
+    box-shadow: 1px 2px 7px #9E9C9C;
     color: #fff;
-    background: #f22613;
+    background: #E04825;
 }
