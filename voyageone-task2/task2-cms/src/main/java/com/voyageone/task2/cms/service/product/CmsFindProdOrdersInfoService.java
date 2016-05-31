@@ -50,8 +50,6 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
     private static String queryStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',sku:'$sku'},count:{$sum:'$qty'}}}";
-    private static String grpqueryStr = "{'cartId':{$ne:1}},{'cartId':1,'groupId':1,'productCodes':1,'_id':1}";
-    private static String prodqueryStr = "{'fields.code':{$in:#}}";
 
     @Override
     public SubSystem getSubSystem() {
@@ -315,7 +313,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         int grpIdx = 0;
 
         JomgoQuery prodQryObj = new JomgoQuery();
-        prodQryObj.setQuery(prodqueryStr);
+        prodQryObj.setQuery("{'fields.code':{$in:#}}");
         prodQryObj.setProjection("{'sales':1,'fields.code':1,'_id':0}");
 
         for (OrderChannelBean chnObj : list) {

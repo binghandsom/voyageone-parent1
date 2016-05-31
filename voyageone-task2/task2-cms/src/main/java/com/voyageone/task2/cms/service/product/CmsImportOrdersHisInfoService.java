@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteOperation;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.DBCollection;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
@@ -37,8 +38,6 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-    private static String queryStr = "{'skus.skuCode':'%s'},{'fields.code':1，'_id':0}";
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -59,6 +58,10 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
         DBCollection coll = cmsMtProdSalesHisDao.getDBCollection();
         BulkWriteOperation bbulkOpe = coll.initializeUnorderedBulkOperation();
 
+        JomgoQuery prodQryObj = new JomgoQuery();
+        prodQryObj.setQuery("{'skus.skuCode':#}");
+        prodQryObj.setProjection("{'fields.code':1,'_id':0}");
+
         for (Map orderObj : rs) {
             BasicDBObject queryObj = new BasicDBObject();
             queryObj.put("cart_id", orderObj.get("cart_id"));
@@ -69,7 +72,8 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
             BasicDBObject updateValue = new BasicDBObject();
             updateValue.putAll(orderObj);
             // 根据sku找出其产品code（暂不考虑sku重复的情况）
-            CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(String.format(queryStr, orderObj.get("sku")), (String) orderObj.get("channel_id"));
+            prodQryObj.setParameters(orderObj.get("sku"));
+            CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, (String) orderObj.get("channel_id"));
             if (prodModel != null) {
                 updateValue.put("prodCode", prodModel.getFields().getCode());
             }
