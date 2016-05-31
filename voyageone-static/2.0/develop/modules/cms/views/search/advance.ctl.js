@@ -338,12 +338,12 @@ define([
             for(var attr in item.fields){
                 if(attr.indexOf("images") >= 0){
                     var image = _.map(item.fields[attr],function(entity){
-                        return entity.image1;
+                        return entity.image1 != null ? entity.image1 : "";
                     });
                     picList.push(image);
                 }
             }
-            this.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
+            this.openImagedetail({'mainPic': picList[0][0], 'picList': picList,'search':'master'});
         }
     }
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
