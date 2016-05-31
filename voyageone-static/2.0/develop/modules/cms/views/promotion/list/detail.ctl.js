@@ -25,7 +25,8 @@ define([
             groupSelList: { selList: []},
             codeSelList: { selList: []},
             skuSelList: { selList: []},
-            tagList:[]
+            tagList:[],
+            platformUrl: ''
         };
         $scope.currentChannelId = cookieService.channel();
 
@@ -38,6 +39,7 @@ define([
                 $scope.vm.promotionStatus = res.data.promotionStatus;
                 promotionService.initByPromotionId($routeParams.promotionId).then(function(res){
                     $scope.vm.tagList=res.data.tagList;
+                    $scope.vm.platformUrl = res.data.platformUrl;
                 });
                 promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                     $scope.vm.promotion = res.data[0];
@@ -71,12 +73,9 @@ define([
                 code.tagPath =tag.tagPath;
                 code.isUpdate = true;
             }
-            console.log(code);
-            console.log(tag);
         }
         $scope.updateCode = function(code){
             delete code.isUpdate;
-            console.log("updateCode"+code);
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
                 code.promotionPriceBak = code.promotionPrice;
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

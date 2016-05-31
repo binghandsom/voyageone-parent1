@@ -193,9 +193,18 @@ public class CmsImageSettingService extends BaseAppService {
         CmsBtProductConstants.FieldImageType fieldImageType = CmsBtProductConstants.FieldImageType.getFieldImageTypeByName(imageType);
         List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getFields().getImages(fieldImageType);
 
-        images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).collect(Collectors.toList());
+        images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
 
-        String imageName = String.format("%s-%s-%s%d", user.getSelChannelId(), cmsBtProductModel.getFields().getCode(), imageType.substring(imageType.length() - 1), images.size() + 1);
+        String imageName = "";
+        int size = images.size();
+        while (true){
+            size++;
+            imageName = String.format("%s-%s-%s%d", user.getSelChannelId(), cmsBtProductModel.getFields().getCode(), imageType.substring(imageType.length() - 1), size);
+            final String finalImageName = imageName;
+            if(images.stream().filter(cmsBtProductModel_field_image -> finalImageName.equalsIgnoreCase(cmsBtProductModel_field_image.getName())).collect(Collectors.toList()).size() == 0){
+                break;
+            }
+        }
 
         images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
 

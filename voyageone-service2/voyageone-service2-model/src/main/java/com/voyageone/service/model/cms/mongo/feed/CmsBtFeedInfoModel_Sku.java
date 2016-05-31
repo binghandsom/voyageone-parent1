@@ -1,5 +1,7 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
+import java.util.List;
+
 /**
  * Created by james.li on 2015/11/27.
  */
@@ -13,6 +15,8 @@ public class CmsBtFeedInfoModel_Sku {
     private String size;
     private String barcode;
     private String clientSku;
+    private List<String> image;
+    private Integer qty;
 
     public Double getPriceCurrent() {
         return priceCurrent;
@@ -85,6 +89,18 @@ public class CmsBtFeedInfoModel_Sku {
     public void setClientSku(String clientSku) {
         this.clientSku = clientSku;
     }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
+    }
+
+    public List<String> getImage() { return image; }
+
+    public void setImage(List<String> image) { this.image = image; }
 
     @Override
     public boolean equals(Object obj) {

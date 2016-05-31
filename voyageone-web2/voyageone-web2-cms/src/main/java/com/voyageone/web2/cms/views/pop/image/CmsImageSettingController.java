@@ -39,6 +39,8 @@ public class CmsImageSettingController extends CmsController {
     private List<String> imageExtends = new ArrayList<String>(){{
         add(".jpg");
         add(".JPG");
+        add(".png");
+        add(".PNG");
     }};
 
     @RequestMapping(CmsUrlConstants.POP.IMAGE_SETTING.UPLOAD_IMAGE)
@@ -48,7 +50,7 @@ public class CmsImageSettingController extends CmsController {
         // 获得输入流：
 
         if (!imageExtends.contains(ImgUtils.getImageExtend(file.getOriginalFilename())))
-            throw new BusinessException("上传的图片后缀名不正确,请上传正确的图片, eg: jpg, JPG");
+            throw new BusinessException("上传的图片后缀名不正确,请上传正确的图片, eg: jpg, JPG, png, PNG");
 
         InputStream input = file.getInputStream();
         Map<String,Object> response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()));

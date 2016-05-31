@@ -17,6 +17,7 @@ import com.voyageone.task2.cms.bean.PlatformUploadRunState;
 import com.voyageone.task2.cms.bean.SkuTemplateSchema;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.TmallUploadRunState;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
 import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
@@ -148,7 +149,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         return true;
     }
 
-    private void buildSkuColor(ComplexValue skuFieldValue, MappingBean colorMapping, BuildSkuResult buildSkuResult, CmsBtProductModel_Sku cmsSkuProp) {
+    private void buildSkuColor(ComplexValue skuFieldValue, MappingBean colorMapping, BuildSkuResult buildSkuResult, CmsBtProductModel_Sku cmsSkuProp) throws TaskSignal {
         if (sku_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> colorOptions = ((SingleCheckField)sku_colorField).getOptions();
             String colorValue = colorOptions.get(availableColorIndex++).getValue();
@@ -162,7 +163,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         }
     }
 
-    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
+    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal {
         BuildSkuResult buildSkuResult = new BuildSkuResult();
         contextBuildCustomFields.setBuildSkuResult(buildSkuResult);
 
@@ -212,7 +213,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         return skuField;
     }
 
-    private Field buildColorExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean colorExtendMapping, Set<String> imageSet) {
+    private Field buildColorExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean colorExtendMapping, Set<String> imageSet) throws TaskSignal {
         BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
         Map<String, Field> fieldMap = ((MultiComplexField)colorExtendField).getFieldMap();
         Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap = ((TmallUploadRunState.TmallContextBuildFields)contextBuildCustomFields.getPlatformContextBuildFields()).getSrcUrlStashEntityMap();
@@ -277,7 +278,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
     }
 
     @Override
-    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List platformProps, List<SxProductBean> processSxProducts, Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) {
+    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List platformProps, List<SxProductBean> processSxProducts, Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) throws TaskSignal {
         init(platformProps, cartId);
         TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
 

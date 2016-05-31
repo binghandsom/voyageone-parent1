@@ -131,7 +131,8 @@
         description,
         platform_id,
         cart_type,
-        active
+        active,
+        created
         from Synship.ct_cart
         where 1=1
         <if test="cart_id !=null">
@@ -155,7 +156,7 @@
         <if test="active !=null">
             and active = #{active}
         </if>
-        order by cart_id
+        order by created desc
     </select>
 
     <select id="com_mt_third_party_config_getAll" resultType="com.voyageone.common.configs.beans.ThirdPartyConfigBean">

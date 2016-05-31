@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.daoext.cms.CmsBtTasksDaoExt;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +21,30 @@ import java.util.Map;
 public class TaskService extends BaseService {
 
     @Autowired
-    private CmsBtTasksDaoExt cmsBtTaskDao;
+    private CmsBtTasksDao tasksDao;
+
+    @Autowired
+    private CmsBtTasksDaoExt tasksDaoExt;
 
     public CmsBtTasksBean getTaskWithPromotion(int task_id) {
-        return cmsBtTaskDao.selectByIdWithPromotion(task_id);
+        return tasksDaoExt.selectWithPromotion(task_id);
     }
 
     public List<CmsBtTasksBean> getTasks(int promotionId, String taskName, String channelId, int taskType) {
-        return cmsBtTaskDao.selectByName(promotionId, taskName, channelId, taskType);
+        return tasksDaoExt.selectWithPromotion(promotionId, taskName, channelId, taskType);
     }
 
     public List<CmsBtTasksBean> getTasksWithPromotionByCondition(Map<String, Object> searchInfo) {
-        return cmsBtTaskDao.selectTaskWithPromotionByChannel(searchInfo);
+        return tasksDaoExt.selectWithPromotion(searchInfo);
     }
 
     @VOTransactional
     public int addTask(CmsBtTasksBean cmsBtTaskModel) {
-        return cmsBtTaskDao.insert(cmsBtTaskModel);
+        return tasksDao.insert(cmsBtTaskModel);
+    }
+
+    @VOTransactional
+    public int updateConfig(CmsBtTasksBean cmsBtTasksBean) {
+        return tasksDaoExt.updateConfig(cmsBtTasksBean);
     }
 }

@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.beat;
 
-import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 
 /**
  * 价格披露请求参数模型(适配多请求)
@@ -23,11 +23,15 @@ public class ReqParam {
 
     private String num_iid;
 
+    private Boolean force;
+
     private String code;
 
     private String productModel;
 
     private int promotionId;
+
+    private String searchKey;
 
     public int getOffset() {
         return offset;
@@ -77,6 +81,14 @@ public class ReqParam {
         this.num_iid = num_iid;
     }
 
+    public Boolean getForce() {
+        return force;
+    }
+
+    public void setForce(Boolean force) {
+        this.force = force;
+    }
+
     public String getCode() {
         return code;
     }
@@ -99,5 +111,13 @@ public class ReqParam {
 
     public void setPromotionId(int promotionId) {
         this.promotionId = promotionId;
+    }
+
+    public String getSearchKey() {
+        return searchKey;
+    }
+
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
     }
 }

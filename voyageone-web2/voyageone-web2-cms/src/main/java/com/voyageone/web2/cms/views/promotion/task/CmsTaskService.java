@@ -16,16 +16,16 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-public class CmsTaskService extends BaseAppService {
+class CmsTaskService extends BaseAppService {
 
     @Autowired
     private TaskService taskService;
 
-    public List<CmsBtTasksBean> getAllTasks(Map<String, Object> searchInfo) {
+    List<CmsBtTasksBean> getAllTasks(Map<String, Object> searchInfo) {
         return taskService.getTasksWithPromotionByCondition(searchInfo);
     }
 
-    public CmsBtTasksBean getTaskWithPromotion(int task_id) {
+    CmsBtTasksBean getTaskWithPromotion(int task_id) {
         return taskService.getTaskWithPromotion(task_id);
     }
 }

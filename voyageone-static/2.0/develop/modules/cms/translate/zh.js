@@ -1,6 +1,8 @@
 define(function(){
     return {
+        "TXT_IMAGE_STATUS": "图片状态",
         "TXT_REMINDER_WITH_COLON": "温馨提示：",
+        "TXT_EDIT_TASK": "编辑当前 Task ",
         "TXT_LOGOUT": "注销",
         "TXT_HOME": "首页",
         "TXT_CATEGORY_VIEWS": "-- 类目视图 --",
@@ -523,6 +525,11 @@ define(function(){
         "RE_FAIL": "还原失败",
         "CANT_BEAT": "信息错误",
 
+        "None": "无图",
+        "Waiting": "等待取图",
+        "Error": "取图错误",
+        "Exists": "取图成功",
+        
         /**分页显示*/
         "TXT_PAGER_SIZE": "每页显示",
         /**尺码表*/
