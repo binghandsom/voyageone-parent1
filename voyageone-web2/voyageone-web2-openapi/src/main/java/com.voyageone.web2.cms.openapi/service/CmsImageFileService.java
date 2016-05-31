@@ -48,7 +48,7 @@ public class CmsImageFileService extends BaseService {
     @Autowired
     private ImagePathCache imagePathCache;
 
-    public GetImageResultBean checkGetImageParameter(String channelId, long templateId, String file, String vparam) {
+    private GetImageResultBean checkGetImageParameter(String channelId, long templateId, String file, String vparam) {
         GetImageResultBean resultBean = new GetImageResultBean();
         if (StringUtils.isEmpty(channelId)) {
             resultBean.setSubEnumError(ImageErrorEnum.ChannelIdNotNull);
@@ -68,7 +68,7 @@ public class CmsImageFileService extends BaseService {
         return resultBean;
     }
 
-    public GetImageResultBean getImage(String channelId, long templateId, String file, boolean isUploadUSCDN, String vparam, String creater) throws Exception {
+    public GetImageResultBean getImage(String channelId, long templateId, String file, boolean isUploadUSCDN, boolean skipCache, String vparam, String creater) throws Exception {
         GetImageResultBean result = new GetImageResultBean();
         CmsMtImageCreateFileModel modelFile = null;
         boolean isCreateNewFile = false;
@@ -86,25 +86,24 @@ public class CmsImageFileService extends BaseService {
             }
             //hashCode做缓存key
             long hashCode = imageCreateFileService.getHashCode(channelId, templateId, file, vparam, modelTemplate.getTemplateModified());
-
-            String ossFilePath = imagePathCache.get(hashCode);
-            if (!StringUtil.isEmpty(ossFilePath)) {
-                //图片已经生成 返回
-                GetImageResultData resultData = new GetImageResultData();
-                resultData.setFilePath(ossFilePath);
-                result.setResultData(resultData);
-                return result;
+            if (!skipCache) {
+                String ossFilePath = imagePathCache.get(hashCode);
+                if (!StringUtil.isEmpty(ossFilePath)) {
+                    //图片已经生成 返回
+                    GetImageResultData resultData = new GetImageResultData();
+                    resultData.setFilePath(ossFilePath);
+                    result.setResultData(resultData);
+                    return result;
+                }
             }
-            $info("CmsImageFileService:getImage create hashCode end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s]", channelId, templateId, file, vparam, hashCode);
             //getModel
             modelFile = imageCreateFileService.getModelByHashCode(hashCode);
-            $info("CmsImageFileService:getImage get db record end; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],hashCode=[%s] model=[%s]", channelId, templateId, file, vparam, hashCode, modelFile);
             if (modelFile == null) {
                 //1.创建记录信息
                 modelFile = imageCreateFileService.createCmsMtImageCreateFile(channelId, templateId, file, vparam, creater, hashCode, isUploadUSCDN);
             }
             //.创建并上传图片
-            isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile);
+            isCreateNewFile = imageCreateFileService.createAndUploadImage(modelFile, skipCache);
             imagePathCache.set(hashCode, modelFile.getOssFilePath());
         } catch (OpenApiException ex) {
             //4.处理业务异常
@@ -135,15 +134,17 @@ public class CmsImageFileService extends BaseService {
             }
         }
         if (modelFile == null) return result;
-        if (result.getErrorCode() > 0) {//6.保存报错错误信息
-            $info("CmsImageFileService:getImage error result; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],error=[%s:%s] model.id=[%s]", channelId, templateId, file, vparam, result.getErrorCode(), result.getErrorMsg(), modelFile.getId());
+
+        if (result.getErrorCode() > 0) {
+            $info("CmsImageFileService:getImage error; params:[%s][%s][%s][%s][%s][%s],error=[%s:%s],model.id=[%s]", channelId, templateId, file, isUploadUSCDN, skipCache, vparam, result.getErrorCode(), result.getErrorMsg(), modelFile.getId());
             modelFile.setErrorMsg(result.getRequestId() + ":" + result.getErrorMsg());
             modelFile.setErrorCode(result.getErrorCode());
         } else {
-            $info("CmsImageFileService:getImage ok result; cId:=[%s],templateId=[%s],file=[%s],vparam=[%s],filePath=[%s] model.id=[%s]", channelId, templateId, file, vparam, modelFile.getOssFilePath(), modelFile.getId());
+            $info("CmsImageFileService:getImage OK; params:[%s][%s][%s][%s][%s][%s],model.id=[%s]", channelId, templateId, file, isUploadUSCDN, skipCache, vparam, modelFile.getId());
             result.getResultData().setFilePath(modelFile.getOssFilePath());
         }
-        imageCreateFileService.changeModel(modelFile);//保存
+        //保存
+        imageCreateFileService.changeModel(modelFile);
         return result;
     }
 

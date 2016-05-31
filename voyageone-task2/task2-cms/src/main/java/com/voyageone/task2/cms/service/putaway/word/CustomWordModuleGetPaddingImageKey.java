@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.dao.PaddingImageDao;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetPaddingImageKey;
@@ -31,13 +32,13 @@ public class CustomWordModuleGetPaddingImageKey extends CustomWordModule {
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) throws TaskSignal {
         return parse(customWord, expressionParser, systemParam, null);
     }
 
     //public Str
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) throws TaskSignal {
         String orderChannelId = systemParam.getOrderChannelId();
         int cartId = systemParam.getCartId();
 

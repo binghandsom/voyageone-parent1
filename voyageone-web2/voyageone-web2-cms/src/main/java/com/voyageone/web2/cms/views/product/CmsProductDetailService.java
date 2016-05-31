@@ -23,6 +23,7 @@ import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -63,6 +64,8 @@ public class CmsProductDetailService extends BaseAppService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    ImageTemplateService imageTemplateService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -91,11 +94,12 @@ public class CmsProductDetailService extends BaseAppService {
             productStatus.setTranslateStatus(false);
         }
 
-//        if (COMPLETE_STATUS.equals(productValueModel.getFields().getEditStatus())) {
-//            productStatus.setEditStatus(true);
-//        } else {
-//            productStatus.setEditStatus(false);
-//        }
+        // 设置是否approve标签
+        if (CmsConstants.ProductStatus.Approved.name().equals(productValueModel.getFields().getStatus())) {
+            productStatus.setIsApproved(true);
+        } else {
+            productStatus.setIsApproved(false);
+        }
 
         //获取商品图片信息.
         Map<String, List<CmsBtProductModel_Field_Image>> productImages = new HashMap<>();
@@ -192,6 +196,13 @@ public class CmsProductDetailService extends BaseAppService {
             }
         }
         infoMap.put("isMain", isMain ? 1 : 0);
+
+        // 设置默认第一张图片
+        String defaultImageUrl = imageTemplateService.getDefaultImageUrl(channelId);
+        Map<String, Object> defaultImage = productValueModel.getFields().getImages1().get(0);
+        if (defaultImage.size() > 0)
+            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))) + ".jpg");
+
         return infoMap;
     }
 
@@ -286,7 +297,7 @@ public class CmsProductDetailService extends BaseAppService {
     /**
      * 保存全部产品信息.
      */
-    public String updateProductAllInfo(String channelId, String userName, Map requestMap) {
+    public Map<String, Object> updateProductAllInfo(String channelId, String userName, Map requestMap) {
 
         String categoryId = requestMap.get("categoryId").toString();
         Long productId = Long.valueOf(requestMap.get("productId").toString());
@@ -366,7 +377,15 @@ public class CmsProductDetailService extends BaseAppService {
             productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
         }
 
-        return newModified;
+        // 设置返回值
+        Map<String, Object> result = new HashMap<>();
+        // 设置返回新的时间戳
+        result.put("modified", newModified);
+        // 设置返回approve状态
+        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
+        // 设置返回status状态
+        result.put("approveStatus", newProduct.getFields().getStatus());
+        return result;
     }
 
     /**

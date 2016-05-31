@@ -2,11 +2,12 @@
  * Created by linanbin on 15/12/7.
  */
 define([
-    'angularAMD',
+    'cms',
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
+], function (cms, _) {
 
-    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope,$modalInstance, attributeValueService, attributeService , notify ,$translate, context,alert) {
+    cms.controller('popAddAttributeValueNewCtl', function ($scope,$modalInstance, attributeValueService, attributeService , notify ,$translate, context, alert, $filter) {
 
         $scope.vm = {
             prop_id:"",
@@ -15,10 +16,10 @@ define([
         };
         $scope.categoryList = context.categoryList;
         $scope.valList = context.valueList;
-        $scope.vm.cat_path = context.from;
-        if ($scope.vm.cat_path == '0') {
-            $scope.vm.cat_path = '共通属性';
-        }
+        $scope.vm.cat_path = context.from == '0' ? '共通属性' : context.from;
+        //if ($scope.vm.cat_path == '0') {
+        //    $scope.vm.cat_path = '共通属性';
+        //}
 
         /**
          * 类目发生变化时,动态获取对应的属性值
@@ -31,8 +32,17 @@ define([
             }
             attributeService.init({cat_path:catPathVal,unsplitFlg:1})
                 .then(function (res){
+                    //_.forEach(res.data.valList, function (data) {
+                    //    return data.
+                    //});
+                    //$scope.valList = $filter(function (data) { console.log(data); return data.prop_translation != ''})(res.data.valList);
                     $scope.valList = res.data.valList;
                 });
+        };
+
+        $scope.propTranslationNotEmpty = function (data) {
+            console.log(data);
+            return data.prop_translation != '';
         };
 
         /**

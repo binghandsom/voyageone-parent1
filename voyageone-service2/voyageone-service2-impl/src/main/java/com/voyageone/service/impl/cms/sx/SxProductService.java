@@ -544,7 +544,7 @@ public class SxProductService extends BaseService {
 
         // 通过上面取得的code，得到对应的产品信息，以及sku信息
         List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
-        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + ", 'fields.status':'Approved'}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getFields().getCode())) {
@@ -1429,7 +1429,7 @@ public class SxProductService extends BaseService {
     }
 
     // 20160513 tom 图片服务器切换 START
-    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) {
+    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) throws Exception {
 
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId(channelId);
@@ -1440,11 +1440,10 @@ public class SxProductService extends BaseService {
         ImageCreateGetResponse response = null;
         try {
             response = imageCreateService.getImage(request);
+            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
         }
-
-        return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
     }
     // 20160513 tom 图片服务器切换 END
 

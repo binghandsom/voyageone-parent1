@@ -40,7 +40,7 @@ define([
                          self.storePageOption.total = res.data.total;
                     })
                 }
-            }
+            };
             return storeOperationController;
 
         })());

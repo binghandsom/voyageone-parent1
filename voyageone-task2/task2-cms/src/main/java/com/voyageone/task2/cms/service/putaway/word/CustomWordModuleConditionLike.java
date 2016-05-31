@@ -6,6 +6,7 @@ import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueConditionLike;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import org.springframework.stereotype.Repository;
 
@@ -24,12 +25,12 @@ public class CustomWordModuleConditionLike extends CustomWordModule{
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam)    {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) throws TaskSignal {
         return parse(customWord, expressionParser, systemParam, null);
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) throws TaskSignal {
         //user param
         CustomModuleUserParamConditionLike customModuleUserParamConditionLike = ((CustomWordValueConditionLike) customWord.getValue()).getUserParam();
 

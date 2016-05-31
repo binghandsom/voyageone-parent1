@@ -300,7 +300,7 @@ public class TmallProductService {
             logger.debug("product_match_schema:" + searchSchema);
 
             if (searchSchema == null) {
-                logger.info("No match schema found");
+                logger.info("No match product schema found from Tmall");
                 // modified by morse.lu 2016/05/24 start
 //                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
                 // 允许无产品，只有商品
@@ -524,6 +524,15 @@ public class TmallProductService {
 
             String productSchema = cmsMtPlatformCategorySchemaModel.getPropsProduct();
             logger.debug("productSchema:" + productSchema);
+            // added by morse.lu 2016/05/27 start
+            if (productSchema == null) {
+                logger.info("No match product schema found from cms");
+                // 允许无产品，只有商品
+                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
+                tmallUploadRunState.getContextBuildFields().clearContext();
+                return;
+            }
+            // added by morse.lu 2016/05/27 end
 
             Map<String, Field> fieldMap;
             try {
@@ -705,6 +714,13 @@ public class TmallProductService {
             logger.info("商品数量设为：" + quantityField.getValue());
         }
         */
+
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productCode)) {
+            productCode = "0";
+        }
+        // added by morse.lu 2016/05/27 end
 
         try {
             logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
@@ -1172,6 +1188,13 @@ public class TmallProductService {
         }
         */
 
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productId)) {
+            productId = "0";
+        }
+        // added by morse.lu 2016/05/27 end
+
         try {
             logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + ", numIId:" + numId + "]");
             numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean, tmallUploadRunState.getContextBuildFields().getXmlSkuData(), workLoadBean);
@@ -1226,6 +1249,13 @@ public class TmallProductService {
             logger.info("商品数量设为：" + quantityField.getValue());
         }
         */
+
+        // added by morse.lu 2016/05/27 start
+        // 允许无产品，只有商品
+        if (StringUtils.isEmpty(productId)) {
+            productId = "0";
+        }
+        // added by morse.lu 2016/05/27 end
 
         try {
             logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + "]");
@@ -1320,6 +1350,11 @@ public class TmallProductService {
         List<Double> skuPriceList = new ArrayList<>();
         for (SxProductBean sxProduct : sxProducts) {
             CmsBtProductModel cmsProduct = sxProduct.getCmsBtProductModel();
+
+            if (!cmsProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
+
             for (CmsBtProductModel_Sku cmsBtProductModelSku : cmsProduct.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
