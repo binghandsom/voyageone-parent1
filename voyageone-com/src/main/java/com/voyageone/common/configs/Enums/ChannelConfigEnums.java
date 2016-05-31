@@ -542,12 +542,21 @@ public class ChannelConfigEnums {
          */
         EDCSKINCARE("020"),
 
+
         /**
          * BHFO_MINIMALL
          */
         BHFO_MINIMALL("021"),
 
+        /**
+         * US匠心界
+         */
+        USJGJ("928"),
 
+        /**
+         * US悦境
+         */
+        USJGY("929"),
         /**
          * VOYAGEONE
          */
@@ -603,6 +612,8 @@ public class ChannelConfigEnums {
                 case "019": return SUMMERGURU;
                 case "020": return EDCSKINCARE;
                 case "021": return BHFO_MINIMALL;
+                case "927": return USJGJ;
+                case "928": return USJGY;
                 case "997": return VOYAGEONE;
                 case "998": return THIRD_PARTY;
                 default: return null;

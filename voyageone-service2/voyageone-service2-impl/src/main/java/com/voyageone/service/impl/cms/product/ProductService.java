@@ -27,15 +27,18 @@ import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -80,6 +83,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private ImageTemplateService imageTemplateService;
+
+    @Autowired
+    private MongoSequenceService commSequenceMongoService;
 
     /**
      * 获取商品 根据ID获
@@ -542,7 +548,7 @@ public class ProductService extends BaseService {
 //    private void insertSxWorkLoad(CmsConstants.ProductStatus befStatus,
 //                                  CmsConstants.ProductStatus aftStatus,
 //                                  String channelId, List<CmsBtProductModel_Group_Platform> platforms, String modifier) {
-    public void insertSxWorkLoad(String channelId, CmsBtProductModel cmsProduct, String modifier) {
+    public void insertSxWorkLoad(String channelId, CmsBtProductModel cmsProduct, String modifier){
 //        if (befStatus != null && aftStatus != null) {
 //            boolean isNeed = false;
 //            // 从其他状态转为Pending
@@ -578,22 +584,27 @@ public class ProductService extends BaseService {
 
             // 获取所有的可上新的平台group信息
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();
-//            for(CmsBtProductModel_Group_Platform platform : platforms) {
-//                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-//                if (carts.contains(platform.getCartId()) && isNeed) {
-//                    model.setChannelId(channelId);
-//                    model.setGroupId(platform.getGroupId());
-//                    model.setCartId(platform.getCartId());
-//                    model.setPublishStatus(0);
-//                    model.setCreater(modifier);
-//                    model.setModifier(modifier);
-//                    models.add(model);
-//                }
-//            }
+
             for (CmsBtProductModel_Carts cartInfo : carts) {
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                 model.setChannelId(channelId);
-                model.setGroupId(platformsMap.get(cartInfo.getCartId()).intValue());
+                if(platformsMap.get(cartInfo.getCartId()) != null){
+                    model.setGroupId(platformsMap.get(cartInfo.getCartId()));
+                }else{
+                    CmsBtProductGroupModel newGroup = null;
+                    try {
+                        newGroup = (CmsBtProductGroupModel) BeanUtils.cloneBean(groups.get(0));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    newGroup.set_id(null);
+                    newGroup.setChannelId(channelId);
+                    newGroup.setNumIId(null);
+                    newGroup.setCartId(cartInfo.getCartId());
+                    newGroup.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+                    cmsBtProductGroupDao.insert(newGroup);
+                    model.setGroupId(newGroup.getGroupId());
+                }
                 model.setCartId(cartInfo.getCartId());
                 model.setPublishStatus(0);
                 model.setCreater(modifier);
