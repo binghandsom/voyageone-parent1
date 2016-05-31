@@ -20,7 +20,7 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                fullCatIdValue: []
+                CIdsValue: []
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -97,7 +97,7 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                fullCatIdValue: []
+                CIdsValue: []
             };
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
