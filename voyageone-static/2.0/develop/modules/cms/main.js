@@ -23,7 +23,7 @@ require.config({
         'angular-file-upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
         'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',
         'ngload': 'libs/angularAMD/0.2.1/ngload.min',
-        'jquery': 'libs/jquery/3.0.0-rc1/jquery',
+        'jquery': 'libs/jquery/2.2.4/jquery',
         'underscore': 'libs/underscore.js/1.8.3/underscore',
         'css': 'libs/require-css/0.1.8/css',
         'json': 'libs/requirejs-plugins/1.0.3/json',
