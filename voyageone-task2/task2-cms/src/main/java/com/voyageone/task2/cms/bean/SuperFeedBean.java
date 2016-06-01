@@ -17,7 +17,6 @@ public class SuperFeedBean {
         noMd5Fields.add("md5");
         noMd5Fields.add("updateflag");
         List<Field> fields = ReflectUtil.getListField(object.getClass());
-        fields.forEach(field2 -> System.out.println(field2.getName()));
         StringBuffer temp = new StringBuffer();
         fields.stream()
                 .sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
