@@ -42,4 +42,3 @@
             multiComplex_tip: new Template("schema.multicomplextip")
         }
     });
-})();

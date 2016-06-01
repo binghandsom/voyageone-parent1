@@ -1,4 +1,4 @@
-(function() {
+
     /**
      * @Date:    2015-11-16 20:51:05
      * @User:    Jonas
@@ -74,4 +74,3 @@
     }).config(function($httpProvider) {
         $httpProvider.interceptors.push("interceptorFactory");
     });
-})();

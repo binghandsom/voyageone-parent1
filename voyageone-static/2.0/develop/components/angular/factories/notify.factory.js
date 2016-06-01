@@ -1,4 +1,4 @@
-(function() {
+
     /**
      * Notify 的可用参数
      * {
@@ -78,4 +78,3 @@
         };
         return notify;
     });
-})();

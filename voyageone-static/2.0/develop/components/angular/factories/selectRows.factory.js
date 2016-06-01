@@ -1,4 +1,4 @@
-(function() {
+
     /**
      * @Description:
      *
@@ -37,4 +37,3 @@
             this.selectRowsInfo = _selectRowsInfo;
         };
     });
-})();

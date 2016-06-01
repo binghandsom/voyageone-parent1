@@ -1,4 +1,4 @@
-(function() {
+
     /**
      * @ngdoc
      * @factory
@@ -52,4 +52,3 @@
             }) + "PopupController";
         }
     });
-})();
