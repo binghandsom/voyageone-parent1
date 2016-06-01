@@ -37,6 +37,10 @@ define([
              */
             init: function () {
                 var self = this;
+                if(self.cartId == null){
+                    self.cartId = "0";
+
+                }
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     //默认对打钩的数目和店铺渠道选择的验证处于隐藏状态
                     self.checkedCountValid = false;

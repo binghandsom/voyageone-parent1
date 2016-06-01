@@ -15,6 +15,7 @@
                     </div>
                     <div class="col-sm-7">
                         <select class="form-control" ng-model="ctrl.cartId" ng-options="cart.value as cart.name for cart in ctrl.cartList" ng-change="ctrl.init()">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
