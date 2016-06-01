@@ -466,10 +466,10 @@ public class SellerCatService extends BaseService {
                     }
 
                     HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("sellerCats.cIds", Joiner.on(",").skipNulls().join(catIds));
-                    updateMap.put("sellerCats.cNames", Joiner.on(",").skipNulls().join(catNames));
-                    updateMap.put("sellerCats.fullCIds", Joiner.on(",").skipNulls().join(fullIds));
-                    updateMap.put("sellerCats.fullCNames", Joiner.on(",").skipNulls().join(fullCatNames));
+                    updateMap.put("sellerCats.cIds", joinStr(catIds));
+                    updateMap.put("sellerCats.cNames", joinStr(catNames));
+                    updateMap.put("sellerCats.fullCIds", joinStr(fullIds));
+                    updateMap.put("sellerCats.fullCNames", joinStr(fullCatNames));
 
                     HashMap<String, Object> queryMap = new HashMap<>();
                     queryMap.put("prodId", product.getProdId());
@@ -490,6 +490,29 @@ public class SellerCatService extends BaseService {
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "", "$set");
 
+    }
+
+
+    private String joinStr(Set<String> codes)
+    {
+        ArrayList<String> list = new ArrayList<>();
+        list.addAll(codes);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+
+        for (int i = 0 ; i < codes.size(); i++)
+        {
+            if (i == 0) {
+                sb.append("'").append(list.get(i)).append("'");
+            } else {
+                sb.append(", '").append(list.get(i)).append("'");
+            }
+
+        }
+        sb.append("]");
+
+        return sb.toString();
     }
 
 
