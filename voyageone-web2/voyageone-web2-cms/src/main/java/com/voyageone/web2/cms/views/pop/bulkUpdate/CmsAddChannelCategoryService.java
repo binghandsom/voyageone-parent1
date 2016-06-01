@@ -2,7 +2,9 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -84,7 +86,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             }
         }
         //取得店铺渠道
-        List<TypeChannelBean> cartList= menuService.getPlatformTypeList(channelId, lang);
+        List<TypeChannelBean> cartList= TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, lang);
         data.put("cartList",cartList);
         //根据channelId在cms_bt_seller_cat取得对应的达标数据
         List<CmsBtSellerCatModel> channelCategoryList = sellerCatService.getSellerCatsByChannelCart(channelId, Integer.parseInt(cartId));
