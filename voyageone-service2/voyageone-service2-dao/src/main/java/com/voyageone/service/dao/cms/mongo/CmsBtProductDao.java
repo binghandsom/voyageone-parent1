@@ -125,10 +125,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return select(PriceNotEqualQuery, channelId);
     }
 
-    public void updateSellerCat(String channelId, List<BulkUpdateModel> bulkList, String modifier, String $set){
-
-    };
-
 
     /**
      * 删除Product对应的店铺内自定义分类
@@ -211,6 +207,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     }
 
 
+    /**
+     * 更新产品的店铺内分类数据
+     *
+     * @param product
+     * @param catModel
+     */
     private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel)
     {
         List<String> cIds = product.getSellerCats().getCid();
@@ -258,6 +260,14 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 //        update(product);
     }
 
+
+    /**
+     * 更新所有产品的店铺内分类数据
+     *
+     * @param channelId
+     * @param catList
+     * @return
+     */
     public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList) {
         if (catList != null) {
             StringBuffer sb = new StringBuffer();
