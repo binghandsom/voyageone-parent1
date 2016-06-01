@@ -6,7 +6,7 @@
  * @Version: 0.1.0, 2016-4-20
  */
 
-angular.module("voyageone.angular.directives.popoverText", []).directive("popoverText", function () {
+angular.module("voyageone.angular.directives").directive("popoverText", function () {
     return {
         restrict: "AE",
         transclude: true,

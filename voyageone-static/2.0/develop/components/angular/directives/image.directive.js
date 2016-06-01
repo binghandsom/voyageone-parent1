@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 16/5/12
  */
-angular.module("voyageone.angular.directives.image", []).directive("image", function () {
+angular.module("voyageone.angular.directives").directive("image", function () {
     return {
         restrict: "A",
         scope: {

@@ -4,7 +4,7 @@
  * @User:    Edward
  * @Version: 0.2.0, 2015-12-22
  */
-angular.module("voyageone.angular.directives.voption", []).directive("voption", function ($templateCache, $compile) {
+angular.module("voyageone.angular.directives").directive("voption", function ($templateCache, $compile) {
     var templateKey_select = "voyageone.angular.directives.optionSelect.tpl.html";
     // 显示成select样式
     if (!$templateCache.get(templateKey_select)) {

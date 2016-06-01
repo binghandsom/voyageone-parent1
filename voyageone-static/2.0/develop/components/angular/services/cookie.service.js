@@ -3,7 +3,7 @@
  * @User:    Jonas
  * @Version: 0.2.0
  */
-angular.module("voyageone.angular.services.cookie", []).service("cookieService", CookieService);
+angular.module("voyageone.angular.services").service("cookieService", CookieService);
 
 var keys = {
     language: "voyageone.user.language",

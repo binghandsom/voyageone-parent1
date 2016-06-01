@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 15/12/16
  */
-angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", function ($scope) {
+angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", function ($scope) {
     $scope.selectAll = selectAll;
     $scope.selectOne = selectOne;
     $scope.isAllSelected = isAllSelected;

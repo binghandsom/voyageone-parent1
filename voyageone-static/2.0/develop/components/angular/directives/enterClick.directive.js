@@ -3,7 +3,7 @@
  * @User: Jonas
  * @Version: 0.2.0
  */
-angular.module("voyageone.angular.directives.enterClick", []).directive("enterClick", function () {
+angular.module("voyageone.angular.directives").directive("enterClick", function () {
     return {
         restrict: "A",
         link: function (scope, elem, attr) {

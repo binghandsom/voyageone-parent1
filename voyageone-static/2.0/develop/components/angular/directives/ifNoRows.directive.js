@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 15/12/11
  */
-angular.module("voyageone.angular.directives.ifNoRows", []).directive("ifNoRows", function ($templateCache, $compile) {
+angular.module("voyageone.angular.directives").directive("ifNoRows", function ($templateCache, $compile) {
     var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     // 没有数据显示警告
     if (!$templateCache.get(tempNoDataKey)) {

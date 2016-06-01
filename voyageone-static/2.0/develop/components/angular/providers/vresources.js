@@ -9,7 +9,7 @@
  * @Version: 2.0.0
  */
 //@Skip
-angular.module("voyageone.angular.vresources", []).provider("$vresources", function ($provide) {
+angular.module("voyageone.angular.vresources").provider("$vresources", function ($provide) {
     /**
      * @description 构建请求地址的 url
      * @param {string} root 请求的根路径

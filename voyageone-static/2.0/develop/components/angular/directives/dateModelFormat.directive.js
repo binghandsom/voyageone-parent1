@@ -3,7 +3,7 @@
  * @User: Jonas
  * @Version: 2.0.0
  */
-angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", function ($filter) {
+angular.module("voyageone.angular.directives").directive("dateModelFormat", function ($filter) {
     return {
         restrict: "A",
         require: "ngModel",

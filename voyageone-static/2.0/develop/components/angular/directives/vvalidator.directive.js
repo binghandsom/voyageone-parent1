@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 15/12/25
  */
-angular.module("voyageone.angular.directives.validator", []).directive("ngCharMaxlength", function () {
+angular.module("voyageone.angular.directives").directive("ngCharMaxlength", function () {
     return {
         restrict: "A",
         require: "?ngModel",

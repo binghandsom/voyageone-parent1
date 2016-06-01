@@ -4,7 +4,7 @@
  * @User:    Jonas
  * @Version: 0.2.0
  */
-angular.module("voyageone.angular.services.message", []).service("messageService", MessageService);
+angular.module("voyageone.angular.services").service("messageService", MessageService);
 
 // 同步,DisplayType 枚举
 var DISPLAY_TYPES = {

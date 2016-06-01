@@ -117,7 +117,7 @@ Schema.prototype = {
         return value !== undefined ? this.config.notShowEdit = value : this.config.notShowEdit;
     }
 };
-angular.module("voyageone.angular.directives.schema", []).directive("schemaHeader", function (templates) {
+angular.module("voyageone.angular.directives").directive("schemaHeader", function (templates) {
     return {
         restrict: "E",
         replace: true,

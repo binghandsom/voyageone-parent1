@@ -4,7 +4,7 @@
  * @User:    Edward
  * @Version: 0.2.0, 2015-12-08
  */
-angular.module("voyageone.angular.directives.vpagination", []).directive("vpagination", function ($templateCache, $compile, vpagination) {
+angular.module("voyageone.angular.directives").directive("vpagination", function ($templateCache, $compile, vpagination) {
     var templateKey = "voyageone.angular.directives.pagination.tpl.html";
     var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
     // 有数据分页样式
