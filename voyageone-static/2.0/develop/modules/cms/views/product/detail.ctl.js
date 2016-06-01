@@ -97,7 +97,6 @@ define([
                         self._isminimall = res.data.isminimall;
                         self._isMain = res.data.isMain;
                         self.currentImage = res.data.defaultImage;
-                        console.log(self.currentImage);
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
 
