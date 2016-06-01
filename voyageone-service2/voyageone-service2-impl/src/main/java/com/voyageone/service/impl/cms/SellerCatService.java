@@ -33,7 +33,6 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCats;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,25 +210,25 @@ public class SellerCatService extends BaseService {
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
 
-//        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         String cId = "";
-//
-//        String shopCartId = shopBean.getCart_id();
-//
-//
-//        if(isJDPlatform(shopCartId))
-//        {
-//            cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
-//        }
-//        else if (isTMPlatform(shopCartId))
-//        {
-//            cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-//        }
+
+        String shopCartId = shopBean.getCart_id();
+
+
+        if(isJDPlatform(shopCartId))
+        {
+            cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
+        }
+        else if (isTMPlatform(shopCartId))
+        {
+            cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
+        }
 
         //TestCode
-        Random random = new Random();
-        cId = String.valueOf(random.nextInt(1000) + 1000);
+//        Random random = new Random();
+//        cId = String.valueOf(random.nextInt(1000) + 1000);
 
         if(!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
@@ -246,17 +245,17 @@ public class SellerCatService extends BaseService {
      */
     public void  updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
 
-//        ShopBean shopBean = Shops.getShop(channelId, cartId);
-//
-//        String shopCartId = shopBean.getCart_id();
-//        if(isJDPlatform(shopCartId))
-//        {
-//            jdShopService.updateShopCategory(shopBean,cId, cName);
-//        }
-//        else if (isTMPlatform(shopCartId))
-//        {
-//            tbSellerCatService.updateSellerCat(shopBean, cId, cName);
-//        }
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        String shopCartId = shopBean.getCart_id();
+        if(isJDPlatform(shopCartId))
+        {
+            jdShopService.updateShopCategory(shopBean,cId, cName);
+        }
+        else if (isTMPlatform(shopCartId))
+        {
+            tbSellerCatService.updateSellerCat(shopBean, cId, cName);
+        }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
 
@@ -278,18 +277,18 @@ public class SellerCatService extends BaseService {
      */
     public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId, String modifier) {
 
-//        ShopBean shopBean = Shops.getShop(channelId, cartId);
-//
-//        String shopCartId = shopBean.getCart_id();
-//
-//        if(isJDPlatform(shopCartId))
-//        {
-//            jdShopService.deleteShopCategory(shopBean, cId);
-//        }
-//        else if (isTMPlatform(shopCartId))
-//        {
-//            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
-//        }
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        String shopCartId = shopBean.getCart_id();
+
+        if(isJDPlatform(shopCartId))
+        {
+            jdShopService.deleteShopCategory(shopBean, cId);
+        }
+        else if (isTMPlatform(shopCartId))
+        {
+            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
+        }
 
 
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
@@ -479,8 +478,6 @@ public class SellerCatService extends BaseService {
                     model.setUpdateMap(updateMap);
                     model.setQueryMap(queryMap);
                     bulkList.add(model);
-
-                    System.out.print("================:" + (count++));
 
                 }
 
