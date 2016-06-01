@@ -2,6 +2,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,5 +58,19 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
 
     public void setFields(BaseMongoMap<String, Object> fields) {
         setAttribute("fields", fields);
+    }
+
+    public List<BaseMongoMap<String, Object>> getSku(){
+        return getAttribute("skus");
+    }
+    public void setSkus(List<BaseMongoMap<String, Object>> skus){
+        setAttribute("skus",skus);
+    }
+
+    public List<String> getTag(){
+        return getAttribute("tag");
+    }
+    public void setTag(List<String> tag){
+        setAttribute("tag",tag);
     }
 }
