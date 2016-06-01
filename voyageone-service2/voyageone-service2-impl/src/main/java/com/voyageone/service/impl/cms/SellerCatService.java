@@ -70,8 +70,8 @@ public class SellerCatService extends BaseService {
     {
         String cartIdStr = String.valueOf(cartId);
         Codes.reload();
-        String depth = Codes.getCodeName("MAX_SELLER_CAT_DEPTH",  cartIdStr);
-        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT",  cartIdStr);
+        String depth = Codes.getCodeName("SELLER_CAT_MAX_DEPTH",  cartIdStr);
+        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT",  cartIdStr);
 
         Map<String, Object> result = new HashMap<>();
 
@@ -499,6 +499,11 @@ public class SellerCatService extends BaseService {
     }
 
 
+    /**
+     * 是京东平台
+     * @param shopCartId
+     * @return
+     */
     private boolean isJDPlatform(String shopCartId)
     {
         if(shopCartId.equals(CartEnums.Cart.JD.getId())  ||  shopCartId.equals(CartEnums.Cart.JG.getId()) ||
@@ -509,6 +514,12 @@ public class SellerCatService extends BaseService {
         return  false;
     }
 
+
+    /**
+     * 是天猫品台
+     * @param shopCartId
+     * @return
+     */
     private boolean isTMPlatform(String shopCartId)
     {
         if(shopCartId.equals(CartEnums.Cart.TM.getId())  ||  shopCartId.equals(CartEnums.Cart.TB.getId()) ||
