@@ -64,7 +64,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //cartId
         String cartId= (String) params.get("cartId");
         //取得类目达标下面的个数
-        String cnt = Codes.getCodeName("MAX_SELLER_CAT_CNT", cartId);
+        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT", cartId);
         data.put("cnt", cnt);
         if(codeList.size()==1){
             //选择一条记录．根据code在cms_bt_product取得对应的属性记录
