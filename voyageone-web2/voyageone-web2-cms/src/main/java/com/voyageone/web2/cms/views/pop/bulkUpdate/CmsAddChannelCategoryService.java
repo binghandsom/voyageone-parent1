@@ -198,10 +198,12 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     public void checkChannelCategory(List<String> fullCatIdList, int cartId){
         //取得类目达标下面的个数
         String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT", String.valueOf(cartId));
-        //选择个数判断
-        if(fullCatIdList.size()>Integer.parseInt(cnt)){
-            // 类目选择check
-            throw new BusinessException("7000090",cnt);
+        if(cnt!=null){
+            //选择个数判断
+            if(fullCatIdList.size()>Integer.parseInt(cnt)){
+                // 类目选择check
+                throw new BusinessException("7000090",cnt);
+            }
         }
     };
 }
