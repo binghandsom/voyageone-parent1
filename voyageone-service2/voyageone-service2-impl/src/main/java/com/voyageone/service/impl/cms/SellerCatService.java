@@ -1,8 +1,16 @@
 package com.voyageone.service.impl.cms;
 
+import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
+import com.mongodb.BulkWriteResult;
+import com.taobao.api.ApiException;
 import com.taobao.api.domain.Product;
 import com.taobao.api.domain.SellerCat;
+import com.taobao.top.schema.exception.TopSchemaException;
+import com.taobao.top.schema.field.Field;
+import com.taobao.top.schema.field.MultiCheckField;
+import com.taobao.top.schema.field.OptionsField;
+import com.taobao.top.schema.option.Option;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
@@ -12,6 +20,9 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
+import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
+import com.voyageone.components.tmall.service.TbItemSchema;
+import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -22,7 +33,9 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCats;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +61,9 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private TbSellerCatService tbSellerCatService;
+
+    @Autowired
+    private TbItemService tbItemService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
@@ -355,6 +371,127 @@ public class SellerCatService extends BaseService {
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
         }
         return  convert2Tree(sellerCat);
+
+    }
+
+
+
+    public void refeshAllProduct(String channelId, int cartId, String creator) {
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        String shopCartId = shopBean.getCart_id();
+
+        List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
+
+        if (isTMPlatform(shopCartId) )
+        {
+            List<SellerCat> sellerCatList= tbSellerCatService.getSellerCat(shopBean);
+            sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
+        }
+
+        List<CmsBtSellerCatModel> treeList = convert2Tree(sellerCat);
+
+
+        List<CmsBtSellerCatModel> result = new ArrayList<>();
+
+        for (CmsBtSellerCatModel node : treeList) {
+            CmsBtSellerCatModel copyRoot = copyCmsBtSellerCatModel(node);
+            result.add(copyRoot);
+
+            result.addAll(findAllChildren(node));
+        }
+
+        //只支持2层结构
+        Map<String, CmsBtSellerCatModel> sellerCatMap =  new HashedMap();
+
+
+        for (CmsBtSellerCatModel model: result) {
+            sellerCatMap.put(model.getCatId(), model);
+        }
+
+        //得到所有的product_group
+
+        String query = "{\"numIId\": {\"$ne\": \"\"} }";
+
+        List<CmsBtProductGroupModel> groupList =  cmsBtProductGroupDao.select(query, channelId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+        int count = 0;
+
+        for (CmsBtProductGroupModel group:groupList) {
+
+
+            List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(), channelId);
+            String numIId = group.getNumIId();
+
+            try {
+
+                TbItemSchema schema = tbItemService.getUpdateSchema(shopBean, Long.valueOf(numIId));
+
+                List<Field> fields = schema.getFields();
+
+                List<String> cIds = new ArrayList<>();
+
+                for (Field field : fields) {
+                    if (field.getId().equals("seller_cids")) {
+                        List<Option> options = ((MultiCheckField) field).getOptions();
+                        for (Option option : options) {
+                            String cId = option.getValue();
+                            cIds.add(cId);
+                        }
+                    }
+                }
+
+                for (CmsBtProductModel product : productList) {
+
+                    Set<String> catIds = new HashSet<>();
+                    Set<String> catNames = new HashSet<>();
+                    Set<String> fullCatNames = new HashSet<>();
+                    Set<String> fullIds = new HashSet<>();
+
+                    for (String cId : cIds) {
+                        CmsBtSellerCatModel leaf = sellerCatMap.get(cId);
+                        catIds.add(cId);
+                        catNames.add(leaf.getCatName());
+                        fullCatNames.add(leaf.getCatPath());
+                        fullIds.add(leaf.getFullCatId());
+
+                        if (!leaf.getParentCatId().equals("0")) {
+                            CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
+                            catIds.add(parent.getCatId());
+                            catNames.add(parent.getCatName());
+                            fullCatNames.add(parent.getCatPath());
+                            fullIds.add(parent.getFullCatId());
+                        }
+                    }
+
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    updateMap.put("sellerCats.cIds", Joiner.on(",").skipNulls().join(catIds));
+                    updateMap.put("sellerCats.cNames", Joiner.on(",").skipNulls().join(catNames));
+                    updateMap.put("sellerCats.fullCIds", Joiner.on(",").skipNulls().join(fullIds));
+                    updateMap.put("sellerCats.fullCNames", Joiner.on(",").skipNulls().join(fullCatNames));
+
+                    HashMap<String, Object> queryMap = new HashMap<>();
+                    queryMap.put("prodId", product.getProdId());
+
+                    BulkUpdateModel model = new BulkUpdateModel();
+                    model.setUpdateMap(updateMap);
+                    model.setQueryMap(queryMap);
+                    bulkList.add(model);
+
+                    System.out.print("================:" + (count++));
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "", "$set");
 
     }
 

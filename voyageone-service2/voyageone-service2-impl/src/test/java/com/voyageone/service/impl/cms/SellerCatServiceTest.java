@@ -70,4 +70,9 @@ public class SellerCatServiceTest {
         System.out.println(JsonUtil.bean2Json(map2));
 
     }
+
+    @Test
+    public void testRefeshAllProduct() throws Exception {
+        sellerCatService.refeshAllProduct("010", 23, "ethan");
+    }
 }
