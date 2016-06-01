@@ -471,6 +471,7 @@ public class SellerCatService extends BaseService {
                     updateMap.put("sellerCats.fullCIds", joinStr(fullIds));
                     updateMap.put("sellerCats.fullCNames", joinStr(fullCatNames));
 
+
                     HashMap<String, Object> queryMap = new HashMap<>();
                     queryMap.put("prodId", product.getProdId());
 
