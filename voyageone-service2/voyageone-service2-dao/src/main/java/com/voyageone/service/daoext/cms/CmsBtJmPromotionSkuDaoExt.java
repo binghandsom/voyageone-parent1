@@ -30,9 +30,12 @@ public interface CmsBtJmPromotionSkuDaoExt {
 
     List getExportListByPromotionId(int promotionId);
 
-    int batchUpdateDealPrice(@Param("listPromotionProduct") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
+    int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
     List<SkuPriceBean> getJmSkuPriceInfoListByPromotionProductId(int promotionProductId);
 
+    int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+
+    int deleteAllSku(@Param("promotionId") int promotionId);
     //jm2 end
 }

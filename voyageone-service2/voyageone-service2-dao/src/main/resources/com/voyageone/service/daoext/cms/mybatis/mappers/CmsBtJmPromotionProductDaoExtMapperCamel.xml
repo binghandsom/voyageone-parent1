@@ -292,5 +292,17 @@
         UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
         WHERE    cms_bt_jm_promotion_id=#{promotionId}
     </update>
+    <delete id="batchDeleteProduct">
+        delete from  cms_bt_jm_promotion_product
+        WHERE synch_status=0 and   id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <delete id="deleteAllProduct">
+        delete from  cms_bt_jm_promotion_product
+        where synch_status=0 and  cms_bt_jm_promotion_id=#{promotionId}
+    </delete>
     <!--jm2 end-->
 </mapper>

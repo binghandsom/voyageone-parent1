@@ -55,5 +55,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     int batchCopyDeal(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int copyDealAll(int promotionId);
+
+    int batchDeleteProduct(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int deleteAllProduct(int promotionId);
+
     //jm2 end
 }

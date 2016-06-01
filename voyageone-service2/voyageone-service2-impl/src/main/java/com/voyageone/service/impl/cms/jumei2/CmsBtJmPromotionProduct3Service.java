@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.jumei2.BatchCopyDealParameter;
+import com.voyageone.service.bean.cms.jumei2.BatchDeleteProductParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -98,7 +99,7 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量同步价格
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
-        if(parameter.getListPromotionProductId().size()==0) return;
+        if (parameter.getListPromotionProductId().size() == 0) return;
         daoExt.batchSynchPrice(parameter.getListPromotionProductId());
     }
 
@@ -109,13 +110,29 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量再售
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
-        if(parameter.getListPromotionProductId().size()==0) return;
+        if (parameter.getListPromotionProductId().size() == 0) return;
         daoExt.batchCopyDeal(parameter.getListPromotionProductId());
     }
 
     //全部再售
     public void copyDealAll(int promotionId) {
         daoExt.copyDealAll(promotionId);
+    }
+
+    //批量删除 product  已经再售的不删
+    @VOTransactional
+    public void batchDeleteProduct(BatchDeleteProductParameter parameter) {
+        //先删除sku 再删除product
+        daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
+        daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
+
+    }
+    @VOTransactional //删除全部product  已经再售的不删
+    public void deleteAllProduct(int promotionId) {
+        //先删除sku 再删除product
+        daoExtCmsBtJmPromotionSku.deleteAllSku(promotionId);
+        daoExt.deleteAllProduct(promotionId);
+
     }
 }
 

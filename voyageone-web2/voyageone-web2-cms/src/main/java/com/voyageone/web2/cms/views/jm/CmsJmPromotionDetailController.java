@@ -1,12 +1,14 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.bean.cms.jumei2.BatchCopyDealParameter;
+import com.voyageone.service.bean.cms.jumei2.BatchDeleteProductParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
 import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
 import com.voyageone.service.impl.cms.jumei.*;
@@ -293,6 +295,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
     //全部再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
     public AjaxResponse copyDealAll(@RequestBody int promotionId) {
@@ -300,6 +303,22 @@ public class CmsJmPromotionDetailController extends CmsController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", promotionId);
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //批量删除 product  已经再售的不删
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchDeleteProduct)
+    public AjaxResponse batchDeleteProduct(@RequestBody BatchDeleteProductParameter parameter) {
+        service3.batchDeleteProduct(parameter);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //删除全部product  已经再售的不删
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DeleteAllProduct)
+    public AjaxResponse deleteAllProduct(@RequestBody int promotionId) {
+        service3.deleteAllProduct(promotionId);
         CallResult result = new CallResult();
         return success(result);
     }

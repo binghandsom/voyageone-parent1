@@ -307,6 +307,40 @@ define([
                 alert($translate.instant('TXT_FAIL'));
             });
         }
+
+        $scope.batchDeleteProduct=function(){
+            //已再售的不删除
+            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var parameter={};
+            parameter.promotionId= $scope.vm.promotionId;
+            parameter.listPromotionProductId=listPromotionProductId;
+            jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        }
+
+        $scope.deleteAllProduct=function()
+        {//已再售的不删除
+            jmPromotionDetailService.deleteAllProduct( $scope.vm.promotionId).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        }
     }
     detailController.$inject = ['$scope', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;

@@ -212,7 +212,7 @@
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;全量操作&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                    <li><a href="" ng-click="deleteByPromotionId();">全量清空</a></li>
+                    <li><a href="" ng-click="deleteAllProduct();">全量清空</a></li>
                     <li><a href="" ng-click="copyDealAll()">全量再售</a></li>
                     <li><a href="" ng-click="synchAllPrice()">全量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelAllUpdateDealEndTime)">全量Deal延期</a></li>-->
@@ -223,7 +223,7 @@
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;批量操作&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                    <li><a href="" ng-click="deleteByProductIdList()">批量清空</a></li>
+                    <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
                     <li><a href="" ng-click="batchCopyDeal()">批量再售</a></li>
                     <li><a href="" ng-click="batchSynchPrice()">批量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
@@ -257,8 +257,8 @@
                                     <th class="text-left">Tag Name</th>
                                     <th class="text-left">Color</th>
                                     <th class="text-right">Price</th>
-                                    <th class="text-right">最新团购价</th>
                                     <th class="text-left">聚美Hash ID</th>
+                                    <th class="text-right">最新团购价</th>
                                     <th class="text-center">折扣</th>
                                     <th class="text-center">SKU数</th>
                                     <th class="text-left">错误消息</th>
@@ -311,7 +311,7 @@
                                             </div>
                                         </small>
                                     </td>
-                                    <td ng-if="model.updateState==0">{{getStatus(model)}}</td>
+                                    <td >{{getStatus(model)}}</td>
                                     <td class="text-center">
                                         <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
                                         </button>

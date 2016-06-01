@@ -163,7 +163,9 @@
         "batchSynchPrice": "batchSynchPrice",
         "synchAllPrice": "synchAllPrice",
         "batchCopyDeal": "batchCopyDeal",
-        "copyDealAll": "copyDealAll"
+        "copyDealAll": "copyDealAll",
+        "batchDeleteProduct":"batchDeleteProduct",
+        "deleteAllProduct":"deleteAllProduct"
       },
       "cmsBtJmPromotionImportTask": {
         "cmsBtJmPromotionImportTaskService": {

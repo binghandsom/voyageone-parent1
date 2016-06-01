@@ -68,6 +68,8 @@ public interface CmsUrlConstants {
                 String SynchAllPrice="synchAllPrice";
                 String BatchCopyDeal="batchCopyDeal";
                 String CopyDealAll="copyDealAll";
+                String BatchDeleteProduct="batchDeleteProduct";
+                String DeleteAllProduct="deleteAllProduct";
             }
         }
     }

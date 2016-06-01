@@ -152,13 +152,11 @@ public class CmsBtJmPromotionImportTask3Service {
 
     private void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
-
         if (info.productModel.getId() == null || info.productModel.getId() == 0) {
             daoCmsBtJmPromotionProduct.insert(info.productModel);
         } else {
             daoCmsBtJmPromotionProduct.update(info.productModel);
         }
-
         //CmsBtJmPromotionSku
         for (CmsBtJmPromotionSkuModel sku : info.skuList) {
             sku.setCmsBtJmPromotionProductId(info.productModel.getId());
@@ -168,7 +166,6 @@ public class CmsBtJmPromotionImportTask3Service {
                 daoCmsBtJmPromotionSku.update(sku);
             }
         }
-
         //CmsBtJmPromotionTagProduct
         for (CmsBtJmPromotionTagProductModel tag : info.tagList) {
             tag.setCmsBtJmPromotionProductId(info.productModel.getId());
@@ -219,7 +216,9 @@ public class CmsBtJmPromotionImportTask3Service {
             saveInfo.productModel.setMarketPrice(saveInfo.skuList.get(0).getMarketPrice());
             saveInfo.productModel.setDealPrice(saveInfo.skuList.get(0).getDealPrice());
             saveInfo.productModel.setDiscount(saveInfo.skuList.get(0).getDiscount());//折扣
+            saveInfo.productModel.setSkuCount(saveInfo.skuList.size());
         }
+
         return saveInfo;
     }
 
