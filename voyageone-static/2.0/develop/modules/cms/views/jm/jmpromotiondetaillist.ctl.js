@@ -229,10 +229,10 @@ define([
 
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
-            if (model.synch_status == 1 || model.update_status == 1 || model.price_status == 1) {
+            if (model.synchStatus == 1 || model.updateStatus == 1 || model.priceStatus == 1) {
                 return "待更新";
             }
-            else if (model.synch_status == 0) {
+            else if (model.synchStatus == 0) {
                 return "未更新";
             }
             return "更新完成";
