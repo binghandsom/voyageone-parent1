@@ -219,7 +219,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         int returnValue = 0;
         if (subSuccessImageUrlList.size() > 0) {
             try {
-                imageTemplate(orderChannelId,subSuccessImageUrlList);
+//                imageTemplate(orderChannelId,subSuccessImageUrlList);
                 subSuccessImageUrlList.forEach(CmsBtImagesModel -> {
                     CmsBtImagesModel.setUpdFlg(1);
                     CmsBtImagesModel.setModifier(getTaskName());
