@@ -381,6 +381,14 @@ public class ProductService extends BaseService {
             updateMap.putAll(fieldObj);
         }
 
+
+        /**
+         * platform
+         */
+        CmsBtProductModel_Platform platform = productModel.getPlatform();
+        updateMap.put("platform", platform);
+
+
         /**
          * Feed
          */

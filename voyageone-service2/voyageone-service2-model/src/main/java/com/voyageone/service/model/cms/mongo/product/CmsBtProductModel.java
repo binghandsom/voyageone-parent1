@@ -28,6 +28,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
     private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
 
+    private CmsBtProductModel_Platform platform = new CmsBtProductModel_Platform();
+
     public String getOrgChannelId() {
 
         return orgChannelId == null ? this.channelId : orgChannelId;
@@ -150,5 +152,13 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
         this.carts = productCarts;
+    }
+
+    public CmsBtProductModel_Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(CmsBtProductModel_Platform platform) {
+        this.platform = platform;
     }
 }
