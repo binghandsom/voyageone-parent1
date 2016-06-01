@@ -114,7 +114,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //根据codeList取得相关联的code
         List<String> allCodeList=getAllCodeList(codeList, channelId, cartId);
         //取得类目达标下面的个数
-        String cnt = Codes.getCodeName("SELLER_CATS", String.valueOf(cartId));
+        String cnt = Codes.getCodeName("SELLER_CATS_FULL_CIDS", String.valueOf(cartId));
         List<String> editFullCNamesList = new ArrayList<>();
         if(cnt!=null){
             for(String fullCatId:fullCatIdList){
