@@ -19,5 +19,3 @@ public class CmsFindProdOrdersInfoJob extends BaseTaskJob {
 		return cmsFindProdOrdersInfoService;
 	}
 }
-
-

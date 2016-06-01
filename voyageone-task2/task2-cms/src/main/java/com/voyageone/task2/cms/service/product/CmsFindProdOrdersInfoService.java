@@ -47,9 +47,16 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
     @Autowired
     private CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
 
+    private final static int PAGE_LIMIT = 500;
     private static String queryStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
     private static String queryStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',sku:'$sku'},count:{$sum:'$qty'}}}";
+    private static String queryCodeStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'prodCode':#}}";
+    private static String queryCodeStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'prodCode':#}}";
+    private static String queryCodeStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',prodCode:'$prodCode'},count:{$sum:'$qty'}}}";
+    private static String queryGrpStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':#,'channel_id':#,'prodCode':{$in:#}}}";
+    private static String queryGrpStr2 = "{$match:{'cart_id':#,'channel_id':#,'prodCode':{$in:#}}}";
+    private static String queryGrpStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id'},count:{$sum:'$qty'}}}";
 
     @Override
     public SubSystem getSubSystem() {
@@ -74,325 +81,481 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         String begDate2 = DateTimeUtil.getDateBeforeDays(30);
 
         JomgoQuery qryObj = new JomgoQuery();
-        qryObj.setProjection("{'_id':0,'prodId':1,'skus.skuCode':1,'skus.skuCarts':1}");
-        qryObj.setLimit(500);
+        qryObj.setProjection("{'_id':0,'fields.code':1,'skus.skuCode':1,'skus.skuCarts':1}");
+        qryObj.setLimit(PAGE_LIMIT);
         int prodIdx = 0;
         for (OrderChannelBean chnObj : list) {
             // 针对各店铺产品进行统计
-            qryObj.setSkip(prodIdx * 500);
-            List<CmsBtProductModel> prodList = cmsBtProductDao.select(qryObj, chnObj.getOrder_channel_id());
-            if (prodList == null || prodList.isEmpty()) {
-                $warn("CmsFindProdOrdersInfoService 该店铺无产品数据！ + channel_id=" + chnObj.getOrder_channel_id());
-                continue;
-            }
-
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (CmsBtProductModel prodObj : prodList) {
-                // 对每个产品统计其sku数据
-                List<CmsBtProductModel_Sku> skusList = prodObj.getSkus();
-                if (skusList == null || skusList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService 该产品无sku数据！ + channel_id=%s, prodId=%d", chnObj.getOrder_channel_id(), prodObj.getProdId()));
-                    continue;
+            prodIdx = 0;
+            List<CmsBtProductModel> prodList = null;
+            do {
+                qryObj.setSkip(prodIdx * PAGE_LIMIT);
+                prodIdx++;
+                prodList = cmsBtProductDao.select(qryObj, chnObj.getOrder_channel_id());
+                if (prodList == null || prodList.isEmpty()) {
+                    $warn("CmsFindProdOrdersInfoService 该店铺无产品数据！ + channel_id=" + chnObj.getOrder_channel_id());
+                    break;
                 }
 
-                List<Integer> cartList = new ArrayList<>();
-                List<String> skuCodeList = new ArrayList<>();
-                skusList.forEach(skuObj -> {
-                    skuCodeList.add(skuObj.getSkuCode());
-                    cartList.addAll(skuObj.getSkuCarts());
-                });
-                List<Integer> cartList2 = cartList.stream().distinct().collect(Collectors.toList());
-                if (cartList.isEmpty() || cartList2.isEmpty()) {
-                    continue;
-                }
-
-                Map salesMap = new HashMap<>();
-                List<Map> skuSum7List = new ArrayList<>();
-                List<Map> skuSum30List = new ArrayList<>();
-                List<Map> skuSumAllList = new ArrayList<>();
-
-                // 7天销售数据
-                Object[] params = new Object[] { begDate1, endDate, cartList2, chnObj.getOrder_channel_id(), skuCodeList };
-                List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
-                if (!amt7days.isEmpty()) {
-                    Map sum7Map = new HashMap<>();
-                    int sum7 = 0;
-                    for (Map hisInfo : amt7days) {
-                        int qty = ((Number) hisInfo.get("count")).intValue();
-                        sum7 += qty;
-                        Map groupKey = (Map) hisInfo.get("_id");
-                        sum7Map.put("cartId_" + groupKey.get("cart_id"), qty);
-
-                        Map skuSalesMap = new HashMap<>();
-                        skuSalesMap.put("skuCode", groupKey.get("sku"));
-                        skuSalesMap.put("cartId", groupKey.get("cart_id"));
-                        skuSalesMap.put("code_sum_7", qty);
-                        skuSum7List.add(skuSalesMap);
+                List<BulkUpdateModel> bulkList = new ArrayList<>();
+                for (CmsBtProductModel prodObj : prodList) {
+                    // 对每个产品统计其sku数据
+                    String prodCode = prodObj.getFields().getCode();
+                    List<CmsBtProductModel_Sku> skusList = prodObj.getSkus();
+                    if (skusList == null || skusList.isEmpty()) {
+                        $warn(String.format("CmsFindProdOrdersInfoService 该产品无sku数据！ + channel_id=%s, code=%s", chnObj.getOrder_channel_id(), prodCode));
+                        continue;
                     }
-                    sum7Map.put("cartId_0", sum7);
-                    salesMap.put("code_sum_7", sum7Map);
-                }
 
-                // 30天销售数据
-                params = new Object[] { begDate2, endDate, cartList2, chnObj.getOrder_channel_id(), skuCodeList };
-                List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
-                if (!amt30days.isEmpty()) {
-                    Map sum30Map = new HashMap<>();
-                    int sum30 = 0;
-                    for (Map hisInfo : amt30days) {
-                        int qty = ((Number) hisInfo.get("count")).intValue();
-                        sum30 += qty;
-                        Map groupKey = (Map) hisInfo.get("_id");
-                        sum30Map.put("cartId_" + groupKey.get("cart_id"), qty);
-
-                        Map skuSalesMap = new HashMap<>();
-                        skuSalesMap.put("skuCode", groupKey.get("sku"));
-                        skuSalesMap.put("cartId", groupKey.get("cart_id"));
-                        skuSalesMap.put("code_sum_30", qty);
-                        skuSum30List.add(skuSalesMap);
+                    List<Integer> cartList = new ArrayList<>();
+                    List<String> skuCodeList = new ArrayList<>();
+                    skusList.forEach(skuObj -> {
+                        skuCodeList.add(skuObj.getSkuCode());
+                        cartList.addAll(skuObj.getSkuCarts());
+                    });
+                    List<Integer> cartList2 = cartList.stream().distinct().collect(Collectors.toList());
+                    if (cartList.isEmpty() || cartList2.isEmpty()) {
+                        continue;
                     }
-                    sum30Map.put("cartId_0", sum30);
-                    salesMap.put("code_sum_30", sum30Map);
-                }
 
-                // 所有销售数据
-                params = new Object[] { cartList2, chnObj.getOrder_channel_id(), skuCodeList };
-                List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr2, params), new JomgoAggregate(queryStr3, null));
-                if (amtall.isEmpty()) {
-                    $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, prodId=%d", chnObj.getOrder_channel_id(), prodObj.getProdId()));
-                } else {
-                    Map sumallMap = new HashMap<>();
-                    int sumall = 0;
-                    for (Map hisInfo : amtall) {
-                        int qty = ((Number) hisInfo.get("count")).intValue();
-                        sumall += qty;
-                        Map groupKey = (Map) hisInfo.get("_id");
-                        sumallMap.put("cartId_" + groupKey.get("cart_id"), qty);
+                    Map salesMap = new HashMap<>();
+                    List<Map> skuSum7List = new ArrayList<>();
+                    List<Map> skuSum30List = new ArrayList<>();
+                    List<Map> skuSumAllList = new ArrayList<>();
 
-                        Map skuSalesMap = new HashMap<>();
-                        skuSalesMap.put("skuCode", groupKey.get("sku"));
-                        skuSalesMap.put("cartId", groupKey.get("cart_id"));
-                        skuSalesMap.put("code_sum_all", qty);
-                        skuSumAllList.add(skuSalesMap);
-                    }
-                    sumallMap.put("cartId_0", sumall);
-                    salesMap.put("code_sum_all", sumallMap);
-                }
+                    // 7天销售sku数据
+                    Object[] params = new Object[]{begDate1, endDate, cartList2, chnObj.getOrder_channel_id(), skuCodeList};
+                    List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
+                    if (!amt7days.isEmpty()) {
+                        Map sum7Map = new HashMap<>();
+                        for (Map hisInfo : amt7days) {
+                            int qty = ((Number) hisInfo.get("count")).intValue();
+                            Map groupKey = (Map) hisInfo.get("_id");
+                            sum7Map.put("cartId_" + groupKey.get("cart_id"), qty);
 
-                // 合并sku销售数据
-                for (Map sumInfo : skuSumAllList) {
-                    for (Map sum7Info : skuSum7List) {
-                        if (sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId"))) {
-                            sumInfo.put("code_sum_7", sum7Info.get("code_sum_7"));
+                            Map skuSalesMap = new HashMap<>();
+                            skuSalesMap.put("skuCode", groupKey.get("sku"));
+                            skuSalesMap.put("cartId", groupKey.get("cart_id"));
+                            skuSalesMap.put("code_sum_7", qty);
+                            skuSum7List.add(skuSalesMap);
                         }
                     }
-                    for (Map sum30Info : skuSum30List) {
-                        if (sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId"))) {
-                            sumInfo.put("code_sum_30", sum30Info.get("code_sum_30"));
+
+                    // 30天销售sku数据
+                    params = new Object[]{begDate2, endDate, cartList2, chnObj.getOrder_channel_id(), skuCodeList};
+                    List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
+                    if (!amt30days.isEmpty()) {
+                        Map sum30Map = new HashMap<>();
+                        for (Map hisInfo : amt30days) {
+                            int qty = ((Number) hisInfo.get("count")).intValue();
+                            Map groupKey = (Map) hisInfo.get("_id");
+                            sum30Map.put("cartId_" + groupKey.get("cart_id"), qty);
+
+                            Map skuSalesMap = new HashMap<>();
+                            skuSalesMap.put("skuCode", groupKey.get("sku"));
+                            skuSalesMap.put("cartId", groupKey.get("cart_id"));
+                            skuSalesMap.put("code_sum_30", qty);
+                            skuSum30List.add(skuSalesMap);
                         }
                     }
-                }
 
-                List<Map> skuCartSumList = new ArrayList<>();
-                Map<String, String> skuCodeMap = new HashMap<>();
-                for (Map sumInfo : skuSumAllList) {
-                    skuCodeMap.put((String) sumInfo.get("skuCode"), "");
-                }
-                for (String skuCode : skuCodeMap.keySet()) {
-                    int skuSum7 = 0;
-                    int skuSum30 = 0;
-                    int skuSumAll = 0;
+                    // 所有销售sku数据
+                    params = new Object[]{cartList2, chnObj.getOrder_channel_id(), skuCodeList};
+                    List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr2, params), new JomgoAggregate(queryStr3, null));
+                    if (amtall.isEmpty()) {
+                        $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, code=%s", chnObj.getOrder_channel_id(), prodCode));
+                        for (String skuCode : skuCodeList) {
+                            for (Integer cartId : cartList2) {
+                                Map skuSalesMap = new HashMap<>();
+                                skuSalesMap.put("skuCode", skuCode);
+                                skuSalesMap.put("cartId", cartId);
+                                skuSalesMap.put("code_sum_all", 0);
+                                skuSumAllList.add(skuSalesMap);
+                            }
+                        }
+                    } else {
+                        Map sumallMap = new HashMap<>();
+                        for (Map hisInfo : amtall) {
+                            int qty = ((Number) hisInfo.get("count")).intValue();
+                            Map groupKey = (Map) hisInfo.get("_id");
+                            sumallMap.put("cartId_" + groupKey.get("cart_id"), qty);
+
+                            Map skuSalesMap = new HashMap<>();
+                            skuSalesMap.put("skuCode", groupKey.get("sku"));
+                            skuSalesMap.put("cartId", groupKey.get("cart_id"));
+                            skuSalesMap.put("code_sum_all", qty);
+                            skuSumAllList.add(skuSalesMap);
+                        }
+                    }
+
+                    // 合并sku销售数据
                     for (Map sumInfo : skuSumAllList) {
-                        if (skuCode.equals(sumInfo.get("skuCode"))) {
-                            skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_7"));
-                            skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_30"));
-                            skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_all"));
+                        for (Map sum7Info : skuSum7List) {
+                            if (sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId"))) {
+                                sumInfo.put("code_sum_7", sum7Info.get("code_sum_7"));
+                            }
+                        }
+                        for (Map sum30Info : skuSum30List) {
+                            if (sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId"))) {
+                                sumInfo.put("code_sum_30", sum30Info.get("code_sum_30"));
+                            }
                         }
                     }
-                    Map<String, Object> skuMap = new HashMap<>();
-                    skuMap.put("skuCode", skuCode);
-                    skuMap.put("cartId", 0);
-                    skuMap.put("code_sum_7", skuSum7);
-                    skuMap.put("code_sum_30", skuSum30);
-                    skuMap.put("code_sum_all", skuSumAll);
-                    skuCartSumList.add(skuMap);
-                }
-                skuSumAllList.addAll(skuCartSumList);
-                salesMap.put("skus", skuSumAllList);
 
-                // 没有的数据补零
-                Map sum7Map = (Map) salesMap.get("code_sum_7");
-                if (sum7Map == null) {
-                    sum7Map = new HashMap<>();
-                    for (Integer cartItem : cartList2) {
-                        sum7Map.put("cartId_" + cartItem, 0);
+                    List<Map> skuCartSumList = new ArrayList<>();
+                    Map<String, String> skuCodeMap = new HashMap<>();
+                    for (Map sumInfo : skuSumAllList) {
+                        skuCodeMap.put((String) sumInfo.get("skuCode"), "");
+                        if (sumInfo.get("code_sum_7") == null) {
+                            sumInfo.put("code_sum_7", 0);
+                        }
+                        if (sumInfo.get("code_sum_30") == null) {
+                            sumInfo.put("code_sum_30", 0);
+                        }
+                        if (sumInfo.get("code_sum_all") == null) {
+                            sumInfo.put("code_sum_all", 0);
+                        }
                     }
-                    salesMap.put("code_sum_7", sum7Map);
-                } else {
-                    for (Integer cartItem : cartList2) {
-                        Integer qty = (Integer) sum7Map.get("cartId_" + cartItem);
-                        if (qty == null) {
+
+                    // 再统计产品code级别的数据，由于是多维度的统计，由上面的sku数据合并较复杂，不如直接统计
+                    // 7天销售code数据
+                    params = new Object[]{begDate1, endDate, cartList2, chnObj.getOrder_channel_id(), prodCode};
+                    amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr, params), new JomgoAggregate(queryCodeStr3, null));
+                    if (!amt7days.isEmpty()) {
+                        Map sum7Map = new HashMap<>();
+                        int sum7 = 0;
+                        for (Map hisInfo : amt7days) {
+                            int qty = ((Number) hisInfo.get("count")).intValue();
+                            sum7 += qty;
+                            Map groupKey = (Map) hisInfo.get("_id");
+                            sum7Map.put("cartId_" + groupKey.get("cart_id"), qty);
+                        }
+                        sum7Map.put("cartId_0", sum7);
+                        salesMap.put("code_sum_7", sum7Map);
+                    }
+
+                    // 30天销售code数据
+                    params = new Object[]{begDate2, endDate, cartList2, chnObj.getOrder_channel_id(), prodCode};
+                    amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr, params), new JomgoAggregate(queryCodeStr3, null));
+                    if (!amt30days.isEmpty()) {
+                        Map sum30Map = new HashMap<>();
+                        int sum30 = 0;
+                        for (Map hisInfo : amt30days) {
+                            int qty = ((Number) hisInfo.get("count")).intValue();
+                            sum30 += qty;
+                            Map groupKey = (Map) hisInfo.get("_id");
+                            sum30Map.put("cartId_" + groupKey.get("cart_id"), qty);
+                        }
+                        sum30Map.put("cartId_0", sum30);
+                        salesMap.put("code_sum_30", sum30Map);
+                    }
+
+                    // 所有销售code数据
+                    params = new Object[]{cartList2, chnObj.getOrder_channel_id(), prodCode};
+                    amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr2, params), new JomgoAggregate(queryCodeStr3, null));
+                    if (amtall.isEmpty()) {
+                        Map sumallMap = new HashMap<>();
+                        for (Integer cartItem : cartList2) {
+                            sumallMap.put("cartId_" + cartItem, 0);
+                        }
+                        sumallMap.put("cartId_0", 0);
+                        salesMap.put("code_sum_all", sumallMap);
+                    } else {
+                        Map sumallMap = new HashMap<>();
+                        int sumall = 0;
+                        for (Map hisInfo : amtall) {
+                            int qty = ((Number) hisInfo.get("count")).intValue();
+                            sumall += qty;
+                            Map groupKey = (Map) hisInfo.get("_id");
+                            sumallMap.put("cartId_" + groupKey.get("cart_id"), qty);
+                        }
+                        sumallMap.put("cartId_0", sumall);
+                        salesMap.put("code_sum_all", sumallMap);
+                    }
+
+                    // sku合计
+                    for (String skuCode : skuCodeMap.keySet()) {
+                        int skuSum7 = 0;
+                        int skuSum30 = 0;
+                        int skuSumAll = 0;
+                        for (Map sumInfo : skuSumAllList) {
+                            if (skuCode.equals(sumInfo.get("skuCode"))) {
+                                skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_7"));
+                                skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_30"));
+                                skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_all"));
+                            }
+                        }
+                        Map<String, Object> skuMap = new HashMap<>();
+                        skuMap.put("skuCode", skuCode);
+                        skuMap.put("cartId", 0);
+                        skuMap.put("code_sum_7", skuSum7);
+                        skuMap.put("code_sum_30", skuSum30);
+                        skuMap.put("code_sum_all", skuSumAll);
+                        skuCartSumList.add(skuMap);
+                    }
+                    skuSumAllList.addAll(skuCartSumList);
+                    salesMap.put("skus", skuSumAllList);
+
+                    // 没有的数据补零
+                    Map sum7Map = (Map) salesMap.get("code_sum_7");
+                    if (sum7Map == null) {
+                        sum7Map = new HashMap<>();
+                        for (Integer cartItem : cartList2) {
                             sum7Map.put("cartId_" + cartItem, 0);
                         }
+                        salesMap.put("code_sum_7", sum7Map);
+                    } else {
+                        for (Integer cartItem : cartList2) {
+                            Integer qty = (Integer) sum7Map.get("cartId_" + cartItem);
+                            if (qty == null) {
+                                sum7Map.put("cartId_" + cartItem, 0);
+                            }
+                        }
                     }
-                }
-                Integer qty0 = (Integer) sum7Map.get("cartId_0");
-                if (qty0 == null) {
-                    sum7Map.put("cartId_0", 0);
-                }
-                Map sum30Map = (Map) salesMap.get("code_sum_30");
-                if (sum30Map == null) {
-                    sum30Map = new HashMap<>();
-                    for (Integer cartItem : cartList2) {
-                        sum30Map.put("cartId_" + cartItem, 0);
+                    Integer qty0 = (Integer) sum7Map.get("cartId_0");
+                    if (qty0 == null) {
+                        sum7Map.put("cartId_0", 0);
                     }
-                    salesMap.put("code_sum_30", sum30Map);
-                } else {
-                    for (Integer cartItem : cartList2) {
-                        Integer qty = (Integer) sum30Map.get("cartId_" + cartItem);
-                        if (qty == null) {
+                    Map sum30Map = (Map) salesMap.get("code_sum_30");
+                    if (sum30Map == null) {
+                        sum30Map = new HashMap<>();
+                        for (Integer cartItem : cartList2) {
                             sum30Map.put("cartId_" + cartItem, 0);
                         }
-                    }
-                }
-                qty0 = (Integer) sum30Map.get("cartId_0");
-                if (qty0 == null) {
-                    sum30Map.put("cartId_0", 0);
-                }
-                Map sumAllMap = (Map) salesMap.get("code_sum_all");
-                if (sumAllMap == null) {
-                    sumAllMap = new HashMap<>();
-                    for (Integer cartItem : cartList2) {
-                        sumAllMap.put("cartId_" + cartItem, 0);
-                    }
-                    salesMap.put("code_sum_all", sumAllMap);
-                } else {
-                    for (Integer cartItem : cartList2) {
-                        Integer qty = (Integer) sumAllMap.get("cartId_" + cartItem);
-                        if (qty == null) {
-                            sumAllMap.put("cartId_" + cartItem, 0);
+                        salesMap.put("code_sum_30", sum30Map);
+                    } else {
+                        for (Integer cartItem : cartList2) {
+                            Integer qty = (Integer) sum30Map.get("cartId_" + cartItem);
+                            if (qty == null) {
+                                sum30Map.put("cartId_" + cartItem, 0);
+                            }
                         }
                     }
-                }
-                qty0 = (Integer) sumAllMap.get("cartId_0");
-                if (qty0 == null) {
-                    sumAllMap.put("cartId_0", 0);
-                }
+                    qty0 = (Integer) sum30Map.get("cartId_0");
+                    if (qty0 == null) {
+                        sum30Map.put("cartId_0", 0);
+                    }
+                    Map sumAllMap = (Map) salesMap.get("code_sum_all");
+                    if (sumAllMap == null) {
+                        sumAllMap = new HashMap<>();
+                        for (Integer cartItem : cartList2) {
+                            sumAllMap.put("cartId_" + cartItem, 0);
+                        }
+                        salesMap.put("code_sum_all", sumAllMap);
+                    } else {
+                        for (Integer cartItem : cartList2) {
+                            Integer qty = (Integer) sumAllMap.get("cartId_" + cartItem);
+                            if (qty == null) {
+                                sumAllMap.put("cartId_" + cartItem, 0);
+                            }
+                        }
+                    }
+                    qty0 = (Integer) sumAllMap.get("cartId_0");
+                    if (qty0 == null) {
+                        sumAllMap.put("cartId_0", 0);
+                    }
 
-                Map queryMap = new HashMap<>();
-                queryMap.put("prodId", prodObj.getProdId());
-                Map updateMap = new HashMap<>();
-                updateMap.put("sales", salesMap);
-                updateMap.put("modifier", getTaskName());
-                updateMap.put("modified", DateTimeUtil.getNow());
+                    Map queryMap = new HashMap<>();
+                    queryMap.put("fields.code", prodCode);
+                    Map updateMap = new HashMap<>();
+                    updateMap.put("sales", salesMap);
+                    updateMap.put("modifier", getTaskName());
+                    updateMap.put("modified", DateTimeUtil.getNow());
 
-                BulkUpdateModel updModel = new BulkUpdateModel();
-                updModel.setQueryMap(queryMap);
-                updModel.setUpdateMap(updateMap);
-                bulkList.add(updModel);
+                    BulkUpdateModel updModel = new BulkUpdateModel();
+                    updModel.setQueryMap(queryMap);
+                    updModel.setUpdateMap(updateMap);
+                    bulkList.add(updModel);
+                    // 批量更新
+                    if (!bulkList.isEmpty() && bulkList.size() % PAGE_LIMIT == 0) {
+                        BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set", false);
+                        $debug(String.format("更新product 店铺%s 执行数 %d, 执行结果 %s", chnObj.getOrder_channel_id(), bulkList.size(), rs.toString()));
+                        bulkList = new ArrayList<>();
+                    }
+                } // end for product list
+
                 // 批量更新
-                if (!bulkList.isEmpty() && bulkList.size() % 500 == 0) {
-                    BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
-                    $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
-                    bulkList = new ArrayList<>();
+                if (!bulkList.isEmpty()) {
+                    BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set");
+                    $debug(String.format("更新product 店铺%s 执行数 %d, 执行结果 %s", chnObj.getOrder_channel_id(), bulkList.size(), rs.toString()));
                 }
-            }
+            } while (prodList.size() == PAGE_LIMIT);
+        } // end for channel list
 
-            // 批量更新
-            if (!bulkList.isEmpty()) {
-                BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set");
-                $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
-            }
-        }
-
-        // 再统计group的数据
+        // 再统计group的数据，直接从[cms_mt_prod_sales_his]统计
+        // 先统计各个cart的数据
         JomgoQuery grpqryObj = new JomgoQuery();
-        grpqryObj.setQuery("{'cartId':{$ne:1}}");
-        grpqryObj.setProjection("{'groupId':1,'groupId':1,'productCodes':1,'_id':1}");
-        grpqryObj.setLimit(500);
+        grpqryObj.setQuery("{'cartId':{$nin:[0,1]}}");
+        grpqryObj.setProjection("{'groupId':1,'cartId':1,'productCodes':1,'_id':1}");
+        grpqryObj.setLimit(PAGE_LIMIT);
         int grpIdx = 0;
-
-        JomgoQuery prodQryObj = new JomgoQuery();
-        prodQryObj.setQuery("{'fields.code':{$in:#}}");
-        prodQryObj.setProjection("{'sales':1,'fields.code':1,'_id':0}");
 
         for (OrderChannelBean chnObj : list) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
-            grpqryObj.setSkip(grpIdx * 500);
-            List<CmsBtProductGroupModel> getList = cmsBtProductGroupDao.select(grpqryObj, chnObj.getOrder_channel_id());
-            if (getList == null || getList.isEmpty()) {
-                $warn(String.format("CmsFindProdOrdersInfoService 该店铺无group数据！ channel_id=%s", chnObj.getOrder_channel_id()));
-                continue;
-            }
-
-            for (CmsBtProductGroupModel grpObj : getList) {
-                List<String> codeList = grpObj.getProductCodes();
-                if (codeList == null || codeList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d", chnObj.getOrder_channel_id(), grpObj.getGroupId()));
-                    continue;
+            List<CmsBtProductGroupModel> getList = null;
+            grpIdx = 0;
+            do {
+                grpqryObj.setSkip(grpIdx * PAGE_LIMIT);
+                grpIdx++;
+                getList = cmsBtProductGroupDao.select(grpqryObj, chnObj.getOrder_channel_id());
+                if (getList == null || getList.isEmpty()) {
+                    $warn(String.format("CmsFindProdOrdersInfoService 该店铺无group数据！ channel_id=%s", chnObj.getOrder_channel_id()));
+                    break;
                 }
 
-                int sum7 = 0;
-                int sum30 = 0;
-                int sumall = 0;
-
-                prodQryObj.setParameters(codeList);
-                List<CmsBtProductModel> prodList = cmsBtProductDao.select(prodQryObj, chnObj.getOrder_channel_id());
-                if (prodList == null || prodList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d codeStr=%s", chnObj.getOrder_channel_id(), grpObj.getGroupId(), codeList.toString()));
-                    continue;
-                }
-
-                for (CmsBtProductModel prodObj : prodList) {
-                    Map salesMap = prodObj.getSales();
-                    if (salesMap == null || salesMap.isEmpty()) {
-                        $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, code=%s", chnObj.getOrder_channel_id(), prodObj.getFields().getCode()));
+                for (CmsBtProductGroupModel grpObj : getList) {
+                    List<String> codeList = grpObj.getProductCodes();
+                    if (codeList == null || codeList.isEmpty()) {
+                        $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d", chnObj.getOrder_channel_id(), grpObj.getGroupId()));
                         continue;
                     }
-                    Map sum7Map = (Map) salesMap.get("code_sum_7");
-                    if (sum7Map != null) {
-                        sum7 += StringUtils.toIntValue((Integer) sum7Map.get("cartId_" + grpObj.getCartId()));
-                    }
-                    Map sum30Map = (Map) salesMap.get("code_sum_30");
-                    if (sum30Map != null) {
-                        sum30 += StringUtils.toIntValue((Integer) sum30Map.get("cartId_" + grpObj.getCartId()));
-                    }
-                    Map sumallMap = (Map) salesMap.get("code_sum_all");
-                    if (sumallMap != null) {
-                        sumall += StringUtils.toIntValue((Integer) sumallMap.get("cartId_" + grpObj.getCartId()));
-                    }
-                }
 
-                Map queryMap = new HashMap<>();
-                queryMap.put("groupId", grpObj.getGroupId());
-                Map updateMap = new HashMap<>();
-                Map salesMap = new HashMap<>();
-                salesMap.put("code_sum_7", sum7);
-                salesMap.put("code_sum_30", sum30);
-                salesMap.put("code_sum_all", sumall);
-                updateMap.put("sales", salesMap);
-                updateMap.put("modifier", getTaskName());
-                updateMap.put("modified", DateTimeUtil.getNow());
+                    Map salesMap = new HashMap<>();
 
-                BulkUpdateModel updModel = new BulkUpdateModel();
-                updModel.setQueryMap(queryMap);
-                updModel.setUpdateMap(updateMap);
-                bulkList.add(updModel);
+                    // 7天销售group级数据
+                    Object[] params = new Object[]{begDate1, endDate, grpObj.getCartId(), chnObj.getOrder_channel_id(), codeList};
+                    List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr, params), new JomgoAggregate(queryGrpStr3, null));
+                    if (amt7days.isEmpty()) {
+                        salesMap.put("code_sum_7", 0);
+                    } else {
+                        int qty = ((Number) amt7days.get(0).get("count")).intValue();
+                        salesMap.put("code_sum_7", qty);
+                    }
+
+                    // 30天销售group级数据
+                    params = new Object[]{begDate2, endDate, grpObj.getCartId(), chnObj.getOrder_channel_id(), codeList};
+                    List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr, params), new JomgoAggregate(queryGrpStr3, null));
+                    if (amt30days.isEmpty()) {
+                        salesMap.put("code_sum_30", 0);
+                    } else {
+                        int qty = ((Number) amt30days.get(0).get("count")).intValue();
+                        salesMap.put("code_sum_30", qty);
+                    }
+
+                    // 所有销售group级数据
+                    params = new Object[]{grpObj.getCartId(), chnObj.getOrder_channel_id(), codeList};
+                    List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr2, params), new JomgoAggregate(queryGrpStr3, null));
+                    if (amtall.isEmpty()) {
+                        $debug(String.format("CmsFindProdOrdersInfoService 该产品group无销售数据！ + channel_id=%s, cart_id=%d, groupId=%d", chnObj.getOrder_channel_id(), grpObj.getCartId(), grpObj.getGroupId()));
+                        salesMap.put("code_sum_all", 0);
+                    } else {
+                        int qty = ((Number) amtall.get(0).get("count")).intValue();
+                        salesMap.put("code_sum_all", qty);
+                    }
+
+                    Map queryMap = new HashMap<>();
+                    queryMap.put("groupId", grpObj.getGroupId());
+                    Map updateMap = new HashMap<>();
+                    updateMap.put("sales", salesMap);
+                    updateMap.put("modifier", getTaskName());
+                    updateMap.put("modified", DateTimeUtil.getNow());
+
+                    BulkUpdateModel updModel = new BulkUpdateModel();
+                    updModel.setQueryMap(queryMap);
+                    updModel.setUpdateMap(updateMap);
+                    bulkList.add(updModel);
+
+                    // 批量更新
+                    if (!bulkList.isEmpty() && bulkList.size() % PAGE_LIMIT == 0) {
+                        BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set", false);
+                        $debug(String.format("更新group 店铺%s 执行数 %d, 执行结果 %s", chnObj.getOrder_channel_id(), bulkList.size(), rs.toString()));
+                        bulkList = new ArrayList<>();
+                    }
+                } // end for group list
 
                 // 批量更新
-                if (!bulkList.isEmpty() && bulkList.size() % 500 == 0) {
-                    BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
-                    $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
-                    bulkList = new ArrayList<>();
+                if (!bulkList.isEmpty()) {
+                    BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set", false);
+                    $debug(String.format("更新group 店铺%s 执行数 %d, 执行结果 %s", chnObj.getOrder_channel_id(), bulkList.size(), rs.toString()));
                 }
-            }
+            } while (getList.size() == PAGE_LIMIT);
+        } // end for channel list
 
-            // 批量更新
-            if (!bulkList.isEmpty()) {
-                BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
-                $debug(String.format("店铺%s执行结果 %s", chnObj.getOrder_channel_id(), rs.toString()));
-            }
-        }
+        // 然后再合计cart数据
+        grpqryObj = new JomgoQuery();
+        grpqryObj.setQuery("{'cartId':0}");
+        grpqryObj.setProjection("{'groupId':1,'productCodes':1,'_id':1}");
+        grpqryObj.setLimit(PAGE_LIMIT);
+        grpIdx = 0;
+
+        for (OrderChannelBean chnObj : list) {
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            List<CmsBtProductGroupModel> getList = null;
+            grpIdx = 0;
+            do {
+                grpqryObj.setSkip(grpIdx * PAGE_LIMIT);
+                grpIdx ++;
+                getList = cmsBtProductGroupDao.select(grpqryObj, chnObj.getOrder_channel_id());
+                if (getList == null || getList.isEmpty()) {
+                    break;
+                }
+
+                for (CmsBtProductGroupModel grpObj : getList) {
+                    List<String> codeList = grpObj.getProductCodes();
+                    if (codeList == null || codeList.isEmpty()) {
+                        continue;
+                    }
+
+                    Map salesMap = new HashMap<>();
+
+                    // 7天销售group级数据
+                    Object[] params = new Object[] { begDate1, endDate, chnObj.getOrder_channel_id(), codeList };
+                    List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate("{$match:{'date':{$gte:#,$lte:#},'channel_id':#,'prodCode':{$in:#}}}", params), new JomgoAggregate("{$group:{_id:'$channel_id',count:{$sum:'$qty'}}}", null));
+                    if (amt7days.isEmpty()) {
+                        salesMap.put("code_sum_7", 0);
+                    } else {
+                        int qty = ((Number) amt7days.get(0).get("count")).intValue();
+                        salesMap.put("code_sum_7", qty);
+                    }
+
+                    // 30天销售group级数据
+                    params = new Object[] { begDate2, endDate, chnObj.getOrder_channel_id(), codeList };
+                    List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate("{$match:{'date':{$gte:#,$lte:#},'channel_id':#,'prodCode':{$in:#}}}", params), new JomgoAggregate("{$group:{_id:'$channel_id',count:{$sum:'$qty'}}}", null));
+                    if (amt30days.isEmpty()) {
+                        salesMap.put("code_sum_30", 0);
+                    } else {
+                        int qty = ((Number) amt30days.get(0).get("count")).intValue();
+                        salesMap.put("code_sum_30", qty);
+                    }
+
+                    // 所有销售group级数据
+                    params = new Object[] { chnObj.getOrder_channel_id(), codeList };
+                    List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate("{$match:{'channel_id':#,'prodCode':{$in:#}}}", params), new JomgoAggregate("{$group:{_id:'$channel_id',count:{$sum:'$qty'}}}", null));
+                    if (amtall.isEmpty()) {
+                        $debug(String.format("CmsFindProdOrdersInfoService 该产品group无销售数据！ + channel_id=%s, groupId=%d", chnObj.getOrder_channel_id(), grpObj.getGroupId()));
+                        salesMap.put("code_sum_all", 0);
+                    } else {
+                        int qty = ((Number) amtall.get(0).get("count")).intValue();
+                        salesMap.put("code_sum_all", qty);
+                    }
+
+                    Map queryMap = new HashMap<>();
+                    queryMap.put("groupId", grpObj.getGroupId());
+                    Map updateMap = new HashMap<>();
+                    updateMap.put("sales", salesMap);
+                    updateMap.put("modifier", getTaskName());
+                    updateMap.put("modified", DateTimeUtil.getNow());
+
+                    BulkUpdateModel updModel = new BulkUpdateModel();
+                    updModel.setQueryMap(queryMap);
+                    updModel.setUpdateMap(updateMap);
+                    bulkList.add(updModel);
+
+                    // 批量更新
+                    if (!bulkList.isEmpty() && bulkList.size() % PAGE_LIMIT == 0) {
+                        BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
+                        $debug(String.format("更新group(合计) 店铺%s 执行数 %d, 执行结果 %s", chnObj.getOrder_channel_id(), bulkList.size(), rs.toString()));
+                        bulkList = new ArrayList<>();
+                    }
+                } // end for group list
+
+                // 批量更新
+                if (!bulkList.isEmpty()) {
+                    BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(chnObj.getOrder_channel_id(), bulkList, getTaskName(), "$set",false);
+                    $debug(String.format("更新group(合计) 店铺%s 执行数 %d, 执行结果 %s", chnObj.getOrder_channel_id(), bulkList.size(), rs.toString()));
+                }
+            } while (getList.size() == PAGE_LIMIT);
+        } // end for channel list
     }
 
 }

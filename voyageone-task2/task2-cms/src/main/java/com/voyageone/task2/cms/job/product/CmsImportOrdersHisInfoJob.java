@@ -19,5 +19,3 @@ public class CmsImportOrdersHisInfoJob extends BaseTaskJob {
 		return cmsImportOrdersHisInfoService;
 	}
 }
-
-

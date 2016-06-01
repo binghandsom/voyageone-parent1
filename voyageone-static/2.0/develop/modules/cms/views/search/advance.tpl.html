@@ -506,7 +506,7 @@
 							<td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
 							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
-							<th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:120px;padding-left:8px">{{prop3.name}}</th>
+							<th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:115px;padding-left:8px">{{prop3.name}}</th>
 							<td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
 							<td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
 						</tr>
@@ -570,7 +570,7 @@
 										<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 									</td>
 									<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}</td>
-									<td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:100px;">{{prop3.value}}</td>
+									<td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">{{prop3.value}}</td>
 									<td class="text-center" style="display:inline-block;width:165px;">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>

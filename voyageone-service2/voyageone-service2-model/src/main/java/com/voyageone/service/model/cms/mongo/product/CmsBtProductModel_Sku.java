@@ -3,6 +3,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.CartEnums;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,23 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         if (!this.containsKey("skuCarts") || getAttribute("skuCarts") == null) {
             setAttribute("skuCarts", new ArrayList<Integer>());
         }
-        return (List<Integer>) getAttribute("skuCarts");
+        // 过滤数据中的double型
+        List<Object> val = getAttribute("skuCarts");
+        List<Integer> rs = new ArrayList<Integer>(val.size());
+        for (Object cartId : val) {
+            if (cartId == null) {
+                continue;
+            }
+            if (cartId instanceof  Number) {
+                rs.add(((Number) cartId).intValue());
+            } else {
+                int cVal = NumberUtils.toInt(cartId.toString(), -1);
+                if (cVal >= 0) {
+                    rs.add(cVal);
+                }
+            }
+        }
+        return rs;
     }
 
     public void setSkuCarts(List<Integer> skuCarts) {
