@@ -58,9 +58,21 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         if (codes == null || codes.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
         }
-        String idsStr = Joiner.on(",").join(codes);
+//        String idsStr = Joiner.on(",").join(codes);
 
-        String query = "{prodId:{$in:[" + idsStr + "]}}";
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0 ; i < codes.size(); i++)
+        {
+            if (i == 0) {
+                sb.append("'").append(codes.get(i)).append("'");
+            } else {
+                sb.append(", '").append(codes.get(i)).append("'");
+            }
+
+        }
+
+        String query = "{'fields.code':{'$in':[" + sb.toString() + "]}}";
         return select(query, channelId);
     }
 
@@ -124,6 +136,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
         return select(PriceNotEqualQuery, channelId);
     }
+
 
 
     /**
