@@ -50,7 +50,7 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
-        $scope.openAddChannelCategory = openAddChannelCategory;
+        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategory;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
