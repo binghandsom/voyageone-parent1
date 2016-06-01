@@ -53,7 +53,7 @@ public class SellerCatServiceTest {
     @Test
     public void testRefreshSellerCat() throws Exception {
 
-        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("010", 23, "test");
+        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("010", 23, "ethan");
         System.out.println(JsonUtil.bean2Json(result));
 
         sellerCatService.save(result);
