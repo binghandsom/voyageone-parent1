@@ -136,5 +136,16 @@ public class CmsBtJmPromotionExportTask3Service {
         }
         return info;
     }
+    public  void  insert(CmsBtJmPromotionExportTaskModel model) {
+        model.setErrorMsg("");
+        model.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+        model.setEndTime(DateTimeUtil.getCreatedDefaultDate());
+        model.setErrorCode(0);
+        model.setIsExport(false);
+        model.setSuccessRows(0);
+        model.setFileName("");
+        model.setFilePath("");
+        dao.insert(model);
+    }
 }
 

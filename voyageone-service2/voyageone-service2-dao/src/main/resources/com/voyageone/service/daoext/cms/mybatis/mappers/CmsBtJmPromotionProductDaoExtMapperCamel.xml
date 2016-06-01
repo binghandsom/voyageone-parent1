@@ -256,7 +256,7 @@
     <select id="getExportListByPromotionId" resultType="MapModel">
         SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag
         FROM `cms_bt_jm_promotion_product`  AS a
-        JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
+        JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
     </select>
 
