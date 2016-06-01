@@ -8,6 +8,7 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+import java.math.BigDecimal;
 
 /**
  * JMBTProduct||聚美商品
@@ -134,6 +135,26 @@ public class CmsBtJmProductModel extends BaseModel {
      * 自定义自定义搜索词
      */
     protected String searchMetaTextCustom;
+
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal msrpUsd;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal msrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal retailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal salePrice;
 
     public String getChannelId() {
         return channelId;
@@ -333,5 +354,37 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setSearchMetaTextCustom(String searchMetaTextCustom) {
         this.searchMetaTextCustom = searchMetaTextCustom == null ? null : searchMetaTextCustom.trim();
+    }
+
+    public BigDecimal getMsrpUsd() {
+        return msrpUsd;
+    }
+
+    public void setMsrpUsd(BigDecimal msrpUsd) {
+        this.msrpUsd = msrpUsd;
+    }
+
+    public BigDecimal getMsrpRmb() {
+        return msrpRmb;
+    }
+
+    public void setMsrpRmb(BigDecimal msrpRmb) {
+        this.msrpRmb = msrpRmb;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
     }
 }

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
  * Created by dell on 2016/4/12.
  */
 public class BigDecimalUtil {
+    //除法
     public static BigDecimal divide(BigDecimal b1, BigDecimal b2,int scale) {
         if (b2.doubleValue() == 0) {
             return new BigDecimal(0);

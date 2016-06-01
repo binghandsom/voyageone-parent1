@@ -20,12 +20,14 @@ public class MapUtil {
     public static <T> Map<String, Object> toMap(T entity, List<Field> listField) throws IllegalAccessException {
         Map<String, Object> map = new HashMap<>();
         for (Field field : listField) {
+            field.setAccessible(true);
             map.put(field.getName(), field.get(entity));
         }
         return map;
     }
 
     public static <T> List<Map<String, Object>> toMapList(List<T> list) throws IllegalAccessException {
+        if(list.size()==0) return new ArrayList<>();
         List<Field> listField = ReflectUtil.getListField(list.get(0).getClass());
         List<Map<String, Object>> listMap = new ArrayList();
         for (T entity : list) {

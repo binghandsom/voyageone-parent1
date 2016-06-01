@@ -126,7 +126,7 @@ public class CmsBtJmPromotionImportTask3Service {
     public void check(CmsBtJmPromotionModel model,List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel,List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap) throws IllegalAccessException {
         List<ProductImportBean> listErroProduct=new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
-            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd())) { //活动日期重叠
+            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd())==Boolean.TRUE) { //活动日期重叠
                 product.setErrorMsg("活动日期有重叠");
                 listErroProduct.add(product);
             }
@@ -152,6 +152,7 @@ public class CmsBtJmPromotionImportTask3Service {
 
     private void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
+
         if (info.productModel.getId() == null || info.productModel.getId() == 0) {
             daoCmsBtJmPromotionProduct.insert(info.productModel);
         } else {
@@ -178,11 +179,12 @@ public class CmsBtJmPromotionImportTask3Service {
     }
 
     private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport,ProductImportBean product) {
-        ProductSaveInfo saveInfo= new ProductSaveInfo();
+        ProductSaveInfo saveInfo = new ProductSaveInfo();
         saveInfo.productModel = daoExtCmsBtJmPromotionProduct.getByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
         if (saveInfo.productModel == null) {
             saveInfo.productModel = new CmsBtJmPromotionProductModel();
         }
+        saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
         saveInfo.productModel.setProductCode(product.getProductCode());
         saveInfo.productModel.setAppId(product.getAppId());
         saveInfo.productModel.setPcId(product.getPcId());
@@ -190,7 +192,22 @@ public class CmsBtJmPromotionImportTask3Service {
         saveInfo.productModel.setChannelId(model.getChannelId());
         saveInfo.productModel.setActivityStart(model.getActivityStart());
         saveInfo.productModel.setActivityEnd(model.getActivityEnd());
-
+        saveInfo.productModel.setJmHashId("");
+        saveInfo.productModel.setPromotionTag(product.getPromotionTag());
+        saveInfo.productModel.setErrorMsg("");
+        saveInfo.productModel.setCreated(new Date());
+        saveInfo.productModel.setPriceStatus(0);
+        saveInfo.productModel.setDealPrice(new BigDecimal(0));
+        saveInfo.productModel.setMarketPrice(new BigDecimal(0));
+        saveInfo.productModel.setDiscount(new BigDecimal(0));;
+        saveInfo.productModel.setSkuCount(0);
+        saveInfo.productModel.setQuantity(0);
+        saveInfo.productModel.setModifier("system");
+        saveInfo.productModel.setCreater("system");
+        saveInfo.productModel.setCreated(new Date());
+        if (saveInfo.productModel.getPromotionTag() == null) {
+            saveInfo.productModel.setPromotionTag("");
+        }
         //初始化CmsBtJmPromotionTagProductModel
         loadSaveTag(product.getPromotionTag(), saveInfo, model);
 
@@ -198,22 +215,38 @@ public class CmsBtJmPromotionImportTask3Service {
         List<SkuImportBean> listSku = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());
         loadSaveSku(saveInfo, listSku);
 
+        if (saveInfo.skuList.size() > 0) {
+            saveInfo.productModel.setMarketPrice(saveInfo.skuList.get(0).getMarketPrice());
+            saveInfo.productModel.setDealPrice(saveInfo.skuList.get(0).getDealPrice());
+            saveInfo.productModel.setDiscount(saveInfo.skuList.get(0).getDiscount());//折扣
+        }
         return saveInfo;
     }
 
     private void  loadSaveSku(ProductSaveInfo saveInfo,List<SkuImportBean> listImport) {
         CmsBtJmPromotionSkuModel skuModel = null;
         for (SkuImportBean skuImportBean : listImport) {
-            if (saveInfo.productModel.getId() > 0) {
+            if (saveInfo.productModel.getId()!=null&& saveInfo.productModel.getId()> 0) {
                 skuModel = daoExtCmsBtJmPromotionSku.getBySkuCode(skuImportBean.getSkuCode(), saveInfo.productModel.getId());
             }
             if (skuModel == null) {
                 skuModel = new CmsBtJmPromotionSkuModel();
             }
+            skuModel.setCmsBtJmPromotionId(saveInfo.productModel.getCmsBtJmPromotionId());
             skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
             skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
+            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(),skuModel.getMarketPrice(),2));
             skuModel.setChannelId(saveInfo.productModel.getChannelId());
             skuModel.setSkuCode(skuImportBean.getSkuCode());
+            skuModel.setDiscount(new BigDecimal(0));
+            skuModel.setModified(new Date());
+            skuModel.setModifier("system");
+            skuModel.setCreated(new Date());
+            skuModel.setCreater("system");
+            skuModel.setProductCode(skuImportBean.getProductCode());
+            skuModel.setErrorMsg("");
+            skuModel.setSynchStatus(0);
+            skuModel.setUpdateState(0);
             saveInfo.skuList.add(skuModel);
             skuModel=null;
         }
@@ -269,7 +302,7 @@ public class CmsBtJmPromotionImportTask3Service {
         list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID"));
         list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID"));
         list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购"));
-        list.add(new ExcelColumn("promotion_tag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）"));
+        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）"));
         return list;
     }
     public List<ExcelColumn> getSkuImportColumn() {

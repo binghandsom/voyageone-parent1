@@ -8,7 +8,8 @@
         `size_type`, `product_des_en`, `attribute`, `foreign_language_name`, `address_of_produce`, 
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
         `creater`, `modified`, `modifier`, `created`, `image1`, `product_long_name`, `product_medium_name`, 
-        `product_short_name`, `search_meta_text_custom`
+        `product_short_name`, `search_meta_text_custom`, `msrp_usd`, `msrp_rmb`, `retail_price`, 
+        `sale_price`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -106,6 +107,18 @@
             </if>
             <if test="searchMetaTextCustom != null" >
                 `search_meta_text_custom`,
+            </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd`,
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb`,
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price`,
+            </if>
+            <if test="salePrice != null" >
+                `sale_price`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -205,6 +218,18 @@
             <if test="searchMetaTextCustom != null" >
                 #{searchMetaTextCustom,jdbcType=VARCHAR},
             </if>
+            <if test="msrpUsd != null" >
+                #{msrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpRmb != null" >
+                #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                #{salePrice,jdbcType=DECIMAL},
+            </if>
         </trim>
     </insert>
 
@@ -300,6 +325,18 @@
             </if>
             <if test="searchMetaTextCustom != null" >
                 `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR},
+            </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                `sale_price` = #{salePrice,jdbcType=DECIMAL},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -402,6 +439,18 @@
             <if test="searchMetaTextCustom != null" >
                 and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
             </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -496,6 +545,18 @@
             </if>
             <if test="searchMetaTextCustom != null" >
                 and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
         </where>
     </select>

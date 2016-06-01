@@ -106,21 +106,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer priceStatus;
 
     /**
-     * 中国指导售价   从sku来
-     */
-    protected BigDecimal retailPrice;
-
-    /**
-     * 中国最终售价   从sku来
-     */
-    protected BigDecimal salePrice;
-
-    /**
-     * 中国官网价格   从sku来
-     */
-    protected BigDecimal msrpRmb;
-
-    /**
      * 专场标签（以|分隔）
      */
     protected String promotionTag;
@@ -267,30 +252,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setPriceStatus(Integer priceStatus) {
         this.priceStatus = priceStatus;
-    }
-
-    public BigDecimal getRetailPrice() {
-        return retailPrice;
-    }
-
-    public void setRetailPrice(BigDecimal retailPrice) {
-        this.retailPrice = retailPrice;
-    }
-
-    public BigDecimal getSalePrice() {
-        return salePrice;
-    }
-
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
-    }
-
-    public BigDecimal getMsrpRmb() {
-        return msrpRmb;
-    }
-
-    public void setMsrpRmb(BigDecimal msrpRmb) {
-        this.msrpRmb = msrpRmb;
     }
 
     public String getPromotionTag() {

@@ -6,8 +6,7 @@
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
         `market_price`, `deal_price`, `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, 
         `sku_count`, `quantity`, `activity_start`, `activity_end`, `synch_status`, `update_status`, 
-        `price_status`, `retail_price`, `modifier`, `sale_price`, `msrp_rmb`, `promotion_tag`, 
-        `created`, `creater`
+        `price_status`, `modifier`, `promotion_tag`, `created`, `creater`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -75,20 +74,11 @@
             <if test="priceStatus != null" >
                 `price_status`,
             </if>
-            <if test="retailPrice != null" >
-                `retail_price`,
-            </if>
             <if test="modifier != null" >
                 `modifier`,
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
-            </if>
-            <if test="salePrice != null" >
-                `sale_price`,
-            </if>
-            <if test="msrpRmb != null" >
-                `msrp_rmb`,
             </if>
             <if test="promotionTag != null" >
                 `promotion_tag`,
@@ -159,20 +149,11 @@
             <if test="priceStatus != null" >
                 #{priceStatus,jdbcType=INTEGER},
             </if>
-            <if test="retailPrice != null" >
-                #{retailPrice,jdbcType=DECIMAL},
-            </if>
             <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="salePrice != null" >
-                #{salePrice,jdbcType=DECIMAL},
-            </if>
-            <if test="msrpRmb != null" >
-                #{msrpRmb,jdbcType=DECIMAL},
             </if>
             <if test="promotionTag != null" >
                 #{promotionTag,jdbcType=VARCHAR},
@@ -252,17 +233,8 @@
             <if test="priceStatus != null" >
                 `price_status` = #{priceStatus,jdbcType=INTEGER},
             </if>
-            <if test="retailPrice != null" >
-                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
-            </if>
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="salePrice != null" >
-                `sale_price` = #{salePrice,jdbcType=DECIMAL},
-            </if>
-            <if test="msrpRmb != null" >
-                `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
             </if>
             <if test="promotionTag != null" >
                 `promotion_tag` = #{promotionTag,jdbcType=VARCHAR},
@@ -344,17 +316,8 @@
             <if test="priceStatus != null" >
                 and `price_status` = #{priceStatus,jdbcType=INTEGER}
             </if>
-            <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
-            </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="salePrice != null" >
-                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
-            </if>
-            <if test="msrpRmb != null" >
-                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
             </if>
             <if test="promotionTag != null" >
                 and `promotion_tag` = #{promotionTag,jdbcType=VARCHAR}
@@ -430,17 +393,8 @@
             <if test="priceStatus != null" >
                 and `price_status` = #{priceStatus,jdbcType=INTEGER}
             </if>
-            <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
-            </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="salePrice != null" >
-                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
-            </if>
-            <if test="msrpRmb != null" >
-                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
             </if>
             <if test="promotionTag != null" >
                 and `promotion_tag` = #{promotionTag,jdbcType=VARCHAR}

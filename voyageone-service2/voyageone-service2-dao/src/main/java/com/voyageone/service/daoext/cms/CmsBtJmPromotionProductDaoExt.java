@@ -40,7 +40,7 @@ public interface CmsBtJmPromotionProductDaoExt {
     int getCountByWhere(Map<String, Object> ma);//add
 
     //add
-    boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+    Boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     CmsBtJmPromotionProductModel getByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
