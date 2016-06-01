@@ -1,15 +1,9 @@
 package com.voyageone.service.impl.cms;
 
-import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
-import com.mongodb.BulkWriteResult;
-import com.taobao.api.ApiException;
-import com.taobao.api.domain.Product;
 import com.taobao.api.domain.SellerCat;
-import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiCheckField;
-import com.taobao.top.schema.field.OptionsField;
 import com.taobao.top.schema.option.Option;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -20,7 +14,6 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
-import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
@@ -321,7 +314,7 @@ public class SellerCatService extends BaseService {
 
                     CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                     model.setChannelId(channelId);
-                    model.setGroupId(platformsMap.get(cartId).intValue());
+                    model.setGroupId(platformsMap.get(cartId).longValue());
                     model.setCartId(cartId);
                     model.setPublishStatus(0);
                     model.setCreater(modifier);
