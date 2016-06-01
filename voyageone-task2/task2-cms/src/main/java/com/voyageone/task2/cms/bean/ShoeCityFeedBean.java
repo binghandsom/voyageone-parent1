@@ -36,6 +36,8 @@ public class ShoeCityFeedBean {
 
     private String product_type;
 
+    private Integer qty;
+
     private String md5;
 
     private int saved;
@@ -51,6 +53,7 @@ public class ShoeCityFeedBean {
         this.size = reader.get(2);
         this.category = reader.get(3);
         // 4 为库存不读取
+        this.qty = Integer.parseInt(reader.get(4));
         String cost = reader.get(5);
         this.cost = new BigDecimal(cost);
         this.brand = reader.get(6);
@@ -73,6 +76,7 @@ public class ShoeCityFeedBean {
                 this.img_id +
                 this.color +
                 this.size_type +
+                this.qty +
                 this.product_type;
 
         this.md5 = MD5.getMD5(contents);
@@ -188,5 +192,13 @@ public class ShoeCityFeedBean {
 
     public void setSaved(int saved) {
         this.saved = saved;
+    }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
     }
 }

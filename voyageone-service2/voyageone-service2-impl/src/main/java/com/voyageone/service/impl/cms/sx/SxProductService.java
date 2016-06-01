@@ -544,7 +544,7 @@ public class SxProductService extends BaseService {
 
         // 通过上面取得的code，得到对应的产品信息，以及sku信息
         List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
-        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + ", 'fields.status':'Approved'}", channelId);
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getFields().getCode())) {
@@ -561,6 +561,11 @@ public class SxProductService extends BaseService {
                 if (cmsMtBrandsMappingModel != null) {
                     sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
                 }
+            }
+
+            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                removeProductList.add(productModel);
+                continue;
             }
 
             List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
