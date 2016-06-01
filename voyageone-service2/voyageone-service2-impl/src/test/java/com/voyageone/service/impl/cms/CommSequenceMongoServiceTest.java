@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CommSequenceMongoServiceTest {
 
     @Autowired
-    MongoSequenceService commSequenceMongoService;
+    private MongoSequenceService commSequenceMongoService;
 
     @Test
     public void testGetNextSequence() throws Exception {

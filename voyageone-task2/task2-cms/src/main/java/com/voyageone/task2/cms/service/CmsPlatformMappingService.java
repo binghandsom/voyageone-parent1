@@ -45,13 +45,13 @@ public class CmsPlatformMappingService extends BaseTaskService {
     // CmsMtCommonProp数据
     private static List<CmsMtCommonPropModel> commonProp;
     @Autowired
-    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
+    private CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
     @Autowired
-    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
-    CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
     @Autowired
-    CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
+    private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
     @Override
     public SubSystem getSubSystem() {

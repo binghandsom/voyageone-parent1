@@ -3,6 +3,8 @@ package com.voyageone.common.spring;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -14,6 +16,8 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
+@Component()
+@Lazy(value = false)
 public class SpringContext implements ApplicationContextAware {
     // Spring应用上下文环境
     private static ApplicationContext applicationContext;
@@ -23,6 +27,7 @@ public class SpringContext implements ApplicationContextAware {
      *
      * @param applicationContext ApplicationContext
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         SpringContext.applicationContext = applicationContext;
     }

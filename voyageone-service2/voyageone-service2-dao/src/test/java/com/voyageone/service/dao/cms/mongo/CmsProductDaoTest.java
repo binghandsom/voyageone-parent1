@@ -21,7 +21,7 @@ import java.util.*;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsProductDaoTest {
     @Autowired
-    CmsBtProductDao cmsBtProductDao;
+    private CmsBtProductDao cmsBtProductDao;
 
     @Test
     public void testSelectProductById() throws Exception {

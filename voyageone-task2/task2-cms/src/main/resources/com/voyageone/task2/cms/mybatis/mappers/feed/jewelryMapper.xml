@@ -109,7 +109,6 @@
         <result column="Attribute92Name" property="Attribute92Name" />
         <result column="Attribute93Name" property="Attribute93Name" />
         <result column="Attribute94Name" property="Attribute94Name" />
-        <result column="Attribute95Name" property="Attribute95Name" />
         <result column="Attribute96Name" property="Attribute96Name" />
         <result column="Attribute97Name" property="Attribute97Name" />
         <result column="Attribute98Name" property="Attribute98Name" />
@@ -205,7 +204,6 @@
         <result column="Attribute92Value" property="Attribute92Value" />
         <result column="Attribute93Value" property="Attribute93Value" />
         <result column="Attribute94Value" property="Attribute94Value" />
-        <result column="Attribute95Value" property="Attribute95Value" />
         <result column="Attribute96Value" property="Attribute96Value" />
         <result column="Attribute97Value" property="Attribute97Value" />
         <result column="Attribute98Value" property="Attribute98Value" />
@@ -219,6 +217,7 @@
             <result column="price_net" property="priceNet" />
             <result column="price_client_retail" property="priceClientRetail" />
             <result column="price_client_msrp" property="priceClientMsrp" />
+            <result column="quantity" property="qty" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -256,6 +255,9 @@
         ,0 as display_order
         ,${client_product_url} as client_product_url
         ,${product_type} as product_type
+        <if test="quantity != null">
+            ,${quantity} as quantity
+        </if>
         ,Attribute1Name,
         Attribute2Name,
         Attribute3Name,
@@ -348,7 +350,6 @@
         Attribute92Name,
         Attribute93Name,
         Attribute94Name,
-        Attribute95Name,
         Attribute96Name,
         Attribute97Name,
         Attribute98Name,
@@ -444,7 +445,6 @@
         Attribute92Value,
         Attribute93Value,
         Attribute94Value,
-        Attribute95Value,
         Attribute96Value,
         Attribute97Value,
         Attribute98Value

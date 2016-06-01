@@ -59,7 +59,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
     @Autowired
     private TbProductService tbProductService;
     @Autowired
-    PlatformMappingService platformMappingService;
+    private PlatformMappingService platformMappingService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired

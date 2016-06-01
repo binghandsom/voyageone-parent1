@@ -40,7 +40,6 @@ import java.util.*;
 public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implements MasterCategorySchemaBuildService{
 
     private final static String JOB_NAME = "buildMasterSchemaFromPlatformTask";
-    Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
@@ -53,6 +52,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
     @Autowired
     private CategoryTreeService categoryTreeService;
+
+
+    private Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
 
     //Field字段排序方法
     private static void fieldsSort(List<Field> masterFields){

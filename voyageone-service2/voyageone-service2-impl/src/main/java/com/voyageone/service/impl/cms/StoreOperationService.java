@@ -54,28 +54,28 @@ public class StoreOperationService extends BaseService {
 
 
     @Resource
-    CmsBtProductDao productDao;
+    private CmsBtProductDao productDao;
 
     @Resource
-    CmsBtFeedInfoDao feedInfoDao;
+    private CmsBtFeedInfoDao feedInfoDao;
 
     @Resource
-    CmsBtProductGroupDao productGroupDao;
+    private CmsBtProductGroupDao productGroupDao;
 
     @Resource
-    CmsBtSxWorkloadDaoExt workloadDao;
+    private CmsBtSxWorkloadDaoExt workloadDao;
 
     @Resource
-    CmsBtStoreOperationHistoryDao historyDao;
+    private CmsBtStoreOperationHistoryDao historyDao;
 
     @Autowired
-    ProductPriceLogService priceLogService;
+    private ProductPriceLogService priceLogService;
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @Autowired
-    ProductSkuService skuService;
+    private ProductSkuService skuService;
 
 
     public long countProductsThatCanUploaded(String channelId) {

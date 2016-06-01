@@ -1,6 +1,6 @@
 package com.voyageone.common.configs.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.voyageone.common.spring.SpringContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,132 +11,59 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigDaoFactory {
 
-    private static CarrierDao carrierDao;
-    private static OrderChannelDao orderChannelDao;
-    private static OrderChannelConfigDao orderChannelConfigDao;
-    private static CmsChannelConfigDao cmsChannelConfigDao;
-    private static CodeDao codeDao;
-    private static FeedDao feedDao;
-    private static ImsCategoryDao imsCategoryDao;
-    private static PortConfigDao portConfigDao;
-    private static ShopDao shopDao;
-    private static ShopConfigDao shopConfigDao;
-    private static StoreConfigDao storeConfigDao;
-    private static ThirdPartConfigDao thirdPartConfigDao;
-    private static TypeDao typeDao;
-    private static TypeChannelDao channelValueDao;
-
-
-    @Autowired
-    private void setCarrierDao(CarrierDao carrierDao) {
-        ConfigDaoFactory.carrierDao = carrierDao;
-    }
-    @Autowired
-    private void setOrderChannelDao(OrderChannelDao orderChannelDao) {
-        ConfigDaoFactory.orderChannelDao = orderChannelDao;
-    }
-    @Autowired
-    private void setOrderChannelConfigDao(OrderChannelConfigDao orderChannelConfigDao) {
-        ConfigDaoFactory.orderChannelConfigDao = orderChannelConfigDao;
-    }
-    @Autowired
-    private void setCmsChannelConfigDao(CmsChannelConfigDao cmsChannelConfigDao) {
-        ConfigDaoFactory.cmsChannelConfigDao = cmsChannelConfigDao;
-    }
-    @Autowired
-    private void setCodeDao(CodeDao codeDao) {
-        ConfigDaoFactory.codeDao = codeDao;
-    }
-    @Autowired
-    private void setFeedDao(FeedDao feedDao) {
-        ConfigDaoFactory.feedDao = feedDao;
-    }
-    @Autowired
-    private void setImsCategoryDao(ImsCategoryDao imsCategoryDao) {
-        ConfigDaoFactory.imsCategoryDao = imsCategoryDao;
-    }
-    @Autowired
-    private void setPortConfigDao(PortConfigDao portConfigDao) {
-        ConfigDaoFactory.portConfigDao = portConfigDao;
-    }
-    @Autowired
-    private void setShopDao(ShopDao shopDao) {
-        ConfigDaoFactory.shopDao = shopDao;
-    }
-    @Autowired
-    private void setShopConfigDao(ShopConfigDao shopConfigDao) {
-        ConfigDaoFactory.shopConfigDao = shopConfigDao;
-    }
-    @Autowired
-    private void setStoreConfigDao(StoreConfigDao storeConfigDao) {
-        ConfigDaoFactory.storeConfigDao = storeConfigDao;
-    }
-    @Autowired
-    private void setThirdPartConfigDao(ThirdPartConfigDao thirdPartConfigDao) {
-        ConfigDaoFactory.thirdPartConfigDao = thirdPartConfigDao;
-    }
-    @Autowired
-    private void setTypeDao(TypeDao typeDao) {
-        ConfigDaoFactory.typeDao = typeDao;
-    }
-    @Autowired
-    private void setChannelValueDao(TypeChannelDao channelValueDao) {
-        ConfigDaoFactory.channelValueDao = channelValueDao;
-    }
-
     public static CarrierDao getCarrierDao() {
-        return carrierDao;
+        return SpringContext.getBean(CarrierDao.class);
     }
 
     public static OrderChannelDao getOrderChannelDao() {
-        return orderChannelDao;
+        return SpringContext.getBean(OrderChannelDao.class);
     }
 
     public static OrderChannelConfigDao getOrderChannelConfigDao() {
-        return orderChannelConfigDao;
+        return SpringContext.getBean(OrderChannelConfigDao.class);
     }
 
     public static CmsChannelConfigDao getCmsChannelConfigDao() {
-        return cmsChannelConfigDao;
+        return SpringContext.getBean(CmsChannelConfigDao.class);
     }
 
     public static CodeDao getCodeDao() {
-        return codeDao;
+        return SpringContext.getBean(CodeDao.class);
     }
 
     public static FeedDao getFeedDao() {
-        return feedDao;
+        return SpringContext.getBean(FeedDao.class);
     }
 
     public static ImsCategoryDao getImsCategoryDao() {
-        return imsCategoryDao;
+        return SpringContext.getBean(ImsCategoryDao.class);
     }
 
     public static PortConfigDao getPortConfigDao() {
-        return portConfigDao;
+        return SpringContext.getBean(PortConfigDao.class);
     }
 
     public static ShopDao getShopDao() {
-        return shopDao;
+        return SpringContext.getBean(ShopDao.class);
     }
 
     public static ShopConfigDao getShopConfigDao() {
-        return shopConfigDao;
+        return SpringContext.getBean(ShopConfigDao.class);
     }
 
     public static StoreConfigDao getStoreConfigDao() {
-        return storeConfigDao;
+        return SpringContext.getBean(StoreConfigDao.class);
     }
 
     public static ThirdPartConfigDao getThirdPartConfigDao() {
-        return thirdPartConfigDao;
+        return SpringContext.getBean(ThirdPartConfigDao.class);
     }
 
     public static TypeDao getTypeDao() {
-        return typeDao;
+        return SpringContext.getBean(TypeDao.class);
     }
 
     public static TypeChannelDao getChannelValueDao() {
-        return channelValueDao;
+        return SpringContext.getBean(TypeChannelDao.class);
     }
 }

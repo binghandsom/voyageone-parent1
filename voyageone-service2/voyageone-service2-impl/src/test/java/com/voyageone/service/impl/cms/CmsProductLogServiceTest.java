@@ -15,10 +15,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsProductLogServiceTest {
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @Autowired
-    ProductLogService productLogService;
+    private ProductLogService productLogService;
 
     @Test
     public void testInsertCmsBtProduct() throws Exception {

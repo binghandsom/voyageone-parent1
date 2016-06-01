@@ -28,13 +28,13 @@ public class ImagePostScene7Job {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
-	TaskDao taskDao;
+	private TaskDao taskDao;
 	
 	@Autowired
-	ImagePostScene7Service imagePostScene7Service;
+	private ImagePostScene7Service imagePostScene7Service;
 	
 	@Autowired
-	IssueLog issueLog;
+	private IssueLog issueLog;
 	
 	private String taskCheck = "ImagePostScene7";
 	

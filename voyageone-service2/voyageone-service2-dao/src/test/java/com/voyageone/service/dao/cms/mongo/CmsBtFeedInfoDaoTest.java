@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsBtFeedInfoDaoTest {
 
     @Autowired
-    CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Test
     public void testUpdateFeedInfoUpdFlg() throws Exception {

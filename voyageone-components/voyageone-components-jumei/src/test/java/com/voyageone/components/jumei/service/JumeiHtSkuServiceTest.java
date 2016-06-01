@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JumeiHtSkuServiceTest {
 
     @Autowired
-    JumeiHtSkuService service;
+    private JumeiHtSkuService service;
 
     @Test
     public void testAddSku() throws Exception {

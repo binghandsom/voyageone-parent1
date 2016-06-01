@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CommSequenceDaoTest {
 
     @Autowired
-    CommSequenceDao commSequenceDao;
+    private CommSequenceDao commSequenceDao;
 
     @Test
     public void testGetNextSequence() {

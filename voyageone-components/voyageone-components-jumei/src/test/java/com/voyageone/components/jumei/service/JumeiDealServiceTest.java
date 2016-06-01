@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JumeiDealServiceTest {
 
     @Autowired
-    JumeiDealService jumeiDealService;
+    private JumeiDealService jumeiDealService;
 
     @Test
     public void testGetDealByHashID() throws Exception {

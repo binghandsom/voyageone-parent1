@@ -29,7 +29,7 @@ public class JuMeiDealService {
         parameterPromotionProduct.put("promotionId", promotionId);
         parameterPromotionProduct.put("dealEndTimeState", 1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
-        if(listPromotionProduct.size()==0) return;;
+        if(listPromotionProduct.size()==0) return;
         ShopBean shopBean = serviceJMShopBean.getShopBean(listPromotionProduct.get(0).getChannelId());
         for (CmsBtJmPromotionProductModel model : listPromotionProduct) {
             updateDealEndTime((ShopBean) shopBean, (CmsBtJmPromotionProductModel) model);
@@ -60,7 +60,6 @@ public class JuMeiDealService {
     }
 
     public static Long getTime(Date d) throws Exception {
-        long l = d.getTime() / 1000 - 8 * 3600;
-        return l;
+        return d.getTime() / 1000 - 8 * 3600;
     }
 }

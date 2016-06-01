@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class ImagesService extends BaseService {
 
     @Autowired
-    CmsBtImagesDao cmsBtImagesDao;
+    private CmsBtImagesDao cmsBtImagesDao;
 
     /**
      * 根据channelId和code返回对应的所有图片列表

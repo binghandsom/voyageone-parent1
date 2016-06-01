@@ -18,10 +18,10 @@ import java.util.Map;
 public class PlatformImagesService extends BaseService {
 
     @Autowired
-    CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
+    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
 
     @Autowired
-    CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
+    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
 
     /**
      * 根据cartId,imageName,templateId查找对应数据是否存在,如果数据存在则返回该数据,不存在则返回初始化的数据.

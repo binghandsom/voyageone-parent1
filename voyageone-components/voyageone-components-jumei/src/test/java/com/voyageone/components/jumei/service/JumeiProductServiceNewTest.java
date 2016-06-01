@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JumeiProductServiceNewTest {
 
     @Autowired
-    JumeiProductService productService;
+    private JumeiProductService productService;
 
     @Test
     public void testGet() throws Exception {
