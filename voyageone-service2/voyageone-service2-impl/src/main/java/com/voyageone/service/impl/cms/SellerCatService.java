@@ -434,9 +434,10 @@ public class SellerCatService extends BaseService {
 
                 for (Field field : fields) {
                     if (field.getId().equals("seller_cids")) {
-                        List<Option> options = ((MultiCheckField) field).getOptions();
-                        for (Option option : options) {
-                            String cId = option.getValue();
+                        List<String> values = ((MultiCheckField) field).getDefaultValues();
+
+                        for (String value : values) {
+                            String cId = value;
                             cIds.add(cId);
                         }
                     }
@@ -505,9 +506,9 @@ public class SellerCatService extends BaseService {
         for (int i = 0 ; i < codes.size(); i++)
         {
             if (i == 0) {
-                sb.append("'").append(list.get(i)).append("'");
+                sb.append("\"").append(list.get(i)).append("\"");
             } else {
-                sb.append(", '").append(list.get(i)).append("'");
+                sb.append(", \"").append(list.get(i)).append("\"");
             }
 
         }
