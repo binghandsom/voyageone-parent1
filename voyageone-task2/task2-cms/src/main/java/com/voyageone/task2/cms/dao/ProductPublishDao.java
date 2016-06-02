@@ -33,7 +33,10 @@ public class ProductPublishDao extends BaseDao {
     }
 
     // 统计前一天订单中的产品数量
-    public List<Map> selectProductOrderCount() {
-        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectProductOrderCount");
+    public List<Map> selectProductOrderCount(long oIdx, long oLimit) {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("oIdx", oIdx);
+        dataMap.put("oLimit", oLimit);
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectProductOrderCount", dataMap);
     }
 }

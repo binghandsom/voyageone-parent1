@@ -1,29 +1,15 @@
 package com.voyageone.task2.cms.service.product;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.BulkWriteOperation;
-import com.mongodb.BulkWriteResult;
-import com.mongodb.DBCollection;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.dao.ProductPublishDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * 从oms系统导入产品前90天订单信息
- * 关联表:
- *   mysql: Synship.oms_bt_order_details
- *   mysql: Synship.oms_bt_orders
- *   mongo: cms_mt_prod_sales_his
+ * 从oms系统导入产品前90天订单信息,统计销量数据
  *
  * @author jason.jiang on 2016/05/24
  * @version 2.0.0
@@ -32,11 +18,9 @@ import java.util.Map;
 public class CmsImportOrdersHisInfoService extends BaseTaskService {
 
     @Autowired
-    private ProductPublishDao productDao;
+    private CmsCopyOrdersInfoService cmsCopyOrdersInfoService;
     @Autowired
-    private CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
+    private CmsFindProdOrdersInfoService cmsFindProdOrdersInfoService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -50,41 +34,10 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<Map> rs = productDao.selectProductOrderCount();
-        if (rs ==  null || rs.isEmpty()) {
-            return;
-        }
-
-        DBCollection coll = cmsMtProdSalesHisDao.getDBCollection();
-        BulkWriteOperation bbulkOpe = coll.initializeUnorderedBulkOperation();
-
-        JomgoQuery prodQryObj = new JomgoQuery();
-        prodQryObj.setQuery("{'skus.skuCode':#}");
-        prodQryObj.setProjection("{'fields.code':1,'_id':0}");
-
-        for (Map orderObj : rs) {
-            BasicDBObject queryObj = new BasicDBObject();
-            queryObj.put("cart_id", orderObj.get("cart_id"));
-            queryObj.put("channel_id", orderObj.get("channel_id"));
-            queryObj.put("sku", orderObj.get("sku"));
-            queryObj.put("date", orderObj.get("date"));
-
-            BasicDBObject updateValue = new BasicDBObject();
-            updateValue.putAll(orderObj);
-            // 根据sku找出其产品code（暂不考虑sku重复的情况）
-            prodQryObj.setParameters(orderObj.get("sku"));
-            CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, (String) orderObj.get("channel_id"));
-            if (prodModel != null) {
-                updateValue.put("prodCode", prodModel.getFields().getCode());
-            }
-            BasicDBObject updateObj = new BasicDBObject("$set", updateValue);
-
-            bbulkOpe.find(queryObj).upsert().update(updateObj);
-        }
-        if (rs.size() > 0) {
-            BulkWriteResult rslt = bbulkOpe.execute();
-            $debug(rslt.toString());
-        }
+        // 从oms系统导入产品前90天订单信息
+        cmsCopyOrdersInfoService.copyOrdersInfo(getTaskName());
+        // 统计销售数据
+        cmsFindProdOrdersInfoService.onStartup(taskControlList);
     }
 
 }
