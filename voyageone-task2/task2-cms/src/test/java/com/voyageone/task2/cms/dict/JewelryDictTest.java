@@ -1,7 +1,5 @@
 package com.voyageone.task2.cms.dict;
 
-import com.voyageone.common.masterdate.schema.rule.Rule;
-import com.voyageone.ims.enums.CmsFieldEnum;
 import com.voyageone.ims.rule_expression.*;
 import org.junit.Test;
 
@@ -362,7 +360,7 @@ public class JewelryDictTest {
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_商品图片));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -378,7 +376,7 @@ public class JewelryDictTest {
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_自定义图片));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 

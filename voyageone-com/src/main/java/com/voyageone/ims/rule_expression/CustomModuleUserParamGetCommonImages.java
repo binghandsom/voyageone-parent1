@@ -1,25 +1,29 @@
 package com.voyageone.ims.rule_expression;
 
 /**
+ * cms_bt_image_group(mongoDB)取得url
+ *
  * @htmlTemplate html模板，如果该值为空，那么parse直接返回图片的url, 如果不为空，那么图片套用这个html模板，如果有
  *               多张图，那么每个图片都套用这个html模板，并拼接好返回
- * @imageTemplate 图片模板，该值不能为空
- * @imageType     图片类型, 参见CmsCodeEnum， 该值不能为空
- * @useOriUrl 1:使用原图 其它或者未设置，不使用原图
+ * @imageType  图片类型, 1:商品图 2:尺码图 3:品牌故事图 4:物流介绍图 5:店铺图
+ * @viewType  1:PC端 2:APP端
+ * @useOriUrl 1:使用原图 其它或者未设置，使用天猫平台图
+ *
+ * @since 2016/06/02 morse.lu
  */
-public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
+public class CustomModuleUserParamGetCommonImages extends CustomModuleUserParam {
     //user param
-    private RuleExpression imageTemplate;
     private RuleExpression htmlTemplate;
     private RuleExpression imageType;
+    private RuleExpression viewType;
     private RuleExpression useOriUrl;
 
-    public CustomModuleUserParamGetAllImages() {}
+    public CustomModuleUserParamGetCommonImages() {}
 
-    public CustomModuleUserParamGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl) {
+    public CustomModuleUserParamGetCommonImages(RuleExpression htmlTemplate, RuleExpression imageType, RuleExpression viewType, RuleExpression useOriUrl) {
         this.htmlTemplate = htmlTemplate;
-        this.imageTemplate = imageTemplate;
         this.imageType = imageType;
+        this.viewType = viewType;
         this.useOriUrl = useOriUrl;
     }
 
@@ -39,12 +43,12 @@ public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
         this.imageType = imageType;
     }
 
-    public RuleExpression getImageTemplate() {
-        return imageTemplate;
+    public RuleExpression getViewType() {
+        return viewType;
     }
 
-    public void setImageTemplate(RuleExpression imageTemplate) {
-        this.imageTemplate = imageTemplate;
+    public void setViewType(RuleExpression viewType) {
+        this.viewType = viewType;
     }
 
     public RuleExpression getUseOriUrl() {

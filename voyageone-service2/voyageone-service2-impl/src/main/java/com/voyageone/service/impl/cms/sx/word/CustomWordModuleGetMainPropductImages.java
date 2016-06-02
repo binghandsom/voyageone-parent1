@@ -3,9 +3,6 @@ package com.voyageone.service.impl.cms.sx.word;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetMainPrductImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetMainProductImages;
@@ -16,8 +13,6 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -75,12 +70,20 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 
         // 判断想要获取哪个product的图片
         // 如果没有指定特别的extParameter, 那么就认为是主商品的图片
-        List<CmsBtProductModel_Field_Image> productImages = mainProduct.getFields().getImages(imageType);
+        // modified by morse.lu 2016/06/02 start
+//        List<CmsBtProductModel_Field_Image> productImages = mainProduct.getFields().getImages(imageType);
+        // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
+        List<CmsBtProductModel_Field_Image> productImages = sxProductService.getProductImages(mainProduct, imageType);
+        // modified by morse.lu 2016/06/02 end
         if (extParameter != null && extParameter.length > 0) {
             // 获取指定product的图片(如果没找到, 那么就使用主商品的图片)
             for (CmsBtProductModel product : sxData.getProductList()) {
                 if (product.getFields().getCode().equals(extParameter[0])) {
-                    productImages = product.getFields().getImages(imageType);
+                    // modified by morse.lu 2016/06/02 start
+//                    productImages = product.getFields().getImages(imageType);
+                    // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
+                    productImages = sxProductService.getProductImages(product, imageType);
+                    // modified by morse.lu 2016/06/02 end
                     break;
                 }
             }
@@ -94,9 +97,9 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             if (imageTemplate != null) {
                 for (CmsBtProductModel_Field_Image productImage : productImages) {
                     // 20160513 tom 图片服务器切换 START
-//                    String completeImageUrl = String.format(imageTemplate, productImage.getName());
+                    String completeImageUrl = String.format(imageTemplate, productImage.getName());
 
-                    String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
+//                    String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
                     // 20160513 tom 图片服务器切换 END
 //                    completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                     imageUrlList.add(completeImageUrl);
@@ -117,9 +120,9 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             String paddingImage;
             if(imageTemplate != null){
                 // 20160513 tom 图片服务器切换 START
-//                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
 
-                paddingImage = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), imageTemplate, paddingImageKey.trim());
+//                paddingImage = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), imageTemplate, paddingImageKey.trim());
                 // 20160513 tom 图片服务器切换 END
 //                paddingImage = sxProductService.encodeImageUrl(paddingImage);
                 imageUrlList.add(String.format(imageTemplate, paddingImage)); // TODO: 这里是不是写错了? 疑似应该是add paddingImage tom   // morse：好像是错了，task2下面也要改
@@ -131,9 +134,9 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             CmsBtProductModel_Field_Image productImage = productImages.get(imageIndex);
             if(imageTemplate != null){
                 // 20160513 tom 图片服务器切换 START
-//                String completeImageUrl = String.format(imageTemplate, productImage.getName());
+                String completeImageUrl = String.format(imageTemplate, productImage.getName());
 
-                String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
+//                String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
                 // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
                 imageUrlList.add(completeImageUrl);

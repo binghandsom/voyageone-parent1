@@ -1,20 +1,15 @@
 package com.voyageone.task2.cms.service.platform.common;
 
-import com.google.common.collect.Lists;
-import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.ims.modelbean.DictWordBean;
-import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -26,47 +21,27 @@ import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
-import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl1;
-import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl2;
-import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl3;
-import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl4;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.service.model.ims.ImsBtProductModel;
-import com.voyageone.task2.cms.bean.SkuTemplateSchema;
 import com.voyageone.task2.cms.bean.SxProductBean;
-import com.voyageone.task2.cms.bean.TmallUploadRunState;
-import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
-import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
-//import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemService;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
-import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_0;
-import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_1;
-import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_2;
-import com.voyageone.task2.cms.service.putaway.tmall.TmallGjSkuFieldBuilderImpl_3;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static java.text.DateFormat.*;
-
-import java.text.DateFormat;
 import java.util.*;
+
+import static java.text.DateFormat.getInstance;
+
+//import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 
 /**
  * Created by dell on 2016/4/18.
@@ -119,6 +94,41 @@ public class SxGetProductInfoTest {
         System.out.println();
         System.out.println("start:" + DateTimeUtil.getNow());
         System.out.println(getInstance().format(new Date()));
+
+//        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", "tomzhu-image-2016053101903_02");
+//        String result = HttpUtils.get(url, null);
+//        result = result.substring(result.indexOf("image"));
+//        String[] args = result.split("image\\.");
+//        Map<String, String> responseMap = new HashMap<>();
+//        for (String param : args) {
+//            if (param.indexOf("=") > 0) {
+//                String[] keyVal = param.split("=");
+//                if (keyVal.length > 1) {
+//                    responseMap.put(keyVal[0], keyVal[1]);
+//                } else {
+//                    responseMap.put(keyVal[0], "");
+//                }
+//            }
+//        }
+//        url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", "tomzhu-image-2016053101903_02", responseMap.get("width"), responseMap.get("height"));
+//        if (result != null) {
+//            System.out.println(url);
+//            return;
+//        }
+
+        SxData sxData = sxProductService.getSxProductDataByGroupId("018", 445666L);
+//        SxData sxData = sxProductService.getSxProductDataByGroupId("018", 662419L);
+        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+
+        String channelId = sxData.getChannelId();
+        int cartId = sxData.getCartId();
+        int imageType = 3;  // 品牌故事图
+        int viewType = 1; // pc
+        String brandName = sxData.getMainProduct().getFields().getBrand();
+        String productType = sxData.getMainProduct().getFields().getProductType();
+        String sizeType = sxData.getMainProduct().getFields().getSizeType();
+
+//        List<String> listUrls = sxProductService.getImageUrls(channelId, cartId, imageType, viewType, brandName, productType, sizeType, false);
 
 //        ShopBean shopBean1 = Shops.getShop("010", 23);
 //        System.out.println("shop");
@@ -505,71 +515,73 @@ public class SxGetProductInfoTest {
 
         // constructMappingPlatformProps start
 //        String schema = "<itemRule><field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><options><option displayName=\"BCBG\" value=\"29864\"/></options></field><field id=\"prop_13021751\" name=\"货号\" type=\"input\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules></field><field id=\"prop_122216385\" name=\"种地类型\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><options><option displayName=\"玻璃种\" value=\"43579\"/><option displayName=\"冰种\" value=\"43580\"/><option displayName=\"冰糯种\" value=\"43581\"/><option displayName=\"糯种\" value=\"43582\"/><option displayName=\"豆种\" value=\"43583\"/><option displayName=\"芙蓉种\" value=\"43584\"/><option displayName=\"花青\" value=\"43585\"/><option displayName=\"油青\" value=\"43586\"/><option displayName=\"白底青\" value=\"43587\"/><option displayName=\"其他\" value=\"20213\"/></options></field><field id=\"prop_20603\" name=\"图案/形状\" type=\"singleCheck\"><options><option displayName=\"佛\" value=\"43591\"/><option displayName=\"其他\" value=\"20213\"/><option displayName=\"叶子\" value=\"3385491\"/><option displayName=\"四季豆\" value=\"43598\"/><option displayName=\"如意\" value=\"43596\"/><option displayName=\"平安扣\" value=\"112815\"/><option displayName=\"生肖\" value=\"117\"/><option displayName=\"福瓜\" value=\"43601\"/><option displayName=\"竹节\" value=\"43597\"/><option displayName=\"葫芦\" value=\"27063\"/><option displayName=\"观音\" value=\"43590\"/><option displayName=\"貔貅\" value=\"43592\"/><option displayName=\"路路通\" value=\"43594\"/><option displayName=\"龙/凤\" value=\"84606\"/></options></field><field id=\"prop_20930\" name=\"售后服务\" type=\"multiCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><options><option displayName=\"复检后再付款\" value=\"60510\"/><option displayName=\"店铺保修\" value=\"60513\"/><option displayName=\"其他\" value=\"20213\"/></options></field><field id=\"prop_122216325\" name=\"镶嵌材质\" type=\"singleCheck\"><options><option displayName=\"未镶嵌\" value=\"21055\"/><option displayName=\"纯银镶嵌宝石\" value=\"21058\"/><option displayName=\"K黄金镶嵌宝石\" value=\"430722427\"/><option displayName=\"铂金/PT镶嵌宝石\" value=\"84748\"/><option displayName=\"其他\" value=\"20213\"/><option displayName=\"镀金镶嵌人工宝石/半宝石\" value=\"28306\"/><option displayName=\"合金镶嵌人工宝石/半宝石\" value=\"21059\"/></options></field><field id=\"prop_13618191\" name=\"价格区间\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><options><option displayName=\"500元以下\" value=\"51851\"/><option displayName=\"500-1000元\" value=\"127685\"/><option displayName=\"1001-5000元\" value=\"19577505\"/><option displayName=\"5001-10000元\" value=\"111341\"/><option displayName=\"10001-20000元\" value=\"129668\"/><option displayName=\"20001-50000元\" value=\"831438256\"/><option displayName=\"50001-100000元\" value=\"831404596\"/><option displayName=\"100000元以上\" value=\"831462044\"/></options></field><field id=\"prop_122276315\" name=\"款式\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><options><option displayName=\"摆件\" value=\"21045\"/><option displayName=\"原石\" value=\"58769\"/><option displayName=\"其他款式\" value=\"20213\"/></options></field><field id=\"product_images\" name=\"产品图片\" type=\"complex\"><fields><field id=\"product_image_0\" name=\"产品图片\" type=\"input\"><rules><rule name=\"valueTypeRule\" value=\"url\"/><rule name=\"requiredRule\" value=\"true\"/></rules></field><field id=\"product_image_1\" name=\"产品图片\" type=\"input\"><rules><rule name=\"valueTypeRule\" value=\"url\"/></rules></field><field id=\"product_image_2\" name=\"产品图片\" type=\"input\"><rules><rule name=\"valueTypeRule\" value=\"url\"/></rules></field><field id=\"product_image_3\" name=\"产品图片\" type=\"input\"><rules><rule name=\"valueTypeRule\" value=\"url\"/></rules></field><field id=\"product_image_4\" name=\"产品图片\" type=\"input\"><rules><rule name=\"valueTypeRule\" value=\"url\"/></rules></field></fields></field><field id=\"market_price\" name=\"市场价格\" type=\"input\"><rules><rule name=\"valueTypeRule\" value=\"decimal\"/><rule name=\"minValueRule\" value=\"0.00\" exProperty=\"not include\"/><rule name=\"maxValueRule\" value=\"100000000.00\" exProperty=\"not include\"/></rules></field></itemRule>";
-        String schema = "<itemRule>\n" +
-                "<field id=\"infos\" name=\"品牌信息\" type=\"input\">\n" +
-                "\t<rules>\n" +
-                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t</rules>\n" +
-                "</field>\n" +
-                "<field id=\"title\" name=\"牌\" type=\"singleCheck\">\n" +
-                "\t<rules>\n" +
-                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t</rules>\n" +
-                "</field>\n" +
-                "<field id=\"product\" name=\"商品\" type=\"complex\">\n" +
-                "<fields>\n" +
-                "\t<field id=\"sell_p_s\" name=\"卖点\" type=\"complex\">\n" +
-                "\t\t<fields>\n" +
-                "\t\t\t<field id=\"sell_p_0\" name=\"卖点1\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t\t<field id=\"sell_p_1\" name=\"卖点2\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t\t<field id=\"sell_p_2\" name=\"卖点3\" type=\"input\">\n" +
-                "\t\t\t</field>\n" +
-                "\t\t</fields>\n" +
-                "\t</field>\n" +
-                "\t<field id=\"col\" name=\"颜色\" type=\"multiCheck\">\n" +
-                "\t\t<rules>\n" +
-                "\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t\t</rules>\n" +
-                "\t\t<options>\n" +
-                "\t\t<option displayName=\"蓝\" value=\"b\"/>\n" +
-                "\t\t<option displayName=\"红\" value=\"r\"/>\n" +
-                "\t\t</options>\n" +
-                "\t</field>\n" +
-                "</fields>\n" +
-                "</field>\n" +
-                "<field id=\"prop_13618191\" name=\"价格区间\" type=\"singleCheck\">\n" +
-                "\t<rules>\n" +
-                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
-                "\t</rules>\n" +
-                "\t<options>\n" +
-                "\t<option displayName=\"500元以下\" value=\"51851\"/>\n" +
-                "\t<option displayName=\"500-1000元\" value=\"127685\"/>\n" +
-                "\t<option displayName=\"1001-5000元\" value=\"19577505\"/>\n" +
-                "\t<option displayName=\"5001-10000元\" value=\"111341\"/>\n" +
-                "\t<option displayName=\"10001-20000元\" value=\"129668\"/>\n" +
-                "\t<option displayName=\"20001-50000元\" value=\"831438256\"/>\n" +
-                "\t<option displayName=\"50001-100000元\" value=\"831404596\"/>\n" +
-                "\t<option displayName=\"100000元以上\" value=\"831462044\"/>\n" +
-                "\t</options>\n" +
-                "</field>\n" +
-                "</itemRule>\n";
-        List<Field> fields = SchemaReader.readXmlForList(schema);
-//        Map<String, Field> fieldMap = schemaToIdPropMap(schema);
-        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
-
-        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
-        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
-
+//        String schema = "<itemRule>\n" +
+//                "<field id=\"infos\" name=\"品牌信息\" type=\"input\">\n" +
+//                "\t<rules>\n" +
+//                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t</rules>\n" +
+//                "</field>\n" +
+//                "<field id=\"title\" name=\"牌\" type=\"singleCheck\">\n" +
+//                "\t<rules>\n" +
+//                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t</rules>\n" +
+//                "</field>\n" +
+//                "<field id=\"product\" name=\"商品\" type=\"complex\">\n" +
+//                "<fields>\n" +
+//                "\t<field id=\"sell_p_s\" name=\"卖点\" type=\"complex\">\n" +
+//                "\t\t<fields>\n" +
+//                "\t\t\t<field id=\"sell_p_0\" name=\"卖点1\" type=\"input\">\n" +
+//                "\t\t\t</field>\n" +
+//                "\t\t\t<field id=\"sell_p_1\" name=\"卖点2\" type=\"input\">\n" +
+//                "\t\t\t</field>\n" +
+//                "\t\t\t<field id=\"sell_p_2\" name=\"卖点3\" type=\"input\">\n" +
+//                "\t\t\t</field>\n" +
+//                "\t\t</fields>\n" +
+//                "\t</field>\n" +
+//                "\t<field id=\"col\" name=\"颜色\" type=\"multiCheck\">\n" +
+//                "\t\t<rules>\n" +
+//                "\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t\t</rules>\n" +
+//                "\t\t<options>\n" +
+//                "\t\t<option displayName=\"蓝\" value=\"b\"/>\n" +
+//                "\t\t<option displayName=\"红\" value=\"r\"/>\n" +
+//                "\t\t</options>\n" +
+//                "\t</field>\n" +
+//                "</fields>\n" +
+//                "</field>\n" +
+//                "<field id=\"prop_13618191\" name=\"价格区间\" type=\"singleCheck\">\n" +
+//                "\t<rules>\n" +
+//                "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                "\t</rules>\n" +
+//                "\t<options>\n" +
+//                "\t<option displayName=\"500元以下\" value=\"51851\"/>\n" +
+//                "\t<option displayName=\"500-1000元\" value=\"127685\"/>\n" +
+//                "\t<option displayName=\"1001-5000元\" value=\"19577505\"/>\n" +
+//                "\t<option displayName=\"5001-10000元\" value=\"111341\"/>\n" +
+//                "\t<option displayName=\"10001-20000元\" value=\"129668\"/>\n" +
+//                "\t<option displayName=\"20001-50000元\" value=\"831438256\"/>\n" +
+//                "\t<option displayName=\"50001-100000元\" value=\"831404596\"/>\n" +
+//                "\t<option displayName=\"100000元以上\" value=\"831462044\"/>\n" +
+//                "\t</options>\n" +
+//                "</field>\n" +
+//                "</itemRule>\n";
+//        List<Field> fields = SchemaReader.readXmlForList(schema);
+////        Map<String, Field> fieldMap = schemaToIdPropMap(schema);
+//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
+//
+//        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+//        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//
         ShopBean shopBean = new ShopBean();
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
         shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
-
-        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse", true);
-        res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
-//        String res = sxProductService.resolveDict("属性图片模板", exp, shopBean, "morse", null);
-//        System.out.println(res);
+//
+//        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse", true);
+//        res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
+        String res =
+                sxProductService.resolveDict("详情页描述-test.morse", exp, shopBean, "morse", null);
+//                "";
+        System.out.println(res);
         // constructMappingPlatformProps end
 
 
