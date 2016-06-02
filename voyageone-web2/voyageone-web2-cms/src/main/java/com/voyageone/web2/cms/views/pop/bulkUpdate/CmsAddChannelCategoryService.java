@@ -158,9 +158,8 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             String code = cmsBtProductModel.getFields().getCode();
             CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-            Long groupId= groupModel.getGroupId();
             model.setChannelId(groupModel.getChannelId());
-            model.setGroupId(new Integer(String.valueOf(groupId)));
+            model.setGroupId(groupModel.getGroupId());
             model.setCartId(cartId);
             model.setPublishStatus(0);
             model.setModifier(userName);
