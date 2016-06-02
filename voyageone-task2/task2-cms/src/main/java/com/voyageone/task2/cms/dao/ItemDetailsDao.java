@@ -12,20 +12,28 @@ import java.util.Map;
 @Repository
 public class ItemDetailsDao extends BaseDao {
 
-    /**
-     * 根据code, 获取item details表的数据
-     * @param channelId channel id
-     * @param code code
-     *
-     * @return List
-     */
-    public List<ItemDetailsBean> selectByCode(String channelId, String code) {
+//    /**
+//     * 根据code, 获取item details表的数据
+//     * @param channelId channel id
+//     * @param code code
+//     *
+//     * @return List
+//     */
+//    public List<ItemDetailsBean> selectByCode(String channelId, String code) {
+//
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("channelId", channelId);
+//        params.put("code", code);
+//
+//        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_select_by_code", params);
+//    }
 
+    public ItemDetailsBean selectBySku(String channelId, String sku) {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
-        params.put("code", code);
+        params.put("sku", sku);
 
-        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_select_by_code", params);
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_select_by_sku", params);
     }
 
     /**
