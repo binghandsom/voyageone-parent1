@@ -191,7 +191,13 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategory (openAddChannelCategoryEdit) {
-            openAddChannelCategoryEdit(getSelProductList()).then(function () {
+            var selList = [];
+            if ($scope.vm.currTab === 'group') {
+                selList = $scope.vm.groupSelList.selList;
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            openAddChannelCategoryEdit(selList).then(function () {
                 getGroupList();
                 getProductList();
             })
