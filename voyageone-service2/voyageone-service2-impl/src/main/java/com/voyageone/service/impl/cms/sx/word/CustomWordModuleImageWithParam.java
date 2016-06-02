@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
@@ -10,8 +9,6 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -43,28 +40,8 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
         List<String> imageParams = new ArrayList<>();
-        boolean isFirstParam = true;
         for (RuleExpression imageParamExpression : imageParamExpressions) {
             String imageParam = expressionParser.parse(imageParamExpression, shopBean, user, extParameter);
-            // added by morse.lu 2016/06/02 start
-            if (isFirstParam) {
-                isFirstParam = false;
-                // 第一个参数是商品图名，取不到的话，直接去取fields.images1[0]
-                if (StringUtils.isEmpty(imageParam)) {
-                    CmsBtProductModel product = sxData.getMainProduct();
-                    if (extParameter != null && extParameter.length > 0) {
-                        // 获取指定product的图片(如果没找到, 那么就使用主商品的图片)
-                        for (CmsBtProductModel productModel : sxData.getProductList()) {
-                            if (productModel.getFields().getCode().equals(extParameter[0])) {
-                                product = productModel;
-                                break;
-                            }
-                        }
-                    }
-                    imageParam = product.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
-                }
-            }
-            // added by morse.lu 2016/06/02 end
             if (imageParam == null) {
                 continue;
             }

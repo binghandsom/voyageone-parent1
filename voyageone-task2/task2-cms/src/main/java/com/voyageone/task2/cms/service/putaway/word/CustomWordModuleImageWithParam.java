@@ -1,21 +1,14 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.cms.bean.CustomValueSystemParam;
-import com.voyageone.task2.cms.bean.tcb.AbortTaskSignalInfo;
-import com.voyageone.task2.cms.bean.tcb.TaskSignal;
-import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
-import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
-import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
 import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.task2.cms.bean.CustomValueSystemParam;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
+import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
+import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -57,19 +50,8 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, null);
         List<String> imageParams = new ArrayList<>();
-        boolean isFirstParam = true;
         for (RuleExpression imageParamExpression : imageParamExpressions) {
             String imageParam = expressionParser.parse(imageParamExpression, null);
-            // added by morse.lu 2016/06/02 start
-            if (isFirstParam) {
-                isFirstParam = false;
-                // 第一个参数是商品图名，取不到的话，直接去取fields.images1[0]
-                if (StringUtils.isEmpty(imageParam)) {
-                    CmsBtProductModel product = systemParam.getMainSxProduct().getCmsBtProductModel();
-                    imageParam = product.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
-                }
-            }
-            // added by morse.lu 2016/06/02 end
             if (imageParam == null) {
                 continue;
             }
