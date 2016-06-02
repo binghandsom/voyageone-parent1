@@ -4,6 +4,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,5 +48,9 @@ public class HtDealUpdateRequest implements BaseJMRequest {
         params.put("jumei_hash_id", jumei_hash_id);
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
+    }
+   public static Long getTime(Date d) throws Exception {
+        long l = d.getTime() / 1000 - 8 * 3600;
+        return l;
     }
 }

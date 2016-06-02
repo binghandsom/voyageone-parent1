@@ -20,6 +20,13 @@ define([
             $scope.searchInfo = {};
         };
         $scope.search = function () {
+            for (var key in $scope.searchInfo)
+            {
+                if(!$scope.searchInfo[key])
+                {
+                    delete $scope.searchInfo[key];
+                }
+            }
             jmPromotionService.getListByWhere($scope.searchInfo).then(function (res) {
                 $scope.vm.modelList = res.data;
             }, function (res) {

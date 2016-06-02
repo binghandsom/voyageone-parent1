@@ -127,8 +127,7 @@ public class JuMeiProductPlatform3Service {
     //再售
     private void jmHtDealCopy(CmsBtJmPromotionProductModel model, ShopBean shopBean, String originJmHashId) throws Exception {
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
-        request.setStart_time(getTime(model.getActivityStart()));
-        request.setEnd_time(getTime(model.getActivityEnd()));
+        request.setStart_time(model.getActivityStart());
         request.setJumei_hash_id(originJmHashId);//原始jmHashId
         HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(shopBean, request);
         if (response.is_Success()) {
@@ -162,8 +161,5 @@ public class JuMeiProductPlatform3Service {
         request.setUpdate_data(list);
         serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
     }
-    private Long getTime(Date d) throws Exception {
-        long l = d.getTime() / 1000 - 8 * 3600;
-        return l;
-    }
+
 }

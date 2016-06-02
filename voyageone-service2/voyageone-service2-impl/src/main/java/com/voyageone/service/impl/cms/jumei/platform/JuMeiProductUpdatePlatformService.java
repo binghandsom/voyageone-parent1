@@ -109,8 +109,8 @@ public class JuMeiProductUpdatePlatformService {
         CmsBtJmProductModel modelProduct = info.getModelCmsBtJmProduct();
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = info.getModelCmsBtJmPromotionProduct();
        // request.setJumei_hash_id(modelProduct.getLastJmHashId());
-        request.setStart_time(getTime(info.getModelCmsBtJmPromotionProduct().getActivityStart()));
-        request.setEnd_time(getTime(info.getModelCmsBtJmPromotionProduct().getActivityEnd()));
+        request.setStart_time(info.getModelCmsBtJmPromotionProduct().getActivityStart());
+        request.setEnd_time(info.getModelCmsBtJmPromotionProduct().getActivityEnd());
         HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(shopBean, request);
         if (response.is_Success()) {
             info.getModelCmsBtJmPromotionProduct().setJmHashId(response.getJumei_hash_id());

@@ -177,33 +177,6 @@
                 <tab>
                     <tab-heading>SKU 详情</tab-heading>
                     <div class="column_overflow" style="height:400px">
-                        <div class="form-group col-sm-12">
-                            <label class="col-sm-3 control-label">颜色<br/>（子产品SPU）</label>
-                            <div class="col-sm-6 m-t-sm">
-                                <input class="form-control" ng-model="ctrl.productInfo.colorEn"/>
-                            </div>
-                            <label class="col-sm-3 m-t-sm control-label text-u-red text-left">(英文颜色)</label>
-                        </div>
-                        <div class="form-group col-sm-12">
-                            <label class="col-sm-3 control-label">海外官网价<br/>（子产品SPU）</label>
-                            <div class="col-sm-9 form-inline m-t-sm">
-                                <div class="input-group col-sm-6"><input type="text" class="form-control text-right" ng-model="ctrl.productInfo.msrp"></div>&nbsp;
-                                <div class="input-group col-sm-5">
-                                    <select class="form-control" ng-model="ctrl.productInfo.areaCode" ng-options="priceUnit.key as priceUnit.name1 for priceUnit in ctrl.masterData.priceUnitList">
-                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <!--<div class="form-group col-sm-12">-->
-                            <!--<label class="col-sm-3 control-label">市场价<br/>（子产品SPU）</label>-->
-                            <!--<div class="col-sm-9 m-t-sm">-->
-                                <!--<input class="form-control" ng-model="ctrl.productInfo.marketPrice"/>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <div class="form-group text-center col-sm-12">
-                            <button class="btn btn-vo" ng-click="ctrl.saveProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
-                        </div>
                         <!-- start sku信息 -->
                         <div class="col-sm-12 panel vo_panel tab_panel">
                             <!-- .table-responsive -->
@@ -212,12 +185,16 @@
                                     <thead>
                                     <tr>
                                         <th class="text-center mfb-xt">Seq.</th>
+                                        <th class="text-left mfb-xxx">聚美SKU</th>
                                         <th class="text-lef mfb-xxx">UPC<br/>（子产品SPU）</th>
+                                        <th class="text-left mfb-xxx">规格<br/>（子产品SPU）</th>
                                         <th class="text-left mfb-xxx">尺码<br/>（子产品SPU）</th>
                                         <th class="text-left mfb-xxx">SKU<br/>（SKU信息）</th>
-                                        <th class="text-right mfb-xxst">市场价<br/>（SKU信息）</th>
+                                        <th class="text-right mfb-xxst">海外官网价</th>
+                                        <th class="text-right mfb-xxst">中国官网售价</th>
+                                        <th class="text-right mfb-xxst">中国最终售价</th>
+                                        <th class="text-right mfb-xxst">市场价<br/>（子产品SPU）</th>
                                         <th class="text-right mfb-xxst">团购价<br/>（SKU信息）</th>
-                                        <th class="mfb-xxx text-left">规格<br/>（子产品SPU）</th>
                                         <th class="mfb-xxs text-center">Action</th>
                                     </tr>
                                     </thead>

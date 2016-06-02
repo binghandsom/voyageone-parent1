@@ -1,6 +1,9 @@
 package com.voyageone.components.jumei.request;
 
+import com.voyageone.common.util.DateTimeUtil;
+
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +17,8 @@ import java.util.Map;
 public class HtDealCopyDealRequest implements BaseJMRequest {
     private String url = "/v1/htDeal/copyDeal";
     private String jumei_hash_id;
-    private long start_time;//	Number 售卖开始时间    参数范围: 注:
-    private long end_time;//Number 售卖结束时间    参数范围: 注:
+    private Date start_time;//	Number 售卖开始时间    参数范围: 注:
+    private Date end_time;//Number 售卖结束时间    参数范围: 注:
 
     @Override
     public String getUrl() {
@@ -34,19 +37,19 @@ public class HtDealCopyDealRequest implements BaseJMRequest {
         this.jumei_hash_id = jumei_hash_id;
     }
 
-    public long getStart_time() {
+    public Date getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(long start_time) {
+    public void setStart_time(Date start_time) {
         this.start_time = start_time;
     }
 
-    public long getEnd_time() {
+    public Date getEnd_time() {
         return end_time;
     }
 
-    public void setEnd_time(long end_time) {
+    public void setEnd_time(Date end_time) {
         this.end_time = end_time;
     }
 
@@ -54,8 +57,12 @@ public class HtDealCopyDealRequest implements BaseJMRequest {
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_hash_id", jumei_hash_id);
-        params.put("start_time", Long.toString(start_time));
-        params.put("end_time", Long.toString(end_time));
+        params.put("start_time", DateTimeUtil.format(start_time,"yyyy-MM-dd HH:mm:ss"));
+        params.put("end_time", DateTimeUtil.format(end_time,"yyyy-MM-dd HH:mm:ss"));
         return params;
+    }
+    public static Long getTime(Date d) throws Exception {
+        long l = d.getTime() / 1000 - 8 * 3600;
+        return l;
     }
 }
