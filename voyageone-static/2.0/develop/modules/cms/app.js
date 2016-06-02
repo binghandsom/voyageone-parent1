@@ -137,8 +137,8 @@ define([
         }, true);
 
         $scope.$watch('$viewContentLoaded', function () {
-            $(window).load(function () {
-            });
+            //$(window).load(function () {
+            //});
 
             $(window).scroll(function () {
                 var scroll = $(window).scrollTop();
