@@ -47,7 +47,7 @@ public class PlatformProductUploadService extends BaseService {
      * @return CmsMtPlatformCategorySchemaModel    平台schema模型
      */
     public CmsMtPlatformCategorySchemaModel getSxWorkloadWithChannelIdCartId(String categoryPath, int cartId) {
-        return platformCategorySchemaDao.getPlatformCatSchemaModel(MD5.getMD5(categoryPath), cartId);
+        return platformCategorySchemaDao.selectPlatformCatSchemaModel(MD5.getMD5(categoryPath), cartId);
     }
 
 //    /**
@@ -58,7 +58,7 @@ public class PlatformProductUploadService extends BaseService {
 //     * @return List<CmsBtSxWorkloadModel>    上新任务模型列表
 //     */
 //    public CmsMtPlatformCategorySchemaModel getSxWorkloadWithChannelIdCartId(String categoryPath, int cartId) {
-//        return platformCategorySchemaDao.getPlatformCatSchemaModel(MD5.getMD5(categoryPath), cartId);
+//        return platformCategorySchemaDao.selectPlatformCatSchemaModel(MD5.getMD5(categoryPath), cartId);
 //    }
 
 

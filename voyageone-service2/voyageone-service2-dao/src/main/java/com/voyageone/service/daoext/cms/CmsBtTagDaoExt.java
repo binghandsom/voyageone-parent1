@@ -78,7 +78,7 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
     }
 
     // 根据tag path查询tag path name
-    public List<CmsBtTagBean> getTagPathNameByTagPath(String channelId, List<String> tagPathList) {
+    public List<CmsBtTagBean> selectTagPathNameByTagPath(String channelId, List<String> tagPathList) {
         HashMap<String, Object> paraIn = new HashMap<>();
         paraIn.put("channelId", channelId);
         paraIn.put("tagPathList", tagPathList);

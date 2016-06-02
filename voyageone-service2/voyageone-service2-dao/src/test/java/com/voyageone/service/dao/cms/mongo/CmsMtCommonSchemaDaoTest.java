@@ -21,7 +21,7 @@ public class CmsMtCommonSchemaDaoTest {
     @Test
     public void testGetComSchema() throws Exception {
 
-        CmsMtCommonSchemaModel comSchemaModel = commonSchemaDao.getComSchema();
+        CmsMtCommonSchemaModel comSchemaModel = commonSchemaDao.selectComSchema();
 
         Assert.assertNotNull(comSchemaModel);
 
