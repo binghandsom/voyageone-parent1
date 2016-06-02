@@ -139,6 +139,11 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.EXTENDCOLOR_BASECOLOR) {
                     colorExtend_basecolorField = platformProp;
                 }
+
+                // 暂时不知道匹配什么
+                if (type.intValue() == SkuTemplateConstants.UNKOWN) {
+                    addUnkownField(platformProp);
+                }
             }
         }
 
@@ -195,6 +200,16 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
                     String propId = mappingBean.getPlatformPropId();
+                    // add by morse.lu 2016/05/15 start
+                    // target店上新临时添加写死用
+                    if ("hscode".equals(propId)) {
+                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        skuFieldValue.setInputFieldValue(propId, propValue.split(",")[0]);
+//                        skuFieldValue.setInputFieldValue(propId, "0410004300");
+                        continue;
+                    }
+                    // add by morse.lu 2016/05/15 end
                     if (propId.equals(sku_colorField.getId())) {
                         continue;
                     } else if (propId.equals(sku_quantityField.getId())) {
@@ -220,9 +235,14 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 
     private Field buildColorExtendProp(ExpressionParser expressionParser, MappingBean colorExtendMapping, ShopBean shopBean, String user) throws Exception {
         SxData sxData = expressionParser.getSxData();
+        boolean hasSomeSku = false;
         Map<CmsBtProductModel_Sku, CmsBtProductModel> skuProductMap = new HashMap<>();
         for (CmsBtProductModel sxProduct : sxData.getProductList()) {
-            for (CmsBtProductModel_Sku sku : sxProduct.getSkus()) {
+            List<CmsBtProductModel_Sku> listSku = sxProduct.getSkus();
+            if (listSku.size() > 1) {
+                hasSomeSku = true;
+            }
+            for (CmsBtProductModel_Sku sku : listSku) {
                 skuProductMap.put(sku, sxProduct);
             }
         }
@@ -244,6 +264,9 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
             }
 
             CmsBtProductModel sxProductBean = skuProductMap.get(cmsSkuProp);
+            // tom 设置当前的产品内容 START TODO: 这段写的不是优雅, 之后看情况修改
+            expressionParser.pushMasterPropContext(sxProductBean.getFields());
+            // tom 设置当前的产品内容 END TODO: 这段写的不是优雅, 之后看情况修改
 
             if (colorExtend_imageField != null) {
                 String propImage = sxProductBean.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
@@ -252,7 +275,8 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                         $warn("图片模板url未设置");
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
                     } else {
-                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+//                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
@@ -260,7 +284,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
+//                        } else {
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                         }
                     }
                 }
@@ -272,6 +299,14 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                         || (colorExtend_imageField  != null && propId.equals(colorExtend_imageField.getId()))) {
                     continue;
                 } else {
+                    // added by morse.lu 2016/05/27 start
+                    // TODO:一个产品多个sku时，暂定别名用skuCode，以外的场合还是用产品code(mapping表设定)
+                    if (hasSomeSku && propId.equals(colorExtend_aliasnameField.getId())) {
+                        // 别名
+                        complexValue.setInputFieldValue(propId, cmsSkuProp.getSkuCode());
+                        continue;
+                    }
+                    // added by morse.lu 2016/05/27 end
                     RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                     String propValue = expressionParser.parse(ruleExpression, shopBean, user, null);
                     Field subField = fieldMap.get(propId);
@@ -282,6 +317,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                     }
                 }
             }
+
+            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+            expressionParser.popMasterPropContext();
+            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
 
             complexValues.add(complexValue);
         }

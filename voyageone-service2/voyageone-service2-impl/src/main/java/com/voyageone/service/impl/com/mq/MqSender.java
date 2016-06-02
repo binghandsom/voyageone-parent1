@@ -4,6 +4,7 @@ import com.voyageone.common.mq.config.MQConfigUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.config.AnnotationProcessorByIP;
+import com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,12 +36,19 @@ public class MqSender extends BaseService {
 
     private static final String EXISTS_IP = "$EXISTS_IP$";
 
-//    public void sendMessage(MqRoutingKey routingKey, Map<String, Object> messageMap) {
-//        sendMessage(routingKey.getValue(), messageMap);
-//    }
+    @Autowired
+    private VoRabbitMqLocalConfig voRabbitMqLocalConfig;
 
 
     public void sendMessage(String routingKey, Map<String, Object> messageMap) {
+        sendMessage(null, routingKey, messageMap);
+    }
+
+    public void sendMessage(String exchange, String routingKey, Map<String, Object> messageMap) {
+        sendMessage(null, routingKey, messageMap, voRabbitMqLocalConfig.isLocal(), true);
+    }
+
+    public void sendMessage(String exchange, String routingKey, Map<String, Object> messageMap, boolean isLoad, boolean isDeclareQueue) {
         try {
             // isload add ipaddress to routingKey
             if (annotationProcessorByIP.isLocal() && !routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
@@ -48,7 +56,10 @@ public class MqSender extends BaseService {
             }
 
             //declareQueue
-            amqpAdmin.declareQueue(new Queue(routingKey, true, false, true));
+            if (isDeclareQueue) {
+                amqpAdmin.declareQueue(new Queue(routingKey, true, false, voRabbitMqLocalConfig.isLocal()));
+            }
+
             if (messageMap == null) {
                 messageMap = new HashMap<>();
             }
@@ -60,9 +71,14 @@ public class MqSender extends BaseService {
             }
 
             final int finalRetryTimes = retryTimes;
-            amqpTemplate.send(routingKey, new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
+            Message message = new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
                 setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
-            }}));
+            }});
+            if (exchange == null) {
+                amqpTemplate.send(routingKey, message);
+            } else {
+                amqpTemplate.send(exchange, routingKey, message);
+            }
 
         } catch (Exception e) {
             $error(e.getMessage(), e);

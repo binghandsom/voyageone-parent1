@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
-import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.junit.Test;
@@ -20,8 +19,8 @@ public class CmsImageTemplateTest {
     @Autowired
     private ImageTemplateService service;
 
-    @Autowired
-    private CmsBtImageTemplateDao dao;
+//    @Autowired
+//    private CmsBtImageTemplateDao dao;
 
 //    @Autowired
 //    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
@@ -29,14 +28,14 @@ public class CmsImageTemplateTest {
     @Test
     public void loadCmsImageTemplate() {
 
-        List<CmsBtImageTemplateModel> list=dao.selectAll();
-
-        for (CmsBtImageTemplateModel model:list) {
-            if(model.getImageTemplateId()!=null&&model.getImageTemplateId()>30) {
-                model.setImageTemplateType(2);
-                service.save(model, "system");
-            }
-        }
+//        List<CmsBtImageTemplateModel> list=dao.selectAll();
+//
+//        for (CmsBtImageTemplateModel model:list) {
+//            if(model.getImageTemplateId()!=null&&model.getImageTemplateId()>30) {
+//                model.setImageTemplateType(2);
+//                service.save(model, "system");
+//            }
+//        }
 //        CmsBtImageTemplateModel modelCmsBtImageTemplate=null;
 //        List<CmsMtImageCreateTemplateModel> modelList = daoCmsMtImageCreateTemplate.selectList(null);
 //        for (CmsMtImageCreateTemplateModel model:modelList) {
@@ -54,5 +53,16 @@ public class CmsImageTemplateTest {
 //
 //        }
     }
+
+//    @Test
+//    public void testSelectOne() {
+//        CmsBtImageTemplateModel model = dao.selectByTemplateId(30);
+//        System.out.println(model);
+//        model.setComment(model.getComment() + "_1");
+//        dao.update(model);
+//        model = dao.selectByTemplateId(30);
+//        System.out.println(model);
+//    }
+
 
 }

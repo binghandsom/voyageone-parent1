@@ -21,7 +21,7 @@ public class CmsMtCommonSchemaDao extends BaseMongoDao<CmsMtCommonSchemaModel> {
     /**
      * 根据category id 查询对应的Schema.
      */
-    public CmsMtCommonSchemaModel getComSchema() {
+    public CmsMtCommonSchemaModel selectComSchema() {
 
         JSONObject comSchmeaJson = mongoTemplate.findOne(collectionName);
 
@@ -41,7 +41,7 @@ public class CmsMtCommonSchemaDao extends BaseMongoDao<CmsMtCommonSchemaModel> {
         return comSchemaModel;
     }
 
-    public List findAllProps() {
+    public List selectAllProps() {
 
         Map json = mongoTemplate.findOne("", "{fields:1}", Map.class, collectionName);
 

@@ -1,6 +1,8 @@
 define(function(){
     return {
+        "TXT_IMAGE_STATUS": "图片状态",
         "TXT_REMINDER_WITH_COLON": "温馨提示：",
+        "TXT_EDIT_TASK": "编辑当前 Task ",
         "TXT_LOGOUT": "注销",
         "TXT_HOME": "首页",
         "TXT_CATEGORY_VIEWS": "-- 类目视图 --",
@@ -337,7 +339,7 @@ define(function(){
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
         "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
-
+        "TXT_CART_NAME": "店铺渠道名称",
 
         "TXT_CHANNEL_ID": "渠道ID",
         "TXT_CART_ID": "Cart ID",
@@ -422,6 +424,7 @@ define(function(){
         "TXT_MSG_TAG": "请正确选择和填写标签!",
         "TXT_MSG_TAG_EDITOR": "标签编辑页!",
         "TXT_MSG_TAG_PATH": "标签路径!",
+        "TXT_MSG_TAG_NAME": "标签名",
         "TXT_MSG_TAG_IMAGE": "标签名称小于50字节!",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功.",
         "TXT_ACTIVITY_NAME": "活动名称",
@@ -448,6 +451,11 @@ define(function(){
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "刷图操作成功",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "刷图操作失败",
         "TXT_IMPORT_TEXT": "导入内容",
+        "TXT_FeedStatus_New": "新产品",
+        "TXT_FeedStatus_WaitingForImport": "等待导入",
+        "TXT_FeedStatus_FinishImport": "导入成功",
+        "TXT_FeedStatus_Error": "导入失败",
+        "TXT_FeedStatus_NotImport": "不导入",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -507,6 +515,7 @@ define(function(){
         "BTN_START_INCREMENT_ALL": "启动增量所有",
         "BTN_SET_DEFAULT_VALUE": "设定默认项",
         "BTN_RESET":"重置",
+        "BTN_REFRESH_PAGE": "刷新画面",
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
         "BEATING": "正在执行",
@@ -517,6 +526,11 @@ define(function(){
         "RE_FAIL": "还原失败",
         "CANT_BEAT": "信息错误",
 
+        "None": "无图",
+        "Waiting": "等待取图",
+        "Error": "取图错误",
+        "Exists": "取图成功",
+        
         /**分页显示*/
         "TXT_PAGER_SIZE": "每页显示",
         /**尺码表*/
@@ -539,6 +553,15 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
+
+        /**店铺分类*/
+        "TXT_STORE_CATEGORY":"店铺分类",
+        "TXT_STORE_CATEGORY_NAME":"店铺",
+        "MAX_SELLER_CAT_DEPTH":"最大层数",
+        "MAX_SELLER_CAT_CNT":"可设置最大标签数应小于",
+        "TXT_STORE_CATEGORY_SELECT":"请选择一个店铺",
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"当前店铺路径下操作无效",
+        "CATEGORY_EDIT":"分类类目编辑"
     };
 });

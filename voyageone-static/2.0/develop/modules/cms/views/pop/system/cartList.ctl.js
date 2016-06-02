@@ -29,10 +29,10 @@ define([
 
             };
             $scope.saveOrUpdate = function () {
-                if (!$scope.vm.cart_id || !/[0-9]+/.test($scope.vm.cart_id) ||  !$scope.vm.name || !$scope.vm.short_name
-                    || !$scope.vm.platform_id || !$scope.vm.cart_type) {
-                    return ; //表单不完整
-                }
+                //if (!$scope.vm.cart_id || !/[0-9]+/.test($scope.vm.cart_id) ||  !$scope.vm.name || !$scope.vm.short_name
+                //    || !$scope.vm.platform_id || !$scope.vm.cart_type) {
+                //    return ; //表单不完整
+                //}
                 var invok=$scope.is_add?cartService.save:cartService.saveOrUpdate; //根据是否新增调用方法
                 invok($scope.vm).then(function () {
                     $modalInstance.close($scope.vm);

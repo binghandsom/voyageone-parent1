@@ -1,7 +1,9 @@
 package com.voyageone.service.impl.com.mq;
 
+import com.voyageone.common.spring.SpringContext;
+import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,25 +14,46 @@ import org.springframework.stereotype.Component;
 @Component
 public class MQControlHelper {
 
-    private static RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
-
-    @Autowired
-    private void setRabbitListenerEndpointRegistry(RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry) {
-        MQControlHelper.rabbitListenerEndpointRegistry = rabbitListenerEndpointRegistry;
+    public static RabbitListenerEndpointRegistry getRabbitListenerEndpointRegistry() {
+        return SpringContext.getBean(RabbitListenerEndpointRegistry.class);
     }
 
-    public static void start(String beanName){
-        if(!isRunning(beanName))
-        rabbitListenerEndpointRegistry.getListenerContainer(beanName).start();
+    public static void start(String beanName) {
+        if (!isRunning(beanName)) {
+            MessageListenerContainer messageListenerContainer = getRabbitListenerEndpointRegistry().getListenerContainer(beanName);
+            if (messageListenerContainer != null) {
+                messageListenerContainer.start();
+            }
+        }
     }
 
-    public static void stop(String beanName){
-        if(isRunning(beanName))
-        rabbitListenerEndpointRegistry.getListenerContainer(beanName).stop();
+    public static void stop(String beanName) {
+        if (isRunning(beanName)) {
+            MessageListenerContainer messageListenerContainer = getRabbitListenerEndpointRegistry().getListenerContainer(beanName);
+            if (messageListenerContainer != null) {
+                messageListenerContainer.stop();
+            }
+        }
     }
 
-    public static boolean isRunning(String beanName){
-        return rabbitListenerEndpointRegistry.getListenerContainer(beanName).isRunning();
+    public static boolean isRunning(String beanName) {
+        MessageListenerContainer messageListenerContainer = getRabbitListenerEndpointRegistry().getListenerContainer(beanName);
+        return messageListenerContainer != null && messageListenerContainer.isRunning();
     }
 
+    public static int getConcurrentConsumers(String beanName) {
+        int result = 0;
+        SimpleMessageListenerContainer simpleMessageListenerContainer = (SimpleMessageListenerContainer) getRabbitListenerEndpointRegistry().getListenerContainer(beanName);
+        if (simpleMessageListenerContainer != null) {
+            result = simpleMessageListenerContainer.getActiveConsumerCount();
+        }
+        return result;
+    }
+
+    public static void setConcurrentConsumers(String beanName, int count) {
+        SimpleMessageListenerContainer simpleMessageListenerContainer = (SimpleMessageListenerContainer) getRabbitListenerEndpointRegistry().getListenerContainer(beanName);
+        if (simpleMessageListenerContainer != null) {
+            simpleMessageListenerContainer.setConcurrentConsumers(count);
+        }
+    }
 }

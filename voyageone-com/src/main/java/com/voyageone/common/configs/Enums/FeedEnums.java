@@ -137,10 +137,12 @@ public class FeedEnums {
         file_id_import_upc,
         file_id_import_category,
         file_id_import_sku,
+        file_id_import_made_in_country,
         client_product_url,
         useDuty,
         priceWithDuty,
         priceWithoutDuty,
-        blackList
+        blackList,
+        quantity
     }
 }

@@ -137,9 +137,6 @@ define([
         }, true);
 
         $scope.$watch('$viewContentLoaded', function () {
-            $(window).load(function () {
-            });
-
             $(window).scroll(function () {
                 var scroll = $(window).scrollTop();
                 if (scroll > 56) {
@@ -149,7 +146,6 @@ define([
                     $(".app-header").removeClass("addShadow");
                 }
             });
-
         });
 
         // set de default language
@@ -449,6 +445,7 @@ define([
             menuService.setPlatformType(cType).then(function (data) {
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
+                $rootScope.productUrl = data.productUrl;
             });
         }
 

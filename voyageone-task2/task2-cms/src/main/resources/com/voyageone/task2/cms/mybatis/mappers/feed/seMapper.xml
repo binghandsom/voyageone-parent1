@@ -3,12 +3,12 @@
 <mapper namespace="com.voyageone.cms.sql">
     <insert id="cms_zz_worktable_se_superfeed_insertList">
         INSERT INTO voyageone_cms2.cms_zz_feed_shoecity_product_temp (
-        upc, code, `size`, category, cost, brand, vo_cost, img_id, color, size_type, product_type, saved, md5
+        upc, code, `size`, category, cost, brand, vo_cost, img_id, color, size_type, product_type, qty,saved, md5
         )
         VALUES
         <foreach collection="beanList" item="bean" separator=",">
             (#{bean.upc}, #{bean.code}, #{bean.size}, #{bean.category}, #{bean.cost}, #{bean.brand}, #{bean.vo_cost},
-            #{bean.img_id}, #{bean.color}, #{bean.size_type}, #{bean.product_type}, #{bean.saved}, #{bean.md5})
+            #{bean.img_id}, #{bean.color}, #{bean.size_type}, #{bean.product_type},#{bean.qty}, #{bean.saved}, #{bean.md5})
         </foreach>
     </insert>
 
@@ -27,6 +27,7 @@
             color,
             size_type,
             product_type,
+            qty,
             saved,
             md5
         FROM voyageone_cms2.cms_zz_feed_shoecity_product_full

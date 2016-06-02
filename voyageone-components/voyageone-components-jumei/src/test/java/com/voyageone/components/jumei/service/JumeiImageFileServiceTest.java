@@ -18,7 +18,7 @@ import java.io.File;
 public class JumeiImageFileServiceTest {
 
     @Autowired
-    JumeiImageFileService imageFileService;
+    private JumeiImageFileService imageFileService;
 
     @Test
     public void testGet() throws Exception {

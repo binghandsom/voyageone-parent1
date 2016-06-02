@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.mapping.platform;
 
 import com.taobao.top.schema.exception.TopSchemaException;
+import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -30,6 +32,9 @@ public class CmsPlatformMappingController extends CmsController {
 
     @Autowired
     private CmsPlatformPropMappingService platformPropMappingService;
+
+    @Autowired
+    private CommonSchemaService commonSchemaService;
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_CARTS)
     public AjaxResponse getCarts() {
@@ -82,7 +87,9 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformPropMappingService.getPlatformCategory(categoryId, cartId, getUser()));
     }
 
-    // 根据主类目与平台类目的匹配关系查询平台类目属性，查询参数为主类目catId
+    /**
+     * 根据主类目与平台类目的匹配关系查询平台类目属性，查询参数为主类目catId
+     */
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAIN_CATEGORY_SCHEMA)
     public AjaxResponse getMainCategorySchema(@RequestBody Map<String, String> params) {
 
@@ -91,8 +98,10 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformPropMappingService.getMainCategorySchema(mainCategoryId));
     }
 
-    // 直接查询平台类目属性，查询参数为平台类目catId
-    // ！！使用的时候必须注意：这里返回的对象已由CmsMtPlatformCategorySchemaModel转换为CmsMtCategorySchemaModel
+    /**
+     * 直接查询平台类目属性，查询参数为平台类目catId
+     * ！！使用的时候必须注意：这里返回的对象已由CmsMtPlatformCategorySchemaModel转换为CmsMtCategorySchemaModel
+     */
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY_SCHEMA)
     public AjaxResponse getPlatformCategorySchema(@RequestBody Map<String, Object> params) {
         String categoryId = StringUtils.trimToNull((String) params.get("categoryId"));
@@ -139,5 +148,11 @@ public class CmsPlatformMappingController extends CmsController {
     public AjaxResponse saveMatchOverByMainCategory(@RequestBody PlatformMappingBean mappingBean) {
         return success(platformPropMappingService.setMatchOver(mappingBean.getMainCategoryId(),
                 mappingBean.getMatchOver(), mappingBean.getCartId(), getUser()));
+    }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_COMMON_SCHEMA)
+    public AjaxResponse getCommonSchema() {
+        CmsMtCommonSchemaModel comSchemaModel = commonSchemaService.getComSchemaModel();
+        return success(comSchemaModel);
     }
 }

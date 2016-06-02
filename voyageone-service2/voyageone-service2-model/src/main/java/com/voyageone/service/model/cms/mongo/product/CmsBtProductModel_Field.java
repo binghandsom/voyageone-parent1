@@ -2,8 +2,9 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     public void setCode(String code) {
         setAttribute("code", code);
+    }
+
+    //originalCode 产品originalCode
+    public String getOriginalCode() {
+        return getAttribute("originalCode");
+    }
+
+    public void setOriginalCode(String originalCode) {
+        setAttribute("originalCode", originalCode);
     }
 
     //brand 品牌
@@ -270,6 +280,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                 case CUSTOM_IMAGE:
                     result = getImages4();
                     break;
+                case MOBILE_CUSTOM_IMAGE:
+                    result = getImages5();
+                    break;
+                case CUSTOM_PRODUCT_IMAGE:
+                    result = getImages6();
+                    break;
             }
         }
         return result;
@@ -288,6 +304,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                     break;
                 case CUSTOM_IMAGE:
                     setImages4(images);
+                    break;
+                case MOBILE_CUSTOM_IMAGE:
+                    setImages5(images);
+                    break;
+                case CUSTOM_PRODUCT_IMAGE:
+                    setImages6(images);
                     break;
             }
         }
@@ -335,6 +357,28 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
     public void setImages4(List<CmsBtProductModel_Field_Image> images4) {
         setAttribute("images4", images4);
+    }
+
+    //手机端自定义图片
+    public List<CmsBtProductModel_Field_Image> getImages5() {
+        if (!this.containsKey("images5") || getAttribute("images5") == null) {
+            setAttribute("images5", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images5");
+    }
+    public void setImages5(List<CmsBtProductModel_Field_Image> images5) {
+        setAttribute("images5", images5);
+    }
+
+    //商品自定义图片
+    public List<CmsBtProductModel_Field_Image> getImages6() {
+        if (!this.containsKey("images6") || getAttribute("images6") == null) {
+            setAttribute("images6", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images6");
+    }
+    public void setImages6(List<CmsBtProductModel_Field_Image> images6) {
+        setAttribute("images6", images6);
     }
 
     //lock商品
@@ -417,7 +461,25 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //产品库存
     public Integer getQuantity() {
-        return Integer.parseInt(getAttribute("quantity") != null && !StringUtil.isEmpty(getAttribute("quantity")) ? getAttribute("quantity").toString() : "0");
+        Object value = getAttribute("quantity");
+
+        if (value == null)
+            return 0;
+
+        if (value instanceof String) {
+
+            String stringValue = (String) value;
+
+            if (StringUtils.isEmpty(stringValue))
+                return 0;
+            else
+                return Integer.valueOf(stringValue);
+        }
+
+        if (value instanceof Integer)
+            return (Integer) value;
+
+        throw new BusinessException("你跟我扯淡呢!!!类型都不对!!!");
     }
     public void setQuantity(Integer quantity) {
         setAttribute("quantity", quantity);

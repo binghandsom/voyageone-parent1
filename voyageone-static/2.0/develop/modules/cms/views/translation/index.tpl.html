@@ -163,7 +163,7 @@
 
                         <p><img image="{{translationModel.productImage}}" alt=""
                                 class="thumb-lg pull-left"
-                                ng-click="openImagedetail({'mainPic':translationModel.productImage,'picList':translationModel.prodImageList})"/></p>
+                                ng-click="openImagedetail({'mainPic':translationModel.productImage,'picList':translationModel.prodImageList,'search':'master'})"/></p>
 
                         <p class="col-sm-12 text-left text-vo m-t-xs">{{'TXT_TRANSLATOR_WIT_COLON'| translate}}{{translationModel.translator}}</p>
                     </td>
@@ -232,7 +232,7 @@
                     <td class="text-left" style="border-top:0px"></td>
                     <td class="text-left mfb-x" style="border-top:0px"><a ng-if="translationModel.clientProductUrl"
                                                                           href="{{translationModel.clientProductUrl}}" target="_blank">官网链接</a></td>
-                    <td class="text-left" colspan="2" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
+                    <td class="text-left" colspan="2" style="border-top:0px">{{translationModel.shortDescription}}</td>
                     <td class="text-left" colspan="2" style="border-top:0px">
                         <textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn"
                                   maxlength="{{vm.lenInfo.short_desc.maxLen}}" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>

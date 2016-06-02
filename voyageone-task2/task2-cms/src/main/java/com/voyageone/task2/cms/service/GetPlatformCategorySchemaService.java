@@ -36,19 +36,19 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
     private final static int Active_1 = 1;
 
     @Autowired
-    BrandDao brandDao;
+    private BrandDao brandDao;
 
     @Autowired
-    TbCategoryService tbCategoryService;
+    private TbCategoryService tbCategoryService;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
     @Autowired
-    CmsMtPlatformCategoryDao platformCategoryDao;
+    private CmsMtPlatformCategoryDao platformCategoryDao;
 
     @Autowired
-    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
     @Resource(name = "paltformCartList")
     List<String> paltformCartList;
@@ -70,7 +70,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
     }
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 取得有效的平台产品ID一览表(条件：active='1')
         cmsMtPlatformProductIdList = platformCategoryService.getPlatformProductIdList(Active_1);
@@ -79,7 +79,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             cmsMtPlatformProductIdList = new ArrayList<>();
         }
 
-        for (String cartId:paltformCartList){
+        for (String cartId : paltformCartList) {
             doSetPlatformPropTm(Integer.valueOf(cartId));
         }
 
@@ -90,6 +90,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
     /**
      * 第三方平台属性信息取得（天猫系）
+     *
      * @param cartId 渠道信息
      */
     private void doSetPlatformPropTm(int cartId) throws ApiException, InvocationTargetException, IllegalAccessException, TopSchemaException {
@@ -102,31 +103,53 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
         List<CmsMtPlatformCategoryTreeModel> categoryTrees = this.platformCategoryDao.selectPlatformCategoriesByCartId(cartId);
 
-        for (CmsMtPlatformCategoryTreeModel root:categoryTrees){
+        for (CmsMtPlatformCategoryTreeModel root : categoryTrees) {
             Object jsonObj = JsonPath.parse(root.toString()).json();
             List<Map> leavesMap = JsonPath.read(jsonObj, "$..children[?(@.isParent == 0)]");
             allCategoryLeavesMap.addAll(leavesMap);
         }
 
-        for (Map leafMap:allCategoryLeavesMap){
+        for (Map leafMap : allCategoryLeavesMap) {
             CmsMtPlatformCategoryTreeModel leafObj = new CmsMtPlatformCategoryTreeModel();
             BeanUtils.populate(leafObj, leafMap);
             String key = leafObj.getCatId();
 
-            if(!savedList.contains(key)) {
-                // 到平台产品ID一览表中去找对应的项目
+            if (!savedList.contains(key)) {
+                // 20160526 tom bug修正 START
+//                // 到平台产品ID一览表中去找对应的项目
+//                for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
+//                    // 如果channelId,cartId,categoryId完全一致，找到并推出循环
+//                    if (leafObj.getChannelId().equals(productId.getChannelId()) &&
+//                            cartId == productId.getCartId() &&
+//                            key.equals(productId.getCategoryId())) {
+//                        // 设置product id
+//                        savedList.add(key);
+//                        leafObj.setCartId(cartId);
+//                        allLeaves.add(leafObj);
+//                        break;
+//                    }
+//                }
+
+                boolean blnFound = false;
+                String strChannelId = "";
+                int intCartId = 0;
                 for (CmsMtPlatformProductIdListModel productId : cmsMtPlatformProductIdList) {
                     // 如果channelId,cartId,categoryId完全一致，找到并推出循环
-                    if (leafObj.getChannelId().equals(productId.getChannelId()) &&
-                            cartId == productId.getCartId() &&
-                            key.equals(productId.getCategoryId())) {
-                        // 设置product id
-                        savedList.add(key);
-                        leafObj.setCartId(cartId);
-                        allLeaves.add(leafObj);
+                    if (key.equals(productId.getCategoryId())) {
+                        blnFound = true;
+                        strChannelId = productId.getChannelId();
+                        intCartId = productId.getCartId();
                         break;
                     }
                 }
+
+                if (!blnFound || (leafObj.getChannelId().equals(strChannelId) && cartId == intCartId)) {
+                    // 设置product id
+                    savedList.add(key);
+                    leafObj.setCartId(cartId);
+                    allLeaves.add(leafObj);
+                }
+                // 20160526 tom bug修正 END
             }
 
         }
@@ -152,6 +175,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
     /**
      * 第三方平台属性信息取得（天猫系）
+     *
      * @param platformCategoriesModel 店铺信息
      */
     private ItemSchema doSetPlatformPropTmSub(CmsMtPlatformCategoryTreeModel platformCategoriesModel) throws ApiException {
@@ -172,7 +196,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             // 调用API获取产品属性规则
             String productXmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
 
-            if (productXmlContent != null){
+            if (productXmlContent != null) {
                 schemaModel.setPropsProduct(productXmlContent);
             } else {
                 $error("获取产品schema失败, CategoryId: " + platformCategoriesModel.getCatId());
@@ -197,23 +221,26 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
                 }
             }
 
-            if (productIdStr != null){
+            // 20160526 tom bug修正 START
+//            if (productIdStr != null){
+            if (!StringUtils.isEmpty(productIdStr)) {
+                // 20160526 tom bug修正 END
 
                 Long productId = Long.parseLong(productIdStr);
 
-                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),productId);
+                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()), productId);
 
             } else {
 
-                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
+                result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()), null);
 
             }
-            if (result != null){
+            if (result != null) {
                 //保存为XML文件
-                if (result.getResult() == 0 ){
+                if (result.getResult() == 0) {
                     itemXmlContent = result.getItemResult();
                 } else {
-                    if (productIdStr != null){
+                    if (productIdStr != null) {
                         $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " productId: " + productIdStr + " 错误信息: " + result.getItemResult());
                     } else {
                         $error("获取商品schema失败, CategoryId: " + platformCategoriesModel.getCatId() + " 错误信息: " + result.getItemResult());
@@ -224,7 +251,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
 
             schemaModel.setPropsItem(itemXmlContent);
 
-            if(!StringUtils.isEmpty(schemaModel.getPropsItem())){
+            if (!StringUtils.isEmpty(schemaModel.getPropsItem())) {
                 cmsMtPlatformCategorySchemaDao.insert(schemaModel);
             }
         }

@@ -16,12 +16,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsMtCommonSchemaDaoTest {
 
     @Autowired
-    CmsMtCommonSchemaDao commonSchemaDao;
+    private CmsMtCommonSchemaDao commonSchemaDao;
 
     @Test
     public void testGetComSchema() throws Exception {
 
-        CmsMtCommonSchemaModel comSchemaModel = commonSchemaDao.getComSchema();
+        CmsMtCommonSchemaModel comSchemaModel = commonSchemaDao.selectComSchema();
 
         Assert.assertNotNull(comSchemaModel);
 

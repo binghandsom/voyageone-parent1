@@ -25,10 +25,10 @@ define([
         $scope.save = function () {
             var self = this;
             var vm = self.vm;
-            if (!vm.order_channel_id || !/[0-9]+/.test(vm.order_channel_id) || !vm.company_id || !vm.name
-                || !vm.send_name || !vm.screct_key || !vm.session_key) {
-                return; //表单错误
-            }
+            //if (!vm.order_channel_id || !/[0-9]+/.test(vm.order_channel_id) || !vm.company_id || !vm.name
+            //    || !vm.send_name || !vm.screct_key || !vm.session_key) {
+            //    return; //表单错误
+            //}
             if (self.is_add) {
                 usjoiService.save(self.vm).then(function () {
                     $modalInstance.close(self.vm);

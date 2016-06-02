@@ -99,7 +99,11 @@ define([
                     context.field[key] = $scope.vm.schema[key];
                 }
             } else if ($scope.addOrEditFlg == 0) {
-                context.field.fields.push($scope.vm.schema);
+                if(context.field.fields[context.field.fields.length-1].name == "SKU" || context.field.fields[context.field.fields.length-1].name == "sku"){
+                    context.field.fields.splice(context.field.fields.length-2,0,$scope.vm.schema);
+                }else{
+                    context.field.fields.push($scope.vm.schema);
+                }
             } else if ($scope.addOrEditFlg == 3) {
                 // 检查重复属性(id重复，$$hashKey重复)
                 var attrId = $scope.vm.schema.id;

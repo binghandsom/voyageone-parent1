@@ -15,7 +15,7 @@ import java.util.Map;
 @Repository
 public class CmsBtTaskTejiabaoDaoExt extends ServiceBaseDao {
 
-    public List<CmsBtTaskTejiabaoModel> getPromotionTaskList(Map<String, Object> params) {
+    public List<CmsBtTaskTejiabaoModel> selectPromotionTaskList(Map<String, Object> params) {
         List<CmsBtTaskTejiabaoModel> ret = selectList("select_cms_bt_promotion_task", params);
         if (ret == null){
             ret = new ArrayList<>();
@@ -23,11 +23,11 @@ public class CmsBtTaskTejiabaoDaoExt extends ServiceBaseDao {
         return ret;
     }
 
-    public int getPromotionTaskPriceListCnt(Map<String,Object> params){
+    public int selectPromotionTaskPriceListCnt(Map<String, Object> params){
         return selectOne("select_cms_bt_promotion_task_price_cnt",params);
     }
 
-    public List<Map<String,Object>> getPromotionTaskPriceList(Map<String,Object> params){
+    public List<Map<String,Object>> selectPromotionTaskPriceList(Map<String, Object> params){
         return selectList("select_cms_bt_promotion_task_price", params);
     }
 
@@ -40,7 +40,7 @@ public class CmsBtTaskTejiabaoDaoExt extends ServiceBaseDao {
     }
 
 
-    public List<CmsBtTaskTejiabaoModel> getPromotionByCodeNotInAllPromotion(Map<String, Object> params) {
+    public List<CmsBtTaskTejiabaoModel> selectPromotionByCodeNotInAllPromotion(Map<String, Object> params) {
         return selectList("select_cms_bt_promotion_by_code_in_no_all_promotion",params);
     }
 }

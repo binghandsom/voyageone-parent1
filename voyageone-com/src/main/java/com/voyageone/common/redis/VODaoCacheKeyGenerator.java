@@ -25,7 +25,7 @@ public class VODaoCacheKeyGenerator implements KeyGenerator {
             String paramstr;
             if (params.length == 1 && params[0] instanceof BaseModel) {
                 paramstr = JacksonUtil.bean2Json(((BaseModel)params[0]).getId());
-            } else if (params.length == 1 && params[0] instanceof Integer) {
+            } else if (params.length == 1) {
                 paramstr = JacksonUtil.bean2Json(params[0]);
             } else {
                 paramstr = JacksonUtil.bean2Json(params);

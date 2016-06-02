@@ -10,12 +10,14 @@ import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * BaseJomgoDao
@@ -23,7 +25,7 @@ import java.util.*;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseJomgoDao<T> {
+public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
 
     protected BaseJomgoTemplate mongoTemplate;
 
@@ -55,9 +57,9 @@ public abstract class BaseJomgoDao<T> {
         });
     }
 
-    @Autowired
-    public void setMongoTemplate(BaseJomgoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.mongoTemplate = applicationContext.getBean(BaseJomgoTemplate.class);
         if (this.collectionName == null) {
             this.entityClass = getEntityClass();
             this.collectionName = mongoTemplate.getCollectionName(entityClass);
@@ -72,12 +74,9 @@ public abstract class BaseJomgoDao<T> {
     /**
      * 通过反射, 获得定义Class时声明的父类的泛型参数的类型. 如无法找到, 返回Object.class.
      *
-     * @param clazz
-     *            clazz The class to introspect
-     * @param index
-     *            the Index of the generic ddeclaration,start from 0.
-     * @return the index generic declaration, or Object.class if cannot be
-     *         determined
+     * @param clazz clazz The class to introspect
+     * @param index the Index of the generic ddeclaration,start from 0.
+     * @return       the index generic declaration, or Object.class if cannot be determined
      */
     @SuppressWarnings("unchecked")
     public static Class<Object> getSuperClassGenricType(final Class clazz, final int index) {

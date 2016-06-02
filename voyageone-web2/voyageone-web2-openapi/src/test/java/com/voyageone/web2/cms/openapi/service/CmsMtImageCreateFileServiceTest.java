@@ -7,7 +7,6 @@ import com.voyageone.service.bean.openapi.image.AddListParameter;
 import com.voyageone.service.bean.openapi.image.AddListResultBean;
 import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.bean.openapi.image.GetImageResultBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -19,16 +18,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsMtImageCreateFileServiceTest {
     @Autowired
-    CmsImageFileService service;
-    @Autowired
-    private CmsBtImageTemplateDao dao;
+    private CmsImageFileService service;
     @Autowired
     private ImageTemplateService serviceCmsImageTemplate;
     @Test
@@ -39,7 +40,7 @@ public class CmsMtImageCreateFileServiceTest {
         String file = "nike-air-penny-ii-333886005-1";//"test-test-1";//
         String vparam = "[\"file:bcbg/bcbg-sku.png\",\"file:bcbg/bcbgtupian.jpg\",\"Text String to be rendered\"]";
         String queryString = "cId=001&templateId=15&file=nike-air-penny-ii-333886005-1&vparam=file:bcbg/bcbg-sku.png,file:bcbg/bcbgtupian.jpg,Text String to be rendered";
-        GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        GetImageResultBean result = service.getImage(cId, templateId, file, false, false, vparam, "测试创建");
 
     }
 
@@ -133,18 +134,18 @@ public class CmsMtImageCreateFileServiceTest {
         String str = "source=name[icon],url[%s]&source=name[s],url[%s]&scale=height[1100],width[700]&blank=color[white],height[1200],name[bcc],width[1200]&select=name[bcc]&composite=compose[Over],image[s],x[200],y[100]&composite=compose[Over],image[icon],x[100],y[32]&annotate=fill[red],font[VeraSans-Bold],pointsize[18],text[%s],x[923],y[832]&sink";
     }
 
-    @Test
-    public void testAllTemplate() throws Exception {
-        Map<String, Object> map = new HashMap<>();
-       // List<CmsMtImageCreateTemplateModel> modelList = daoCmsMtImageCreateTemplate.selectList(map);
-//        for (CmsMtImageCreateTemplateModel model : modelList) {
-//            testTemplate(model.getId());
+//    @Test
+//    public void testAllTemplate() throws Exception {
+//        Map<String, Object> map = new HashMap<>();
+//       // List<CmsMtImageCreateTemplateModel> modelList = daoCmsMtImageCreateTemplate.selectList(map);
+////        for (CmsMtImageCreateTemplateModel model : modelList) {
+////            testTemplate(model.getId());
+////        }
+//         List<CmsBtImageTemplateModel> modelList =  dao.selectAll();// daoCmsMtImageCreateTemplate.selectList(map);
+//        for (CmsBtImageTemplateModel model : modelList) {
+//            testTemplate(model.getImageTemplateId());
 //        }
-         List<CmsBtImageTemplateModel> modelList =  dao.selectAll();// daoCmsMtImageCreateTemplate.selectList(map);
-        for (CmsBtImageTemplateModel model : modelList) {
-            testTemplate(model.getImageTemplateId());
-        }
-    }
+//    }
 
     @Test
     public void testTemplateOne() throws Exception {
@@ -191,7 +192,7 @@ sink=format[jpg],quality[100]
         //int templateId = 15;
         String file = "nike-air-penny-ii-333886005-1";// + System.currentTimeMillis() + "templateId:" + templateId;//"test-test-1";//
         String vparam = JacksonUtil.bean2Json(paramList);
-        GetImageResultBean result = service.getImage(cId, templateId, file, false, vparam, "测试创建");
+        GetImageResultBean result = service.getImage(cId, templateId, file, false, false, vparam, "测试创建");
         System.out.println(result.getErrorCode()+""+result.getErrorMsg());
        // Assert.isTrue(result.getErrorCode()==0,"有错误");
     }

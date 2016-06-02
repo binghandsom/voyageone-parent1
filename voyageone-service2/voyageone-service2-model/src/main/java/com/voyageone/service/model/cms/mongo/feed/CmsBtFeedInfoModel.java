@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import org.springframework.beans.BeanUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
  */
 public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
-    public CmsBtFeedInfoModel() {}
+    public CmsBtFeedInfoModel() {
+    }
 
     public CmsBtFeedInfoModel(String channelId) {
         super(channelId);
@@ -38,10 +40,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String longDescription;
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
-    private Map<String,List<String>> attribute = new HashMap<>();
+    private Map<String, List<String>> attribute = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private int updFlg;
     private String clientProductURL = "";
+    private Integer qty = 0;
 
     private String productType;
 
@@ -149,11 +152,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.attributeList = attributeList;
     }
 
-    public Map<String,List<String>> getAttribute() {
+    public Map<String, List<String>> getAttribute() {
         return attribute;
     }
 
-    public void setAttribute(Map<String,List<String>> attribute) {
+    public void setAttribute(Map<String, List<String>> attribute) {
         this.attribute = attribute;
     }
 
@@ -242,8 +245,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     @JsonIgnore
-    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(ChannelConfigEnums.Channel channel){
-        CmsBtFeedInfoModel cmsBtFeedInfoModel =new CmsBtFeedInfoModel(this.channelId);
+    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(ChannelConfigEnums.Channel channel) {
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = new CmsBtFeedInfoModel(this.channelId);
         cmsBtFeedInfoModel.setCategory(this.getCategory());
         cmsBtFeedInfoModel.setCode(this.getCode());
         cmsBtFeedInfoModel.setName(this.getName());
@@ -252,14 +255,17 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setOrigin(this.getOrigin());
         cmsBtFeedInfoModel.setSizeType(this.getSizeType());
         String imageSplit = Feeds.getVal1(channel, FeedEnums.Name.image_split);
-        if(StringUtil.isEmpty(imageSplit)){
+        if (StringUtil.isEmpty(imageSplit)) {
             imageSplit = ",";
         }
-        if(this.getImage().size()>0){
+        if (this.getImage().size() > 0) {
             cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(imageSplit)).stream().map(s -> s.trim()).collect(Collectors.toList()));
-        }else{
+        } else {
             cmsBtFeedInfoModel.setImage(new ArrayList<>());
         }
+
+        this.getSkus().forEach(cmsBtFeedInfoModel_sku -> cmsBtFeedInfoModel_sku.setImage(cmsBtFeedInfoModel.getImage().stream().collect(Collectors.toList())));
+
         cmsBtFeedInfoModel.setBrand(this.getBrand());
         cmsBtFeedInfoModel.setWeight(this.getWeight());
         cmsBtFeedInfoModel.setShortDescription(this.getShortDescription());
@@ -268,7 +274,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setUpdFlg(0);
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
         cmsBtFeedInfoModel.setProductType(this.productType);
-        return  cmsBtFeedInfoModel;
+        return cmsBtFeedInfoModel;
     }
 
     public String getProductType() {
@@ -285,5 +291,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
     }
 }

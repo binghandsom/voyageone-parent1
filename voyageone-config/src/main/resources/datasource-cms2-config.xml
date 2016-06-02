@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-lazy-init ="false"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:p="http://www.springframework.org/schema/p"
-        xmlns:tx="http://www.springframework.org/schema/tx"
-        xmlns="http://www.springframework.org/schema/beans"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans default-lazy-init="true"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
@@ -20,7 +20,7 @@
         <!--连接池中保留的最大连接数。Default: 15 -->
         <property name="maxPoolSize" value="30"></property>
         <property name="minPoolSize" value="5"></property>
-        <property name="testConnectionOnCheckout"  value="true"></property>
+        <property name="testConnectionOnCheckout" value="true"></property>
         <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
         <property name="testConnectionOnCheckin" value="true"></property>
         <!--定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个一显著提高测试速度。注意： 测试的表必须在初始数据源的时候就存在。Default: null-->
@@ -80,7 +80,7 @@
         <!--连接池中保留的最大连接数。Default: 15 -->
         <property name="maxPoolSize" value="30"></property>
         <property name="minPoolSize" value="5"></property>
-        <property name="testConnectionOnCheckout"  value="true"></property>
+        <property name="testConnectionOnCheckout" value="true"></property>
         <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
         <property name="testConnectionOnCheckin" value="true"></property>
         <!--定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个一显著提高测试速度。注意： 测试的表必须在初始数据源的时候就存在。Default: null-->

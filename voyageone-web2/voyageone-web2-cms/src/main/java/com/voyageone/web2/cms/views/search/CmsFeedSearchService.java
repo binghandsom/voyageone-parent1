@@ -3,7 +3,9 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -37,9 +39,9 @@ public class CmsFeedSearchService extends BaseAppService {
     private CmsFeedCustPropService cmsFeedCustPropService;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'created':1,'modified':1}";
+    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'created':1,'modified':1}";
 
-    // 查询产品信息时的缺省输出列
+    // 查询产品信息时的缺省排序条件
     private final String sortItems = "{'category':1,'code':1}";
 
     /**
@@ -49,6 +51,9 @@ public class CmsFeedSearchService extends BaseAppService {
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException{
         Map<String, Object> masterData = new HashMap<>();
+
+        // 获取compare type
+        masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
@@ -187,11 +192,13 @@ public class CmsFeedSearchService extends BaseAppService {
         List<String> strList = (List<String>) searchValue.get("fuzzyList");
         if (strList != null && strList.size() > 0) {
             List<String> orSearch = new ArrayList<>();
-            String[] fuzzyArr = new String[strList.size()];
-            fuzzyArr = strList.toArray(fuzzyArr);
-            orSearch.add(MongoUtils.splicingValue("code", fuzzyArr));
-            orSearch.add(MongoUtils.splicingValue("name", fuzzyArr));
-            orSearch.add(MongoUtils.splicingValue("model", fuzzyArr));
+            for (String fuzzyStr : strList) {
+                orSearch.add(MongoUtils.splicingValue("code", fuzzyStr, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("name", fuzzyStr, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("model", fuzzyStr, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("skus.sku", fuzzyStr, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("skus.clientSku", fuzzyStr, "$regex"));
+            }
 
             if (strList.size() == 1) {
                 orSearch.add(MongoUtils.splicingValue("short_description", strList.get(0), "$regex"));
@@ -211,7 +218,7 @@ public class CmsFeedSearchService extends BaseAppService {
         // 获取color
         String color = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("color"));
         if (color != null) {
-            result.append(MongoUtils.splicingValue("color", color));
+            result.append("'color':{'$regex': '" + color + "','$options':'i'}");
             result.append(",");
         }
 
@@ -229,6 +236,22 @@ public class CmsFeedSearchService extends BaseAppService {
             result.append(",");
         }
 
+        // 获取inventory
+        String compareType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("compareType"));
+        String qtyStr = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("inventory"));
+        if (compareType != null && qtyStr != null) {
+            int inventory = NumberUtils.toInt(qtyStr);
+            result.append(MongoUtils.splicingValue("qty", inventory, compareType));
+            result.append(",");
+        }
+
+        // 获取status
+        String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
+        if (status != null) {
+            result.append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
+            result.append(",");
+        }
+
         if (!StringUtils.isEmpty(result.toString())) {
             return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
         }
@@ -237,4 +260,20 @@ public class CmsFeedSearchService extends BaseAppService {
         }
     }
 
+    // 批量更新FEED状态信息
+    public void updateFeedStatus(List<Map> params, UserSessionBean userInfo) {
+        List<String> codeList = new ArrayList<>(params.size());
+        params.forEach(para -> codeList.add((String) para.get("code")));
+        HashMap paraMap1 = new HashMap(1);
+        paraMap1.put("$in", codeList);
+        HashMap paraMap2 = new HashMap(1);
+        paraMap2.put("code", paraMap1);
+
+        HashMap valueMap = new HashMap(1);
+        valueMap.put("updFlg", 0);
+        valueMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        valueMap.put("modifier", userInfo.getUserName());
+
+        feedInfoService.updateFeedInfo(userInfo.getSelChannelId(), paraMap2, valueMap);
+    }
 }

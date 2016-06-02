@@ -21,8 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,6 +75,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
         $info("Target产品白名单读入开始");
         Map<String, SuperFeedTargetBean> retail = getRetailPriceList();
         if(retail == null || retail.isEmpty()) return 0;
+        setMadeInCountry(retail);
 
 
         $info("Target产品文件读入开始");
@@ -224,6 +224,14 @@ public class TargetAnalysisService extends BaseAnalysisService {
             }
             reader.close();
             $info("Target产品文件读入完成");
+            if(!retail.isEmpty()){
+                String temp="";
+                for(String key :retail.keySet()){
+                    temp += key+"\n";
+                }
+                issueLog.log("target feed导入",temp+"feed中不存在",ErrorType.BatchJob,SubSystem.CMS);
+            }
+
         } catch (FileNotFoundException e) {
             $info("Target产品文件读入不存在");
         } catch (Exception ex) {
@@ -375,6 +383,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
+                beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);
@@ -415,8 +425,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
         try {
             reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
             // Head读入
-            reader.readHeaders();
-            reader.getHeaders();
+//            reader.readHeaders();
+//            reader.getHeaders();
 
             // Body读入
             while (reader.readRecord()) {
@@ -438,6 +448,38 @@ public class TargetAnalysisService extends BaseAnalysisService {
         return retailPriceList;
     }
 
+    public void setMadeInCountry(Map<String, SuperFeedTargetBean> superFeedTargetBean){
+
+        String fileName = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id_import_made_in_country);
+        String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
+        String fileFullName = String.format("%s/%s", filePath, fileName);
+        FileReader fr = null;
+        try {
+            fr=new FileReader(fileFullName);
+            BufferedReader br=new BufferedReader(fr);
+            String json = br.readLine();
+            fr.close();
+            Map<String,Object> madeInCountry = JacksonUtil.jsonToMap(json);
+
+            for(String key: superFeedTargetBean.keySet()){
+                if(madeInCountry.get(key) != null){
+                    List<String> country = (List<String>) madeInCountry.get(key);
+                    superFeedTargetBean.get(key).setMadeInCountry(country.stream().collect(Collectors.joining(",")));
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(fr != null) try {
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private String weightConvert(String weight){
         String temp[] = weight.trim().split(" ");
         if(temp.length > 1){
@@ -446,7 +488,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]) / 16.0);
                 return convertWeight.toString();
             }else if("lb".equalsIgnoreCase(temp[1])){
-                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));;
+                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
                 return convertWeight.toString();
             }else{
                 throw new BusinessException("重量转换失败：" + weight);
@@ -474,5 +516,11 @@ public class TargetAnalysisService extends BaseAnalysisService {
             i++;
         }
         return attribute;
+    }
+
+    @Override
+    protected boolean backupFeedFile(String channelId){
+        super.backupFeedFile(channelId);
+        return backupFeedFile(channelId,FeedEnums.Name.file_id_import_sku);
     }
 }

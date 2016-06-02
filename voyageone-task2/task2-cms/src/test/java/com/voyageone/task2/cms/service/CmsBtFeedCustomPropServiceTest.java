@@ -18,7 +18,7 @@ import java.util.List;
 public class CmsBtFeedCustomPropServiceTest {
 
     @Autowired
-    FeedCustomPropService customPropService;
+    private FeedCustomPropService customPropService;
 
     @Test
     public void testCustomProp() throws Exception {

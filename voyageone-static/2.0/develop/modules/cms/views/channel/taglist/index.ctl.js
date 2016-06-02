@@ -29,7 +29,6 @@ define([
             //默认选中店铺类分类
             channelTagService.init({tagTypeSelectValue: $scope.vm.tagTypeSelectValue}).then(function (res) {
                 $scope.source = $scope.vm.tagTree = res.data.tagTree;
-                console.log("tagTree",$scope.vm.tagTree);
                 $scope.vm.tagTypeList= res.data.tagTypeList;
                 $scope.search(0);
             });
@@ -105,6 +104,7 @@ define([
                     if (err.message != null) {
                         savedata.vm.errMsg=err.message;
                     }
+                    $scope.search(0);
                 })
         }
 

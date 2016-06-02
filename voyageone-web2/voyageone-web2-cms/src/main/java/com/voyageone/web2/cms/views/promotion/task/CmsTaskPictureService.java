@@ -8,12 +8,15 @@ import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.service.impl.cms.BeatInfoService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -26,10 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
 import static com.voyageone.common.util.ExcelUtils.getString;
 
@@ -57,6 +58,9 @@ class CmsTaskPictureService extends BaseAppService {
     @Autowired
     private PromotionCodeService promotionCodeService;
 
+    @Autowired
+    private ImageTemplateService imageTemplateService;
+
     /**
      * 创建一个价格披露任务
      *
@@ -66,7 +70,7 @@ class CmsTaskPictureService extends BaseAppService {
      */
     public TaskBean create(TaskBean taskBean, UserSessionBean user) {
 
-        CmsBtPromotionModel promotion = getPromotion(taskBean.getPromotion_id());
+        CmsBtPromotionModel promotion = promotionService.getPromotion(taskBean.getPromotionId());
 
         if (promotion == null)
             throw new BusinessException("7000001");
@@ -74,39 +78,47 @@ class CmsTaskPictureService extends BaseAppService {
         if (!taskBean.getConfig().isValid())
             throw new BusinessException("7000002");
 
-        // 尝试检查任务的名称, 是否已经存在
-        List<CmsBtTasksBean> taskModels = taskService.getTasks(
-                taskBean.getPromotion_id(),
-                taskBean.getTask_name(),
-                user.getSelChannelId(),
-                PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
+        List<CmsBtTasksBean> taskModels;
+        boolean insert = (taskBean.getUpdate() == null || !taskBean.getUpdate());
 
-        if (!taskModels.isEmpty())
-            throw new BusinessException("7000003");
+        // 如果不是更新, 而是创建
+        if (insert) {
+
+            // 尝试检查任务的名称, 是否已经存在
+            taskModels = taskService.getTasks(
+                    taskBean.getPromotionId(),
+                    taskBean.getTaskName(),
+                    user.getSelChannelId(),
+                    PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
+
+            if (!taskModels.isEmpty())
+                throw new BusinessException("7000003");
+
+            taskBean.setTaskType(PromotionTypeEnums.Type.JIAGEPILU);
+            taskBean.setChannelId(user.getSelChannelId());
+            taskBean.setCreater(user.getUserName());
+        }
 
         // 如果没提交刷图时间, 则使用 Promotion 的预热时间
-        if (StringUtils.isEmpty(taskBean.getActivity_start()))
-            taskBean.setActivity_start(taskBean.getPromotion().getPrePeriodStart());
+        if (StringUtils.isEmpty(taskBean.getActivityStart()))
+            taskBean.setActivityStart(taskBean.getPromotion().getPrePeriodStart());
 
         // 如果没提交还原时间, 则使用 Promotion 的结束时间
-        if (StringUtils.isEmpty(taskBean.getActivity_end()))
-            taskBean.setActivity_end(taskBean.getPromotion().getActivityEnd());
+        if (StringUtils.isEmpty(taskBean.getActivityEnd()))
+            taskBean.setActivityEnd(taskBean.getPromotion().getActivityEnd());
 
-        taskBean.setTask_type(PromotionTypeEnums.Type.JIAGEPILU);
-        taskBean.setChannelId(user.getSelChannelId());
-        taskBean.setCreater(user.getUserName());
         taskBean.setModifier(user.getUserName());
 
-        int count = taskService.addTask(taskBean.toModel());
+        int count = insert ? taskService.addTask(taskBean.toModel()) : taskService.updateConfig(taskBean.toModel());
 
         if (count < 1)
             return null;
 
         taskModels = taskService.getTasks(
-                taskBean.getPromotion_id(),
-                taskBean.getTask_name(),
+                taskBean.getPromotionId(),
+                taskBean.getTaskName(),
                 user.getSelChannelId(),
-                taskBean.getTask_type().getTypeId());
+                taskBean.getTaskType().getTypeId());
 
         return new TaskBean(taskModels.get(0));
     }
@@ -120,9 +132,9 @@ class CmsTaskPictureService extends BaseAppService {
      * @param size    分页数
      * @return 数据集合
      */
-    List<CmsBtBeatInfoBean> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
+    List<CmsBtBeatInfoBean> getAllBeat(int task_id, BeatFlag flag, String searchKey, int offset, int size) {
 
-        return beatInfoService.getBeatInfoListByTaskId(task_id, flag, offset, size);
+        return beatInfoService.getBeatInfoListByTaskId(task_id, flag, searchKey, offset, size);
     }
 
     /**
@@ -132,21 +144,26 @@ class CmsTaskPictureService extends BaseAppService {
      * @param flag    指定的任务状态
      * @return 数据集合
      */
-    int getAllBeatCount(int task_id, BeatFlag flag) {
+    int getAllBeatCount(int task_id, BeatFlag flag, String searchKey) {
 
-        return beatInfoService.getBeatInfoCountByTaskId(task_id, flag);
+        return beatInfoService.getBeatInfoCountByTaskId(task_id, flag, searchKey);
     }
 
     /**
      * 获取价格披露的统计信息
+     *
      * @param task_id 任务 ID
      * @return 统计信息, List[Map{flag&count}]
      */
-    List<Map> getBeatSummary(int task_id) {
-        List<Map> result = beatInfoService.getBeatSummary(task_id);
-        // 数据查询出来的是整数, 转换为枚举
-        for (Map map : result)
-            map.put("flag", BeatFlag.valueOf((Integer) map.get("flag")));
+    List<Map<String, Object>> getBeatSummary(int task_id) {
+        List<Map<String, Object>> result = beatInfoService.getBeatSummary(task_id);
+        // 数据查询出来的是整数, 转换为枚举名
+        for (Map<String, Object> map : result) {
+            Object flag = map.get("flag");
+            Integer flagId = Integer.valueOf(String.valueOf(flag));
+            BeatFlag flagEnum = BeatFlag.valueOf(flagId);
+            map.put("flag", flagEnum.name());
+        }
         return result;
     }
 
@@ -158,46 +175,49 @@ class CmsTaskPictureService extends BaseAppService {
         if (count > 0)
             throw new BusinessException("7000004");
 
-        Workbook wb;
+        try (InputStream a = file.getInputStream();
+             Workbook wb = WorkbookFactory.create(a)) {
 
-        try {
-            wb = WorkbookFactory.create(file.getInputStream());
+            Sheet sheet = wb.getSheetAt(0);
+
+            List<CmsBtBeatInfoBean> models = new ArrayList<>();
+
+            for (Row row : sheet) {
+
+                String value = getString(row, 0, "#");
+
+                if (StringUtils.isEmpty(value))
+                    break;
+
+                if (!StringUtils.isNumeric(value))
+                    throw new BusinessException("7000006", row.getRowNum());
+
+                CmsBtBeatInfoBean model = new CmsBtBeatInfoBean();
+
+                model.setNumIid(Long.valueOf(value));
+                model.setProductCode(getString(row, 1));
+                model.setSynFlag(BeatFlag.STOP); // syn_flag
+                model.setTaskId(task_id);
+                model.setCreater(user.getUserName());
+                model.setModifier(user.getUserName());
+                model.setMessage("");
+                model.setImageStatus(ImageStatus.None);
+                model.setImageTaskId(0);
+
+                Date now = DateTimeUtil.getDate();
+                model.setCreated(now);
+                model.setModified(now);
+
+                models.add(model);
+            }
+
+            beatInfoService.importBeatInfo(task_id, models);
+
         } catch (IOException | InvalidFormatException e) {
             throw new BusinessException("7000005");
         }
 
-        Sheet sheet = wb.getSheetAt(0);
-
-        List<CmsBtBeatInfoBean> models = new ArrayList<>();
-
-        for (Row row : sheet) {
-
-            String value = getString(row, 0, "#");
-
-            if (StringUtils.isEmpty(value))
-                break;
-
-            if (!StringUtils.isNumeric(value))
-                throw new BusinessException("7000006", row.getRowNum());
-
-            CmsBtBeatInfoBean model = new CmsBtBeatInfoBean();
-
-            model.setNum_iid(Long.valueOf(value));
-            model.setProduct_code(getString(row, 1));
-            model.setBeatFlag(BeatFlag.STOP); // syn_flag
-            model.setTask_id(task_id);
-            model.setCreater(user.getUserName());
-            model.setModifier(user.getUserName());
-            String now = DateTimeUtil.getNow();
-            model.setCreatedStr(now);
-            model.setModifiedStr(now);
-
-            models.add(model);
-        }
-
-        beatInfoService.importBeatInfo(task_id, models);
-
-        return getAllBeat(task_id, null, 0, size);
+        return getAllBeat(task_id, null, null, 0, size);
     }
 
     byte[] downloadBeatInfo(int task_id) {
@@ -226,11 +246,11 @@ class CmsTaskPictureService extends BaseAppService {
 
                 row = row(sheet, i + 1);
 
-                cell(row, 0, null).setCellValue(model.getNum_iid());
+                cell(row, 0, null).setCellValue(model.getNumIid());
 
-                cell(row, 1, null).setCellValue(model.getProduct_code());
+                cell(row, 1, null).setCellValue(model.getProductCode());
 
-                cell(row, 2, null).setCellValue(model.getBeatFlag().name());
+                cell(row, 2, null).setCellValue(model.getSynFlagEnum().name());
 
                 cell(row, 3, null).setCellValue(model.getMessage());
             }
@@ -246,11 +266,11 @@ class CmsTaskPictureService extends BaseAppService {
         }
     }
 
-    int control(Integer beat_id, Integer task_id, BeatFlag flag, UserSessionBean user) {
+    int control(Integer beat_id, Integer task_id, BeatFlag flag, Boolean force, UserSessionBean user) {
         if (beat_id != null)
             return setFlag(beat_id, flag, user);
         else if (task_id != null)
-            return setFlags(task_id, flag, user);
+            return setFlags(task_id, flag, force, user);
         else
             return 0;
     }
@@ -260,7 +280,7 @@ class CmsTaskPictureService extends BaseAppService {
         CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
-        map.put("promotionId", taskModel.getPromotion_id());
+        map.put("promotionId", taskModel.getPromotionId());
         return promotionModelService.getPromotionModelDetailList(map);
     }
 
@@ -275,37 +295,56 @@ class CmsTaskPictureService extends BaseAppService {
         CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
-        return beatInfoService.getBeatInfByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
+        return beatInfoService.getBeatInfByNumiidInOtherTask(taskModel.getPromotionId(), task_id, num_iid);
+    }
+
+    List<CmsBtImageTemplateModel> getTemplatesByPromotion(int promotionId) {
+
+        CmsBtPromotionModel promotionModel = promotionService.getPromotion(promotionId);
+
+        if (promotionModel == null)
+            throw new BusinessException("没找到 Promotion");
+
+        return imageTemplateService.getAllTemplate(promotionModel.getChannelId(), promotionModel.getCartId());
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
+
         CmsBtTasksBean taskModel = taskService.getTaskWithPromotion(task_id);
+
         if (taskModel == null) return null;
+
         CmsBtBeatInfoBean model = beatInfoService.getBeatInfByNumiid(task_id, num_iid);
+
         if (model != null) {
-            if (model.getProduct_code().equals(code))
+
+            if (model.getProductCode().equals(code))
                 return 0;
-            model.setProduct_code(code);
+
+            model.setImageStatus(ImageStatus.None);
+            model.setProductCode(code);
             model.setModifier(user.getUserName());
             return beatInfoService.updateCode(model);
         }
+
         model = new CmsBtBeatInfoBean();
-        model.setNum_iid(Long.valueOf(num_iid));
-        model.setProduct_code(code);
-        model.setBeatFlag(BeatFlag.STOP);
-        model.setTask_id(task_id);
+        model.setNumIid(Long.valueOf(num_iid));
+        model.setProductCode(code);
+        model.setSynFlag(BeatFlag.STOP);
+        model.setTaskId(task_id);
         model.setCreater(user.getUserName());
         model.setModifier(user.getUserName());
-        String now = DateTimeUtil.getNow();
-        model.setCreatedStr(now);
-        model.setModifiedStr(now);
+        model.setImageStatus(ImageStatus.None);
+        model.setImageTaskId(0);
+        model.setMessage("");
+
+        Date now = DateTimeUtil.getDate();
+        model.setCreated(now);
+        model.setModified(now);
+
         List<CmsBtBeatInfoBean> list = new ArrayList<>();
         list.add(model);
         return beatInfoService.addTasks(list);
-    }
-
-    private CmsBtPromotionModel getPromotion(int promotion_id) {
-        return promotionService.getByPromotionId(promotion_id);
     }
 
     private Row row(Sheet sheet, int rowIndex) {
@@ -328,6 +367,9 @@ class CmsTaskPictureService extends BaseAppService {
         return cell;
     }
 
+    /**
+     * 设定任务到指定状态, 并重置任务的图片状态
+     */
     private int setFlag(int beat_id, BeatFlag flag, UserSessionBean user) {
 
         if (flag == null)
@@ -338,16 +380,20 @@ class CmsTaskPictureService extends BaseAppService {
         if (beatInfoModel == null)
             return 0;
 
-        beatInfoModel.setBeatFlag(flag);
+        beatInfoModel.setImageStatus(ImageStatus.None);
+        beatInfoModel.setSynFlag(flag);
         beatInfoModel.setModifier(user.getUserName());
         return beatInfoService.updateBeatInfoFlag(beatInfoModel);
     }
 
-    private int setFlags(int task_id, BeatFlag flag, UserSessionBean user) {
+    /**
+     * 设定所有任务到指定状态, 并重置所有任务的图片状态
+     */
+    private int setFlags(int task_id, BeatFlag flag, Boolean force, UserSessionBean user) {
 
         if (flag == null)
             throw new BusinessException("7000002");
 
-        return beatInfoService.updateBeatInfoFlag(task_id, flag, user.getUserName());
+        return beatInfoService.updateBeatInfoFlag(task_id, flag, ImageStatus.None, force, user.getUserName());
     }
 }

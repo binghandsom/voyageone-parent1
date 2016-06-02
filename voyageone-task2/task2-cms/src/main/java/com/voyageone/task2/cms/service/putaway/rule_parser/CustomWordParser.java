@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.putaway.rule_parser;
 
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.service.putaway.word.CustomWordModule;
 import com.voyageone.task2.cms.service.putaway.DefaultCustomRuleModules;
 import com.voyageone.ims.rule_expression.CustomWord;
@@ -27,7 +28,7 @@ public class CustomWordParser {
         this.ruleModules = DefaultCustomRuleModules.getInstance();
     }
 
-    public String parse(RuleWord ruleWord, Set<String> imageSet) {
+    public String parse(RuleWord ruleWord, Set<String> imageSet) throws TaskSignal {
         if (!WordType.CUSTOM.equals(ruleWord.getWordType())) {
             return null;
         }

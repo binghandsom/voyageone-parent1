@@ -42,7 +42,7 @@ import java.util.Map;
 public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService {
 
     @Autowired
-    JdCategoryService jdCategoryService;
+    private JdCategoryService jdCategoryService;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;

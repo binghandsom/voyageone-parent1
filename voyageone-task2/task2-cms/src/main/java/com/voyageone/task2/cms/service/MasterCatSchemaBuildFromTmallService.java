@@ -40,7 +40,6 @@ import java.util.*;
 public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implements MasterCategorySchemaBuildService{
 
     private final static String JOB_NAME = "buildMasterSchemaFromPlatformTask";
-    Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
@@ -53,6 +52,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
     @Autowired
     private CategoryTreeService categoryTreeService;
+
+
+    private Map<String, CommonPropActionDefBean> allDefModelsMap = new HashMap<>();
 
     //Field字段排序方法
     private static void fieldsSort(List<Field> masterFields){
@@ -117,7 +119,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         //删除原有数据
 //        cmsMtCategorySchemaDao.deleteAll();
 
-        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(cartId));
+        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.selectAllSchemaKeys(Integer.parseInt(cartId));
 
         List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDaoExt.selectActionModelList();
 
@@ -160,10 +162,11 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         for (JSONObject schemaId:schemaIds) {
             String id = schemaId.get("_id").toString();
             CmsMtPlatformCategorySchemaModel schemaModel =
-                    cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(
+                    cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModelById(
                             id,
                             Integer.parseInt(cartId));
             if (schemaModel != null){
+                if(cartId.equalsIgnoreCase(CartEnums.Cart.JGJ.getId()) || cartId.equalsIgnoreCase(CartEnums.Cart.JGY.getId())) schemaModel.setCatFullPath("jd_"+ schemaModel.getCatFullPath());
                 if(isExist(schemaModel.getCatFullPath())) continue;
                 if (Integer.parseInt(cartId) == schemaModel.getCartId()) {
 
@@ -325,7 +328,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                     index++;
 
-                    $info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId());
+                    $info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId()+"   "+masterModel.getCatFullPath());
 
                     //保存主数据schema
                     cmsMtCategorySchemaDao.insert(masterModel);

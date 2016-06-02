@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.bean;
 
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.excel.ReflectUtil;
+import org.apache.poi.util.SystemOutLogger;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.Set;
  */
 public class SuperFeedBean {
     public String beanToMd5(Object object, Set<String> noMd5Fields){
+        noMd5Fields.add("md5");
+        noMd5Fields.add("updateflag");
         List<Field> fields = ReflectUtil.getListField(object.getClass());
         StringBuffer temp = new StringBuffer();
         fields.stream()

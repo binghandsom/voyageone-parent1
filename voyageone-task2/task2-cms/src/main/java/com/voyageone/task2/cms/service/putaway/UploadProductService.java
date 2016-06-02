@@ -43,6 +43,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Autowired
     private ProductService productService;
     @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -56,9 +58,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
-
-    @Autowired
-    private ProductGroupService productGroupService;
 
     public UploadProductService() {}
 
@@ -252,14 +251,14 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 // 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新-> 是的 (回写group表和product表)
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
 //                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, inStockTime, newPlatformStatus);
-
-                // 20160512 tom 回写group表和product表 START
+                // added by morse.lu 2016/05/15 start
+                // 回写group表和product表
+                System.out.println("上新成功, 产品id是：" + workLoadBean.getProductId() + ". 商品id是：" + workLoadBean.getNumId());
                 mainProductPlatform.setNumIId(workLoadBean.getNumId());
+                mainProductPlatform.setPlatformPid(workLoadBean.getProductId());
                 mainProductPlatform.setPlatformStatus(newPlatformStatus);
-                mainProductPlatform.setProductCodes(codeList);
-                mainProductPlatform.setChannelId(workLoadBean.getOrder_channel_id());
                 productGroupService.updateGroupsPlatformStatus(mainProductPlatform);
-                // 20160512 tom 回写group表和product表 END
+                // added by morse.lu 2016/05/15 end
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);

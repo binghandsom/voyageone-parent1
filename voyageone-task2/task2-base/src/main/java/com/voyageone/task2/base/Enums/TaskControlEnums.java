@@ -14,6 +14,10 @@ public class TaskControlEnums {
          */
         run_flg,
         /**
+         * 可以运行ip
+         */
+        run_ip,
+        /**
          * 订单渠道
          */
         order_channel_id,

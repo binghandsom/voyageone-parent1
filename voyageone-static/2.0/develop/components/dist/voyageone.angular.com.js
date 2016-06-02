@@ -3,9 +3,11 @@ define([
   'components/angular/controllers/showPopover.ctrl',
   'components/angular/directives/dateModelFormat.directive',
   'components/angular/directives/enterClick.directive',
-  'components/angular/directives/image.directive',
   'components/angular/directives/filestyle.directive',
+  'components/angular/directives/goTop.directive',
   'components/angular/directives/ifNoRows.directive',
+  'components/angular/directives/image.directive',
+  'components/angular/directives/message.directive',
   'components/angular/directives/navigation.directive',
   'components/angular/directives/popoverText.directive',
   'components/angular/directives/schema.directive',
@@ -28,14 +30,16 @@ define([
   'components/angular/services/translate.service'
 ], function () {
 
- angular.module("voyageone.angular",[
+angular.module("voyageone.angular",[
 "voyageone.angular.controllers.selectRows",
 "voyageone.angular.controllers.showPopover",
 "voyageone.angular.directives.dateModelFormat",
 "voyageone.angular.directives.enterClick",
-"voyageone.angular.directives.image",
 "voyageone.angular.directives.fileStyle",
+"voyageone.angular.directives.goTop",
 "voyageone.angular.directives.ifNoRows",
+"voyageone.angular.directives.image",
+"voyageone.angular.directives.message",
 "voyageone.angular.directives.uiNav",
 "voyageone.angular.directives.popoverText",
 "voyageone.angular.directives.schema",

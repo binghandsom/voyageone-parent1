@@ -186,24 +186,26 @@ public class PromotionDetailService extends BaseService {
      */
     private void updateCmsBtProductTags(CmsBtPromotionCodesBean promotionCodeModel,String oldTagPath,String modifier) {
         //更新商品Tags  sunpt
-        CmsBtProductModel productModel = productService.getProductById(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductId());
-        List<String> tags = productModel.getTags();
-        int size = tags.size();
-        boolean isUpdate=false;
-        for (int i = 0; i < size; i++) {
-            if (oldTagPath.equals(tags.get(i))) {
-                //存在替换
-                tags.set(i, promotionCodeModel.getTagPath());
-                isUpdate=true;
-                break;
+        CmsBtProductModel productModel = productService.getProductByCode(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductCode());
+        if(productModel != null) {
+            List<String> tags = productModel.getTags();
+            int size = tags.size();
+            boolean isUpdate = false;
+            for (int i = 0; i < size; i++) {
+                if (oldTagPath.equals(tags.get(i))) {
+                    //存在替换
+                    tags.set(i, promotionCodeModel.getTagPath());
+                    isUpdate = true;
+                    break;
+                }
             }
+            if (!isUpdate)//没有更新 就添加
+            {
+                tags.add(promotionCodeModel.getTagPath());
+            }
+            productModel.setTags(tags);
+            productService.updateTags(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductId(), tags, modifier);
         }
-        if(!isUpdate)//没有更新 就添加
-        {
-            tags.add(promotionCodeModel.getTagPath());
-        }
-        productModel.setTags(tags);
-        productService.updateTags(promotionCodeModel.getOrgChannelId(),promotionCodeModel.getProductId(),tags,modifier);
        //productService.update(productModel);
     }
 
@@ -247,7 +249,7 @@ public class PromotionDetailService extends BaseService {
         parm.put("cartId", cmsBtPromotionCodesBean.getCartId());
         parm.put("code", cmsBtPromotionCodesBean.getProductCode());
         // 找出该code有没有参加其它的活动
-        List<CmsBtTaskTejiabaoModel> tasks = cmsPromotionTaskDao.getPromotionByCodeNotInAllPromotion(parm);
+        List<CmsBtTaskTejiabaoModel> tasks = cmsPromotionTaskDao.selectPromotionByCodeNotInAllPromotion(parm);
         return !(tasks != null && tasks.size() > 0);
     }
 

@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service.platform.uj;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -71,43 +72,51 @@ public class UploadToUSJoiService extends BaseTaskService{
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(CartEnums.Cart.TMM.getId()));
-        cmsBtSxWorkloadModels.forEach(this::upload);
+
+        for(OrderChannelBean channelBean:Channels.getUsJoiChannelList()) {
+            List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100,  Integer.parseInt(channelBean.getOrder_channel_id()));
+            cmsBtSxWorkloadModels.forEach(this::upload);
+        }
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
+        String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
         try {
-            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
             List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
-
+            $info("productModels"+productModels.size());
             //从group中过滤出需要上的usjoi的产品
-            productModels = getUSjoiProductModel(productModels);
+            productModels = getUSjoiProductModel(productModels,sxWorkLoadBean.getCartId());
             if(productModels.size() == 0){
                 throw new BusinessException("没有找到需要上新的SKU");
             }else{
                 $info("有"+productModels.size()+"个产品要复制");
             }
-            creatGroup(productModels.get(0).getFields().getModel());
+
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel.set_id(null);
 
-                CmsBtProductModel pr = productService.getProductByCode(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode());
+                final List<Integer> cartIds;
+                OrderChannelBean usJoiBean = Channels.getChannel(usJoiChannelId);
+                if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
+                    cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+                }else{
+                    cartIds = new ArrayList<>();
+                }
+
+                CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, productModel.getFields().getCode());
                 if (pr == null) {
-                    productModel.setChannelId(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+                    productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
+                    creatGroup(productModel, usJoiChannelId);
+
 
                     List<ProductPriceBean> productPrices = new ArrayList<>();
                     List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
 
                     // 根据com_mt_us_joi_config表给sku 设cartId
-                    final List<Integer> cartIds;
-                    OrderChannelBean usJoiBean = Channels.getChannel(productModel.getOrgChannelId());
-                    if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
-                        cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-                    }else{
-                        cartIds = new ArrayList<>();
-                    }
+
                     productModel.getSkus().forEach(sku -> {
                         ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
 
@@ -136,36 +145,94 @@ public class UploadToUSJoiService extends BaseTaskService{
                     });
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
-                    productService.createProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel, sxWorkLoadBean.getModifier());
+                    productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
                     ProductPriceBean priceBean = new ProductPriceBean();
                     priceBean.setProductId(productModel.getProdId());
 
                     priceBean.setSkuPrices(skuPriceBeans);
                     productPrices.add(priceBean);
-                    productSkuService.updatePrices(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productPrices, sxWorkLoadBean.getModifier());
+                    productSkuService.updatePrices(usJoiChannelId, productPrices, sxWorkLoadBean.getModifier());
                 } else {
-                    productModel.setProdId(pr.getProdId());
-                    productModel.setGroups(pr.getGroups());
+                    List<ProductPriceBean> productPrices = new ArrayList<>();
+                    List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
+                    for(CmsBtProductModel_Sku sku:productModel.getSkus()){
+                        CmsBtProductModel_Sku oldSku = pr.getSku(sku.getSkuCode());
+                        if(oldSku == null){
+                            ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
 
-                    // 更新group
-                    // TODO: 16/4/23 edward 需要重新实现获取平台的groups对象
-//                    productGroupService.saveGroups(ChannelConfigEnums.Channel.VOYAGEONE.getId(), productModel.getFields().getCode(), sxWorkLoadBean.getCartId(), pr.getGroups());
+                            skuPriceBean.setSkuCode(sku.getSkuCode());
 
-                    ProductUpdateBean requestModel = new ProductUpdateBean();
-                    requestModel.setProductModel(productModel);
-                    requestModel.setModifier(sxWorkLoadBean.getModifier());
-                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-                    productService.updateProduct(ChannelConfigEnums.Channel.VOYAGEONE.getId(), requestModel);
+                            skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+                            sku.setClientMsrpPrice(null);
+
+                            skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+                            sku.setClientNetPrice(null);
+
+                            skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+                            sku.setClientRetailPrice(null);
+
+                            skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+                            sku.setPriceMsrp(null);
+
+                            skuPriceBean.setPriceRetail(sku.getPriceRetail());
+                            sku.setPriceRetail(null);
+
+                            skuPriceBean.setPriceSale(sku.getPriceSale());
+                            sku.setPriceSale(null);
+
+                            skuPriceBeans.add(skuPriceBean);
+                            sku.setSkuCarts(cartIds);
+                            pr.getSkus().add(sku);
+                        }else{
+                            if(oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
+                                    || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0
+                                    || oldSku.getPriceSale().compareTo(sku.getPriceSale()) != 0){
+                                ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
+
+                                skuPriceBean.setSkuCode(sku.getSkuCode());
+
+                                skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+
+                                skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+
+                                skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+
+                                skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+
+                                skuPriceBean.setPriceRetail(sku.getPriceRetail());
+
+                                skuPriceBean.setPriceSale(sku.getPriceSale());
+
+                                skuPriceBeans.add(skuPriceBean);
+                            }
+                        }
+                    }
+
+                    if(skuPriceBeans.size() > 0) {
+                        ProductUpdateBean requestModel = new ProductUpdateBean();
+                        requestModel.setProductModel(pr);
+                        requestModel.setModifier(sxWorkLoadBean.getModifier());
+                        requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
+                        productService.updateProduct(usJoiChannelId, requestModel);
+
+                        ProductPriceBean priceBean = new ProductPriceBean();
+                        priceBean.setProductId(pr.getProdId());
+                        priceBean.setSkuPrices(skuPriceBeans);
+                        productPrices.add(priceBean);
+                        productSkuService.updatePrices(usJoiChannelId, productPrices, sxWorkLoadBean.getModifier());
+                    }
                 }
             }
             sxWorkLoadBean.setPublishStatus(1);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
         }catch (Exception e){
             sxWorkLoadBean.setPublishStatus(2);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到US JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId()));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
+            e.printStackTrace();
+            issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
             throw e;
         }
     }
@@ -175,14 +242,14 @@ public class UploadToUSJoiService extends BaseTaskService{
      * @param productModels 产品列表
      * @return 产品列表
      */
-    private List<CmsBtProductModel> getUSjoiProductModel(List<CmsBtProductModel> productModels) {
+    private List<CmsBtProductModel> getUSjoiProductModel(List<CmsBtProductModel> productModels,Integer cartId) {
 
         List<CmsBtProductModel> usJoiProductModes = new ArrayList<>();
 
         // 找出approved 并且 sku的carts里包含 28（usjoi的cartid）
         productModels.stream().filter(productModel -> "Approved".equalsIgnoreCase(productModel.getFields().getStatus())).forEach(productModel -> {
             List<CmsBtProductModel_Sku> skus = productModel.getSkus().stream()
-                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(Integer.parseInt(CartEnums.Cart.TMM.getId())))
+                    .filter(cmsBtProductModel_sku -> cmsBtProductModel_sku.getSkuCarts().contains(cartId))
                     .collect(toList());
             if (skus.size() > 0) {
                 skus.forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setSkuCarts(null));
@@ -204,20 +271,17 @@ public class UploadToUSJoiService extends BaseTaskService{
      * @param cartId    cart id
      * @return group id
      */
-    private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
+    private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
         // 先去看看是否有存在的了
         CmsBtProductGroupModel groupObj = productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
-        if (groupObj == null) {
-            return -1;
-        }
-        return groupObj.getGroupId();
+        return groupObj;
     }
 
-    private void creatGroup(String model) {
+    private void creatGroup(CmsBtProductModel cmsBtProductModel,String usJoiChannel) {
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
 
         // 获取当前channel, 有多少个platform
-        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(ChannelConfigEnums.Channel.VOYAGEONE.getId(), "D", "en"); // 取得展示用数据
+        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(usJoiChannel, "D", "en"); // 取得展示用数据
         if (typeChannelBeanList == null) {
             return;
         }
@@ -225,28 +289,58 @@ public class UploadToUSJoiService extends BaseTaskService{
         List<CmsBtProductGroupModel> platformList = new ArrayList<>();
         // 循环一下
         for (TypeChannelBean shop : typeChannelBeanList) {
-            // 创建一个platform
-            CmsBtProductGroupModel platform = new CmsBtProductGroupModel();
-
-            // cart id
-            platform.setCartId(Integer.parseInt(shop.getValue()));
 
             // 获取group id
-            long groupId = getGroupIdByFeedModel(ChannelConfigEnums.Channel.VOYAGEONE.getId(), model, shop.getValue());
+            CmsBtProductGroupModel platform = getGroupIdByFeedModel(cmsBtProductModel.getChannelId(), cmsBtProductModel.getFields().getModel(), shop.getValue());
 
             // group id
             // 看看同一个model里是否已经有数据在cms里存在的
             //   如果已经有存在的话: 直接用哪个group id
             //   如果没有的话: 取一个最大的 + 1
-            if (groupId == -1) {
+            if (platform == null) {
+            // 创建一个platform
+                platform = new CmsBtProductGroupModel();
+                // cart id
+                platform.setCartId(Integer.parseInt(shop.getValue()));
                 // 获取唯一编号
                 platform.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
 
+                platform.setChannelId(cmsBtProductModel.getChannelId());
+                platform.setMainProductCode(cmsBtProductModel.getFields().getCode());
+                platform.setProductCodes(Arrays.asList(cmsBtProductModel.getFields().getCode()));
+
+                platform.setPriceMsrpSt(cmsBtProductModel.getFields().getPriceMsrpSt());
+                platform.setPriceMsrpEd(cmsBtProductModel.getFields().getPriceMsrpEd());
+                platform.setPriceRetailSt(cmsBtProductModel.getFields().getPriceRetailSt());
+                platform.setPriceRetailEd(cmsBtProductModel.getFields().getPriceRetailEd());
+                platform.setPriceSaleSt(cmsBtProductModel.getFields().getPriceSaleSt());
+                platform.setPriceSaleEd(cmsBtProductModel.getFields().getPriceSaleEd());
+
                 // is Main
                 // TODO 修改设置isMain属性
-//                platform.setIsMain(true);
             } else {
-                platform.setGroupId(groupId);
+                platform.getProductCodes().add(cmsBtProductModel.getFields().getCode());
+
+                if(platform.getPriceMsrpSt() == null || platform.getPriceMsrpSt().compareTo(cmsBtProductModel.getFields().getPriceMsrpSt()) > 0){
+                    platform.setPriceMsrpSt(cmsBtProductModel.getFields().getPriceMsrpSt());
+                }
+                if(platform.getPriceMsrpEd() == null || platform.getPriceMsrpEd().compareTo(cmsBtProductModel.getFields().getPriceMsrpEd()) < 0){
+                    platform.setPriceMsrpEd(cmsBtProductModel.getFields().getPriceMsrpEd());
+                }
+
+                if(platform.getPriceRetailSt() == null || platform.getPriceRetailSt().compareTo(cmsBtProductModel.getFields().getPriceRetailSt()) > 0){
+                    platform.setPriceRetailSt(cmsBtProductModel.getFields().getPriceRetailSt());
+                }
+                if(platform.getPriceRetailEd() == null || platform.getPriceRetailEd().compareTo(cmsBtProductModel.getFields().getPriceRetailEd()) < 0){
+                    platform.setPriceRetailEd(cmsBtProductModel.getFields().getPriceRetailEd());
+                }
+
+                if(platform.getPriceSaleSt() == null || platform.getPriceSaleSt().compareTo(cmsBtProductModel.getFields().getPriceSaleSt()) > 0){
+                    platform.setPriceSaleSt(cmsBtProductModel.getFields().getPriceSaleSt());
+                }
+                if(platform.getPriceSaleEd() == null || platform.getPriceSaleEd().compareTo(cmsBtProductModel.getFields().getPriceSaleEd()) < 0){
+                    platform.setPriceSaleEd(cmsBtProductModel.getFields().getPriceSaleEd());
+                }
 
                 // is Main
                 // TODO 修改设置isMain属性

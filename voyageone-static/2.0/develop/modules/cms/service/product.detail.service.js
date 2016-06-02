@@ -19,7 +19,7 @@ define([
 		this.getProductInfo = getProductInfo;
 		this.updateProductDetail = updateProductDetail;
 		this.changeCategory = changeCategory;
-		this._setProductStatus = _setProductStatus;
+		//this._setProductStatus = _setProductStatus;
 
 		/**
 		 * 获取页面产品信息
@@ -50,9 +50,9 @@ define([
 						});
 
 						// 设置产品状态
-						if (result.data.productInfo.productStatus) {
-							_setProductStatus(result.data.productInfo.productStatus);
-						}
+						//if (result.data.productInfo.productStatus) {
+						//	_setProductStatus(result.data.productInfo.productStatus);
+						//}
 
 						defer.resolve(result);
 					});
@@ -73,11 +73,11 @@ define([
 			});
 
 			// 设定status
-			var status = formData.productStatus.approveStatus;
-			if (formData.productStatus.statusInfo.isApproved)
-				status = Status.APPROVED;
-			else if (formData.productStatus.statusInfo.isWaitingApprove)
-				status = Status.READY;
+			//var status = formData.productStatus.approveStatus;
+			//if (formData.productStatus.statusInfo.isApproved)
+			//	status = Status.APPROVED;
+			//else if (formData.productStatus.statusInfo.isWaitingApprove)
+			//	status = Status.READY;
 
 			var data = {
 				categoryId: formData.categoryId,
@@ -87,7 +87,7 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes,
 				productStatus: {
-					approveStatus: status,
+					approveStatus: formData.productStatus.approveStatus,
 					translateStatus: formData.productStatus.translateStatus ? "1" : "0"
 				},
 				skuFields: formData.skuFields
@@ -103,7 +103,7 @@ define([
 			var defer = $q.defer();
 			$productDetailService.updateProductAllInfo(data).then(function (res) {
 
-				defer.resolve({modified: res.data.modified, approveStatus: status});
+				defer.resolve(res.data);
 			});
 			return defer.promise;
 		}
@@ -142,39 +142,39 @@ define([
 			return $filter('orderBy')(result, "selected", true);
 		}
 
-		/**
-		 * 转换成画面上能用项目
-		 * @param productStatus
-		 * @private
-		 */
-		function _setProductStatus (productStatus) {
-
-			switch (productStatus.approveStatus) {
-				case Status.NEW:
-				case Status.PENDING:
-					productStatus.statusInfo = {
-						isWaitingApprove: false,
-						isApproved: false,
-						isDisable: false
-					};
-					break;
-				case Status.READY:
-					productStatus.statusInfo = {
-						isWaitingApprove: true,
-						isApproved: false,
-						isDisable: false
-					};
-					break;
-				case Status.APPROVED:
-					productStatus.statusInfo = {
-						isWaitingApprove: true,
-						isApproved: true,
-						isDisable: true
-					};
-					break;
-			}
-
-		}
+		///**
+		// * 转换成画面上能用项目
+		// * @param productStatus
+		// * @private
+		// */
+		//function _setProductStatus (productStatus) {
+        //
+		//	switch (productStatus.approveStatus) {
+		//		case Status.NEW:
+		//		case Status.PENDING:
+		//			productStatus.statusInfo = {
+		//				isWaitingApprove: false,
+		//				isApproved: false,
+		//				isDisable: false
+		//			};
+		//			break;
+		//		case Status.READY:
+		//			productStatus.statusInfo = {
+		//				isWaitingApprove: true,
+		//				isApproved: false,
+		//				isDisable: false
+		//			};
+		//			break;
+		//		case Status.APPROVED:
+		//			productStatus.statusInfo = {
+		//				isWaitingApprove: true,
+		//				isApproved: true,
+		//				isDisable: true
+		//			};
+		//			break;
+		//	}
+        //
+		//}
 	}
 
 });

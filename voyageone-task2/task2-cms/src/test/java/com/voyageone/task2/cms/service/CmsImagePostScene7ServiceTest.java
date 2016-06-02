@@ -20,15 +20,20 @@ import java.util.List;
 public class CmsImagePostScene7ServiceTest {
 
     @Autowired
-    CmsImagePostScene7Service cmsImagePostScene7Service;
+    private CmsImagePostScene7Service cmsImagePostScene7Service;
 
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("013");
+        taskControlBean.setCfg_val1("017");
         taskControlList.add(taskControlBean);
         cmsImagePostScene7Service.onStartup(taskControlList);
+    }
+
+    @Test
+    public void testOnStartup1() throws Exception {
+
     }
 }

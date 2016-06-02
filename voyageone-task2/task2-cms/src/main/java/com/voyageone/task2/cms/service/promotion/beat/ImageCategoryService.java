@@ -26,6 +26,7 @@ import java.util.List;
  */
 @Service
 public class ImageCategoryService extends VOAbsLoggable {
+
     @Autowired
     private CmsMtImageCategoryDao imageCategoryDao;
 
@@ -65,7 +66,7 @@ public class ImageCategoryService extends VOAbsLoggable {
 
     public CmsMtImageCategoryModel createImageCategory(ShopBean shopBean, ImageCategoryType type, String userName) throws ApiException {
 
-        String categoryId = "0";
+        String categoryId;
         String categoryName = type.name() + "_" + shopBean.getCart_id() + "_" + shopBean.getOrder_channel_id();
 
         // 获取目录
@@ -77,31 +78,18 @@ public class ImageCategoryService extends VOAbsLoggable {
                 if (getResponse.getPictureCategories() != null && getResponse.getPictureCategories().size() > 0) {
                     categoryId = String.valueOf(getResponse.getPictureCategories().get(0).getPictureCategoryId());
                 } else {
-                    // 获取目录不存在的情况下，增加目录
-                    PictureCategoryAddResponse addResponse = null;
-                    try {
-                        addResponse = tbPictureService.addCategory(shopBean, categoryName);
-                        if (addResponse.isSuccess() && addResponse!= null && addResponse.getPictureCategory() != null && addResponse.getPictureCategory().getPictureCategoryId() != null) {
-                            categoryId =  String.valueOf(addResponse.getPictureCategory().getPictureCategoryId());
-                        } else if (!addResponse.isSuccess()) {
-                            String msg = "图片空间服务 -> 调用接口尝试新增图片分类信息失败，错误:" + addResponse.getErrorCode() + ", " + addResponse.getMsg();
-                            if (!StringUtils.isEmpty(addResponse.getSubMsg())) {
-                                msg += addResponse.getSubMsg();
-                            }
-                            throw new BusinessException(msg);
-                        }
-                    }  catch (ApiException e) {
-                        throw new BusinessException("图片空间服务 -> 调用接口尝试新增图片分类信息失败，错误:" + e.getErrCode() + ", " + e.getErrMsg());
-                    }
+                    categoryId = createImageCategory(shopBean, categoryName);
                 }
             } else {
                 String msg = "图片空间服务 -> 调用接口尝试获取目录出现错误，错误:" + getResponse.getErrorCode() + ", " + getResponse.getMsg();
-                if (!StringUtils.isEmpty(getResponse.getSubMsg())) {
+
+                if (!StringUtils.isEmpty(getResponse.getSubMsg()))
                     msg += getResponse.getSubMsg();
-                }
+
                 throw new BusinessException(msg);
             }
         } catch (ApiException e) {
+
             throw new BusinessException("图片空间服务 -> 调用接口尝试获取目录出现错误，错误:" + e.getErrCode() + ", " + e.getErrMsg());
         }
 
@@ -114,6 +102,38 @@ public class ImageCategoryService extends VOAbsLoggable {
         model.setCreater(userName);
         model.setModifier(userName);
         imageCategoryDao.insert(model);
+
         return model;
+    }
+
+    private String createImageCategory(ShopBean shopBean, String categoryName) {
+
+        try {
+            PictureCategoryAddResponse addResponse = tbPictureService.addCategory(shopBean, categoryName);
+
+            if (addResponse == null)
+                return null;
+
+            if (addResponse.isSuccess()) {
+
+                PictureCategory pictureCategory = addResponse.getPictureCategory();
+
+                if (pictureCategory != null)
+                    return String.valueOf(pictureCategory.getPictureCategoryId());
+                else
+                    throw new BusinessException("图片空间服务 -> 调用接口尝试新增图片分类信息失败。");
+
+            } else {
+
+                String msg = "图片空间服务 -> 调用接口尝试新增图片分类信息失败，错误:" + addResponse.getErrorCode() + ", " + addResponse.getMsg();
+
+                if (!StringUtils.isEmpty(addResponse.getSubMsg())) {
+                    msg += addResponse.getSubMsg();
+                }
+                throw new BusinessException(msg);
+            }
+        } catch (ApiException e) {
+            throw new BusinessException("图片空间服务 -> 调用接口尝试新增图片分类信息失败，错误:" + e.getErrCode() + ", " + e.getErrMsg());
+        }
     }
 }

@@ -1,29 +1,29 @@
 package com.voyageone.task2.base;
 
-import com.rabbitmq.client.impl.VariableLinkedBlockingQueue;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.mq.config.VOMQRunnable;
+import com.voyageone.common.mq.config.VOMQStart;
+import com.voyageone.common.mq.config.VOMQStop;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MQControlHelper;
-import com.voyageone.service.impl.com.mq.config.VOMQRunnable;
 import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.support.SimpleAmqpHeaderMapper;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 
 /**
  * @author aooer 2016/4/18.
@@ -34,8 +34,6 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     //taskControlList job配置
     protected List<TaskControlBean> taskControlList = null;
-
-    private ExecutorService threadPool = null;
 
     /**
      * @param taskControlList job 配置
@@ -56,9 +54,12 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     public abstract void onStartup(Map<String, Object> messageMap) throws Exception;
 
     @RabbitHandler
-    protected void onMessage(byte[] message, @Headers Map headers) throws Exception {
+    protected void onMessage(byte[] message, @Headers Map<String, Object> headers) throws Exception {
+        SimpleAmqpHeaderMapper headerMapper = new SimpleAmqpHeaderMapper();
+        MessageHeaders messageHeaders = new MessageHeaders(headers);
         MessageProperties messageProperties = new MessageProperties();
-        BeanUtils.populate(messageProperties, headers);
+        headerMapper.fromHeaders(messageHeaders, messageProperties);
+
         onMessage(new Message(message, messageProperties));
     }
 
@@ -73,9 +74,6 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         if (taskControlList.isEmpty()) {
             $info("没有找到任何配置。");
             logIssue("没有找到任何配置！！！", getTaskName());
-            MQControlHelper.stop(getClass().getName());
-        }else{
-            MQControlHelper.start(getClass().getName());
         }
     }
 
@@ -85,13 +83,28 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         initControls();
         try {
             if (!taskControlList.isEmpty()) {
-                return TaskControlUtils.isRunnable(taskControlList);
+                return TaskControlUtils.isRunnable(taskControlList, true);
             }
         } catch (Exception ignored) {
         }
         return false;
     }
 
+    @VOMQStart
+    public boolean startMQ() {
+        MQControlHelper.start(getClass().getName());
+        // set concurrentConsumers
+        String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+        int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
+        MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
+        return true;
+    }
+
+    @VOMQStop
+    public boolean stopMQ() {
+        MQControlHelper.stop(getClass().getName());
+        return true;
+    }
     /**
      * 监听通知消息，执行任务
      *
@@ -100,24 +113,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     protected void onMessage(Message message) {
         //先获取配置
         initControls();
-
-        if (ObjectUtils.isEmpty(threadPool)) {
-            String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
-            int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
-            threadPool = new ThreadPoolExecutor(nThreads, nThreads,
-                    0L, TimeUnit.MILLISECONDS,
-                    new VariableLinkedBlockingQueue<Runnable>());
-        }
-        Future<TaskControlEnums.Status> result = threadPool.submit(() -> process(message));
-        try {
-            result.get();
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        process(message);
     }
 
     private TaskControlEnums.Status process(Message message) {

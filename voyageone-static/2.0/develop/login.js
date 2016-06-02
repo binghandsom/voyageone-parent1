@@ -8,7 +8,7 @@
 
 require.config({
   paths: {
-    'angular': 'libs/angular.js/1.5.0/angular',
+    'angular': 'libs/angular.js/1.5.6/angular',
     "voyageone-angular-com" : 'components/dist/voyageone.angular.com',
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',

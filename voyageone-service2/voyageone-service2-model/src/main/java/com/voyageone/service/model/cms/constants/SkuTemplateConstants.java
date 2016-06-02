@@ -81,5 +81,5 @@ public class SkuTemplateConstants {
     public final static int EXTENDSIZE_CUSTOM_SIZE_3 = 67;
     public final static int EXTENDSIZE_CUSTOM_SIZE_4 = 68;
 
-
+    public final static int UNKOWN = 99999;
 }

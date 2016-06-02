@@ -17,22 +17,20 @@ import java.util.ArrayList;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class GetPlatformCategorySchemaServiceTest {
 
-	@Autowired
-	CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
+    @Autowired
+    private CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
 
-	@Autowired
-	GetPlatformCategorySchemaService getPlatformCategorySchemaService;
+    @Autowired
+    private GetPlatformCategorySchemaService getPlatformCategorySchemaService;
 
-	@Test
-	public void testOnStartup() throws Exception {
+    @Test
+    public void testOnStartup() throws Exception {
+        // 插入类目信息
+        getPlatformCategorySchemaService.startup();
+    }
 
-		// 插入类目信息
-		getPlatformCategorySchemaService.startup();
-
-	}
-
-	@Test
-	public void testOnStartup1() throws Exception {
-		getPlatformCategorySchemaService.onStartup(new ArrayList<>());
-	}
+    @Test
+    public void testOnStartup1() throws Exception {
+        getPlatformCategorySchemaService.onStartup(new ArrayList<>());
+    }
 }

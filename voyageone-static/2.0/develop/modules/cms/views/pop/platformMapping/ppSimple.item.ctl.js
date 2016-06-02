@@ -160,7 +160,7 @@ define([
                 switch (me.selected.valueFrom) {
                     case options.MASTER:
 
-                        return me.ppService.getMainCategoryProps(mainCate.id).then(function (props) {
+                        return me.ppService.getMainCategoryProps(mainCate.id, false, true).then(function (props) {
 
                             // 如果是编辑, 则搜索选中字段的完整字段路径
                             // 编辑情况下, 有可能默认选中固定值, 但同时也会 load Master 属性, 所以这里需要特殊处理
@@ -172,21 +172,21 @@ define([
                                 return;
                             }
 
-                            me.ppService.getPropertyPath(mainCate.id, me.ruleWord.value)
-                                .then(function (properties) {
+                            // 使用选中的叶子属性, 搜索完整的属性树枝干
+                            var properties = me.ppService.searchProperty(props, me.ruleWord.value);
 
-                                    if (!properties) {
-                                        values.push({selected: null, props: props});
-                                        return;
-                                    }
+                            // 如果搜索不到枝干(路径), 就默认不选中数据
+                            if (!properties) {
+                                values.push({selected: null, props: props});
+                                return;
+                            }
 
-                                    _.each(properties.reverse(), function (property) {
-                                        values.push({selected: property, props: props});
-                                        props = property.fields;
-                                        me.selected.value = property;
-                                    });
-
-                                });
+                            // 如果有, 则按倒序, 为每个下拉指定数据源和默认的选中项
+                            _.each(properties.reverse(), function (property) {
+                                values.push({selected: property, props: props});
+                                props = property.fields;
+                                me.selected.value = property;
+                            });
 
                         });
 

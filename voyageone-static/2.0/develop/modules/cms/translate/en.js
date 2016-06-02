@@ -1,6 +1,8 @@
 define(function() {
     return {
+        "TXT_IMAGE_STATUS": "Image Status",
         "TXT_REMINDER_WITH_COLON": "Reminder：",
+        "TXT_EDIT_TASK": "Edit Task ",
         "TXT_LOGOUT": "Logout",
         "TXT_HOME": "Home",
         "TXT_CATEGORY_VIEWS": "-- Category Views --",
@@ -402,6 +404,7 @@ define(function() {
         "TXT_MSG_TAG": "Please select and fill in the label!",
         "TXT_MSG_TAG_EDITOR": "Tag Editor",
         "TXT_MSG_TAG_PATH": "Tag Path",
+        "TXT_MSG_TAG_NAME": "Tag Name",
         "TXT_MSG_TAG_IMAGE": "Tag name is less than 50 bytes!",
         "TXT_MSG_IMPORT_MODE": "Import Mode",
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
@@ -440,8 +443,13 @@ define(function() {
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
         "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
+        "TXT_CART_NAME": "Cart Name",
         "TXT_IMPORT_TEXT": "Import text",
-
+        "TXT_FeedStatus_New": "New",
+        "TXT_FeedStatus_WaitingForImport": "Waiting For Import",
+        "TXT_FeedStatus_FinishImport": "Finish Import",
+        "TXT_FeedStatus_Error": "Error",
+        "TXT_FeedStatus_NotImport": "Not Import",
 
 
 
@@ -503,6 +511,7 @@ define(function() {
         "BTN_COMPLETE": "Done",
         "BTN_SET_DEFAULT_VALUE": "Set Default Value",
         "BTN_RESET":"Reset",
+        "BTN_REFRESH_PAGE": "Refresh Page",
         "TXT_ACTIVITY_NAME": "Activity name",
         "TXT_PC_MODULE_ID": "PC module ID",
         "TXT_APP_MODULE_ID": "APP module ID",
@@ -518,6 +527,11 @@ define(function() {
         "RE_SUCCESS": "Revert Success",
         "RE_FAIL": "Revert Fail",
         "CANT_BEAT": "Info Error",
+
+        "None": "No Image",
+        "Waiting": "Waiting",
+        "Error": "Error",
+        "Exists": "Success",
 
         /**分页显示*/
         "TXT_PAGER_SIZE": "page-size",
@@ -537,6 +551,15 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE_REPEAT":"OriginalSize can't repeat",
         "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size is required",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
-        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character"
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
+
+        /**店铺分类*/
+        "TXT_STORE_CATEGORY":"Store Category",
+        "TXT_STORE_CATEGORY_NAME":"store",
+        "MAX_SELLER_CAT_DEPTH":"max level",
+        "MAX_SELLER_CAT_CNT":"max tag counts should be less than ",
+        "TXT_STORE_CATEGORY_SELECT":"Please select a tag",
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in cart directory",
+        "CATEGORY_EDIT":"Category edit"
     };
 });

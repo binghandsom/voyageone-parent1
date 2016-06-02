@@ -28,7 +28,7 @@ public class PlatformCategoryDaoTest {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    CmsMtPlatformCategoryDao platformCategoryDao;
+    private CmsMtPlatformCategoryDao platformCategoryDao;
 
     @Test
     public void testSavePlatformCategories() throws Exception {

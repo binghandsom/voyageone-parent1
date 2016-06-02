@@ -22,7 +22,7 @@ public class MainTestReadTask {
 //    @Autowired
 //    PersonDao personDao;
     @Autowired
-    MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
 
     public void testSelect() {
 

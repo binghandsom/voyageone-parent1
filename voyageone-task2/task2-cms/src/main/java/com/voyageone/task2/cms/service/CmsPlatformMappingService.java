@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
@@ -44,13 +45,13 @@ public class CmsPlatformMappingService extends BaseTaskService {
     // CmsMtCommonProp数据
     private static List<CmsMtCommonPropModel> commonProp;
     @Autowired
-    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
+    private CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
     @Autowired
-    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
-    CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
     @Autowired
-    CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
+    private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
     @Override
     public SubSystem getSubSystem() {
@@ -126,7 +127,11 @@ public class CmsPlatformMappingService extends BaseTaskService {
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
         // 类目ID
-        cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId(cmsMtPlatformCategoryTree.getCatPath()));
+        if(cmsMtPlatformCategoryTree.getCartId()== Integer.parseInt(CartEnums.Cart.JGJ.getId()) || cmsMtPlatformCategoryTree.getCartId()== Integer.parseInt(CartEnums.Cart.JGY.getId())){
+            cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId("jd_" + cmsMtPlatformCategoryTree.getCatPath()));
+        }else{
+            cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId(cmsMtPlatformCategoryTree.getCatPath()));
+        }
         // 类目ID
         cmsMtPlatformMappingModel.setPlatformCategoryId(cmsMtPlatformCategoryTree.getCatId());
         // 渠道ID
@@ -142,7 +147,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     private List<MappingBean> makeProps(int cartId, String categoryId) throws Exception {
 
         List<MappingBean> props = new ArrayList<>();
-        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(categoryId, cartId);
         if (cmsMtPlatformCategorySchemaModel != null) {
             //PropsItem 生成props
             if (!StringUtils.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {

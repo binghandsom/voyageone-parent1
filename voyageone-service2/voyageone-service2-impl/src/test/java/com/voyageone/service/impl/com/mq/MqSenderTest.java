@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.com.mq;
 
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +23,44 @@ public class MqSenderTest extends TestCase {
     @Autowired
     private MqSender sender;
 
+    private int[] taskIds = {42965};
+
     @Test
     public void testSendMessage() throws Exception {
-        Map<String, Object> message = new HashMap<>();
-        message.put("id", "111");
-        for (int i=0;i<100;i++)
-        sender.sendMessage("voyageone_mq_error_handle_testing", message);
+//        for (int i=0;i<10;i++) {
+//            Map<String, Object> message = new HashMap<>();
+//            message.put("id", String.valueOf(i));
+//            sender.sendMessage("voyageone_mq_error_handle_testing", message);
+//        }
+
+//        for (int i : taskIds) {
+//            Map<String, Object> message = new HashMap<>();
+//            message.put("id", i);
+//            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
+//        }
+
+        for (int i=0;i<1000;i++) {
+            Map<String, Object> message = new HashMap<>();
+            message.put("id", 123);
+            message.put("no", i);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
+            Thread.sleep(1000);
+        }
     }
 
+    @Test
+    public void testStopMq() throws Exception {
+        Map<String, Object> message = new HashMap<>();
+        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("active", "stop");
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false);
+    }
+
+    @Test
+    public void testStartMq() throws Exception {
+        Map<String, Object> message = new HashMap<>();
+        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("active", "start");
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false);
+    }
 }

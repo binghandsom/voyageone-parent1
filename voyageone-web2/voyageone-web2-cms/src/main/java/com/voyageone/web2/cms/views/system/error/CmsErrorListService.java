@@ -55,8 +55,9 @@ class CmsErrorListService extends BaseAppService {
      * @param params 搜索参数
      * @return 包含错误信息的 Map, 使用了 key: [ errorList, errorCnt ]
      */
-    public Map<String, Object> search(Map params) {
+    public Map<String, Object> search(Map params, String channelId) {
         Map<String, Object> resultBean = new HashMap<>();
+        params.put("channelId", channelId);
         resultBean.put("errorList", businessLogService.getList(params));
         resultBean.put("errorCnt", businessLogService.getCount(params));
         return resultBean;
@@ -70,7 +71,7 @@ class CmsErrorListService extends BaseAppService {
      */
     Map<String, Object> updateStatus(Map params, UserSessionBean userInfo) {
         Map<String, Object> request = new HashMap<>();
-        request.put("seq", Integer.parseInt(params.get("seq").toString()));
+        request.put("id", Integer.parseInt(params.get("id").toString()));
         request.put("modifier", userInfo.getUserName());
         int modifiedCount = businessLogService.updateFinishStatus(request);
 

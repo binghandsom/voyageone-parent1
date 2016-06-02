@@ -1,16 +1,23 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.SxProductBean;
+import com.voyageone.task2.cms.bean.tcb.AbortTaskSignalInfo;
+import com.voyageone.task2.cms.bean.tcb.TaskSignal;
+import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetMainPrductImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetMainProductImages;
 import com.voyageone.ims.rule_expression.RuleExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -24,17 +31,20 @@ import java.util.Set;
 public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
     public final static String moduleName = "GetMainProductImages";
 
+    @Autowired
+    private ImageCreateService imageCreateService;
+
     public CustomWordModuleGetMainPropductImages() {
         super(moduleName);
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam) throws TaskSignal {
         return parse(customWord, expressionParser, systemParam, null);
     }
 
     @Override
-    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) {
+    public String parse(CustomWord customWord, ExpressionParser expressionParser, CustomValueSystemParam systemParam, Set<String> imageSet) throws TaskSignal {
         //user param
         CustomModuleUserParamGetMainPrductImages customModuleUserParamGetMainPrductImages = ((CustomWordValueGetMainProductImages) customWord.getValue()).getUserParam();
 
@@ -76,7 +86,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         if (imageIndex == -1) {
             if (imageTemplate != null) {
                 for (CmsBtProductModel_Field_Image productImage : productImages) {
-                    String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
+                    // 20160513 tom 图片服务器切换 START
+//                    String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
+
+                    String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName(), systemParam);
+                    // 20160513 tom 图片服务器切换 END
                     imageUrlList.add(completeImageUrl);
                 }
             } else {
@@ -94,7 +108,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             }
             String paddingImage;
             if(imageTemplate != null){
-                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+                // 20160513 tom 图片服务器切换 START
+//                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+
+                paddingImage = getImageByTemplateId(expressionParser, imageTemplate, paddingImageKey.trim(), systemParam);
+                // 20160513 tom 图片服务器切换 END
                 paddingImage = UploadImageHandler.encodeImageUrl(paddingImage);
                 imageUrlList.add(String.format(imageTemplate, paddingImage));
 
@@ -104,7 +122,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         } else {
             CmsBtProductModel_Field_Image productImage = productImages.get(imageIndex);
             if(imageTemplate != null){
-                String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
+                // 20160513 tom 图片服务器切换 START
+//                String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
+
+                String completeImageUrl = getImageByTemplateId(expressionParser, imageTemplate, productImage.getName(), systemParam);
+                // 20160513 tom 图片服务器切换 END
                 imageUrlList.add(completeImageUrl);
             }else {
                 return productImage.getName();
@@ -123,4 +145,29 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         }
         return parseResult;
     }
+
+    // 20160513 tom 图片服务器切换 START
+    private String getImageByTemplateId(ExpressionParser expressionParser, String imageTemplate, String imageName, CustomValueSystemParam systemParam) throws TaskSignal {
+
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(expressionParser.getMasterWordCmsBtProduct().getChannelId());
+        request.setTemplateId(Integer.parseInt(imageTemplate));
+        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
+        String[] vPara = {imageName};
+        request.setVParam(vPara);
+        ImageCreateGetResponse response = null;
+        try {
+            response = imageCreateService.getImage(request);
+            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(
+                            "channelId:" + systemParam.getOrderChannelId() +
+                            ". cartId:" + systemParam.getCartId() +
+                            ". groupId:" + systemParam.getMainSxProduct().getCmsBtProductModelGroupPlatform().getGroupId() +
+                            ". 图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName));
+        }
+    }
+    // 20160513 tom 图片服务器切换 END
+
 }

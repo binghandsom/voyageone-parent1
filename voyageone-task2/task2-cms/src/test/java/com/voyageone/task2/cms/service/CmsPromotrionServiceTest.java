@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class CmsPromotrionServiceTest  {
 
     @Autowired
-    CmsPromotrionService cmsPromotrionService;
+    private CmsPromotrionService cmsPromotrionService;
 
     @Test
     public void testOnStartup() throws Exception {

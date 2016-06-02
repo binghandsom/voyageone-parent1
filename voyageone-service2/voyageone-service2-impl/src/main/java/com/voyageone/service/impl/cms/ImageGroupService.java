@@ -4,6 +4,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
@@ -34,10 +35,13 @@ public class ImageGroupService extends BaseService {
     private final String DIRECTORY_SHIPPING_DESCRIPTION_IMAGE = "/shipping/";
     private final String DIRECTORY_STORE_DESCRIPTION_IMAGE = "/store/";
 
+    // 图片SFTP设置
+    private static final String SFTP_CONFIG = "SFTP_CONFIG";
+
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
-    MongoSequenceService commSequenceMongoService; // DAO: Sequence
+    private MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
     /**
      * 新建ImageGroup信息
@@ -126,7 +130,7 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList 相关尺码列表
      */
     public void update(String userName, String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
-                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                       List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             model.setModifier(userName);
@@ -215,7 +219,7 @@ public class ImageGroupService extends BaseService {
      * @return 检索结果件数
      */
     public long getCount(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
-                           String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                         String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         String parameter = getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList);
         return cmsBtImageGroupDao.countByQuery(parameter);
@@ -323,7 +327,7 @@ public class ImageGroupService extends BaseService {
             CmsBtImageGroupModel_Image imageModel = new CmsBtImageGroupModel_Image();
             imageModel.setOriginUrl(uploadUrl);
             imageModel.setErrorMsg(null);
-            imageModel.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
+            imageModel.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.WAITING_UPLOAD));
             List<CmsBtImageGroupModel_Image> images = model.getImage();
             if (images == null) {
                 images = new ArrayList<>();
@@ -352,7 +356,7 @@ public class ImageGroupService extends BaseService {
                     if (image.getOriginUrl().equals(key)) {
                         image.setOriginUrl(uploadUrl);
                         image.setErrorMsg(null);
-                        image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.NOT_UPLOAD));
+                        image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.WAITING_UPLOAD));
                         break;
                     }
                 }
@@ -415,7 +419,7 @@ public class ImageGroupService extends BaseService {
             if (images != null && images.size() > 0) {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(originUrl)) {
-                        image.setStatus(2);
+                        image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.WAITING_UPLOAD));
                         break;
                     }
                 }
@@ -463,24 +467,27 @@ public class ImageGroupService extends BaseService {
             // FTP上传失败
             throw new BusinessException("7000089");
         }
-         return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
+        return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
     }
 
     private FtpBean formatFtpBean(){
-        String url = "image.voyageone.com.cn";
-        // ftp连接port
-        String port = "22";
-        // ftp连接usernmae
-        String username = "voyageone-cms-sftp";
-        // ftp连接password
-        String password = "Li48I-22aBz";
+        // sftp连接url
+        String url = Codes.getCodeName(SFTP_CONFIG, "Url");
+        // sftp连接port
+        String port = Codes.getCodeName(SFTP_CONFIG, "Port");
+        // sftp连接username
+        String userName = Codes.getCodeName(SFTP_CONFIG, "UserName");
+        // sftp连接password
+        String password = Codes.getCodeName(SFTP_CONFIG, "Password");
+        // sftp连接上传文件编码
+        String fileEncode = Codes.getCodeName(SFTP_CONFIG, "FileCoding");
 
         FtpBean ftpBean = new FtpBean();
         ftpBean.setPort(port);
         ftpBean.setUrl(url);
-        ftpBean.setUsername(username);
+        ftpBean.setUsername(userName);
         ftpBean.setPassword(password);
-        ftpBean.setFile_coding("iso-8859-1");
+        ftpBean.setFile_coding(fileEncode);
         return ftpBean;
     }
 }

@@ -271,6 +271,11 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.EXTENDSIZE_YUANBAI) {
                     skuExtend_yuanbaiField = platformProp;
                 }
+
+                // 暂时不知道匹配什么
+                if (type.intValue() == SkuTemplateConstants.UNKOWN) {
+                    addUnkownField(platformProp);
+                }
             }
         }
 
@@ -359,6 +364,16 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
 
                 for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
                     String propId = mappingBean.getPlatformPropId();
+                    // add by morse.lu 2016/05/15 start
+                    // target店上新临时添加写死用
+                    if ("hscode".equals(propId)) {
+                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        skuFieldValue.setInputFieldValue(propId, propValue.split(",")[0]);
+//                        skuFieldValue.setInputFieldValue(propId, "0410004300");
+                        continue;
+                    }
+                    // add by morse.lu 2016/05/15 end
                     if (propId.equals(sku_sizeField.getId())
                             || propId.equals(sku_colorField.getId())) {
                         continue;
@@ -413,7 +428,8 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                         $warn("图片模板url未设置");
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
                     } else {
-                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+//                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
@@ -421,7 +437,10 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
+//                        } else {
+//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                         }
                     }
                 }

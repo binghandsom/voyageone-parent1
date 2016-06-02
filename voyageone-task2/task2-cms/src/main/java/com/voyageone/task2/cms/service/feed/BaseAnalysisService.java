@@ -78,7 +78,6 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         int cnt = superFeedImport();
         $info("产品信息插入完成 共" + cnt + "条数据");
         if (cnt > 0) {
-//
             transformer.new Context(channel, this).transform();
 
             postNewProduct();
@@ -102,6 +101,27 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         if (!file.renameTo(file_backup)) {
 //            logger.error("产品文件备份失败");
             $info("产品文件备份失败");
+        }
+
+        $info("备份处理文件结束");
+        return true;
+    }
+
+    protected boolean backupFeedFile(String channel_id,FeedEnums.Name name) {
+        $info("备份处理文件开始");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date_ymd = sdf.format(date);
+
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id,  name));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
+        File file = new File(filename);
+        File file_backup = new File(filename_backup);
+
+        if (!file.renameTo(file_backup)) {
+//            $error("产品文件备份失败");
+            $info(file_backup+"备份失败");
         }
 
         $info("备份处理文件结束");
@@ -135,6 +155,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
         map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
         map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
+        map.put("quantity", (Feeds.getVal1(channel, FeedEnums.Name.quantity)));
         return map;
     }
 
@@ -203,7 +224,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                issueLog.log(e,ErrorType.BatchJob,SubSystem.CMS);
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             }
         }
         executeMongoDB(productAll, productSucceeList, productFailAllList);

@@ -1,10 +1,9 @@
 package com.voyageone.service.bean.cms;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.voyageone.common.Constants;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
-import com.voyageone.service.model.cms.enums.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -15,77 +14,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
-    //    private int id;
-//
-    private int task_id;
-
-    private long num_iid;
-
-    private String product_code;
-
-    private int syn_flag;
-
-    private String message = Constants.EmptyString;
-
     private CmsBtPromotionCodesBean promotion_code;
 
     private CmsBtPromotionModel promotion;
 
     private CmsBtTasksBean task;
 
-    //    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-//
-    public int getTask_id() {
-        return task_id;
-    }
-
-    public void setTask_id(int task_id) {
-        this.task_id = task_id;
-    }
-
-    public long getNum_iid() {
-        return num_iid;
-    }
-
-    public void setNum_iid(long num_iid) {
-        this.num_iid = num_iid;
-    }
-
-    public String getProduct_code() {
-        return product_code;
-    }
-
-    public void setProduct_code(String product_code) {
-        this.product_code = product_code;
-    }
-
-    public int getSyn_flag() {
-        return syn_flag;
-    }
-
-    public void setSyn_flag(int syn_flag) {
-        this.syn_flag = syn_flag;
-    }
-
-    @JsonIgnore
-    public BeatFlag getBeatFlag() {
-        return BeatFlag.valueOf(getSynFlag());
-    }
-    @JsonIgnore
-    public void setBeatFlag(BeatFlag flag) {
-        setSynFlag(flag.getFlag());
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
+    /**
+     * 为任务保存信息。
+     * <p>该属性为业务过程提供多条信息的报错功能。</p>
+     */
     public void setMessage(String message) {
         if (StringUtils.isEmpty(this.message))
             this.message = message;
@@ -93,6 +31,27 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
             this.message += ";" + message;
     }
 
+    public CmsBtBeatInfoBean() {
+    }
+
+    public CmsBtBeatInfoBean(CmsBtTaskJiagepiluModel model) {
+        setId(model.getId());
+        setTaskId(model.getTaskId());
+        setNumIid(model.getNumIid());
+        setProductCode(model.getProductCode());
+        setSynFlag(model.getSynFlag());
+        setMessage(model.getMessage());
+        setImageStatus(model.getImageStatus());
+        setImageTaskId(model.getImageTaskId());
+        setCreater(model.getCreater());
+        setCreated(model.getCreated());
+        setModifier(model.getModifier());
+        setModified(model.getModified());
+    }
+
+    /**
+     * 重置(清空)任务信息
+     */
     public void clearMessage() {
         this.message = null;
     }
@@ -119,5 +78,21 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
     public void setTask(CmsBtTasksBean task) {
         this.task = task;
+    }
+
+    public BeatFlag getSynFlagEnum() {
+        return BeatFlag.valueOf(synFlag);
+    }
+
+    public void setSynFlag(BeatFlag synFlag) {
+        this.synFlag = synFlag.getFlag();
+    }
+
+    public ImageStatus getImageStatusEnum() {
+        return ImageStatus.valueOf(imageStatus);
+    }
+
+    public void setImageStatus(ImageStatus imageStatus) {
+        this.imageStatus = imageStatus.getId();
     }
 }

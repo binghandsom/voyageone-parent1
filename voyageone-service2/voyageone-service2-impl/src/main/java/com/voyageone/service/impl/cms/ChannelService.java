@@ -25,9 +25,6 @@ public class ChannelService {
     OrderChannelDao channelDao;
 
     @Resource
-    ShopDao cartDao;
-
-    @Resource
     CmsBtConfigHistoryDao historyDao;
 
     /**
@@ -39,27 +36,20 @@ public class ChannelService {
      */
     public List getChannelListBy(String channelId, String channelName, Integer allowMinimall, String active) {
 
-        List<OrderChannelBean> channelList = channelDao.getAll();
-        Predicate<OrderChannelBean> filterByCon = (bean) -> {
-
-            boolean flg = true;
-            if (!Strings.isNullOrEmpty(channelId)) {
-                flg = flg && channelId.equalsIgnoreCase(bean.getOrder_channel_id());
-            }
-            if (!Strings.isNullOrEmpty(channelName)) {
-                flg = flg && channelName.equalsIgnoreCase(bean.getName());
-            }
-            if (allowMinimall != null && allowMinimall != -1) {
-                flg = flg && (allowMinimall == bean.getIs_usjoi());
-            }
-            if (!Strings.isNullOrEmpty(active)) {
-                flg = flg && (active.equals(bean.getActive()));
-            }
-            return flg;
-
-        };
-        return channelList.stream().filter(filterByCon)
-                .collect(Collectors.toCollection(ArrayList::new));
+        OrderChannelBean bean = new OrderChannelBean();
+        if (!Strings.isNullOrEmpty(channelId)) {
+            bean.setOrder_channel_id(channelId);
+        }
+        if (!Strings.isNullOrEmpty(channelName)) {
+            bean.setName(channelName);
+        }
+        if (allowMinimall != null && allowMinimall != -1) {
+            bean.setIs_usjoi(allowMinimall);
+        }
+        if (!Strings.isNullOrEmpty(active)) {
+            bean.setActive(active);
+        }
+        return channelDao.getList(bean);
     }
 
     public void updateById(OrderChannelBean bean) {
@@ -82,14 +72,26 @@ public class ChannelService {
 
     public void save(OrderChannelBean bean) {
         try {
-            channelDao.insertChannel(bean);
+            OrderChannelBean old = channelDao.getOne(bean.getOrder_channel_id());
+            if (old != null) {
+                if ("1".equals(old.getActive())) {
+                    // 主键存在,并且非逻辑删除的情况
+                    throw new BusinessException("channel id is not unique,please rewrite a new id");
+                } else {
+                    // 主键存在,但是逻辑删除的情况
+                    bean.setActive("1");
+                    channelDao.updateById(bean);
+                }
+            } else {
+                // 主键不存在的情况（包括逻辑删除也不存在）
+                channelDao.insertChannel(bean);
+            }
             Channels.invalidate();
             CmsBtConfigHistory<OrderChannelBean> history = CmsBtConfigHistory.build(null, bean, "CHANNEL ADD", bean.getModifier());
             historyDao.insert(history);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            if (e.getMessage().contains("Duplicate entry")) {
-                throw new BusinessException("channel id is not unique,please rewrite a new id",e);
-            }
             throw new BusinessException("insert channel error with message:"+e.getMessage(), e);
         }
     }

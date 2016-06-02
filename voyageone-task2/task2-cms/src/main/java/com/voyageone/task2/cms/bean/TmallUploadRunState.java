@@ -127,6 +127,17 @@ public class TmallUploadRunState extends PlatformUploadRunState{
         //Darwin 上下文
         private List<Field> darwinFields;
 
+        // added by morse.lu 2016/05/17 start
+        // 由于sku属性设值修正，临时添加，保存结果用
+        private String xmlSkuData;
+        public String getXmlSkuData() {
+            return xmlSkuData;
+        }
+        public void setXmlSkuData(String xmlSkuData) {
+            this.xmlSkuData = xmlSkuData;
+        }
+        // added by morse.lu 2016/05/17 end
+
         //key->srcUrl
         private Map<String, List<UrlStashEntity>> srcUrlStashEntityMap;
 

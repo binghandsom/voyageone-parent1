@@ -62,8 +62,16 @@ public class CartEnums {
 		/**
 		 * 天猫MiniMall
 		 */
-		TMM("30");
+		TMM("d"),
 
+		/**
+		 * US匠心界
+		 */
+		USJGJ("928"),
+		/**
+		 * US悦境
+		 */
+		USJGY("929");
 
     	private String id;
 
